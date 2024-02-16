@@ -22,8 +22,15 @@ import Home from './Home';
 import Contacts from "./Contact"
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Menu, MenuItem } from '@mui/material';
+import logo from "../images/logo.png";
+
+import Button from '@mui/material/Button';
+import SendIcon from '@mui/icons-material/Send';
 
 const drawerWidth = 240;
+// const logo = require('images/logo.png');
+
+
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -117,12 +124,15 @@ export default function SidebarNav() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Mini variant drawer
-          </Typography>
+           
+          <img src={logo} />
+
           <Box>
+          <Button variant="contained" endIcon={<SendIcon />}>Send</Button>
             <Menu>
-                <MenuItem>Contacts</MenuItem>
+            
+
+                {/* <MenuItem>Contacts</MenuItem> */}
             </Menu>
           </Box>
         </Toolbar>
@@ -135,7 +145,7 @@ export default function SidebarNav() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Dashboard', 'Contacts', 'Mails', 'Meetings'].map((text, index) => (
+          {['Dashboard', 'Create New', 'Connections', 'Smart Views', 'Log Out'].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={{
