@@ -28,7 +28,6 @@ import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 
 const drawerWidth = 240;
-// const logo = require('images/logo.png');
 
 
 
@@ -124,17 +123,16 @@ export default function SidebarNav() {
           >
             <MenuIcon />
           </IconButton>
-           
+          <Box>
+
           <img src={logo} />
 
-          <Box>
           <Button variant="contained" endIcon={<SendIcon />}>Send</Button>
             <Menu>
-            
-
                 {/* <MenuItem>Contacts</MenuItem> */}
             </Menu>
           </Box>
+          
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>

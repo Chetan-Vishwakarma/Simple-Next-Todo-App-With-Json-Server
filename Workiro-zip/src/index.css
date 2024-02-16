@@ -19,10 +19,11 @@ body {
 }
 .client-box {
   background: #fff;
-  padding: 50px 20px;
+  padding: 30px 20px;
   border-radius: 18px;
   text-align: center;
-  margin: 20px 0; 
+  margin: 20px 0;
+  position: relative;
 }
 .client-img {
   width: 110px;
@@ -52,4 +53,9 @@ body {
   border: 2px solid;
   font-size: 12px;
   font-weight: 600;
+}
+.client-box .pin-img {
+  position: absolute;
+  top: 18px;
+  right: 18px;
 }
