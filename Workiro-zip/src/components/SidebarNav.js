@@ -37,14 +37,9 @@ const style = {
   width: 400,
   bgcolor: 'background.paper',
   border: '2px solid #000',
-  boxShadow: 24,
   p: 4,
 };
-
-
 const drawerWidth = 240;
-
-
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -151,7 +146,7 @@ export default function SidebarNav() {
         </AppBar>
         {/* header end */}
 
-        <Drawer variant="permanent" open={open}>
+        <Drawer variant="permanent" className='left-sidebar' open={open}>
           <DrawerHeader className='d-none'>
             <IconButton onClick={handleDrawerClose}>
               {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
@@ -165,9 +160,9 @@ export default function SidebarNav() {
 
           <CreateNewModal></CreateNewModal>
 
-          <List>
+          <List className='side-navi'>
 
-            {['Dashboard', 'Create New', 'Connections', 'Smart Views', 'Log Out'].map((text, index) => (
+            {['Dashboard', 'Connections', 'Smart Views', 'Log Out'].map((text, index) => (
               <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                 <ListItemButton
                   sx={{

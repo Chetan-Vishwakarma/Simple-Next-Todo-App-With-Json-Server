@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector, useDispatch } from "react-redux";
 import { increment, decrement } from "../redux/reducers/counterSlice";
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, colors } from '@mui/material';
 import user from "../images/user.jpg";
 import pin from "../images/icons/star.svg";
 import Button from "@mui/material/Button";
@@ -65,6 +65,10 @@ function Home() {
               <Layout>
                 <AutocompleteWrapper>
                   <AutocompleteRoot
+                  sx={{
+                    borderColor: '#D5D5D5',
+                    color: 'success.main',
+                  }}
                     {...getRootProps()}
                     className={focused ? 'Mui-focused' : ''}>
                     <span class="material-symbols-outlined search-icon">search</span>
@@ -118,6 +122,9 @@ function Home() {
                       <Button className='btn-white'>key: value <span class="material-symbols-outlined font-16 text-danger">
                         close
                       </span></Button>
+                      <Button className='btn-white'>key: value <span class="material-symbols-outlined font-16 text-danger">
+                        close
+                      </span></Button>
 
                       <Fab size="small" className='btn-plus  ms-2' aria-label="add">
                         <AddIcon />
@@ -160,9 +167,7 @@ function Home() {
                           </Box>
                         </Box>
                       </div>
-
                     </div>
-
 
                     <div className='mt-2'>
                       <Button variant="contained" size='small' color="success">
@@ -171,13 +176,7 @@ function Home() {
                         </span> Add
                       </Button>
                     </div>
-
-
-
-
-
-
-
+                    
                   </Box>
 
                   {/* <Box className='clearfix'>

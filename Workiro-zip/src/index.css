@@ -52,6 +52,25 @@ input, .form-select {
 .logo img {
   width: 110px;
 }
+
+.left-sidebar .MuiPaper-root {
+  padding: 0 22px;
+  border: 0px;
+  box-shadow: 0 0 5px #f1f1f1;
+}
+.side-navi {
+  border-top: 1px solid #f1f1f1;
+  margin-top: 24px !important;
+}
+.side-navi li {
+  color: #ABB5BA;
+}
+.side-navi li svg {
+  fill: #ABB5BA;
+}
+.header {
+  box-shadow: 2px 0 5px #f1f1f1 !important;
+}
 /* header css end */
 
 .client-box {
@@ -68,6 +87,19 @@ input, .form-select {
   align-items: center;
   padding-left: 12px;
   font-size: 18px;
+  padding-top: 3px;
+  color: #c9c9c9;
+}
+::-ms-input-placeholder {
+  color: #c9c9c9;
+}
+
+::placeholder {
+  color: #c9c9c9;
+}
+
+.search-box .Mui-focused {
+  box-shadow: none !important;
 }
 
 .client-img {
@@ -222,3 +254,4 @@ input, .form-select {
   align-items: center;
   flex-wrap: wrap;
 }
+

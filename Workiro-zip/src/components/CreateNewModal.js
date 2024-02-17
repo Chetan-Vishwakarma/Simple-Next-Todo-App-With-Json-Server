@@ -26,7 +26,7 @@ export default function CreateNewModal() {
 
 
       <Box className="text-center">
-      <Button className='btn-blue btn-round btn-block' onClick={handleOpen}><span class="material-symbols-outlined">
+      <Button className='btn-blue btn-round btn-block' onClick={handleOpen}><span class="material-symbols-outlined pe-2">
                 edit_square
               </span> Create New</Button>
       </Box>
