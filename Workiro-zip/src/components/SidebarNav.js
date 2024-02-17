@@ -23,9 +23,24 @@ import Contacts from "./Contact"
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Menu, MenuItem } from '@mui/material';
 import logo from "../images/logo.png";
-
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
+import Modal from '@mui/material/Modal';
+import CreateNewModal from './CreateNewModal';
+
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
 
 const drawerWidth = 240;
 
@@ -102,80 +117,89 @@ export default function SidebarNav() {
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
     setOpen(false);
   };
 
+  const handleDrawerClose = () => {
+    setOpen(true);
+  };
+
+
   return (
     <>
-      <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar position="fixed" color='inherit'>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={()=>setOpen(!open)}
-            edge="start"
-          >
-            <MenuIcon />
-          </IconButton>
-          <Box>
+      <Box  sx={{ display: 'flex' }}>
+        <CssBaseline />
+        <AppBar className='header' position="fixed" open={open} color='inherit'>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={() => setOpen(!open)}
+              edge="start"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Box>
 
-          <img src={logo} />
-
-          <Button variant="contained" endIcon={<SendIcon />}>Send</Button>
-            <Menu>
+              <Button variant="contained" endIcon={<SendIcon />}>Send</Button>
+              <Menu>
                 {/* <MenuItem>Contacts</MenuItem> */}
-            </Menu>
+              </Menu>
+            </Box>
+
+          </Toolbar>
+        </AppBar>
+        {/* header end */}
+
+        <Drawer variant="permanent" open={open}>
+          <DrawerHeader className='d-none'>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            </IconButton>
+          </DrawerHeader>
+          <Divider />
+
+          <Box className="text-center">
+            <a href='#' className='logo'><img src={logo} /></a>
           </Box>
-          
-        </Toolbar>
-      </AppBar>
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
-          {['Dashboard', 'Create New', 'Connections', 'Smart Views', 'Log Out'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-                onClick={()=>{text==="Dashboard"?navigate("/"):navigate("/"+text)}}
-              >
-                <ListItemIcon
+
+          <CreateNewModal></CreateNewModal>
+
+          <List>
+
+            {['Dashboard', 'Create New', 'Connections', 'Smart Views', 'Log Out'].map((text, index) => (
+              <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+                <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
                   }}
+                  onClick={() => { text === "Dashboard" ? navigate("/") : navigate("/" + text) }}
                 >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <DrawerHeader />
-        {/* <Home/> */}
-        <Routes>
-            <Route path="/" element={<Home/>}/>
-            <Route path="/Contacts" element={<Contacts/>}/>
-        </Routes>
-      </Box>
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  </ListItemIcon>
+                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Drawer>
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <DrawerHeader />
+          {/* <Home/> */}
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/Contacts" element={<Contacts />} />
+          </Routes>
+        </Box>
       </Box>
     </>
   );
