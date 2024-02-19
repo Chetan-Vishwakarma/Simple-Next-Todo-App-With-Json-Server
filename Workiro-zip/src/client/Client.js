@@ -1,22 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from "react-redux";
-import { increment, decrement } from "../redux/reducers/counterSlice";
-import { Box, Typography, colors } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import user from "../images/user.jpg";
-import pin from "../images/icons/star.svg";
 import Button from "@mui/material/Button";
-
-import Stack from '@mui/material/Stack';
 
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 // search
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import InputLabel from '@mui/material/InputLabel';
-import TextField from '@mui/material/TextField';
-import axios, { all } from "axios";
+
+import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -30,34 +23,31 @@ const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'
 
 function Client() {
 
-    const data = useSelector((state) => state.counter.value);
-    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    // const [value, setValue] = React.useState(options[0]);
+    // const [inputValue, setInputValue] = React.useState('');
 
+    // const {
+    //     getRootProps,
+    //     getInputProps,
+    //     getListboxProps,
+    //     getOptionProps,
+    //     groupedOptions,
+    //     focused,
+    // } = useAutocomplete({
+    //     id: 'controlled-state-demo',
+    //     options,
+    //     value,
+    //     onChange: (event, newValue) => setValue(newValue),
+    //     inputValue,
+    //     onInputChange: (event, newInputValue) => setInputValue(newInputValue),
+    // });
 
-    const [value, setValue] = React.useState(options[0]);
-    const [inputValue, setInputValue] = React.useState('');
+    // const [age, setAge] = React.useState('');
 
-    const {
-        getRootProps,
-        getInputProps,
-        getListboxProps,
-        getOptionProps,
-        groupedOptions,
-        focused,
-    } = useAutocomplete({
-        id: 'controlled-state-demo',
-        options,
-        value,
-        onChange: (event, newValue) => setValue(newValue),
-        inputValue,
-        onInputChange: (event, newInputValue) => setInputValue(newInputValue),
-    });
-
-    const [age, setAge] = React.useState('');
-
-    const handleChange = (event) => {
-        setAge(event.target.value);
-    };
+    // const handleChange = (event) => {
+    //     setAge(event.target.value);
+    // };
     // search end
 
 
@@ -73,6 +63,11 @@ function Client() {
     const [isFolder, setIsFolder] = useState(false);
     const [selectedFolder, setSelectedFolder] = useState("Clients");
     const [isAdvFilter, setIsAdvFilter] = useState(false);
+    const [isSearch, setIsSearch] = useState(false);
+    const [searchInput, setSearchInput] = useState("");
+    const [filteredClientsForSearchBox, setFilteredClientsForSearchBox] = useState([]);
+    const [filteredContactsForSearchBox, setFilteredContactsForSearchBox] = useState([]);
+
     const apiUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
     let getClientsByFolder = async (folderID = "1") => {
         const response = await axios.post(`${apiUrl}Json_GetClientsByFolder`, {
@@ -140,6 +135,34 @@ function Client() {
         getClientsByFolder(folderID);
         getContactsByFolder(folderID);
     }
+    const handleSearch = (value) => {
+        setSearchInput(value);
+        // for clients filter
+        let filteredClientData = clients.filter((item) => {
+            return Object.entries(item).join('').toLowerCase().includes(searchInput.toLowerCase());
+        });
+        if (value === "") {
+            setFilteredClientsForSearchBox([]);  // when you will face some issue then make an folderId state and pass folderId parameter in this function
+        }
+        if (filteredClientData.length === 0) {
+            setFilteredClientsForSearchBox([]);
+        } else {
+            setFilteredClientsForSearchBox(filteredClientData);
+        }
+        // for contacts filter
+        let filteredContactData = contacts.filter((item) => {
+            return Object.entries(item).join('').toLowerCase().includes(searchInput.toLowerCase());
+        });
+        if (value === "") {
+            setFilteredClientsForSearchBox([]);  // when you will face some issue then make an folderId state and pass folderId parameter in this function
+        }
+        if (filteredContactData.length === 0) {
+            setFilteredContactsForSearchBox([]);
+        } else {
+            setFilteredContactsForSearchBox(filteredContactData);
+        }
+
+    }
     return (
         <Box className='container'>
             {/* <div className='select-for-clients-contacts-and-both'>
@@ -162,19 +185,27 @@ function Client() {
                                             borderColor: '#D5D5D5',
                                             color: 'success.main',
                                         }}
-                                        {...getRootProps()}
-                                        className={focused ? 'Mui-focused' : ''}>
+                                        className={isSearch?'Mui-focused':''}>
                                         <span class="material-symbols-outlined search-icon">search</span>
 
-                                        <Input {...getInputProps()} placeholder='Search' className='ps-0' />
+                                        <Input onClick={() => setIsSearch(!isSearch)} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
                                     </AutocompleteRoot>
-                                    {groupedOptions.length > 0 && (
-                                        <Listbox {...getListboxProps()}>
-                                            {groupedOptions.map((option, index) => (
+
+                                    {isSearch && <Listbox>
+                                        {/* {groupedOptions.map((option, index) => (
                                                 <Option {...getOptionProps({ option, index })}>{option}</Option>
-                                            ))}
-                                        </Listbox>
-                                    )}
+                                            ))} */}
+                                        {filteredClientsForSearchBox.length > 0 ? filteredClientsForSearchBox.map((option, i) => (
+                                            <Option key={i} onClick={() => navigate("/clientPage")}><span style={{ marginRight: "10px" }}>Client</span>{option.Client}</Option>
+                                        )) : clients.map((option, i) => (
+                                            <Option key={i} onClick={() => navigate("/clientPage")}><span style={{ marginRight: "10px" }}>Client</span>{option.Client}</Option>
+                                        ))}
+                                        {filteredContactsForSearchBox.length > 0 ? filteredContactsForSearchBox.map((option, i) => (
+                                            <Option key={i} onClick={() => navigate("/contactPage")}><span style={{ marginRight: "10px" }}>Contact</span>{option["Company Name"]}</Option>
+                                        )) : contacts.map((option, i) => (
+                                            <Option key={i} onClick={() => navigate("/contactPage")}><span style={{ marginRight: "10px" }}>Contact</span>{option["Company Name"]}</Option>
+                                        ))}
+                                    </Listbox>}
                                 </AutocompleteWrapper>
                             </Layout>
                         </Box>
@@ -200,7 +231,7 @@ function Client() {
 
                         <Box className="dropdown-box ms-4">
                             <Box>
-                                <Fab size="small" className='btn-plus' aria-label="add" onClick={()=>setIsAdvFilter(!isAdvFilter)}>
+                                <Fab size="small" className='btn-plus' aria-label="add" onClick={() => setIsAdvFilter(!isAdvFilter)}>
                                     <AddIcon />
                                 </Fab>
                             </Box>

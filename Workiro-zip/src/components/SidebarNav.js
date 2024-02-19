@@ -28,6 +28,8 @@ import CreateNewModal from './CreateNewModal';
 import Client from '../client/Client';
 
 import { useAutocomplete } from '@mui/base/useAutocomplete';
+import ClientPage from '../client/client-components/ClientPage';
+import ContactPage from '../contact/contact-components/ContactPage';
 
 const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
 
@@ -243,6 +245,8 @@ export default function SidebarNav() {
           <Routes>
             {/* <Route path="/" element={<Home/>}/> */}
             <Route path="/" element={<Client/>}/>
+            <Route path="/clientPage" element={<ClientPage/>}/>
+            <Route path="/contactPage" element={<ContactPage/>}/>
         </Routes>
         </Box>
       </Box>
