@@ -18,6 +18,8 @@ import InputLabel from '@mui/material/InputLabel';
 import TextField from '@mui/material/TextField';
 
 
+
+
 import { useAutocomplete } from '@mui/base/useAutocomplete';
 import { styled } from '@mui/system';
 
@@ -25,6 +27,12 @@ const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'
 
 
 function Home() {
+
+// auto completed start
+
+// autocompleted end
+
+
   const data = useSelector((state) => state.counter.value);
   const dispatch = useDispatch();
 
