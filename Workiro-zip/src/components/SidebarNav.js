@@ -26,6 +26,7 @@ import logo from "../images/logo.png";
 
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
+import Client from '../client/Client';
 
 const drawerWidth = 240;
 
@@ -113,7 +114,7 @@ export default function SidebarNav() {
     <>
       <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" color='inherit'>
+      <AppBar position="fixed" color='inherit' open={open}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -173,6 +174,7 @@ export default function SidebarNav() {
         {/* <Home/> */}
         <Routes>
             <Route path="/" element={<Home/>}/>
+            <Route path="/clients" element={<Client/>}/>
             <Route path="/Contacts" element={<Contacts/>}/>
         </Routes>
       </Box>
