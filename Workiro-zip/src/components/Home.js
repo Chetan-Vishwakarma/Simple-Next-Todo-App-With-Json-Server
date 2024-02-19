@@ -27,7 +27,6 @@ import { styled } from '@mui/system';
 
 const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
 
-
 function Home() {
 
   const data = useSelector((state) => state.counter.value);

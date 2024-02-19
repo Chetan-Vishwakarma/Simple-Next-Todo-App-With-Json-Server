@@ -29,11 +29,11 @@ import Modal from '@mui/material/Modal';
 import CreateNewModal from './CreateNewModal';
 import Client from '../client/Client';
 
+import Badge from '@mui/material/Badge';
+
 import { useAutocomplete } from '@mui/base/useAutocomplete';
 
 const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
-
-
 
 const style = {
   position: 'absolute',
@@ -146,6 +146,16 @@ export default function SidebarNav() {
   });
 
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const opens = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+
   return (
     <>
       <Box sx={{ display: 'flex' }}>
@@ -160,33 +170,105 @@ export default function SidebarNav() {
             >
               <MenuIcon />
             </IconButton>
-            <Box>
+            <Box className="w-100">
+
+              <Box className="d-flex justify-content-between w-100">
+                <Box className="search-box ms-4">
+                  <Layout>
+                    <AutocompleteWrapper>
+                      <AutocompleteRoot
+                        sx={{
+                          borderColor: '#D5D5D5',
+                          color: 'success.main',
+                        }}
+                        {...getRootProps()}
+                        className={focused ? 'Mui-focused' : ''}>
+                        <span class="material-symbols-outlined search-icon">search</span>
+
+                        <Input {...getInputProps()} placeholder='Search' className='ps-0' />
+                      </AutocompleteRoot>
+                      {groupedOptions.length > 0 && (
+                        <Listbox {...getListboxProps()}>
+                          {groupedOptions.map((option, index) => (
+                            <Option {...getOptionProps({ option, index })}>{option}</Option>
+                          ))}
+                        </Listbox>
+                      )}
+                    </AutocompleteWrapper>
+                  </Layout>
+                </Box>
 
 
-              <Box className="search-box ms-4">
-                <Layout>
-                  <AutocompleteWrapper>
-                    <AutocompleteRoot
-                    sx={{
-                      borderColor: '#D5D5D5',
-                      color: 'success.main',
-                    }}
-                      {...getRootProps()}
-                      className={focused ? 'Mui-focused' : ''}>
-                      <span class="material-symbols-outlined search-icon">search</span>
+                <Box className="d-flex">
+                  
+                
 
-                      <Input {...getInputProps()} placeholder='Search' className='ps-0' />
-                    </AutocompleteRoot>
-                    {groupedOptions.length > 0 && (
-                      <Listbox {...getListboxProps()}>
-                        {groupedOptions.map((option, index) => (
-                          <Option {...getOptionProps({ option, index })}>{option}</Option>
-                        ))}
-                      </Listbox>
-                    )}
-                  </AutocompleteWrapper>
-                </Layout>
+                  <Box>
+                    <Button
+                      id="basic-button"
+                      aria-controls={opens ? 'basic-menu' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={opens ? 'true' : undefined}
+                      onClick={handleClick}
+                    >
+                      <Badge badgeContent={4} color="primary" sx={{ "& .MuiBadge-badge": { top: 3, right: 4, fontSize: 11, backgroundColor: '#F93C65', height: 18, minWidth: 16 } }}>
+                        <span class="material-symbols-outlined">
+                          notifications
+                        </span>
+                      </Badge>
+                    </Button>
+
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={anchorEl}
+                      open={opens}
+                      onClose={handleClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                      }}
+                    >
+                      <MenuItem onClick={handleClose}>Profile</MenuItem>
+                      <MenuItem onClick={handleClose}>My account</MenuItem>
+                      <MenuItem onClick={handleClose}>Logout</MenuItem>
+                    </Menu>
+                  </Box>
+
+
+                  <Box>
+                    <Button
+                      id="basic-button2"
+                      aria-controls={opens ? 'basic-menu' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={opens ? 'true' : undefined}
+                      onClick={handleClick}
+                    >
+                      
+                      fgdsfg
+
+                    </Button>
+
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={anchorEl}
+                      open={opens}
+                      onClose={handleClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button2',
+                      }}
+                    >
+                      <MenuItem onClick={handleClose}>Profile</MenuItem>
+                      <MenuItem onClick={handleClose}>My account</MenuItem>
+                      <MenuItem onClick={handleClose}>Logout</MenuItem>
+                    </Menu>
+                  </Box>
+
+                  
+
+                </Box>
+
+
               </Box>
+
 
               <Menu>
                 {/* <MenuItem>Contacts</MenuItem> */}
@@ -241,12 +323,12 @@ export default function SidebarNav() {
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <DrawerHeader />
           {/* <Home/> */}
-          
+
           <Routes>
-            <Route path="/" element={<Home/>}/>
-            <Route path="/clients" element={<Client/>}/>
-            <Route path="/Contacts" element={<Contacts/>}/>
-        </Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/clients" element={<Client />} />
+            <Route path="/Contacts" element={<Contacts />} />
+          </Routes>
         </Box>
       </Box>
     </>
@@ -290,9 +372,8 @@ const AutocompleteRoot = styled('div')(
   color: ${theme.palette.mode === 'dark' ? grey[300] : grey[500]};
   background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
   border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-  box-shadow: 0px 2px 4px ${
-    theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.5)' : 'rgba(0,0,0, 0.05)'
-  };
+  box-shadow: 0px 2px 4px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.5)' : 'rgba(0,0,0, 0.05)'
+    };
   display: flex;
   gap: 5px;
   padding-right: 5px;
@@ -349,9 +430,8 @@ const Listbox = styled('ul')(
   background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
   border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
   color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-  box-shadow: 0px 4px 6px ${
-    theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.50)' : 'rgba(0,0,0, 0.05)'
-  };
+  box-shadow: 0px 4px 6px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.50)' : 'rgba(0,0,0, 0.05)'
+    };
   `,
 );
 
