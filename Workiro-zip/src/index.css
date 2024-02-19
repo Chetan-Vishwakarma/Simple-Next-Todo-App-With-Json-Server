@@ -255,3 +255,23 @@ input, .form-select {
   flex-wrap: wrap;
 }
 
+.css-2dum1v-MuiDrawer-docked .MuiDrawer-paper .create-text {
+  display: none;
+}
+
+.css-2dum1v-MuiDrawer-docked .MuiDrawer-paper {
+  padding: 0 6px;
+}
+
+.css-2dum1v-MuiDrawer-docked .MuiDrawer-paper .btn-blue {
+  min-width: 40px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.css-2dum1v-MuiDrawer-docked .MuiDrawer-paper .btn-blue span {
+  padding: 0px !important;
+}
+
+
