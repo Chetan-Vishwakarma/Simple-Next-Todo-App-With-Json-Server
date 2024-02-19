@@ -27,6 +27,7 @@ import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import Modal from '@mui/material/Modal';
 import CreateNewModal from './CreateNewModal';
+import Client from '../client/Client';
 
 import { useAutocomplete } from '@mui/base/useAutocomplete';
 
@@ -240,10 +241,12 @@ export default function SidebarNav() {
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <DrawerHeader />
           {/* <Home/> */}
+          
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/Contacts" element={<Contacts />} />
-          </Routes>
+            <Route path="/" element={<Home/>}/>
+            <Route path="/clients" element={<Client/>}/>
+            <Route path="/Contacts" element={<Contacts/>}/>
+        </Routes>
         </Box>
       </Box>
     </>
