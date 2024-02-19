@@ -18,8 +18,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
-import Home from './Home';
-import Contacts from "./Contact"
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Menu, MenuItem } from '@mui/material';
 import logo from "../images/logo.png";
@@ -243,9 +241,8 @@ export default function SidebarNav() {
           {/* <Home/> */}
           
           <Routes>
-            <Route path="/" element={<Home/>}/>
-            <Route path="/clients" element={<Client/>}/>
-            <Route path="/Contacts" element={<Contacts/>}/>
+            {/* <Route path="/" element={<Home/>}/> */}
+            <Route path="/" element={<Client/>}/>
         </Routes>
         </Box>
       </Box>

@@ -11,3 +11,13 @@ export const getClientsByFolder = async (folderID = "1") => {
     let res = JSON.parse(response?.data?.d);
     return res.Table1;
 }
+
+export const getAllFolders = async () => {
+    let response = await axios.post(`${apiUrl}Json_GetClientsByFolder`,{
+        agrno: "0261",
+        Email: "nabs@docusoft.net",
+        password: "ZG9jdXNvZnQ="
+      });
+    let res = JSON.parse(response?.data?.d);
+    return res.Table1;
+}
