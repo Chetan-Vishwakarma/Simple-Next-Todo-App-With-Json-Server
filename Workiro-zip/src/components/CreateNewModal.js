@@ -47,8 +47,6 @@ export default function CreateNewModal() {
 
         <React.Fragment>
 
-            
-
             <Button className='btn-blue btn-round btn-block' onClick={handleClickOpen}><span class="material-symbols-outlined">
                 edit_square
             </span> <span className='ps-2 create-text'>Create New</span></Button>
