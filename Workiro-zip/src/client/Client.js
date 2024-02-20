@@ -191,10 +191,16 @@ function Client() {
                                         <Input onClick={() => setIsSearch(!isSearch)} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
                                     </AutocompleteRoot>
 
-                                    {isSearch && <Listbox>
+                                        <Listbox>
+                                        <Option>Firefox</Option>
+                                        <Option>Chrome</Option>
+                                        <Option>Safari</Option>
                                         {/* {groupedOptions.map((option, index) => (
                                                 <Option {...getOptionProps({ option, index })}>{option}</Option>
                                             ))} */}
+                                        </Listbox>
+
+                                    {/* {isSearch && <Listbox>
                                         {filteredClientsForSearchBox.length > 0 ? filteredClientsForSearchBox.map((option, i) => (
                                             <Option key={i} onClick={() => navigate("/clientPage")}><span style={{ marginRight: "10px" }}>Client</span>{option.Client}</Option>
                                         )) : clients.map((option, i) => (
@@ -205,7 +211,7 @@ function Client() {
                                         )) : contacts.map((option, i) => (
                                             <Option key={i} onClick={() => navigate("/contactPage")}><span style={{ marginRight: "10px" }}>Contact</span>{option["Company Name"]}</Option>
                                         ))}
-                                    </Listbox>}
+                                    </Listbox>} */}
                                 </AutocompleteWrapper>
                             </Layout>
                         </Box>
