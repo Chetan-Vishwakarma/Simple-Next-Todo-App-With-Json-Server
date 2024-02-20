@@ -17,9 +17,14 @@ body {
 select:focus, .form-control:focus {
   box-shadow: none;
 } 
-.form-control, .form-select {
+.form-control, .form-select, .textarea {
   border: 1px solid #e9e9e9;
   border-radius: 3px;
+  font-size: 14px;
+}
+.textarea {
+  padding: 15px;
+  height: 70px;
 }
 body {
   background: #F9F9F9 !important;
@@ -29,7 +34,9 @@ body {
 input, .form-select {
   font-size: 14px !important;
 }
-
+.resize-none {
+  resize: none;
+}
 .btn-blue {
   background: #4780FF !important;
   color: #fff !important;
@@ -41,6 +48,21 @@ input, .form-select {
 }
 .btn-round {
   border-radius: 90px !important;
+}
+.btn-blue-2 {
+  background: #4780FF !important;
+}
+.btn-blue-2, .btn-green, .btn-red {
+  color: #fff !important;
+  padding: 6px 20px !important;
+  text-transform: capitalize !important;
+  font-size: 14px !important;
+}
+.btn-green {
+  background: #367A00 !important;
+}
+.btn-red {
+  background: #D41B20 !important;
 }
 
 /* header css start */
@@ -71,15 +93,78 @@ input, .form-select {
 .header {
   box-shadow: 2px 0 5px #f1f1f1 !important;
 }
-/* header css end */
+.user-dropdown .user-img {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  /* justify-content: center; */
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 90px;
+}
+.user-dropdown .user-img img {
+  max-height: 40px;
+  min-height: 40px;
+}
+.user-dropdown .user-content h2 {
+  font-size: 14px;
+  text-transform: capitalize;
+  color: #151D48;
+  font-weight: 600;
+}
+.user-dropdown .user-content p {
+  font-size: 14px;
+  /* text-transform: capitalize; */
+  color: #565656;
+}
 
+.custom-dropdown .MuiPaper-root.MuiPaper-elevation {
+  box-shadow: 0 9px 20px #e9e9e9 !important;
+}
+
+/* header css end */
+.datepicker input {
+  padding: 10px 0;
+  color: #000;
+  width: 90px;
+}
+.datepicker fieldset {
+  border: 0;
+  border-bottom: 2px solid #000;
+  border-radius: 0px;
+  padding: 0px !important;
+}
+.text-black {
+  color: #1C274C;
+}
+hr {
+  border-top: 2px solid #CCCCCC;
+}
+.custom-modal .MuiDialog-container .MuiDialog-paperWidthSm {
+  width: 100%;
+  max-width: 650px;
+  border-radius: 10px;
+  padding: 10px 20px 10px;
+}
+
+.client-box-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -10px;
+}
 .client-box {
   background: #fff;
-  padding: 50px 20px;
+  padding: 50px 10px;
   border-radius: 18px;
   text-align: center;
   margin: 20px 0;
   position: relative;
+}
+.client-box-main {
+  flex: 0 0 20%;
+  width: 20%;
+  padding: 0 10px;
 }
 
 .search-icon {
@@ -273,5 +358,42 @@ input, .form-select {
 .css-2dum1v-MuiDrawer-docked .MuiDrawer-paper .btn-blue span {
   padding: 0px !important;
 }
-
+.file-uploads {
+  position: relative;
+  margin-top: 20px;
+}
+.file-uploads #file-upload {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  visibility: hidden;
+}
+.file-uploads .file-uploads-label {
+  background: #fff;
+  border: 2px dashed #f1f1f1;
+  padding: 16px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  justify-content: space-between;
+}
+.file-uploads .file-uploads-label .icon {
+  font-size: 44px;
+  font-weight: 200 !important;
+  margin-right: 12px;
+  color: #bababa;
+}
+.file-uploads .file-uploads-label h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #474747;
+  margin-bottom: 5px;
+}
+.file-uploads .file-uploads-label p {
+  font-size: 12px;
+  font-weight: 500;
+  color: #aeaeae;
+}
 

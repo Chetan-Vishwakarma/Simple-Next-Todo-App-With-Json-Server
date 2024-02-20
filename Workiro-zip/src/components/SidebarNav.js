@@ -18,11 +18,10 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
-import Home from './Home';
-import Contacts from "./Contact"
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Menu, MenuItem } from '@mui/material';
 import logo from "../images/logo.png";
+import user from "../images/user.jpg";
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import Modal from '@mui/material/Modal';
@@ -172,7 +171,7 @@ export default function SidebarNav() {
             </IconButton>
             <Box className="w-100">
 
-              <Box className="d-flex justify-content-between w-100">
+              <Box className="d-flex align-items-center justify-content-between w-100">
                 <Box className="search-box ms-4">
                   <Layout>
                     <AutocompleteWrapper>
@@ -199,9 +198,9 @@ export default function SidebarNav() {
                 </Box>
 
 
-                <Box className="d-flex">
-                  
-                
+                <Box className="d-flex align-items-center">
+
+
 
                   <Box>
                     <Button
@@ -218,7 +217,8 @@ export default function SidebarNav() {
                       </Badge>
                     </Button>
 
-                    <Menu
+                    <Box
+                    className='custom-dropdown'
                       id="basic-menu"
                       anchorEl={anchorEl}
                       open={opens}
@@ -227,28 +227,33 @@ export default function SidebarNav() {
                         'aria-labelledby': 'basic-button',
                       }}
                     >
-                      <MenuItem onClick={handleClose}>Profile</MenuItem>
-                      <MenuItem onClick={handleClose}>My account</MenuItem>
-                      <MenuItem onClick={handleClose}>Logout</MenuItem>
-                    </Menu>
+                      
+                    </Box>
                   </Box>
 
 
                   <Box>
                     <Button
                       id="basic-button2"
-                      aria-controls={opens ? 'basic-menu' : undefined}
+                      aria-controls={opens ? 'basic-menu2' : undefined}
                       aria-haspopup="true"
                       aria-expanded={opens ? 'true' : undefined}
                       onClick={handleClick}
                     >
-                      
-                      fgdsfg
-
+                      <Box className="d-flex align-items-center user-dropdown">
+                        <Box className="user-img me-2">
+                         <img src={user} />
+                        </Box>
+                          <Box className="user-content text-start">
+                           <Typography variant='h2'>Patrick Jo.</Typography>
+                           <Typography variant='body1'>Admin</Typography>
+                          </Box>
+                      </Box>
                     </Button>
 
                     <Menu
-                      id="basic-menu"
+                      id="basic-menu2"
+                      className='custom-dropdown'
                       anchorEl={anchorEl}
                       open={opens}
                       onClose={handleClose}
@@ -261,12 +266,7 @@ export default function SidebarNav() {
                       <MenuItem onClick={handleClose}>Logout</MenuItem>
                     </Menu>
                   </Box>
-
-                  
-
                 </Box>
-
-
               </Box>
 
 
@@ -325,17 +325,14 @@ export default function SidebarNav() {
           {/* <Home/> */}
 
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/clients" element={<Client />} />
-            <Route path="/Contacts" element={<Contacts />} />
+            {/* <Route path="/" element={<Home/>}/> */}
+            <Route path="/" element={<Client />} />
           </Routes>
         </Box>
       </Box>
     </>
   );
 }
-
-
 
 const blue = {
   100: '#DAECFF',
