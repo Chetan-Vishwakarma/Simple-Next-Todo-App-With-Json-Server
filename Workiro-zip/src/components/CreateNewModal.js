@@ -21,13 +21,13 @@ import MenuItem from '@mui/material/MenuItem';
 
 export default function CreateNewModal() {
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open2 = Boolean(anchorEl);
+    const [anchorel, setAnchorel] = React.useState(null);
+    const open2 = Boolean(anchorel);
     const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
+        setAnchorel(event.currentTarget);
     };
     const handleClose2 = () => {
-        setAnchorEl(null);
+        setAnchorel(null);
     };
     // 
 
@@ -93,11 +93,11 @@ export default function CreateNewModal() {
                                 <h5 className='text-black mb-2'>Subject </h5>
 
                                 <AvatarGroup max={4}>
-                                    <Avatar alt="Remy Sharp" src={{ user }} />
-                                    <Avatar alt="Travis Howard" src={{ user }} />
-                                    <Avatar alt="Cindy Baker" src={{ user }} />
-                                    <Avatar alt="Agnes Walker" src={{ user }} />
-                                    <Avatar alt="Trevor Henderson" src={{ user }} />
+                                    <Avatar alt="Remy Sharp" src={ user } />
+                                    <Avatar alt="Travis Howard" src={ user } />
+                                    <Avatar alt="Cindy Baker" src={ user } />
+                                    <Avatar alt="Agnes Walker" src={ user } />
+                                    <Avatar alt="Trevor Henderson" src={ user } />
                                 </AvatarGroup>
                             </Box>
                             <Box>
@@ -158,7 +158,7 @@ export default function CreateNewModal() {
                                         </Button>
                                         <Menu
                                             id="basic-menu"
-                                            anchorEl={anchorEl}
+                                            anchorel={anchorel}
                                             open={open2}
                                             onClose={handleClose2}
                                             MenuListProps={{
