@@ -59,14 +59,23 @@ function Client() {
     const [onlyClients, setOnlyClients] = useState(true);
     const [selectedChoice, setSelectedChoice] = useState("All");
     const [isChoice, setIsChoice] = useState(false);
+    // Folders state start
     const [allFolders, setAllFolders] = useState([]);
     const [isFolder, setIsFolder] = useState(false);
     const [selectedFolder, setSelectedFolder] = useState("Clients");
+    // Folders state ends
+    // advance filter states start
     const [isAdvFilter, setIsAdvFilter] = useState(false);
+    const [clientKeys, setClientKeys] = useState([]);
+    const [contactKeys, setContactKeys] = useState([]);
+    const [advSearchKeyValue, setAdvSearchKeyValue] = useState([{key:"", value:""},{key:"", value:""}]);
+    // advance filter states ends
+    // search box states start
     const [isSearch, setIsSearch] = useState(false);
     const [searchInput, setSearchInput] = useState("");
     const [filteredClientsForSearchBox, setFilteredClientsForSearchBox] = useState([]);
     const [filteredContactsForSearchBox, setFilteredContactsForSearchBox] = useState([]);
+    // search box states ends 
 
     const apiUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
     let getClientsByFolder = async (folderID = "1") => {
@@ -80,6 +89,7 @@ function Client() {
         //setBothClientContact(res?.Table1);
         console.log("getClientsByFolder", res?.Table1);
         setClients(res?.Table1);
+        setClientKeys(Object.keys(res.Table1[0]));
     }
     let getContactsByFolder = async (folderID = "1", obj, clientKeys) => {
         const response = await axios.post(`${apiUrl}Json_GetContactListByFolder`, {
@@ -96,6 +106,7 @@ function Client() {
             //setAdvanceSearchKeys([...clientKeys,...contactKeys]);
             //setBothClientContact([...obj,...res?.Table]);
             setContacts(res?.Table);
+            setContactKeys(Object.keys(res.Table[0]));
             console.log("getContactsByFolder", res?.Table);
         }
     }
@@ -161,10 +172,14 @@ function Client() {
         } else {
             setFilteredContactsForSearchBox(filteredContactData);
         }
-
+    }
+    let handleAdvanceFilter = () => {
+        if(advSearchKeyValue.length===1){
+            console.log("advSearchKeyValue",advSearchKeyValue);
+        }
     }
     return (
-        <Box className='container'>
+        <Box className='container-fluid'>
             {/* <div className='select-for-clients-contacts-and-both'>
           <select onChange={(e)=>basedOnClientContactAndAll(e.target.value)}>
             {["All","Clients","Contacts"].map((item)=>{
@@ -172,8 +187,8 @@ function Client() {
             })}
           </select>  
         </div> */}
-            <Box className='row'>
-                <Box className='col-lg-11 m-auto'>
+      <Box className='row'>
+        <Box className='col-lg-12'>
 
                     <Box className='d-flex main-search-box'>
 
@@ -191,16 +206,7 @@ function Client() {
                                         <Input onClick={() => setIsSearch(!isSearch)} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
                                     </AutocompleteRoot>
 
-                                        <Listbox>
-                                        <Option>Firefox</Option>
-                                        <Option>Chrome</Option>
-                                        <Option>Safari</Option>
-                                        {/* {groupedOptions.map((option, index) => (
-                                                <Option {...getOptionProps({ option, index })}>{option}</Option>
-                                            ))} */}
-                                        </Listbox>
-
-                                    {/* {isSearch && <Listbox>
+                                    {isSearch && <Listbox>
                                         {filteredClientsForSearchBox.length > 0 ? filteredClientsForSearchBox.map((option, i) => (
                                             <Option key={i} onClick={() => navigate("/clientPage")}><span style={{ marginRight: "10px" }}>Client</span>{option.Client}</Option>
                                         )) : clients.map((option, i) => (
@@ -211,7 +217,8 @@ function Client() {
                                         )) : contacts.map((option, i) => (
                                             <Option key={i} onClick={() => navigate("/contactPage")}><span style={{ marginRight: "10px" }}>Contact</span>{option["Company Name"]}</Option>
                                         ))}
-                                    </Listbox>} */}
+                                    </Listbox>}
+
                                 </AutocompleteWrapper>
                             </Layout>
                         </Box>
@@ -263,15 +270,19 @@ function Client() {
                                         </Box>
 
 
-                                        <div className='row'>
+                                        {advSearchKeyValue.map((item,i)=>{
+                                            return <div className='row'>
                                             <div className='col-md-4'>
                                                 <div className='mb-2'>
                                                     <label>Select Property</label>
                                                     <select class="form-select" aria-label="Default select example">
-                                                        <option selected>Select Property</option>
-                                                        <option value="1">One</option>
-                                                        <option value="2">Two</option>
-                                                        <option value="3">Three</option>
+                                                        <option>Select</option>
+                                                        {clientKeys.map((item,i)=>{
+                                                            return <option key={i} value={i}>{item}</option>
+                                                        })}
+                                                        {contactKeys.map((item,i)=>{
+                                                            return <option key={i} value={i}>{item}</option>
+                                                        })}
                                                     </select>
                                                 </div>
                                             </div>
@@ -293,9 +304,10 @@ function Client() {
                                                 </Box>
                                             </div>
                                         </div>
+                                        })}
 
                                         <div className='mt-2'>
-                                            <Button variant="contained" size='small' color="success">
+                                            <Button onClick={handleAdvanceFilter} variant="contained" size='small' color="success">
                                                 <span class="material-symbols-outlined">
                                                     add
                                                 </span> Add
@@ -318,8 +330,8 @@ function Client() {
                     <Box className='row'>
 
                         {
-                            onlyClients && clients.map((item) => {
-                                return <Box className='col-lg-3'>
+                            onlyClients && clients.map((item,i) => {
+                                return <Box key={i} className='client-box-main'>
                                     <Box className='client-box'>
                                         {/* <img src={pin} className='pin-img' /> */}
                                         <Box className='client-img'>
@@ -339,8 +351,8 @@ function Client() {
                         }
 
                         {
-                            onlyContacts && contacts.map((item) => {
-                                return <Box className='col-lg-3'>
+                            onlyContacts && contacts.map((item,i) => {
+                                return <Box key={i} className='client-box-main'>
                                     <Box className='client-box'>
                                         {/* <img src={pin} className='pin-img' /> */}
                                         <Box className='client-img'>
