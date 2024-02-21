@@ -34,6 +34,14 @@ body {
 input, .form-select {
   font-size: 14px !important;
 }
+.input-text, .input-text:focus {
+  display: inline-block;
+  border: 0px;
+  width: 100%;
+  box-shadow: none;
+  outline: none;
+  padding: 0 5px;
+}
 .resize-none {
   resize: none;
 }
@@ -93,7 +101,7 @@ input, .form-select {
 .header {
   box-shadow: 2px 0 5px #f1f1f1 !important;
 }
-.user-dropdown .user-img {
+.user-dropdown .user-img, .user-img-list {
   width: 40px;
   height: 40px;
   display: flex;
@@ -102,8 +110,44 @@ input, .form-select {
   justify-content: center;
   overflow: hidden;
   border-radius: 90px;
+  background: #557ff7;
+  color: #fff;
 }
-.user-dropdown .user-img img {
+
+/* .box-user-list-dropdown button:nth-child(-n + 2) .user-img-list {
+  background: #088aee;
+} 
+.box-user-list-dropdown button:nth-child(-n + 3) .user-img-list {
+  background: #ee5908;
+} 
+.box-user-list-dropdown button:nth-child(-n + 4) .user-img-list {
+  background: #9a08ee;
+} 
+.box-user-list-dropdown button:nth-child(-n + 5) .user-img-list {
+  background: #03a64f;
+}  */
+/* .user-img-list:nth-child(-n + 2),
+.box-user-list-dropdown button:nth-child(-n + 2) .user-img-list {
+  background: #088aee;
+}
+
+.user-img-list:nth-child(-n + 3), .box-user-list-dropdown button:nth-child(-n + 3) .user-img-list {
+  background: red;
+}
+
+.user-img-list:nth-child(-n + 4),.box-user-list-dropdown button:nth-child(-n + 4) .user-img-list {
+  background: red;
+}
+
+.user-img-list:nth-child(-n + 5),.box-user-list-dropdown button:nth-child(-n + 5) .user-img-list {
+  background: red;
+} */
+
+.user-dropdown .user-img p, .user-img-list p {
+  margin: 0px;
+}
+
+.user-dropdown .user-img img, .user-img-list img {
   max-height: 40px;
   min-height: 40px;
 }
@@ -123,6 +167,52 @@ input, .form-select {
   box-shadow: 0 9px 20px #e9e9e9 !important;
 }
 
+.dotification-list {
+  padding: 0 15px;
+  cursor: pointer;
+}
+.notification-box {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+.notification-box-img {
+  width: 46px;
+  min-width: 46px;
+  overflow: hidden;
+  height: 46px;
+  border-radius: 90px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.notification-box-img img {
+  /* width: 46px; */
+  min-height: 46px;
+  height: 46px;
+}
+.notification-box h4 {
+  font-size: 14px;
+  margin: 0;
+}
+.notification-box p {
+  margin: 0;
+  font-size: 12px;
+}
+
+.notification-content {
+  padding-right: 70px;
+}
+.notification-content .notification-date {
+  font-size: 12px;
+  color: #ccc;
+  position: absolute;
+  right: 15px;
+}
+
+
 /* header css end */
 .datepicker input {
   padding: 10px 0;
@@ -137,6 +227,9 @@ input, .form-select {
 }
 .text-black {
   color: #1C274C;
+}
+.sembold {
+  font-weight: 500;
 }
 hr {
   border-top: 2px solid #CCCCCC;
@@ -396,4 +489,64 @@ hr {
   font-weight: 500;
   color: #aeaeae;
 }
+.user-list-dropdown .inner-user-list-dropdown {
+  padding: 10px 15px;
+  min-width: 300px;
+  width: 100%;
+  border-bottom: 2px solid #f0f0f0;
+}
+.box-user-list-dropdown button {
+  /* width: 100%; */
+  display: flex;
+  border: 0;
+  background: #fff;
+  align-items: center;
+  width: 100%;
+  padding: 5px 10px;
+  /* background: red; */
+  border: 0;
+  position: relative;
+  transition: .5s all ease;
+  border-radius: 3px;
+}
+.box-user-list-dropdown button:hover {
+  background: #f1f1f1;
+}
+.box-user-list-dropdown button p {
+  margin: 0px;
+}
 
+.box-user-list-dropdown button .close {
+  /* background: red; */
+  position: absolute;
+  right: 6px;
+  top: 18px;
+  display: inline-block;
+  color: red;
+  /* font-size: 10px !important; */
+}
+.box-user-list-dropdown button .close span {
+  color: #969696;
+  font-size: 18px;
+}
+
+
+
+@media only screen and (max-width: 1366px) {
+  .client-box-main {
+      flex: 0 0 25%;
+      width: 25%;
+    }
+}
+@media only screen and (max-width: 1199px) {
+  .client-box-main {
+      flex: 0 0 33.33%;
+      width: 33.33%;
+    }
+}
+@media only screen and (max-width: 1024px) {
+  .client-box-main {
+      flex: 0 0 50%;
+      width: 50%;
+    }
+}

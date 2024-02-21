@@ -186,19 +186,16 @@ function Client() {
                                             color: 'success.main',
                                         }}
                                         className={isSearch?'Mui-focused':''}>
-                                        <span class="material-symbols-outlined search-icon">search</span>
+                                        <span className="material-symbols-outlined search-icon">search</span>
 
                                         <Input onClick={() => setIsSearch(!isSearch)} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
                                     </AutocompleteRoot>
 
-                                        <Listbox>
+                                        {/* <Listbox>
                                         <Option>Firefox</Option>
                                         <Option>Chrome</Option>
                                         <Option>Safari</Option>
-                                        {/* {groupedOptions.map((option, index) => (
-                                                <Option {...getOptionProps({ option, index })}>{option}</Option>
-                                            ))} */}
-                                        </Listbox>
+                                        </Listbox> */}
 
                                     {/* {isSearch && <Listbox>
                                         {filteredClientsForSearchBox.length > 0 ? filteredClientsForSearchBox.map((option, i) => (
@@ -248,10 +245,10 @@ function Client() {
                                     <Box className='clearfix'>
                                         <Typography variant='Body1' className='ps-1'>Filter:</Typography>
                                         <Box className="mb-2">
-                                            <Button className='btn-white'>key: value <span class="material-symbols-outlined font-16 text-danger">
+                                            <Button className='btn-white'>key: value <span className="material-symbols-outlined font-16 text-danger">
                                                 close
                                             </span></Button>
-                                            <Button className='btn-white'>key: value <span class="material-symbols-outlined font-16 text-danger">
+                                            <Button className='btn-white'>key: value <span className="material-symbols-outlined font-16 text-danger">
                                                 close
                                             </span></Button>
 
@@ -267,7 +264,7 @@ function Client() {
                                             <div className='col-md-4'>
                                                 <div className='mb-2'>
                                                     <label>Select Property</label>
-                                                    <select class="form-select" aria-label="Default select example">
+                                                    <select className="form-select" aria-label="Default select example">
                                                         <option selected>Select Property</option>
                                                         <option value="1">One</option>
                                                         <option value="2">Two</option>
@@ -278,7 +275,7 @@ function Client() {
                                             <div className='col-md-4 px-0'>
                                                 <div className='mb-2'>
                                                     <label>Value</label>
-                                                    <input type="text" class="form-control" placeholder="Type Value" />
+                                                    <input type="text" className="form-control" placeholder="Type Value" />
                                                 </div>
                                             </div>
                                             <div className='col-md-4'>
@@ -296,7 +293,7 @@ function Client() {
 
                                         <div className='mt-2'>
                                             <Button variant="contained" size='small' color="success">
-                                                <span class="material-symbols-outlined">
+                                                <span className="material-symbols-outlined">
                                                     add
                                                 </span> Add
                                             </Button>

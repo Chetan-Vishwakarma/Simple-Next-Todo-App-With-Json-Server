@@ -23,10 +23,12 @@ import { Menu, MenuItem } from '@mui/material';
 import logo from "../images/logo.png";
 import user from "../images/user.jpg";
 import Button from '@mui/material/Button';
-import SendIcon from '@mui/icons-material/Send';
-import Modal from '@mui/material/Modal';
+import PersonAdd from '@mui/icons-material/PersonAdd';
+import Settings from '@mui/icons-material/Settings';
+import Logout from '@mui/icons-material/Logout';
 import CreateNewModal from './CreateNewModal';
 import Client from '../client/Client';
+import Avatar from '@mui/material/Avatar';
 
 import Badge from '@mui/material/Badge';
 
@@ -149,12 +151,26 @@ export default function SidebarNav() {
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const opens = Boolean(anchorEl);
+  const opens2 = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  // user dropdown start
+  const [useranchorEl, usersetuserAnchorEl] = React.useState(null);
+
+  const userDropdown = Boolean(useranchorEl);
+
+  const userHandleClick = (event) => {
+    usersetuserAnchorEl(event.currentTarget);
+  };
+  const userhandleClose = () => {
+    usersetuserAnchorEl(null);
+  };
+  // user dropdown end
 
 
   return (
@@ -184,7 +200,7 @@ export default function SidebarNav() {
                         }}
                         {...getRootProps()}
                         className={focused ? 'Mui-focused' : ''}>
-                        <span class="material-symbols-outlined search-icon">search</span>
+                        <span className="material-symbols-outlined search-icon">search</span>
 
                         <Input {...getInputProps()} placeholder='Search' className='ps-0' />
                       </AutocompleteRoot>
@@ -202,36 +218,92 @@ export default function SidebarNav() {
 
                 <Box className="d-flex align-items-center">
 
-
-
                   <Box>
                     <Button
-                      id="basic-button"
-                      aria-controls={opens ? 'basic-menu' : undefined}
+                      id="basic-button3"
+                      aria-controls={opens2 ? 'basic-menu3' : undefined}
                       aria-haspopup="true"
-                      aria-expanded={opens ? 'true' : undefined}
+                      aria-expanded={opens2 ? 'true' : undefined}
                       onClick={handleClick}
                     >
+
                       <Badge badgeContent={4} color="primary" sx={{ "& .MuiBadge-badge": { top: 3, right: 4, fontSize: 11, backgroundColor: '#F93C65', height: 18, minWidth: 16 } }}>
-                        <span class="material-symbols-outlined">
+                        <span className="material-symbols-outlined">
                           notifications
                         </span>
                       </Badge>
+
                     </Button>
 
-                    <Box
-                    className='custom-dropdown'
-                      id="basic-menu"
+                    {/* <Menu
+                      id="basic-menu3"
+                      className='custom-dropdown'
                       anchorEl={anchorEl}
-                      open={opens}
+                      open={opens2}
                       onClose={handleClose}
                       MenuListProps={{
-                        'aria-labelledby': 'basic-button',
+                        'aria-labelledby': 'basic-button3',
                       }}
                     >
                       
-                    </Box>
+                      <li className="dotification-list">
+                        <Box className="notification-box">
+                          <Box className="notification-box-img">
+                            <img src={user} />
+                          </Box>    
+                          <Box className="notification-content">
+                          <span className='notification-date'>10h ago</span>
+
+                            <h4>Petrick Joy.</h4>
+                            <p>lorem ipsome dolor site amer this is a dummy text world tours.</p>
+                          </Box>
+                        </Box>
+                      </li>
+
+                      <li className="dotification-list">
+                        <Box className="notification-box">
+                          <Box className="notification-box-img">
+                            <img src={user} />
+                          </Box>    
+                          <Box className="notification-content">
+                          <span className='notification-date'>10h ago</span>
+
+                            <h4>Petrick Joy.</h4>
+                            <p>lorem ipsome dolor site amer this is a dummy text world tours.</p>
+                          </Box>
+                        </Box>
+                      </li>
+
+                      <li className="dotification-list">
+                        <Box className="notification-box">
+                          <Box className="notification-box-img">
+                            <img src={user} />
+                          </Box>    
+                          <Box className="notification-content">
+                            <span className='notification-date'>10h ago</span>
+                            <h4>Petrick Joy.</h4>
+                            <p>lorem ipsome dolor site amer this is a dummy text world tours.</p>
+                          </Box>
+                        </Box>
+                      </li>
+
+                      <li className="dotification-list">
+                        <Box className="notification-box">
+                          <Box className="notification-box-img">
+                            <img src={user} />
+                          </Box>    
+                          <Box className="notification-content">
+                          <span className='notification-date'>10h ago</span>
+                            <h4>Petrick Joy.</h4>
+                            <p>lorem ipsome dolor site amer this is a dummy text world tours.</p>
+                          </Box>
+                        </Box>
+                      </li>
+                      
+                    </Menu> */}
+
                   </Box>
+
 
 
                   <Box>
@@ -244,12 +316,12 @@ export default function SidebarNav() {
                     >
                       <Box className="d-flex align-items-center user-dropdown">
                         <Box className="user-img me-2">
-                         <img src={user} />
+                          <img src={user} />
                         </Box>
-                          <Box className="user-content text-start">
-                           <Typography variant='h2'>Patrick Jo.</Typography>
-                           <Typography variant='body1'>Admin</Typography>
-                          </Box>
+                        <Box className="user-content text-start">
+                          <Typography variant='h2'>Patrick Jo.</Typography>
+                          <Typography variant='body1'>Admin</Typography>
+                        </Box>
                       </Box>
                     </Button>
 
@@ -263,11 +335,30 @@ export default function SidebarNav() {
                         'aria-labelledby': 'basic-button2',
                       }}
                     >
-                      <MenuItem onClick={handleClose}>Profile</MenuItem>
-                      <MenuItem onClick={handleClose}>My account</MenuItem>
-                      <MenuItem onClick={handleClose}>Logout</MenuItem>
+
+                      <MenuItem onClick={handleClose}>
+                        <ListItemIcon>
+                          <PersonAdd fontSize="small" />
+                        </ListItemIcon>
+                        My Account
+                      </MenuItem>
+                      <MenuItem onClick={handleClose}>
+                        <ListItemIcon>
+                          <Settings fontSize="small" />
+                        </ListItemIcon>
+                        Settings
+                      </MenuItem>
+                      <MenuItem onClick={handleClose}>
+                        <ListItemIcon>
+                          <Logout fontSize="small" />
+                        </ListItemIcon>
+                        Logout
+                      </MenuItem>
+
                     </Menu>
                   </Box>
+                  {/*  */}
+
                 </Box>
               </Box>
 
@@ -328,10 +419,10 @@ export default function SidebarNav() {
 
           <Routes>
             {/* <Route path="/" element={<Home/>}/> */}
-            <Route path="/" element={<Client/>}/>
-            <Route path="/clientPage" element={<ClientPage/>}/>
-            <Route path="/contactPage" element={<ContactPage/>}/>
-        </Routes>
+            <Route path="/" element={<Client />} />
+            <Route path="/clientPage" element={<ClientPage />} />
+            <Route path="/contactPage" element={<ContactPage />} />
+          </Routes>
         </Box>
       </Box>
     </>
