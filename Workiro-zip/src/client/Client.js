@@ -68,7 +68,7 @@ function Client() {
     const [isAdvFilter, setIsAdvFilter] = useState(false);
     const [clientKeys, setClientKeys] = useState([]);
     const [contactKeys, setContactKeys] = useState([]);
-    const [advSearchKeyValue, setAdvSearchKeyValue] = useState([{key:"", value:""},{key:"", value:""}]);
+    const [advSearchKeyValue, setAdvSearchKeyValue] = useState([{key:"", value:""}]);
     // advance filter states ends
     // search box states start
     const [isSearch, setIsSearch] = useState(false);
@@ -275,13 +275,13 @@ function Client() {
                                             <div className='col-md-4'>
                                                 <div className='mb-2'>
                                                     <label>Select Property</label>
-                                                    <select class="form-select" aria-label="Default select example">
+                                                    <select onChange={(e)=>{item.key=e.target.value}} class="form-select" aria-label="Default select example">
                                                         <option>Select</option>
                                                         {clientKeys.map((item,i)=>{
-                                                            return <option key={i} value={i}>{item}</option>
+                                                            return <option key={i} value={item}>{item}</option>
                                                         })}
                                                         {contactKeys.map((item,i)=>{
-                                                            return <option key={i} value={i}>{item}</option>
+                                                            return <option key={i} value={item}>{item}</option>
                                                         })}
                                                     </select>
                                                 </div>
@@ -289,7 +289,7 @@ function Client() {
                                             <div className='col-md-4 px-0'>
                                                 <div className='mb-2'>
                                                     <label>Value</label>
-                                                    <input type="text" class="form-control" placeholder="Type Value" />
+                                                    <input onChange={(e)=>{item.value=e.target.value}} type="text" class="form-control" placeholder="enter..." />
                                                 </div>
                                             </div>
                                             <div className='col-md-4'>
