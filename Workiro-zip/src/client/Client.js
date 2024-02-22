@@ -3,23 +3,19 @@ import { useSelector, useDispatch } from "react-redux";
 import { Box, Typography } from '@mui/material';
 import user from "../images/user.jpg";
 import Button from "@mui/material/Button";
-
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 // search
-
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-
-
-
-
-
-import { useAutocomplete } from '@mui/base/useAutocomplete';
 import { styled } from '@mui/system';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Link from '@mui/material/Link';
 
-const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
-
+function handleClick(event) {
+    event.preventDefault();
+    console.info('You clicked a breadcrumb.');
+}
 
 function Client() {
 
@@ -51,6 +47,7 @@ function Client() {
     // search end
 
 
+
     //const data = useSelector((state) => state.counter.value);
     //const dispatch = useDispatch();
     const [clients, setClients] = useState([]);
@@ -68,7 +65,7 @@ function Client() {
     const [isAdvFilter, setIsAdvFilter] = useState(false);
     const [clientKeys, setClientKeys] = useState([]);
     const [contactKeys, setContactKeys] = useState([]);
-    const [advSearchKeyValue, setAdvSearchKeyValue] = useState([{key:"", value:""},{key:"", value:""}]);
+    const [advSearchKeyValue, setAdvSearchKeyValue] = useState([{ key: "", value: "" }, { key: "", value: "" }]);
     // advance filter states ends
     // search box states start
     const [isSearch, setIsSearch] = useState(false);
@@ -173,13 +170,26 @@ function Client() {
             setFilteredContactsForSearchBox(filteredContactData);
         }
     }
-    let handleAdvanceFilter = () => {
-        if(advSearchKeyValue.length===1){
-            console.log("advSearchKeyValue",advSearchKeyValue);
-        }
-    }
+    
     return (
         <Box className='container-fluid'>
+
+            <div role="presentation" className='mb-2 mb-3 ' onClick={handleClick}>
+                <Breadcrumbs aria-label="breadcrumb">
+                    <Link underline="hover" color="inherit" href="/">
+                        Home
+                    </Link>
+                    <Link
+                        underline="hover"
+                        color="inherit"
+                        href="/material-ui/getting-started/installation/"
+                    >
+                        Clients
+                    </Link>
+                    <Typography color="text.primary">Client Details</Typography>
+                </Breadcrumbs>
+            </div>
+
             {/* <div className='select-for-clients-contacts-and-both'>
           <select onChange={(e)=>basedOnClientContactAndAll(e.target.value)}>
             {["All","Clients","Contacts"].map((item)=>{
@@ -187,8 +197,8 @@ function Client() {
             })}
           </select>  
         </div> */}
-      <Box className='row'>
-        <Box className='col-lg-12'>
+            <Box className='row d-'>
+                <Box className='col-lg-12'>
 
                     <Box className='d-flex main-search-box'>
 
@@ -200,7 +210,7 @@ function Client() {
                                             borderColor: '#D5D5D5',
                                             color: 'success.main',
                                         }}
-                                        className={isSearch?'Mui-focused':''}>
+                                        className={isSearch ? 'Mui-focused' : ''}>
                                         <span className="material-symbols-outlined search-icon">search</span>
 
                                         <Input onClick={() => setIsSearch(!isSearch)} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
@@ -270,49 +280,43 @@ function Client() {
                                         </Box>
 
 
-                                        {advSearchKeyValue.map((item,i)=>{
+                                        {advSearchKeyValue.map((item, i) => {
                                             return <div className='row'>
-                                            <div className='col-md-4'>
-                                                <div className='mb-2'>
-                                                    <label>Select Property</label>
-                                                    <select class="form-select" aria-label="Default select example">
-                                                        <option>Select</option>
-                                                        {clientKeys.map((item,i)=>{
-                                                            return <option key={i} value={i}>{item}</option>
-                                                        })}
-                                                        {contactKeys.map((item,i)=>{
-                                                            return <option key={i} value={i}>{item}</option>
-                                                        })}
-                                                    </select>
+                                                <div className='col-md-4'>
+                                                    <div className='mb-2'>
+                                                        <label>Select Property</label>
+                                                        <select class="form-select" aria-label="Default select example">
+                                                            <option>Select</option>
+                                                            {clientKeys.map((item, i) => {
+                                                                return <option key={i} value={i}>{item}</option>
+                                                            })}
+                                                            {contactKeys.map((item, i) => {
+                                                                return <option key={i} value={i}>{item}</option>
+                                                            })}
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className='col-md-4 px-0'>
-                                                <div className='mb-2'>
-                                                    <label>Value</label>
-                                                    <input type="text" className="form-control" placeholder="Type Value" />
+                                                <div className='col-md-4 px-0'>
+                                                    <div className='mb-2'>
+                                                        <label>Value</label>
+                                                        <input type="text" className="form-control" placeholder="Type Value" />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className='col-md-4'>
-                                                <Box className='clearfix'>
-                                                    <Typography variant='Body1' className='mb-1'>Labels</Typography>
+                                                <div className='col-md-4'>
+                                                    <Box className='clearfix'>
+                                                        <Typography variant='Body1' className='mb-1'>Labels</Typography>
 
-                                                    <Box className="color-box">
-                                                        <button type='button' className='btn-color selected' style={{ backgroundColor: '#32ceff' }}></button>
-                                                        <button type='button' className='btn-color' style={{ backgroundColor: '#ff3da6' }}></button>
+                                                        <Box className="color-box">
+                                                            <button type='button' className='btn-color selected' style={{ backgroundColor: '#32ceff' }}></button>
+                                                            <button type='button' className='btn-color' style={{ backgroundColor: '#ff3da6' }}></button>
 
+                                                        </Box>
                                                     </Box>
-                                                </Box>
+                                                </div>
                                             </div>
-                                        </div>
                                         })}
 
-                                        <div className='mt-2'>
-                                            <Button onClick={handleAdvanceFilter} variant="contained" size='small' color="success">
-                                                <span class="material-symbols-outlined">
-                                                    add
-                                                </span> Add
-                                            </Button>
-                                        </div>
+                                        
 
                                     </Box>
 
@@ -330,9 +334,9 @@ function Client() {
                     <Box className='row'>
 
                         {
-                            onlyClients && clients.map((item,i) => {
+                            onlyClients && clients.map((item, i) => {
                                 return <Box key={i} className='client-box-main'>
-                                    <Box className='client-box'>
+                                    <Box className='client-box' onClick={()=>navigate('/clientDetails')}>
                                         {/* <img src={pin} className='pin-img' /> */}
                                         <Box className='client-img'>
                                             <img src={user} />
@@ -351,7 +355,7 @@ function Client() {
                         }
 
                         {
-                            onlyContacts && contacts.map((item,i) => {
+                            onlyContacts && contacts.map((item, i) => {
                                 return <Box key={i} className='client-box-main'>
                                     <Box className='client-box'>
                                         {/* <img src={pin} className='pin-img' /> */}

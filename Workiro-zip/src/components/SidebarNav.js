@@ -28,13 +28,13 @@ import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import CreateNewModal from './CreateNewModal';
 import Client from '../client/Client';
-import Avatar from '@mui/material/Avatar';
 
 import Badge from '@mui/material/Badge';
 
 import { useAutocomplete } from '@mui/base/useAutocomplete';
 import ClientPage from '../client/client-components/ClientPage';
 import ContactPage from '../contact/contact-components/ContactPage';
+import ClientDetails from '../client/client-components/ClientDetails';
 
 const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
 
@@ -118,7 +118,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export default function SidebarNav() {
   const navigate = useNavigate();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   const handleDrawerOpen = () => {
     setOpen(false);
@@ -422,6 +422,7 @@ export default function SidebarNav() {
             <Route path="/" element={<Client />} />
             <Route path="/clientPage" element={<ClientPage />} />
             <Route path="/contactPage" element={<ContactPage />} />
+            <Route path="/clientDetails" element={<ClientDetails />} />
           </Routes>
         </Box>
       </Box>
