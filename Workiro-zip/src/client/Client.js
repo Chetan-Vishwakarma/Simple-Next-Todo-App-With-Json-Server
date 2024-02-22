@@ -65,14 +65,20 @@ function Client() {
     const [isAdvFilter, setIsAdvFilter] = useState(false);
     const [clientKeys, setClientKeys] = useState([]);
     const [contactKeys, setContactKeys] = useState([]);
-    const [advSearchKeyValue, setAdvSearchKeyValue] = useState([{ key: "", value: "" }, { key: "", value: "" }]);
+    const [advSearchKeyValue, setAdvSearchKeyValue] = useState([]);
+    const [filteredContacts, setFilteredContacts] = useState([]);
+    const [filteredClients, setFilteredClients] = useState([]);
+    const [selectedProperty, setSelectedProperty] = useState("");
+    const [selectedPropertyValue, setSelectedPropertyValue] = useState("");
+    const colorArr = ["#e26124", "#20aedb", "#075adb", "#be1de8", "#00983b", "#ed32b3"];
+    const [selectedColor, setSelectedColor] = useState("");
     // advance filter states ends
     // search box states start
     const [isSearch, setIsSearch] = useState(false);
     const [searchInput, setSearchInput] = useState("");
     const [filteredClientsForSearchBox, setFilteredClientsForSearchBox] = useState([]);
     const [filteredContactsForSearchBox, setFilteredContactsForSearchBox] = useState([]);
-    // search box states ends 
+    // search box states ends
 
     const apiUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
     let getClientsByFolder = async (folderID = "1") => {
@@ -170,7 +176,225 @@ function Client() {
             setFilteredContactsForSearchBox(filteredContactData);
         }
     }
-    
+    let handleAdvanceFilter = () => {
+        if (advSearchKeyValue.length === 1) {
+            console.log("if");
+            let key = advSearchKeyValue[0].key;
+            let value = advSearchKeyValue[0].value;
+            if (clientKeys.includes(key)) {
+                let filteredClient = clients.filter((item) => {
+                    return Object.values(item).join('').toLowerCase().includes(value.toLowerCase());
+                });
+                console.log("filteredCient", filteredClient);
+                setFilteredClients(filteredClient);
+                setOnlyClients(true);
+                setOnlyContacts(false);
+            } else if (contactKeys.includes(key)) {
+                let filteredContact = contacts.filter((item) => {
+                    return Object.values(item).join('').toLowerCase().includes(value.toLowerCase());
+                });
+                console.log("filteredCient", filteredContact);
+                setFilteredContacts(filteredContact);
+                setOnlyClients(false);
+                setOnlyContacts(true);
+            }
+        } else {
+            console.log("else");
+            let isCLientKey = advSearchKeyValue.map((item) => {
+                if (item.key !== "" || item.value !== "") {
+                    return clientKeys.includes(item.key);
+                }
+            }).every((item) => item === true);
+
+            let isContactKey = advSearchKeyValue.map((item) => {
+                if (item.key !== "" || item.value !== "") {
+                    return contactKeys.includes(item.key);
+                }
+            }).every((item) => item === true);
+
+            // console.log("isClientKey", isCLientKey);
+            // console.log("isContactKey", isContactKey);
+
+            if (isCLientKey) {
+                // console.log("isClientKey");
+                let advResult = advSearchKeyValue.map((item) => {
+                    return clients.filter((data) => {
+                        return data[item.key].toLowerCase() === item.value.toLowerCase();
+                    });
+                });
+                // console.log("advResult",advResult);
+                let isEmpty = advResult.slice(0, advResult.length - 1).some((item) => item.length === 0);
+                // console.log("isEmpty", isEmpty);
+                if (!isEmpty) {
+                    setFilteredClients(advResult[1]);
+                    setOnlyContacts(false);
+                    setOnlyClients(true);
+                }
+                //setFilteredClients(advResult[1]);
+            } else if (isContactKey) {
+                // console.log("isContactKey");
+                let advContactResult = advSearchKeyValue.map((item) => {
+                    if (item.key !== "" || item.value !== "") {
+                        return contacts.filter((data) => {
+                            return data[item.key].toLowerCase() === item.value.toLowerCase();
+                        });
+                    }
+                });
+                // console.log("advContactResult",advContactResult[1]);
+                let isEmpty = advContactResult.slice(0, advContactResult.length - 1).some((item) => item.length === 0);
+                if (!isEmpty) {
+                    setFilteredContacts(advContactResult[1]);
+                    setOnlyContacts(true);
+                    setOnlyClients(false);
+                }
+            }
+        }
+        if (advSearchKeyValue.length < 3) {
+            setAdvSearchKeyValue([...advSearchKeyValue, { key: "", value: "" }]);
+        }
+    }
+    //-----
+    let handleFilter = () => {
+
+        if (advSearchKeyValue.length === 1) {
+            let key = advSearchKeyValue[0].key;
+            let value = advSearchKeyValue[0].value;
+            if (clientKeys.includes(key)) {
+                let filteredClient = clients.filter((item) => {
+                    return Object.values(item).join('').toLowerCase().includes(value.toLowerCase());
+                });
+                console.log("filteredCient", filteredClient);
+                setFilteredClients(filteredClient);
+                setOnlyClients(true);
+                setOnlyContacts(false);
+            } else if (contactKeys.includes(key)) {
+                let filteredContact = contacts.filter((item) => {
+                    return Object.values(item).join('').toLowerCase().includes(value.toLowerCase());
+                });
+                console.log("filteredCient", filteredContact);
+                setFilteredContacts(filteredContact);
+                setOnlyClients(false);
+                setOnlyContacts(true);
+            }
+        }
+    }
+    let handleAdvanceFilterAgain = () => {
+        if (selectedProperty !== "" && selectedPropertyValue !== "" && selectedColor) {
+            //console.log("Success");
+            setAdvSearchKeyValue([...advSearchKeyValue, { key: selectedProperty, value: selectedPropertyValue, color: selectedColor }]);
+            setSelectedProperty("");
+            setSelectedPropertyValue("");
+            setSelectedColor("");
+        } else {
+            alert("All Fields Are Required Including Colors");
+        }
+    }
+
+    useEffect(() => {
+        //console.log("advSearchKeyValue",advSearchKeyValue);
+        if (advSearchKeyValue.length === 1) {
+            let key = advSearchKeyValue[0].key;
+            let value = advSearchKeyValue[0].value;
+            if (clientKeys.includes(key)) {
+                let filteredClient = clients.filter((item) => {
+                    return Object.values(item).join('').toLowerCase().includes(value.toLowerCase());
+                });
+                //console.log("filteredCient", filteredClient);
+                if (filteredClient.length !== 0) {
+                    setFilteredClients(filteredClient);
+                    setOnlyClients(true);
+                    setOnlyContacts(false);
+                }
+            } else if (contactKeys.includes(key)) {
+                let filteredContact = contacts.filter((item) => {
+                    return Object.values(item).join('').toLowerCase().includes(value.toLowerCase());
+                });
+                //console.log("filteredContact", filteredContact);
+                if (filteredContact.length !== 0) {
+                    setFilteredContacts(filteredContact);
+                    setOnlyClients(false);
+                    setOnlyContacts(true);
+                }
+            }
+        } else if (advSearchKeyValue.length > 1) {
+            let isCLientKey = advSearchKeyValue.map((item) => {
+                return clientKeys.includes(item.key);
+            }).every((item) => item === true);
+
+            let isContactKey = advSearchKeyValue.map((item) => {
+                return contactKeys.includes(item.key);
+            }).every((item) => item === true);
+
+            // console.log("isClientKey", isCLientKey);
+            // console.log("isContactKey", isContactKey);
+
+            if (isCLientKey) {
+                // console.log("isClientKey");
+                let advResult = advSearchKeyValue.map((item) => {
+                    return clients.filter((data) => {
+                        return data[item.key].toLowerCase().includes(item.value.toLowerCase());
+                    });
+                });
+                //console.log("advResult",advResult);
+                let isEmpty = advResult.slice(0, advResult.length - 1).some((item) => item.length === 0);
+                // console.log("isEmpty", isEmpty);
+                if (!isEmpty) {
+                    setFilteredClients(advResult[1]);
+                    setOnlyContacts(false);
+                    setOnlyClients(true);
+                }
+                //setFilteredClients(advResult[1]);
+            } else if (isContactKey) {
+                // console.log("isContactKey");
+                let advContactResult = advSearchKeyValue.map((item) => {
+                    return contacts.filter((data) => {
+                        return data[item.key].toLowerCase().includes(item.value.toLowerCase());
+                    });
+                });
+                // console.log("advContactResult",advContactResult[1]);
+                let isEmpty = advContactResult.slice(0, advContactResult.length - 1).some((item) => item.length === 0);
+                if (!isEmpty) {
+                    setFilteredContacts(advContactResult[1]);
+                    setOnlyContacts(true);
+                    setOnlyClients(false);
+                }
+            }
+        } else {
+            setFilteredClients([]);
+            setFilteredContacts([]);
+        }
+    }, [advSearchKeyValue]);
+    let handleFilterRemove = (filterForRemove) => {
+        let target = filterForRemove.key;
+        if (advSearchKeyValue.length === 1) {
+            setAdvSearchKeyValue([]);
+        } else {
+            setAdvSearchKeyValue(advSearchKeyValue.filter((item) => item.key !== target));
+        }
+    }
+    let handleDialogsOpen = (toOpen) => {
+        if (toOpen === "Folder") {
+            setIsFolder(!isFolder);
+            setIsChoice(false);
+            setIsAdvFilter(false);
+            setIsSearch(false);
+        } else if (toOpen === "Choice") {
+            setIsFolder(false);
+            setIsChoice(!isChoice);
+            setIsAdvFilter(false);
+            setIsSearch(false);
+        } else if (toOpen === "AdvFilter") {
+            setIsFolder(false);
+            setIsChoice(false);
+            setIsAdvFilter(!isAdvFilter);
+            setIsSearch(false);
+        } else if (toOpen === "Search") {
+            setIsFolder(false);
+            setIsChoice(false);
+            setIsAdvFilter(false);
+            setIsSearch(!isSearch);
+        }
+    }
     return (
         <Box className='container-fluid'>
 
@@ -197,7 +421,7 @@ function Client() {
             })}
           </select>  
         </div> */}
-            <Box className='row d-'>
+            <Box className='row'>
                 <Box className='col-lg-12'>
 
                     <Box className='d-flex main-search-box'>
@@ -213,7 +437,7 @@ function Client() {
                                         className={isSearch ? 'Mui-focused' : ''}>
                                         <span className="material-symbols-outlined search-icon">search</span>
 
-                                        <Input onClick={() => setIsSearch(!isSearch)} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
+                                        <Input onClick={() => handleDialogsOpen("Search")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
                                     </AutocompleteRoot>
 
                                     {isSearch && <Listbox>
@@ -234,7 +458,7 @@ function Client() {
                         </Box>
 
                         <Box className="dropdown-box ms-4">
-                            <Button className='btn-select' onClick={() => setIsFolder(!isFolder)}>{selectedFolder}</Button>
+                            <Button className='btn-select' onClick={() => handleDialogsOpen("Folder")}>{selectedFolder}</Button>
                             {isFolder && <Box className="btn-Select">
                                 {allFolders.map((item) => {
                                     // pass folder-id in onClick handler
@@ -244,7 +468,7 @@ function Client() {
                         </Box>
 
                         <Box className="dropdown-box ms-4">
-                            <Button className='btn-select' onClick={() => setIsChoice(!isChoice)}>{selectedChoice}</Button>
+                            <Button className='btn-select' onClick={() => handleDialogsOpen("Choice")}>{selectedChoice}</Button>
                             {isChoice && <Box className="btn-list-box btn-Select">
                                 {["All", "Clients", "Contacts"].map((item) => {
                                     return <Button className='btn-list' onClick={() => basedOnClientContactAndAll(item)}>{item}</Button>
@@ -254,7 +478,7 @@ function Client() {
 
                         <Box className="dropdown-box ms-4">
                             <Box>
-                                <Fab size="small" className='btn-plus' aria-label="add" onClick={() => setIsAdvFilter(!isAdvFilter)}>
+                                <Fab size="small" className='btn-plus' aria-label="add" onClick={() => handleDialogsOpen("AdvFilter")}>
                                     <AddIcon />
                                 </Fab>
                             </Box>
@@ -265,12 +489,18 @@ function Client() {
                                     <Box className='clearfix'>
                                         <Typography variant='Body1' className='ps-1'>Filter:</Typography>
                                         <Box className="mb-2">
-                                            <Button className='btn-white'>key: value <span className="material-symbols-outlined font-16 text-danger">
+                                            {advSearchKeyValue.map((item) => {
+                                                return <Button sx={{ backgroundColor: item.color }} className='btn-white'>{item.key}: {item.value}
+                                                    <span onClick={() => handleFilterRemove(item)} className="material-symbols-outlined font-16 text-danger">
+                                                        close
+                                                    </span></Button>
+                                            })}
+                                            {/* <Button className='btn-white'>key: value <span className="material-symbols-outlined font-16 text-danger">
                                                 close
-                                            </span></Button>
-                                            <Button className='btn-white'>key: value <span className="material-symbols-outlined font-16 text-danger">
+                                            </span></Button> */}
+                                            {/* <Button className='btn-white'>key: value <span className="material-symbols-outlined font-16 text-danger">
                                                 close
-                                            </span></Button>
+                                            </span></Button> */}
 
                                             <Fab size="small" className='btn-plus  ms-2' aria-label="add">
                                                 <AddIcon />
@@ -280,50 +510,59 @@ function Client() {
                                         </Box>
 
 
-                                        {advSearchKeyValue.map((item, i) => {
-                                            return <div className='row'>
-                                                <div className='col-md-4'>
-                                                    <div className='mb-2'>
-                                                        <label>Select Property</label>
-                                                        <select class="form-select" aria-label="Default select example">
-                                                            <option>Select</option>
-                                                            {clientKeys.map((item, i) => {
-                                                                return <option key={i} value={i}>{item}</option>
-                                                            })}
-                                                            {contactKeys.map((item, i) => {
-                                                                return <option key={i} value={i}>{item}</option>
-                                                            })}
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div className='col-md-4 px-0'>
-                                                    <div className='mb-2'>
-                                                        <label>Value</label>
-                                                        <input type="text" className="form-control" placeholder="Type Value" />
-                                                    </div>
-                                                </div>
-                                                <div className='col-md-4'>
-                                                    <Box className='clearfix'>
-                                                        <Typography variant='Body1' className='mb-1'>Labels</Typography>
-
-                                                        <Box className="color-box">
-                                                            <button type='button' className='btn-color selected' style={{ backgroundColor: '#32ceff' }}></button>
-                                                            <button type='button' className='btn-color' style={{ backgroundColor: '#ff3da6' }}></button>
-
-                                                        </Box>
-                                                    </Box>
-                                                </div>
-                                            </div>
-                                        })}
-
+                                        <div className='row'> 
+                                            <div className='col-md-4'> 
+                                                <div className='mb-2'> 
+                                                    <label>Select Property</label> 
+                                                    <select value={selectedProperty} onChange={(e) => { setSelectedProperty(e.target.value) }} class="form-select" aria-label="Default select example"> 
+                                                        <option value={""}>Select</option> 
+                                                        {clientKeys.map((item, i) => { 
+                                                            return <option key={i} value={item}>{item}</option> 
+                                                        })} 
+                                                        {contactKeys.map((item, i) => { 
+                                                            return <option key={i} value={item}>{item}</option> 
+                                                        })} 
+                                                    </select> 
+                                                </div> 
+                                            </div> 
+                                            <div className='col-md-4 px-0'> 
+                                                <div className='mb-2'> 
+                                                    <label>Value</label> 
+                                                    <input value={selectedPropertyValue} onChange={(e) => { setSelectedPropertyValue(e.target.value) }} type="text" class="form-control" placeholder="Type Value" /> 
+                                                </div> 
+                                            </div> 
+                                            <div className='col-md-4'> 
+                                                <Box className='clearfix'> 
+                                                    <Typography variant='Body1' className='mb-1'>Labels</Typography> 
+ 
+                                                    <Box className="color-box"> 
+                                                        { 
+                                                            advSearchKeyValue.length === 0 && <><button onClick={(e) => setSelectedColor(colorArr[0])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[0] }}></button> 
+                                                                <button onClick={() => setSelectedColor(colorArr[1])} type='button' className='btn-color' style={{ backgroundColor: colorArr[1] }}></button></> 
+                                                        } 
+                                                        { 
+                                                            advSearchKeyValue.length === 1 && <><button onClick={() => setSelectedColor(colorArr[2])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[2] }}></button> 
+                                                                <button onClick={() => setSelectedColor(colorArr[3])} type='button' className='btn-color' style={{ backgroundColor: colorArr[3] }}></button></> 
+                                                        } 
+                                                        { 
+                                                            advSearchKeyValue.length === 2 && <><button onClick={() => setSelectedColor(colorArr[4])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[4] }}></button> 
+                                                                <button onClick={() => setSelectedColor(colorArr[5])} type='button' className='btn-color' style={{ backgroundColor: colorArr[5] }}></button></> 
+                                                        } 
+                                                    </Box> 
+                                                </Box> 
+                                            </div> 
+                                        </div>
                                         
 
+                                        <div className='mt-2'>
+                                            <Button onClick={handleAdvanceFilterAgain} variant="contained" size='small' color="success">
+                                                <span class="material-symbols-outlined">
+                                                    add
+                                                </span> Add
+                                            </Button>
+                                        </div>
+
                                     </Box>
-
-
-
-
-
                                 </Box>
                             </Box>}
 
@@ -334,45 +573,85 @@ function Client() {
                     <Box className='row'>
 
                         {
-                            onlyClients && clients.map((item, i) => {
+                            onlyClients && (filteredClients.length > 0 ? filteredClients.map((item, i) => {
                                 return <Box key={i} className='client-box-main'>
-                                    <Box className='client-box' onClick={()=>navigate('/clientDetails')}>
+                                    <Box className='client-box' onClick={() => navigate('/clientDetails')}>
                                         {/* <img src={pin} className='pin-img' /> */}
                                         <Box className='client-img'>
                                             <img src={user} />
                                         </Box>
                                         <Typography title={item.Client} variant="h2">{item.Client.substr(0, 12) + "."}</Typography>
                                         <Typography variant='h4'>Admin</Typography>
-                                        <Typography title={item.Email} variant='p' className='mb-0'>{item.Email.substr(0, 22) + "."}</Typography>
+                                        <Typography title={item.Email} variant='p' className='mb-0'>{item.Client.length > 25 ? (item.Client.substr(0, 12) + ".") : item.Client}</Typography>
                                         <Box className='color-filter-box mt-3'>
-                                            <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
+                                            {advSearchKeyValue.map((data) => {
+                                                return <Typography variant='span' className='color-filter-row' style={{ color: data.color, borderColor: data.color }}>{data.key}: {item[data.key]}</Typography>;
+                                            })}
+                                            {/* <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
-                                            <Typography variant='span' className='color-filter-row' style={{ color: "#01018d", borderColor: "#01018d" }}>Blue</Typography>
+                                            <Typography variant='span' className='color-filter-row' style={{ color: "#01018d", borderColor: "#01018d" }}>Blue</Typography> */}
                                         </Box>
                                     </Box>
                                 </Box>
-                            })
-                        }
-
-                        {
-                            onlyContacts && contacts.map((item, i) => {
+                            }) : clients.map((item, i) => {
                                 return <Box key={i} className='client-box-main'>
                                     <Box className='client-box'>
                                         {/* <img src={pin} className='pin-img' /> */}
                                         <Box className='client-img'>
                                             <img src={user} />
                                         </Box>
-                                        <Typography title={item["Company Name"]} variant="h2">{item["Company Name"].substr(0, 12) + "."}</Typography>
+                                        <Typography title={item.Client} variant="h2">{item.Client.length > 25 ? (item.Client.substr(0, 12) + ".") : item.Client}</Typography>
                                         <Typography variant='h4'>Admin</Typography>
-                                        <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"].substr(0, 22) + "."}</Typography>
-                                        <Box className='color-filter-box mt-3'>
+                                        <Typography title={item.Email} variant='p' className='mb-0'>{item.Email.substr(0, 22) + "."}</Typography>
+                                        {/* <Box className='color-filter-box mt-3'>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#01018d", borderColor: "#01018d" }}>Blue</Typography>
+                                        </Box> */}
+                                    </Box>
+                                </Box>
+                            }))
+                        }
+
+                        {
+                            onlyContacts && (filteredContacts.length > 0 ? filteredContacts.map((item, i) => {
+                                return <Box key={i} className='client-box-main'>
+                                    <Box className='client-box'>
+                                        {/* <img src={pin} className='pin-img' /> */}
+                                        <Box className='client-img'>
+                                            <img src={user} />
+                                        </Box>
+                                        <Typography title={item["Company Name"]} variant="h2">{item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 12) + ".") : item["Company Name"]}</Typography>
+                                        <Typography variant='h4'>Admin</Typography>
+                                        <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"].substr(0, 22) + "."}</Typography>
+                                        <Box className='color-filter-box mt-3'>
+                                            {advSearchKeyValue.map((data) => {
+                                                return <Typography variant='span' className='color-filter-row' style={{ color: data.color, borderColor: data.color }}>{data.key}: {item[data.key]}</Typography>;
+                                            })}
+                                            {/* <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
+                                            <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
+                                            <Typography variant='span' className='color-filter-row' style={{ color: "#01018d", borderColor: "#01018d" }}>Blue</Typography> */}
                                         </Box>
                                     </Box>
                                 </Box>
-                            })
+                            }) : contacts.map((item, i) => {
+                                return <Box key={i} className='client-box-main'>
+                                    <Box className='client-box'>
+                                        {/* <img src={pin} className='pin-img' /> */}
+                                        <Box className='client-img'>
+                                            <img src={user} />
+                                        </Box>
+                                        <Typography title={item["Company Name"]} variant="h2">{item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 12) + ".") : item["Company Name"]}</Typography>
+                                        <Typography variant='h4'>Admin</Typography>
+                                        <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"].substr(0, 22) + "."}</Typography>
+                                        {/* <Box className='color-filter-box mt-3'>
+                                            <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
+                                            <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
+                                            <Typography variant='span' className='color-filter-row' style={{ color: "#01018d", borderColor: "#01018d" }}>Blue</Typography>
+                                        </Box> */}
+                                    </Box>
+                                </Box>
+                            }))
                         }
 
 
