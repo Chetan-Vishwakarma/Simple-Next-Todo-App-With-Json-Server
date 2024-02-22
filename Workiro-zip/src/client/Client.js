@@ -24,31 +24,6 @@ const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'
 function Client() {
 
     const navigate = useNavigate();
-    // const [value, setValue] = React.useState(options[0]);
-    // const [inputValue, setInputValue] = React.useState('');
-
-    // const {
-    //     getRootProps,
-    //     getInputProps,
-    //     getListboxProps,
-    //     getOptionProps,
-    //     groupedOptions,
-    //     focused,
-    // } = useAutocomplete({
-    //     id: 'controlled-state-demo',
-    //     options,
-    //     value,
-    //     onChange: (event, newValue) => setValue(newValue),
-    //     inputValue,
-    //     onInputChange: (event, newInputValue) => setInputValue(newInputValue),
-    // });
-
-    // const [age, setAge] = React.useState('');
-
-    // const handleChange = (event) => {
-    //     setAge(event.target.value);
-    // };
-    // search end
 
 
     //const data = useSelector((state) => state.counter.value);
@@ -97,6 +72,26 @@ function Client() {
         setClients(res?.Table1);
         setClientKeys(Object.keys(res.Table1[0]));
     }
+    function startFormattingDate(dt){
+    const timestamp = parseInt(/-\d+/.exec(dt));
+      const date = new Date(timestamp);
+      const formattedDate = date.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+
+      return formattedDate;
+    }
+    let formateDate = (data) => {
+        let key = "Date Of Birth"
+        data.map((item,i)=>{
+            if(item[key]!==null){
+                item[key] = startFormattingDate(item[key]);
+            }
+        })
+        return data;
+    }
     let getContactsByFolder = async (folderID = "1", obj, clientKeys) => {
         const response = await axios.post(`${apiUrl}Json_GetContactListByFolder`, {
             agrno: "0261",
@@ -111,7 +106,11 @@ function Client() {
             //let contactKeys = Object.keys(res?.Table[0]);
             //setAdvanceSearchKeys([...clientKeys,...contactKeys]);
             //setBothClientContact([...obj,...res?.Table]);
-            setContacts(res?.Table);
+
+            //setContacts(res?.Table);  ye code chal rha he
+
+            setContacts(formateDate(res?.Table));  // ye date formate ke liye use kiya he
+
             setContactKeys(Object.keys(res.Table[0]));
             console.log("getContactsByFolder", res?.Table);
         }
@@ -310,6 +309,7 @@ function Client() {
                 }
             } else if (contactKeys.includes(key)) {
                 let filteredContact = contacts.filter((item) => {
+                    console.log(item[key]);
                     return Object.values(item).join('').toLowerCase().includes(value.toLowerCase());
                 });
                 //console.log("filteredContact", filteredContact);
@@ -400,13 +400,6 @@ function Client() {
     }
     return (
         <Box className='container-fluid'>
-            {/* <div className='select-for-clients-contacts-and-both'>
-          <select onChange={(e)=>basedOnClientContactAndAll(e.target.value)}>
-            {["All","Clients","Contacts"].map((item)=>{
-              return <option value={item}>{item}</option>
-            })}
-          </select>  
-        </div> */}
             <Box className='row'>
                 <Box className='col-lg-12'>
 
@@ -481,12 +474,6 @@ function Client() {
                                                         close
                                                     </span></Button>
                                             })}
-                                            {/* <Button className='btn-white'>key: value <span className="material-symbols-outlined font-16 text-danger">
-                                                close
-                                            </span></Button> */}
-                                            {/* <Button className='btn-white'>key: value <span className="material-symbols-outlined font-16 text-danger">
-                                                close
-                                            </span></Button> */}
 
                                             <Fab size="small" className='btn-plus  ms-2' aria-label="add">
                                                 <AddIcon />
