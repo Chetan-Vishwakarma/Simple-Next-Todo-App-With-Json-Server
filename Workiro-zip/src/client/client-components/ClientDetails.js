@@ -39,7 +39,7 @@ function ClientDetails() {
     };
 
     return (
-        <Box className="container-fluid">
+        <Box className="container-fluid p-0">
             <Box className="d-flex align-items-center justify-content-between flex-wrap">
                 <Box className='d-flex flex-wrap align-items-center'>
                     <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
@@ -63,7 +63,7 @@ function ClientDetails() {
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<BorderColorIcon />}>Edit Client</Button>
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<GroupAddIcon />}>Add Client</Button>
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<DeleteIcon />}>Notes</Button>
-                    <Button className='btn-blue-2 mb-1' size="small" startIcon={<EmailIcon />}>Email List</Button>
+                    <Button className='btn-blue-2 mb-1' size="small" startIcon={<EmailIcon />}>Add Document</Button>
                 </Box>
             </Box>
 
@@ -74,7 +74,7 @@ function ClientDetails() {
                             <Tab label="General" value="1" />
                             <Tab label="Address" value="2" />
                             <Tab label="Contact" value="3" />
-                            <Tab label="DMS Tasks" value="4" />
+                            <Tab label="Tasks" value="4" />
                             <Tab label="Documents" value="5" />
                             <Tab label="Companies House" value="6" />
                             <Tab label="Requested Document" value="7" />
@@ -89,7 +89,7 @@ function ClientDetails() {
                                     </Typography>
 
                                     <Box className="row">
-                                        <Box className="col-lg-4 col-md-12 col-sm-12">
+                                        <Box className="col-lg-4 col-md-6 col-sm-12">
                                             <Box class="company-details-box d-flex">
                                                 <Box class="flex-shrink-0">
                                                     <PinDropIcon />
@@ -105,9 +105,9 @@ function ClientDetails() {
                                             </Box>
                                         </Box>
 
-                                        <Box className="col-lg-8 col-md-12 col-sm-12">
+                                        <Box className="col-lg-8 col-md-6 col-sm-12">
                                             <Box className="row">
-                                                <Box className="col-lg-4 col-md-6">
+                                                <Box className="col-xxl-4 col-lg-6 col-md-6">
                                                     <Box class="company-details-box">
                                                         <Typography variant="h6" gutterBottom>
                                                             Status
@@ -118,7 +118,7 @@ function ClientDetails() {
                                                     </Box>
                                                 </Box>
 
-                                                <Box className="col-lg-4 col-md-6">
+                                                <Box className="col-xxl-4 col-lg-6 col-md-6">
                                                     <Box class="company-details-box">
                                                         <Typography variant="h6" gutterBottom>
                                                             Source
@@ -129,7 +129,7 @@ function ClientDetails() {
                                                     </Box>
                                                 </Box>
 
-                                                <Box className="col-lg-4 col-md-6">
+                                                <Box className="col-xxl-4 col-lg-6 col-md-6">
                                                     <Box class="company-details-box">
                                                         <Typography variant="h6" gutterBottom>
                                                             Manager
@@ -140,7 +140,7 @@ function ClientDetails() {
                                                     </Box>
                                                 </Box>
 
-                                                <Box className="col-lg-4 col-md-6">
+                                                <Box className="col-xxl-4 col-lg-12">
                                                     <Box class="company-details-box">
                                                         <Typography variant="h6" gutterBottom>
                                                             Email
@@ -151,7 +151,7 @@ function ClientDetails() {
                                                     </Box>
                                                 </Box>
 
-                                                <Box className="col-lg-8 col-md-6">
+                                                <Box className="col-xxl-8 col-lg-12">
                                                     <Box class="company-details-box">
                                                         <Typography variant="h6" gutterBottom>
                                                             Business
@@ -301,9 +301,48 @@ function ClientDetails() {
                                     Key Facts - Team
                                 </AccordionSummary>
                                 <AccordionDetails>
-                                    <Table>
-                                        
-                                    </Table>
+                                    <Box className='table-responsive'>
+                                        <table className='table'>
+                                            <tbody>
+                                                <tr>
+                                                    <th>Key Facts - Team</th>
+                                                    <td>Key Facts - Team</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Key Facts - Team</th>
+                                                    <td>Patrick</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Investigations manager Name</th>
+                                                    <td>Jones</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Assistant Manager Date</th>
+                                                    <td>Jones@gmail.com</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Investigations manager Date</th>
+                                                    <td>Admin</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Closures Manager Date</th>
+                                                    <td>Key</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Administrator 1 Date</th>
+                                                    <td>01/10/2001</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Administrator 1 Date</th>
+                                                    <td>01/10/2001</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Assistant Manager Name</th>
+                                                    <td>98756465464</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </Box>
                                 </AccordionDetails>
                             </Accordion>
                             <Accordion className='accordian-box'>
@@ -312,11 +351,51 @@ function ClientDetails() {
                                     aria-controls="panel2-content"
                                     id="panel2-header"
                                 >
-                                    Accordion 2
+                                    Fee Data
                                 </AccordionSummary>
                                 <AccordionDetails>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                    malesuada lacus ex, sit amet blandit leo lobortis eget.
+                                    <Box className='table-responsive'>
+                                        <table className='table'>
+                                            <tbody>
+                                                <tr>
+                                                    <th>Key Facts - Team</th>
+                                                    <td>Key Facts - Team</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Key Facts - Team</th>
+                                                    <td>Patrick</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Investigations manager Name</th>
+                                                    <td>Jones</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Assistant Manager Date</th>
+                                                    <td>Jones@gmail.com</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Investigations manager Date</th>
+                                                    <td>Admin</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Closures Manager Date</th>
+                                                    <td>Key</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Administrator 1 Date</th>
+                                                    <td>01/10/2001</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Administrator 1 Date</th>
+                                                    <td>01/10/2001</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Assistant Manager Name</th>
+                                                    <td>98756465464</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </Box>
                                 </AccordionDetails>
                             </Accordion>
                             <Accordion className='accordian-box'>
@@ -325,16 +404,12 @@ function ClientDetails() {
                                     aria-controls="panel3-content"
                                     id="panel3-header"
                                 >
-                                    Accordion Actions 3
+                                    Key Facts - Team
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
                                     malesuada lacus ex, sit amet blandit leo lobortis eget.
                                 </AccordionDetails>
-                                <AccordionActions>
-                                    <Button>Cancel</Button>
-                                    <Button>Agree</Button>
-                                </AccordionActions>
                             </Accordion>
 
                             <Accordion className='accordian-box'>
@@ -343,7 +418,7 @@ function ClientDetails() {
                                     aria-controls="panel4-content"
                                     id="panel4-header"
                                 >
-                                    Accordion 4
+                                    Key Facts - Team
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
@@ -357,7 +432,7 @@ function ClientDetails() {
                                     aria-controls="panel5-content"
                                     id="panel5-header"
                                 >
-                                    Accordion 5
+                                    WIP - Fee Approval
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
@@ -371,7 +446,7 @@ function ClientDetails() {
                                     aria-controls="panel6-content"
                                     id="panel6-header"
                                 >
-                                    Accordion 6
+                                    PreFee
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
@@ -385,7 +460,7 @@ function ClientDetails() {
                                     aria-controls="panel7-content"
                                     id="panel7-header"
                                 >
-                                    Accordion 7
+                                    Bonding
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
@@ -399,7 +474,7 @@ function ClientDetails() {
                                     aria-controls="panel9-content"
                                     id="panel7-header"
                                 >
-                                    Accordion 8
+                                    Next Actions
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
@@ -413,7 +488,7 @@ function ClientDetails() {
                                     aria-controls="panel8-content"
                                     id="panel8-header"
                                 >
-                                    Accordion 9
+                                    WIP - Current
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
@@ -427,7 +502,7 @@ function ClientDetails() {
                                     aria-controls="panel9-content"
                                     id="panel9-header"
                                 >
-                                    Accordion 10
+                                    Bonding
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse

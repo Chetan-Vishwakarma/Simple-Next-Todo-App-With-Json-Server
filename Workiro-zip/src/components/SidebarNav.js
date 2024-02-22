@@ -48,7 +48,7 @@ const style = {
   border: '2px solid #000',
   p: 4,
 };
-const drawerWidth = 240;
+const drawerWidth = 220;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -175,7 +175,7 @@ export default function SidebarNav() {
 
   return (
     <>
-      <Box sx={{ display: 'flex' }}>
+      <Box className='d-block d-md-flex'>
         <CssBaseline />
         <AppBar className='header' position="fixed" open={open} color='inherit'>
           <Toolbar>

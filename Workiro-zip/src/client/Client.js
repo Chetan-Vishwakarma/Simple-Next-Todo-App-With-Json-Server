@@ -396,7 +396,7 @@ function Client() {
         }
     }
     return (
-        <Box className='container-fluid'>
+        <Box className='container-fluid p-0'>
 
             <div role="presentation" className='mb-2 mb-3 ' onClick={handleClick}>
                 <Breadcrumbs aria-label="breadcrumb">
@@ -510,49 +510,49 @@ function Client() {
                                         </Box>
 
 
-                                        <div className='row'> 
-                                            <div className='col-md-4'> 
-                                                <div className='mb-2'> 
-                                                    <label>Select Property</label> 
-                                                    <select value={selectedProperty} onChange={(e) => { setSelectedProperty(e.target.value) }} class="form-select" aria-label="Default select example"> 
-                                                        <option value={""}>Select</option> 
-                                                        {clientKeys.map((item, i) => { 
-                                                            return <option key={i} value={item}>{item}</option> 
-                                                        })} 
-                                                        {contactKeys.map((item, i) => { 
-                                                            return <option key={i} value={item}>{item}</option> 
-                                                        })} 
-                                                    </select> 
-                                                </div> 
-                                            </div> 
-                                            <div className='col-md-4 px-0'> 
-                                                <div className='mb-2'> 
-                                                    <label>Value</label> 
-                                                    <input value={selectedPropertyValue} onChange={(e) => { setSelectedPropertyValue(e.target.value) }} type="text" class="form-control" placeholder="Type Value" /> 
-                                                </div> 
-                                            </div> 
-                                            <div className='col-md-4'> 
-                                                <Box className='clearfix'> 
-                                                    <Typography variant='Body1' className='mb-1'>Labels</Typography> 
- 
-                                                    <Box className="color-box"> 
-                                                        { 
-                                                            advSearchKeyValue.length === 0 && <><button onClick={(e) => setSelectedColor(colorArr[0])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[0] }}></button> 
-                                                                <button onClick={() => setSelectedColor(colorArr[1])} type='button' className='btn-color' style={{ backgroundColor: colorArr[1] }}></button></> 
-                                                        } 
-                                                        { 
-                                                            advSearchKeyValue.length === 1 && <><button onClick={() => setSelectedColor(colorArr[2])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[2] }}></button> 
-                                                                <button onClick={() => setSelectedColor(colorArr[3])} type='button' className='btn-color' style={{ backgroundColor: colorArr[3] }}></button></> 
-                                                        } 
-                                                        { 
-                                                            advSearchKeyValue.length === 2 && <><button onClick={() => setSelectedColor(colorArr[4])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[4] }}></button> 
-                                                                <button onClick={() => setSelectedColor(colorArr[5])} type='button' className='btn-color' style={{ backgroundColor: colorArr[5] }}></button></> 
-                                                        } 
-                                                    </Box> 
-                                                </Box> 
-                                            </div> 
+                                        <div className='row'>
+                                            <div className='col-md-4'>
+                                                <div className='mb-2'>
+                                                    <label>Select Property</label>
+                                                    <select value={selectedProperty} onChange={(e) => { setSelectedProperty(e.target.value) }} class="form-select" aria-label="Default select example">
+                                                        <option value={""}>Select</option>
+                                                        {clientKeys.map((item, i) => {
+                                                            return <option key={i} value={item}>{item}</option>
+                                                        })}
+                                                        {contactKeys.map((item, i) => {
+                                                            return <option key={i} value={item}>{item}</option>
+                                                        })}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div className='col-md-4 px-0'>
+                                                <div className='mb-2'>
+                                                    <label>Value</label>
+                                                    <input value={selectedPropertyValue} onChange={(e) => { setSelectedPropertyValue(e.target.value) }} type="text" class="form-control" placeholder="Type Value" />
+                                                </div>
+                                            </div>
+                                            <div className='col-md-4'>
+                                                <Box className='clearfix'>
+                                                    <Typography variant='Body1' className='mb-1'>Labels</Typography>
+
+                                                    <Box className="color-box">
+                                                        {
+                                                            advSearchKeyValue.length === 0 && <><button onClick={(e) => setSelectedColor(colorArr[0])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[0] }}></button>
+                                                                <button onClick={() => setSelectedColor(colorArr[1])} type='button' className='btn-color' style={{ backgroundColor: colorArr[1] }}></button></>
+                                                        }
+                                                        {
+                                                            advSearchKeyValue.length === 1 && <><button onClick={() => setSelectedColor(colorArr[2])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[2] }}></button>
+                                                                <button onClick={() => setSelectedColor(colorArr[3])} type='button' className='btn-color' style={{ backgroundColor: colorArr[3] }}></button></>
+                                                        }
+                                                        {
+                                                            advSearchKeyValue.length === 2 && <><button onClick={() => setSelectedColor(colorArr[4])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[4] }}></button>
+                                                                <button onClick={() => setSelectedColor(colorArr[5])} type='button' className='btn-color' style={{ backgroundColor: colorArr[5] }}></button></>
+                                                        }
+                                                    </Box>
+                                                </Box>
+                                            </div>
                                         </div>
-                                        
+
 
                                         <div className='mt-2'>
                                             <Button onClick={handleAdvanceFilterAgain} variant="contained" size='small' color="success">
@@ -595,7 +595,7 @@ function Client() {
                                 </Box>
                             }) : clients.map((item, i) => {
                                 return <Box key={i} className='client-box-main'>
-                                    <Box className='client-box'>
+                                    <Box className='client-box' onClick={() => navigate('/clientDetails')}>
                                         {/* <img src={pin} className='pin-img' /> */}
                                         <Box className='client-img'>
                                             <img src={user} />
