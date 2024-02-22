@@ -69,13 +69,15 @@ function Client() {
     const [clientKeys, setClientKeys] = useState([]);
     const [contactKeys, setContactKeys] = useState([]);
     const [advSearchKeyValue, setAdvSearchKeyValue] = useState([{key:"", value:""}]);
+    const [filteredContacts, setFilteredContacts] = useState([]);
+    const [filteredClients, setFilteredClients] = useState([]);
     // advance filter states ends
     // search box states start
     const [isSearch, setIsSearch] = useState(false);
     const [searchInput, setSearchInput] = useState("");
     const [filteredClientsForSearchBox, setFilteredClientsForSearchBox] = useState([]);
     const [filteredContactsForSearchBox, setFilteredContactsForSearchBox] = useState([]);
-    // search box states ends 
+    // search box states ends
 
     const apiUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
     let getClientsByFolder = async (folderID = "1") => {
@@ -175,7 +177,79 @@ function Client() {
     }
     let handleAdvanceFilter = () => {
         if(advSearchKeyValue.length===1){
-            console.log("advSearchKeyValue",advSearchKeyValue);
+            console.log("if");
+            let key = advSearchKeyValue[0].key;
+            let value = advSearchKeyValue[0].value;
+            if(clientKeys.includes(key)){
+                let filteredClient = clients.filter((item)=>{
+                    return Object.values(item).join('').toLowerCase().includes(value.toLowerCase());
+                });
+                console.log("filteredCient",filteredClient);
+                setFilteredClients(filteredClient);
+                setOnlyClients(true);
+                setOnlyContacts(false);
+            }else if(contactKeys.includes(key)){
+                let filteredContact = contacts.filter((item)=>{
+                    return Object.values(item).join('').toLowerCase().includes(value.toLowerCase());
+                });
+                console.log("filteredCient",filteredContact);
+                setFilteredContacts(filteredContact);
+                setOnlyClients(false);
+                setOnlyContacts(true);
+            }
+        }else{
+            console.log("else");
+            let isCLientKey = advSearchKeyValue.map((item)=>{
+                if(item.key!==""||item.value!==""){
+                    return clientKeys.includes(item.key);
+                }
+            }).every((item)=>item===true);
+
+            let isContactKey = advSearchKeyValue.map((item)=>{
+                if(item.key!==""||item.value!==""){
+                    return contactKeys.includes(item.key);
+                }
+            }).every((item)=>item===true);
+
+            // console.log("isClientKey", isCLientKey);
+            // console.log("isContactKey", isContactKey);
+
+            if(isCLientKey){
+                // console.log("isClientKey");
+                let advResult = advSearchKeyValue.map((item)=>{
+                        return clients.filter((data)=>{
+                            return data[item.key].toLowerCase() === item.value.toLowerCase();
+                        });
+                });
+                // console.log("advResult",advResult);
+                let isEmpty = advResult.slice(0, advResult.length-1).some((item)=>item.length===0);
+                // console.log("isEmpty", isEmpty);
+                if(!isEmpty){
+                    setFilteredClients(advResult[1]);
+                    setOnlyContacts(false);
+                    setOnlyClients(true);
+                }
+                //setFilteredClients(advResult[1]);
+            }else if(isContactKey){
+                // console.log("isContactKey");
+                let advContactResult = advSearchKeyValue.map((item)=>{
+                    if(item.key!==""||item.value!==""){
+                        return contacts.filter((data)=>{
+                            return data[item.key].toLowerCase() === item.value.toLowerCase();
+                        });
+                    }
+                });
+                // console.log("advContactResult",advContactResult[1]);
+                let isEmpty = advContactResult.slice(0, advContactResult.length-1).some((item)=>item.length===0);
+                if(!isEmpty){
+                    setFilteredContacts(advContactResult[1]);
+                    setOnlyContacts(true);
+                    setOnlyClients(false);
+                }
+            }
+        }
+        if(advSearchKeyValue.length<3){
+            setAdvSearchKeyValue([...advSearchKeyValue,{key:"",value:""}]);
         }
     }
     return (
@@ -201,7 +275,7 @@ function Client() {
                                             color: 'success.main',
                                         }}
                                         className={isSearch?'Mui-focused':''}>
-                                        <span class="material-symbols-outlined search-icon">search</span>
+                                        <span className="material-symbols-outlined search-icon">search</span>
 
                                         <Input onClick={() => setIsSearch(!isSearch)} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
                                     </AutocompleteRoot>
@@ -255,12 +329,22 @@ function Client() {
                                     <Box className='clearfix'>
                                         <Typography variant='Body1' className='ps-1'>Filter:</Typography>
                                         <Box className="mb-2">
-                                            <Button className='btn-white'>key: value <span class="material-symbols-outlined font-16 text-danger">
+                                            {advSearchKeyValue.map((item)=>{
+                                                if(item.value!==""||item.key!==""){
+                                                    return <Button className='btn-white'>{item.key}: {item.value} 
+                                                    <span className="material-symbols-outlined font-16 text-danger">
+                                                    close
+                                                    </span></Button>
+                                                }else{
+                                                    return "";
+                                                }
+                                            })}
+                                            {/* <Button className='btn-white'>key: value <span className="material-symbols-outlined font-16 text-danger">
                                                 close
-                                            </span></Button>
-                                            <Button className='btn-white'>key: value <span class="material-symbols-outlined font-16 text-danger">
+                                            </span></Button> */}
+                                            {/* <Button className='btn-white'>key: value <span className="material-symbols-outlined font-16 text-danger">
                                                 close
-                                            </span></Button>
+                                            </span></Button> */}
 
                                             <Fab size="small" className='btn-plus  ms-2' aria-label="add">
                                                 <AddIcon />
@@ -289,7 +373,7 @@ function Client() {
                                             <div className='col-md-4 px-0'>
                                                 <div className='mb-2'>
                                                     <label>Value</label>
-                                                    <input onChange={(e)=>{item.value=e.target.value}} type="text" class="form-control" placeholder="enter..." />
+                                                    <input onChange={(e)=>{item.value=e.target.value}} type="text" class="form-control" placeholder="Type Value" />
                                                 </div>
                                             </div>
                                             <div className='col-md-4'>
@@ -330,7 +414,7 @@ function Client() {
                     <Box className='row'>
 
                         {
-                            onlyClients && clients.map((item,i) => {
+                            onlyClients && (filteredClients.length>0?filteredClients.map((item,i) => {
                                 return <Box key={i} className='client-box-main'>
                                     <Box className='client-box'>
                                         {/* <img src={pin} className='pin-img' /> */}
@@ -347,11 +431,28 @@ function Client() {
                                         </Box>
                                     </Box>
                                 </Box>
-                            })
+                            }):clients.map((item,i) => {
+                                return <Box key={i} className='client-box-main'>
+                                    <Box className='client-box'>
+                                        {/* <img src={pin} className='pin-img' /> */}
+                                        <Box className='client-img'>
+                                            <img src={user} />
+                                        </Box>
+                                        <Typography title={item.Client} variant="h2">{item.Client.substr(0, 12) + "."}</Typography>
+                                        <Typography variant='h4'>Admin</Typography>
+                                        <Typography title={item.Email} variant='p' className='mb-0'>{item.Email.substr(0, 22) + "."}</Typography>
+                                        <Box className='color-filter-box mt-3'>
+                                            <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
+                                            <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
+                                            <Typography variant='span' className='color-filter-row' style={{ color: "#01018d", borderColor: "#01018d" }}>Blue</Typography>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            }))
                         }
 
                         {
-                            onlyContacts && contacts.map((item,i) => {
+                            onlyContacts && (filteredContacts.length>0?filteredContacts.map((item,i) => {
                                 return <Box key={i} className='client-box-main'>
                                     <Box className='client-box'>
                                         {/* <img src={pin} className='pin-img' /> */}
@@ -368,7 +469,24 @@ function Client() {
                                         </Box>
                                     </Box>
                                 </Box>
-                            })
+                            }):contacts.map((item,i) => {
+                                return <Box key={i} className='client-box-main'>
+                                    <Box className='client-box'>
+                                        {/* <img src={pin} className='pin-img' /> */}
+                                        <Box className='client-img'>
+                                            <img src={user} />
+                                        </Box>
+                                        <Typography title={item["Company Name"]} variant="h2">{item["Company Name"].substr(0, 12) + "."}</Typography>
+                                        <Typography variant='h4'>Admin</Typography>
+                                        <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"].substr(0, 22) + "."}</Typography>
+                                        <Box className='color-filter-box mt-3'>
+                                            <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
+                                            <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
+                                            <Typography variant='span' className='color-filter-row' style={{ color: "#01018d", borderColor: "#01018d" }}>Blue</Typography>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            }))
                         }
 
 
