@@ -13,11 +13,13 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import user from "../images/user.jpg";
-import Avatar from '@mui/material/Avatar';
-import AvatarGroup from '@mui/material/AvatarGroup';
-
+import Logout from '@mui/icons-material/Logout';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 export default function CreateNewModal() {
 
@@ -130,12 +132,7 @@ export default function CreateNewModal() {
                                         className='p-0 w-auto d-inline-block'
                                     >
                                         <Box className="d-flex align-items-center">
-                                            <Box className="d-flex">
-                                                <span class="material-symbols-outlined">
-                                                    person_add
-                                                </span>
-                                            </Box>
-
+                                            
                                             <Box className="user-img-list ms-2">
                                                 <img src={user} />
                                                 {/* <p>PJ</p> */}
@@ -152,6 +149,12 @@ export default function CreateNewModal() {
 
                                             <Box className="user-img-list ms-2">
                                                 <p>AP</p>
+                                            </Box>
+
+                                            <Box className="d-flex">
+                                                <span class="material-symbols-outlined">
+                                                    person_add
+                                                </span>
                                             </Box>
 
                                         </Box>
@@ -295,8 +298,16 @@ export default function CreateNewModal() {
                                                 'aria-labelledby': 'basic-button',
                                             }}
                                         >
-                                            <MenuItem onClick={handleClose2}>Add</MenuItem>
-                                            <MenuItem onClick={handleClose2}>Remove</MenuItem>
+                                            <MenuItem onClick={handleClose2}>
+                                                <ListItemIcon>
+                                                    <LibraryAddIcon fontSize="small" />
+                                                </ListItemIcon>
+                                                Add
+                                            </MenuItem>
+
+                                            <MenuItem onClick={handleClose2}><ListItemIcon>
+                                                <DeleteIcon  fontSize="small" />
+                                            </ListItemIcon> Remove</MenuItem>
                                         </Menu>
                                     </Box>
                                 </Box>

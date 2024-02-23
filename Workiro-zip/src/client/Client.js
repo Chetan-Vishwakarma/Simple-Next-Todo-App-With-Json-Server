@@ -3,27 +3,24 @@ import { useSelector, useDispatch } from "react-redux";
 import { Box, Typography } from '@mui/material';
 import user from "../images/user.jpg";
 import Button from "@mui/material/Button";
-
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 // search
-
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-
-
-
-
-
-import { useAutocomplete } from '@mui/base/useAutocomplete';
 import { styled } from '@mui/system';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Link from '@mui/material/Link';
 
-const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
-
+function handleClick(event) {
+    event.preventDefault();
+    console.info('You clicked a breadcrumb.');
+}
 
 function Client() {
 
     const navigate = useNavigate();
+
 
 
     //const data = useSelector((state) => state.counter.value);
@@ -399,7 +396,31 @@ function Client() {
         }
     }
     return (
-        <Box className='container-fluid'>
+        <Box className='container-fluid p-0'>
+
+            <div role="presentation" className='mb-2 mb-3 ' onClick={handleClick}>
+                <Breadcrumbs aria-label="breadcrumb">
+                    <Link underline="hover" color="inherit" href="/">
+                        Home
+                    </Link>
+                    <Link
+                        underline="hover"
+                        color="inherit"
+                        href="/material-ui/getting-started/installation/"
+                    >
+                        Clients
+                    </Link>
+                    <Typography color="text.primary">Client Details</Typography>
+                </Breadcrumbs>
+            </div>
+
+            {/* <div className='select-for-clients-contacts-and-both'>
+          <select onChange={(e)=>basedOnClientContactAndAll(e.target.value)}>
+            {["All","Clients","Contacts"].map((item)=>{
+              return <option value={item}>{item}</option>
+            })}
+          </select>  
+        </div> */}
             <Box className='row'>
                 <Box className='col-lg-12'>
 
@@ -526,6 +547,7 @@ function Client() {
                                             </div>
                                         </div>
 
+
                                         <div className='mt-2'>
                                             <Button onClick={handleAdvanceFilterAgain} variant="contained" size='small' color="success">
                                                 <span class="material-symbols-outlined">
@@ -535,11 +557,6 @@ function Client() {
                                         </div>
 
                                     </Box>
-
-
-
-
-
                                 </Box>
                             </Box>}
 
@@ -552,17 +569,17 @@ function Client() {
                         {
                             onlyClients && (filteredClients.length > 0 ? filteredClients.map((item, i) => {
                                 return <Box key={i} className='client-box-main'>
-                                    <Box className='client-box'>
+                                    <Box className='client-box' onClick={() => navigate('/clientDetails')}>
                                         {/* <img src={pin} className='pin-img' /> */}
                                         <Box className='client-img'>
                                             <img src={user} />
                                         </Box>
                                         <Typography title={item.Client} variant="h2">{item.Client.substr(0, 12) + "."}</Typography>
                                         <Typography variant='h4'>Admin</Typography>
-                                        <Typography title={item.Email} variant='p' className='mb-0'>{item.Client.length > 25 ? (item.Client.substr(0, 12) + ".") : item.Client}</Typography>
+                                        <Typography title={item.Email} variant='p' className='mb-0'>{item.Client.length > 25 ? (item.Client.substr(0, 20) + ".") : item.Client}</Typography>
                                         <Box className='color-filter-box mt-3'>
                                             {advSearchKeyValue.map((data) => {
-                                                return <Typography variant='span' className='color-filter-row' style={{ color: data.color, borderColor: data.color }}>{data.key}: {item[data.key]}</Typography>;
+                                                return <Typography variant='span' className='color-filter-row' style={{ color: data.color, borderColor: data.color }}>{item[data.key]}</Typography>;
                                             })}
                                             {/* <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
@@ -572,12 +589,12 @@ function Client() {
                                 </Box>
                             }) : clients.map((item, i) => {
                                 return <Box key={i} className='client-box-main'>
-                                    <Box className='client-box'>
+                                    <Box className='client-box' onClick={() => navigate('/clientDetails')}>
                                         {/* <img src={pin} className='pin-img' /> */}
                                         <Box className='client-img'>
                                             <img src={user} />
                                         </Box>
-                                        <Typography title={item.Client} variant="h2">{item.Client.length > 25 ? (item.Client.substr(0, 12) + ".") : item.Client}</Typography>
+                                        <Typography title={item.Client} variant="h2">{item.Client.length > 25 ? (item.Client.substr(0, 20) + ".") : item.Client}</Typography>
                                         <Typography variant='h4'>Admin</Typography>
                                         <Typography title={item.Email} variant='p' className='mb-0'>{item.Email.substr(0, 22) + "."}</Typography>
                                         {/* <Box className='color-filter-box mt-3'>
@@ -598,12 +615,12 @@ function Client() {
                                         <Box className='client-img'>
                                             <img src={user} />
                                         </Box>
-                                        <Typography title={item["Company Name"]} variant="h2">{item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 12) + ".") : item["Company Name"]}</Typography>
+                                        <Typography title={item["Company Name"]} variant="h2">{item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"]}</Typography>
                                         <Typography variant='h4'>Admin</Typography>
                                         <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"].substr(0, 22) + "."}</Typography>
                                         <Box className='color-filter-box mt-3'>
                                             {advSearchKeyValue.map((data) => {
-                                                return <Typography variant='span' className='color-filter-row' style={{ color: data.color, borderColor: data.color }}>{data.key}: {item[data.key]}</Typography>;
+                                                return <Typography variant='span' className='color-filter-row' style={{ color: data.color, borderColor: data.color }}>{item[data.key]}</Typography>;
                                             })}
                                             {/* <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
@@ -618,7 +635,7 @@ function Client() {
                                         <Box className='client-img'>
                                             <img src={user} />
                                         </Box>
-                                        <Typography title={item["Company Name"]} variant="h2">{item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 12) + ".") : item["Company Name"]}</Typography>
+                                        <Typography title={item["Company Name"]} variant="h2">{item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"]}</Typography>
                                         <Typography variant='h4'>Admin</Typography>
                                         <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"].substr(0, 22) + "."}</Typography>
                                         {/* <Box className='color-filter-box mt-3'>
