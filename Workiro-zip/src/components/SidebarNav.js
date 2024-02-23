@@ -357,7 +357,6 @@ export default function SidebarNav() {
 
                     </Menu>
                   </Box>
-                  {/*  */}
 
                 </Box>
               </Box>
