@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -26,6 +26,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Table } from '@mui/material';
+import axios from 'axios';
 
 
 function ClientDetails() {
@@ -34,9 +35,97 @@ function ClientDetails() {
 
     const [value, setValue] = React.useState('1');
 
+    const [clientDetails, setClientDetails] = useState({});
+
+    const [companyDetails, setCompanyDetails] = useState([]);
+
+    const [taskInProgress, setTaskInProgress] = useState([]);
+
+    const [noStarted, setNoStarted] = useState([]);
+
+    const [totalContacts, setTotalContacts] = useState(0);
+
+    const [totalDocuments, setTotalDocuments] = useState(0);
+
+    const [lastActivityDate, setLastActivityDate] = useState("");
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+
+    const Json_GetClientCardDetails = async () => {
+        let response = await axios.post("https://docusms.uk/dswebclientmanager.asmx/Json_GetClientCardDetails", {
+            Email: "patrick@docusoft.net",
+            agrno: "0261",
+            intProjectId: "4",
+            password: "MjYxZG9jdXNvZnQ=",
+            strOrignatorNumber: "Case1"
+        });
+        if (response.data.d !== '') {
+            let details = JSON.parse(response.data.d);
+            console.log("Json_GetClientCardDetails", details);
+            setClientDetails(details);
+            setCompanyDetails(details.Table1);
+            Json_CRM_GetOutlookTask();
+        }
+    }
+    const Json_CRM_GetOutlookTask = async () => {
+        let response = await axios.post("https://docusms.uk/dsdesktopwebservice.asmx/Json_CRM_GetOutlookTask", {
+            agrno: "0261",
+            Email: "patrick@docusoft.net",
+            password: "MjYxZG9jdXNvZnQ="
+        });
+        if (response.data.d !== "") {
+            let details = JSON.parse(response.data.d).Table;
+            console.log("Json_CRM_GetOutlookTask", details);
+            setTaskInProgress(details.filter((el) => el.mstatus == "In Progress"));
+            setNoStarted(details.filter((el) => el.mstatus == "Not Started"));
+            Json_GetAllContactsByClientID();
+        }
+    }
+    const Json_GetAllContactsByClientID = async () => {
+        let response = await axios.post("https://docusms.uk/dsdesktopwebservice.asmx/Json_GetAllContactsByClientID", {
+            agrno: "0261",
+            Email: "patrick@docusoft.net",
+            password: "MjYxZG9jdXNvZnQ=",
+            ProjectID: "4",
+            ClientID: "Case1"
+        });
+        if (response.data.d !== "") {
+            let details = JSON.parse(response.data.d).Table;
+            console.log("Json_GetAllContactsByClientID", details);
+            setTotalContacts(details.length);
+            Json_ExplorerSearchDoc();
+        }
+    }
+    const Json_ExplorerSearchDoc = async () => {
+        let response = await axios.post("https://docusms.uk/dsdesktopwebservice.asmx/Json_ExplorerSearchDoc", {
+            agrno: "0261",
+            Email: "patrick@docusoft.net",
+            password: "MjYxZG9jdXNvZnQ=",
+            ProjectId: "4",
+            ClientId: "01",
+            sectionId: "-1"
+        });
+        if (response.data.d !== "") {
+            let details = JSON.parse(response.data.d).Table;
+            console.log("Json_ExplorerSearchDoc", details);
+            setTotalDocuments(details.length);
+        }
+    }
+    useEffect(() => {
+        Json_GetClientCardDetails();
+        // Json_CRM_GetOutlookTask();     // due to
+        // Json_GetAllContactsByClientID();     // due to
+        // Json_ExplorerSearchDoc();      // due to this sometimes data does not render that's why I comment this 3 lines
+        let today = new Date();
+        let dd = String(today.getDate()).padStart(2, '0');
+        let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        let yyyy = today.getFullYear();
+
+        today = dd + '/' + mm + '/' + yyyy;
+        setLastActivityDate(today);
+    }, []);
 
     return (
         <Box className="container-fluid p-0">
@@ -99,7 +188,7 @@ function ClientDetails() {
                                                         Address
                                                     </Typography>
                                                     <Typography variant="body1" gutterBottom>
-                                                        Sayaji Hotel, Near meghdud Guarden Vijay nagar square  indore
+                                                        {companyDetails[0]?.Address}
                                                     </Typography>
                                                 </Box>
                                             </Box>
@@ -113,7 +202,7 @@ function ClientDetails() {
                                                             Status
                                                         </Typography>
                                                         <Typography variant="body1" gutterBottom>
-                                                            Active
+                                                            {companyDetails[0]?.StatusName}
                                                         </Typography>
                                                     </Box>
                                                 </Box>
@@ -124,7 +213,7 @@ function ClientDetails() {
                                                             Source
                                                         </Typography>
                                                         <Typography variant="body1" gutterBottom>
-                                                            Google
+                                                            {companyDetails[0]?.SourceName}
                                                         </Typography>
                                                     </Box>
                                                 </Box>
@@ -135,7 +224,7 @@ function ClientDetails() {
                                                             Manager
                                                         </Typography>
                                                         <Typography variant="body1" gutterBottom>
-                                                            Patrick John
+                                                            {companyDetails[0]?.ManagerName}
                                                         </Typography>
                                                     </Box>
                                                 </Box>
@@ -146,7 +235,7 @@ function ClientDetails() {
                                                             Email
                                                         </Typography>
                                                         <Typography variant="body1" gutterBottom>
-                                                            test@gmail.com
+                                                            {companyDetails[0]?.Email}
                                                         </Typography>
                                                     </Box>
                                                 </Box>
@@ -157,7 +246,7 @@ function ClientDetails() {
                                                             Business
                                                         </Typography>
                                                         <Typography variant="body1" gutterBottom>
-                                                            01130 Growing of vegetables and melons, roots and tubers1
+                                                            {companyDetails[0]?.BussName}
                                                         </Typography>
                                                     </Box>
                                                 </Box>
@@ -170,7 +259,7 @@ function ClientDetails() {
                                             </Box>
                                             <Box class="flex-grow-1 ms-2">
                                                 <Typography variant="body1" gutterBottom>
-                                                    9879898798, 7987987
+                                                    {companyDetails[0]?.TelNo}
                                                 </Typography>
                                             </Box>
                                         </Box>
@@ -197,7 +286,7 @@ function ClientDetails() {
                                                         Last Activity on
                                                     </Typography>
                                                     <Typography variant="body1" gutterBottom>
-                                                        09/02/2024
+                                                        {lastActivityDate}
                                                     </Typography>
                                                 </div>
                                             </Box>
@@ -213,7 +302,7 @@ function ClientDetails() {
                                                         Total Document
                                                     </Typography>
                                                     <Typography variant="body1" gutterBottom>
-                                                        1256
+                                                        {totalDocuments}
                                                     </Typography>
                                                 </div>
                                             </Box>
@@ -229,7 +318,7 @@ function ClientDetails() {
                                                         Task In Progress
                                                     </Typography>
                                                     <Typography variant="body1" gutterBottom>
-                                                        54
+                                                        {taskInProgress.length}
                                                     </Typography>
                                                 </div>
                                             </Box>
@@ -245,7 +334,7 @@ function ClientDetails() {
                                                         Not Started
                                                     </Typography>
                                                     <Typography variant="body1" gutterBottom>
-                                                        22
+                                                        {noStarted.length}
                                                     </Typography>
                                                 </div>
                                             </Box>
@@ -261,7 +350,7 @@ function ClientDetails() {
                                                         Total Contacts
                                                     </Typography>
                                                     <Typography variant="body1" gutterBottom>
-                                                        65
+                                                        {totalContacts}
                                                     </Typography>
                                                 </div>
                                             </Box>
@@ -277,7 +366,7 @@ function ClientDetails() {
                                                         Messages Sent
                                                     </Typography>
                                                     <Typography variant="body1" gutterBottom>
-                                                        545
+                                                        200
                                                     </Typography>
                                                 </div>
                                             </Box>
@@ -292,7 +381,35 @@ function ClientDetails() {
                         {/* white box end */}
 
                         <Box className='main-accordian'>
-                            <Accordion className='accordian-box' defaultExpanded>
+                            {
+                                Object.keys(clientDetails).length > 0
+                                && clientDetails?.Table.map((item, i) => {
+                                    return <Accordion className='accordian-box' defaultExpanded={i === 0 ? true : false}>
+                                        <AccordionSummary
+                                            expandIcon={<ExpandMoreIcon />}
+                                            aria-controls="panel1-content"
+                                            id="panel1-header"
+                                        >
+                                            {item.TagName}
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <Box className='table-responsive'>
+                                                <table className='table'>
+                                                    <tbody>
+                                                        {clientDetails?.Table3.map((data, i) => {
+                                                            return <tr>
+                                                                <th>{data.Name}</th>
+                                                                <td>{data.UdfValue === "undefined" ? "" : data.UdfValue}</td>
+                                                            </tr>
+                                                        })}
+                                                    </tbody>
+                                                </table>
+                                            </Box>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                })
+                            }
+                            {/* <Accordion className='accordian-box' defaultExpanded>
                                 <AccordionSummary
                                     expandIcon={<ExpandMoreIcon />}
                                     aria-controls="panel1-content"
@@ -344,8 +461,8 @@ function ClientDetails() {
                                         </table>
                                     </Box>
                                 </AccordionDetails>
-                            </Accordion>
-                            <Accordion className='accordian-box'>
+                            </Accordion> */}
+                            {/* <Accordion className='accordian-box'>
                                 <AccordionSummary
                                     expandIcon={<ExpandMoreIcon />}
                                     aria-controls="panel2-content"
@@ -452,9 +569,9 @@ function ClientDetails() {
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
                                     malesuada lacus ex, sit amet blandit leo lobortis eget.
                                 </AccordionDetails>
-                            </Accordion>
+                            </Accordion> */}
 
-                            <Accordion className='accordian-box'>
+                            {/* <Accordion className='accordian-box'>
                                 <AccordionSummary
                                     expandIcon={<ExpandMoreIcon />}
                                     aria-controls="panel7-content"
@@ -508,7 +625,7 @@ function ClientDetails() {
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
                                     malesuada lacus ex, sit amet blandit leo lobortis eget.
                                 </AccordionDetails>
-                            </Accordion>
+                            </Accordion> */}
 
                         </Box>
                     </TabPanel>

@@ -21,3 +21,4 @@ export const getAllFolders = async () => {
     let res = JSON.parse(response?.data?.d);
     return res.Table1;
 }
+
