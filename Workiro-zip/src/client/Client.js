@@ -11,6 +11,8 @@ import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
+import PersonIcon from '@mui/icons-material/Person';
+import ApartmentIcon from '@mui/icons-material/Apartment';
 
 function handleClick(event) {
     event.preventDefault();
@@ -69,21 +71,21 @@ function Client() {
         setClients(res?.Table1);
         setClientKeys(Object.keys(res.Table1[0]));
     }
-    function startFormattingDate(dt){
-    const timestamp = parseInt(/-\d+/.exec(dt));
-      const date = new Date(timestamp);
-      const formattedDate = date.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
+    function startFormattingDate(dt) {
+        const timestamp = parseInt(/-\d+/.exec(dt));
+        const date = new Date(timestamp);
+        const formattedDate = date.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
 
-      return formattedDate;
+        return formattedDate;
     }
     let formateDate = (data) => {
         let key = "Date Of Birth"
-        data.map((item,i)=>{
-            if(item[key]!==null){
+        data.map((item, i) => {
+            if (item[key] !== null) {
                 item[key] = startFormattingDate(item[key]);
             }
         })
@@ -423,9 +425,7 @@ function Client() {
         </div> */}
             <Box className='row'>
                 <Box className='col-lg-12'>
-
-                    <Box className='d-flex main-search-box'>
-
+                    <Box className='d-flex main-search-box mb-2'>
                         <Box className="search-box">
                             <Layout>
                                 <AutocompleteWrapper>
@@ -442,14 +442,16 @@ function Client() {
 
                                     {isSearch && <Listbox>
                                         {filteredClientsForSearchBox.length > 0 ? filteredClientsForSearchBox.map((option, i) => (
-                                            <Option key={i} onClick={() => navigate("/clientPage")}><span style={{ marginRight: "10px" }}>Client</span>{option.Client}</Option>
+                                            <Option key={i} onClick={() => navigate("/clientPage")}>
+                                                <PersonIcon className='me-1' />
+                                                {option.Client}</Option>
                                         )) : clients.map((option, i) => (
-                                            <Option key={i} onClick={() => navigate("/clientPage")}><span style={{ marginRight: "10px" }}>Client</span>{option.Client}</Option>
+                                            <Option key={i} onClick={() => navigate("/clientPage")}><PersonIcon className='me-1' />{option.Client}</Option>
                                         ))}
                                         {filteredContactsForSearchBox.length > 0 ? filteredContactsForSearchBox.map((option, i) => (
-                                            <Option key={i} onClick={() => navigate("/contactPage")}><span style={{ marginRight: "10px" }}>Contact</span>{option["Company Name"]}</Option>
+                                            <Option key={i} onClick={() => navigate("/contactPage")}><ApartmentIcon className='me-1' />{option["Company Name"]}</Option>
                                         )) : contacts.map((option, i) => (
-                                            <Option key={i} onClick={() => navigate("/contactPage")}><span style={{ marginRight: "10px" }}>Contact</span>{option["Company Name"]}</Option>
+                                            <Option key={i} onClick={() => navigate("/contactPage")}><ApartmentIcon className='me-1' />{option["Company Name"]}</Option>
                                         ))}
                                     </Listbox>}
 
@@ -487,8 +489,8 @@ function Client() {
                                 <Box className='clearfix'>
 
                                     <Box className='clearfix'>
-                                        <Typography variant='Body1' className='ps-1'>Filter:</Typography>
-                                        <Box className="mb-2">
+                                        <Typography variant='Body1' className='mb-2 d-block  bold'>Filter:</Typography>
+                                        {/* <Box className="mb-2">
                                             {advSearchKeyValue.map((item) => {
                                                 return <Button sx={{ backgroundColor: item.color }} className='btn-white'>{item.key}: {item.value}
                                                     <span onClick={() => handleFilterRemove(item)} className="material-symbols-outlined font-16 text-danger">
@@ -499,10 +501,7 @@ function Client() {
                                             <Fab size="small" className='btn-plus  ms-2' aria-label="add">
                                                 <AddIcon />
                                             </Fab>
-
-
-                                        </Box>
-
+                                        </Box> */}
 
                                         <div className='row'>
                                             <div className='col-md-4'>
@@ -555,14 +554,27 @@ function Client() {
                                                 </span> Add
                                             </Button>
                                         </div>
-
                                     </Box>
                                 </Box>
                             </Box>}
-
                         </Box>
-                    </Box>
+                        {/*  */}
 
+                        <Box className="mb-2 ms-3">
+                            {advSearchKeyValue.map((item) => {
+                                return <Button sx={{ backgroundColor: item.color }} className='btn-white text-white'><span className='text-white'>{item.key}: {item.value}</span>
+                                    <span onClick={() => handleFilterRemove(item)} className="material-symbols-outlined font-16 text-white">
+                                        close
+                                    </span></Button>
+                            })}
+
+                            {/* <Fab size="small" className='btn-plus  ms-2' aria-label="add">
+                                <AddIcon />
+                            </Fab> */}
+                        </Box>
+
+
+                    </Box>
 
                     <Box className='row'>
 
