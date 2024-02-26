@@ -6,9 +6,8 @@ import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
 import StayCurrentPortraitIcon from '@mui/icons-material/StayCurrentPortrait';
 import MarkAsUnreadIcon from '@mui/icons-material/MarkAsUnread';
 import PinDropIcon from '@mui/icons-material/PinDrop';
-import axios from 'axios';
 
-function ClientOverview() {
+function ClientOverview({ Cls }) {
 
     const [taskInProgress, setTaskInProgress] = useState([]);
 
@@ -20,54 +19,81 @@ function ClientOverview() {
 
     const [lastActivityDate, setLastActivityDate] = useState("");
 
-    const Json_CRM_GetOutlookTask = async () => {
-        let response = await axios.post("https://docusms.uk/dsdesktopwebservice.asmx/Json_CRM_GetOutlookTask", {
+    const Json_CRM_GetOutlookTask = () => {
+        let obj = {
             agrno: "0261",
             Email: "patrick@docusoft.net",
             password: "MjYxZG9jdXNvZnQ="
-        });
-        if (response.data.d !== "") {
-            let details = JSON.parse(response.data.d).Table;
-            console.log("Json_CRM_GetOutlookTask", details);
-            setTaskInProgress(details.filter((el) => el.mstatus == "In Progress"));
-            setNoStarted(details.filter((el) => el.mstatus == "Not Started"));
-            Json_GetAllContactsByClientID();
+        };
+        try {
+            Cls.Json_CRM_GetOutlookTask(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        let details = json.Table
+                        console.log("Json_CRM_GetOutlookTask", details);
+                        setTaskInProgress(details.filter((el) => el.mstatus == "In Progress"));
+                        setNoStarted(details.filter((el) => el.mstatus == "Not Started"));
+                        Json_GetAllContactsByClientID();
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_CRM_GetOutlookTask", err);
         }
     }
 
-    const Json_GetAllContactsByClientID = async () => {
-        let response = await axios.post("https://docusms.uk/dsdesktopwebservice.asmx/Json_GetAllContactsByClientID", {
+    const Json_GetAllContactsByClientID = () => {
+        let obj = {
             agrno: "0261",
             Email: "patrick@docusoft.net",
             password: "MjYxZG9jdXNvZnQ=",
             ProjectID: "4",
             ClientID: "Case1"
-        });
-        if (response.data.d !== "") {
-            let details = JSON.parse(response.data.d).Table;
-            console.log("Json_GetAllContactsByClientID", details);
-            setTotalContacts(details.length);
-            Json_ExplorerSearchDoc();
+        };
+        try {
+            Cls.Json_GetAllContactsByClientID(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        let details = json.Table
+                        console.log("Json_GetAllContactsByClientID", details);
+                        setTotalContacts(details.length);
+                        Json_ExplorerSearchDoc();
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_GetAllContactsByClientID", err);
         }
     }
 
     const Json_ExplorerSearchDoc = async () => {
-        let response = await axios.post("https://docusms.uk/dsdesktopwebservice.asmx/Json_ExplorerSearchDoc", {
+        let obj = {
             agrno: "0261",
             Email: "patrick@docusoft.net",
             password: "MjYxZG9jdXNvZnQ=",
             ProjectId: "4",
             ClientId: "01",
             sectionId: "-1"
-        });
-        if (response.data.d !== "") {
-            let details = JSON.parse(response.data.d).Table;
-            console.log("Json_ExplorerSearchDoc", details);
-            setTotalDocuments(details.length);
+        };
+        try {
+            Cls.Json_ExplorerSearchDoc(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        let details = json.Table
+                        console.log("Json_ExplorerSearchDoc", details);
+                        setTotalDocuments(details.length);
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_ExplorerSearchDoc", err);
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         Json_CRM_GetOutlookTask();
         let today = new Date();
         let dd = String(today.getDate()).padStart(2, '0');
@@ -76,7 +102,7 @@ function ClientOverview() {
 
         today = dd + '/' + mm + '/' + yyyy;
         setLastActivityDate(today);
-    },[]);
+    }, []);
 
     return (
         <Box className="col-xl-6 col-lg-6 col-md-12">

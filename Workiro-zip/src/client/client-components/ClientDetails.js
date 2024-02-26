@@ -12,13 +12,12 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import axios from 'axios';
 import CompanyDetails from './CompanyDetails';
 import ClientOverview from './ClientOverview';
+//import Utils from "../../services/Utils";
+import CommanCLS from '../../services/CommanService';
+import UdfCard from './UdfCard';
+
 
 
 function ClientDetails() {
@@ -31,23 +30,41 @@ function ClientDetails() {
 
     const [companyDetails, setCompanyDetails] = useState([]);
 
+    const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+
+    const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
+
+    //let Util = new Utils();
+
+    let Cls = new CommanCLS(baseUrl, "0261", "patrick@docusoft.net", "MjYxZG9jdXNvZnQ=");
+
+    let webClientCLS = new CommanCLS(clientWebUrl, "0261", "patrick@docusoft.net", "MjYxZG9jdXNvZnQ=");
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
-    const Json_GetClientCardDetails = async () => {
-        let response = await axios.post("https://docusms.uk/dswebclientmanager.asmx/Json_GetClientCardDetails", {
+    const Json_GetClientCardDetails = () => {
+        let obj = {
             Email: "patrick@docusoft.net",
             agrno: "0261",
             intProjectId: "4",
             password: "MjYxZG9jdXNvZnQ=",
             strOrignatorNumber: "Case1"
-        });
-        if (response.data.d !== '') {
-            let details = JSON.parse(response.data.d);
-            console.log("Json_GetClientCardDetails", details);
-            setClientDetails(details);
-            setCompanyDetails(details.Table1);
+        };
+        try{
+            webClientCLS.Json_GetClientCardDetails(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_GetClientCardDetails", json);
+                        setClientDetails(json);
+                        setCompanyDetails(json.Table1);
+                    }
+                }
+            });
+        }catch(err){
+            console.log("Error while calling Json_GetClientCardDetails",err)
         }
     }
     useEffect(() => {
@@ -99,39 +116,15 @@ function ClientDetails() {
                     <TabPanel value="1" className='p-0'>
                         <Box className="general-tab white-box">
                             <Box className="row">
-                                <CompanyDetails companyDetails={companyDetails}/>
-                                <ClientOverview/>
+                                {/* For CompanyDetails */}
+                                <CompanyDetails companyDetails={companyDetails} />
+                                {/* For ClientOverview */}
+                                <ClientOverview Cls={Cls} webClientCLS={webClientCLS}/>
                             </Box>
                         </Box>
                         <Box className='main-accordian'>
-                            {
-                                Object.keys(clientDetails).length > 0
-                                && clientDetails?.Table.map((item, i) => {
-                                    return <Accordion className='accordian-box' defaultExpanded={i === 0 ? true : false}>
-                                        <AccordionSummary
-                                            expandIcon={<ExpandMoreIcon />}
-                                            aria-controls="panel1-content"
-                                            id="panel1-header"
-                                        >
-                                            {item.TagName}
-                                        </AccordionSummary>
-                                        <AccordionDetails>
-                                            <Box className='table-responsive'>
-                                                <table className='table'>
-                                                    <tbody>
-                                                        {clientDetails?.Table3.map((data, i) => {
-                                                            return <tr>
-                                                                <th>{data.Name}</th>
-                                                                <td>{data.UdfValue === "undefined" ? "" : data.UdfValue}</td>
-                                                            </tr>
-                                                        })}
-                                                    </tbody>
-                                                </table>
-                                            </Box>
-                                        </AccordionDetails>
-                                    </Accordion>
-                                })
-                            }
+                            {/* For UDFs */}
+                            <UdfCard data={clientDetails}/>
                         </Box>
                     </TabPanel>
                     <TabPanel value="2">Item Two</TabPanel>
