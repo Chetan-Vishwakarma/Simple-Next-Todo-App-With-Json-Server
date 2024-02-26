@@ -80,7 +80,41 @@ export default class CommanCLS extends AllService {
             }
         })
     }
+    
+    Json_CRM_GetOutlookTask(obj,callBack) { 
+        super.CreateNewServiceParamObject("Json_CRM_GetOutlookTask",obj,true);   
+        super.CallNewService("Json_CRM_GetOutlookTask", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
 
+    Json_GetAllContactsByClientID(obj,callBack) { 
+        super.CreateNewServiceParamObject("Json_GetAllContactsByClientID",obj,true);   
+        super.CallNewService("Json_GetAllContactsByClientID", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
 
+    Json_ExplorerSearchDoc(obj,callBack) { 
+        super.CreateNewServiceParamObject("Json_ExplorerSearchDoc",obj,true);   
+        super.CallNewService("Json_ExplorerSearchDoc", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
 
 }
