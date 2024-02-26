@@ -1,0 +1,86 @@
+
+import AllService from "./AllService";
+
+
+
+export default class CommanCLS extends AllService {
+    constructor(APIUrl,agrno, Email, password) {
+        super(APIUrl,agrno, Email, password);
+    }
+
+
+    Json_GetSections(obj,callBack){   
+       super.CreateNewServiceParamObject("Json_GetSections",obj,true);
+       super.CallNewService("Json_GetSections",function(status,Data){
+           if(status){
+               return callBack(true,Data);
+           }
+           else{
+               return callBack(false,[]);
+           }
+       })
+    }
+    
+    Json_GetClientCardDetails(obj,callBack){   
+       super.CreateNewServiceParamObject("Json_GetClientCardDetails",obj,false);
+       super.CallNewService("Json_GetClientCardDetails",function(status,Data){
+           if(status){
+               return callBack(true,Data);
+           }
+           else{
+               return callBack(false,[]);
+           }
+       })
+    }
+
+    Json_GetFolders(callBack) {       
+        super.CreateNewServiceParamObject("Json_GetFolders");       
+        super.CallNewService("Json_GetFolders", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
+
+    Json_Get_DS_TaskManager(callBack) {       
+        super.CreateNewServiceParamObject("Json_Get_DS_TaskManager");       
+        super.CallNewService("Json_Get_DS_TaskManager", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
+
+    Json_GetContactListByFolder(obj,callBack) { 
+        super.CreateNewServiceParamObject("Json_GetContactListByFolder",obj,true);   
+        super.CallNewService("Json_GetContactListByFolder", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
+
+    ListEditableTemplates(obj,callBack) { 
+        super.CreateNewServiceParamObject("Json_ListEditableTemplates",obj,true);   
+        super.CallNewService("Json_ListEditableTemplates", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
+
+
+
+}
