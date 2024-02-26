@@ -17,6 +17,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import user from "../../images/user.jpg";
+import country from "../../images/uk.png";
 import KeyIcon from '@mui/icons-material/Key';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import FactCheckIcon from '@mui/icons-material/FactCheck';
@@ -32,6 +33,10 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Fade from '@mui/material/Fade';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Tooltip from '@mui/material/Tooltip';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import PersonAdd from '@mui/icons-material/PersonAdd';
+
 
 
 
@@ -78,7 +83,7 @@ function ContactDetails() {
 
                 <Box className='d-flex flex-wrap'>
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<BorderColorIcon />}>Edit Contacts</Button>
-                    <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<GroupAddIcon />}>Launch Case Card</Button>
+                    <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<GroupAddIcon />}>Client Card</Button>
 
                     <div>
                         <Button
@@ -87,10 +92,10 @@ function ContactDetails() {
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}
                             onClick={handleClick}
-                            className=''
+                            className='min-width-auto mb-1'
                         >
-                        <MoreVertIcon />   
-                            
+                            <MoreVertIcon />
+
 
                         </Button>
                         <Menu
@@ -103,18 +108,33 @@ function ContactDetails() {
                             onClose={handleClose}
                             TransitionComponent={Fade}
                         >
-                            <MenuItem onClick={handleClose}>Profile</MenuItem>
-                            <MenuItem onClick={handleClose}>My account</MenuItem>
-                            <MenuItem onClick={handleClose}>Logout</MenuItem>
+                            <MenuItem onClick={handleClose}>
+                                <ListItemIcon>
+                                    <PersonAdd fontSize="small" />
+                                </ListItemIcon>
+                                My Account
+                            </MenuItem>
+                            <MenuItem onClick={handleClose}>
+                                <ListItemIcon>
+                                    <PersonAdd fontSize="small" />
+                                </ListItemIcon>
+                                My Account
+                            </MenuItem>
+                            <MenuItem onClick={handleClose}>
+                                <ListItemIcon>
+                                    <PersonAdd fontSize="small" />
+                                </ListItemIcon>
+                                My Account
+                            </MenuItem>
                         </Menu>
                     </div>
 
                 </Box>
             </Box>
 
-            <Box sx={{ width: '100%', typography: 'body1' }} className="mt-4 pt-1">
+            <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
                 <TabContext value={value}>
-                    <Box>
+                    <Box className='d-none'>
                         <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
                             <Tab label="General" value="1" />
                             <Tab label="Address" value="2" />
@@ -128,8 +148,8 @@ function ContactDetails() {
                     <TabPanel value="1" className='p-0'>
                         <Box className="general-tab">
                             <Box className="row">
-                                <Box className="col-xl-4 col-lg-4 col-md-12">
-                                    <Box className='white-box'>
+                                <Box className="col-xl-4 col-lg-4 col-md-12 d-flex">
+                                    <Box className='white-box w-100'>
 
                                         <Box className='d-flex align-items-center'>
                                             <Box className='relative m-0 me-4'>
@@ -137,8 +157,13 @@ function ContactDetails() {
                                                     <img src={user} />
                                                 </Box>
 
-                                                <VerifiedIcon className='user-register' />
+                                                <Tooltip title="UK" arrow>
+                                                    <Box className='country-flage'>
+                                                        <img src={country} className='' />
+                                                    </Box>
+                                                </Tooltip>
 
+                                                <VerifiedIcon className='user-register' />
 
                                             </Box>
                                             <Box className="clearfix">
@@ -153,10 +178,6 @@ function ContactDetails() {
                                                 </Typography>
                                             </Box>
                                         </Box>
-
-
-
-
 
                                         <Box className='d-flex flex-wrap contact-availability mb-2'>
                                             <Box className='contact-availability-box'>
@@ -189,7 +210,7 @@ function ContactDetails() {
 
                                         </Box>
 
-                                        <Box className='card-box d-flex'>
+                                        <Box className='card-box d-flex mt-2'>
                                             <FmdGoodIcon className='me-2 text-primary' />
 
                                             <Box className=''>
@@ -198,15 +219,22 @@ function ContactDetails() {
                                             </Box>
                                         </Box>
 
+                                        <Box className='card-box d-flex mt-2'>
+                                            <FmdGoodIcon className='me-2 text-primary' />
+
+                                            <Box className=''>
+                                                <p className='font-16 bold mb-1 text-primary'>Contact</p>
+                                                <p className='mb-0 font-14 text-gray'>8979845132, 8545489</p>
+                                            </Box>
+                                        </Box>
+
                                     </Box>
-
-
 
                                 </Box>
                                 {/* cold end */}
 
-                                <Box className="col-xl-8 col-lg-8 col-md-12">
-                                    <Box className='white-box'>
+                                <Box className="col-xl-8 col-lg-8 col-md-12 d-flex">
+                                    <Box className='white-box w-100'>
                                         <Box className='contact-detail-row mb-4'>
                                             <Box className='contact-detail-box'>
                                                 <KeyIcon />
@@ -262,15 +290,15 @@ function ContactDetails() {
                                                     23/05/23
                                                 </Typography>
                                             </Box>
-
                                         </Box>
+                                        
 
                                         {/* test */}
                                         <Box className='card-box d-flex'>
                                             <EditNoteIcon className='me-2 text-primary' />
                                             <Box className=''>
                                                 <p className='font-16 bold mb-1 text-primary'>Notes</p>
-                                                <p className='mb-0 font-14 text-gray'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+                                                <p className='mb-0 font-14 text-gray'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the when an unknown printer took a galley of type and scrambled it to make simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the when an unknown printer took a galley of type  the industry standard dummy text ever since the when an unknown p and scrambled it to make a type specimen book.</p>
                                             </Box>
                                         </Box>
 
