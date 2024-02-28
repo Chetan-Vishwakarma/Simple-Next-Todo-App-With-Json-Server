@@ -20,11 +20,11 @@ import user from "../../images/user.jpg";
 import country from "../../images/uk.png";
 import KeyIcon from '@mui/icons-material/Key';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
-import FactCheckIcon from '@mui/icons-material/FactCheck';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
+import FactCheckIcon from '@mui/icons-material/FactCheck';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import CircleIcon from '@mui/icons-material/Circle';
 import EditNoteIcon from '@mui/icons-material/EditNote';
@@ -36,23 +36,62 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Tooltip from '@mui/material/Tooltip';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import PersonAdd from '@mui/icons-material/PersonAdd';
-
-
-
+import { useEffect } from 'react';
+import CommanCLS from "../../services/CommanService"
+import { useLocation } from 'react-router-dom';
 
 function ContactDetails() {
+
+    const location = useLocation();
+
+    const {agrno, Email, password, folderId, originatorNo, contactNo} = location.state;
 
     const [selected, setSelected] = React.useState(false);
 
     const [value, setValue] = React.useState('1');
 
+    const [contactDetails, setContactDetails] = React.useState([]);
+
+    const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+
+    const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
+
+    let Cls = new CommanCLS(baseUrl, agrno, Email, password);
+
+    let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
+    useEffect(() => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ClientID: originatorNo,
+            ProjectID: folderId
+        };
+        try {
+            Cls.Json_GetAllContactsByClientID(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_GetAllContactsByClientID", json);
+                        let details = json.Table;
+                        setContactDetails(details.filter((item) => item.ContactNo === contactNo));
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_GetAllContactsByClientID", err);
+        }
+    }, []);
+    console.log("contactDetails: ", contactDetails);
     // dropdown
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -65,10 +104,10 @@ function ContactDetails() {
             <Box className="d-flex align-items-center justify-content-between flex-wrap">
                 <Box className='d-flex flex-wrap align-items-center'>
                     <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
-                        Sample Case
+                        {contactDetails.length>0 && contactDetails[0]["Company Name"]}
                     </Typography>
 
-                    <ToggleButton
+                    {/* <ToggleButton
                         value="check"
                         selected={selected}
                         onChange={() => {
@@ -78,12 +117,13 @@ function ContactDetails() {
                     >
                         <FavoriteIcon />
                         Add to Favorites
-                    </ToggleButton>
+                    </ToggleButton> */}
                 </Box>
 
                 <Box className='d-flex flex-wrap'>
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<BorderColorIcon />}>Edit Contacts</Button>
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<GroupAddIcon />}>Client Card</Button>
+                    <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<FactCheckIcon />}>AML Check</Button>
 
                     <div>
                         <Button
@@ -138,97 +178,97 @@ function ContactDetails() {
                         <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
                             <Tab label="General" value="1" />
                             <Tab label="Address" value="2" />
-                            {/* <Tab label="Contact" value="3" />
-                            <Tab label="Tasks" value="4" />
-                            <Tab label="Documents" value="5" />
-                            <Tab label="Companies House" value="6" />
-                            <Tab label="Requested Document" value="7" /> */}
                         </TabList>
                     </Box>
                     <TabPanel value="1" className='p-0'>
                         <Box className="general-tab">
                             <Box className="row">
                                 <Box className="col-xl-4 col-lg-4 col-md-12 d-flex">
-                                    <Box className='white-box w-100'>
+                                    {
+                                        contactDetails.length > 0 &&
+                                          contactDetails.map((item)=>{
+                                            return <Box className='white-box w-100'>
 
-                                        <Box className='d-flex align-items-center'>
-                                            <Box className='relative m-0 me-4'>
-                                                <Box className='client-img'>
-                                                    <img src={user} />
+                                            <Box className='d-flex align-items-center'>
+                                                <Box className='relative m-0 me-4'>
+                                                    <Box className='client-img'>
+                                                        <img src={user} />
+                                                    </Box>
+
+                                                    <Tooltip title="UK" arrow>
+                                                        <Box className='country-flage'>
+                                                            <img src={country} className='' />
+                                                        </Box>
+                                                    </Tooltip>
+
+                                                    <VerifiedIcon className='user-register' />
+
+                                                </Box>
+                                                <Box className="clearfix">
+                                                    <Typography variant="h5" className='mb-1 bold d-flex align-items-center' gutterBottom>
+                                                        <CircleIcon className='text-success me-1 font-16' /> {item["First Name"]+ " "+ item["Last Name"]}
+                                                    </Typography>
+
+
+                                                    <Typography variant="body1" className='mb-0 ' gutterBottom>
+                                                        <span className='bold'>
+                                                            Role:</span> {item.Role}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+
+                                            <Box className='d-flex flex-wrap contact-availability mb-2'>
+                                                <Box className={item["Main Contact"]?'contact-availability-box':'contact-availability-box inactive'}>
+                                                    <CheckCircleIcon />
+                                                    <Typography variant="h5" className='mb-0 ' gutterBottom>
+                                                        Main Contact
+                                                    </Typography>
                                                 </Box>
 
-                                                <Tooltip title="UK" arrow>
-                                                    <Box className='country-flage'>
-                                                        <img src={country} className='' />
-                                                    </Box>
-                                                </Tooltip>
-
-                                                <VerifiedIcon className='user-register' />
-
-                                            </Box>
-                                            <Box className="clearfix">
-                                                <Typography variant="h5" className='mb-1 bold d-flex align-items-center' gutterBottom>
-                                                    <CircleIcon className='text-success me-1 font-16' /> Patrick Jones
-                                                </Typography>
-
-
-                                                <Typography variant="body1" className='mb-0 ' gutterBottom>
-                                                    <span className='bold'>
-                                                        Role:</span> Admin
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-
-                                        <Box className='d-flex flex-wrap contact-availability mb-2'>
-                                            <Box className='contact-availability-box'>
-                                                <CheckCircleIcon />
-                                                <Typography variant="h5" className='mb-0 ' gutterBottom>
-                                                    Main Contact
-                                                </Typography>
-                                            </Box>
-
-                                            {/* <Box className='contact-availability-box inactive'>
+                                                {/* <Box className='contact-availability-box inactive'>
                                                 <CancelIcon />
                                                 <Typography variant="h5" className='mb-0 ' gutterBottom>
                                                     In Active
                                                 </Typography>
                                             </Box> */}
 
-                                            <Box className='contact-availability-box inactive'>
-                                                <CancelIcon />
-                                                <Typography variant="h5" className='mb-0 ' gutterBottom>
-                                                    Portal User
-                                                </Typography>
-                                            </Box>
+                                                <Box className='contact-availability-box inactive'>
+                                                    <CancelIcon />
+                                                    <Typography variant="h5" className='mb-0 ' gutterBottom>
+                                                        Portal User
+                                                    </Typography>
+                                                </Box>
 
-                                            {/* <Box className='contact-availability-box'>
+                                                {/* <Box className='contact-availability-box'>
                                                 <CheckCircleIcon />
                                                 <Typography variant="h5" className='mb-0 ' gutterBottom>
                                                     AML Check
                                                 </Typography>
                                             </Box> */}
 
-                                        </Box>
-
-                                        <Box className='card-box d-flex mt-2'>
-                                            <FmdGoodIcon className='me-2 text-primary' />
-
-                                            <Box className=''>
-                                                <p className='font-16 bold mb-1 text-primary'>Address</p>
-                                                <p className='mb-0 font-14 text-gray'>Mobility House Aberaman Park Industrial Estate, Aberdare CF44 6DA</p>
                                             </Box>
-                                        </Box>
 
-                                        <Box className='card-box d-flex mt-2'>
-                                            <FmdGoodIcon className='me-2 text-primary' />
+                                            <Box className='card-box d-flex mt-2'>
+                                                <FmdGoodIcon className='me-2 text-primary' />
 
-                                            <Box className=''>
-                                                <p className='font-16 bold mb-1 text-primary'>Contact</p>
-                                                <p className='mb-0 font-14 text-gray'>8979845132, 8545489</p>
+                                                <Box className=''>
+                                                    <p className='font-16 bold mb-1 text-primary'>Address</p>
+                                                    <p className='mb-0 font-14 text-gray'>{item["Address 1"]}</p>
+                                                </Box>
                                             </Box>
-                                        </Box>
 
-                                    </Box>
+                                            <Box className='card-box d-flex mt-2'>
+                                                <FmdGoodIcon className='me-2 text-primary' />
+
+                                                <Box className=''>
+                                                    <p className='font-16 bold mb-1 text-primary'>Phone</p>
+                                                    <p className='mb-0 font-14 text-gray'>{item.Tel}, {item.Mobile}</p>
+                                                </Box>
+                                            </Box>
+
+                                                   </Box>
+                                          })
+                                    }
 
                                 </Box>
                                 {/* cold end */}
@@ -291,7 +331,7 @@ function ContactDetails() {
                                                 </Typography>
                                             </Box>
                                         </Box>
-                                        
+
 
                                         {/* test */}
                                         <Box className='card-box d-flex'>

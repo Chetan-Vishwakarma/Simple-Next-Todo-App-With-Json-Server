@@ -7,7 +7,9 @@ import StayCurrentPortraitIcon from '@mui/icons-material/StayCurrentPortrait';
 import MarkAsUnreadIcon from '@mui/icons-material/MarkAsUnread';
 import PinDropIcon from '@mui/icons-material/PinDrop';
 
-function ClientOverview({ Cls }) {
+function ClientOverview({ Cls, locationState }) {
+
+    const {agrno, Email, password, folderId, originatorNo} = locationState;
 
     const [taskInProgress, setTaskInProgress] = useState([]);
 
@@ -21,9 +23,9 @@ function ClientOverview({ Cls }) {
 
     const Json_CRM_GetOutlookTask = () => {
         let obj = {
-            agrno: "0261",
-            Email: "patrick@docusoft.net",
-            password: "MjYxZG9jdXNvZnQ="
+            agrno: agrno,
+            Email: Email,
+            password: password
         };
         try {
             Cls.Json_CRM_GetOutlookTask(obj, (sts, data) => {
@@ -45,11 +47,11 @@ function ClientOverview({ Cls }) {
 
     const Json_GetAllContactsByClientID = () => {
         let obj = {
-            agrno: "0261",
-            Email: "patrick@docusoft.net",
-            password: "MjYxZG9jdXNvZnQ=",
-            ProjectID: "4",
-            ClientID: "Case1"
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ProjectID: folderId,
+            ClientID: originatorNo
         };
         try {
             Cls.Json_GetAllContactsByClientID(obj, (sts, data) => {
@@ -70,11 +72,11 @@ function ClientOverview({ Cls }) {
 
     const Json_ExplorerSearchDoc = async () => {
         let obj = {
-            agrno: "0261",
-            Email: "patrick@docusoft.net",
-            password: "MjYxZG9jdXNvZnQ=",
-            ProjectId: "4",
-            ClientId: "01",
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ProjectId: folderId,
+            ClientId: originatorNo,
             sectionId: "-1"
         };
         try {

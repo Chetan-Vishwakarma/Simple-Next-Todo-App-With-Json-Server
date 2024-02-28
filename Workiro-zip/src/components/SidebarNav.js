@@ -32,10 +32,9 @@ import Client from '../client/Client';
 import Badge from '@mui/material/Badge';
 
 import { useAutocomplete } from '@mui/base/useAutocomplete';
-import ClientPage from '../client/client-components/ClientPage';
-import ContactPage from '../contact/contact-components/ContactPage';
 import ClientDetails from '../client/client-components/ClientDetails';
-import ContactDetails from '../client/client-components/ContactDetails';
+import ContactDetails from '../contact/contact-components/ContactDetails';
+import Login from './Login';
 
 const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
 
@@ -418,10 +417,9 @@ export default function SidebarNav() {
           {/* <Home/> */}
 
           <Routes>
-            {/* <Route path="/" element={<Home/>}/> */}
-            <Route path="/" element={<Client />} />
-            <Route path="/clientPage" element={<ClientPage />} />
-            <Route path="/contactPage" element={<ContactPage />} />
+            {/* <Route path="/" element={<Login/>}/> */}
+            {/* <Route path="/" element={<Client />} /> */}
+            <Route index element={<Client />} />
             <Route path="/clientDetails" element={<ClientDetails />} />
             <Route path="/ContactDetails" element={<ContactDetails />} />
 

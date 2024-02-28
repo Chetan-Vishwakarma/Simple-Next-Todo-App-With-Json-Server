@@ -117,4 +117,52 @@ export default class CommanCLS extends AllService {
         })
     }
 
+    Json_GetToFavourites(obj,callBack) { 
+        super.CreateNewServiceParamObject("Json_GetToFavourites",obj,true);   
+        super.CallNewService("Json_GetToFavourites", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
+
+    Json_AddToFavourite(obj,callBack) { 
+        super.CreateNewServiceParamObject("Json_AddToFavourite",obj,true);   
+        super.CallNewService("Json_AddToFavourite", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
+
+    Json_RemoveToFavourite(obj,callBack) { 
+        super.CreateNewServiceParamObject("Json_RemoveToFavourite",obj,true);   
+        super.CallNewService("Json_RemoveToFavourite", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
+    
+    Json_GetConfiguration(obj,callBack) { 
+        super.CreateNewServiceParamObject("Json_GetConfiguration",obj,true);   
+        super.CallNewService("Json_GetConfiguration", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
+
 }

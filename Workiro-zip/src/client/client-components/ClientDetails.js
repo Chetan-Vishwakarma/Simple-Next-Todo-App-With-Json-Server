@@ -17,10 +17,15 @@ import ClientOverview from './ClientOverview';
 //import Utils from "../../services/Utils";
 import CommanCLS from '../../services/CommanService';
 import UdfCard from './UdfCard';
+import { useLocation } from 'react-router-dom';
 
 
 
 function ClientDetails() {
+
+    const location = useLocation();
+
+    const {agrno, Email, password, folderId, originatorNo} = location.state;
 
     const [selected, setSelected] = React.useState(false);
 
@@ -36,21 +41,98 @@ function ClientDetails() {
 
     //let Util = new Utils();
 
-    let Cls = new CommanCLS(baseUrl, "0261", "patrick@docusoft.net", "MjYxZG9jdXNvZnQ=");
+    let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
-    let webClientCLS = new CommanCLS(clientWebUrl, "0261", "patrick@docusoft.net", "MjYxZG9jdXNvZnQ=");
+    let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
+    const Json_GetToFavourites = () => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password
+        };
+        try{
+            Cls.Json_GetToFavourites(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_GetToFavourites", json);
+                        let details = json.Table;
+                        for (let iv of details) {
+                            console.log("asf",details);
+                            if (iv.OriginatorNo == "Case1") {
+                                setSelected(true);
+                                break;
+                                // console.log("This is Favourite Client");
+                            }
+    
+                        }
+                    }
+                }
+            });
+        }catch(err){
+            console.log("Error while calling Json_GetToFavourites",err);
+        }
+    }
+
+    const Json_RemoveToFavourite = () => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            OrgNo: originatorNo,
+            ProjectID: folderId
+        };
+        try{
+            Cls.Json_RemoveToFavourite(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_RemoveToFavourite", json);
+                        setSelected(false);
+                    }
+                }
+            });
+        }catch(err){
+            console.log("Error while calling Json_GetToFavourites",err);
+        }
+    }
+
+    const Json_AddToFavourite = () => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ProjectID: folderId,
+            OrgNo: originatorNo
+        };
+        try{
+            Cls.Json_AddToFavourite(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_AddToFavourite", json);
+                        let details = json.Table;
+                        setSelected(true);
+                    }
+                }
+            });
+        }catch(err){
+            console.log("Error while calling Json_GetToFavourites",err);
+        }
+    }
+
     const Json_GetClientCardDetails = () => {
         let obj = {
-            Email: "patrick@docusoft.net",
-            agrno: "0261",
-            intProjectId: "4",
-            password: "MjYxZG9jdXNvZnQ=",
-            strOrignatorNumber: "Case1"
+            Email: Email,
+            agrno: agrno,
+            intProjectId: folderId,
+            password: password,
+            strOrignatorNumber: originatorNo
         };
         try{
             webClientCLS.Json_GetClientCardDetails(obj, (sts, data) => {
@@ -60,6 +142,7 @@ function ClientDetails() {
                         console.log("Json_GetClientCardDetails", json);
                         setClientDetails(json);
                         setCompanyDetails(json.Table1);
+                        Json_GetToFavourites();
                     }
                 }
             });
@@ -76,14 +159,20 @@ function ClientDetails() {
             <Box className="d-flex align-items-center justify-content-between flex-wrap">
                 <Box className='d-flex flex-wrap align-items-center'>
                     <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
-                        Sample Case
+                        {clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}
                     </Typography>
 
                     <ToggleButton
                         value="check"
                         selected={selected}
                         onChange={() => {
-                            setSelected(!selected);
+                            //setSelected(!selected);
+                            if(selected){
+                                Json_RemoveToFavourite();
+                            }else{
+                                Json_AddToFavourite();
+                            }
+
                         }}
                         className='mb-2 btn-favorite'
                     >
@@ -119,7 +208,7 @@ function ClientDetails() {
                                 {/* For CompanyDetails */}
                                 <CompanyDetails companyDetails={companyDetails} />
                                 {/* For ClientOverview */}
-                                <ClientOverview Cls={Cls} webClientCLS={webClientCLS}/>
+                                <ClientOverview Cls={Cls} webClientCLS={webClientCLS} locationState={location.state}/>
                             </Box>
                         </Box>
                         <Box className='main-accordian'>
