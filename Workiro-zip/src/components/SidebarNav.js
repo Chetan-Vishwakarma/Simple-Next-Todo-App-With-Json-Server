@@ -36,6 +36,7 @@ import ClientPage from '../client/client-components/ClientPage';
 import ContactPage from '../contact/contact-components/ContactPage';
 import ClientDetails from '../client/client-components/ClientDetails';
 import ContactDetails from '../client/client-components/ContactDetails';
+import TodoList from './TodoList';
 
 const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
 
@@ -388,7 +389,7 @@ export default function SidebarNav() {
 
           <List className='side-navi'>
 
-            {['Dashboard', 'Connections', 'Smart Views', 'Log Out'].map((text, index) => (
+            {['Dashboard', 'To do list', 'Connections', 'Smart Views', 'Log Out'].map((text, index) => (
               <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                 <ListItemButton
                   sx={{
@@ -424,6 +425,7 @@ export default function SidebarNav() {
             <Route path="/contactPage" element={<ContactPage />} />
             <Route path="/clientDetails" element={<ClientDetails />} />
             <Route path="/ContactDetails" element={<ContactDetails />} />
+            <Route path="/TodoList" element={<TodoList />} />
 
             
           </Routes>

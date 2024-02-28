@@ -18,6 +18,9 @@
 .font-14 {
   font-size: 14px !important;
 }
+.font-18 {
+  font-size: 18px !important;
+}
 
 select:focus,
 .form-control:focus {
@@ -213,6 +216,7 @@ button {
   border-radius: 90px;
   background: #557ff7;
   color: #fff;
+  cursor: pointer;
 }
 
 /* .box-user-list-dropdown button:nth-child(-n + 2) .user-img-list {
@@ -361,11 +365,15 @@ button {
   color: #1C274C;
 }
 .text-blue {
-  color: #557ff7;
+  color: #557ff7 !important;
 }
 
 .min-width-auto {
   min-width: auto !important;
+}
+
+.text-gray {
+  color: #777777;
 }
 
 .text-white {
@@ -867,6 +875,11 @@ hr {
   color: #fff;
 }
 
+.main-accordian .accordian-box .table-responsive {
+  max-height: 284px;
+  overflow: auto;
+}
+
 .contact-detail-row {
   display: flex;
   text-align: center;
@@ -963,6 +976,31 @@ hr {
   border-radius: 6px;
   background: #ebf6fe;
 }
+
+/* .text-yellow {
+  color: #ff9400d6 !important;
+} */
+
+.todo-list-box {
+  border-radius: 20px;
+  border: 2px dashed #e1e1e1;
+}
+
+.todo-list-box h2 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.check-todo svg {
+  font-size: 32px;
+}
+.check-todo {
+  position: absolute !important;
+  right: 10px;
+  top: 10px;
+  /* font-size: 34px !important; */
+}
+
 
 @media only screen and (max-width: 1366px) {
   .client-box-main {
