@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from "react-redux";
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, alertTitleClasses } from '@mui/material';
 import user from "../images/user.jpg";
 import Button from "@mui/material/Button";
 import Fab from '@mui/material/Fab';
@@ -11,17 +11,20 @@ import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
+import PersonIcon from '@mui/icons-material/Person';
+import ApartmentIcon from '@mui/icons-material/Apartment';
+import { credentials } from '../services/Utils';
 
-function handleClick(event) {
-    event.preventDefault();
-    console.info('You clicked a breadcrumb.');
-}
+
 
 function Client() {
 
     const navigate = useNavigate();
 
-
+    const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
+    const [password, setPassword] = useState(localStorage.getItem("Password"));
+    const [Email, setEmail] = useState(localStorage.getItem("Email"));
+    const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
     //const data = useSelector((state) => state.counter.value);
     //const dispatch = useDispatch();
@@ -56,12 +59,12 @@ function Client() {
     // search box states ends
 
     const apiUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
-    let getClientsByFolder = async (folderID = "1") => {
+    let getClientsByFolder = async () => {
         const response = await axios.post(`${apiUrl}Json_GetClientsByFolder`, {
-            agrno: "0261",
-            Email: "nabs@docusoft.net",
-            password: "ZG9jdXNvZnQ=",
-            ProjectId: folderID
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ProjectId: folderId
         });
         let res = JSON.parse(response?.data?.d);
         //setBothClientContact(res?.Table1);
@@ -69,32 +72,32 @@ function Client() {
         setClients(res?.Table1);
         setClientKeys(Object.keys(res.Table1[0]));
     }
-    function startFormattingDate(dt){
-    const timestamp = parseInt(/-\d+/.exec(dt));
-      const date = new Date(timestamp);
-      const formattedDate = date.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
+    function startFormattingDate(dt) {
+        const timestamp = parseInt(/-\d+/.exec(dt));
+        const date = new Date(timestamp);
+        const formattedDate = date.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
 
-      return formattedDate;
+        return formattedDate;
     }
     let formateDate = (data) => {
         let key = "Date Of Birth"
-        data.map((item,i)=>{
-            if(item[key]!==null){
+        data.map((item, i) => {
+            if (item[key] !== null) {
                 item[key] = startFormattingDate(item[key]);
             }
         })
         return data;
     }
-    let getContactsByFolder = async (folderID = "1", obj, clientKeys) => {
+    let getContactsByFolder = async () => {
         const response = await axios.post(`${apiUrl}Json_GetContactListByFolder`, {
-            agrno: "0261",
-            Email: "nabs@docusoft.net",
-            password: "ZG9jdXNvZnQ=",
-            intFolderId: folderID
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            intFolderId: folderId
         });
         if (response?.data?.d !== '') {
             let res = JSON.parse(response?.data?.d);
@@ -114,9 +117,9 @@ function Client() {
     }
     let getAllFolders = async () => {
         const response = await axios.post(`${apiUrl}Json_GetFolders`, {
-            agrno: "0261",
-            Email: "nabs@docusoft.net",
-            password: "ZG9jdXNvZnQ="
+            agrno: agrno,
+            Email: Email,
+            password: password
         });
         if (response.data.d !== "") {
             let res = JSON.parse(response.data.d).Table;
@@ -124,6 +127,10 @@ function Client() {
         }
     }
     useEffect(() => {
+        setAgrNo(localStorage.getItem("agrno"));
+        setFolderId(localStorage.getItem("FolderId"));
+        setPassword(localStorage.getItem("Password"));
+        setEmail(localStorage.getItem("Email"));
         getClientsByFolder();
         getContactsByFolder();
         getAllFolders();
@@ -372,7 +379,8 @@ function Client() {
             setAdvSearchKeyValue(advSearchKeyValue.filter((item) => item.key !== target));
         }
     }
-    let handleDialogsOpen = (toOpen) => {
+    let handleDialogsOpen = (e,toOpen) => {
+        e.stopPropagation();
         if (toOpen === "Folder") {
             setIsFolder(!isFolder);
             setIsChoice(false);
@@ -395,10 +403,40 @@ function Client() {
             setIsSearch(!isSearch);
         }
     }
+    function handleClick(event) {
+        event.preventDefault();
+        setIsFolder(false);
+        setIsAdvFilter(false);
+        setIsChoice(false);
+        setIsSearch(false);
+    }
+    const handleContactNavigattion=(originator_no,contact_no)=>{
+        navigate('/dashboard/ContactDetails',{
+            state:{
+                agrno: agrno,
+                Email: Email,
+                password: password,
+                folderId: folderId,
+                originatorNo: originator_no,
+                contactNo: contact_no   
+            }
+        })
+    }
+    const handleClientNavigation=(clientId)=>{
+        navigate('/dashboard/clientDetails',{
+            state:{
+                agrno: agrno,
+                Email: Email,
+                password: password,
+                folderId: folderId,
+                originatorNo: clientId 
+            }
+        })
+    }
     return (
-        <Box className='container-fluid p-0'>
+        <Box className='container-fluid p-0' onClick={handleClick}>
 
-            <div role="presentation" className='mb-2 mb-3 ' onClick={handleClick}>
+            <div role="presentation" className='mb-2 mb-3 '>
                 <Breadcrumbs aria-label="breadcrumb">
                     <Link underline="hover" color="inherit" href="/">
                         Home
@@ -423,9 +461,7 @@ function Client() {
         </div> */}
             <Box className='row'>
                 <Box className='col-lg-12'>
-
-                    <Box className='d-flex main-search-box'>
-
+                    <Box className='d-flex main-search-box mb-2'>
                         <Box className="search-box">
                             <Layout>
                                 <AutocompleteWrapper>
@@ -437,19 +473,21 @@ function Client() {
                                         className={isSearch ? 'Mui-focused' : ''}>
                                         <span className="material-symbols-outlined search-icon">search</span>
 
-                                        <Input onClick={() => handleDialogsOpen("Search")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
+                                        <Input onClick={(e) => handleDialogsOpen(e,"Search")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
                                     </AutocompleteRoot>
 
                                     {isSearch && <Listbox>
                                         {filteredClientsForSearchBox.length > 0 ? filteredClientsForSearchBox.map((option, i) => (
-                                            <Option key={i} onClick={() => navigate("/clientPage")}><span style={{ marginRight: "10px" }}>Client</span>{option.Client}</Option>
+                                            <Option key={i} onClick={() => handleClientNavigation(option.ClientID)}>
+                                                <ApartmentIcon className='me-1' />
+                                                {option.Client}</Option>
                                         )) : clients.map((option, i) => (
-                                            <Option key={i} onClick={() => navigate("/clientPage")}><span style={{ marginRight: "10px" }}>Client</span>{option.Client}</Option>
+                                            <Option key={i} onClick={() => handleClientNavigation(option.ClientID)}><ApartmentIcon className='me-1' />{option.Client}</Option>
                                         ))}
                                         {filteredContactsForSearchBox.length > 0 ? filteredContactsForSearchBox.map((option, i) => (
-                                            <Option key={i} onClick={() => navigate("/contactPage")}><span style={{ marginRight: "10px" }}>Contact</span>{option["Company Name"]}</Option>
+                                            <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo,option.ContactNo)}><PersonIcon className='me-1' />{option["Company Name"]}</Option>
                                         )) : contacts.map((option, i) => (
-                                            <Option key={i} onClick={() => navigate("/contactPage")}><span style={{ marginRight: "10px" }}>Contact</span>{option["Company Name"]}</Option>
+                                            <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo,option.ContactNo)}><PersonIcon className='me-1' />{option["Company Name"]}</Option>
                                         ))}
                                     </Listbox>}
 
@@ -458,7 +496,7 @@ function Client() {
                         </Box>
 
                         <Box className="dropdown-box ms-4">
-                            <Button className='btn-select' onClick={() => handleDialogsOpen("Folder")}>{selectedFolder}</Button>
+                            <Button className='btn-select' onClick={(e) => handleDialogsOpen(e,"Folder")}>{selectedFolder}</Button>
                             {isFolder && <Box className="btn-Select">
                                 {allFolders.map((item) => {
                                     // pass folder-id in onClick handler
@@ -468,7 +506,7 @@ function Client() {
                         </Box>
 
                         <Box className="dropdown-box ms-4">
-                            <Button className='btn-select' onClick={() => handleDialogsOpen("Choice")}>{selectedChoice}</Button>
+                            <Button className='btn-select' onClick={(e) => handleDialogsOpen(e,"Choice")}>{selectedChoice}</Button>
                             {isChoice && <Box className="btn-list-box btn-Select">
                                 {["All", "Clients", "Contacts"].map((item) => {
                                     return <Button className='btn-list' onClick={() => basedOnClientContactAndAll(item)}>{item}</Button>
@@ -478,17 +516,20 @@ function Client() {
 
                         <Box className="dropdown-box ms-4">
                             <Box>
-                                <Fab size="small" className='btn-plus' aria-label="add" onClick={() => handleDialogsOpen("AdvFilter")}>
+                                <Fab size="small" className='btn-plus' aria-label="add" onClick={(e) => handleDialogsOpen(e,"AdvFilter")}>
                                     <AddIcon />
                                 </Fab>
                             </Box>
 
-                            {isAdvFilter && <Box className="btn-Select color-pic-box">
+                            {isAdvFilter && <Box className="btn-Select color-pic-box" onClick={(e)=>{
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }}>
                                 <Box className='clearfix'>
 
                                     <Box className='clearfix'>
-                                        <Typography variant='Body1' className='ps-1'>Filter:</Typography>
-                                        <Box className="mb-2">
+                                        <Typography variant='Body1' className='mb-2 d-block  bold'>Filter:</Typography>
+                                        {/* <Box className="mb-2">
                                             {advSearchKeyValue.map((item) => {
                                                 return <Button sx={{ backgroundColor: item.color }} className='btn-white'>{item.key}: {item.value}
                                                     <span onClick={() => handleFilterRemove(item)} className="material-symbols-outlined font-16 text-danger">
@@ -499,10 +540,7 @@ function Client() {
                                             <Fab size="small" className='btn-plus  ms-2' aria-label="add">
                                                 <AddIcon />
                                             </Fab>
-
-
-                                        </Box>
-
+                                        </Box> */}
 
                                         <div className='row'>
                                             <div className='col-md-4'>
@@ -555,21 +593,34 @@ function Client() {
                                                 </span> Add
                                             </Button>
                                         </div>
-
                                     </Box>
                                 </Box>
                             </Box>}
-
                         </Box>
-                    </Box>
+                        {/*  */}
 
+                        <Box className="mb-2 ms-3">
+                            {advSearchKeyValue.map((item) => {
+                                return <Button sx={{ backgroundColor: item.color }} className='btn-white text-white'><span className='text-white'>{item.key}: {item.value}</span>
+                                    <span onClick={() => handleFilterRemove(item)} className="material-symbols-outlined font-16 text-white">
+                                        close
+                                    </span></Button>
+                            })}
+
+                            {/* <Fab size="small" className='btn-plus  ms-2' aria-label="add">
+                                <AddIcon />
+                            </Fab> */}
+                        </Box>
+
+
+                    </Box>
 
                     <Box className='row'>
 
                         {
                             onlyClients && (filteredClients.length > 0 ? filteredClients.map((item, i) => {
                                 return <Box key={i} className='client-box-main'>
-                                    <Box className='client-box' onClick={() => navigate('/clientDetails')}>
+                                    <Box className='client-box' onClick={() => handleClientNavigation(item.ClientID)}>
                                         {/* <img src={pin} className='pin-img' /> */}
                                         <Box className='client-img'>
                                             <img src={user} />
@@ -589,7 +640,7 @@ function Client() {
                                 </Box>
                             }) : clients.map((item, i) => {
                                 return <Box key={i} className='client-box-main'>
-                                    <Box className='client-box' onClick={() => navigate('/clientDetails')}>
+                                    <Box className='client-box' onClick={() => handleClientNavigation(item.ClientID)}>
                                         {/* <img src={pin} className='pin-img' /> */}
                                         <Box className='client-img'>
                                             <img src={user} />
@@ -610,7 +661,7 @@ function Client() {
                         {
                             onlyContacts && (filteredContacts.length > 0 ? filteredContacts.map((item, i) => {
                                 return <Box key={i} className='client-box-main'>
-                                    <Box className='client-box'>
+                                    <Box className='client-box' onClick={() => handleContactNavigattion(item.OriginatorNo,item.ContactNo)}>
                                         {/* <img src={pin} className='pin-img' /> */}
                                         <Box className='client-img'>
                                             <img src={user} />
@@ -630,7 +681,7 @@ function Client() {
                                 </Box>
                             }) : contacts.map((item, i) => {
                                 return <Box key={i} className='client-box-main'>
-                                    <Box className='client-box'>
+                                    <Box className='client-box' onClick={() => handleContactNavigattion(item.OriginatorNo,item.ContactNo)}>
                                         {/* <img src={pin} className='pin-img' /> */}
                                         <Box className='client-img'>
                                             <img src={user} />
@@ -647,8 +698,6 @@ function Client() {
                                 </Box>
                             }))
                         }
-
-
                     </Box>
                 </Box>
             </Box>
