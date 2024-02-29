@@ -34,20 +34,10 @@ import Badge from '@mui/material/Badge';
 import { useAutocomplete } from '@mui/base/useAutocomplete';
 import ClientDetails from '../client/client-components/ClientDetails';
 import ContactDetails from '../contact/contact-components/ContactDetails';
-import Login from './Login';
+import TodoList from './TodoList';
 
 const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  p: 4,
-};
 const drawerWidth = 220;
 
 const openedMixin = (theme) => ({
@@ -387,15 +377,15 @@ export default function SidebarNav() {
 
           <List className='side-navi'>
 
-            {['Dashboard', 'Connections', 'Smart Views', 'Log Out'].map((text, index) => (
-              <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+            {[{tabLink:"/dashboard",tabName:'Dashboard'}, {tabLink:"/dashboard/TodoList",tabName:'To do list'}, {tabLink:"/dashboard/Connections",tabName:'Connections'}, {tabLink:"/dashboard/SmartViews",tabName:'Smart Views'}, {tabLink:"/dashboard/LogOut",tabName:'Log Out'}].map((text, index) => (
+              <ListItem key={index} disablePadding sx={{ display: 'block' }}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
                     justifyContent: open ? 'initial' : 'center',
                     px: 2.5,
                   }}
-                  onClick={() => { text === "Dashboard" ? navigate("/") : navigate("/" + text) }}
+                  onClick={() => navigate(text.tabLink)}
                 >
                   <ListItemIcon
                     sx={{
@@ -406,7 +396,7 @@ export default function SidebarNav() {
                   >
                     {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                   </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                  <ListItemText primary={text.tabName} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
               </ListItem>
             ))}
@@ -422,6 +412,7 @@ export default function SidebarNav() {
             <Route index element={<Client />} />
             <Route path="/clientDetails" element={<ClientDetails />} />
             <Route path="/ContactDetails" element={<ContactDetails />} />
+            <Route path="/TodoList" element={<TodoList />} />
 
             
           </Routes>
