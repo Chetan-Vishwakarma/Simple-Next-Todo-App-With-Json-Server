@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React,{useState,useEffect, useReducer} from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -35,6 +35,7 @@ import { useAutocomplete } from '@mui/base/useAutocomplete';
 import ClientDetails from '../client/client-components/ClientDetails';
 import ContactDetails from '../contact/contact-components/ContactDetails';
 import TodoList from './TodoList';
+import CommanCLS from '../services/CommanService';
 
 const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
 
@@ -106,10 +107,20 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function SidebarNav() {
+
+  const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
+  const [password, setPassword] = useState(localStorage.getItem("Password"));
+  const [Email, setEmail] = useState(localStorage.getItem("Email"));
+  const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
+
+  const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+    let Cls = new CommanCLS(baseUrl, agrno, Email, password);
+
   const navigate = useNavigate();
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
-  const [userName,setUserName] = React.useState("");
+  const [userName, setUserName] = React.useState("");
+  const [userEmail,setUserEmail] = useState("");
 
   const handleDrawerOpen = () => {
     setOpen(false);
@@ -150,14 +161,42 @@ export default function SidebarNav() {
     setAnchorEl(null);
   };
 
-  const handleLogout=()=>{
+  const handleLogout = () => {
     localStorage.clear();
     navigate("/");
   }
 
-  React.useEffect(()=>{
+  const Json_Get_CRM_UserByProjectId=()=>{
+    let obj = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      ProjectId: folderId
+  };
+    Cls.Json_Get_CRM_UserByProjectId(obj, (sts, data) => {
+      if (sts) {
+          if (data) {
+              let json = JSON.parse(data);
+              console.log("Json_Get_CRM_UserByProjectId", json.Table);
+              json.Table.map((item)=>{
+                if(item.loggedInUser==="True"){
+                  setUserName(item.DisplayName);
+                  setUserEmail(item.Name);
+                }
+              });
+          }
+      }
+  });
+  }
 
-  },[]);
+  React.useEffect(() => {
+    setAgrNo(localStorage.getItem("agrno"));
+    setFolderId(localStorage.getItem("FolderId"));
+    setPassword(localStorage.getItem("Password"));
+    setEmail(localStorage.getItem("Email"));
+    Json_Get_CRM_UserByProjectId();
+    navigate("/dashboard/TodoList");
+  }, []);
   return (
     <>
       <Box className='d-block d-md-flex'>
@@ -304,8 +343,8 @@ export default function SidebarNav() {
                           <img src={user} />
                         </Box>
                         <Box className="user-content text-start">
-                          <Typography variant='h2'>Patrick Jo.</Typography>
-                          <Typography variant='body1'>Admin</Typography>
+                          <Typography variant='h2'>{userName}</Typography>
+                          <Typography variant='body1'>{userEmail}</Typography>
                         </Box>
                       </Box>
                     </Button>
@@ -333,7 +372,7 @@ export default function SidebarNav() {
                         </ListItemIcon>
                         Settings
                       </MenuItem>
-                      <MenuItem onClick={()=>{
+                      <MenuItem onClick={() => {
                         handleClose();
                         handleLogout();
                       }}>
@@ -375,7 +414,7 @@ export default function SidebarNav() {
 
           <List className='side-navi'>
 
-            {[{tabLink:"/dashboard",tabName:'Dashboard'}, {tabLink:"/dashboard/TodoList",tabName:'To do list'}, {tabLink:"/dashboard/Connections",tabName:'Connections'}, {tabLink:"/dashboard/SmartViews",tabName:'Smart Views'}, {tabLink:"/dashboard/LogOut",tabName:'Log Out'}].map((text, index) => (
+            {[{ tabLink: "/dashboard", tabName: 'Dashboard' }, { tabLink: "/dashboard/TodoList", tabName: 'To do list' }, { tabLink: "/dashboard/Connections", tabName: 'Connections' }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views' }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out' }].map((text, index) => (
               <ListItem key={index} disablePadding sx={{ display: 'block' }}>
                 <ListItemButton
                   sx={{
@@ -412,7 +451,7 @@ export default function SidebarNav() {
             <Route path="/ContactDetails" element={<ContactDetails />} />
             <Route path="/TodoList" element={<TodoList />} />
 
-            
+
           </Routes>
         </Box>
       </Box>

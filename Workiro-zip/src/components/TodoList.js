@@ -135,7 +135,7 @@ function TodoList() {
                                                 aria-expanded={open ? 'true' : undefined}
                                                 onClick={handleClick}
                                             >
-                                                {item.Priority === 1 ? "High" : item.Priority === 2 ? "Medium" : "Low"}
+                                                {item.Status && item.Status}
                                             </Button>
                                             <Menu
                                                 id="basic-menu"
@@ -157,7 +157,7 @@ function TodoList() {
                                 </Box>
         
                                 <Box className='mt-2'>
-                                    <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
+                                    <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
                                     <Button variant="text" className='btn-blue-2'>Defer</Button>
                                 </Box>
         

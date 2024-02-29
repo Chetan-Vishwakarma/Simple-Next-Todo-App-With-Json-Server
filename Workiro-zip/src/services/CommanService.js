@@ -33,8 +33,8 @@ export default class CommanCLS extends AllService {
        })
     }
 
-    Json_GetFolders(callBack) {       
-        super.CreateNewServiceParamObject("Json_GetFolders");       
+    Json_GetFolders(obj,callBack) {       
+        super.CreateNewServiceParamObject("Json_GetFolders",obj,false);       
         super.CallNewService("Json_GetFolders", function (status, Data) {
             if (status) {
                 callBack(true, Data);
