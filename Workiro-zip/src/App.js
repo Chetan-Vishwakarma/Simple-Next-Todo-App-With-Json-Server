@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Login from './components/Login'
 import ClientDetails from './client/client-components/ClientDetails'
 import ContactDetails from './contact/contact-components/ContactDetails'
+import TodoList from './components/TodoList'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path='/dashboard' element={<PrivateRoute/>}>
             <Route path="clientDetails" element={<ClientDetails />} />
             <Route path="ContactDetails" element={<ContactDetails />} />
+            <Route path="TodoList" element={<TodoList />} />
           </Route>
         </Routes>
       </BrowserRouter>

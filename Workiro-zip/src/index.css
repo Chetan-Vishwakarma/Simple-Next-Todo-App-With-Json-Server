@@ -18,6 +18,9 @@
 .font-14 {
   font-size: 14px !important;
 }
+.font-18 {
+  font-size: 18px !important;
+}
 
 select:focus,
 .form-control:focus {
@@ -69,10 +72,13 @@ input,
   box-shadow: none;
   outline: none;
   padding: 0 5px;
+  font-size: 16px !important;
 }
+
 .relative {
   position: relative;
 }
+
 .resize-none {
   resize: none;
 }
@@ -94,6 +100,10 @@ input,
 
 .btn-blue-2 {
   background: #4780FF !important;
+}
+
+button {
+  text-transform: capitalize !important;
 }
 
 .btn-blue-2,
@@ -206,6 +216,7 @@ input,
   border-radius: 90px;
   background: #557ff7;
   color: #fff;
+  cursor: pointer;
 }
 
 /* .box-user-list-dropdown button:nth-child(-n + 2) .user-img-list {
@@ -315,18 +326,37 @@ input,
   position: absolute;
   right: 15px;
 }
-
-
 /* header css end */
+
+.select-dropdown button {
+  background: #fff;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.select-dropdown button svg {
+  opacity: 0;
+  visibility: hidden;
+  transition: .5s all ease;
+}
+
+.select-dropdown button:hover svg {
+  opacity: 1;
+  visibility: visible;
+}
+
+
 .datepicker input {
   padding: 10px 0;
   color: #000;
-  width: 90px;
+  /* width: 90px; */
 }
 
 .datepicker fieldset {
   border: 0;
-  border-bottom: 2px solid #000;
+  border-bottom: 0px solid #000;
   border-radius: 0px;
   padding: 0px !important;
 }
@@ -334,9 +364,16 @@ input,
 .text-black {
   color: #1C274C;
 }
+.text-blue {
+  color: #557ff7 !important;
+}
 
 .min-width-auto {
   min-width: auto !important;
+}
+
+.text-gray {
+  color: #777777;
 }
 
 .text-white {
@@ -357,9 +394,9 @@ hr {
 
 .custom-modal .MuiDialog-container .MuiDialog-paperWidthSm {
   width: 100%;
-  max-width: 650px;
+  max-width: 850px;
   border-radius: 10px;
-  padding: 10px 20px 10px;
+  /* padding: 10px 20px 10px; */
 }
 
 .client-box-row {
@@ -416,10 +453,12 @@ hr {
   justify-content: center;
   position: relative;
 }
+
 .country-flage img {
   width: 20px;
   height: 20px;
 }
+
 .country-flage {
   width: 20px;
   height: 20px;
@@ -434,16 +473,18 @@ hr {
   border: 2px solid #fff;
   overflow: hidden;
 }
+
 .client-img img {
   height: 110px;
 }
+
 .user-register {
   position: absolute;
-    right: 0;
-    bottom: 32px;
-    color: #557ff7;
-    background: #fff;
-    border-radius: 90px;
+  right: 0;
+  bottom: 32px;
+  color: #557ff7;
+  background: #fff;
+  border-radius: 90px;
 }
 
 .client-box h2 {
@@ -489,6 +530,9 @@ hr {
   border-bottom: 2px solid;
   border-radius: 0px;
   text-transform: capitalize;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .btn-Select {
@@ -616,7 +660,7 @@ hr {
 
 .file-uploads {
   position: relative;
-  margin-top: 20px;
+  margin-top: 14px;
 }
 
 .file-uploads #file-upload {
@@ -630,7 +674,7 @@ hr {
 .file-uploads .file-uploads-label {
   background: #fff;
   border: 2px dashed #f1f1f1;
-  padding: 16px;
+  padding: 8px 10px;
   border-radius: 5px;
   display: flex;
   align-items: center;
@@ -639,7 +683,7 @@ hr {
 }
 
 .file-uploads .file-uploads-label .icon {
-  font-size: 44px;
+  font-size: 26px;
   font-weight: 200 !important;
   margin-right: 12px;
   color: #bababa;
@@ -647,14 +691,14 @@ hr {
 
 .file-uploads .file-uploads-label h4 {
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   color: #474747;
   margin-bottom: 5px;
 }
 
 .file-uploads .file-uploads-label p {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 400;
   color: #aeaeae;
 }
 
@@ -831,6 +875,11 @@ hr {
   color: #fff;
 }
 
+.main-accordian .accordian-box .table-responsive {
+  max-height: 284px;
+  overflow: auto;
+}
+
 .contact-detail-row {
   display: flex;
   text-align: center;
@@ -927,6 +976,31 @@ hr {
   border-radius: 6px;
   background: #ebf6fe;
 }
+
+/* .text-yellow {
+  color: #ff9400d6 !important;
+} */
+
+.todo-list-box {
+  border-radius: 20px;
+  border: 2px dashed #e1e1e1;
+}
+
+.todo-list-box h2 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.check-todo svg {
+  font-size: 32px;
+}
+.check-todo {
+  position: absolute !important;
+  right: 10px;
+  top: 10px;
+  /* font-size: 34px !important; */
+}
+
 
 @media only screen and (max-width: 1366px) {
   .client-box-main {

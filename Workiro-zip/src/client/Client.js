@@ -49,12 +49,12 @@ function Client() {
     // search box states ends
 
     const apiUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
-    let getClientsByFolder = async () => {
+    let getClientsByFolder = async (folder_id=folderId) => {
         const response = await axios.post(`${apiUrl}Json_GetClientsByFolder`, {
             agrno: agrno,
             Email: Email,
             password: password,
-            ProjectId: folderId
+            ProjectId: folder_id
         });
         let res = JSON.parse(response?.data?.d);
         //setBothClientContact(res?.Table1);

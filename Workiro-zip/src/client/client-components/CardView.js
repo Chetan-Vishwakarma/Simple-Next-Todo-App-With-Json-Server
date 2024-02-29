@@ -184,9 +184,9 @@ function CardView(props) {
                                         <Box className='client-img'>
                                             <img src={user} />
                                         </Box>
-                                        <Typography title={item.Client} variant="h2">{item.Client.substr(0, 12) + "."}</Typography>
+                                        <Typography title={item.Client} variant="h2">{item.Client && item.Client.substr(0, 12) + "."}</Typography>
                                         <Typography variant='h4'>Admin</Typography>
-                                        <Typography title={item.Email} variant='p' className='mb-0'>{item.Client.length > 25 ? (item.Client.substr(0, 20) + ".") : item.Client}</Typography>
+                                        <Typography title={item.Email} variant='p' className='mb-0'>{item.Client && (item.Client.length > 25 ? (item.Client.substr(0, 20) + ".") : item.Client)}</Typography>
                                         <Box className='color-filter-box mt-3'>
                                             {advSearchKeyValue.map((data) => {
                                                 return <Typography variant='span' className='color-filter-row' style={{ color: data.color, borderColor: data.color }}>{item[data.key]}</Typography>;
@@ -204,9 +204,9 @@ function CardView(props) {
                                         <Box className='client-img'>
                                             <img src={user} />
                                         </Box>
-                                        <Typography title={item.Client} variant="h2">{item.Client.length > 25 ? (item.Client.substr(0, 20) + ".") : item.Client}</Typography>
+                                        <Typography title={item.Client} variant="h2">{item.Client && (item.Client.length > 25 ? (item.Client.substr(0, 20) + ".") : item.Client)}</Typography>
                                         <Typography variant='h4'>Admin</Typography>
-                                        <Typography title={item.Email} variant='p' className='mb-0'>{item.Email.substr(0, 22) + "."}</Typography>
+                                        <Typography title={item.Email} variant='p' className='mb-0'>{item.Email && (item.Email.substr(0, 22) + ".")}</Typography>
                                         {/* <Box className='color-filter-box mt-3'>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
@@ -225,9 +225,9 @@ function CardView(props) {
                                         <Box className='client-img'>
                                             <img src={user} />
                                         </Box>
-                                        <Typography title={item["Company Name"]} variant="h2">{item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"]}</Typography>
+                                        <Typography title={item["Company Name"]} variant="h2">{item["Company Name"]&& (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
                                         <Typography variant='h4'>Admin</Typography>
-                                        <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"].substr(0, 22) + "."}</Typography>
+                                        <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"] && item["E-Mail"].substr(0, 22) + "."}</Typography>
                                         <Box className='color-filter-box mt-3'>
                                             {advSearchKeyValue.map((data) => {
                                                 return <Typography variant='span' className='color-filter-row' style={{ color: data.color, borderColor: data.color }}>{item[data.key]}</Typography>;
@@ -245,9 +245,9 @@ function CardView(props) {
                                         <Box className='client-img'>
                                             <img src={user} />
                                         </Box>
-                                        <Typography title={item["Company Name"]} variant="h2">{item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"]}</Typography>
+                                        <Typography title={item["Company Name"]} variant="h2">{item["Company Name"]&& (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
                                         <Typography variant='h4'>Admin</Typography>
-                                        <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"].substr(0, 22) + "."}</Typography>
+                                        <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"]&& (item["E-Mail"].substr(0, 22) + ".")}</Typography>
                                         {/* <Box className='color-filter-box mt-3'>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
