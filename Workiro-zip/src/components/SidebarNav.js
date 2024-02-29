@@ -109,6 +109,7 @@ export default function SidebarNav() {
   const navigate = useNavigate();
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
+  const [userName,setUserName] = React.useState("");
 
   const handleDrawerOpen = () => {
     setOpen(false);
@@ -153,6 +154,10 @@ export default function SidebarNav() {
     localStorage.clear();
     navigate("/");
   }
+
+  React.useEffect(()=>{
+
+  },[]);
   return (
     <>
       <Box className='d-block d-md-flex'>

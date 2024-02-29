@@ -177,4 +177,16 @@ export default class CommanCLS extends AllService {
         })
     }
 
+    Json_Get_CRM_UserByProjectId(obj,callBack) { 
+        super.CreateNewServiceParamObject("Json_Get_CRM_UserByProjectId",obj,true);   
+        super.CallNewService("Json_Get_CRM_UserByProjectId", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
+
 }

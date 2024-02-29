@@ -64,6 +64,17 @@ function TodoList() {
         Json_CRM_GetOutlookTask();
     },[]);
 
+    function startFormattingDate(dt) {
+        const timestamp = parseInt(/\d+/.exec(dt));
+        const date = new Date(timestamp);
+        const formattedDate = date.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
+
+        return formattedDate==="Invalid Date"?"01/01/1900":formattedDate;
+    }
 
     return (
         <Box className="container-fluid p-0">
@@ -109,7 +120,7 @@ function TodoList() {
                                         {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
                                         {/* <a href='#'>Patrick</a>, */}
                                         <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +1</a></Typography>
-                                    <Typography variant='subtitle1 sembold'>{item["EndDateTime"]}</Typography>
+                                    <Typography variant='subtitle1 sembold'>{startFormattingDate(item["EndDateTime"])}</Typography>
                                 </Box>
         
                                 <Box className='d-flex align-items-center justify-content-between'>
@@ -124,7 +135,7 @@ function TodoList() {
                                                 aria-expanded={open ? 'true' : undefined}
                                                 onClick={handleClick}
                                             >
-                                                priority
+                                                {item.Priority === 1 ? "High" : item.Priority === 2 ? "Medium" : "Low"}
                                             </Button>
                                             <Menu
                                                 id="basic-menu"
