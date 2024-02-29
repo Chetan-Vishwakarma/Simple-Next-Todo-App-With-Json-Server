@@ -98,7 +98,7 @@ function ClientDetails() {
                 }
             });
         }catch(err){
-            console.log("Error while calling Json_GetToFavourites",err);
+            console.log("Error while calling Json_RemoveToFavourite",err);
         }
     }
 
@@ -122,7 +122,7 @@ function ClientDetails() {
                 }
             });
         }catch(err){
-            console.log("Error while calling Json_GetToFavourites",err);
+            console.log("Error while calling Json_AddToFavourite",err);
         }
     }
 
