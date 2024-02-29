@@ -49,7 +49,7 @@ function ClientDetails() {
         setValue(newValue);
     };
 
-    const Json_GetToFavourites = () => {
+    const Json_GetToFavourites = (currentUser) => {
         let obj = {
             agrno: agrno,
             Email: Email,
@@ -61,15 +61,16 @@ function ClientDetails() {
                     if (data) {
                         let json = JSON.parse(data);
                         console.log("Json_GetToFavourites", json);
-                        let details = json.Table;
-                        for (let iv of details) {
-                            console.log("asf",details);
-                            if (iv.OriginatorNo == "Case1") {
+                        let favouriteUser = json.Table;
+                        if(favouriteUser.length>0 && currentUser.length>0){
+                            let ans = favouriteUser.some((item)=>item.OriginatorNo === currentUser[0]?.OriginatorNo);
+                            if(ans){
                                 setSelected(true);
-                                break;
-                                // console.log("This is Favourite Client");
+                            }else{
+                                setSelected(false);
                             }
-    
+                        }else{
+                            setSelected(false);
                         }
                     }
                 }
@@ -126,6 +127,27 @@ function ClientDetails() {
         }
     }
 
+    // const Json_GetClientsByFolder=()=>{
+    //     let obj = {
+    //         agrno: agrno,
+    //         Email: Email,
+    //         password: password,
+    //         ProjectId: folderId
+    //     };
+    //     try{
+    //         Cls.Json_GetClientsByFolder(obj, (sts, data) => {
+    //             if (sts) {
+    //                 if (data) {
+    //                     let json = JSON.parse(data);
+    //                     console.log("Json_GetClientsByFolder", json);
+    //                 }
+    //             }
+    //         });
+    //     }catch(err){
+    //         console.log("Error while calling Json_GetClientsByFolder",err);
+    //     }
+    // }
+
     const Json_GetClientCardDetails = () => {
         let obj = {
             Email: Email,
@@ -142,7 +164,8 @@ function ClientDetails() {
                         console.log("Json_GetClientCardDetails", json);
                         setClientDetails(json);
                         setCompanyDetails(json.Table1);
-                        Json_GetToFavourites();
+                        //Json_GetClientsByFolder();
+                        Json_GetToFavourites(json.Table1);
                     }
                 }
             });

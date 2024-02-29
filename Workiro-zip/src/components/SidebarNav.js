@@ -149,20 +149,10 @@ export default function SidebarNav() {
     setAnchorEl(null);
   };
 
-  // user dropdown start
-  const [useranchorEl, usersetuserAnchorEl] = React.useState(null);
-
-  const userDropdown = Boolean(useranchorEl);
-
-  const userHandleClick = (event) => {
-    usersetuserAnchorEl(event.currentTarget);
-  };
-  const userhandleClose = () => {
-    usersetuserAnchorEl(null);
-  };
-  // user dropdown end
-
-
+  const handleLogout=()=>{
+    localStorage.clear();
+    navigate("/");
+  }
   return (
     <>
       <Box className='d-block d-md-flex'>
@@ -338,7 +328,10 @@ export default function SidebarNav() {
                         </ListItemIcon>
                         Settings
                       </MenuItem>
-                      <MenuItem onClick={handleClose}>
+                      <MenuItem onClick={()=>{
+                        handleClose();
+                        handleLogout();
+                      }}>
                         <ListItemIcon>
                           <Logout fontSize="small" />
                         </ListItemIcon>

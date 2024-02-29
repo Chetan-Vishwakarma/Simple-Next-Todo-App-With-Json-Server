@@ -165,4 +165,16 @@ export default class CommanCLS extends AllService {
         })
     }
 
+    Json_GetClientsByFolder(obj,callBack) { 
+        super.CreateNewServiceParamObject("Json_GetClientsByFolder",obj,true);   
+        super.CallNewService("Json_GetClientsByFolder", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
+
 }
