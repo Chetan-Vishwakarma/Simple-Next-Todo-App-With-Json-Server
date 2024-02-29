@@ -1,6 +1,6 @@
 import React from 'react'
 import SidebarNav from "./components/SidebarNav"
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Login from './components/Login'
 import ClientDetails from './client/client-components/ClientDetails'
 import ContactDetails from './contact/contact-components/ContactDetails'
@@ -11,7 +11,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Login/>}/>
-          <Route path='/dashboard' element={<SidebarNav/>}>
+          <Route path='/dashboard' element={<PrivateRoute/>}>
             <Route path="clientDetails" element={<ClientDetails />} />
             <Route path="ContactDetails" element={<ContactDetails />} />
           </Route>
@@ -19,6 +19,25 @@ function App() {
       </BrowserRouter>
     </div>
   )
+}
+
+function PrivateRoute(){
+  let isLoggedIn=true;
+    let email =localStorage.getItem('Email');
+    let pass = localStorage.getItem('Password');
+    let agrno = localStorage.getItem('agrno');
+    console.log("isLoggedIn",isLoggedIn);
+    if(email && pass && agrno) {
+        isLoggedIn=true;
+    }
+    else{
+        isLoggedIn=false;  
+    }
+  return isLoggedIn ? (
+        <SidebarNav></SidebarNav>
+    ) : (
+        <Navigate to="/" />
+    );
 }
 
 export default App
