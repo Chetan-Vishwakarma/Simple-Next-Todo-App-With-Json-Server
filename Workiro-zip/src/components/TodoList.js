@@ -17,6 +17,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import BallotIcon from '@mui/icons-material/Ballot';
+import Link from '@mui/material/Link';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -134,7 +140,7 @@ function TodoList() {
                             <Box className="d-flex align-items-center justify-content-between">
                                 <Box className="d-flex">
 
-                                    <div>
+                                    <Box>
                                         <Button
                                             id="fade-button5"
                                             aria-controls={openDropdown ? 'fade-menu' : undefined}
@@ -159,7 +165,7 @@ function TodoList() {
                                             <MenuItem onClick={handleCloseDropdown}>My account</MenuItem>
                                             <MenuItem onClick={handleCloseDropdown}>Logout</MenuItem>
                                         </Menu>
-                                    </div>
+                                    </Box>
 
 
                                     {/* <div>
@@ -264,11 +270,108 @@ function TodoList() {
 
                             <Typography variant="h4">Contact Agreement Update</Typography>
 
-                            <Box className='d-flex'>
+                            <Box className='d-flex flex-wrap justify-content-between'>
                                 <Box className='d-flex'>
-                                    <p>Client: ABC Limited</p>
+                                    <p className='pe-2 me-2 border-end'><span className='text-black'>Client:</span> ABC Limited</p>
+                                    <p><span className='text-black'>Section:</span> ABC Limited</p>
+                                </Box>
+
+                                <Box className="d-flex align-items-center mb-4 flex-wrap">
+                                    <Box className="user-img-list me-2">
+                                        <img src={user} />
+                                        {/* <p>PJ</p> */}
+                                    </Box>
+                                    <Box className="user-img-list me-2">
+                                        <p>PJ</p>
+                                    </Box>
+                                    <Box className="user-img-list user-total-list me-2">
+                                        <p>14+</p>
+                                    </Box>
                                 </Box>
                             </Box>
+                            {/*  */}
+
+                            <Box className='d-flex flex-wrap justify-content-between align-items-center'>
+
+                                <Link href="#" className='text-decoration-none d-flex'><BallotIcon className='me-1' /> 15 Documents</Link>
+
+                                <Box className='d-flex'>
+                                    <Box className='mb-2 border-bottom me-2 width-150'>
+                                        <label className='font-14 text-black'>Start Date</label>
+                                        <LocalizationProvider className='pe-0 sadik' dateAdapter={AdapterDayjs} >
+                                            <DatePicker className="datepicker w-100" />
+                                        </LocalizationProvider>
+                                    </Box>
+
+                                    <Box className="border-bottom mb-2 width-150">
+                                        <Box className='mb-2 '>
+                                            <label className='font-14 semibold text-black'>Due By</label>
+                                            <LocalizationProvider className='pe-0 sadik' dateAdapter={AdapterDayjs} >
+                                                <DatePicker className="datepicker w-100" />
+                                            </LocalizationProvider>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            </Box>
+
+                            <Box className="mt-3 mb-3">
+                                <textarea className='form-control textarea resize-none' placeholder='Description'></textarea>
+                            </Box>
+
+                            <Box className='d-flex'>
+                                <Button variant="text" className='btn-blue-2 me-2'>Mark complete</Button>
+                                <Button variant="text" className='btn-blue-2'>Defer</Button>
+                            </Box>
+
+                            <Box className='white-box'>
+                                <Box className='chat-box d-flex align-items-end'>
+
+                                    <Box class="client-img me-3 mb-0">
+                                        <img src={user} />
+                                    </Box>
+
+                                    <Box class="chat-message me-2">
+                                        <Box class="inner-chat-message me-2">
+                                            <Typography variant="body1">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</Typography>
+
+                                            <Box className='d-flex'>
+                                                <Typography variant="body1">6.30 pm</Typography>
+
+
+                                                <div>
+                                                    <Button
+                                                        id="fade-button"
+                                                        aria-controls={open ? 'fade-menu' : undefined}
+                                                        aria-haspopup="true"
+                                                        aria-expanded={open ? 'true' : undefined}
+                                                        onClick={handleClick}
+                                                        className='min-width-auto px-0 text-gray'
+                                                    >
+
+                                                        <MoreVertIcon />
+
+                                                    </Button>
+                                                    <Menu
+                                                        id="fade-menu"
+                                                        MenuListProps={{
+                                                            'aria-labelledby': 'fade-button',
+                                                        }}
+                                                        anchorEl={anchorEl}
+                                                        open={open}
+                                                        onClose={handleClose}
+                                                    >
+                                                        <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                                        <MenuItem onClick={handleClose}>My account</MenuItem>
+                                                    </Menu>
+                                                </div>
+
+                                            </Box>
+                                        </Box>
+                                    </Box>
+
+                                </Box>
+                            </Box>
+
 
 
                         </DialogContentText>

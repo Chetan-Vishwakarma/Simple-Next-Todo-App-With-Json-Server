@@ -217,7 +217,15 @@ button {
   background: #557ff7;
   color: #fff;
   cursor: pointer;
+  border: 2px solid transparent;
 }
+.user-img-list.user-total-list {
+  background: #fff;
+  color: #557ff7;
+  border-color: #557ff7;
+  font-weight: 600;
+}
+
 
 /* .box-user-list-dropdown button:nth-child(-n + 2) .user-img-list {
   background: #088aee;
@@ -347,7 +355,9 @@ button {
   visibility: visible;
 }
 
-
+.width-150 {
+  width: 150px;
+}
 .datepicker input {
   padding: 10px 0;
   color: #000;
@@ -444,6 +454,7 @@ hr {
 
 .client-img {
   width: 110px;
+  min-width: 110px;
   height: 110px;
   overflow: hidden;
   border-radius: 90px;
@@ -999,6 +1010,21 @@ hr {
   right: 10px;
   top: 10px;
   /* font-size: 34px !important; */
+}
+
+.chat-box .client-img {
+  width: 45px;
+  height: 45px;
+  min-width: 45px;
+}
+.chat-box .client-img img {
+  height: 45px;
+}
+.inner-chat-message {
+  background: #e9e9e9;
+  padding: 16px;
+  font-size: 14px;
+  border-radius: 30px 30px 30px 0px;
 }
 
 
