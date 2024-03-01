@@ -104,7 +104,7 @@ console.log(obj);
 //   title: 'Login Successful!',
 //   text: 'Welcome back, ' + obj.Email + '!',
 // });
-navigate("/dashboard");
+navigate("/dashboard/TodoList");
   })
 }
 

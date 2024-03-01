@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
 import CardView from './client-components/CardView';
+import CommanCLS from '../services/CommanService';
 
 
 function Client() {
@@ -48,20 +49,79 @@ function Client() {
     const [filteredContactsForSearchBox, setFilteredContactsForSearchBox] = useState([]);
     // search box states ends
 
-    const apiUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
-    let getClientsByFolder = async (folder_id=folderId) => {
-        const response = await axios.post(`${apiUrl}Json_GetClientsByFolder`, {
+    const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+
+    let Cls = new CommanCLS(baseUrl, agrno, Email, password);
+
+    const Json_GetFolders=()=>{
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password
+        };
+        try {
+            Cls.Json_GetFolders(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_GetFolders", json);
+                        setAllFolders(json.Table);
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_GetFolders", err);
+        }
+    }
+
+    const Json_GetContactListByFolder = () => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            intFolderId: folderId
+        };
+        try {
+            Cls.Json_GetContactListByFolder(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_GetContactListByFolder", json);
+                        setContacts(formateDate(json?.Table));  // ye date formate ke liye use kiya he
+                        setContactKeys(Object.keys(json.Table[0]));
+                        Json_GetFolders();
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_GetContactListByFolder", err);
+        }
+    }
+
+    const Json_GetClientsByFolder = (folder_id = folderId) => {
+        let obj = {
             agrno: agrno,
             Email: Email,
             password: password,
             ProjectId: folder_id
-        });
-        let res = JSON.parse(response?.data?.d);
-        //setBothClientContact(res?.Table1);
-        console.log("getClientsByFolder", res?.Table1);
-        setClients(res?.Table1);
-        setClientKeys(Object.keys(res.Table1[0]));
+        };
+        try {
+            Cls.Json_GetClientsByFolder(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_GetClientsByFolder", json);
+                        setClients(json?.Table1);
+                        setClientKeys(Object.keys(json.Table1[0]));
+                        Json_GetContactListByFolder();
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_GetClientsByFolder", err);
+        }
     }
+
     function startFormattingDate(dt) {
         const timestamp = parseInt(/-\d+/.exec(dt));
         const date = new Date(timestamp);
@@ -82,41 +142,12 @@ function Client() {
         })
         return data;
     }
-    let getContactsByFolder = async () => {
-        const response = await axios.post(`${apiUrl}Json_GetContactListByFolder`, {
-            agrno: agrno,
-            Email: Email,
-            password: password,
-            intFolderId: folderId
-        });
-        if (response?.data?.d !== '') {
-            let res = JSON.parse(response?.data?.d);
-
-            setContacts(formateDate(res?.Table));  // ye date formate ke liye use kiya he
-
-            setContactKeys(Object.keys(res.Table[0]));
-            console.log("getContactsByFolder", res?.Table);
-        }
-    }
-    let getAllFolders = async () => {
-        const response = await axios.post(`${apiUrl}Json_GetFolders`, {
-            agrno: agrno,
-            Email: Email,
-            password: password
-        });
-        if (response.data.d !== "") {
-            let res = JSON.parse(response.data.d).Table;
-            setAllFolders(res);
-        }
-    }
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
-        getClientsByFolder();
-        getContactsByFolder();
-        getAllFolders();
+        Json_GetClientsByFolder();
     }, []);
     const basedOnClientContactAndAll = (target) => {
         setSelectedChoice(target);
@@ -135,8 +166,8 @@ function Client() {
     let handleFolderSelection = (folderID, folderName) => {
         setSelectedFolder(folderName);
         setIsFolder(false);
-        getClientsByFolder(folderID);
-        getContactsByFolder(folderID);
+        Json_GetClientsByFolder(folderID);
+        Json_GetContactListByFolder(folderID);
     }
     const handleSearch = (value) => {
         setSearchInput(value);
@@ -260,7 +291,7 @@ function Client() {
             setAdvSearchKeyValue(advSearchKeyValue.filter((item) => item.key !== target));
         }
     }
-    let handleDialogsOpen = (e,toOpen) => {
+    let handleDialogsOpen = (e, toOpen) => {
         e.stopPropagation();
         if (toOpen === "Folder") {
             setIsFolder(!isFolder);
@@ -291,26 +322,26 @@ function Client() {
         setIsChoice(false);
         setIsSearch(false);
     }
-    const handleContactNavigattion=(originator_no,contact_no)=>{
-        navigate('/dashboard/ContactDetails',{
-            state:{
+    const handleContactNavigattion = (originator_no, contact_no) => {
+        navigate('/dashboard/ContactDetails', {
+            state: {
                 agrno: agrno,
                 Email: Email,
                 password: password,
                 folderId: folderId,
                 originatorNo: originator_no,
-                contactNo: contact_no   
+                contactNo: contact_no
             }
         })
     }
-    const handleClientNavigation=(clientId)=>{
-        navigate('/dashboard/clientDetails',{
-            state:{
+    const handleClientNavigation = (clientId) => {
+        navigate('/dashboard/clientDetails', {
+            state: {
                 agrno: agrno,
                 Email: Email,
                 password: password,
                 folderId: folderId,
-                originatorNo: clientId 
+                originatorNo: clientId
             }
         })
     }
@@ -333,39 +364,39 @@ function Client() {
                 </Breadcrumbs>
             </div>
 
-            <CardView 
-              isSearch={isSearch}
-              handleDialogsOpen={handleDialogsOpen}
-              handleSearch={handleSearch}
-              filteredClientsForSearchBox={filteredClientsForSearchBox}
-              handleClientNavigation={handleClientNavigation}
-              filteredContactsForSearchBox={filteredContactsForSearchBox}
-              handleContactNavigattion={handleContactNavigattion}
-              handleFolderSelection={handleFolderSelection}
-              isFolder={isFolder}
-              allFolders={allFolders}
-              isChoice={isChoice}
-              isAdvFilter={isAdvFilter}
-              selectedProperty={selectedProperty}
-              setSelectedProperty={setSelectedProperty}
-              clientKeys={clientKeys}
-              contactKeys={contactKeys}
-              selectedPropertyValue={selectedPropertyValue}
-              setSelectedPropertyValue={setSelectedPropertyValue}
-              advSearchKeyValue={advSearchKeyValue}
-              setSelectedColor={setSelectedColor}
-              colorArr={colorArr}
-              handleAdvanceFilterAgain={handleAdvanceFilterAgain}
-              handleFilterRemove={handleFilterRemove}
-              onlyClients={onlyClients}
-              filteredClients={filteredClients}
-              clients={clients}
-              onlyContacts={onlyContacts}
-              filteredContacts={filteredContacts}
-              contacts={contacts}
-              selectedFolder={selectedFolder}
-              selectedChoice={selectedChoice}
-              basedOnClientContactAndAll={basedOnClientContactAndAll}
+            <CardView
+                isSearch={isSearch}
+                handleDialogsOpen={handleDialogsOpen}
+                handleSearch={handleSearch}
+                filteredClientsForSearchBox={filteredClientsForSearchBox}
+                handleClientNavigation={handleClientNavigation}
+                filteredContactsForSearchBox={filteredContactsForSearchBox}
+                handleContactNavigattion={handleContactNavigattion}
+                handleFolderSelection={handleFolderSelection}
+                isFolder={isFolder}
+                allFolders={allFolders}
+                isChoice={isChoice}
+                isAdvFilter={isAdvFilter}
+                selectedProperty={selectedProperty}
+                setSelectedProperty={setSelectedProperty}
+                clientKeys={clientKeys}
+                contactKeys={contactKeys}
+                selectedPropertyValue={selectedPropertyValue}
+                setSelectedPropertyValue={setSelectedPropertyValue}
+                advSearchKeyValue={advSearchKeyValue}
+                setSelectedColor={setSelectedColor}
+                colorArr={colorArr}
+                handleAdvanceFilterAgain={handleAdvanceFilterAgain}
+                handleFilterRemove={handleFilterRemove}
+                onlyClients={onlyClients}
+                filteredClients={filteredClients}
+                clients={clients}
+                onlyContacts={onlyContacts}
+                filteredContacts={filteredContacts}
+                contacts={contacts}
+                selectedFolder={selectedFolder}
+                selectedChoice={selectedChoice}
+                basedOnClientContactAndAll={basedOnClientContactAndAll}
             />
         </Box>
     )

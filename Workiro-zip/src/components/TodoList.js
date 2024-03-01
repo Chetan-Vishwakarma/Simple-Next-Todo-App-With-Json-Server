@@ -6,44 +6,34 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
 import user from "../images/user.jpg";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommanCLS from '../services/CommanService';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import BallotIcon from '@mui/icons-material/Ballot';
-import Link from '@mui/material/Link';
+
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
+import DescriptionIcon from '@mui/icons-material/Description';
+import { Radio } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
+import AttachmentIcon from '@mui/icons-material/Attachment';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
+import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
+import TaskDetailModal from './TaskDetailModal';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
+// chipset
+const handleDelete = () => {
+    console.info('You clicked the delete icon.');
+};
 
 function TodoList() {
 
-    // modal start
-    // modal start
-    const [openModal, setOpen] = React.useState(false);
-    const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setOpen(false);
-    };
-    // modal end
-    // modal end
 
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -77,7 +67,19 @@ function TodoList() {
                     if (data) {
                         let json = JSON.parse(data);
                         console.log("Json_CRM_GetOutlookTask", json.Table);
-                        setAllTask(json.Table);
+                        const formattedTasks = json.Table.map((task) => {
+                            let timestamp;
+                            if (task.EndDateTime) {
+                                timestamp = parseInt(task.EndDateTime.slice(6, -2));
+                            }
+
+                            const date = new Date(timestamp);
+
+                            return { ...task, EndDateTime: date };
+                        });
+
+                        setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
+                        // setAllTask(json.Table);
                     }
                 }
             });
@@ -95,306 +97,31 @@ function TodoList() {
     }, []);
 
     function startFormattingDate(dt) {
-        const timestamp = parseInt(/\d+/.exec(dt));
-        const date = new Date(timestamp);
+        //const timestamp = parseInt(/\d+/.exec(dt));
+        const date = new Date(dt);
         const formattedDate = date.toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "2-digit",
             year: "numeric",
         });
 
-        return formattedDate === "Invalid Date" ? "01/01/1900" : formattedDate;
+        return formattedDate === "Invalid Date" ? " " : formattedDate;
     }
 
+    // modal
+    const [openModal, setOpen] = React.useState(false);
+    
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
 
-    // status dropdown
-    const [anchorElSelect, setAnchorElSelect] = React.useState(null);
-    const openDropdown = Boolean(anchorElSelect);
-    const handleClickDroppdown = (event) => {
-        setAnchorElSelect(event.currentTarget);
-    };
-    const handleCloseDropdown = () => {
-        setAnchorElSelect(null);
-    };
+
 
     return (
         <Box className="container-fluid p-0">
 
 
-            {/* modal start */}
-            <React.Fragment>
-
-
-
-                <Dialog
-                    fullScreen={fullScreen}
-                    open={openModal}
-                    onClose={handleCloseModal}
-                    aria-labelledby="responsive-dialog-title"
-                    className='custom-modal'
-                >
-
-                    <DialogContent>
-                        <DialogContentText>
-
-                            <Box className="d-flex align-items-center justify-content-between">
-                                <Box className="d-flex">
-
-                                    <Box>
-                                        <Button
-                                            id="fade-button5"
-                                            aria-controls={openDropdown ? 'fade-menu' : undefined}
-                                            aria-haspopup="true"
-                                            aria-expanded={openDropdown ? 'true' : undefined}
-                                            onClick={handleClickDroppdown}
-                                        >
-
-                                            <CheckCircleIcon />
-
-                                        </Button>
-                                        <Menu
-                                            id="fade-menu"
-                                            MenuListProps={{
-                                                'aria-labelledby': 'fade-button5',
-                                            }}
-                                            anchorElSelect={anchorElSelect}
-                                            open={openDropdown}
-                                            onClose={handleCloseDropdown}
-                                        >
-                                            <MenuItem onClick={handleCloseDropdown}>Profile</MenuItem>
-                                            <MenuItem onClick={handleCloseDropdown}>My account</MenuItem>
-                                            <MenuItem onClick={handleCloseDropdown}>Logout</MenuItem>
-                                        </Menu>
-                                    </Box>
-
-
-                                    {/* <div>
-                                        <Button
-                                            id="basic-button-status"
-                                            aria-controls={open ? 'basic-menu' : undefined}
-                                            aria-haspopup="true"
-                                            aria-expanded={open ? 'true' : undefined}
-                                            onClick={handleClick}
-                                        >
-                                            <CheckCircleIcon />
-                                            
-                                        </Button>
-                                        <Menu
-                                            id="basic-menu"
-                                            anchorEl={anchorEl}
-                                            open={open}
-                                            onClose={handleClose}
-                                            MenuListProps={{
-                                                'aria-labelledby': 'basic-button-status',
-                                            }}
-                                        >
-                                            <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                            <MenuItem onClick={handleClose}>My account</MenuItem>
-                                            <MenuItem onClick={handleClose}>Logout</MenuItem>
-                                        </Menu>
-                                    </div> */}
-
-                                    <Typography variant='subtitle1' className='font-16 sembold mb-2'>Select Type</Typography>
-
-
-                                </Box>
-
-                                <Box className="d-flex">
-
-                                    <div>
-                                        <Button
-                                            id="fade-button"
-                                            aria-controls={open ? 'fade-menu' : undefined}
-                                            aria-haspopup="true"
-                                            aria-expanded={open ? 'true' : undefined}
-                                            onClick={handleClick}
-                                            className='min-width-auto'
-                                        >
-                                            Priority
-                                        </Button>
-                                        <Menu
-                                            id="fade-menu"
-                                            MenuListProps={{
-                                                'aria-labelledby': 'fade-button',
-                                            }}
-                                            anchorEl={anchorEl}
-                                            open={open}
-                                            onClose={handleClose}
-                                        >
-                                            <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                            <MenuItem onClick={handleClose}>My account</MenuItem>
-                                        </Menu>
-                                    </div>
-
-                                    <div>
-                                        <Button
-                                            id="fade-button"
-                                            aria-controls={open ? 'fade-menu' : undefined}
-                                            aria-haspopup="true"
-                                            aria-expanded={open ? 'true' : undefined}
-                                            onClick={handleClick}
-                                            className='min-width-auto px-0 text-gray'
-                                        >
-
-                                            <MoreVertIcon />
-
-                                        </Button>
-                                        <Menu
-                                            id="fade-menu"
-                                            MenuListProps={{
-                                                'aria-labelledby': 'fade-button',
-                                            }}
-                                            anchorEl={anchorEl}
-                                            open={open}
-                                            onClose={handleClose}
-                                        >
-                                            <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                            <MenuItem onClick={handleClose}>My account</MenuItem>
-                                        </Menu>
-                                    </div>
-
-                                    <Button onClick={handleClose} autoFocus sx={{ minWidth: 30, }}>
-                                        <span className="material-symbols-outlined text-black">
-                                            cancel
-                                        </span>
-                                    </Button>
-
-                                </Box>
-
-
-
-
-                            </Box>
-
-                            <hr />
-
-                            <Typography variant="h4">Contact Agreement Update</Typography>
-
-                            <Box className='d-flex flex-wrap justify-content-between'>
-                                <Box className='d-flex'>
-                                    <p className='pe-2 me-2 border-end'><span className='text-black'>Client:</span> ABC Limited</p>
-                                    <p><span className='text-black'>Section:</span> ABC Limited</p>
-                                </Box>
-
-                                <Box className="d-flex align-items-center mb-4 flex-wrap">
-                                    <Box className="user-img-list me-2">
-                                        <img src={user} />
-                                        {/* <p>PJ</p> */}
-                                    </Box>
-                                    <Box className="user-img-list me-2">
-                                        <p>PJ</p>
-                                    </Box>
-                                    <Box className="user-img-list user-total-list me-2">
-                                        <p>14+</p>
-                                    </Box>
-                                </Box>
-                            </Box>
-                            {/*  */}
-
-                            <Box className='d-flex flex-wrap justify-content-between align-items-center'>
-
-                                <Link href="#" className='text-decoration-none d-flex'><BallotIcon className='me-1' /> 15 Documents</Link>
-
-                                <Box className='d-flex'>
-                                    <Box className='mb-2 border-bottom me-2 width-150'>
-                                        <label className='font-14 text-black'>Start Date</label>
-                                        <LocalizationProvider className='pe-0 sadik' dateAdapter={AdapterDayjs} >
-                                            <DatePicker className="datepicker w-100" />
-                                        </LocalizationProvider>
-                                    </Box>
-
-                                    <Box className="border-bottom mb-2 width-150">
-                                        <Box className='mb-2 '>
-                                            <label className='font-14 semibold text-black'>Due By</label>
-                                            <LocalizationProvider className='pe-0 sadik' dateAdapter={AdapterDayjs} >
-                                                <DatePicker className="datepicker w-100" />
-                                            </LocalizationProvider>
-                                        </Box>
-                                    </Box>
-                                </Box>
-                            </Box>
-
-                            <Box className="mt-3 mb-3">
-                                <textarea className='form-control textarea resize-none' placeholder='Description'></textarea>
-                            </Box>
-
-                            <Box className='d-flex'>
-                                <Button variant="text" className='btn-blue-2 me-2'>Mark complete</Button>
-                                <Button variant="text" className='btn-blue-2'>Defer</Button>
-                            </Box>
-
-                            <Box className='white-box'>
-                                <Box className='chat-box d-flex align-items-end'>
-
-                                    <Box class="client-img me-3 mb-0">
-                                        <img src={user} />
-                                    </Box>
-
-                                    <Box class="chat-message me-2">
-                                        <Box class="inner-chat-message me-2">
-                                            <Typography variant="body1">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</Typography>
-
-                                            <Box className='d-flex'>
-                                                <Typography variant="body1">6.30 pm</Typography>
-
-
-                                                <div>
-                                                    <Button
-                                                        id="fade-button"
-                                                        aria-controls={open ? 'fade-menu' : undefined}
-                                                        aria-haspopup="true"
-                                                        aria-expanded={open ? 'true' : undefined}
-                                                        onClick={handleClick}
-                                                        className='min-width-auto px-0 text-gray'
-                                                    >
-
-                                                        <MoreVertIcon />
-
-                                                    </Button>
-                                                    <Menu
-                                                        id="fade-menu"
-                                                        MenuListProps={{
-                                                            'aria-labelledby': 'fade-button',
-                                                        }}
-                                                        anchorEl={anchorEl}
-                                                        open={open}
-                                                        onClose={handleClose}
-                                                    >
-                                                        <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                                        <MenuItem onClick={handleClose}>My account</MenuItem>
-                                                    </Menu>
-                                                </div>
-
-                                            </Box>
-                                        </Box>
-                                    </Box>
-
-                                </Box>
-                            </Box>
-
-
-
-                        </DialogContentText>
-
-                        {/* <hr /> */}
-
-                        <DialogActions className='px-0 w-100'>
-                            <Box className="d-flex align-items-center justify-content-end w-100">
-
-                                {/* <Box>
-                <Button autoFocus className='btn-red me-2' onClick={handleCloseModal}>
-                    cancel
-                </Button>
-                <Button className='btn-green' onClick={handleCloseModal} autoFocus>
-                    Save
-                </Button>
-            </Box> */}
-                            </Box>
-                        </DialogActions>
-                    </DialogContent>
-                </Dialog>
-            </React.Fragment>
-            {/* modal end */}
+            <TaskDetailModal handleClickOpen={handleClickOpen} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
 
             <Typography variant='subtitle1' className='font-18 bold mb-2'>Select Filter</Typography>
@@ -423,10 +150,17 @@ function TodoList() {
                         return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                             <Box className='todo-list-box white-box relative w-100' onClick={handleClickOpen}>
 
-                                <Checkbox className='text-blue check-todo'
+                                {/* <Checkbox className='text-blue check-todo'
                                     {...label}
                                     icon={<RadioButtonUncheckedIcon />}
                                     checkedIcon={<CheckCircleIcon />}
+                                /> */}
+                                <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
+                                    sx={{
+                                        '&.Mui-checked': {
+                                            color: "secondary",
+                                        },
+                                    }}
                                 />
 
                                 <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> {item.Source}</Typography>
@@ -453,7 +187,7 @@ function TodoList() {
                                                 aria-expanded={open ? 'true' : undefined}
                                                 onClick={handleClick}
                                             >
-                                                {item.Priority === 1 ? "High" : item.Priority === 2 ? "Medium" : "Low"}
+                                                {item.Status && item.Status}
                                             </Button>
                                             <Menu
                                                 id="basic-menu"
@@ -475,7 +209,7 @@ function TodoList() {
                                 </Box>
 
                                 <Box className='mt-2'>
-                                    <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
+                                    <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
                                     <Button variant="text" className='btn-blue-2'>Defer</Button>
                                 </Box>
 
