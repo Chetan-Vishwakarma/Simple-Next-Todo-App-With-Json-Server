@@ -364,8 +364,17 @@ button {
 .text-black {
   color: #1C274C;
 }
+
 .text-blue {
   color: #557ff7 !important;
+}
+
+.text-red {
+  color: #e46565 !important;
+}
+
+.text-green {
+  color: #8be193 !important;
 }
 
 .min-width-auto {
@@ -373,7 +382,7 @@ button {
 }
 
 .text-gray {
-  color: #777777;
+  color: #777777 !important;
 }
 
 .text-white {

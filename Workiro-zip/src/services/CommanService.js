@@ -33,8 +33,8 @@ export default class CommanCLS extends AllService {
        })
     }
 
-    Json_GetFolders(callBack) {       
-        super.CreateNewServiceParamObject("Json_GetFolders");       
+    Json_GetFolders(obj,callBack) {       
+        super.CreateNewServiceParamObject("Json_GetFolders",obj,false);       
         super.CallNewService("Json_GetFolders", function (status, Data) {
             if (status) {
                 callBack(true, Data);
@@ -168,6 +168,18 @@ export default class CommanCLS extends AllService {
     Json_GetClientsByFolder(obj,callBack) { 
         super.CreateNewServiceParamObject("Json_GetClientsByFolder",obj,true);   
         super.CallNewService("Json_GetClientsByFolder", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
+
+    Json_Get_CRM_UserByProjectId(obj,callBack) { 
+        super.CreateNewServiceParamObject("Json_Get_CRM_UserByProjectId",obj,true);   
+        super.CallNewService("Json_Get_CRM_UserByProjectId", function (status, Data) {
             if (status) {
                 callBack(true, Data);
             }
