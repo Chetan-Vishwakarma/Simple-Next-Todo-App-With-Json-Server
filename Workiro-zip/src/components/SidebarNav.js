@@ -195,7 +195,6 @@ export default function SidebarNav() {
     setPassword(localStorage.getItem("Password"));
     setEmail(localStorage.getItem("Email"));
     Json_Get_CRM_UserByProjectId();
-    navigate("/dashboard/TodoList");
   }, []);
   return (
     <>

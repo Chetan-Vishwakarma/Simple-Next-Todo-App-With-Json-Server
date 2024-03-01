@@ -148,7 +148,6 @@ function Client() {
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
         Json_GetClientsByFolder();
-
     }, []);
     const basedOnClientContactAndAll = (target) => {
         setSelectedChoice(target);
