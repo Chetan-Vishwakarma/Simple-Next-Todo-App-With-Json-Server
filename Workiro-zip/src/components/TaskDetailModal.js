@@ -27,9 +27,13 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import user from "../images/user.jpg";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 
-function TaskDetailModal({handleClickOpen,openModal, setOpen}) {
+function TaskDetailModal({ handleClickOpen, openModal, setOpen }) {
 
     // modal start
     // modal start
@@ -97,7 +101,7 @@ function TaskDetailModal({handleClickOpen,openModal, setOpen}) {
                     <DialogContentText>
 
                         <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="d-flex">
+                            <Box className="d-flex align-items-center">
 
                                 <Box>
                                     <Button
@@ -106,6 +110,7 @@ function TaskDetailModal({handleClickOpen,openModal, setOpen}) {
                                         aria-haspopup="true"
                                         aria-expanded={openDropdown ? 'true' : undefined}
                                         onClick={handleClickDroppdown}
+                                        className='min-width-auto'
                                     >
 
                                         <CheckCircleIcon />
@@ -153,7 +158,7 @@ function TaskDetailModal({handleClickOpen,openModal, setOpen}) {
                             </Menu>
                         </div> */}
 
-                                <Typography variant='subtitle1' className='font-16 sembold mb-2'>Select Type</Typography>
+                                <Typography variant='subtitle1' className='font-16 sembold'>Select Type</Typography>
 
                             </Box>
 
@@ -195,21 +200,29 @@ function TaskDetailModal({handleClickOpen,openModal, setOpen}) {
 
                                         <MenuItem onClick={handleClose}>
                                             <ListItemIcon>
-                                                <AttachmentIcon fontSize="medium" />
+                                                <HourglassBottomIcon fontSize="medium" />
                                             </ListItemIcon>
-                                            Waiting on someone else</MenuItem>
+                                            Waiting on someone else
+                                        </MenuItem>
+
+
+
                                         <MenuItem onClick={handleClose}>
                                             <ListItemIcon>
-                                                <AttachmentIcon fontSize="medium" />
+                                                <ErrorOutlineIcon fontSize="medium" />
                                             </ListItemIcon>
                                             Deferred</MenuItem>
+
                                         <MenuItem onClick={handleClose}>
                                             <ListItemIcon>
-                                                <AttachmentIcon fontSize="medium" />
+                                                <CheckCircleOutlineIcon fontSize="medium" />
                                             </ListItemIcon>
                                             Done</MenuItem>
+
+
+
                                         <MenuItem onClick={handleClose}><ListItemIcon>
-                                            <AttachmentIcon fontSize="medium" />
+                                            <CheckCircleOutlineIcon fontSize="medium" />
                                         </ListItemIcon>
                                             Complete
                                         </MenuItem>
@@ -253,10 +266,10 @@ function TaskDetailModal({handleClickOpen,openModal, setOpen}) {
                             </Box>
                         </Box>
                         <hr />
-                        <Typography variant="h4">Contact Agreement Update</Typography>
+                        <Typography variant="h4" className='font-18 bold mb-2 text-black'>Contact Agreement Update</Typography>
 
-                        <Box className='d-flex flex-wrap justify-content-between'>
-                            <Box className='d-flex'>
+                        <Box className='d-flex flex-wrap justify-content-between align-items-center'>
+                            <Box className='d-flex font-14 sembold'>
                                 <p className='pe-2 me-2 border-end'><span className='text-black'>Client:</span> ABC Limited</p>
                                 <p><span className='text-black'>Section:</span> ABC Limited</p>
                             </Box>
@@ -284,14 +297,12 @@ function TaskDetailModal({handleClickOpen,openModal, setOpen}) {
                                 >
                                     <Box className="d-flex align-items-center">
 
-                                        <Box className="user-img-list ms-2">
+                                        <Box className="user-img-list ms-2 admin">
                                             <img src={user} />
                                             {/* <p>PJ</p> */}
                                         </Box>
 
-                                        <Box className="user-img-list ms-2">
-                                            <p>PJ</p>
-                                        </Box>
+                                        <ArrowForwardIosIcon className='ms-2' />
 
                                         <Box className="user-img-list ms-2">
                                             <img src={user} />
@@ -307,6 +318,10 @@ function TaskDetailModal({handleClickOpen,openModal, setOpen}) {
                                                 person_add
                                             </span>
                                         </Box>
+
+                                        {/* <Box className="user-img-list ms-2 user-total-list">
+                                            <p>15+</p>
+                                        </Box> */}
 
                                     </Box>
 
@@ -384,12 +399,12 @@ function TaskDetailModal({handleClickOpen,openModal, setOpen}) {
                         </Box>
                         {/*  */}
 
-                        <Box className='d-flex flex-wrap justify-content-between align-items-center'>
+                        <Box className='d-flex flex-wrap justify-content-between'>
 
                             <Link href="#" className='text-decoration-none d-flex'><BallotIcon className='me-1' /> 15 Documents</Link>
 
                             <Box className='d-flex'>
-                                <Box className='mb-2 border-bottom me-2 width-150'>
+                                <Box className='mb-2 border-bottom me-3 width-150'>
                                     <label className='font-14 text-black'>Start Date</label>
                                     <LocalizationProvider className='pe-0 sadik' dateAdapter={AdapterDayjs} >
                                         <DatePicker className="datepicker w-100" />
@@ -407,7 +422,7 @@ function TaskDetailModal({handleClickOpen,openModal, setOpen}) {
                             </Box>
                         </Box>
 
-                        <Box className="mt-3 mb-3">
+                        <Box className="mt-2 mb-3">
                             <textarea className='form-control textarea resize-none' placeholder='Description'></textarea>
                         </Box>
 
@@ -538,19 +553,20 @@ function TaskDetailModal({handleClickOpen,openModal, setOpen}) {
 
                     {/* <hr /> */}
 
-                    <DialogActions className='px-0 w-100'>
+                    {/* <DialogActions className='px-0 w-100'>
                         <Box className="d-flex align-items-center justify-content-end w-100">
 
-                            {/* <Box>
-    <Button autoFocus className='btn-red me-2' onClick={handleCloseModal}>
-        cancel
-    </Button>
-    <Button className='btn-green' onClick={handleCloseModal} autoFocus>
-        Save
-    </Button>
-</Box> */}
+                            <Box>
+                                <Button autoFocus className='btn-red me-2' onClick={handleCloseModal}>
+                                    cancel
+                                </Button>
+                                <Button className='btn-green' onClick={handleCloseModal} autoFocus>
+                                    Save
+                                </Button>
+                            </Box>
                         </Box>
-                    </DialogActions>
+                    </DialogActions> */}
+                    
                 </DialogContent>
             </Dialog >
         </React.Fragment >

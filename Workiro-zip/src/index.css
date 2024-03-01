@@ -40,6 +40,7 @@ select:focus,
   padding: 15px;
   height: 70px;
   resize: none;
+  border-radius: 5px;
 }
 
 h1,
@@ -221,13 +222,17 @@ button {
   border: 2px solid transparent;
 }
 
+.user-img-list.admin {
+  width: 46px;
+  height: 46px;
+}
+
 .user-img-list.user-total-list {
   background: #fff;
   color: #557ff7;
   border-color: #557ff7;
   font-weight: 600;
 }
-
 
 /* .box-user-list-dropdown button:nth-child(-n + 2) .user-img-list {
   background: #088aee;
@@ -1057,9 +1062,11 @@ hr {
   font-size: 40px;
   color: #AFAFAF;
 }
+
 .main-file-upload {
   border-top: 1px solid #f1f1f1;
 }
+
 .main-file-upload textarea {
   width: 100%;
   border: 0;
@@ -1069,10 +1076,12 @@ hr {
   resize: none;
   font-size: 14px;
 }
+
 .main-file-upload .file-upload {
   position: relative;
   cursor: pointer;
 }
+
 .main-file-upload .file-upload input {
   position: absolute;
   right: 0;
