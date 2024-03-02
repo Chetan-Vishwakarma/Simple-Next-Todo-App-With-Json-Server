@@ -25,7 +25,6 @@ import user from "../images/user.jpg";
 import Button from '@mui/material/Button';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
-import Logout from '@mui/icons-material/Logout';
 import CreateNewModal from './CreateNewModal';
 import Client from '../client/Client';
 
@@ -36,6 +35,7 @@ import ClientDetails from '../client/client-components/ClientDetails';
 import ContactDetails from '../contact/contact-components/ContactDetails';
 import TodoList from './TodoList';
 import CommanCLS from '../services/CommanService';
+import Logout from './Logout';
 
 const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
 
@@ -451,7 +451,7 @@ export default function SidebarNav() {
             <Route path="/ContactDetails" element={<ContactDetails />} />
             <Route path="/TodoList" element={<TodoList />} />
             <Route path="/SmartViews" element={<></>} />
-            <Route path="/LogOut" element={<></>} />
+            <Route path="/LogOut" element={<Logout/>} />
 
           </Routes>
         </Box>
