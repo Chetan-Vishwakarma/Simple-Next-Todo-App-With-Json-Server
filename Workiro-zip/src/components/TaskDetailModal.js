@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -27,30 +27,39 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import user from "../images/user.jpg";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import axios from "axios";
 
 
-function TaskDetailModal({handleClickOpen,openModal, setOpen}) {
+function TaskDetailModal({selectedTask,openModal, setOpen}) {
 
-    // modal start
-    // modal start
-    // const [openModal, setOpen] = React.useState(false);
+    const [allTask,setAllTask] = useState([]);
+
+    const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+
+    useEffect(()=>{
+        const Json_CRM_GetOutlookTask=async()=>{
+            let res = await axios.post(`${baseUrl}Json_CRM_GetOutlookTask`,{
+                Email: "nabs@docusoft.net",
+                agrno: "0261",
+                password: "ZG9jdXNvZnQ="
+            });
+            console.log("Json_CRM_GetOutlookTask",JSON.parse(res.data.d));
+        }
+        Json_CRM_GetOutlookTask();
+        return ()=>{
+            console.log("Modal is Closed");
+        }
+    },[]);
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-
-    // const handleClickOpen = () => {
-    //     setOpen(true);
-    // };
 
     const handleCloseModal = () => {
         setOpen(false);
     };
-    // modal end
-    // modal end
 
-
-    // status dropdown
     const [anchorElSelect, setAnchorElSelect] = React.useState(null);
     const openDropdown = Boolean(anchorElSelect);
+
     const handleClickDroppdown = (event) => {
         setAnchorElSelect(event.currentTarget);
     };

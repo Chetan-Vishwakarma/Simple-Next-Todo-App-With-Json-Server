@@ -13,9 +13,12 @@ function App() {
         <Routes>
           <Route path='/' element={<Login/>}/>
           <Route path='/dashboard' element={<PrivateRoute/>}>
+          <Route path="Connections" element={<ClientDetails />} />
             <Route path="clientDetails" element={<ClientDetails />} />
             <Route path="ContactDetails" element={<ContactDetails />} />
             <Route path="TodoList" element={<TodoList />} />
+            <Route path="SmartViews" element={<></>} />
+            <Route path="Logout" element={<></>} />
           </Route>
         </Routes>
       </BrowserRouter>
