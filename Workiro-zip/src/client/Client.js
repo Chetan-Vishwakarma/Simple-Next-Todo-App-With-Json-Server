@@ -6,6 +6,9 @@ import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
 import CardView from './client-components/CardView';
 import CommanCLS from '../services/CommanService';
+import ClientGrid from '../components/ClientGrid';
+import AppsIcon from '@mui/icons-material/Apps';
+import ListIcon from '@mui/icons-material/List';
 
 
 function Client() {
@@ -53,7 +56,7 @@ function Client() {
 
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
-    const Json_GetFolders=()=>{
+    const Json_GetFolders = () => {
         let obj = {
             agrno: agrno,
             Email: Email,
@@ -345,9 +348,20 @@ function Client() {
             }
         })
     }
+    const [isGridView, setIsGridView] = useState(true);
+    const [isCardView, setIsCardView] = useState(false);
     return (
         <Box className='container-fluid p-0' onClick={handleClick}>
 
+            {isGridView && <div style={{ textAlign: "end" }}><AppsIcon onClick={() => {
+                setIsCardView(!isCardView);
+                setIsGridView(!isGridView);
+            }} /></div>}
+
+            {isCardView && <div style={{ textAlign: "end" }}><ListIcon onClick={() => {
+                setIsCardView(!isCardView);
+                setIsGridView(!isGridView);
+            }} /></div>}
             {/* <div role="presentation" className='mb-2 mb-3 '>
                 <Breadcrumbs aria-label="breadcrumb">
                     <Link underline="hover" color="inherit" href="/">
@@ -363,8 +377,9 @@ function Client() {
                     <Typography color="text.primary">Client Details</Typography>
                 </Breadcrumbs>
             </div> */}
+            {isGridView && <ClientGrid />}
 
-            <CardView
+            {isCardView && <CardView
                 isSearch={isSearch}
                 handleDialogsOpen={handleDialogsOpen}
                 handleSearch={handleSearch}
@@ -397,7 +412,7 @@ function Client() {
                 selectedFolder={selectedFolder}
                 selectedChoice={selectedChoice}
                 basedOnClientContactAndAll={basedOnClientContactAndAll}
-            />
+            />}
         </Box>
     )
 }
