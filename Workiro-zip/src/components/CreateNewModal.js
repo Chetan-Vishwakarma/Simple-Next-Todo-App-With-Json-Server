@@ -1101,7 +1101,7 @@ export default function CreateNewModalTask() {
                                                     width: "100%",
                                                     maxWidth: 360,
                                                     bgcolor: "background.paper",
-                                                    height: '230px'
+                                                    maxHeight: '230px'
                                                 }}
                                             >
                                                 {filteredFolderList
@@ -1190,7 +1190,7 @@ export default function CreateNewModalTask() {
                                                     width: "100%",
                                                     maxWidth: 360,
                                                     bgcolor: "background.paper",
-                                                    height: '300px'
+                                                    maxHeight: '300px'
                                                 }}
                                             >
                                                 {filteredClientList.map((item, index) => (

@@ -107,7 +107,6 @@ const ClientGrid = () => {
                 <Paging defaultPageSize={20} />
                 <Pager
                     visible={true} />
-
                 <SearchPanel
                     visible={true}
                     width={240}
