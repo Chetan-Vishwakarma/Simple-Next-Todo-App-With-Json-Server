@@ -5,6 +5,7 @@ import Login from './components/Login'
 import ClientDetails from './client/client-components/ClientDetails'
 import ContactDetails from './contact/contact-components/ContactDetails'
 import TodoList from './components/TodoList'
+import Logout from './components/Logout'
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
             <Route path="ContactDetails" element={<ContactDetails />} />
             <Route path="TodoList" element={<TodoList />} />
             <Route path="SmartViews" element={<></>} />
-            <Route path="Logout" element={<></>} />
+            <Route path="Logout" element={<Logout/>} />
           </Route>
         </Routes>
       </BrowserRouter>
