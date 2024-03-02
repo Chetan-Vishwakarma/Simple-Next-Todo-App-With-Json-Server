@@ -1054,7 +1054,6 @@ export default function CreateNewModalTask() {
                             </Box>
                             {/* col end */}
 
-
                             <Box className="col-lg-4">
                                 <Box className="border-bottom mb-2">
                                     <label className="font-14 sembold">Index</label>
