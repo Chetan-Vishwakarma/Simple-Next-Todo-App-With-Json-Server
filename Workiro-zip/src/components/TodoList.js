@@ -33,9 +33,6 @@ const handleDelete = () => {
 
 function TodoList() {
 
-
-
-
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -46,6 +43,7 @@ function TodoList() {
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
     const [allTask, setAllTask] = useState([]);
+    const [selectedTask,setSelectedTask] = useState({});
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -111,7 +109,8 @@ function TodoList() {
     // modal
     const [openModal, setOpen] = React.useState(false);
     
-    const handleClickOpen = () => {
+    const handleClickOpen = (task=selectedTask) => {
+        setSelectedTask(task);
         setOpen(true);
     };
 
@@ -121,7 +120,7 @@ function TodoList() {
         <Box className="container-fluid p-0">
 
 
-            <TaskDetailModal handleClickOpen={handleClickOpen} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
+            <TaskDetailModal selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
 
             <Typography variant='subtitle1' className='font-18 bold mb-2'>Select Filter</Typography>
@@ -148,7 +147,7 @@ function TodoList() {
                     allTask.length > 0 &&
                     allTask.map((item, index) => {
                         return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
-                            <Box className='todo-list-box white-box relative w-100' onClick={handleClickOpen}>
+                            <Box className='todo-list-box white-box relative w-100' onClick={()=>handleClickOpen(item)}>
 
                                 {/* <Checkbox className='text-blue check-todo'
                                     {...label}

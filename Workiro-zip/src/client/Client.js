@@ -348,7 +348,7 @@ function Client() {
     return (
         <Box className='container-fluid p-0' onClick={handleClick}>
 
-            <div role="presentation" className='mb-2 mb-3 '>
+            {/* <div role="presentation" className='mb-2 mb-3 '>
                 <Breadcrumbs aria-label="breadcrumb">
                     <Link underline="hover" color="inherit" href="/">
                         Home
@@ -362,7 +362,7 @@ function Client() {
                     </Link>
                     <Typography color="text.primary">Client Details</Typography>
                 </Breadcrumbs>
-            </div>
+            </div> */}
 
             <CardView
                 isSearch={isSearch}

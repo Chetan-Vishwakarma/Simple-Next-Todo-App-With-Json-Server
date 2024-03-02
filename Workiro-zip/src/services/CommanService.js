@@ -189,4 +189,70 @@ export default class CommanCLS extends AllService {
         })
     }
 
+    Json_GetForwardUserList(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetForwardUserList",obj,true);
+        super.CallNewService("Json_GetForwardUserList",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+     Json_GetFolderData(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetFolderData",obj,true);
+        super.CallNewService("Json_GetFolderData",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+     Json_CRM_Task_Save(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_CRM_Task_Save",obj,true);
+        super.CallNewService("Json_CRM_Task_Save",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+     SaveTaskAttachments(obj,callBack){   
+        super.CreateNewServiceParamObject("SaveTaskAttachments",obj,true);
+        super.CallNewService("SaveTaskAttachments",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+     Json_GetSupplierListByProject(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetSupplierListByProject",obj,true);
+        super.CallNewService("Json_GetSupplierListByProject",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+     
+
+
+
+
+
 }
