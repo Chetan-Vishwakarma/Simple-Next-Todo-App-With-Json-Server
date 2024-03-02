@@ -6,14 +6,30 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
 import user from "../images/user.jpg";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommanCLS from '../services/CommanService';
+
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import DescriptionIcon from '@mui/icons-material/Description';
 import { Radio } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
+import AttachmentIcon from '@mui/icons-material/Attachment';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
+import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
+import TaskDetailModal from './TaskDetailModal';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
+// chipset
+const handleDelete = () => {
+    console.info('You clicked the delete icon.');
+};
 
 function TodoList() {
 
@@ -27,6 +43,7 @@ function TodoList() {
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
     const [allTask, setAllTask] = useState([]);
+    const [selectedTask,setSelectedTask] = useState({});
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -50,16 +67,16 @@ function TodoList() {
                         console.log("Json_CRM_GetOutlookTask", json.Table);
                         const formattedTasks = json.Table.map((task) => {
                             let timestamp;
-                            if(task.EndDateTime){
+                            if (task.EndDateTime) {
                                 timestamp = parseInt(task.EndDateTime.slice(6, -2));
                             }
-                      
+
                             const date = new Date(timestamp);
-                      
+
                             return { ...task, EndDateTime: date };
-                          });
-                      
-                          setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
+                        });
+
+                        setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
                         // setAllTask(json.Table);
                     }
                 }
@@ -89,8 +106,22 @@ function TodoList() {
         return formattedDate === "Invalid Date" ? " " : formattedDate;
     }
 
+    // modal
+    const [openModal, setOpen] = React.useState(false);
+    
+    const handleClickOpen = (task=selectedTask) => {
+        setSelectedTask(task);
+        setOpen(true);
+    };
+
+
+
     return (
         <Box className="container-fluid p-0">
+
+
+            <TaskDetailModal selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
+
 
             <Typography variant='subtitle1' className='font-18 bold mb-2'>Select Filter</Typography>
             <Box className="d-flex align-items-center mb-4 flex-wrap">
@@ -116,14 +147,14 @@ function TodoList() {
                     allTask.length > 0 &&
                     allTask.map((item, index) => {
                         return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
-                            <Box className='todo-list-box white-box relative w-100'>
+                            <Box className='todo-list-box white-box relative w-100' onClick={()=>handleClickOpen(item)}>
 
                                 {/* <Checkbox className='text-blue check-todo'
                                     {...label}
                                     icon={<RadioButtonUncheckedIcon />}
                                     checkedIcon={<CheckCircleIcon />}
                                 /> */}
-                                <Radio className={item.Priority===1?'text-red check-todo':item.Priority===2?'text-green check-todo':'text-grey check-todo'} checked
+                                <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
                                     sx={{
                                         '&.Mui-checked': {
                                             color: "secondary",

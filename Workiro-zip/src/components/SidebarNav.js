@@ -445,11 +445,13 @@ export default function SidebarNav() {
           <Routes>
             {/* <Route path="/" element={<Login/>}/> */}
             {/* <Route path="/" element={<Client />} /> */}
-            <Route index element={<Client />} />
+            <Route index element={<h1></h1>} />
+            <Route path="/Connections" element={<Client />} />
             <Route path="/clientDetails" element={<ClientDetails />} />
             <Route path="/ContactDetails" element={<ContactDetails />} />
             <Route path="/TodoList" element={<TodoList />} />
-
+            <Route path="/SmartViews" element={<></>} />
+            <Route path="/LogOut" element={<></>} />
 
           </Routes>
         </Box>
