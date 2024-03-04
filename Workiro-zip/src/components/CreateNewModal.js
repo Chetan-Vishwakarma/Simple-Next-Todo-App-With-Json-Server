@@ -749,6 +749,7 @@ export default function CreateNewModalTask() {
                                                 {...label}
                                                 icon={<RadioButtonUncheckedOutlinedIcon />}
                                                 checkedIcon={<CheckCircleIcon />}
+                                                className="p-0"
                                             />
 
                                             <Box className>
@@ -857,7 +858,6 @@ export default function CreateNewModalTask() {
                                                 className="user-list-dropdown"
                                             >
 
-
                                                 <Box
                                                     className="inner-user-list-dropdown"
                                                     style={{ maxHeight: "200px", overflowY: "auto" }}
@@ -919,8 +919,6 @@ export default function CreateNewModalTask() {
                                                                 </React.Fragment>
                                                             ))}
                                                         </Box>
-
-
                                                     </Box>
                                                 </Box>
                                             </Menu>
@@ -1178,13 +1176,16 @@ export default function CreateNewModalTask() {
                                                 "aria-labelledby": "basic-button",
                                             }}
                                         >
-                                            <TextField
-                                                label="Search"
-                                                variant="outlined"
-                                                value={searchQuery}
-                                                onChange={handleSearchInputChange}
-                                                sx={{ width: "100%" }}
-                                            />
+                                            <Box className='p-2'>
+                                                <TextField
+                                                    label="Search"
+                                                    variant="outlined"
+                                                    value={searchQuery}
+                                                    onChange={handleSearchInputChange}
+                                                    sx={{ width: "100%" }}
+                                                />
+                                            </Box>
+
                                             <List
                                                 sx={{
                                                     width: "100%",
@@ -1262,13 +1263,15 @@ export default function CreateNewModalTask() {
                                                 "aria-labelledby": "basic-button",
                                             }}
                                         >
-                                            <TextField
-                                                label="Search"
-                                                variant="outlined"
-                                                value={searchFolderQuery}
-                                                onChange={handleSearchInputChangeSection}
-                                                sx={{ width: "100%" }}
-                                            />
+                                            <Box className='p-2'>
+                                                <TextField
+                                                    label="Search"
+                                                    variant="outlined"
+                                                    value={searchFolderQuery}
+                                                    onChange={handleSearchInputChangeSection}
+                                                    sx={{ width: "100%" }}
+                                                />
+                                            </Box>
                                             <List
                                                 sx={{
                                                     width: "100%",
