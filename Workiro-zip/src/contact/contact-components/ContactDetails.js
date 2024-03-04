@@ -104,7 +104,7 @@ function ContactDetails() {
             <Box className="d-flex align-items-center justify-content-between flex-wrap">
                 <Box className='d-flex flex-wrap align-items-center'>
                     <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
-                        {contactDetails.length>0 && contactDetails[0]["Company Name"]}
+                        {contactDetails.length>0 ? contactDetails[0]["Company Name"]: "Loading..."}
                     </Typography>
 
                     {/* <ToggleButton
@@ -185,7 +185,7 @@ function ContactDetails() {
                             <Box className="row">
                                 <Box className="col-xl-4 col-lg-4 col-md-12 d-flex">
                                     {
-                                        contactDetails.length > 0 &&
+                                        contactDetails.length > 0 ?
                                           contactDetails.map((item)=>{
                                             return <Box className='white-box w-100'>
 
@@ -267,7 +267,86 @@ function ContactDetails() {
                                             </Box>
 
                                                    </Box>
-                                          })
+                                          }):<Box className='white-box w-100'>
+
+                                            <Box className='d-flex align-items-center'>
+                                                <Box className='relative m-0 me-4'>
+                                                    <Box className='client-img'>
+                                                        <img src={user} />
+                                                    </Box>
+
+                                                    <Tooltip title="UK" arrow>
+                                                        <Box className='country-flage'>
+                                                            <img src={country} className='' />
+                                                        </Box>
+                                                    </Tooltip>
+
+                                                    <VerifiedIcon className='user-register' />
+
+                                                </Box>
+                                                <Box className="clearfix">
+                                                    <Typography variant="h5" className='mb-1 bold d-flex align-items-center' gutterBottom>
+                                                        <CircleIcon className='text-success me-1 font-16' /> Patrick Jones
+                                                    </Typography>
+
+
+                                                    <Typography variant="body1" className='mb-0 ' gutterBottom>
+                                                        <span className='bold'>
+                                                            Role:</span> Tester
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+
+                                            <Box className='d-flex flex-wrap contact-availability mb-2'>
+                                                <Box className={'contact-availability-box inactive'}>
+                                                    <CheckCircleIcon />
+                                                    <Typography variant="h5" className='mb-0 ' gutterBottom>
+                                                        Main Contact
+                                                    </Typography>
+                                                </Box>
+
+                                                {/* <Box className='contact-availability-box inactive'>
+                                                <CancelIcon />
+                                                <Typography variant="h5" className='mb-0 ' gutterBottom>
+                                                    In Active
+                                                </Typography>
+                                            </Box> */}
+
+                                                <Box className='contact-availability-box inactive'>
+                                                    <CancelIcon />
+                                                    <Typography variant="h5" className='mb-0 ' gutterBottom>
+                                                        Portal User
+                                                    </Typography>
+                                                </Box>
+
+                                                {/* <Box className='contact-availability-box'>
+                                                <CheckCircleIcon />
+                                                <Typography variant="h5" className='mb-0 ' gutterBottom>
+                                                    AML Check
+                                                </Typography>
+                                            </Box> */}
+
+                                            </Box>
+
+                                            <Box className='card-box d-flex mt-2'>
+                                                <FmdGoodIcon className='me-2 text-primary' />
+
+                                                <Box className=''>
+                                                    <p className='font-16 bold mb-1 text-primary'>Address</p>
+                                                    <p className='mb-0 font-14 text-gray'>testing/address</p>
+                                                </Box>
+                                            </Box>
+
+                                            <Box className='card-box d-flex mt-2'>
+                                                <FmdGoodIcon className='me-2 text-primary' />
+
+                                                <Box className=''>
+                                                    <p className='font-16 bold mb-1 text-primary'>Phone</p>
+                                                    <p className='mb-0 font-14 text-gray'>0000000000, 000000000</p>
+                                                </Box>
+                                            </Box>
+
+                                                   </Box>
                                     }
 
                                 </Box>
