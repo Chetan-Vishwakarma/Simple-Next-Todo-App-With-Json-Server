@@ -200,6 +200,8 @@ export default function SidebarNav() {
     setEmail(localStorage.getItem("Email"));
     Json_Get_CRM_UserByProjectId();
   }, []);
+
+  const [tabs,setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active:false }, { tabLink: "/dashboard/TodoList", tabName: 'To do list', active:true }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active:false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active:false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active:false }]);
   
   return (
     <>
@@ -435,8 +437,8 @@ export default function SidebarNav() {
 
           <List className='side-navi'>
 
-            {[{ tabLink: "/dashboard", tabName: 'Dashboard', active:false }, { tabLink: "/dashboard/TodoList", tabName: 'To do list', active:true }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active:false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active:false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active:false }].map((text, index, arr) => (
-              <ListItem key={index} disablePadding sx={{ display: 'block' }}>
+            {tabs.map((text, index, arr) => (
+              <ListItem className={text.active? 'active': ''} key={index} disablePadding sx={{ display: 'block' }}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -445,13 +447,16 @@ export default function SidebarNav() {
                   }}
                   onClick={() => {
                     navigate(text.tabLink);
-                    arr.forEach((item)=>{
-                      if(item.tabLink===text.tabLink){
+                    let test = tabs.map((item)=>{
+                      if(item.tabName===text.tabName){
                         item.active = true;
                       }else{
                         item.active = false;
                       }
+                      return item;
                     })
+                    setTabs(test);
+                    // setTabs(tabs.map(()))
                   }}
                 >
                   <ListItemIcon
