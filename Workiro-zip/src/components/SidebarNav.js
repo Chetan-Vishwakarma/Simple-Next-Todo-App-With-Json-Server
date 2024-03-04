@@ -203,11 +203,7 @@ export default function SidebarNav() {
   
   return (
     <>
-      <Box id="test" className='d-block d-md-flex' onClick={()=>{
-        document.getElementById("test").addEventListener("click",()=>{
-          setIsProfileClicked(false);
-        },false);
-      }}>
+      <Box className='d-block d-md-flex'>
         <CssBaseline />
         <AppBar className='header' position="fixed" open={open} color='inherit'>
           <Toolbar>
@@ -344,7 +340,9 @@ export default function SidebarNav() {
                       aria-controls={opens ? 'basic-menu2' : undefined}
                       aria-haspopup="true"
                       aria-expanded={opens ? 'true' : undefined}
-                      onClick={()=>setIsProfileClicked(!isProfileClicked)}
+                      onClick={(e)=>{
+                        setIsProfileClicked(!isProfileClicked);
+                      }}
                     >
                       <Box className="d-flex align-items-center user-dropdown">
                         <Box className="user-img me-2">
