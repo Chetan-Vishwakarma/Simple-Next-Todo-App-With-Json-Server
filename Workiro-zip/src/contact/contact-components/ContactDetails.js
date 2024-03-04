@@ -39,6 +39,7 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import { useEffect } from 'react';
 import CommanCLS from "../../services/CommanService"
 import { useLocation } from 'react-router-dom';
+import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 
 function ContactDetails() {
 
@@ -338,7 +339,7 @@ function ContactDetails() {
                                             </Box>
 
                                             <Box className='card-box d-flex mt-2'>
-                                                <FmdGoodIcon className='me-2 text-primary' />
+                                                <LocalPhoneIcon className='me-2 text-primary' />
 
                                                 <Box className=''>
                                                     <p className='font-16 bold mb-1 text-primary'>Phone</p>
