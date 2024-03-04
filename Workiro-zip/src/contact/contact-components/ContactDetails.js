@@ -2,6 +2,7 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ToggleButton from '@mui/material/ToggleButton';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -40,12 +41,19 @@ import { useEffect } from 'react';
 import CommanCLS from "../../services/CommanService"
 import { useLocation } from 'react-router-dom';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import CheckIcon from '@mui/icons-material/Check';
+
 
 function ContactDetails() {
 
     const location = useLocation();
 
-    const {agrno, Email, password, folderId, originatorNo, contactNo} = location.state;
+    const { agrno, Email, password, folderId, originatorNo, contactNo } = location.state;
 
     const [selected, setSelected] = React.useState(false);
 
@@ -98,14 +106,33 @@ function ContactDetails() {
     };
     const handleClose = () => {
         setAnchorEl(null);
+        setOpen(false);
+        setOpen(false);
+        verificationSetOpen(false)
     };
+
+
+    // AML check modal
+    const [openModal, setOpen] = React.useState(false);
+
+    const [VerificationModal, verificationSetOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+
+    const varificationHandleClickOpen = () => {
+        verificationSetOpen(true);
+    };
+
 
     return (
         <Box className="container-fluid p-0">
             <Box className="d-flex align-items-center justify-content-between flex-wrap">
                 <Box className='d-flex flex-wrap align-items-center'>
                     <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
-                        {contactDetails.length>0 ? contactDetails[0]["Company Name"]: "Loading..."}
+                        {contactDetails.length > 0 ? contactDetails[0]["Company Name"] : "Loading..."}
                     </Typography>
 
                     {/* <ToggleButton
@@ -124,7 +151,9 @@ function ContactDetails() {
                 <Box className='d-flex flex-wrap'>
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<BorderColorIcon />}>Edit Contacts</Button>
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<GroupAddIcon />}>Client Card</Button>
-                    <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<FactCheckIcon />}>AML Check</Button>
+                    <Button className='btn-blue-2 me-2 mb-1' onClick={handleClickOpen} size="small" startIcon={<FactCheckIcon />}>AML Check</Button>
+                    
+                    {/* <Button className='btn-blue-2 me-2 mb-1' onClick={verificationSetOpen} size="small" startIcon={<FactCheckIcon />}>varificaton</Button> */}
 
                     <div>
                         <Button
@@ -136,7 +165,6 @@ function ContactDetails() {
                             className='min-width-auto mb-1'
                         >
                             <MoreVertIcon />
-
 
                         </Button>
                         <Menu
@@ -187,167 +215,167 @@ function ContactDetails() {
                                 <Box className="col-xl-4 col-lg-4 col-md-12 d-flex">
                                     {
                                         contactDetails.length > 0 ?
-                                          contactDetails.map((item)=>{
-                                            return <Box className='white-box w-100'>
+                                            contactDetails.map((item) => {
+                                                return <Box className='white-box w-100'>
 
-                                            <Box className='d-flex align-items-center'>
-                                                <Box className='relative m-0 me-4'>
-                                                    <Box className='client-img'>
-                                                        <img src={user} />
+                                                    <Box className='d-flex align-items-center'>
+                                                        <Box className='relative m-0 me-4'>
+                                                            <Box className='client-img'>
+                                                                <img src={user} />
+                                                            </Box>
+
+                                                            <Tooltip title="UK" arrow>
+                                                                <Box className='country-flage'>
+                                                                    <img src={country} className='' />
+                                                                </Box>
+                                                            </Tooltip>
+
+                                                            <VerifiedIcon className='user-register' />
+
+                                                        </Box>
+                                                        <Box className="clearfix">
+                                                            <Typography variant="h5" className='mb-1 bold d-flex align-items-center' gutterBottom>
+                                                                <CircleIcon className='text-success me-1 font-16' /> {item["First Name"] + " " + item["Last Name"]}
+                                                            </Typography>
+
+
+                                                            <Typography variant="body1" className='mb-0 ' gutterBottom>
+                                                                <span className='bold'>
+                                                                    Role:</span> {item.Role}
+                                                            </Typography>
+                                                        </Box>
                                                     </Box>
 
-                                                    <Tooltip title="UK" arrow>
-                                                        <Box className='country-flage'>
-                                                            <img src={country} className='' />
+                                                    <Box className='d-flex flex-wrap contact-availability mb-2'>
+                                                        <Box className={item["Main Contact"] ? 'contact-availability-box' : 'contact-availability-box inactive'}>
+                                                            <CheckCircleIcon />
+                                                            <Typography variant="h5" className='mb-0 ' gutterBottom>
+                                                                Main Contact
+                                                            </Typography>
                                                         </Box>
-                                                    </Tooltip>
 
-                                                    <VerifiedIcon className='user-register' />
-
-                                                </Box>
-                                                <Box className="clearfix">
-                                                    <Typography variant="h5" className='mb-1 bold d-flex align-items-center' gutterBottom>
-                                                        <CircleIcon className='text-success me-1 font-16' /> {item["First Name"]+ " "+ item["Last Name"]}
-                                                    </Typography>
-
-
-                                                    <Typography variant="body1" className='mb-0 ' gutterBottom>
-                                                        <span className='bold'>
-                                                            Role:</span> {item.Role}
-                                                    </Typography>
-                                                </Box>
-                                            </Box>
-
-                                            <Box className='d-flex flex-wrap contact-availability mb-2'>
-                                                <Box className={item["Main Contact"]?'contact-availability-box':'contact-availability-box inactive'}>
-                                                    <CheckCircleIcon />
-                                                    <Typography variant="h5" className='mb-0 ' gutterBottom>
-                                                        Main Contact
-                                                    </Typography>
-                                                </Box>
-
-                                                {/* <Box className='contact-availability-box inactive'>
+                                                        {/* <Box className='contact-availability-box inactive'>
                                                 <CancelIcon />
                                                 <Typography variant="h5" className='mb-0 ' gutterBottom>
                                                     In Active
                                                 </Typography>
                                             </Box> */}
 
-                                                <Box className='contact-availability-box inactive'>
-                                                    <CancelIcon />
-                                                    <Typography variant="h5" className='mb-0 ' gutterBottom>
-                                                        Portal User
-                                                    </Typography>
-                                                </Box>
+                                                        <Box className='contact-availability-box inactive'>
+                                                            <CancelIcon />
+                                                            <Typography variant="h5" className='mb-0 ' gutterBottom>
+                                                                Portal User
+                                                            </Typography>
+                                                        </Box>
 
-                                                {/* <Box className='contact-availability-box'>
+                                                        {/* <Box className='contact-availability-box'>
                                                 <CheckCircleIcon />
                                                 <Typography variant="h5" className='mb-0 ' gutterBottom>
                                                     AML Check
                                                 </Typography>
                                             </Box> */}
 
-                                            </Box>
-
-                                            <Box className='card-box d-flex mt-2'>
-                                                <FmdGoodIcon className='me-2 text-primary' />
-
-                                                <Box className=''>
-                                                    <p className='font-16 bold mb-1 text-primary'>Address</p>
-                                                    <p className='mb-0 font-14 text-gray'>{item["Address 1"]}</p>
-                                                </Box>
-                                            </Box>
-
-                                            <Box className='card-box d-flex mt-2'>
-                                                <FmdGoodIcon className='me-2 text-primary' />
-
-                                                <Box className=''>
-                                                    <p className='font-16 bold mb-1 text-primary'>Phone</p>
-                                                    <p className='mb-0 font-14 text-gray'>{item.Tel}, {item.Mobile}</p>
-                                                </Box>
-                                            </Box>
-
-                                                   </Box>
-                                          }):<Box className='white-box w-100'>
-
-                                            <Box className='d-flex align-items-center'>
-                                                <Box className='relative m-0 me-4'>
-                                                    <Box className='client-img'>
-                                                        <img src={user} />
                                                     </Box>
 
-                                                    <Tooltip title="UK" arrow>
-                                                        <Box className='country-flage'>
-                                                            <img src={country} className='' />
+                                                    <Box className='card-box d-flex mt-2'>
+                                                        <FmdGoodIcon className='me-2 text-primary' />
+
+                                                        <Box className=''>
+                                                            <p className='font-16 bold mb-1 text-primary'>Address</p>
+                                                            <p className='mb-0 font-14 text-gray'>{item["Address 1"]}</p>
                                                         </Box>
-                                                    </Tooltip>
+                                                    </Box>
 
-                                                    <VerifiedIcon className='user-register' />
+                                                    <Box className='card-box d-flex mt-2'>
+                                                        <FmdGoodIcon className='me-2 text-primary' />
+
+                                                        <Box className=''>
+                                                            <p className='font-16 bold mb-1 text-primary'>Phone</p>
+                                                            <p className='mb-0 font-14 text-gray'>{item.Tel}, {item.Mobile}</p>
+                                                        </Box>
+                                                    </Box>
 
                                                 </Box>
-                                                <Box className="clearfix">
-                                                    <Typography variant="h5" className='mb-1 bold d-flex align-items-center' gutterBottom>
-                                                        <CircleIcon className='text-success me-1 font-16' /> Patrick Jones
-                                                    </Typography>
+                                            }) : <Box className='white-box w-100'>
+
+                                                <Box className='d-flex align-items-center'>
+                                                    <Box className='relative m-0 me-4'>
+                                                        <Box className='client-img'>
+                                                            <img src={user} />
+                                                        </Box>
+
+                                                        <Tooltip title="UK" arrow>
+                                                            <Box className='country-flage'>
+                                                                <img src={country} className='' />
+                                                            </Box>
+                                                        </Tooltip>
+
+                                                        <VerifiedIcon className='user-register' />
+
+                                                    </Box>
+                                                    <Box className="clearfix">
+                                                        <Typography variant="h5" className='mb-1 bold d-flex align-items-center' gutterBottom>
+                                                            <CircleIcon className='text-success me-1 font-16' /> Patrick Jones
+                                                        </Typography>
 
 
-                                                    <Typography variant="body1" className='mb-0 ' gutterBottom>
-                                                        <span className='bold'>
-                                                            Role:</span> Tester
-                                                    </Typography>
+                                                        <Typography variant="body1" className='mb-0 ' gutterBottom>
+                                                            <span className='bold'>
+                                                                Role:</span> Tester
+                                                        </Typography>
+                                                    </Box>
                                                 </Box>
-                                            </Box>
 
-                                            <Box className='d-flex flex-wrap contact-availability mb-2'>
-                                                <Box className={'contact-availability-box inactive'}>
-                                                    <CheckCircleIcon />
-                                                    <Typography variant="h5" className='mb-0 ' gutterBottom>
-                                                        Main Contact
-                                                    </Typography>
-                                                </Box>
+                                                <Box className='d-flex flex-wrap contact-availability mb-2'>
+                                                    <Box className={'contact-availability-box inactive'}>
+                                                        <CheckCircleIcon />
+                                                        <Typography variant="h5" className='mb-0 ' gutterBottom>
+                                                            Main Contact
+                                                        </Typography>
+                                                    </Box>
 
-                                                {/* <Box className='contact-availability-box inactive'>
+                                                    {/* <Box className='contact-availability-box inactive'>
                                                 <CancelIcon />
                                                 <Typography variant="h5" className='mb-0 ' gutterBottom>
                                                     In Active
                                                 </Typography>
                                             </Box> */}
 
-                                                <Box className='contact-availability-box inactive'>
-                                                    <CancelIcon />
-                                                    <Typography variant="h5" className='mb-0 ' gutterBottom>
-                                                        Portal User
-                                                    </Typography>
-                                                </Box>
+                                                    <Box className='contact-availability-box inactive'>
+                                                        <CancelIcon />
+                                                        <Typography variant="h5" className='mb-0 ' gutterBottom>
+                                                            Portal User
+                                                        </Typography>
+                                                    </Box>
 
-                                                {/* <Box className='contact-availability-box'>
+                                                    {/* <Box className='contact-availability-box'>
                                                 <CheckCircleIcon />
                                                 <Typography variant="h5" className='mb-0 ' gutterBottom>
                                                     AML Check
                                                 </Typography>
                                             </Box> */}
 
-                                            </Box>
-
-                                            <Box className='card-box d-flex mt-2'>
-                                                <FmdGoodIcon className='me-2 text-primary' />
-
-                                                <Box className=''>
-                                                    <p className='font-16 bold mb-1 text-primary'>Address</p>
-                                                    <p className='mb-0 font-14 text-gray'>testing/address</p>
                                                 </Box>
-                                            </Box>
 
-                                            <Box className='card-box d-flex mt-2'>
-                                                <LocalPhoneIcon className='me-2 text-primary' />
+                                                <Box className='card-box d-flex mt-2'>
+                                                    <FmdGoodIcon className='me-2 text-primary' />
 
-                                                <Box className=''>
-                                                    <p className='font-16 bold mb-1 text-primary'>Phone</p>
-                                                    <p className='mb-0 font-14 text-gray'>0000000000, 000000000</p>
+                                                    <Box className=''>
+                                                        <p className='font-16 bold mb-1 text-primary'>Address</p>
+                                                        <p className='mb-0 font-14 text-gray'>testing/address</p>
+                                                    </Box>
                                                 </Box>
-                                            </Box>
 
-                                                   </Box>
+                                                <Box className='card-box d-flex mt-2'>
+                                                    <LocalPhoneIcon className='me-2 text-primary' />
+
+                                                    <Box className=''>
+                                                        <p className='font-16 bold mb-1 text-primary'>Phone</p>
+                                                        <p className='mb-0 font-14 text-gray'>0000000000, 000000000</p>
+                                                    </Box>
+                                                </Box>
+
+                                            </Box>
                                     }
 
                                 </Box>
@@ -676,6 +704,166 @@ function ContactDetails() {
                     <TabPanel value="7">Item Three</TabPanel> */}
                 </TabContext>
             </Box>
+
+            {/* <Button variant="outlined" onClick={handleClickOpen}>
+                Open alert dialog
+            </Button> */}
+
+
+            {/* AML check modal Start */}
+            <Dialog
+                open={openModal}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className="custom-modal aml-details-modal"
+            >
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <Box className="d-flex align-items-center justify-content-between">
+                            <Box className="dropdown-box">
+                                <Typography variant="h4" className='font-18 text-black'>AML Details</Typography>
+                            </Box>
+
+                            <Button onClick={handleClose} autoFocus sx={{ minWidth: 30 }} className='p-0'>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+                        </Box>
+
+                        <hr />
+
+                        <Box className='row'>
+                            <Box className='col-md-6'>
+                                <Box class="input-group mb-3">
+                                    <TextField label="Bank Account No" className='form-control' variant="outlined" />
+                                    <Button className='btn-blue-2 btn-sign' onClick={verificationSetOpen}
+                                    ><CheckIcon /></Button>
+                                </Box>
+
+                            </Box>
+
+                            <Box className='col-md-6'>
+                                <Box class="input-group mb-3">
+                                    <TextField label="Bank SR Code" variant="outlined" className='form-control' />
+                                    <Button className='btn-blue-2 btn-sign'><CheckIcon /></Button>
+                                </Box>
+                            </Box>
+                        </Box>
+
+                        <Box className='row'>
+                            <Box className='col-md-6'>
+                                <Box class="input-group mb-3">
+                                    <TextField label="Driving Lic No" variant="outlined" className='form-control' />
+                                    <Button className='btn-blue-2 btn-sign'><CheckIcon /></Button>
+                                </Box>
+                            </Box>
+
+                            <Box className='col-md-6'>
+                                <Box class="input-group mb-3">
+                                    <TextField label="NI Number" variant="outlined" className='form-control' />
+                                    <Button className='btn-blue-2 btn-sign'><CheckIcon /></Button>
+                                </Box>
+                            </Box>
+
+                            <Box className='col-md-6'>
+                                <Box class="input-group mb-3">
+                                    <TextField label="Passport Number" variant="outlined" className='form-control' />
+                                    <Button className='btn-blue-2 btn-sign'><CheckIcon /></Button>
+                                </Box>
+                            </Box>
+
+                            <Box className='col-md-6'>
+                                <Button variant="text" className="btn-blue btn-block">
+                                    Next
+                                    <NavigateNextIcon className='ms-2' />
+                                </Button>
+                            </Box>
+                        </Box>
+
+                    </DialogContentText>
+                </DialogContent>
+                {/* <DialogActions>
+                        <Button onClick={handleClose}>Disagree</Button>
+                        <Button onClick={handleClose} autoFocus>
+                            Agree
+                        </Button>
+                    </DialogActions> */}
+            </Dialog>
+
+            {/* AML check modal End */}
+
+
+            {/* Checkmodal modal Start */}
+            <Dialog
+                open={VerificationModal}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className="custom-modal aml-details-modal"
+            >
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <Box className="d-flex align-items-center justify-content-between">
+                            <Box className="dropdown-box">
+                                <Typography variant="h4" className='font-18 text-black'>National Insurance Number Verification</Typography>
+                            </Box>
+
+                            <Button onClick={handleClose} autoFocus sx={{ minWidth: 30 }} className='p-0'>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+                        </Box>
+
+                        <hr />
+
+                        <Box className='row'>
+                            <Box className='col-md-6'>
+                                <Box class="input-group mb-3">
+                                    <TextField label="First Name" className='form-control' variant="outlined" />
+                                </Box>
+                            </Box>
+
+                            <Box className='col-md-6'>
+                                <Box class="input-group mb-3">
+                                    <TextField label="Middle Name" variant="outlined" className='form-control' />
+                                </Box>
+                            </Box>
+
+                            <Box className='col-md-6'>
+                                <Box class="input-group mb-3">
+                                    <TextField label="Last Name" variant="outlined" className='form-control' />
+                                </Box>
+                            </Box>
+
+
+                        </Box>
+
+                        <Box className='row'>
+                            
+
+                            <Box className='col-md-6'>
+                                <Button variant="text" className="btn-blue btn-block">
+                                    Next
+                                    <NavigateNextIcon className='ms-2' />
+                                </Button>
+                            </Box>
+                        </Box>
+
+                    </DialogContentText>
+                </DialogContent>
+                {/* <DialogActions>
+                        <Button onClick={handleClose}>Disagree</Button>
+                        <Button onClick={handleClose} autoFocus>
+                            Agree
+                        </Button>
+                    </DialogActions> */}
+            </Dialog>
+
+            {/* Checkmodal check modal End */}
+
 
         </Box>
 

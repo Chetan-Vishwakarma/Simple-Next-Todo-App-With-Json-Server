@@ -1163,7 +1163,20 @@ hr {
   background: #4780FF;
   color: #fff;
 }
-
+.aml-details-modal {
+  max-width: 660px;
+  margin: 0 auto;
+}
+.aml-details-modal .btn-sign {
+  padding: 0px !important;
+  clear: both;
+  position: absolute;
+  right: 12px;
+  top: 11px;
+  height: 26px;
+  min-width: 26px;
+  border-radius: 90px !important;
+}
 
 @media only screen and (max-width: 1366px) {
   .client-box-main {

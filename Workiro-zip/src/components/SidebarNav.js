@@ -456,6 +456,7 @@ export default function SidebarNav() {
                     })
                   }}
                 >
+                  
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
