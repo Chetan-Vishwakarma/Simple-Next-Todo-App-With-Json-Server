@@ -20,6 +20,7 @@ function App() {
             <Route path="TodoList" element={<TodoList />} />
             <Route path="SmartViews" element={<></>} />
             <Route path="Logout" element={<Logout/>} />
+            
           </Route>
         </Routes>
       </BrowserRouter>
