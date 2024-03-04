@@ -249,6 +249,18 @@ export default class CommanCLS extends AllService {
         })
      }
 
+     Json_getViewerToken(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_getViewerToken",obj,true);
+        super.CallNewService("Json_getViewerToken",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
      
 
 

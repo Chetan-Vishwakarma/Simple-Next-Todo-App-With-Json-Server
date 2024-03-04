@@ -121,6 +121,8 @@ export default function SidebarNav() {
   const [open, setOpen] = React.useState(true);
   const [userName, setUserName] = React.useState("");
   const [userEmail,setUserEmail] = useState("");
+  const [isProfileClicked,setIsProfileClicked] = useState(false);
+  const icons = [<PersonAdd fontSize="small" />,<Settings fontSize="small" />,<Logout fontSize="small" />];
 
   const handleDrawerOpen = () => {
     setOpen(false);
@@ -155,6 +157,8 @@ export default function SidebarNav() {
   const opens = Boolean(anchorEl);
   const opens2 = Boolean(anchorEl);
   const handleClick = (event) => {
+    console.log("current target",event.currentTarget);
+    event.preventDefault();
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
@@ -196,6 +200,9 @@ export default function SidebarNav() {
     setEmail(localStorage.getItem("Email"));
     Json_Get_CRM_UserByProjectId();
   }, []);
+
+  const [tabs,setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active:false }, { tabLink: "/dashboard/TodoList", tabName: 'To do list', active:true }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active:false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active:false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active:false }]);
+  
   return (
     <>
       <Box className='d-block d-md-flex'>
@@ -335,7 +342,9 @@ export default function SidebarNav() {
                       aria-controls={opens ? 'basic-menu2' : undefined}
                       aria-haspopup="true"
                       aria-expanded={opens ? 'true' : undefined}
-                      onClick={handleClick}
+                      onClick={(e)=>{
+                        setIsProfileClicked(!isProfileClicked);
+                      }}
                     >
                       <Box className="d-flex align-items-center user-dropdown">
                         <Box className="user-img me-2">
@@ -346,9 +355,24 @@ export default function SidebarNav() {
                           <Typography variant='body1'>{userEmail}</Typography>
                         </Box>
                       </Box>
+                      {isProfileClicked && <Box className="btn-list-box btn-Select">
+                                {["My Accounts", "Settings", "Logout"].map((item) => {
+                                    return <div style={{textAlign:"start"}} onClick={(e) => {
+                                      e.stopPropagation();
+                                      if(item==="Logout"){
+                                        setIsProfileClicked(false);
+                                        localStorage.clear();
+                                        navigate("/");
+                                      }else{
+                                        setIsProfileClicked(false);
+                                      }
+                                    }}><Button className='btn-list'>{item}</Button></div>
+                                })}
+                      </Box>}
                     </Button>
 
-                    <Menu
+                    
+                    {/* <Menu
                       id="basic-menu2"
                       className='custom-dropdown'
                       anchorEl={anchorEl}
@@ -381,7 +405,7 @@ export default function SidebarNav() {
                         Logout
                       </MenuItem>
 
-                    </Menu>
+                    </Menu> */}
                   </Box>
 
                 </Box>
@@ -413,15 +437,27 @@ export default function SidebarNav() {
 
           <List className='side-navi'>
 
-            {[{ tabLink: "/dashboard", tabName: 'Dashboard' }, { tabLink: "/dashboard/TodoList", tabName: 'To do list' }, { tabLink: "/dashboard/Connections", tabName: 'Connections' }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views' }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out' }].map((text, index) => (
-              <ListItem key={index} disablePadding sx={{ display: 'block' }}>
+            {tabs.map((text, index, arr) => (
+              <ListItem className={text.active? 'active': ''} key={index} disablePadding sx={{ display: 'block' }}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
                     justifyContent: open ? 'initial' : 'center',
                     px: 2.5,
                   }}
-                  onClick={() => navigate(text.tabLink)}
+                  onClick={() => {
+                    navigate(text.tabLink);
+                    let test = tabs.map((item)=>{
+                      if(item.tabName===text.tabName){
+                        item.active = true;
+                      }else{
+                        item.active = false;
+                      }
+                      return item;
+                    })
+                    setTabs(test);
+                    // setTabs(tabs.map(()))
+                  }}
                 >
                   <ListItemIcon
                     sx={{

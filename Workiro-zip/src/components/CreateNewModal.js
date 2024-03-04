@@ -21,6 +21,8 @@ import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import DeleteIcon from "@mui/icons-material/Delete";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Checkbox from "@mui/material/Checkbox";
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+
 import Swal from 'sweetalert2';
 import {
     List,
@@ -413,7 +415,7 @@ export default function CreateNewModalTask() {
             password: password
         }
         try {
-            cls.Json_GetFolders(obj,function (sts, data) {
+            cls.Json_GetFolders(obj, function (sts, data) {
                 if (sts) {
                     if (data) {
                         let js = JSON.parse(data);
@@ -747,6 +749,7 @@ export default function CreateNewModalTask() {
                                                 {...label}
                                                 icon={<RadioButtonUncheckedOutlinedIcon />}
                                                 checkedIcon={<CheckCircleIcon />}
+                                                className="p-0"
                                             />
 
                                             <Box className>
@@ -808,12 +811,14 @@ export default function CreateNewModalTask() {
                                                                 return (
                                                                     <>
                                                                         <Box
-                                                                            className="user-img-list ms-2 bg-red"
+                                                                            className="user-img-list me-2 admin"
                                                                             title={item.ForwardTo}
                                                                             key={item.ID}
                                                                         >
                                                                             <p>{result}</p>
                                                                         </Box>
+
+                                                                        <ArrowForwardIosIcon className='me-1' />
                                                                     </>
                                                                 );
                                                             }
@@ -821,7 +826,7 @@ export default function CreateNewModalTask() {
                                                                 return (
                                                                     <>
                                                                         <Box
-                                                                            className="user-img-list ms-2"
+                                                                            className="user-img-list me-2"
                                                                             title={item.ForwardTo}
                                                                             key={item.ID}
                                                                         >
@@ -852,7 +857,6 @@ export default function CreateNewModalTask() {
                                                 }}
                                                 className="user-list-dropdown"
                                             >
-
 
                                                 <Box
                                                     className="inner-user-list-dropdown"
@@ -915,8 +919,6 @@ export default function CreateNewModalTask() {
                                                                 </React.Fragment>
                                                             ))}
                                                         </Box>
-
-
                                                     </Box>
                                                 </Box>
                                             </Menu>
@@ -1038,6 +1040,15 @@ export default function CreateNewModalTask() {
                                         onChange={(e) => setTxtComment(e.target.value)} // Handle changes to the textarea
                                     ></textarea>
                                 </Box>
+
+                                <Button
+                                    variant="contained"
+                                    onClick={UploadAttachment}
+                                    disabled={loading}
+                                    className="btn-blue-2 mt-3"
+                                >
+                                    {loading ? 'Submitting...' : 'Create Task'}
+                                </Button>
                             </Box>
                             {/* col end */}
 
@@ -1071,19 +1082,24 @@ export default function CreateNewModalTask() {
                                             MenuListProps={{
                                                 "aria-labelledby": "basic-button",
                                             }}
+                                            className="search-list-main"
                                         >
-                                            <TextField
-                                                label="Search"
-                                                variant="outlined"
-                                                value={searchFolderQuery}
-                                                onChange={handleSearchInputChangeFolder}
-                                                sx={{ width: "100%" }}
-                                            />
+                                            <Box className='px-3'>
+                                                <TextField
+                                                    label="Search"
+                                                    variant="outlined"
+                                                    value={searchFolderQuery}
+                                                    onChange={handleSearchInputChangeFolder}
+                                                    sx={{ width: "100%" }}
+                                                />
+                                            </Box>
+
                                             <List
                                                 sx={{
                                                     width: "100%",
                                                     maxWidth: 360,
                                                     bgcolor: "background.paper",
+                                                    maxHeight: '230px'
                                                 }}
                                             >
                                                 {filteredFolderList
@@ -1095,18 +1111,19 @@ export default function CreateNewModalTask() {
                                                                     console.log("client select", item.Folder);
                                                                     settxtFolder(item.Folder); // Assuming item.Client holds the value you want
                                                                     setFolderId(item.FolderID);
-
                                                                     setFolderAnchorEl(null);
                                                                     Json_GetFolderData();
                                                                 }}
+                                                                className="search-list"
                                                             >
-                                                                <ListItemAvatar>
+                                                                {/* <ListItemAvatar>
                                                                     <Avatar
                                                                         alt="Remy Sharp"
                                                                         src="/static/images/avatar/1.jpg"
                                                                     />
-                                                                </ListItemAvatar>
+                                                                </ListItemAvatar> */}
                                                                 <ListItemText
+                                                                    className='m-0'
                                                                     primary={item.Folder}
                                                                     secondary={
                                                                         <React.Fragment>
@@ -1116,14 +1133,14 @@ export default function CreateNewModalTask() {
                                                                                 variant="body2"
                                                                                 color="text.primary"
                                                                             >
-                                                                                {item.FolderID}
+                                                                                {/* {item.FolderID} */}
                                                                             </Typography>
                                                                             {/* {item.CLMandatory} */}
                                                                         </React.Fragment>
                                                                     }
                                                                 />
                                                             </ListItem>
-                                                            <Divider variant="inset" component="li" />
+                                                            {/* <Divider variant="inset" component="li" /> */}
                                                         </React.Fragment>
                                                     ))
                                                     : null}
@@ -1159,18 +1176,22 @@ export default function CreateNewModalTask() {
                                                 "aria-labelledby": "basic-button",
                                             }}
                                         >
-                                            <TextField
-                                                label="Search"
-                                                variant="outlined"
-                                                value={searchQuery}
-                                                onChange={handleSearchInputChange}
-                                                sx={{ width: "100%" }}
-                                            />
+                                            <Box className='p-2'>
+                                                <TextField
+                                                    label="Search"
+                                                    variant="outlined"
+                                                    value={searchQuery}
+                                                    onChange={handleSearchInputChange}
+                                                    sx={{ width: "100%" }}
+                                                />
+                                            </Box>
+
                                             <List
                                                 sx={{
                                                     width: "100%",
                                                     maxWidth: 360,
                                                     bgcolor: "background.paper",
+                                                    maxHeight: '300px'
                                                 }}
                                             >
                                                 {filteredClientList.map((item, index) => (
@@ -1183,13 +1204,14 @@ export default function CreateNewModalTask() {
                                                                 setTextClientId(item.ClientID);
                                                                 setClientAnchorEl(null);
                                                             }}
+                                                            className="search-list"
                                                         >
-                                                            <ListItemAvatar>
+                                                            {/* <ListItemAvatar>
                                                                 <Avatar
                                                                     alt="Remy Sharp"
                                                                     src="/static/images/avatar/1.jpg"
                                                                 />
-                                                            </ListItemAvatar>
+                                                            </ListItemAvatar> */}
                                                             <ListItemText
                                                                 primary={item.Client}
                                                                 secondary={
@@ -1200,14 +1222,14 @@ export default function CreateNewModalTask() {
                                                                             variant="body2"
                                                                             color="text.primary"
                                                                         >
-                                                                            {item.ClientID}
+                                                                            {/* {item.ClientID} */}
                                                                         </Typography>
-                                                                        {item.Email}
+                                                                        {/* {item.Email} */}
                                                                     </React.Fragment>
                                                                 }
                                                             />
                                                         </ListItem>
-                                                        <Divider variant="inset" component="li" />
+                                                        {/* <Divider variant="inset" component="li" /> */}
                                                     </React.Fragment>
                                                 ))}
                                             </List>
@@ -1241,18 +1263,21 @@ export default function CreateNewModalTask() {
                                                 "aria-labelledby": "basic-button",
                                             }}
                                         >
-                                            <TextField
-                                                label="Search"
-                                                variant="outlined"
-                                                value={searchFolderQuery}
-                                                onChange={handleSearchInputChangeSection}
-                                                sx={{ width: "100%" }}
-                                            />
+                                            <Box className='p-2'>
+                                                <TextField
+                                                    label="Search"
+                                                    variant="outlined"
+                                                    value={searchFolderQuery}
+                                                    onChange={handleSearchInputChangeSection}
+                                                    sx={{ width: "100%" }}
+                                                />
+                                            </Box>
                                             <List
                                                 sx={{
                                                     width: "100%",
                                                     maxWidth: 360,
                                                     bgcolor: "background.paper",
+                                                    height: '260px'
                                                 }}
                                             >
                                                 {filtereSectionList
@@ -1266,13 +1291,14 @@ export default function CreateNewModalTask() {
                                                                     setTxtSectionId(item.SecID); // Assuming item.Client holds the value you want
                                                                     setSectionAnchorEl(null);
                                                                 }}
+                                                                className="search-list"
                                                             >
-                                                                <ListItemAvatar>
+                                                                {/* <ListItemAvatar>
                                                                     <Avatar
                                                                         alt="Remy Sharp"
                                                                         src="/static/images/avatar/1.jpg"
                                                                     />
-                                                                </ListItemAvatar>
+                                                                </ListItemAvatar> */}
                                                                 <ListItemText
                                                                     primary={item.Sec}
                                                                     secondary={
@@ -1283,14 +1309,14 @@ export default function CreateNewModalTask() {
                                                                                 variant="body2"
                                                                                 color="text.primary"
                                                                             >
-                                                                                {item.SecID}
+                                                                                {/* {item.SecID} */}
                                                                             </Typography>
                                                                             {/* {item.CLMandatory} */}
                                                                         </React.Fragment>
                                                                     }
                                                                 />
                                                             </ListItem>
-                                                            <Divider variant="inset" component="li" />
+                                                            {/* <Divider variant="inset" component="li" /> */}
                                                         </React.Fragment>
                                                     ))
                                                     : null}
@@ -1406,13 +1432,14 @@ export default function CreateNewModalTask() {
                                                                 setTxtPriorityId(item.id)
                                                                 setPrioriyAnchorEl(null);
                                                             }}
+                                                            className="search-list"
                                                         >
-                                                            <ListItemAvatar>
+                                                            {/* <ListItemAvatar>
                                                                 <Avatar
                                                                     alt="Remy Sharp"
                                                                     src="/static/images/avatar/1.jpg"
                                                                 />
-                                                            </ListItemAvatar>
+                                                            </ListItemAvatar> */}
                                                             <ListItemText
                                                                 primary={item.name}
                                                                 secondary={
@@ -1423,14 +1450,14 @@ export default function CreateNewModalTask() {
                                                                             variant="body2"
                                                                             color="text.primary"
                                                                         >
-                                                                            {item.id}
+                                                                            {/* {item.id} */}
                                                                         </Typography>
                                                                         {/* {item.CLMandatory} */}
                                                                     </React.Fragment>
                                                                 }
                                                             />
                                                         </ListItem>
-                                                        <Divider variant="inset" component="li" />
+                                                        {/* <Divider variant="inset" component="li" /> */}
                                                     </React.Fragment>
                                                 ))
                                                 : null}
@@ -1468,6 +1495,7 @@ export default function CreateNewModalTask() {
                                                 width: "100%",
                                                 maxWidth: 600,
                                                 bgcolor: "background.paper",
+                                                height: '200px'
                                             }}
                                         >
                                             {statusarr
@@ -1481,13 +1509,14 @@ export default function CreateNewModalTask() {
 
                                                                 setStatusAnchorEl(null);
                                                             }}
+                                                            className="search-list"
                                                         >
-                                                            <ListItemAvatar>
+                                                            {/* <ListItemAvatar>
                                                                 <Avatar
                                                                     alt="Remy Sharp"
                                                                     src="/static/images/avatar/1.jpg"
                                                                 />
-                                                            </ListItemAvatar>
+                                                            </ListItemAvatar> */}
                                                             <ListItemText
                                                                 primary={item.name}
                                                                 secondary={
@@ -1498,14 +1527,14 @@ export default function CreateNewModalTask() {
                                                                             variant="body2"
                                                                             color="text.primary"
                                                                         >
-                                                                            {item.id}
+                                                                            {/* {item.id} */}
                                                                         </Typography>
                                                                         {/* {item.CLMandatory} */}
                                                                     </React.Fragment>
                                                                 }
                                                             />
                                                         </ListItem>
-                                                        <Divider variant="inset" component="li" />
+                                                        {/* <Divider variant="inset" component="li" /> */}
                                                     </React.Fragment>
                                                 ))
                                                 : null}
@@ -1517,13 +1546,7 @@ export default function CreateNewModalTask() {
 
 
 
-                            <Button
-                                variant="contained"
-                                onClick={UploadAttachment}
-                                disabled={loading}
-                            >
-                                {loading ? 'Submitting...' : 'Create Task'}
-                            </Button>
+
 
 
 
@@ -1533,7 +1556,7 @@ export default function CreateNewModalTask() {
 
                     {/* <hr /> */}
 
-                    <DialogActions className="px-0 w-100">
+                    <DialogActions className="px-0 w-100 p-0">
                         <Box className="d-flex align-items-center justify-content-end w-100">
                             {/* <Box className="d-flex align-items-center">
                                 <label className='pe-3'>Team Account:</label>

@@ -26,11 +26,7 @@ const ClientGrid = () => {
     const clearFilter = useCallback(() => {
         dataGridRef.current.instance.clearFilter();
     }, []);
-
-
-
-
-
+    
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";// base url for api
 
     //   let dt = new LoginDetails();
@@ -107,7 +103,6 @@ const ClientGrid = () => {
                 <Paging defaultPageSize={20} />
                 <Pager
                     visible={true} />
-
                 <SearchPanel
                     visible={true}
                     width={240}
