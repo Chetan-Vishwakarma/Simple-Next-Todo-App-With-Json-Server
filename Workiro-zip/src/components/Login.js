@@ -92,6 +92,18 @@ function LoginDetail(){
     
   })
 }
+const Json_getViewerToken=(agrno)=>{
+  let obj = JSON.parse(details);
+  obj.agrno = agrno;
+  try{
+    CLS.Call(JSON.stringify(obj),"Json_getViewerToken",function(res){
+      localStorage.setItem("ViewerToken", res.d);
+      navigate("/dashboard/TodoList");
+    });
+  }catch(err){
+    console.log("Error while calling Json_getViewerToken",err);
+  }
+}
 const GetAgreementList = (agrno) => {
   let obj = JSON.parse(details);
 obj.agrno = agrno;
@@ -99,12 +111,12 @@ console.log(obj);
   CLS.Call(JSON.stringify(obj),"Json_GetAccessToken",function(res){
     localStorage.setItem("FolderId",res.d);
     localStorage.setItem("ProjectId",res.d);
+    Json_getViewerToken(agrno);
 // Swal.fire({
 //   icon: 'success',
 //   title: 'Login Successful!',
 //   text: 'Welcome back, ' + obj.Email + '!',
 // });
-navigate("/dashboard/TodoList");
   })
 }
 
