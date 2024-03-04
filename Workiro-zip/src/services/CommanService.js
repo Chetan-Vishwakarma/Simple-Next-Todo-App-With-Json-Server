@@ -261,6 +261,18 @@ export default class CommanCLS extends AllService {
         })
      }
 
+     Json_GetAccessToken(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetAccessToken",obj,true);
+        super.CallNewService("Json_GetAccessToken",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
      
 
 
