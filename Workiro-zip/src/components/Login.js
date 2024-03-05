@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import API from '../services/APIsCall';
 import Swal from 'sweetalert2';
 import { json, useNavigate } from 'react-router-dom';
+import CommanCLS from '../services/CommanService';
 
 
 function Copyright(props) {
@@ -40,39 +41,47 @@ export default function Login() {
 
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";// base url for api
 
-  let CLS =new API(baseUrl);// Call api 
+  //let CLS =new API(baseUrl);// Call api 
+  let CLS = new CommanCLS(baseUrl);
 
 
   /////////////////////////handalSubmit
   const handleSubmit = (event) => {
     event.preventDefault();
+    let strEmail = document.getElementById("email").value;
+    let strPassword = document.getElementById("password").value;
+    console.log("kjhsfkj",strEmail,btoa(strPassword));
     const data = new FormData(event.currentTarget);
+    // let obj = {
+    //   Email: data.get('email'),
+    //   password: btoa(data.get('password')),
+    // }
     let obj = {
-      Email: data.get('email'),
-      password: btoa(data.get('password')),
+      Email: strEmail,
+      password: btoa(strPassword),
     }
     setDetails(JSON.stringify(obj));
-    console.log({
-      Email: data.get('email'),
-      password: data.get('password'),
-    });
-    LoginDetail();
+    // console.log({
+    //   Email: data.get('email'),
+    //   password: data.get('password'),
+    // });
+    LoginDetail(obj);
   };
   /////////////////////////end handalSubmit
-function LoginDetail(){
-  CLS.Call(details,"Json_GetAgreementList",function(res){
+function LoginDetail(obj){
+  CLS.Call(JSON.stringify(obj),"Json_GetAgreementList",function(res){
     if(res.d !=="Invalid"){
       let str = JSON.parse(res.d);
       let tbl = str.Table;
       console.log("response data",tbl);
       if(tbl.length>0){
-        let setEmaiPass = JSON.parse(details);        
+        //let setEmaiPass = JSON.parse(obj);        
         localStorage.setItem("agrno",tbl[0].vAgreementNo);
         localStorage.setItem("IsAdmin",tbl[0].strIsAdmin);
         localStorage.setItem("UserId",tbl[0].intUserId);
-        localStorage.setItem("Email",setEmaiPass.Email);
-        localStorage.setItem("Password",setEmaiPass.password);
-        GetAgreementList(tbl[0].vAgreementNo);
+        localStorage.setItem("Email",obj.Email);
+        localStorage.setItem("Password",obj.password);
+        GetAgreementList(obj,tbl[0].vAgreementNo);
       }
       else{
         Swal.fire({
@@ -92,9 +101,7 @@ function LoginDetail(){
     
   })
 }
-const Json_getViewerToken=(agrno)=>{
-  let obj = JSON.parse(details);
-  obj.agrno = agrno;
+const Json_getViewerToken=(obj)=>{
   try{
     CLS.Call(JSON.stringify(obj),"Json_getViewerToken",function(res){
       localStorage.setItem("ViewerToken", res.d);
@@ -104,19 +111,12 @@ const Json_getViewerToken=(agrno)=>{
     console.log("Error while calling Json_getViewerToken",err);
   }
 }
-const GetAgreementList = (agrno) => {
-  let obj = JSON.parse(details);
+const GetAgreementList = (obj,agrno) => {
 obj.agrno = agrno;
-console.log(obj);
   CLS.Call(JSON.stringify(obj),"Json_GetAccessToken",function(res){
     localStorage.setItem("FolderId",res.d);
     localStorage.setItem("ProjectId",res.d);
-    Json_getViewerToken(agrno);
-// Swal.fire({
-//   icon: 'success',
-//   title: 'Login Successful!',
-//   text: 'Welcome back, ' + obj.Email + '!',
-// });
+    Json_getViewerToken(obj);
   })
 }
 
