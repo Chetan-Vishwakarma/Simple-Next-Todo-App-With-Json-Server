@@ -1176,7 +1176,13 @@ hr {
   height: 26px;
   min-width: 26px;
   border-radius: 90px !important;
+  background: #bebebe !important;
 }
+
+.aml-details-modal .btn-sign.active {
+  background: #4780FF !important;
+}
+
 
 @media only screen and (max-width: 1366px) {
   .client-box-main {

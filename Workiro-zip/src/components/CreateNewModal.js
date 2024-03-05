@@ -1332,7 +1332,6 @@ export default function CreateNewModalTask() {
                                             className="pe-0 sadik"
                                             dateAdapter={AdapterDayjs}
                                         >
-
                                             <DatePicker className="datepicker w-100"
                                                 defaultValue={currentDate}// Set the default value using the value prop
                                                 onChange={(e) => setCurrentDate(e)} // Update the default date when the user changes it                      
@@ -1355,7 +1354,7 @@ export default function CreateNewModalTask() {
                                 <Box className="mb-2 border-bottom">
                                     <label className="font-14">Start Date</label>
                                     <LocalizationProvider
-                                        className="pe-0 sadik"
+                                        className="pe-0"
                                         dateAdapter={AdapterDayjs}
                                     >
                                         <DatePicker className="datepicker w-100"
