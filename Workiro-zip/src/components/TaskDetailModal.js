@@ -32,27 +32,41 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import axios from "axios";
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
-function TaskDetailModal({selectedTask,openModal, setOpen }) {
+import ArticleIcon from '@mui/icons-material/Article';
 
-    const [allTask,setAllTask] = useState([]);
+
+// import {CloudUploadIcon, DriveFileRenameOutlineIcon, TravelExploreIcon, CloudDownloadIcon} from '@mui/icons-material';
+
+
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import TravelExploreIcon from '@mui/icons-material/TravelExplore';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+
+
+
+function TaskDetailModal({ selectedTask, openModal, setOpen }) {
+
+    const [allTask, setAllTask] = useState([]);
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
-    useEffect(()=>{
-        const Json_CRM_GetOutlookTask=async()=>{
-            let res = await axios.post(`${baseUrl}Json_CRM_GetOutlookTask`,{
+    useEffect(() => {
+        const Json_CRM_GetOutlookTask = async () => {
+            let res = await axios.post(`${baseUrl}Json_CRM_GetOutlookTask`, {
                 Email: "nabs@docusoft.net",
                 agrno: "0261",
                 password: "ZG9jdXNvZnQ="
             });
-            console.log("Json_CRM_GetOutlookTask",JSON.parse(res.data.d));
+            console.log("Json_CRM_GetOutlookTask", JSON.parse(res.data.d));
         }
         Json_CRM_GetOutlookTask();
-        return ()=>{
+        return () => {
             console.log("Modal is Closed");
         }
-    },[]);
+    }, []);
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -92,6 +106,27 @@ function TaskDetailModal({selectedTask,openModal, setOpen }) {
         // setAnchorEl(null);
         setOpen(false)
     };
+
+
+    // document details modal
+    const [documentLis, setOpenDocumentList] = React.useState(false);
+    const handleClickOpen = () => {
+        setOpenDocumentList(true);
+    };
+    const handleCloseDocumentList = () => {
+        setOpenDocumentList(false);
+    };
+
+    // details dropdown
+    const [anchorElDocumentList, setAnchorElDocumentList] = React.useState(null);
+    const DocumentList = Boolean(anchorElDocumentList);
+    const handleClickDocumentList = (event) => {
+        setAnchorElDocumentList(event.currentTarget);
+    };
+    const handleCloseDocument = () => {
+        setAnchorElDocumentList(null);
+    };
+
 
     return (
 
@@ -409,12 +444,14 @@ function TaskDetailModal({selectedTask,openModal, setOpen }) {
 
                         <Box className='d-flex flex-wrap justify-content-between'>
 
-                            <Link href="#" className='text-decoration-none d-flex'><BallotIcon className='me-1' /> 15 Documents</Link>
+                            <Link href="#" className='text-decoration-none d-flex'
+                                onClick={handleClickOpen}
+                            ><BallotIcon className='me-1' /> 15 Documents</Link>
 
                             <Box className='d-flex'>
                                 <Box className='mb-2 border-bottom me-3 width-150'>
                                     <label className='font-14 text-black'>Start Date</label>
-                                    <LocalizationProvider className='pe-0 sadik' dateAdapter={AdapterDayjs} >
+                                    <LocalizationProvider className='pe-0 ' dateAdapter={AdapterDayjs} >
                                         <DatePicker className="datepicker w-100" />
                                     </LocalizationProvider>
                                 </Box>
@@ -422,7 +459,7 @@ function TaskDetailModal({selectedTask,openModal, setOpen }) {
                                 <Box className="border-bottom mb-2 width-150">
                                     <Box className='mb-2 '>
                                         <label className='font-14 semibold text-black'>Due By</label>
-                                        <LocalizationProvider className='pe-0 sadik' dateAdapter={AdapterDayjs} >
+                                        <LocalizationProvider className='pe-0 ' dateAdapter={AdapterDayjs} >
                                             <DatePicker className="datepicker w-100" />
                                         </LocalizationProvider>
                                     </Box>
@@ -574,9 +611,350 @@ function TaskDetailModal({selectedTask,openModal, setOpen }) {
                             </Box>
                         </Box>
                     </DialogActions> */}
-                    
+
                 </DialogContent>
             </Dialog >
+
+
+
+
+
+            {/* // document list modal */}
+
+            <Dialog
+                open={documentLis}
+                onClose={handleCloseDocumentList}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal'
+
+                sx={{
+                    maxWidth: 640,
+                    margin: '0 auto'
+                }}
+            >
+                {/* <DialogTitle id="alert-dialog-title">
+                        {"Use Google's location service?"}
+                    </DialogTitle> */}
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+
+                        <Box className="d-flex align-items-center justify-content-between">
+                            <Box className="dropdown-box">
+                                <Typography variant="h4" className='font-18 bold mb-2 text-black'>
+                                    Document Details
+                                </Typography>
+                                {/* <Box className="btn-Select">
+                                    <Button className='btn-white'>Action</Button>
+                                    <Button className='btn-white'>Ser</Button>
+                                    <Button className='btn-white'>Custom</Button>
+
+                                    <hr />
+
+                                    <Button className='btn-blue-2' size="small">Apply Now</Button>
+                                </Box> */}
+                            </Box>
+
+{/*  */}
+                            <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+                        </Box>
+
+                        <Box className="file-uploads">
+                            <label className="file-uploads-label file-uploads-document">
+                                <Box className="d-flex align-items-center">
+                                    <DescriptionIcon
+                                        sx={{
+                                            fontSize: 32,
+                                        }}
+                                        className='me-2'
+                                    />
+                                    <Box className="upload-content pe-3">
+                                        <Typography variant="h4" >
+                                            thisisTest.pdf
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            Size:  <span className='sembold'>10MB</span> | Uploaded by <span className='sembold'>Patrick</span>
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
+                                <Box>
+                                    <Button
+                                        id="basic-button"
+                                        aria-controls={DocumentList ? 'basic-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={DocumentList ? 'true' : undefined}
+                                        onClick={handleClickDocumentList}
+                                        className='min-width-auto'
+                                    >
+                                        <MoreVertIcon />
+                                    </Button>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorElDocumentList}
+                                        open={DocumentList}
+                                        onClose={handleCloseDocument}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+                                        className='custom-dropdown'
+                                    >
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <ArticleIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Document Details</MenuItem>
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <CloudUploadIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Upload New Version</MenuItem>
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <DriveFileRenameOutlineIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Rename Document</MenuItem>
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <TravelExploreIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Open in Browser</MenuItem>
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <CloudDownloadIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Download</MenuItem>
+                                    </Menu>
+                                </Box>
+                            </label>
+                        </Box>
+                        {/* file upload end */}
+
+                        <Box className="file-uploads">
+                            <label className="file-uploads-label file-uploads-document">
+                                <Box className="d-flex align-items-center">
+                                    <DescriptionIcon
+                                        sx={{
+                                            fontSize: 32,
+                                        }}
+                                        className='me-2'
+                                    />
+                                    <Box className="upload-content pe-3">
+                                        <Typography variant="h4" >
+                                            file_names_123.pdf
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            Size:  <span className='sembold'>10MB</span> | Uploaded by <span className='sembold'>Patrick</span>
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
+                                <Box>
+                                    <Button
+                                        id="basic-button"
+                                        aria-controls={DocumentList ? 'basic-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={DocumentList ? 'true' : undefined}
+                                        onClick={handleClickDocumentList}
+                                        className='min-width-auto'
+                                    >
+                                        <MoreVertIcon />
+                                    </Button>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorElDocumentList}
+                                        open={DocumentList}
+                                        onClose={handleCloseDocument}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+                                        className='custom-dropdown'
+                                    >
+                                            <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <ArticleIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Document Details</MenuItem>
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <CloudUploadIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Upload New Version</MenuItem>
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <DriveFileRenameOutlineIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Rename Document</MenuItem>
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <TravelExploreIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Open in Browser</MenuItem>
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <CloudDownloadIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Download</MenuItem>
+                                    </Menu>
+                                </Box>
+                            </label>
+                        </Box>
+                        {/* file upload end */}
+
+                        <Box className="file-uploads">
+                            <label className="file-uploads-label file-uploads-document">
+                                <Box className="d-flex align-items-center">
+                                    <DescriptionIcon
+                                        sx={{
+                                            fontSize: 32,
+                                        }}
+                                        className='me-2'
+                                    />
+                                    <Box className="upload-content pe-3">
+                                        <Typography variant="h4" >
+                                            test_three.doc
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            Size:  <span className='sembold'>10MB</span> | Uploaded by <span className='sembold'>Patrick</span>
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
+                                <Box>
+                                    <Button
+                                        id="basic-button"
+                                        aria-controls={DocumentList ? 'basic-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={DocumentList ? 'true' : undefined}
+                                        onClick={handleClickDocumentList}
+                                        className='min-width-auto'
+                                    >
+                                        <MoreVertIcon />
+                                    </Button>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorElDocumentList}
+                                        open={DocumentList}
+                                        onClose={handleCloseDocument}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+                                        className='custom-dropdown'
+                                    >
+                                            <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <ArticleIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Document Details</MenuItem>
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <CloudUploadIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Upload New Version</MenuItem>
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <DriveFileRenameOutlineIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Rename Document</MenuItem>
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <TravelExploreIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Open in Browser</MenuItem>
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <CloudDownloadIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Download</MenuItem>
+                                    </Menu>
+                                </Box>
+                            </label>
+                        </Box>
+                        {/* file upload end */}
+
+                        <Box className="file-uploads">
+                            <label className="file-uploads-label file-uploads-document">
+                                <Box className="d-flex align-items-center">
+                                    <DescriptionIcon
+                                        sx={{
+                                            fontSize: 32,
+                                        }}
+                                        className='me-2'
+                                    />
+                                    <Box className="upload-content pe-3">
+                                        <Typography variant="h4" >
+                                            document_654.pdf
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            Size:  <span className='sembold'>10MB</span> | Uploaded by <span className='sembold'>Patrick</span>
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
+                                <Box>
+                                    <Button
+                                        id="basic-button"
+                                        aria-controls={DocumentList ? 'basic-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={DocumentList ? 'true' : undefined}
+                                        onClick={handleClickDocumentList}
+                                        className='min-width-auto'
+                                    >
+                                        <MoreVertIcon />
+                                    </Button>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorElDocumentList}
+                                        open={DocumentList}
+                                        onClose={handleCloseDocument}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+                                        className='custom-dropdown'
+                                    >
+                                            <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <ArticleIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Document Details</MenuItem>
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <CloudUploadIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Upload New Version</MenuItem>
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <DriveFileRenameOutlineIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Rename Document</MenuItem>
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <TravelExploreIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Open in Browser</MenuItem>
+                                        <MenuItem onClick={handleCloseDocument}>
+                                            <ListItemIcon>
+                                                <CloudDownloadIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Download</MenuItem>
+                                    </Menu>
+                                </Box>
+                            </label>
+                        </Box>
+                        {/* file upload end */}
+
+
+
+                    </DialogContentText>
+                </DialogContent>
+
+            </Dialog>
+
+
         </React.Fragment >
 
     )
