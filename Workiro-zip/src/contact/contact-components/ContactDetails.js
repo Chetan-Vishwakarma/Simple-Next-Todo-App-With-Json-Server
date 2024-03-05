@@ -793,7 +793,7 @@ function ContactDetails() {
                                     <TextField label="Driving Lic No" variant="outlined" className='form-control' />
                                     <Button className='btn-blue-2 btn-sign' onClick={()=> {
                                         verificationSetOpen(true)
-                                        Json_UpdateContactVerify()
+                                        Json_UpdateContactVerify();
                                     }}><CheckIcon /></Button>
                                 </Box>
                             </Box>
