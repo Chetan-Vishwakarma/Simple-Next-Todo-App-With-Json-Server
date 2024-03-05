@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -59,7 +59,7 @@ function ContactDetails() {
 
     const [value, setValue] = React.useState('1');
 
-    const [contactDetails, setContactDetails] = React.useState([]);
+    const [contactDetails, setContactDetails] = useState([]);
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
@@ -121,10 +121,30 @@ function ContactDetails() {
         setOpen(true);
     };
 
-
-    const varificationHandleClickOpen = () => {
-        verificationSetOpen(true);
-    };
+    const Json_UpdateContactVerify=()=>{
+        let obj = {
+            agrno:agrno,
+            Email:Email,
+            password: password,
+            Contactemail: contactDetails[0]["E-Mail"],
+            BnkAccNumber: "",
+            BnkSrCode:"",
+            DrvLicNumber:"test",
+            NatInsNumber:"",
+            PassportNumber:""
+        }
+        try{
+            Cls.Json_UpdateContactVerify(obj,(sts,data)=>{
+                if(sts){
+                    if(data){
+                        console.log("Json_UpdateContactVerify",data);
+                    }
+                }
+            });
+        }catch(err){
+            console.log("Error while calling Json_UpdateContactVerify",err);
+        }
+    }
 
 
     return (
@@ -738,8 +758,7 @@ function ContactDetails() {
                             <Box className='col-md-6'>
                                 <Box class="input-group mb-3">
                                     <TextField label="Bank Account No" className='form-control' variant="outlined" />
-                                    <Button className='btn-blue-2 btn-sign' onClick={verificationSetOpen}
-                                    ><CheckIcon /></Button>
+                                    <Button className='btn-blue-2 btn-sign'><CheckIcon /></Button>
                                 </Box>
 
                             </Box>
@@ -747,7 +766,7 @@ function ContactDetails() {
                             <Box className='col-md-6'>
                                 <Box class="input-group mb-3">
                                     <TextField label="Bank SR Code" variant="outlined" className='form-control' />
-                                    <Button className='btn-blue-2 btn-sign'><CheckIcon /></Button>
+                                    <Button className='btn-blue-2 btn-sign '><CheckIcon /></Button>
                                 </Box>
                             </Box>
                         </Box>
@@ -756,7 +775,7 @@ function ContactDetails() {
                             <Box className='col-md-6'>
                                 <Box class="input-group mb-3">
                                     <TextField label="Driving Lic No" variant="outlined" className='form-control' />
-                                    <Button className='btn-blue-2 btn-sign'><CheckIcon /></Button>
+                                    <Button className='btn-blue-2 btn-sign' onClick={Json_UpdateContactVerify}><CheckIcon /></Button>
                                 </Box>
                             </Box>
 

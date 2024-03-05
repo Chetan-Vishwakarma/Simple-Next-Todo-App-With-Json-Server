@@ -261,6 +261,18 @@ export default class CommanCLS extends AllService {
         })
      }
 
+     Json_UpdateContactVerify(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_UpdateContactVerify",obj,true);
+        super.CallNewService("Json_UpdateContactVerify",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
      
 
 
