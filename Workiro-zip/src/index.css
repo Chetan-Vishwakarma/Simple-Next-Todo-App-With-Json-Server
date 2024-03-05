@@ -436,7 +436,7 @@ button {
 }
 
 .text-red {
-  color: #e46565 !important;
+  color: #d42027 !important;
 }
 
 .text-green {
@@ -1068,10 +1068,15 @@ hr {
 .todo-list-box {
   border-radius: 20px;
   border: 2px dashed #e1e1e1;
+  cursor: pointer;
+  transition: .5s all ease;
+}
+.todo-list-box:hover {
+  border-color: #d42027;
 }
 
 .todo-list-box h2 {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
 }
 
@@ -1157,6 +1162,25 @@ hr {
 .search-list:hover {
   background: #4780FF;
   color: #fff;
+}
+.aml-details-modal {
+  max-width: 660px;
+  margin: 0 auto;
+}
+.aml-details-modal .btn-sign {
+  padding: 0px !important;
+  clear: both;
+  position: absolute;
+  right: 12px;
+  top: 11px;
+  height: 26px;
+  min-width: 26px;
+  border-radius: 90px !important;
+  background: #bebebe !important;
+}
+
+.aml-details-modal .btn-sign.active {
+  background: #4780FF !important;
 }
 
 

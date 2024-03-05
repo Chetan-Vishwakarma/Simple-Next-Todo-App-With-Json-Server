@@ -83,15 +83,15 @@ const ClientGrid = () => {
     }
 
     return (
-        <div style={{ height: 'auto', overflowY: 'auto',width:'86vw' }}>
+        <div className='white-box' style={{ height: 'auto', overflowY: 'auto',width:'80vw' }}>
             <DataGrid
                 id="dataGrid"
                 ref={dataGridRef}
                 dataSource={clientList}
                 keyExpr="OriginatorNo"
                 columnAutoWidth={true}
-                showBorders={true}
-                onSelectionChanged={onSelectionChanged}>
+                showBorders={true}>
+                {/* onSelectionChanged={onSelectionChanged} */}
                 <FilterRow visible={true} />
                 <FilterPanel visible={true} />
                 <HeaderFilter visible={true} />
