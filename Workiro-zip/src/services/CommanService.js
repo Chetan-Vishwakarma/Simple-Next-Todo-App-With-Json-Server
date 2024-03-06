@@ -8,6 +8,17 @@ export default class CommanCLS extends AllService {
         super(APIUrl,agrno, Email, password);
     }
 
+    Json_ExplorerSearchDoc(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_ExplorerSearchDoc",obj,true);
+        super.CallNewService("Json_ExplorerSearchDoc",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
     Json_Get_CRM_Task_ActivityByTaskId(obj,callBack){   
         super.CreateNewServiceParamObject("Json_Get_CRM_Task_ActivityByTaskId",obj,true);
         super.CallNewService("Json_Get_CRM_Task_ActivityByTaskId",function(status,Data){

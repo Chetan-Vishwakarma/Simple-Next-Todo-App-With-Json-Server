@@ -23,6 +23,8 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Checkbox from "@mui/material/Checkbox";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
+import DescriptionIcon from '@mui/icons-material/Description';
+
 import Swal from 'sweetalert2';
 import {
     List,
@@ -35,6 +37,18 @@ import {
 } from "@mui/material";
 
 import dayjs from 'dayjs';
+////////////////////////////////////////////////////////////////Dxdata Grid
+import ODataStore from 'devextreme/data/odata/store';
+import DataGrid, {
+  Column,
+  DataGridTypes,
+  Grouping,
+  GroupPanel,
+  Pager,
+  Paging,
+  SearchPanel,
+} from 'devextreme-react/data-grid';
+
 
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 
@@ -682,6 +696,48 @@ export default function CreateNewModalTask() {
 
     }
 
+////////////////////////////////////DMS Document
+    const [documentLisdoc, setOpenDocumentList] = React.useState(false);
+    const [dmsDocumentList, setDMSDocumentList] = React.useState([]);
+  
+
+
+    const Json_ExplorerSearchDoc = ()=>{
+        try {           
+            
+            if(txtFolderId && textClientId){
+                let obj ={};
+                obj.ProjectId=txtFolderId;
+                obj.ClientId=textClientId;
+                obj.sectionId="-1";        
+                cls.Json_ExplorerSearchDoc(obj, function(sts,data){
+                    if(sts && data){
+                        let json = JSON.parse(data);
+                        console.log("ExplorerSearchDoc",json);
+                        let tble6 = json.Table6;
+                        setDMSDocumentList(tble6);
+                    }
+                })
+            }
+            
+        } catch (error) {
+            console.log("ExplorerSearchDoc",error)
+        }
+       
+    }
+
+    const handleDocumentClickOpen = () => {
+        Json_ExplorerSearchDoc();
+        setOpenDocumentList(true);
+    };
+    const handleCloseDocumentList = () => {
+        setOpenDocumentList(false);
+    };
+    const pageSizes = [10, 25, 50, 100];
+    // useEffect(()=>{
+    //     Json_ExplorerSearchDoc();
+    // },[])
+
     return (
         <React.Fragment>
             <Button
@@ -970,7 +1026,7 @@ export default function CreateNewModalTask() {
                                                 </Typography>
                                             </Box>
                                         </Box>
-                                        <Button variant="text" className="btn-blue-2">
+                                        <Button variant="text" className="btn-blue-2" onClick={handleDocumentClickOpen}>
                                             Select file
                                         </Button>
                                     </label>
@@ -1607,6 +1663,59 @@ export default function CreateNewModalTask() {
                             </Box> */}
                         </Box>
                     </DialogActions>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog
+                open={documentLisdoc}
+                onClose={handleCloseDocumentList}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal'
+
+                sx={{
+                    maxWidth: 640,
+                    margin: '0 auto'
+                }}
+            >
+                {/* <DialogTitle id="alert-dialog-title">
+                        {"Use Google's location service?"}
+                    </DialogTitle> */}
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+
+                    <DataGrid
+      dataSource={dmsDocumentList}
+      allowColumnReordering={true}
+      rowAlternationEnabled={true}
+      showBorders={true}
+      width="100%"
+      //onContentReady={onContentReady}
+    >
+    
+      <SearchPanel visible={true} highlightCaseSensitive={true} />     
+
+      <Column dataField="Product" groupIndex={0} />
+      <Column
+        dataField="Client"
+        caption="Client"       
+      />
+      <Column
+        dataField="Description"
+        caption="Description"       
+      />
+      <Column
+        dataField="Section"
+        caption="Section"       
+       
+      />
+   
+
+      <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
+      <Paging defaultPageSize={10} />
+    </DataGrid>
+                        {/* file upload end */}
+                    </DialogContentText>
                 </DialogContent>
             </Dialog>
         </React.Fragment>
