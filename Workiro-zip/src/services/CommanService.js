@@ -285,6 +285,18 @@ export default class CommanCLS extends AllService {
         })
      }
 
+     Json_Get_CRM_SavedTask_ByTaskId(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_Get_CRM_SavedTask_ByTaskId",obj,true);
+        super.CallNewService("Json_Get_CRM_SavedTask_ByTaskId",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
      
 
 

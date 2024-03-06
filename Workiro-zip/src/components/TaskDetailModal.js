@@ -32,27 +32,80 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import axios from "axios";
+import CommanCLS from '../services/CommanService';
 
-function TaskDetailModal({selectedTask,openModal, setOpen }) {
+function TaskDetailModal({ selectedTask,openModal, setOpen }) {
+
+    const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
+    const [password, setPassword] = useState(localStorage.getItem("Password"));
+    const [Email, setEmail] = useState(localStorage.getItem("Email"));
+    const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
     const [allTask,setAllTask] = useState([]);
 
-    const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+    const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 
+    let Cls = new CommanCLS(baseUrl, agrno, Email, password);
+
+    async function Json_Get_CRM_SavedTask_ByTaskId(taskid) {
+        console.log("TaskId",taskid);
+        let obj = {};
+        obj.TaskId = taskid;
+        Cls.Json_Get_CRM_SavedTask_ByTaskId(obj, function (status, data) {
+          if (status && data) {
+            let json = JSON.parse(data);
+            console.log("Json_Get_CRM_SavedTask_ByTaskId", json);
+            let table2 = json.T2;
+            if(table2.length>0){ 
+              let spt = table2[0].AssignedToID.split(",");  
+              let pushUser=[];
+              console.log("");
+            //   for(let i of spt){
+            //     if(i){
+            //       for(let j of userList){
+            //         if(parseInt(i)===j.ID){
+            //           pushUser.push(j);
+            //         }
+            //       }
+            //     }
+            //   }
+              //console.log("Json_Get_CRM_SavedTask_ByTaskId22", pushUser);
+              //setAddUser(pushUser);
+            }
+    
+            // let table6 = json.T6;
+            // if (table6.length > 0) {
+            //   let arrFile = [];
+            //   for (let item of table6) {
+            //     arrFile.push(getFilePath(item));
+            //   }
+            //   setAttachmentFile(arrFile);
+            //   setTimeout(() => {
+            //     console.log("attachmentFile", attachmentFile);
+            //   }, 3000);
+            // }
+          }
+        });
+      }
     useEffect(()=>{
-        const Json_CRM_GetOutlookTask=async()=>{
-            let res = await axios.post(`${baseUrl}Json_CRM_GetOutlookTask`,{
-                Email: "nabs@docusoft.net",
-                agrno: "0261",
-                password: "ZG9jdXNvZnQ="
-            });
-            console.log("Json_CRM_GetOutlookTask",JSON.parse(res.data.d));
-        }
-        Json_CRM_GetOutlookTask();
-        return ()=>{
-            console.log("Modal is Closed");
-        }
-    },[]);
+        setAgrNo(localStorage.getItem("agrno"));
+        setFolderId(localStorage.getItem("FolderId"));
+        setPassword(localStorage.getItem("Password"));
+        setEmail(localStorage.getItem("Email"));
+        Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
+        // const Json_CRM_GetOutlookTask=async()=>{
+        //     let res = await axios.post(`${baseUrl}Json_CRM_GetOutlookTask`,{
+        //         Email: "nabs@docusoft.net",
+        //         agrno: "0261",
+        //         password: "ZG9jdXNvZnQ="
+        //     });
+        //     console.log("Json_CRM_GetOutlookTask",JSON.parse(res.data.d));
+        // }
+        // Json_CRM_GetOutlookTask();
+        // return ()=>{
+        //     console.log("Modal is Closed");
+        // }
+    },[selectedTask]);
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
