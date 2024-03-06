@@ -343,5 +343,17 @@ export default class CommanCLS extends AllService {
             }
         })
      }
+     
+     Json_ExplorerSearchDoc(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_ExplorerSearchDoc",obj,true);
+        super.CallNewService("Json_ExplorerSearchDoc",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
 
 }
