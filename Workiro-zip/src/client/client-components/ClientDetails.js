@@ -19,6 +19,7 @@ import CommanCLS from '../../services/CommanService';
 import UdfCard from './UdfCard';
 import { useLocation } from 'react-router-dom';
 import DocumentList from './Document';
+// import DocumentList from './DocumentList';
 
 
 
@@ -248,6 +249,9 @@ function ClientDetails() {
                         <DocumentList></DocumentList>
                     </TabPanel>
 
+                    {/* <TabPanel value="5">
+                        <DocumentList/>
+                    </TabPanel> */}
                     <TabPanel value="6">Item Three</TabPanel>
                     <TabPanel value="7">Item Three</TabPanel>
                 </TabContext>

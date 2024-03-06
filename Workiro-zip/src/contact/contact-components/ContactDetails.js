@@ -56,6 +56,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Autocomplete from '@mui/material/Autocomplete';
+import TestPDF from '../TestPDF';
 
 
 
@@ -91,6 +92,8 @@ function ContactDetails() {
     const [currentDate, setCurrentDate] = useState(""); // Initialize with the current date in "dd/mm/yyyy" format
 
     const [verificationModal, setVerificationModalOpen] = React.useState(false);
+
+    const [isViewerModalOpen, setIsViewerModalOpen] = useState(false);
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
@@ -198,6 +201,7 @@ function ContactDetails() {
     }
 
     const Json_VerifyDrivingLicence=()=>{
+        setIsViewerModalOpen(!isViewerModalOpen);
         let obj = {
             agrno: agrno,
             strEmail: Email,
@@ -938,7 +942,7 @@ function ContactDetails() {
 
                             <Box className='col-xl-6 col-md-6'>
                                 <Box class="input-group mb-3">
-                                    <TextField label="First Name" defaultValue={contactDetails[0]["First Name"]}  className='form-control' variant="outlined" />
+                                    <TextField label="First Name" defaultValue={contactDetails.length>0 && contactDetails[0]["First Name"] }  className='form-control' variant="outlined" />
                                 </Box>
                             </Box>
 
@@ -950,7 +954,7 @@ function ContactDetails() {
 
                             <Box className='col-xl-6 col-md-6'>
                                 <Box class="input-group mb-3">
-                                    <TextField label="Last Name" defaultValue={contactDetails[0]["Last Name"]} variant="outlined" className='form-control' />
+                                    <TextField label="Last Name" defaultValue={contactDetails.length>0 && contactDetails[0]["Last Name"]} variant="outlined" className='form-control' />
                                 </Box>
                             </Box>
 
@@ -1066,13 +1070,13 @@ function ContactDetails() {
 
                             <Box className='col-xl-6 col-md-6'>
                                 <Box class="input-group mb-3">
-                                    <TextField label="PostCode" defaultValue={contactDetails[0]["PostCode"]} variant="outlined" className='form-control' />
+                                    <TextField label="PostCode" defaultValue={contactDetails.length>0 && contactDetails[0]["PostCode"]} variant="outlined" className='form-control' />
                                 </Box>
                             </Box>
 
                             <Box className='col-xl-6 col-md-6'>
                                 <Box class="input-group mb-3">
-                                    <TextField label="County" defaultValue={contactDetails[0]["County"]===null ? contactDetails[0]["County"]: ""} variant="outlined" className='form-control' />
+                                    <TextField label="County" defaultValue={contactDetails.length>0 && contactDetails[0]["County"]} variant="outlined" className='form-control' />
                                 </Box>
                             </Box>
 
@@ -1101,6 +1105,39 @@ function ContactDetails() {
             </Dialog>
 
             {/* Checkmodal check modal End */}
+
+            {/* viewer modal start */}
+            <Dialog
+                open={isViewerModalOpen}
+                onClose={() => setIsViewerModalOpen(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className="custom-modal"
+
+            >
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <Box className="d-flex align-items-center justify-content-between">
+                            <Box className="dropdown-box">
+                                <Typography variant="h4" className='font-18 text-black'>Driving License Verification</Typography>
+                            </Box>
+
+                            <Button onClick={() => setIsViewerModalOpen(false)} autoFocus sx={{ minWidth: 30 }} className='p-0'>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+                        </Box>
+
+                        <hr />
+
+                        <TestPDF/>
+
+                    </DialogContentText>
+                </DialogContent>
+            </Dialog>
+
+            {/* viewer modal end */}
 
 
         </Box>

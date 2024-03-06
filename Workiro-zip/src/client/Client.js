@@ -348,8 +348,8 @@ function Client() {
             }
         })
     }
-    const [isGridView, setIsGridView] = useState(true);
-    const [isCardView, setIsCardView] = useState(false);
+    const [isGridView, setIsGridView] = useState(false);
+    const [isCardView, setIsCardView] = useState(true);
     return (
         <Box className='container-fluid p-0' onClick={handleClick}>
 

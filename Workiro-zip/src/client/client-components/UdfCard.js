@@ -3,6 +3,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import React from 'react'
 
 function UdfCard({data}) {
+    console.log("sdfsd",data.Table3);
   return (
     <>
     {
@@ -21,10 +22,12 @@ function UdfCard({data}) {
                         <table className='table'>
                             <tbody>
                                 {data?.Table3.map((data, i) => {
-                                    return <tr>
+                                    if(item.TagId===data.Tag){
+                                        return <tr>
                                         <th>{data.Name}</th>
                                         <td>{data.UdfValue === "undefined" ? "" : data.UdfValue}</td>
                                     </tr>
+                                    }
                                 })}
                             </tbody>
                         </table>

@@ -165,7 +165,7 @@ export default function CreateNewModalTask() {
 
     const open2 = Boolean(anchorel);
     const handleClick = (event) => {
-        setAnchorel(event.currentTarget);
+        //setAnchorel(event.currentTarget);
     };
     const handleClose2 = () => {
         setAnchorel(null);
