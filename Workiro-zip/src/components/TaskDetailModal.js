@@ -143,6 +143,13 @@ function TaskDetailModal({ selectedTask, openModal, setOpen }) {
         setOpenDocumentDetailsList(false);
     };
 
+    // accordian
+    const [expanded, setExpanded] = React.useState('panel1');
+
+    const handleChange = (panel) => (event, newExpanded) => {
+        setExpanded(newExpanded ? panel : false);
+    };
+
 
     return (
 
@@ -1013,44 +1020,148 @@ function TaskDetailModal({ selectedTask, openModal, setOpen }) {
                             </Button>
                         </Box>
 
-                        <d iv>
-                            <Accordion className='accordian-box'>
+                        <div>
+                            <Accordion className='accordian-box' expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
                                 <AccordionSummary
                                     expandIcon={<ExpandMoreIcon />}
                                     aria-controls="panel1-content"
                                     id="panel1-header"
                                 >
-                                    Details
+                                    Document Details
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <TableContainer component={Paper}>
+                                        <Table sx={{ minWidth: '100%' }} aria-label="simple table" size="small">
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell className='bold'>Document</TableCell>
+                                                    <TableCell className='bold' align="right">Details</TableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {rows.map((row) => (
+                                                    <TableRow
+                                                        key={row.name}
+                                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                    >
+                                                        <TableCell align="left" className='bold'>{row.document}</TableCell>
+                                                        <TableCell align="left">{row.details}</TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </AccordionDetails>
+                            </Accordion>
+
+                            <Accordion className='accordian-box' expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panel2-content"
+                                    id="panel2-header"
+                                >
+                                    Document Versions
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <Box className='table-responsive'>
-                                        Details
+
+
+                                        <Box className="file-uploads">
+                                            <label className="file-uploads-label file-uploads-document">
+                                                <Box className="d-flex align-items-center">
+                                                    <DescriptionIcon
+                                                        sx={{
+                                                            fontSize: 32,
+                                                        }}
+                                                        className='me-2'
+                                                    />
+                                                    <Box className="upload-content pe-3">
+                                                        <Typography variant="h4" >
+                                                            This File is Test Files.pdf
+                                                        </Typography>
+                                                        <Typography variant="body1">
+                                                            12:36PM 28/12/2023 | File uploaded by Patrick
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                            </label>
+                                        </Box>
+                                        {/* file upload end */}
+
+                                        <Box className="file-uploads">
+                                            <label className="file-uploads-label file-uploads-document">
+                                                <Box className="d-flex align-items-center">
+                                                    <DescriptionIcon
+                                                        sx={{
+                                                            fontSize: 32,
+                                                        }}
+                                                        className='me-2'
+                                                    />
+                                                    <Box className="upload-content pe-3">
+                                                        <Typography variant="h4" >
+                                                            test doc file.doc
+                                                        </Typography>
+                                                        <Typography variant="body1">
+                                                            11:16PM 09/012/2024 | File uploaded by Patrick
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                            </label>
+                                        </Box>
+                                        {/* file upload end */}
+
+                                        <Box className="file-uploads">
+                                            <label className="file-uploads-label file-uploads-document">
+                                                <Box className="d-flex align-items-center">
+                                                    <DescriptionIcon
+                                                        sx={{
+                                                            fontSize: 32,
+                                                        }}
+                                                        className='me-2'
+                                                    />
+                                                    <Box className="upload-content pe-3">
+                                                        <Typography variant="h4" >
+                                                            loremipsomedolorsite.pdf
+                                                        </Typography>
+                                                        <Typography variant="body1">
+                                                            02:36PM 06/05/2023 | File uploaded by Patrick
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                            </label>
+                                        </Box>
+                                        {/* file upload end */}
+
+                                        <Box className="file-uploads">
+                                            <label className="file-uploads-label file-uploads-document">
+                                                <Box className="d-flex align-items-center">
+                                                    <DescriptionIcon
+                                                        sx={{
+                                                            fontSize: 32,
+                                                        }}
+                                                        className='me-2'
+                                                    />
+                                                    <Box className="upload-content pe-3">
+                                                        <Typography variant="h4" >
+                                                            This File is Test Files.pdf
+                                                        </Typography>
+                                                        <Typography variant="body1">
+                                                            02:36PM 06/05/2023 | File uploaded by Patrick
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                            </label>
+                                        </Box>
+                                        {/* file upload end */}
+
+
                                     </Box>
                                 </AccordionDetails>
                             </Accordion>
-                        </d>
 
-                        <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: '100%' }} aria-label="simple table" size="small">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell className='bold'>Document</TableCell>
-                                        <TableCell className='bold' align="right">Details</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {rows.map((row) => (
-                                        <TableRow
-                                            key={row.name}
-                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                        >
-                                            <TableCell align="left" className='bold'>{row.document}</TableCell>
-                                            <TableCell align="left">{row.details}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        </div>
+
+
 
                     </DialogContentText>
                 </DialogContent>
