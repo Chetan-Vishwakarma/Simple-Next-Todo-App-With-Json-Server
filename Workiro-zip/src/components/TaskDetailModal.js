@@ -1956,6 +1956,33 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     </Box>
                                 </AccordionDetails>
                             </Accordion>
+                            {/* end */}
+
+
+
+                            <Accordion className='accordian-box' expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panel3-content"
+                                    id="panel3-header"
+                                >
+                                    Attached To
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                </AccordionDetails>
+                            </Accordion>
+
+                            <Accordion className='accordian-box' expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panel4-content"
+                                    id="panel4-header"
+                                >
+                                    Activity
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                </AccordionDetails>
+                            </Accordion>
 
                         </div>
 
