@@ -865,22 +865,43 @@ export default function CreateNewModalTask() {
                                                     <p className="sembold">Assigned</p>
 
                                                     <Box className="box-user-list-dropdown">
-                                                        {addUser ? addUser.map((item, ind) => (
-                                                            <React.Fragment key={ind}>
-                                                                <button
-                                                                    type="button"
-                                                                    id={item.ID}
-                                                                >
-                                                                    <Box className="user-img-list me-2">
-                                                                        <img src={user} alt="User" />
-                                                                    </Box>
-                                                                    <p>{item.ForwardTo}</p>
-                                                                    <a href="#" className="close" onClick={() => handleRemoveUser(item.ID)}>
-                                                                        <span className="material-symbols-outlined">close</span>
-                                                                    </a>
-                                                                </button>
-                                                            </React.Fragment>
-                                                        )) : null}
+                                                        {addUser
+                                                            ? addUser.map((item, ind) => {
+                                                                if (item.ID === parseInt(localStorage.getItem("UserId"))) {
+                                                                    return (
+                                                                        <React.Fragment key={ind}>
+                                                                            <button type="button" id={item.ID}>
+                                                                                <Box className="user-img-list me-2">
+                                                                                    <img src={user} alt="User" />
+                                                                                </Box>
+                                                                                <p>{item.ForwardTo}</p>
+                                                                            </button>
+                                                                        </React.Fragment>
+                                                                    );
+                                                                } else {
+                                                                    return (
+                                                                        <React.Fragment key={ind}>
+                                                                            <button type="button" id={item.ID}>
+                                                                                <Box className="user-img-list me-2">
+                                                                                    <img src={user} alt="User" />
+                                                                                </Box>
+                                                                                <p>{item.ForwardTo}</p>
+                                                                                <span
+                                                                                    className="close"
+                                                                                    onClick={() => handleRemoveUser(item.ID)}
+                                                                                    role="button" // Adding role="button" to indicate this element is clickable
+                                                                                    tabIndex="0" // Adding tabIndex to make the element focusable
+                                                                                >
+                                                                                    <span className="material-symbols-outlined">
+                                                                                        close
+                                                                                    </span>
+                                                                                </span>
+                                                                            </button>
+                                                                        </React.Fragment>
+                                                                    );
+                                                                }
+                                                            })
+                                                            : null}
                                                     </Box>
                                                 </Box>
 
