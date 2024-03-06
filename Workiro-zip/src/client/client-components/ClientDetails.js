@@ -18,6 +18,7 @@ import ClientOverview from './ClientOverview';
 import CommanCLS from '../../services/CommanService';
 import UdfCard from './UdfCard';
 import { useLocation } from 'react-router-dom';
+import DocumentList from './Document';
 
 
 
@@ -25,7 +26,7 @@ function ClientDetails() {
 
     const location = useLocation();
 
-    const {agrno, Email, password, folderId, originatorNo} = location.state;
+    const { agrno, Email, password, folderId, originatorNo } = location.state;
 
     const [selected, setSelected] = React.useState(false);
 
@@ -55,28 +56,28 @@ function ClientDetails() {
             Email: Email,
             password: password
         };
-        try{
+        try {
             Cls.Json_GetToFavourites(obj, (sts, data) => {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
                         console.log("Json_GetToFavourites", json);
                         let favouriteUser = json.Table;
-                        if(favouriteUser.length>0 && currentUser.length>0){
-                            let ans = favouriteUser.some((item)=>item.OriginatorNo === currentUser[0]?.OriginatorNo);
-                            if(ans){
+                        if (favouriteUser.length > 0 && currentUser.length > 0) {
+                            let ans = favouriteUser.some((item) => item.OriginatorNo === currentUser[0]?.OriginatorNo);
+                            if (ans) {
                                 setSelected(true);
-                            }else{
+                            } else {
                                 setSelected(false);
                             }
-                        }else{
+                        } else {
                             setSelected(false);
                         }
                     }
                 }
             });
-        }catch(err){
-            console.log("Error while calling Json_GetToFavourites",err);
+        } catch (err) {
+            console.log("Error while calling Json_GetToFavourites", err);
         }
     }
 
@@ -88,7 +89,7 @@ function ClientDetails() {
             OrgNo: originatorNo,
             ProjectID: folderId
         };
-        try{
+        try {
             Cls.Json_RemoveToFavourite(obj, (sts, data) => {
                 if (sts) {
                     if (data) {
@@ -98,8 +99,8 @@ function ClientDetails() {
                     }
                 }
             });
-        }catch(err){
-            console.log("Error while calling Json_RemoveToFavourite",err);
+        } catch (err) {
+            console.log("Error while calling Json_RemoveToFavourite", err);
         }
     }
 
@@ -111,7 +112,7 @@ function ClientDetails() {
             ProjectID: folderId,
             OrgNo: originatorNo
         };
-        try{
+        try {
             Cls.Json_AddToFavourite(obj, (sts, data) => {
                 if (sts) {
                     if (data) {
@@ -122,8 +123,8 @@ function ClientDetails() {
                     }
                 }
             });
-        }catch(err){
-            console.log("Error while calling Json_AddToFavourite",err);
+        } catch (err) {
+            console.log("Error while calling Json_AddToFavourite", err);
         }
     }
 
@@ -156,7 +157,7 @@ function ClientDetails() {
             password: password,
             strOrignatorNumber: originatorNo
         };
-        try{
+        try {
             webClientCLS.Json_GetClientCardDetails(obj, (sts, data) => {
                 if (sts) {
                     if (data) {
@@ -169,8 +170,8 @@ function ClientDetails() {
                     }
                 }
             });
-        }catch(err){
-            console.log("Error while calling Json_GetClientCardDetails",err)
+        } catch (err) {
+            console.log("Error while calling Json_GetClientCardDetails", err)
         }
     }
     useEffect(() => {
@@ -190,9 +191,9 @@ function ClientDetails() {
                         selected={selected}
                         onChange={() => {
                             //setSelected(!selected);
-                            if(selected){
+                            if (selected) {
                                 Json_RemoveToFavourite();
-                            }else{
+                            } else {
                                 Json_AddToFavourite();
                             }
 
@@ -231,18 +232,22 @@ function ClientDetails() {
                                 {/* For CompanyDetails */}
                                 <CompanyDetails companyDetails={companyDetails} />
                                 {/* For ClientOverview */}
-                                <ClientOverview Cls={Cls} webClientCLS={webClientCLS} locationState={location.state}/>
+                                <ClientOverview Cls={Cls} webClientCLS={webClientCLS} locationState={location.state} />
                             </Box>
                         </Box>
                         <Box className='main-accordian'>
                             {/* For UDFs */}
-                            <UdfCard data={clientDetails}/>
+                            <UdfCard data={clientDetails} />
                         </Box>
                     </TabPanel>
                     <TabPanel value="2">Item Two</TabPanel>
                     <TabPanel value="3">Item Three</TabPanel>
                     <TabPanel value="4">Item Three</TabPanel>
-                    <TabPanel value="5">Item Three</TabPanel>
+
+                    <TabPanel value="5" className='p-0'>
+                        <DocumentList></DocumentList>
+                    </TabPanel>
+
                     <TabPanel value="6">Item Three</TabPanel>
                     <TabPanel value="7">Item Three</TabPanel>
                 </TabContext>
