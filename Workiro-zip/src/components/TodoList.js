@@ -4,48 +4,44 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import Checkbox from '@mui/material/Checkbox';
+
 import user from "../images/user.jpg";
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommanCLS from '../services/CommanService';
 
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import DescriptionIcon from '@mui/icons-material/Description';
+
 import { Radio } from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
-import AttachmentIcon from '@mui/icons-material/Attachment';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
-import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
+
 import TaskDetailModal from './TaskDetailModal';
 
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
-// chipset
-const handleDelete = () => {
-    console.info('You clicked the delete icon.');
-};
+
 
 function TodoList() {
+
+
+
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
+
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
-    const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
-    let Cls = new CommanCLS(baseUrl, agrno, Email, password);
+   
+
+    const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+
+    let Cls = new CommanCLS(baseUrlPractice, agrno, Email, password);
+    //let Clsp = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
     const [allTask, setAllTask] = useState([]);
     const [selectedTask,setSelectedTask] = useState({});
 
     const [anchorEl, setAnchorEl] = React.useState(null);
+  
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -86,13 +82,21 @@ function TodoList() {
         }
     }
 
+    const [isApi,setIsApi] = useState(false);
+
+    useEffect(()=>{
+        Json_CRM_GetOutlookTask();
+    },[isApi])
+
+    
+
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
         Json_CRM_GetOutlookTask();
-    }, []);
+    },[]);
 
     function startFormattingDate(dt) {
         //const timestamp = parseInt(/\d+/.exec(dt));
@@ -109,19 +113,18 @@ function TodoList() {
     // modal
     const [openModal, setOpen] = React.useState(false);
     
-    const handleClickOpen = (task=selectedTask) => {
+    const handleClickOpen = (task=selectedTask) => {        
         setSelectedTask(task);
+        
         setOpen(true);
+       
     };
 
 
 
     return (
         <Box className="container-fluid p-0">
-
-
-            <TaskDetailModal selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
-
+            <TaskDetailModal setIsApi={setIsApi} isApi={isApi}  selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
             <Typography variant='subtitle1' className='font-18 bold mb-2'>Select Filter</Typography>
             <Box className="d-flex align-items-center mb-4 flex-wrap">
