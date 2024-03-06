@@ -8,6 +8,18 @@ export default class CommanCLS extends AllService {
         super(APIUrl,agrno, Email, password);
     }
 
+    Json_Get_CRM_Task_ActivityByTaskId(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_Get_CRM_Task_ActivityByTaskId",obj,true);
+        super.CallNewService("Json_Get_CRM_Task_ActivityByTaskId",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
 
     Json_GetSections(obj,callBack){   
        super.CreateNewServiceParamObject("Json_GetSections",obj,true);
@@ -93,6 +105,17 @@ export default class CommanCLS extends AllService {
         })
     }
 
+    Json_AddSupplierActivity(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_AddSupplierActivity",obj,true);
+        super.CallNewService("Json_AddSupplierActivity",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
     Json_GetAllContactsByClientID(obj,callBack) { 
         super.CreateNewServiceParamObject("Json_GetAllContactsByClientID",obj,true);   
         super.CallNewService("Json_GetAllContactsByClientID", function (status, Data) {
@@ -273,10 +296,52 @@ export default class CommanCLS extends AllService {
         })
      }
 
-     
+     Json_VerifyDrivingLicence(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_VerifyDrivingLicence",obj,true);
+        super.CallNewService("Json_VerifyDrivingLicence",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
 
+     Json_Get_CRM_SavedTask_ByTaskId(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_Get_CRM_SavedTask_ByTaskId",obj,true);
+        super.CallNewService("Json_Get_CRM_SavedTask_ByTaskId",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
 
+     getCurrentDate() {
+        const currentDate = new Date();
+        const day = currentDate.getDate().toString().padStart(2, '0'); // Get the day and pad with 0 if needed
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Get the month (Note: January is 0)
+        const year = currentDate.getFullYear(); // Get the full year
+      
+        // Construct the date string in "dd/mm/yyyy" format
+        const formattedDate = `${year}/${month}/${day}`;
+      
+        return formattedDate;
+      }
 
-
+      Json_CRM_Task_Update(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_CRM_Task_Update",obj,true);
+        super.CallNewService("Json_CRM_Task_Update",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
 
 }
