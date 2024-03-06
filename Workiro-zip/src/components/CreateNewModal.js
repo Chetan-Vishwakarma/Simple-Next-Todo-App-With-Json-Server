@@ -1329,7 +1329,7 @@ export default function CreateNewModalTask() {
                                     <Box className="mb-2 ">
                                         <label className="font-14 semibold">Due By</label>
                                         <LocalizationProvider
-                                            className="pe-0 sadik"
+                                            className="pe-0"
                                             dateAdapter={AdapterDayjs}
                                         >
                                             <DatePicker className="datepicker w-100"
@@ -1374,7 +1374,7 @@ export default function CreateNewModalTask() {
                                     <label className="font-14 d-block">Reminder Date</label>
 
                                     <LocalizationProvider
-                                        className="pe-0 sadik"
+                                        className="pe-0"
                                         dateAdapter={AdapterDayjs}
                                     >
                                         <DatePicker className="datepicker w-100"
