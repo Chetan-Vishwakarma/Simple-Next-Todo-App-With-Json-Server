@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -73,6 +73,25 @@ function ContactDetails() {
 
     const [contactDetails, setContactDetails] = useState([]);
 
+    // dropdown
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+
+    // AML check modal
+    const [isAMLChkOpen, setisAMLChkOpen] = React.useState(false);
+
+    const [amlDetails, setAmlDetails] = useState({
+        bankAccNo: "",
+        bankSrNo: "",
+        drivingLicNo: "",
+        NiNumber: "",
+        passportNo: ""
+    });
+
+    const [currentDate, setCurrentDate] = useState(""); // Initialize with the current date in "dd/mm/yyyy" format
+
+    const [verificationModal, setVerificationModalOpen] = React.useState(false);
+
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
     const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
@@ -108,60 +127,107 @@ function ContactDetails() {
             console.log("Error while calling Json_GetAllContactsByClientID", err);
         }
     }, []);
-    console.log("contactDetails: ", contactDetails);
-    // dropdown
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
         setAnchorEl(null);
-        setOpen(false);
-        setOpen(false);
-        verificationSetOpen(false)
     };
-
-
-    // AML check modal
-    const [openModal, setOpen] = React.useState(false);
-
-    const [VerificationModal, verificationSetOpen] = React.useState(false);
 
     const handleClickOpen = () => {
-        setOpen(true);
+        setAmlDetails({
+            bankAccNo: "",
+            bankSrNo: "",
+            drivingLicNo: "",
+            NiNumber: "",
+            passportNo: ""
+        });
+        setisAMLChkOpen(true);
     };
 
-    const Json_UpdateContactVerify=()=>{
+    const Json_UpdateContactVerify = () => {
         let obj = {
-            agrno:agrno,
-            Email:Email,
+            agrno: agrno,
+            Email: Email,
             password: password,
             Contactemail: contactDetails[0]["E-Mail"],
             BnkAccNumber: "",
-            BnkSrCode:"",
-            DrvLicNumber:"test",
-            NatInsNumber:"",
-            PassportNumber:""
+            BnkSrCode: "",
+            DrvLicNumber: amlDetails.drivingLicNo,
+            NatInsNumber: "",
+            PassportNumber: ""
         }
-        try{
-            Cls.Json_UpdateContactVerify(obj,(sts,data)=>{
-                if(sts){
-                    if(data){
-                        console.log("Json_UpdateContactVerify",data);
+        try {
+            Cls.Json_UpdateContactVerify(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        console.log("Json_UpdateContactVerify", data);
+                        if (data === "Success") {
+                            setVerificationModalOpen(true);
+                        }
                     }
                 }
             });
-        }catch(err){
-            console.log("Error while calling Json_UpdateContactVerify",err);
+        } catch (err) {
+            console.log("Error while calling Json_UpdateContactVerify", err);
         }
     }
 
+    const handleUpdateContactVerify = (target) => {
+        if (target === "drivingLicNo") {
+            if (isValidate("drivingLicNo")) {
+                Json_UpdateContactVerify();
+            }
+        }
+    }
 
-    const [currentDate, setCurrentDate] = useState(""); // Initialize with the current date in "dd/mm/yyyy" format
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setAmlDetails(prevState => ({
+            ...prevState, [name]: value
+        }));
+    }
 
+    const isValidate = (str) => {
+        if (amlDetails[str].length > 0) {
+            return true;
+        } else {
+            return false
+        }
+    }
 
+    const Json_VerifyDrivingLicence=()=>{
+        let obj = {
+            agrno: agrno,
+            strEmail: Email,
+            password: password,
+            strTitle: "",
+            strFirstName: "",
+            strMiddleName: "",
+            strLastName: "",
+            dtDateOfBirth: "",
+            strGender: "",
+            strAddress1:"",
+            strAddress2: "",
+            strAddress3: "",
+            strAddress4: "",
+            strPostTown: "",
+            strCounty: "",
+            strPostCode:"",
+            strCountry: "",
+            strLicenseNo: amlDetails.drivingLicNo
+        }
+        try {
+            Cls.Json_VerifyDrivingLicence(obj, (sts, data) => {
+                if (sts) {
+                    console.log("Json_VerifyDrivingLicence",data);
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_VerifyDrivingLicence", err);
+        }
+    }
 
     return (
         <Box className="container-fluid p-0">
@@ -189,7 +255,7 @@ function ContactDetails() {
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<GroupAddIcon />}>Client Card</Button>
                     <Button className='btn-blue-2 me-2 mb-1' onClick={handleClickOpen} size="small" startIcon={<FactCheckIcon />}>AML Check</Button>
 
-                    {/* <Button className='btn-blue-2 me-2 mb-1' onClick={verificationSetOpen} size="small" startIcon={<FactCheckIcon />}>varificaton</Button> */}
+                    {/* <Button className='btn-blue-2 me-2 mb-1' onClick={setVerificationModalOpen} size="small" startIcon={<FactCheckIcon />}>varificaton</Button> */}
 
                     <div>
                         <Button
@@ -748,8 +814,8 @@ function ContactDetails() {
 
             {/* AML check modal Start */}
             <Dialog
-                open={openModal}
-                onClose={handleClose}
+                open={isAMLChkOpen}
+                onClose={() => setisAMLChkOpen(false)}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 className="custom-modal aml-details-modal"
@@ -761,7 +827,7 @@ function ContactDetails() {
                                 <Typography variant="h4" className='font-18 text-black'>AML Details</Typography>
                             </Box>
 
-                            <Button onClick={handleClose} autoFocus sx={{ minWidth: 30 }} className='p-0'>
+                            <Button onClick={() => setisAMLChkOpen(false)} autoFocus sx={{ minWidth: 30 }} className='p-0'>
                                 <span className="material-symbols-outlined text-black">
                                     cancel
                                 </span>
@@ -773,16 +839,16 @@ function ContactDetails() {
                         <Box className='row'>
                             <Box className='col-md-6'>
                                 <Box class="input-group mb-3">
-                                    <TextField label="Bank Account No" className='form-control' variant="outlined" />
-                                    <Button className='btn-blue-2 btn-sign'><CheckIcon /></Button>
+                                    <TextField name='bankAccNo' value={amlDetails.bankAccNo} onChange={handleInputChange} label="Bank Account No" className='form-control' variant="outlined" />
+                                    <Button className={isValidate("bankAccNo") ? 'btn-blue-2 btn-sign active' : 'btn-blue-2 btn-sign'} onClick={() => handleUpdateContactVerify("bankAccNo")}><CheckIcon /></Button>
                                 </Box>
 
                             </Box>
 
                             <Box className='col-md-6'>
                                 <Box class="input-group mb-3">
-                                    <TextField label="Bank SR Code" variant="outlined" className='form-control' />
-                                    <Button className='btn-blue-2 btn-sign' onClick={verificationSetOpen}><CheckIcon /></Button>
+                                    <TextField name='bankSrNo' value={amlDetails.bankSrNo} onChange={handleInputChange} label="Bank SR Code" variant="outlined" className='form-control' />
+                                    <Button className={isValidate("bankSrNo") ? 'btn-blue-2 btn-sign active' : 'btn-blue-2 btn-sign'} onClick={() => handleUpdateContactVerify("bankSrNo")}><CheckIcon /></Button>
                                 </Box>
                             </Box>
                         </Box>
@@ -790,25 +856,22 @@ function ContactDetails() {
                         <Box className='row'>
                             <Box className='col-md-6'>
                                 <Box class="input-group mb-3">
-                                    <TextField label="Driving Lic No" variant="outlined" className='form-control' />
-                                    <Button className='btn-blue-2 btn-sign' onClick={()=> {
-                                        verificationSetOpen(true)
-                                        Json_UpdateContactVerify()
-                                    }}><CheckIcon /></Button>
+                                    <TextField name='drivingLicNo' value={amlDetails.drivingLicNo} onChange={handleInputChange} label="Driving Lic No" variant="outlined" className='form-control' />
+                                    <Button className={isValidate("drivingLicNo") ? 'btn-blue-2 btn-sign active' : 'btn-blue-2 btn-sign'} onClick={() => handleUpdateContactVerify("drivingLicNo")}><CheckIcon /></Button>
                                 </Box>
                             </Box>
 
                             <Box className='col-md-6'>
                                 <Box class="input-group mb-3">
-                                    <TextField label="NI Number" variant="outlined" className='form-control' />
-                                    <Button className='btn-blue-2 btn-sign' onClick={verificationSetOpen}><CheckIcon /></Button>
+                                    <TextField name='NiNumber' value={amlDetails.NiNumber} onChange={handleInputChange} label="NI Number" variant="outlined" className='form-control' />
+                                    <Button className={isValidate("NiNumber") ? 'btn-blue-2 btn-sign active' : 'btn-blue-2 btn-sign'} onClick={() => handleUpdateContactVerify("NiNumber")}><CheckIcon /></Button>
                                 </Box>
                             </Box>
 
                             <Box className='col-md-6'>
                                 <Box class="input-group mb-3">
-                                    <TextField label="Passport Number" variant="outlined" className='form-control' />
-                                    <Button className='btn-blue-2 btn-sign' onClick={verificationSetOpen}><CheckIcon /></Button>
+                                    <TextField name='passportNo' value={amlDetails.passportNo} onChange={handleInputChange} label="Passport Number" variant="outlined" className='form-control' />
+                                    <Button className={isValidate("passportNo") ? 'btn-blue-2 btn-sign active' : 'btn-blue-2 btn-sign'} onClick={() => handleUpdateContactVerify("passportNo")}><CheckIcon /></Button>
                                 </Box>
                             </Box>
 
@@ -835,8 +898,8 @@ function ContactDetails() {
 
             {/* Checkmodal modal Start */}
             <Dialog
-                open={VerificationModal}
-                onClose={handleClose}
+                open={verificationModal}
+                onClose={() => setVerificationModalOpen(false)}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 className="custom-modal"
@@ -846,10 +909,10 @@ function ContactDetails() {
                     <DialogContentText id="alert-dialog-description">
                         <Box className="d-flex align-items-center justify-content-between">
                             <Box className="dropdown-box">
-                                <Typography variant="h4" className='font-18 text-black'>National Insurance Number Verification</Typography>
+                                <Typography variant="h4" className='font-18 text-black'>Driving License Verification</Typography>
                             </Box>
 
-                            <Button onClick={handleClose} autoFocus sx={{ minWidth: 30 }} className='p-0'>
+                            <Button onClick={() => setVerificationModalOpen(false)} autoFocus sx={{ minWidth: 30 }} className='p-0'>
                                 <span className="material-symbols-outlined text-black">
                                     cancel
                                 </span>
@@ -875,7 +938,7 @@ function ContactDetails() {
 
                             <Box className='col-xl-6 col-md-6'>
                                 <Box class="input-group mb-3">
-                                    <TextField label="First Name" className='form-control' variant="outlined" />
+                                    <TextField label="First Name" defaultValue={contactDetails[0]["First Name"]}  className='form-control' variant="outlined" />
                                 </Box>
                             </Box>
 
@@ -887,7 +950,7 @@ function ContactDetails() {
 
                             <Box className='col-xl-6 col-md-6'>
                                 <Box class="input-group mb-3">
-                                    <TextField label="Last Name" variant="outlined" className='form-control' />
+                                    <TextField label="Last Name" defaultValue={contactDetails[0]["Last Name"]} variant="outlined" className='form-control' />
                                 </Box>
                             </Box>
 
@@ -991,6 +1054,7 @@ function ContactDetails() {
                                             className='form-control'
                                             {...params}
                                             label="Choose a country"
+                                            defaultValue={contactDetails[0].Country}
                                             inputProps={{
                                                 ...params.inputProps,
                                                 autoComplete: 'new-password', // disable autocomplete and autofill
@@ -1002,25 +1066,25 @@ function ContactDetails() {
 
                             <Box className='col-xl-6 col-md-6'>
                                 <Box class="input-group mb-3">
-                                    <TextField label="PostCode" variant="outlined" className='form-control' />
+                                    <TextField label="PostCode" defaultValue={contactDetails[0]["PostCode"]} variant="outlined" className='form-control' />
                                 </Box>
                             </Box>
 
                             <Box className='col-xl-6 col-md-6'>
                                 <Box class="input-group mb-3">
-                                    <TextField label="County" variant="outlined" className='form-control' />
+                                    <TextField label="County" defaultValue={contactDetails[0]["County"]===null ? contactDetails[0]["County"]: ""} variant="outlined" className='form-control' />
                                 </Box>
                             </Box>
 
                             <Box className='col-xl-6 col-md-6'>
                                 <Box class="input-group mb-3">
-                                    <TextField label="National Insurance" variant="outlined" className='form-control' />
+                                    <TextField label="Driving License Number" defaultValue={amlDetails.drivingLicNo} variant="outlined" className='form-control' />
                                 </Box>
                             </Box>
 
                             <Box className='col-md-6'>
-                                <Button variant="text" className="btn-blue btn-block">
-                                    Next
+                                <Button variant="text" className="btn-blue btn-block" onClick={Json_VerifyDrivingLicence}>
+                                    Verify
                                     <NavigateNextIcon className='ms-2' />
                                 </Button>
                             </Box>
@@ -1479,11 +1543,11 @@ const countries = [
 
 // select title
 const selectMR = [
-    { label: 'Mr'},
-    { label: 'Mrs'},
-    { label: 'Miss'},
-    { label: 'Ms'},
-    { label: 'Dr'}
-  ];
+    { label: 'Mr' },
+    { label: 'Mrs' },
+    { label: 'Miss' },
+    { label: 'Ms' },
+    { label: 'Dr' }
+];
 
 // rfce

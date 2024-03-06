@@ -273,6 +273,18 @@ export default class CommanCLS extends AllService {
         })
      }
 
+     Json_VerifyDrivingLicence(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_VerifyDrivingLicence",obj,true);
+        super.CallNewService("Json_VerifyDrivingLicence",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
      
 
 

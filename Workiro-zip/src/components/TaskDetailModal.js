@@ -1,50 +1,56 @@
 import React, { useEffect, useState } from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, Typography, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, Link, Chip, Stack, ListItemIcon, Radio, useMediaQuery, useTheme, Accordion, AccordionSummary, AccordionDetails, } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+// import {AdapterDayjs,LocalizationProvider,DatePicker} from '@mui/x-date-pickers';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import BallotIcon from '@mui/icons-material/Ballot';
-import Link from '@mui/material/Link';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import DescriptionIcon from '@mui/icons-material/Description';
-import { Radio } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import AttachmentIcon from '@mui/icons-material/Attachment';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import user from "../images/user.jpg";
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import axios from "axios";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-
 import ArticleIcon from '@mui/icons-material/Article';
-
-
 // import {CloudUploadIcon, DriveFileRenameOutlineIcon, TravelExploreIcon, CloudDownloadIcon} from '@mui/icons-material';
-
-
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
+
+
+
+function createData(document, details) {
+    return { document, details };
+}
+
+const rows = [
+    createData('Folder', 'Client'),
+    createData('Client', '212121Test'),
+    createData('Section', '01. General Correspondence'),
+    createData('Received Date', '02/03/2024'),
+    createData('Doc. Date', '02/03/2024'),
+    createData('Description', 'General Letter'),
+    createData('Notes', 'Yes'),
+    createData('Category', '1. Received'),
+    createData('DocDirection', 'Incoming'),
+    createData('ItemId', 998301),
+    createData('Tax Year', '18/19'),
+    createData('Financial Year', '2020'),
+    createData('From Email', 'test@gmail.com'),
+    createData('to Email', 'test@gmail.com'),
+    createData('CC', 'test@gmail.com')
+];
 
 
 function TaskDetailModal({ selectedTask, openModal, setOpen }) {
@@ -125,6 +131,16 @@ function TaskDetailModal({ selectedTask, openModal, setOpen }) {
     };
     const handleCloseDocument = () => {
         setAnchorElDocumentList(null);
+    };
+
+
+    // Document details List
+    const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
+    const handleClickOpenDocumentDetailsList = () => {
+        setOpenDocumentDetailsList(true);
+    };
+    const handleCloseDocumentDetailsList = () => {
+        setOpenDocumentDetailsList(false);
     };
 
 
@@ -452,7 +468,9 @@ function TaskDetailModal({ selectedTask, openModal, setOpen }) {
                                 <Box className='mb-2 border-bottom me-3 width-150'>
                                     <label className='font-14 text-black'>Start Date</label>
                                     <LocalizationProvider className='pe-0 ' dateAdapter={AdapterDayjs} >
-                                        <DatePicker className="datepicker w-100" />
+                                        <DatePicker className="datepicker w-100"
+                                            format="DD/MM/YYYY"
+                                        />
                                     </LocalizationProvider>
                                 </Box>
 
@@ -642,7 +660,7 @@ function TaskDetailModal({ selectedTask, openModal, setOpen }) {
                         <Box className="d-flex align-items-center justify-content-between">
                             <Box className="dropdown-box">
                                 <Typography variant="h4" className='font-18 bold mb-2 text-black'>
-                                    Document Details
+                                    Document List
                                 </Typography>
                                 {/* <Box className="btn-Select">
                                     <Button className='btn-white'>Action</Button>
@@ -655,7 +673,7 @@ function TaskDetailModal({ selectedTask, openModal, setOpen }) {
                                 </Box> */}
                             </Box>
 
-{/*  */}
+                            {/*  */}
                             <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
                                 <span className="material-symbols-outlined text-black">
                                     cancel
@@ -703,11 +721,15 @@ function TaskDetailModal({ selectedTask, openModal, setOpen }) {
                                         }}
                                         className='custom-dropdown'
                                     >
-                                        <MenuItem onClick={handleCloseDocument}>
+                                        <MenuItem onClick={() => {
+                                            handleCloseDocument()
+                                            handleClickOpenDocumentDetailsList()
+                                        }}>
                                             <ListItemIcon>
                                                 <ArticleIcon fontSize="medium" />
                                             </ListItemIcon>
                                             Document Details</MenuItem>
+
                                         <MenuItem onClick={handleCloseDocument}>
                                             <ListItemIcon>
                                                 <CloudUploadIcon fontSize="medium" />
@@ -774,7 +796,10 @@ function TaskDetailModal({ selectedTask, openModal, setOpen }) {
                                         }}
                                         className='custom-dropdown'
                                     >
-                                            <MenuItem onClick={handleCloseDocument}>
+                                        <MenuItem onClick={() => {
+                                            handleCloseDocument()
+                                            handleClickOpenDocumentDetailsList()
+                                        }}>
                                             <ListItemIcon>
                                                 <ArticleIcon fontSize="medium" />
                                             </ListItemIcon>
@@ -845,7 +870,10 @@ function TaskDetailModal({ selectedTask, openModal, setOpen }) {
                                         }}
                                         className='custom-dropdown'
                                     >
-                                            <MenuItem onClick={handleCloseDocument}>
+                                        <MenuItem onClick={() => {
+                                            handleCloseDocument()
+                                            handleClickOpenDocumentDetailsList()
+                                        }}>
                                             <ListItemIcon>
                                                 <ArticleIcon fontSize="medium" />
                                             </ListItemIcon>
@@ -916,7 +944,10 @@ function TaskDetailModal({ selectedTask, openModal, setOpen }) {
                                         }}
                                         className='custom-dropdown'
                                     >
-                                            <MenuItem onClick={handleCloseDocument}>
+                                        <MenuItem onClick={() => {
+                                            handleCloseDocument()
+                                            handleClickOpenDocumentDetailsList()
+                                        }}>
                                             <ListItemIcon>
                                                 <ArticleIcon fontSize="medium" />
                                             </ListItemIcon>
@@ -946,8 +977,80 @@ function TaskDetailModal({ selectedTask, openModal, setOpen }) {
                             </label>
                         </Box>
                         {/* file upload end */}
+                    </DialogContentText>
+                </DialogContent>
+            </Dialog>
 
 
+
+            {/* document modal list details */}
+            <Dialog
+                open={openDocumentDetailsList}
+                onClose={handleCloseDocumentDetailsList}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal'
+                sx={{
+                    maxWidth: 640,
+                    margin: '0 auto'
+                }}
+            >
+                <DialogContent>
+                    <DialogContentText>
+
+                        <Box className="d-flex align-items-center justify-content-between">
+                            <Box className="dropdown-box">
+                                <Typography variant="h4" className='font-18 bold mb-2 text-black'>
+                                    Document Details
+                                </Typography>
+                            </Box>
+
+                            {/*  */}
+                            <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+                        </Box>
+
+                        <d iv>
+                            <Accordion className='accordian-box'>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panel1-content"
+                                    id="panel1-header"
+                                >
+                                    Details
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Box className='table-responsive'>
+                                        Details
+                                    </Box>
+                                </AccordionDetails>
+                            </Accordion>
+                        </d>
+
+                        <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: '100%' }} aria-label="simple table" size="small">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell className='bold'>Document</TableCell>
+                                        <TableCell className='bold' align="right">Details</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {rows.map((row) => (
+                                        <TableRow
+                                            key={row.name}
+                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        >
+                                            <TableCell align="left" className='bold'>{row.document}</TableCell>
+                                            <TableCell align="left">{row.details}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
 
                     </DialogContentText>
                 </DialogContent>
