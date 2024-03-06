@@ -25,10 +25,10 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 import Autocomplete from '@mui/material/Autocomplete';
 import FormControlLabel from '@mui/material/FormControlLabel';
-
-
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import DescriptionIcon from '@mui/icons-material/Description';
+
 import Swal from 'sweetalert2';
 import {
     List,
@@ -41,6 +41,18 @@ import {
 } from "@mui/material";
 
 import dayjs from 'dayjs';
+////////////////////////////////////////////////////////////////Dxdata Grid
+import ODataStore from 'devextreme/data/odata/store';
+import DataGrid, {
+    Column,
+    DataGridTypes,
+    Grouping,
+    GroupPanel,
+    Pager,
+    Paging,
+    SearchPanel,
+} from 'devextreme-react/data-grid';
+
 
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 
@@ -692,6 +704,49 @@ export default function CreateNewModalTask() {
         console.log("final save data2222222222", result);
     }
 
+    ////////////////////////////////////DMS Document
+    const [documentLisdoc, setOpenDocumentList] = React.useState(false);
+    const [dmsDocumentList, setDMSDocumentList] = React.useState([]);
+
+
+
+    const Json_ExplorerSearchDoc = () => {
+        try {
+
+            if (txtFolderId && textClientId) {
+                let obj = {};
+                obj.ProjectId = txtFolderId;
+                obj.ClientId = textClientId;
+                obj.sectionId = "-1";
+                cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
+                    if (sts && data) {
+                        let json = JSON.parse(data);
+                        console.log("ExplorerSearchDoc", json);
+                        let tble6 = json.Table6;
+                        setDMSDocumentList(tble6);
+                    }
+                })
+            }
+
+        } catch (error) {
+            console.log("ExplorerSearchDoc", error)
+        }
+
+    }
+
+    const handleDocumentClickOpen = () => {
+        Json_ExplorerSearchDoc();
+        setOpenDocumentList(true);
+    };
+    const handleCloseDocumentList = () => {
+        setOpenDocumentList(false);
+    };
+    const pageSizes = [10, 25, 50, 100];
+    // useEffect(()=>{
+    //     Json_ExplorerSearchDoc();
+    // },[])
+
+
     // task dropdown 
     const [anchorElTastkType, setAnchorElTastkType] = React.useState(null);
     const TastkType = Boolean(anchorElTastkType);
@@ -997,22 +1052,43 @@ export default function CreateNewModalTask() {
                                                     <p className="sembold">Assigned</p>
 
                                                     <Box className="box-user-list-dropdown">
-                                                        {addUser ? addUser.map((item, ind) => (
-                                                            <React.Fragment key={ind}>
-                                                                <button
-                                                                    type="button"
-                                                                    id={item.ID}
-                                                                >
-                                                                    <Box className="user-img-list me-2">
-                                                                        <img src={user} alt="User" />
-                                                                    </Box>
-                                                                    <p>{item.ForwardTo}</p>
-                                                                    <a href="#" className="close" onClick={() => handleRemoveUser(item.ID)}>
-                                                                        <span className="material-symbols-outlined">close</span>
-                                                                    </a>
-                                                                </button>
-                                                            </React.Fragment>
-                                                        )) : null}
+                                                        {addUser
+                                                            ? addUser.map((item, ind) => {
+                                                                if (item.ID === parseInt(localStorage.getItem("UserId"))) {
+                                                                    return (
+                                                                        <React.Fragment key={ind}>
+                                                                            <button type="button" id={item.ID}>
+                                                                                <Box className="user-img-list me-2">
+                                                                                    <img src={user} alt="User" />
+                                                                                </Box>
+                                                                                <p>{item.ForwardTo}</p>
+                                                                            </button>
+                                                                        </React.Fragment>
+                                                                    );
+                                                                } else {
+                                                                    return (
+                                                                        <React.Fragment key={ind}>
+                                                                            <button type="button" id={item.ID}>
+                                                                                <Box className="user-img-list me-2">
+                                                                                    <img src={user} alt="User" />
+                                                                                </Box>
+                                                                                <p>{item.ForwardTo}</p>
+                                                                                <span
+                                                                                    className="close"
+                                                                                    onClick={() => handleRemoveUser(item.ID)}
+                                                                                    role="button" // Adding role="button" to indicate this element is clickable
+                                                                                    tabIndex="0" // Adding tabIndex to make the element focusable
+                                                                                >
+                                                                                    <span className="material-symbols-outlined">
+                                                                                        close
+                                                                                    </span>
+                                                                                </span>
+                                                                            </button>
+                                                                        </React.Fragment>
+                                                                    );
+                                                                }
+                                                            })
+                                                            : null}
                                                     </Box>
                                                 </Box>
 
@@ -1081,7 +1157,7 @@ export default function CreateNewModalTask() {
                                                 </Typography>
                                             </Box>
                                         </Box>
-                                        <Button variant="text" className="btn-blue-2">
+                                        <Button variant="text" className="btn-blue-2" onClick={handleDocumentClickOpen}>
                                             Select file
                                         </Button>
                                     </label>
@@ -1730,6 +1806,59 @@ export default function CreateNewModalTask() {
                             </Box> */}
                         </Box>
                     </DialogActions>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog
+                open={documentLisdoc}
+                onClose={handleCloseDocumentList}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal'
+
+                sx={{
+                    maxWidth: 640,
+                    margin: '0 auto'
+                }}
+            >
+                {/* <DialogTitle id="alert-dialog-title">
+                        {"Use Google's location service?"}
+                    </DialogTitle> */}
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+
+                        <DataGrid
+                            dataSource={dmsDocumentList}
+                            allowColumnReordering={true}
+                            rowAlternationEnabled={true}
+                            showBorders={true}
+                            width="100%"
+                        //onContentReady={onContentReady}
+                        >
+
+                            <SearchPanel visible={true} highlightCaseSensitive={true} />
+
+                            <Column dataField="Product" groupIndex={0} />
+                            <Column
+                                dataField="Client"
+                                caption="Client"
+                            />
+                            <Column
+                                dataField="Description"
+                                caption="Description"
+                            />
+                            <Column
+                                dataField="Section"
+                                caption="Section"
+
+                            />
+
+
+                            <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
+                            <Paging defaultPageSize={10} />
+                        </DataGrid>
+                        {/* file upload end */}
+                    </DialogContentText>
                 </DialogContent>
             </Dialog>
         </React.Fragment>
