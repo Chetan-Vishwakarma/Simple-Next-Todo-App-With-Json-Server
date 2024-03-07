@@ -48,6 +48,7 @@ import DataGrid, {
     DataGridTypes,
     Grouping,
     GroupPanel,
+    FilterRow,
     Pager,
     Paging,
     SearchPanel,
@@ -409,6 +410,7 @@ export default function CreateNewModalTask() {
         return formattedDate;
     }
 
+  
 
     useEffect(() => {
 
@@ -425,7 +427,8 @@ export default function CreateNewModalTask() {
         Json_GetFolders();
         Json_GetForwardUserList();
         Json_GetFolderData();
-        console.log(nextDate, currentDate)
+        //console.log(nextDate, currentDate)
+      
     }, []);
 
     //////////////////////Folder Funciton
@@ -669,17 +672,7 @@ export default function CreateNewModalTask() {
     }
     //////////////////////////////////////End Attachment data
 
-    ////////////////// Priority
-    let priorityarr = [{ id: 1, "name": "High" }, { id: 2, "name": "Normal" }, { id: 3, "name": "Low" }];
-    let statusarr = [
-        { id: 1, "name": "Not Started" },
-        { id: 2, "name": "In Progress" },
-        { id: 3, "name": "Waiting on someone else" },
-        { id: 4, "name": "Deferred" },
-        { id: 5, "name": "Done" },
-        { id: 6, "name": "Completed" },
-    ];
-    //////////////////End Priority
+   
 
 
     /////////////////////////////Remove Assignee
@@ -707,8 +700,12 @@ export default function CreateNewModalTask() {
     ////////////////////////////////////DMS Document
     const [documentLisdoc, setOpenDocumentList] = React.useState(false);
     const [dmsDocumentList, setDMSDocumentList] = React.useState([]);
+    const [allMode, setAllMode] = useState('allPages');
+    const [selectedRows, setSelectedRows] = useState([]);
 
-
+    const onAllModeChanged = React.useCallback(({ value }) => {
+        setAllMode(value);
+      }, []);
 
     const Json_ExplorerSearchDoc = () => {
         try {
@@ -734,6 +731,8 @@ export default function CreateNewModalTask() {
 
     }
 
+   
+
     const handleDocumentClickOpen = () => {
         Json_ExplorerSearchDoc();
         setOpenDocumentList(true);
@@ -749,6 +748,8 @@ export default function CreateNewModalTask() {
 
     // task dropdown 
     const [anchorElTastkType, setAnchorElTastkType] = React.useState(null);
+    const [portalUser, setPortalUser] = React.useState([]);
+
     const TastkType = Boolean(anchorElTastkType);
     const handleClickTastkType = (event) => {
         setAnchorElTastkType(event.currentTarget);
@@ -757,7 +758,86 @@ export default function CreateNewModalTask() {
         setAnchorElTastkType(null);
     };
 
+     ////////////////// Priority
+     let priorityarr = [{ id: 1, "name": "High" }, { id: 2, "name": "Normal" }, { id: 3, "name": "Low" }];
+     let statusarr = [
+         { id: 1, "name": "Not Started" },
+         { id: 2, "name": "In Progress" },
+         { id: 3, "name": "Waiting on someone else" },
+         { id: 4, "name": "Deferred" },
+         { id: 5, "name": "Done" },
+         { id: 6, "name": "Completed" },
+     ];
+     //////////////////End Priority
 
+    const handleSelectionChanged = (selectedItems) => {
+        setSelectedRows(selectedItems.selectedRowsData);
+        // You can perform further actions with the selectedRows array
+        console.log(selectedRows); // Log the selected rows data
+    };
+    const Json_GetClientCardDetails = (cid) => {
+        try {
+
+            if (txtFolderId && cid) {
+                let obj = {};
+                obj.agrno = agrno;
+                obj.Email = Email;
+                obj.password = password;
+                obj.intProjectId = txtFolderId;
+                obj.strOrignatorNumber = cid;               
+                cls.Json_GetClientCardDetails(obj, function (sts, data) {
+                    if (sts && data) {
+                        let json = JSON.parse(data);
+                      
+                        let tble6 = json.Table6;
+                        if(tble6.length>0){
+                            let result = tble6.map((el)=>{
+
+                                if(el["Portal User"]===true && el["Portal User"] !==null){
+                                    return el;
+                                }
+                                setTimeout(() => {
+                                    if(result.length>0){
+                                        setPortalUser(result)
+                                        console.log("Json_GetClientCardDetails", result);
+                                    }
+                                    else{
+                                        setPortalUser(null)
+                                    }
+                                }, 1500);
+                                
+                            });
+                            
+                        }
+                       // setDMSDocumentList(tble6);
+                    }
+                })
+            }
+
+        } catch (error) {
+            console.log("ExplorerSearchDoc", error)
+        }
+
+    }
+
+    const getPortalUser=()=>{
+
+        Json_GetClientCardDetails();
+
+    }
+
+    const [selectedValues, setSelectedValues] = useState([]);
+
+    const handleAutocompleteChange = (event, newValue) => {
+        setSelectedEmail(newValue ? newValue["E-Mail"] : null);
+        console.log("handleAutocompleteChange",newValue);
+    };
+    const [selectedEmail, setSelectedEmail] = useState(null);
+   
+        const filteredOptions  =portalUser?portalUser.filter(option => option["E-Mail"] !== selectedEmail):[];
+  
+    
+    
     return (
         <React.Fragment>
             <Button
@@ -880,7 +960,7 @@ export default function CreateNewModalTask() {
                                         {/* attached to start */}
                                         <Box className='mt-3'>
 
-                                            <Box className='mb-3'>
+                                            {/* <Box className='mb-3'>
                                                 <Autocomplete
                                                     disablePortal
                                                     id="combo-box-demo"
@@ -888,7 +968,7 @@ export default function CreateNewModalTask() {
                                                     renderInput={(params) => <TextField {...params} label="From" />}
                                                     className="w-100"
                                                 />
-                                            </Box>
+                                            </Box> */}
                                             {/* attached to end */}
 
 
@@ -896,9 +976,10 @@ export default function CreateNewModalTask() {
                                                 <Autocomplete
                                                     multiple
                                                     id="checkboxes-tags-demo"
-                                                    options={userListName}
+                                                  
+                                                    options={filteredOptions?filteredOptions:[]}
                                                     disableCloseOnSelect
-                                                    getOptionLabel={(option) => option.label}
+                                                    getOptionLabel={(option) => option["E-Mail"]}
                                                     renderOption={(props, option, { selected }) => (
                                                         <li {...props}>
                                                             <Checkbox
@@ -907,23 +988,26 @@ export default function CreateNewModalTask() {
                                                                 style={{ marginRight: 8 }}
                                                                 checked={selected}
                                                             />
-                                                            {option.label}
+                                                            {option["First Name"]+" "+option["Last Name"]+" ("+option["E-Mail"]+")"}
                                                         </li>
                                                     )}
                                                     renderInput={(params) => (
-                                                        <TextField {...params} label="To:" limitTags={2} placeholder="To" />
+                                                        <TextField {...params} label="To:" limitTags={2} placeholder="" />
                                                     )}
+                                                    onChange={handleAutocompleteChange} // Handle selection change
+                                                    value={selectedValues} // Set selected values
                                                 />
 
                                             </Box>
 
                                             <Box className='mb-3'>
-                                                <Autocomplete
+                                            <Autocomplete
                                                     multiple
                                                     id="checkboxes-tags-demo"
-                                                    options={userListName}
+                                                  
+                                                    options={filteredOptions}
                                                     disableCloseOnSelect
-                                                    getOptionLabel={(option) => option.label}
+                                                    getOptionLabel={(option) => option["E-Mail"]}
                                                     renderOption={(props, option, { selected }) => (
                                                         <li {...props}>
                                                             <Checkbox
@@ -932,11 +1016,11 @@ export default function CreateNewModalTask() {
                                                                 style={{ marginRight: 8 }}
                                                                 checked={selected}
                                                             />
-                                                            {option.label}
+                                                            {option["First Name"]+" "+option["Last Name"]+" ("+option["E-Mail"]+")"}
                                                         </li>
                                                     )}
                                                     renderInput={(params) => (
-                                                        <TextField {...params} label="CC:" limitTags={2} placeholder="To" />
+                                                        <TextField {...params} label="CC:" limitTags={2} placeholder="" />
                                                     )}
                                                 />
 
@@ -1407,10 +1491,13 @@ export default function CreateNewModalTask() {
                                                         <ListItem
                                                             alignItems="flex-start"
                                                             onClick={(e) => {
-                                                                console.log("client select", item.Client);
+                                                                //console.log("client select", item.Client);
                                                                 settxtClient(item.Client); // Assuming item.Client holds the value you want
                                                                 setTextClientId(item.ClientID);
                                                                 setClientAnchorEl(null);
+                                                                Json_GetClientCardDetails(item.ClientID)
+                                                                
+                                                                
                                                             }}
                                                             className="search-list"
                                                         >
@@ -1827,36 +1914,35 @@ export default function CreateNewModalTask() {
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
 
-                        <DataGrid
-                            dataSource={dmsDocumentList}
-                            allowColumnReordering={true}
-                            rowAlternationEnabled={true}
-                            showBorders={true}
-                            width="100%"
-                        //onContentReady={onContentReady}
-                        >
+                    <DataGrid
+            dataSource={dmsDocumentList}
+            allowColumnReordering={true}
+            rowAlternationEnabled={true}
+            showBorders={true}
+            width="100%"
+            selection={{ mode: 'multiple' }}
+            onSelectionChanged={handleSelectionChanged} // Handle selection change event
+        >
+            <FilterRow visible={true} />
+            <SearchPanel visible={true} highlightCaseSensitive={true} />
 
-                            <SearchPanel visible={true} highlightCaseSensitive={true} />
+            <Column
+                dataField="Client"
+                caption="Client"
+            />
+            <Column
+                dataField="Description"
+                caption="Description"
+            />
+            <Column
+                dataField="Section"
+                caption="Section"
+            />
 
-                            <Column dataField="Product" groupIndex={0} />
-                            <Column
-                                dataField="Client"
-                                caption="Client"
-                            />
-                            <Column
-                                dataField="Description"
-                                caption="Description"
-                            />
-                            <Column
-                                dataField="Section"
-                                caption="Section"
+            <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
+            <Paging defaultPageSize={10} />
+        </DataGrid>
 
-                            />
-
-
-                            <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
-                            <Paging defaultPageSize={10} />
-                        </DataGrid>
                         {/* file upload end */}
                     </DialogContentText>
                 </DialogContent>
