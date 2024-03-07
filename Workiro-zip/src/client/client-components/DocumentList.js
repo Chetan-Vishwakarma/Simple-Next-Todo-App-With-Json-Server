@@ -108,6 +108,7 @@ export default function DocumentList({ clientId }) {
     const [toggleScreen, setToggleScreen] = useState(false);
     const [filteredDocResult, setFilteredDocResult] = useState([]);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [advFilteredResult, setAdvFilteredResult] = useState([]);
 
     const handleSearchOpen = (text) => {
         if(text==="InputSearch"){
@@ -153,6 +154,40 @@ export default function DocumentList({ clientId }) {
                 return Object.entries(item).join("").toLowerCase().includes(text.toLowerCase());
             });
             setFilteredDocResult(filteredDocuments);
+        }
+    }
+    
+    function formatDate(inputDate) {
+        const date = new Date(inputDate);
+        const day = date.getDate();
+        const month = date.getMonth() + 1; // January is 0, so add 1 to get the correct month
+        const year = date.getFullYear();
+        const paddedDay = day < 10 ? `0${day}` : day;
+        const paddedMonth = month < 10 ? `0${month}` : month;
+        return `${paddedDay}/${paddedMonth}/${year}`;
+    }
+    function getLastMonth() {
+        const currentDate = new Date();
+        const lastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1);
+        const month = lastMonth.getMonth() + 1; // Adding 1 because January is represented as 0
+        const year = lastMonth.getFullYear();
+        return `0${month}/${year}`;
+      }
+    const handleDocumentsFilter = (target) => {
+        if(target==="LastMonth"){
+            // console.log(getLastMonth().split("/"));
+            let last = getLastMonth().split("/");
+            documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
+            let fltData = documents.filter((itm)=>{
+                let all = itm["Item Date"].split("/");
+                if(all[1]===last[0] && all[2]===last[1]){
+                    return itm;
+                }
+                // console.log(itm["Item Date"].split("/"))
+            });
+            // fltData.map((item)=>console.log(item.Description))
+            console.log(fltData.length);
+            setAdvFilteredResult(fltData);
         }
     }
     function getRootProps(params) {}
@@ -217,8 +252,10 @@ export default function DocumentList({ clientId }) {
                     </AutocompleteWrapper>
                 </Layout>
 
+                <div><button onClick={()=>handleDocumentsFilter("LastMonth")}>LastMonth</button></div>
+
                     <Box className='row'>
-                        {documents.length > 0 && documents.map((item) => {
+                        {advFilteredResult.length>0?(advFilteredResult.map((item) => {
                             return <Box className='col-xl-4 col-md-6'>
                                 <Box className="file-uploads">
                                     <label className="file-uploads-label file-uploads-document">
@@ -242,7 +279,31 @@ export default function DocumentList({ clientId }) {
                                 </Box>
                                 {/* file upload end */}
                             </Box>
-                        })}
+                        })):(documents.length > 0 && documents.map((item) => {
+                            return <Box className='col-xl-4 col-md-6'>
+                                <Box className="file-uploads">
+                                    <label className="file-uploads-label file-uploads-document">
+                                        <Box className="d-flex align-items-center">
+                                            <DescriptionIcon
+                                                sx={{
+                                                    fontSize: 32,
+                                                }}
+                                                className='me-2'
+                                            />
+                                            <Box className="upload-content pe-3">
+                                                <Typography variant="h4" >
+                                                    {item.Description ? item.Description : "Demo"}
+                                                </Typography>
+                                                <Typography variant="body1">
+                                                    {item["Item Date"] ? formatDate(item["Item Date"]) : ""} | {item["FileSize"] ? item["FileSize"] : ""}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                    </label>
+                                </Box>
+                                {/* file upload end */}
+                            </Box>
+                        }))}
                     </Box></>)
             }
 

@@ -365,7 +365,6 @@ export default class CommanCLS extends AllService {
                 return callBack(false,[]);
             }
         })
-        console.log("test");
      }
 
 
