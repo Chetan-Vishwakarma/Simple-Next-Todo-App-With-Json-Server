@@ -1187,11 +1187,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                                 >
                                                     <Typography
                                                         variant="body1"
-                                                        className="font-16 sembold"
+                                                        className="font-14 sembold"
                                                     >
                                                         {item.Notes}
                                                     </Typography>
-                                                    <Typography variant="body1">
+                                                    <Typography variant="body1" className="font-12">
                                                         {dateAndTime(item.ActivityDate)}
                                                     </Typography>
                                                 </Box>
@@ -1209,11 +1209,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                                 </Box>
                                                 <Box className="chat-message me-2">
                                                     <Box className="inner-chat-message me-2">
-                                                        <Typography variant="body1">
+                                                        <Typography variant="body1" className="font-14">
                                                             {item.Notes}
                                                         </Typography>
                                                         <Box className="d-flex align-items-center justify-content-end">
-                                                            <Typography variant="body1">
+                                                            <Typography variant="body1" className="font-12">
                                                                 {dateAndTime(item.ActivityDate)}
                                                             </Typography>
 
@@ -1271,11 +1271,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                                 >
                                                     <Box class="chat-message">
                                                         <Box class="inner-chat-message ms-auto">
-                                                            <Typography variant="body1">
+                                                            <Typography variant="body1" className="font-14">
                                                                 {item.Notes}
                                                             </Typography>
                                                             <Box className="d-flex align-items-center justify-content-end">
-                                                                <Typography variant="body1">
+                                                                <Typography variant="body1" className="font-12">
                                                                     {dateAndTime(item.ActivityDate)}
                                                                 </Typography>
 
