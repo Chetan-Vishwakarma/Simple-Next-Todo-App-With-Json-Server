@@ -13,6 +13,7 @@ import { styled } from '@mui/material/styles';
 import AppsIcon from '@mui/icons-material/Apps';
 import ListIcon from '@mui/icons-material/List';
 
+
 const Layout = styled('div')`  display: flex;
   flex-flow: column nowrap;  gap: 4px;
 `;
@@ -95,7 +96,7 @@ function createData(name, calories, fat, carbs, protein) {
     return { name, calories, fat, carbs, protein };
 }
 
-export default function DocumentList({clientId}) {
+export default function DocumentList({ clientId }) {
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -105,7 +106,17 @@ export default function DocumentList({clientId}) {
     const [documents, setDocuments] = useState([]);
     const [groupedOptions, setgroupedOptions] = useState([]);
     const [toggleScreen, setToggleScreen] = useState(false);
-    const [filteredDocResult,setFilteredDocResult] = useState([]);
+    const [filteredDocResult, setFilteredDocResult] = useState([]);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [advFilteredResult, setAdvFilteredResult] = useState([]);
+
+    const handleSearchOpen = (text) => {
+        if(text==="InputSearch"){
+            setIsSearchOpen(!isSearchOpen);
+        }else{
+            setIsSearchOpen(false);
+        }
+    }
 
     const Json_ExplorerSearchDoc = () => {
         try {
@@ -117,14 +128,12 @@ export default function DocumentList({clientId}) {
                 if (sts && data) {
                     console.log("ExplorerSearchDoc", JSON.parse(data));
                     let json = JSON.parse(data);
-                    if(json.Table6){
+                    if (json.Table6) {
                         let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                         setDocuments(docs);
-                            // let desc = docs.map((item)=>{
-                            //     if(item.Description!==null)
-                            // });
-                            // console.log("desc",desc);
-                            // setgroupedOptions(desc);
+                        let desc = docs.filter((item) => item.Description!=="");
+                        console.log("desc", desc);
+                        setgroupedOptions(desc);
                     }
                 }
             })
@@ -139,47 +148,69 @@ export default function DocumentList({clientId}) {
         setEmail(localStorage.getItem("Email"));
         Json_ExplorerSearchDoc();
     }, []);
-    const handleSearch=(text)=>{
-        if(documents.length>0){
-            let filteredDocuments = documents.filter((item)=>{
+    const handleSearch = (text) => {
+        if (documents.length > 0) {
+            let filteredDocuments = documents.filter((item) => {
                 return Object.entries(item).join("").toLowerCase().includes(text.toLowerCase());
             });
             setFilteredDocResult(filteredDocuments);
         }
     }
-
-
-    function getInputProps(params) {
-
+    
+    function formatDate(inputDate) {
+        const date = new Date(inputDate);
+        const day = date.getDate();
+        const month = date.getMonth() + 1; // January is 0, so add 1 to get the correct month
+        const year = date.getFullYear();
+        const paddedDay = day < 10 ? `0${day}` : day;
+        const paddedMonth = month < 10 ? `0${month}` : month;
+        return `${paddedDay}/${paddedMonth}/${year}`;
     }
-    function getRootProps(params) {
-
+    function getLastMonth() {
+        const currentDate = new Date();
+        const lastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1);
+        const month = lastMonth.getMonth() + 1; // Adding 1 because January is represented as 0
+        const year = lastMonth.getFullYear();
+        return `0${month}/${year}`;
+      }
+    const handleDocumentsFilter = (target) => {
+        if(target==="LastMonth"){
+            // console.log(getLastMonth().split("/"));
+            let last = getLastMonth().split("/");
+            documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
+            let fltData = documents.filter((itm)=>{
+                let all = itm["Item Date"].split("/");
+                if(all[1]===last[0] && all[2]===last[1]){
+                    return itm;
+                }
+                // console.log(itm["Item Date"].split("/"))
+            });
+            // fltData.map((item)=>console.log(item.Description))
+            console.log(fltData.length);
+            setAdvFilteredResult(fltData);
+        }
     }
-    function getListboxProps(params) {
-
-    }
-    function getOptionProps(params) {
-
-    }
+    function getRootProps(params) {}
+    function getListboxProps(params) {}
     return (
         <>
-        <div style={{textAlign:"end"}}>{toggleScreen?<AppsIcon onClick={()=>setToggleScreen(!toggleScreen)}/>:<ListIcon onClick={()=>setToggleScreen(!toggleScreen)}/>}</div>
+            <div style={{ textAlign: "end" }}>{toggleScreen ? <AppsIcon onClick={() => setToggleScreen(!toggleScreen)} /> : <ListIcon onClick={() => setToggleScreen(!toggleScreen)} />}</div>
 
-            { toggleScreen? 
-                (documents.length>0 && <DataGrid
+            {toggleScreen ?
+                (documents.length > 0 && <DataGrid
                     id="dataGrid"
-                    style={{width:"1600px"}}
+                    style={{ width: "1600px" }}
                     dataSource={documents}
                     columnAutoWidth={true}
                     showBorders={true}>
-                    <Column dataField="Description" dataType="string" caption="Discount"/>
-                    <Column dataField="Section" dataType="string" caption="Section"/>
-                    <Column dataField="SubSection" dataType="string" caption="Sub"/>
-                    <Column dataField="Item Date" dataType="date" caption="Doc. Date"/>
-                    <Column dataField="Received Date" dataType="date" caption="Received Date"/>
-                    <Column dataField="Category" dataType="string" caption="Category"/>
-                    <Column dataField="Client" dataType="string" caption="Reference"/>    
-                    <Column dataField="FileSize" dataType="string" caption="File Size"/> 
+                    <Column dataField="Description" dataType="string" caption="Discount" />
+                    <Column dataField="Section" dataType="string" caption="Section" />
+                    <Column dataField="SubSection" dataType="string" caption="Sub" />
+                    <Column dataField="Item Date" dataType="date" caption="Doc. Date" />
+                    <Column dataField="Received Date" dataType="date" caption="Received Date" />
+                    <Column dataField="Category" dataType="string" caption="Category" />
+                    <Column dataField="Client" dataType="string" caption="Reference" />
+                    <Column dataField="FileSize" dataType="string" caption="File Size" />
                     <FilterRow visible={true} />
                     <FilterPanel visible={true} />
                     <HeaderFilter visible={true} />
@@ -206,51 +237,79 @@ export default function DocumentList({clientId}) {
                         // className={focused ? 'Mui-focused' : ''}
                         >
                             <span className="material-symbols-outlined search-icon">search</span>
-    
-                            <Input {...getInputProps()} onChange={(e)=>handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
+
+                            <Input onClick={()=>handleSearchOpen("InputSearch")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
                         </AutocompleteRoot>
-                        {groupedOptions.length > 0 && (
+                        {isSearchOpen ? (groupedOptions.length > 0 && (
                             <Listbox {...getListboxProps()}>
-                                {groupedOptions.map((option, index) => (
-                                    <Option {...getOptionProps({ option, index })}>{option}</Option>
+                                {filteredDocResult.length===0? groupedOptions.map((option, index) => (
+                                    <Option onClick={handleSearchOpen}>{option.Description}</Option>
+                                )):filteredDocResult.map((option, index) => (
+                                    <Option onClick={handleSearchOpen}>{option.Description}</Option>
                                 ))}
                             </Listbox>
-                        )}
+                        )):""}
                     </AutocompleteWrapper>
                 </Layout>
-    
-                <Box className='row'>
-                    {documents.length > 0 && documents.map((item) => {
-                        return <Box className='col-xl-4 col-md-6'>
-                            <Box className="file-uploads">
-                                <label className="file-uploads-label file-uploads-document">
-                                    <Box className="d-flex align-items-center">
-                                        <DescriptionIcon
-                                            sx={{
-                                                fontSize: 32,
-                                            }}
-                                            className='me-2'
-                                        />
-                                        <Box className="upload-content pe-3">
-                                            <Typography variant="h4" >
-                                                {item.Description ? item.Description : "Demo"}
-                                            </Typography>
-                                            <Typography variant="body1">
-                                                {item["Item Date"] ? item["Item Date"] : ""} | {item["FileSize"] ? item["FileSize"] : ""}
-                                            </Typography>
+
+                <div><button onClick={()=>handleDocumentsFilter("LastMonth")}>LastMonth</button></div>
+
+                    <Box className='row'>
+                        {advFilteredResult.length>0?(advFilteredResult.map((item) => {
+                            return <Box className='col-xl-4 col-md-6'>
+                                <Box className="file-uploads">
+                                    <label className="file-uploads-label file-uploads-document">
+                                        <Box className="d-flex align-items-center">
+                                            <DescriptionIcon
+                                                sx={{
+                                                    fontSize: 32,
+                                                }}
+                                                className='me-2'
+                                            />
+                                            <Box className="upload-content pe-3">
+                                                <Typography variant="h4" >
+                                                    {item.Description ? item.Description : "Demo"}
+                                                </Typography>
+                                                <Typography variant="body1">
+                                                    {item["Item Date"] ? item["Item Date"] : ""} | {item["FileSize"] ? item["FileSize"] : ""}
+                                                </Typography>
+                                            </Box>
                                         </Box>
-                                    </Box>
-                                </label>
+                                    </label>
+                                </Box>
+                                {/* file upload end */}
                             </Box>
-                            {/* file upload end */}
-                        </Box>
-                    })}
-                </Box></>)
+                        })):(documents.length > 0 && documents.map((item) => {
+                            return <Box className='col-xl-4 col-md-6'>
+                                <Box className="file-uploads">
+                                    <label className="file-uploads-label file-uploads-document">
+                                        <Box className="d-flex align-items-center">
+                                            <DescriptionIcon
+                                                sx={{
+                                                    fontSize: 32,
+                                                }}
+                                                className='me-2'
+                                            />
+                                            <Box className="upload-content pe-3">
+                                                <Typography variant="h4" >
+                                                    {item.Description ? item.Description : "Demo"}
+                                                </Typography>
+                                                <Typography variant="body1">
+                                                    {item["Item Date"] ? formatDate(item["Item Date"]) : ""} | {item["FileSize"] ? item["FileSize"] : ""}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                    </label>
+                                </Box>
+                                {/* file upload end */}
+                            </Box>
+                        }))}
+                    </Box></>)
             }
 
-            
 
-            
+
+
         </>
     );
 }

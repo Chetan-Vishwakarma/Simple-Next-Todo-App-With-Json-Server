@@ -38,6 +38,8 @@ function ClientDetails() {
 
     const [companyDetails, setCompanyDetails] = useState([]);
 
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
     const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
@@ -261,7 +263,7 @@ function ClientDetails() {
                     <TabPanel value="4">Item Three</TabPanel>
 
                     <TabPanel value="5" className='p-0'>
-                        <DocumentList clientId={originatorNo}></DocumentList>
+                        <DocumentList clientId={originatorNo} ></DocumentList>
                     </TabPanel>
 
                     {/* <TabPanel value="5">
