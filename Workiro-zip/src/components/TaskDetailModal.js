@@ -26,7 +26,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
 
 // sadik code start
@@ -1939,6 +1939,15 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     Attached To
                                 </AccordionSummary>
                                 <AccordionDetails>
+                                    <Box className=''>
+
+                                        {Array(5).fill("").map(() => {
+                                            return <>
+                                                <Link href="#" className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />Contact agreement</Link>
+                                            </>
+                                        })}
+
+                                    </Box>
                                 </AccordionDetails>
                             </Accordion>
 
@@ -1951,6 +1960,21 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     Activity
                                 </AccordionSummary>
                                 <AccordionDetails>
+
+                                    {Array(5).fill("").map(() => {
+                                        return <>
+                                            <Box className='mb-3'>
+                                                <Typography variant="body1" className="text-black sembold font-16">
+                                                    New version uploaded
+                                                </Typography>
+
+                                                <Typography variant="body1" className="font-12 sembold text-gray">
+                                                    02:36PM 06/05/2023 | by Me
+                                                </Typography>
+
+                                            </Box>
+                                        </>
+                                    })}
                                 </AccordionDetails>
                             </Accordion>
 
