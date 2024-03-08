@@ -257,10 +257,10 @@ export default function DocumentList({ clientId }) {
                 (<>
 
 
-                    <div>
+                    {/* <div>
                         <button onClick={() => handleDocumentsFilter("LastMonth")}>LastMonth</button>
                         <button onClick={() => handleDocumentsFilter("LastSixMonth")}>LastSixMonth</button>
-                    </div>
+                    </div> */}
 
 
                     <Grid
@@ -271,7 +271,7 @@ export default function DocumentList({ clientId }) {
                     >
                         <Grid item xs={12} sm={10} md={6} lg={5} className='white-box'>
                             <Box className='d-flex m-auto justify-content-center w-100 align-items-end'>
-                                <Layout className='d-flex w-100 d-none'>
+                                <Layout className='d-flex w-100 d-non'>
                                     <AutocompleteWrapper className='w-100'>
                                         <AutocompleteRoot
                                             className='w-100'
@@ -299,7 +299,7 @@ export default function DocumentList({ clientId }) {
                                 </Layout>
 
 
-                                <Box className='row w-100 pe-3 d-non'>
+                                <Box className='row w-100 pe-3 d-none'>
                                     <Box className='col-md-6'>
                                         <Box className='mb-2'>
                                             <label>Select Property</label>
@@ -320,14 +320,14 @@ export default function DocumentList({ clientId }) {
 
                             </Box>
 
-                            <Box className='mt-2'>
+                            {/* <Box className='mt-2'>
                                 <Stack direction="row" spacing={1}>
                                     <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
 
                                     <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} />
 
                                 </Stack>
-                            </Box>
+                            </Box> */}
 
                             <Box className='mt-4'>
                                 <DocumentDetails></DocumentDetails>
