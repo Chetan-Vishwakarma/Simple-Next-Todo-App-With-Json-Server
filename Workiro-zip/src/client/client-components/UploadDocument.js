@@ -62,7 +62,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
 
                         {/* file upload */}
-                        <Box className="d-none">
+                        <Box className="">
                             <Box className='row'>
                                 <Box className='col-lg-8 m-auto'>
                                     <Box className="file-upload-2 mt-4">
@@ -108,7 +108,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                             </Box>
                         </Box>
 
-                        <Box className='row'>
+                        {/* <Box className='row'>
                             <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                 
                                 <Autocomplete
@@ -183,12 +183,12 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                 <textarea className='textarea w-100' placeholder='Description'></textarea>
                             </Box>
 
-                        </Box>
+                        </Box> */}
                         {/* row end */}
 
                         {/* UDF Start */}
 
-                        <hr />
+                        {/* <hr />
 
                         <Typography variant="body1" className="font-18 bold mb-2 text-black">
                             UDF Form
@@ -208,7 +208,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                     renderInput={(params) => <TextField {...params} label="Financial Year" />}
                                 />
                             </Box>
-                        </Box>
+                        </Box> */}
 
                         {/* UDF End */}
 

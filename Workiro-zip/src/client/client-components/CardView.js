@@ -101,9 +101,9 @@ function CardView(props) {
                                             </Fab>
                                         </Box> */}
 
-                                        <div className='row'>
-                                            <div className='col-md-4'>
-                                                <div className='mb-2'>
+                                        <Box className='row'>
+                                            <Box className='col-md-4'>
+                                                <Box className='mb-2'>
                                                     <label>Select Property</label>
                                                     <select value={selectedProperty} onChange={(e) => { setSelectedProperty(e.target.value) }} class="form-select" aria-label="Default select example">
                                                         <option value={""}>Select</option>
@@ -114,15 +114,15 @@ function CardView(props) {
                                                             return <option key={i} value={item}>{item}</option>
                                                         })}
                                                     </select>
-                                                </div>
-                                            </div>
-                                            <div className='col-md-4 px-0'>
-                                                <div className='mb-2'>
+                                                </Box>
+                                            </Box>
+                                            <Box className='col-md-4 px-0'>
+                                                <Box className='mb-2'>
                                                     <label>Value</label>
                                                     <input value={selectedPropertyValue} onChange={(e) => { setSelectedPropertyValue(e.target.value) }} type="text" class="form-control" placeholder="Type Value" />
-                                                </div>
-                                            </div>
-                                            <div className='col-md-4'>
+                                                </Box>
+                                            </Box>
+                                            <Box className='col-md-4'>
                                                 <Box className='clearfix'>
                                                     <Typography variant='Body1' className='mb-1'>Labels</Typography>
 
@@ -141,17 +141,17 @@ function CardView(props) {
                                                         }
                                                     </Box>
                                                 </Box>
-                                            </div>
-                                        </div>
+                                            </Box>
+                                        </Box>
 
 
-                                        <div className='mt-2'>
+                                        <Box className='mt-2'>
                                             <Button onClick={handleAdvanceFilterAgain} variant="contained" size='small' color="success">
                                                 <span class="material-symbols-outlined">
                                                     add
                                                 </span> Add
                                             </Button>
-                                        </div>
+                                        </Box>
                                     </Box>
                                 </Box>
                             </Box>}

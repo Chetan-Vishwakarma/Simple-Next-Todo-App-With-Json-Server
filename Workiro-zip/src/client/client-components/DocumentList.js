@@ -8,10 +8,13 @@ import DataGrid, {
     Pager, Paging, DataGridTypes,
 } from 'devextreme-react/data-grid';
 import 'devextreme/dist/css/dx.light.css';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Button, Paper, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AppsIcon from '@mui/icons-material/Apps';
 import ListIcon from '@mui/icons-material/List';
+import DocumentDetails from '../../components/DocumentDetails';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
 
 
 const Layout = styled('div')`  display: flex;
@@ -110,10 +113,16 @@ export default function DocumentList({ clientId }) {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [advFilteredResult, setAdvFilteredResult] = useState([]);
 
+
+
+    const handleDelete = () => {
+        console.info('You clicked the delete icon.');
+    };
+
     const handleSearchOpen = (text) => {
-        if(text==="InputSearch"){
+        if (text === "InputSearch") {
             setIsSearchOpen(!isSearchOpen);
-        }else{
+        } else {
             setIsSearchOpen(false);
         }
     }
@@ -131,7 +140,7 @@ export default function DocumentList({ clientId }) {
                     if (json.Table6) {
                         let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                         setDocuments(docs);
-                        let desc = docs.filter((item) => item.Description!=="");
+                        let desc = docs.filter((item) => item.Description !== "");
                         console.log("desc", desc);
                         setgroupedOptions(desc);
                     }
@@ -156,7 +165,7 @@ export default function DocumentList({ clientId }) {
             setFilteredDocResult(filteredDocuments);
         }
     }
-    
+
     function formatDate(inputDate) {
         const date = new Date(inputDate);
         const day = date.getDate();
@@ -172,15 +181,15 @@ export default function DocumentList({ clientId }) {
         const month = lastMonth.getMonth() + 1; // Adding 1 because January is represented as 0
         const year = lastMonth.getFullYear();
         return `0${month}/${year}`;
-      }
+    }
     const handleDocumentsFilter = (target) => {
-        if(target==="LastMonth"){
+        if (target === "LastMonth") {
             // console.log(getLastMonth().split("/"));
             let last = getLastMonth().split("/");
-            documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
-            let fltData = documents.filter((itm)=>{
+            documents.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
+            let fltData = documents.filter((itm) => {
                 let all = itm["Item Date"].split("/");
-                if(all[1]===last[0] && all[2]===last[1]){
+                if (all[1] === last[0] && all[2] === last[1]) {
                     return itm;
                 }
                 // console.log(itm["Item Date"].split("/"))
@@ -190,8 +199,8 @@ export default function DocumentList({ clientId }) {
             setAdvFilteredResult(fltData);
         }
     }
-    function getRootProps(params) {}
-    function getListboxProps(params) {}
+    function getRootProps(params) { }
+    function getListboxProps(params) { }
     return (
         <>
             <div style={{ textAlign: "end" }}>{toggleScreen ? <AppsIcon onClick={() => setToggleScreen(!toggleScreen)} /> : <ListIcon onClick={() => setToggleScreen(!toggleScreen)} />}</div>
@@ -226,36 +235,83 @@ export default function DocumentList({ clientId }) {
                         width={240}
                         placeholder="Search..." />
                 </DataGrid>) :
-                (<><Layout>
-                    <AutocompleteWrapper>
-                        <AutocompleteRoot
-                            sx={{
-                                borderColor: '#D5D5D5',
-                                color: 'success.main',
-                            }}
-                            {...getRootProps()}
-                        // className={focused ? 'Mui-focused' : ''}
-                        >
-                            <span className="material-symbols-outlined search-icon">search</span>
+                (<>
 
-                            <Input onClick={()=>handleSearchOpen("InputSearch")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
-                        </AutocompleteRoot>
-                        {isSearchOpen ? (groupedOptions.length > 0 && (
-                            <Listbox {...getListboxProps()}>
-                                {filteredDocResult.length===0? groupedOptions.map((option, index) => (
-                                    <Option onClick={handleSearchOpen}>{option.Description}</Option>
-                                )):filteredDocResult.map((option, index) => (
-                                    <Option onClick={handleSearchOpen}>{option.Description}</Option>
-                                ))}
-                            </Listbox>
-                        )):""}
-                    </AutocompleteWrapper>
-                </Layout>
+                    <Grid
+                        container
+                        justifyContent="center"
+                        alignItems="center"
 
-                <div><button onClick={()=>handleDocumentsFilter("LastMonth")}>LastMonth</button></div>
+                    >
+                        <Grid item xs={12} sm={10} md={6} lg={5} className='white-box'>
+                            <Box className='d-flex m-auto justify-content-center w-100 align-items-end'>
+                                <Layout className='d-flex w-100 d-non'>
+                                    <AutocompleteWrapper className='w-100'>
+                                        <AutocompleteRoot
+                                            className='w-100'
+                                            sx={{
+                                                borderColor: '#D5D5D5',
+                                                color: 'success.main',
+                                            }}
+                                            {...getRootProps()}
+                                        // className={focused ? 'Mui-focused' : ''}
+                                        >
+                                            <span className="material-symbols-outlined search-icon">search</span>
 
-                    <Box className='row'>
-                        {advFilteredResult.length>0?(advFilteredResult.map((item) => {
+                                            <Input onClick={() => handleSearchOpen("InputSearch")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0 w-100' />
+                                        </AutocompleteRoot>
+                                        {isSearchOpen ? (groupedOptions.length > 0 && (
+                                            <Listbox {...getListboxProps()}>
+                                                {filteredDocResult.length === 0 ? groupedOptions.map((option, index) => (
+                                                    <Option onClick={handleSearchOpen}>{option.Description}</Option>
+                                                )) : filteredDocResult.map((option, index) => (
+                                                    <Option onClick={handleSearchOpen}>{option.Description}</Option>
+                                                ))}
+                                            </Listbox>
+                                        )) : ""}
+                                    </AutocompleteWrapper>
+                                </Layout>
+
+
+                                <Box className='row w-100 pe-3 d-none'>
+                                    <Box className='col-md-6'>
+                                        <Box className='mb-2'>
+                                            <label>Select Property</label>
+                                            <select class="form-select" aria-label="Default select example">
+                                                <option>Select</option>
+                                            </select>
+                                        </Box>
+                                    </Box>
+                                    <Box className='col-md-6 px-0'>
+                                        <Box className='mb-2'>
+                                            <label>Value</label>
+                                            <input type="text" class="form-control" placeholder="Type Value" />
+                                        </Box>
+                                    </Box>
+                                </Box>
+
+                                <Button className='btn-blue-2' sx={{ ml: '12px' }} onClick={() => handleDocumentsFilter("LastMonth")}>LastMonth</Button>
+
+                            </Box>
+
+                            <Box className='mt-2'>
+                                <Stack direction="row" spacing={1}>
+                                    <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
+
+                                    <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} />
+
+                                </Stack>
+                            </Box>
+
+                            <Box className='mt-4'>
+                                <DocumentDetails></DocumentDetails>
+                            </Box>
+
+                        </Grid>
+                    </Grid>
+
+                    {/* <Box className='row'>
+                        {advFilteredResult.length > 0 ? (advFilteredResult.map((item) => {
                             return <Box className='col-xl-4 col-md-6'>
                                 <Box className="file-uploads">
                                     <label className="file-uploads-label file-uploads-document">
@@ -277,9 +333,8 @@ export default function DocumentList({ clientId }) {
                                         </Box>
                                     </label>
                                 </Box>
-                                {/* file upload end */}
                             </Box>
-                        })):(documents.length > 0 && documents.map((item) => {
+                        })) : (documents.length > 0 && documents.map((item) => {
                             return <Box className='col-xl-4 col-md-6'>
                                 <Box className="file-uploads">
                                     <label className="file-uploads-label file-uploads-document">
@@ -301,15 +356,12 @@ export default function DocumentList({ clientId }) {
                                         </Box>
                                     </label>
                                 </Box>
-                                {/* file upload end */}
+                                
                             </Box>
                         }))}
-                    </Box></>)
+                    </Box> */}
+                </>)
             }
-
-
-
-
         </>
     );
 }
