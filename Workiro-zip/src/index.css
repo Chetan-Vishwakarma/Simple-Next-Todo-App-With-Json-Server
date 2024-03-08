@@ -1253,6 +1253,20 @@ hr {
   cursor: pointer;
 }
 
+.hover-checkbox {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  transition: .5s all ease;
+}
+
+.file-uploads .file-uploads-label:hover .hover-checkbox {
+  opacity: 1;
+  visibility: visible;
+}
+
 @media only screen and (max-width: 1366px) {
   .client-box-main {
     flex: 0 0 25%;

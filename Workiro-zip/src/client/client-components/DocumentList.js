@@ -15,6 +15,7 @@ import ListIcon from '@mui/icons-material/List';
 import DocumentDetails from '../../components/DocumentDetails';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import DateRangePicker from 'react-bootstrap-daterangepicker';
 
 
 const Layout = styled('div')`  display: flex;
@@ -218,8 +219,13 @@ export default function DocumentList({ clientId }) {
             // setAdvFilteredResult(fltData);
         }
     }
+
+
+
+
     function getRootProps(params) { }
     function getListboxProps(params) { }
+
     return (
         <>
             <div style={{ textAlign: "end" }}>{toggleScreen ? <AppsIcon onClick={() => setToggleScreen(!toggleScreen)} /> : <ListIcon onClick={() => setToggleScreen(!toggleScreen)} />}</div>
@@ -262,6 +268,12 @@ export default function DocumentList({ clientId }) {
                         <button onClick={() => handleDocumentsFilter("LastSixMonth")}>LastSixMonth</button>
                     </div> */}
 
+                    <Box className='col-5 mb-4'>
+                        <DateRangePicker className=''>
+                            <input type="text" className="form-control col-4" />
+                        </DateRangePicker>
+                    </Box>
+
 
                     <Grid
                         container
@@ -269,7 +281,10 @@ export default function DocumentList({ clientId }) {
                         alignItems="center"
 
                     >
+
+
                         <Grid item xs={12} sm={10} md={6} lg={5} className='white-box'>
+
                             <Box className='d-flex m-auto justify-content-center w-100 align-items-end'>
                                 <Layout className='d-flex w-100 d-non'>
                                     <AutocompleteWrapper className='w-100'>

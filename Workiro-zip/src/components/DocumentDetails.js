@@ -27,6 +27,10 @@ import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutli
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+
 
 // sadik code start
 function createData(document, details) {
@@ -49,6 +53,9 @@ const rows = [
     createData('to Email', 'test@gmail.com'),
     createData('CC', 'test@gmail.com')
 ];
+
+const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+
 // sadik code end
 
 
@@ -120,20 +127,35 @@ function DocumentDetails() {
     return (
         <>
             <Box>
+
+
+                <Box className='d-flex mb-3 mt-2'>
+                    {/* <FormControlLabel control={<Checkbox />} className="p-0 m-0 ms-2 ps-1" size="small"/> */}
+
+                    <Checkbox {...label} defaultChecked size="small" />
+
+                    <Button className="btn-blue-2 ms-2 py-1" size="small" variant="outlined"> Delete</Button>
+
+                </Box>
+
                 {Array(5).fill("").map(() => {
                     return <>
+
                         <Box className="file-uploads">
                             <label className="file-uploads-label file-uploads-document">
                                 <Box className="d-flex align-items-center">
+
+                                    <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
+
                                     <DescriptionIcon
                                         sx={{
                                             fontSize: 32,
                                         }}
-                                        className='me-2'
+                                        className='me-2 ms-0'
                                     />
                                     <Box className="upload-content pe-3">
                                         <Typography variant="h4" >
-                                            thisisTest.pdf
+                                            thisisTest.pdf iu
                                         </Typography>
                                         <Typography variant="body1">
                                             Size:  <span className='sembold'>10MB</span> | Uploaded by <span className='sembold'>Patrick</span>
@@ -329,9 +351,6 @@ function DocumentDetails() {
                                 {/* file upload end */}
                             </>
                         })}
-
-
-
 
                     </DialogContentText>
                 </DialogContent>
