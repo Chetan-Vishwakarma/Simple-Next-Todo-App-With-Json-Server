@@ -129,7 +129,8 @@ export default function DocumentList({ clientId }) {
                     console.log("ExplorerSearchDoc", JSON.parse(data));
                     let json = JSON.parse(data);
                     if (json.Table6) {
-                        let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
+                        // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
+                        let docs = json.Table6;
                         setDocuments(docs);
                         let desc = docs.filter((item) => item.Description!=="");
                         console.log("desc", desc);
@@ -141,6 +142,7 @@ export default function DocumentList({ clientId }) {
             console.log("ExplorerSearchDoc", error)
         }
     }
+
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
@@ -171,7 +173,14 @@ export default function DocumentList({ clientId }) {
         const lastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1);
         const month = lastMonth.getMonth() + 1; // Adding 1 because January is represented as 0
         const year = lastMonth.getFullYear();
-        return `0${month}/${year}`;
+        return month<10 ? `0${month}/${year}` : `${month}/${year}`;
+    }
+    function getLastSixMonthsDate() {
+        const currentDate = new Date();
+        const lastSixMonthsDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 5);
+        const month = lastSixMonthsDate.getMonth() + 1; // Adding 1 because January is represented as 0
+        const year = lastSixMonthsDate.getFullYear();
+        return `${month}/${year}`;
       }
     const handleDocumentsFilter = (target) => {
         if(target==="LastMonth"){
@@ -180,14 +189,24 @@ export default function DocumentList({ clientId }) {
             documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
             let fltData = documents.filter((itm)=>{
                 let all = itm["Item Date"].split("/");
-                if(all[1]===last[0] && all[2]===last[1]){
+                if(all[1]>=last[0] && all[2]===last[1]){
                     return itm;
                 }
-                // console.log(itm["Item Date"].split("/"))
             });
-            // fltData.map((item)=>console.log(item.Description))
-            console.log(fltData.length);
             setAdvFilteredResult(fltData);
+        }else if(target==="LastSixMonth"){
+            let last = getLastSixMonthsDate().split("/");
+            console.log(last);
+            documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
+            // documents.map((itm)=>console.log(itm["Item Date"]));
+            let fltData = documents.filter((itm)=>{
+                let all = itm["Item Date"].split("/");
+                console.log(all[1],"--",all[2],"-----",last[0],"--",last[1]);
+                // if(all[1]>=last[0] && all[2]===last[1]){
+                //     return itm;
+                // }
+            });
+            // setAdvFilteredResult(fltData);
         }
     }
     function getRootProps(params) {}
@@ -252,7 +271,10 @@ export default function DocumentList({ clientId }) {
                     </AutocompleteWrapper>
                 </Layout>
 
-                <div><button onClick={()=>handleDocumentsFilter("LastMonth")}>LastMonth</button></div>
+                <div>
+                    <button onClick={()=>handleDocumentsFilter("LastMonth")}>LastMonth</button>
+                    <button onClick={()=>handleDocumentsFilter("LastSixMonth")}>LastSixMonth</button>
+                </div>
 
                     <Box className='row'>
                         {advFilteredResult.length>0?(advFilteredResult.map((item) => {
