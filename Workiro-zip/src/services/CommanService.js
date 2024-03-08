@@ -8,6 +8,53 @@ export default class CommanCLS extends AllService {
         super(APIUrl,agrno, Email, password);
     }
 
+    Json_GetStandardLetterData(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetStandardLetterData",obj,false);
+        super.CallNewService("Json_GetStandardLetterData",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+    Json_GetHtmlFromRtf(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetHtmlFromRtf",obj,true);
+        super.CallNewService("Json_GetHtmlFromRtf",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+    Json_GetTemplateData(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetTemplateData",obj,false);
+        super.CallNewService("Json_GetTemplateData",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+     
+     Json_GetWebTemplatesList(callBack){   
+        super.CreateNewServiceParamObject("Json_GetWebTemplates");
+        super.CallNewService("Json_GetWebTemplates",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
     Json_ExplorerSearchDoc(obj,callBack){   
         super.CreateNewServiceParamObject("Json_ExplorerSearchDoc",obj,true);
         super.CallNewService("Json_ExplorerSearchDoc",function(status,Data){

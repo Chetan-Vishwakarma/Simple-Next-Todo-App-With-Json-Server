@@ -29,6 +29,9 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DescriptionIcon from '@mui/icons-material/Description';
 
+
+
+
 import Swal from 'sweetalert2';
 import {
     List,
@@ -65,7 +68,8 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CommanCLS from "../services/CommanService";
 import { useEffect } from "react";
 import { useState } from "react";
-
+import Fade from '@mui/material/Fade';
+import HtmlEditorDX from "./HtmlEditor";
 
 
 // 
@@ -144,6 +148,7 @@ export default function CreateNewModalTask() {
     const [currentDate, setCurrentDate] = useState(""); // Initialize with the current date in "dd/mm/yyyy" format
     const [nextDate, setNextDate] = useState("");
     const [remiderDate, setRemiderDate] = useState("");
+    const [expireDate, setExpireDate] = useState("");
     ///////////////////////////////////////end date set
 
     const [loading, setLoading] = useState(false);
@@ -257,6 +262,8 @@ export default function CreateNewModalTask() {
     //   const handleClose3 = () => {
     //     setAnchorEl(null); // Close the menu by setting the anchor element to null
     //   };
+
+
 
     const userAdd = Boolean(anchorel);
 
@@ -410,7 +417,7 @@ export default function CreateNewModalTask() {
         return formattedDate;
     }
 
-  
+
 
     useEffect(() => {
 
@@ -428,7 +435,7 @@ export default function CreateNewModalTask() {
         Json_GetForwardUserList();
         Json_GetFolderData();
         //console.log(nextDate, currentDate)
-      
+
     }, []);
 
     //////////////////////Folder Funciton
@@ -493,6 +500,7 @@ export default function CreateNewModalTask() {
                     Base64: fileByte, // Base64 data of the file
                     FileSize: file.size,
                     Preview: reader.result, // Data URL for preview
+                    DocId: ""
                 };
                 filesData.push(fileData);
 
@@ -601,7 +609,7 @@ export default function CreateNewModalTask() {
     async function Json_CRM_Task_Save() {
 
         if (addUser.length > 0) {
-            const idsString = addUser.map(obj => obj.ID).join(',');
+            const idsString = selectedEmailCC.map(obj => obj.ID).join(',');
             const attString = attachmentPath.map(obj => obj.Path).join(',');
             let obj = {
                 "ClientIsRecurrence": false,
@@ -670,9 +678,12 @@ export default function CreateNewModalTask() {
 
 
     }
+
+
+
     //////////////////////////////////////End Attachment data
 
-   
+
 
 
     /////////////////////////////Remove Assignee
@@ -705,7 +716,7 @@ export default function CreateNewModalTask() {
 
     const onAllModeChanged = React.useCallback(({ value }) => {
         setAllMode(value);
-      }, []);
+    }, []);
 
     const Json_ExplorerSearchDoc = () => {
         try {
@@ -731,7 +742,7 @@ export default function CreateNewModalTask() {
 
     }
 
-   
+
 
     const handleDocumentClickOpen = () => {
         Json_ExplorerSearchDoc();
@@ -749,26 +760,32 @@ export default function CreateNewModalTask() {
     // task dropdown 
     const [anchorElTastkType, setAnchorElTastkType] = React.useState(null);
     const [portalUser, setPortalUser] = React.useState([]);
+    const [txtTaskType, settxtTaskType] = React.useState("Task Type");
+
+
 
     const TastkType = Boolean(anchorElTastkType);
     const handleClickTastkType = (event) => {
         setAnchorElTastkType(event.currentTarget);
     };
-    const handleCloseTastkType = () => {
+
+    const handleCloseTastkType = (e) => {
         setAnchorElTastkType(null);
+        settxtTaskType(e.target.textContent);
+        // setCreateTaskButton(e.target.textContent)
     };
 
-     ////////////////// Priority
-     let priorityarr = [{ id: 1, "name": "High" }, { id: 2, "name": "Normal" }, { id: 3, "name": "Low" }];
-     let statusarr = [
-         { id: 1, "name": "Not Started" },
-         { id: 2, "name": "In Progress" },
-         { id: 3, "name": "Waiting on someone else" },
-         { id: 4, "name": "Deferred" },
-         { id: 5, "name": "Done" },
-         { id: 6, "name": "Completed" },
-     ];
-     //////////////////End Priority
+    ////////////////// Priority
+    let priorityarr = [{ id: 1, "name": "High" }, { id: 2, "name": "Normal" }, { id: 3, "name": "Low" }];
+    let statusarr = [
+        { id: 1, "name": "Not Started" },
+        { id: 2, "name": "In Progress" },
+        { id: 3, "name": "Waiting on someone else" },
+        { id: 4, "name": "Deferred" },
+        { id: 5, "name": "Done" },
+        { id: 6, "name": "Completed" },
+    ];
+    //////////////////End Priority
 
     const handleSelectionChanged = (selectedItems) => {
         setSelectedRows(selectedItems.selectedRowsData);
@@ -777,67 +794,291 @@ export default function CreateNewModalTask() {
     };
     const Json_GetClientCardDetails = (cid) => {
         try {
-
             if (txtFolderId && cid) {
-                let obj = {};
-                obj.agrno = agrno;
-                obj.Email = Email;
-                obj.password = password;
-                obj.intProjectId = txtFolderId;
-                obj.strOrignatorNumber = cid;               
+                let obj = {
+                    agrno: agrno,
+                    Email: Email,
+                    password: password,
+                    intProjectId: txtFolderId,
+                    strOrignatorNumber: cid
+                };
+
                 cls.Json_GetClientCardDetails(obj, function (sts, data) {
                     if (sts && data) {
                         let json = JSON.parse(data);
-                      
                         let tble6 = json.Table6;
-                        if(tble6.length>0){
-                            let result = tble6.map((el)=>{
 
-                                if(el["Portal User"]===true && el["Portal User"] !==null){
-                                    return el;
-                                }
-                                setTimeout(() => {
-                                    if(result.length>0){
-                                        setPortalUser(result)
-                                        console.log("Json_GetClientCardDetails", result);
-                                    }
-                                    else{
-                                        setPortalUser(null)
-                                    }
-                                }, 1500);
-                                
-                            });
-                            
+                        if (tble6.length > 0) {
+                            let filteredUsers = tble6.filter(el => el["Portal User"] === true && el["Portal User"] !== null);
+                            if(filteredUsers.length>0){
+                                setPortalUser(filteredUsers.length > 0 ? filteredUsers : null);
+                            }
+                           
+                            console.log("Json_GetClientCardDetails", filteredUsers);
+                        } else {
+                            setPortalUser(null);
                         }
-                       // setDMSDocumentList(tble6);
                     }
-                })
+                });
             }
-
         } catch (error) {
-            console.log("ExplorerSearchDoc", error)
+            console.log("ExplorerSearchDoc", error);
         }
+    };
 
-    }
 
-    const getPortalUser=()=>{
+    const getPortalUser = () => {
 
         Json_GetClientCardDetails();
 
     }
 
     const [selectedValues, setSelectedValues] = useState([]);
+    const [selectedEmail, setSelectedEmail] = useState([]);
 
     const handleAutocompleteChange = (event, newValue) => {
-        setSelectedEmail(newValue ? newValue["E-Mail"] : null);
-        console.log("handleAutocompleteChange",newValue);
+        setSelectedEmail(newValue ? newValue : null);
+        console.log("handleAutocompleteChange", newValue);
     };
-    const [selectedEmail, setSelectedEmail] = useState(null);
-   
-        const filteredOptions  =portalUser?portalUser.filter(option => option["E-Mail"] !== selectedEmail):[];
-  
+
+    const [selectedEmailCC, setSelectedEmailCC] = useState(null);
+    const handleAutocompleteChangeOnCC = (event, newValue) => {
+        setSelectedEmailCC(newValue ? newValue : null);
+        console.log("handleAutocompleteChange CC", newValue);
+    };
+
+    //const filteredOptions = portalUser ? portalUser.filter(option => option["E-Mail"] !== selectedEmail) : [];
+
+    const AddDocuments = () => {
+        let filesData = [];
+        selectedRows.forEach((row, index) => {
+            const fileData = {
+                FileName: row.Path,
+                Base64: "", // Base64 data of the file
+                FileSize: row.FileSize,
+                Preview: "", // Data URL for preview
+                DocId: row.ItemId
+            };
+            filesData.push(fileData);
+            // Check if this is the last file
+            if (index === selectedRows.length - 1) {
+                // Add new files to the uploadedFiles array
+                setSelectedFiles((prevUploadedFiles) => [
+                    ...prevUploadedFiles,
+                    ...filesData,
+                ]);
+            }
+
+        })
+
+        setOpenDocumentList(false)
+
+    }
+
+
+
+
+
+    const [editorContent, setEditorContent] = useState('');
+
+    // Handler function to update the editor content
+    const handleContentChange = (e) => {
+        setEditorContent(e.value);
+    };
+    //////////////////////////Template Start
+    const [txtTemplateId, setTxtTempId] = useState(null);
+    const [errorMgs, setErrorMgs] = useState(false);
+
+    const handleSelectionChangedTemp = (selectedItems) => {
+        setTxtTempId(selectedItems.selectedRowsData);
+        setShowComponent(true);
+        // You can perform further actions with the selectedRows array
+        console.log("Seleted Template", txtTemplateId); // Log the selected rows data
+        if (selectedEmail.length > 0) {
+            Json_GetStandardLetterData(selectedItems.selectedRowsData)
+        }
+        else {
+            setErrorMgs(true)
+        }
+
+        setTimeout(() => {
+            setErrorMgs(false); // Set error message state to false to hide the message
+        }, 3000);
+
+
+    };
+
+    function GetTemplateData(data) {
+        try {
+            let obj = {};
+            obj.agrno = agrno;
+            obj.UserEmail = Email;
+            obj.password = password;
+            obj.strFolderId = data[0].ProjectID;;
+            obj.strClientId = textClientId;
+            obj.strSectionId = data[0].ItemTypeId;
+            obj.strTemplateId = data[0].TemplateID;
+
+            cls.Json_GetTemplateData(obj, function (sts, data) {
+                if (sts && data) {
+                    console.log("Template Data ", data)
+                    Json_GetHtmlFromRtf(data);
+                }
+            })
+        } catch (error) {
+            console.log("Error for Tempalte", error)
+        }
+    }
+
+    const [templateDataMarkup, setTemplateDataMarkup] = useState(null);
+    const [showComponent, setShowComponent] = useState(false);
+
+
+    function Json_GetHtmlFromRtf(rtfdata) {
+        try {
+            let obj = {};
+            obj.strRtf = rtfdata;
+            cls.Json_GetHtmlFromRtf(obj, function (sts, data) {
+                if (sts && data) {
+
+                    let json = JSON.parse(data);
+                    console.log("Template Data html", json);
+
+                    setTemplateDataMarkup(json)
+                }
+            })
+        } catch (error) {
+            console.log("Error for Tempalte", error)
+        }
+    }
+
+    const [smsTemplate, setSMSTemplate] = useState([]);
+
+    const handleClickAddTemplate = (event) => {
+        setAnchorElTemp(event.currentTarget);
+    }
+
+    const [anchorElTemp, setAnchorElTemp] = React.useState(null);
+    const openTemp = Boolean(anchorElTemp);
+
+    const handleCloseTemp = () => {
+        setAnchorElTemp(null);
+    };
+
+    function GetSMSTemplate() {
+        cls.Json_GetWebTemplatesList(function (sts, data) {
+            if (sts && data) {
+                let json = JSON.parse(data);
+                console.log("Json_GetWebTemplatesList", json);
+                let tbl = json.Table;
+                setSMSTemplate(tbl)
+
+            }
+        });
+    }
+
+
+
+
+
+    function Json_GetStandardLetterData(data) {
+        try {
+            let obj = {};
+            obj.agrno = agrno;
+            obj.UserEmail = Email;
+            obj.password = password;
+            obj.strFolderId = data[0].ProjectID;
+            obj.strClientId = textClientId;
+            obj.strSectionId = data[0].ItemTypeId;
+            obj.strTemplateId = data[0].TemplateID;
+            obj.ContactEmail = selectedEmail[0]["E-Mail"];
+            var urlLetter = "https://docusms.uk/dsdesktopwebservice.asmx/";
+            let cls = new CommanCLS(urlLetter, agrno, Email, password);
+            cls.Json_GetStandardLetterData(obj, function (sts, data) {
+                if (sts && data) {
+                    console.log("Json_GetStandardLetterData", data)
+                    Json_GetHtmlFromRtf(data);
+                }
+            })
+        } catch (error) {
+            console.log("Error for Tempalte", error)
+        }
+    }
+
+    useEffect(() => {
+        GetSMSTemplate();
+    }, [setTxtTempId])
+
+    const [textSubject,setTextSubject]=useState("Subject");
+
+    async function CreatePortalTask() {
+
+        if (addUser.length > 0) {
+            const ccEmail = selectedEmailCC.map(obj => obj["E-Mail"]).join(',');
+            const ToEmail = selectedEmail.map(obj => obj["E-Mail"]).join(',');
+            const ItemId = selectedRows.map(obj => obj["ItemId"]).join(',');
+            
+            let obj = {
+                "senderID": textClientId,
+                "sectionID":txtSectionId,
+                "ccode":textClientId,
+                "recipients": ToEmail,
+                "ccs": ccEmail,
+                "subject": textSubject,
+                "forApproval": isCheckedForApproval,
+                "highImportance":"" ,
+                "expiryDate":expireDate ,
+                "actionDate": currentDate,
+                "trackIt": false,
+                "docTemplateTaskId":0,
+                "docTemplateId":txtTemplateId[0]["TemplateID"],
+                "filenames":"" ,
+                "attachments": "",
+                "itemNos": ItemId,
+                "noMessage": isCheckedWithOutmgs,
+                "message": "",
+                "docuBoxMessage": false,
+                "docuBoxEmails": "",
+                "daysToDelete": "",
+                "approvalResponse": "",
+
+               
+            }
+            console.log("final save data obj", obj);
+            cls.Json_CRM_Task_Save(obj, function (sts, data) {
+                if (sts) {
+                    let js = JSON.parse(data);
+                    if (js.Status == "success") {
+                        setMessageId(js.Message)
+                        setLoading(false);
+                        // Inside your function or event handler where you want to show the success message
+                        handleSuccess(js.Message);
+                        setOpen(false);
+                    }
+                    console.log("Response final", data)
+                    // setLoading(false);
+                }
+            })
+
+        }
+
+
+
+    }
+
+
+    const [isCheckedForApproval, setIsCheckedForApproval] = useState(false);
+
+    const handleCheckboxChangeForAppoval = (event) => {
+        setIsCheckedForApproval(event.target.checked);
+    };
     
-    
+    const [isCheckedWithOutmgs, setisCheckedWithOutmgs] = useState(false);
+
+    const handleCheckboxChangeisCheckedWithOutmgs = (event) => {
+        setisCheckedWithOutmgs(event.target.checked);
+    };
+
     return (
         <React.Fragment>
             <Button
@@ -854,6 +1095,8 @@ export default function CreateNewModalTask() {
                 onClose={handleClose}
                 aria-labelledby="responsive-dialog-title"
                 className="custom-modal"
+                maxWidth="xl" // Set maxWidth to control the width
+                fullWidth={true} // Ensure the dialog takes up the full width
             >
                 <DialogContent>
                     <DialogContentText>
@@ -868,7 +1111,7 @@ export default function CreateNewModalTask() {
                                     onClick={handleClickTastkType}
                                     className="btn-select"
                                 >
-                                    Task Type
+                                    {txtTaskType}
                                 </Button>
                                 <Menu
                                     id="basic-menu"
@@ -939,8 +1182,9 @@ export default function CreateNewModalTask() {
                                             <Box className>
                                                 <input
                                                     className="input-text"
+                                                    onChange={(e)=>setTextSubject(e.value)}
                                                     type="text"
-                                                    value="This is Subject"
+                                                    value={textSubject}
                                                 />
                                             </Box>
                                         </Box>
@@ -973,11 +1217,11 @@ export default function CreateNewModalTask() {
 
 
                                             <Box className='mb-3'>
+
                                                 <Autocomplete
                                                     multiple
                                                     id="checkboxes-tags-demo"
-                                                  
-                                                    options={filteredOptions?filteredOptions:[]}
+                                                    options={portalUser}
                                                     disableCloseOnSelect
                                                     getOptionLabel={(option) => option["E-Mail"]}
                                                     renderOption={(props, option, { selected }) => (
@@ -988,24 +1232,25 @@ export default function CreateNewModalTask() {
                                                                 style={{ marginRight: 8 }}
                                                                 checked={selected}
                                                             />
-                                                            {option["First Name"]+" "+option["Last Name"]+" ("+option["E-Mail"]+")"}
+                                                            {option["First Name"] + " " + option["Last Name"] + " (" + option["E-Mail"] + ")"}
                                                         </li>
                                                     )}
                                                     renderInput={(params) => (
                                                         <TextField {...params} label="To:" limitTags={2} placeholder="" />
                                                     )}
                                                     onChange={handleAutocompleteChange} // Handle selection change
-                                                    value={selectedValues} // Set selected values
+
                                                 />
+
+
 
                                             </Box>
 
                                             <Box className='mb-3'>
-                                            <Autocomplete
+                                                <Autocomplete
                                                     multiple
                                                     id="checkboxes-tags-demo"
-                                                  
-                                                    options={filteredOptions}
+                                                    options={portalUser}
                                                     disableCloseOnSelect
                                                     getOptionLabel={(option) => option["E-Mail"]}
                                                     renderOption={(props, option, { selected }) => (
@@ -1016,19 +1261,71 @@ export default function CreateNewModalTask() {
                                                                 style={{ marginRight: 8 }}
                                                                 checked={selected}
                                                             />
-                                                            {option["First Name"]+" "+option["Last Name"]+" ("+option["E-Mail"]+")"}
+                                                            {option["First Name"] + " " + option["Last Name"] + " (" + option["E-Mail"] + ")"}
                                                         </li>
                                                     )}
                                                     renderInput={(params) => (
                                                         <TextField {...params} label="CC:" limitTags={2} placeholder="" />
                                                     )}
+                                                    onChange={handleAutocompleteChangeOnCC} // Handle selection change
                                                 />
 
                                             </Box>
 
                                             <Box className='mb-3'>
-                                                <FormControlLabel control={<Checkbox Checkbox />} label="For Approval" />
-                                                <FormControlLabel control={<Checkbox Checkbox />} label="Send Without Message" />
+                                                <FormControlLabel control={<Checkbox checked={isCheckedForApproval} onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
+                                                <FormControlLabel control={<Checkbox checked={isCheckedWithOutmgs} onChange={handleCheckboxChangeisCheckedWithOutmgs} />} label="Send Without Message" />
+
+                                                <Button
+                                                    variant="contained"
+                                                    id="fade-button"
+                                                    aria-controls={openTemp ? 'fade-menu' : undefined}
+                                                    aria-haspopup="true"
+                                                    aria-expanded={openTemp ? 'true' : undefined}
+                                                    onClick={handleClickAddTemplate}
+
+                                                >
+                                                    Add Template
+                                                </Button>
+                                                <Menu
+                                                    id="fade-menu"
+                                                    MenuListProps={{
+                                                        'aria-labelledby': 'fade-button',
+                                                    }}
+                                                    anchorEl={anchorElTemp}
+                                                    open={openTemp}
+                                                    onClose={handleCloseTemp}
+                                                    TransitionComponent={Fade}
+                                                    style={{ width: '50%', pending: "12px" }}
+                                                >
+                                                    {errorMgs ? (
+                                                        <span sx={{ color: "red" }}>Email is blank, please select the mail</span>
+                                                    ) : (
+                                                        null // or any other element you want to render when errorMgs is false
+                                                    )}
+                                                    <DataGrid
+                                                        dataSource={smsTemplate}
+                                                        allowColumnReordering={true}
+                                                        rowAlternationEnabled={true}
+                                                        showBorders={true}
+                                                        width={"100%"}
+                                                        selection={{ mode: 'single' }}
+                                                        onSelectionChanged={handleSelectionChangedTemp} // Handle selection change event
+                                                    >
+                                                        <FilterRow visible={true} />
+                                                        <SearchPanel visible={false} highlightCaseSensitive={true} />
+
+                                                        <Column
+                                                            dataField="Description"
+                                                            caption="Description"
+                                                        />
+
+                                                        <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
+                                                        <Paging defaultPageSize={10} />
+                                                    </DataGrid>
+                                                </Menu>
+
+
                                             </Box>
 
 
@@ -1042,6 +1339,9 @@ export default function CreateNewModalTask() {
 
 
                                         <Box className="mt-3 mb-3">
+
+                                            {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup}></HtmlEditorDX>}
+
                                             <textarea
                                                 className="form-control textarea resize-none"
                                                 placeholder="Description"
@@ -1332,15 +1632,29 @@ export default function CreateNewModalTask() {
                                         onChange={(e) => setTxtComment(e.target.value)} // Handle changes to the textarea
                                     ></textarea>
                                 </Box>
+                                {txtTaskType === "CRM" && (
+                                    <Button
+                                        variant="contained"
+                                        onClick={UploadAttachment}
+                                        disabled={loading}
+                                        className="btn-blue-2 mt-3"
+                                    >
+                                        {'CRM Task'}
+                                    </Button>
+                                )}
 
-                                <Button
-                                    variant="contained"
-                                    onClick={UploadAttachment}
-                                    disabled={loading}
-                                    className="btn-blue-2 mt-3"
-                                >
-                                    {loading ? 'Submitting...' : 'Create Task'}
-                                </Button>
+                                {txtTaskType === "Portal" && (
+                                    <Button
+                                        variant="contained"
+                                        onClick={CreatePortalTask}
+                                        disabled={loading}
+                                        className="btn-blue-2 mt-3"
+                                    >
+                                        {'Portal Task'}
+                                    </Button>
+                                )}
+
+
                             </Box>
                             {/* col end */}
 
@@ -1496,8 +1810,8 @@ export default function CreateNewModalTask() {
                                                                 setTextClientId(item.ClientID);
                                                                 setClientAnchorEl(null);
                                                                 Json_GetClientCardDetails(item.ClientID)
-                                                                
-                                                                
+
+
                                                             }}
                                                             className="search-list"
                                                         >
@@ -1685,8 +1999,8 @@ export default function CreateNewModalTask() {
                                         dateAdapter={AdapterDayjs}
                                     >
                                         <DatePicker className="datepicker w-100"
-                                            defaultValue={remiderDate} // Set the default value using the value prop
-                                            onChange={(e) => setRemiderDate(e)} // Update the default date when the user changes it                      
+                                            defaultValue={expireDate} // Set the default value using the value prop
+                                            onChange={(e) => setExpireDate(e)} // Update the default date when the user changes it                      
                                             inputFormat="DD/MM/YYYY" // Set the input format to "dd/mm/yyyy"
                                         />
                                     </LocalizationProvider>
@@ -1860,7 +2174,7 @@ export default function CreateNewModalTask() {
                         </Box>
                     </DialogContentText>
 
-                    {/* <hr /> */}
+
 
                     <DialogActions className="px-0 w-100 p-0">
                         <Box className="d-flex align-items-center justify-content-end w-100">
@@ -1914,53 +2228,71 @@ export default function CreateNewModalTask() {
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
 
-                    <DataGrid
-            dataSource={dmsDocumentList}
-            allowColumnReordering={true}
-            rowAlternationEnabled={true}
-            showBorders={true}
-            width="100%"
-            selection={{ mode: 'multiple' }}
-            onSelectionChanged={handleSelectionChanged} // Handle selection change event
-        >
-            <FilterRow visible={true} />
-            <SearchPanel visible={true} highlightCaseSensitive={true} />
+                        <Box className="d-flex align-items-center justify-content-between">
 
-            <Column
-                dataField="Client"
-                caption="Client"
-            />
-            <Column
-                dataField="Description"
-                caption="Description"
-            />
-            <Column
-                dataField="Section"
-                caption="Section"
-            />
+                            <div>
+                                <Button
+                                    id="basic-button"
+                                >
+                                    Document List
+                                </Button>
 
-            <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
-            <Paging defaultPageSize={10} />
-        </DataGrid>
+                            </div>
+
+
+
+
+                            <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+                        </Box>
+
+                        <hr />
+
+                        <DataGrid
+                            dataSource={dmsDocumentList}
+                            allowColumnReordering={true}
+                            rowAlternationEnabled={true}
+                            showBorders={true}
+                            width="100%"
+                            selection={{ mode: 'multiple' }}
+                            onSelectionChanged={handleSelectionChanged} // Handle selection change event
+                        >
+                            <FilterRow visible={true} />
+                            <SearchPanel visible={true} highlightCaseSensitive={true} />
+
+                            <Column
+                                dataField="Client"
+                                caption="Client"
+                            />
+                            <Column
+                                dataField="Description"
+                                caption="Description"
+                            />
+                            <Column
+                                dataField="Section"
+                                caption="Section"
+                            />
+
+                            <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
+                            <Paging defaultPageSize={10} />
+                        </DataGrid>
 
                         {/* file upload end */}
+
+                        <Button
+                            variant="contained"
+                            onClick={AddDocuments}
+                            className="btn-blue-2 mt-3"
+                        >
+                            {'Add Document'}
+                        </Button>
+
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
         </React.Fragment>
     );
 }
-
-
-
-// 
-const userListName = [
-    { label: 'Demo Account Creative Intell UK' },
-    { label: 'Demo Accountancy' },
-    { label: 'DemoUser4' },
-    { label: 'DemoUser4' },
-    { label: 'DemoUser4' },
-    { label: 'DemoUser4' },
-    { label: 'Demo Account Creative Intell UK' },
-    { label: 'Demo Accountancy' },
-];
