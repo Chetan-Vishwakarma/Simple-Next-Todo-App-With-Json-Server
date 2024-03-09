@@ -8,9 +8,9 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Editor } from '@tinymce/tinymce-react';
 
-const HtmlEditorDX =({templateDataMarkup,setTemplateDataMarkup})=>{
+const HtmlEditorDX =({templateDataMarkup,setTemplateDataMarkup,setEditorContentValue})=>{
    
-console.log("templateDataMarkup",templateDataMarkup)
+//console.log("templateDataMarkup",templateDataMarkup)
     const [isMultiline, setIsMultiline] = useState(true);
     const [currentTab, setCurrentTab] = useState(null);
     const [editorContent, setEditorContent] = useState('');
@@ -31,6 +31,14 @@ console.log("templateDataMarkup",templateDataMarkup)
     }
   };
 
+
+
+  // Function to handle editor content changes
+  const handleEditorChange = (content, editor) => {
+    setEditorContent(content);
+    setEditorContentValue(content);
+  };
+
 return(<>
 <Editor
         apiKey='z7wm4fosbuk1u5u0oe99feavc9jozc8o57mqpx30uwgeo8zo'
@@ -49,6 +57,7 @@ return(<>
            'bullist numlist checklist outdent indent | removeformat | a11ycheck code table help',
         content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
         }}
+        onEditorChange={handleEditorChange}
     />
   
     

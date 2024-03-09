@@ -8,6 +8,17 @@ export default class CommanCLS extends AllService {
         super(APIUrl,agrno, Email, password);
     }
 
+    MessagePublished_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("MessagePublished_Json",obj,false);
+        super.CallNewService("MessagePublished_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
     Json_GetStandardLetterData(obj,callBack){   
         super.CreateNewServiceParamObject("Json_GetStandardLetterData",obj,false);
         super.CallNewService("Json_GetStandardLetterData",function(status,Data){
@@ -174,6 +185,17 @@ export default class CommanCLS extends AllService {
         })
     }
 
+    Json_GetItemBase64DataById(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetItemBase64DataById",obj,true);
+        super.CallNewService("Json_GetItemBase64DataById",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
     Json_AddSupplierActivity(obj,callBack){   
         super.CreateNewServiceParamObject("Json_AddSupplierActivity",obj,true);
         super.CallNewService("Json_AddSupplierActivity",function(status,Data){
