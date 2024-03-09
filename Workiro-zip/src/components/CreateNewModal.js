@@ -1435,11 +1435,6 @@ export default function CreateNewModalTask() {
 
                                         </Box>
 
-
-
-
-
-
                                         {!isVisibleByTypeCRM && (<>
                                             <Box className="mt-3 mb-3">
                                                 <textarea
@@ -1450,8 +1445,6 @@ export default function CreateNewModalTask() {
                                                 ></textarea>
                                             </Box>
                                         </>)}
-
-
 
                                         <div className="mt-4">
                                             <Button

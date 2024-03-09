@@ -108,7 +108,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                             </Box>
                         </Box>
 
-                        {/* <Box className='row'>
+                        <Box className='row d-none'>
                             <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                 
                                 <Autocomplete
@@ -183,7 +183,9 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                 <textarea className='textarea w-100' placeholder='Description'></textarea>
                             </Box>
 
-                        </Box> */}
+                        </Box>
+
+
                         {/* row end */}
 
                         {/* UDF Start */}
