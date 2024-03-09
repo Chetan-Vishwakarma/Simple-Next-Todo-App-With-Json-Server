@@ -117,13 +117,17 @@ export default function DocumentList({ clientId }) {
     const [filteredDocResult, setFilteredDocResult] = useState([]);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [advFilteredResult, setAdvFilteredResult] = useState([]);
-    const [age, setAge] = React.useState('');
+    const [section, setSection] = React.useState('');
+    const [select, setSelect] = React.useState('');
 
 
 
     // 
     const handleChange = (event) => {
-        setAge(event.target.value);
+        setSection(event.target.value);
+    };
+    const handleChange2 = (event) => {
+        setSelect(event.target.value);
     };
 
 
@@ -283,39 +287,89 @@ export default function DocumentList({ clientId }) {
 
 
 
-                    <Box className='d-flex flex-wrap justify-content-between align-items-center'>
+                    <Box className='d-flex flex-wrap justify-content-between align-items-center mb-4'>
 
-                        <Box  sx={{ m: 1, width: 240 }}>
-                            <DateRangePicker className='m-0 p-0'>
-                                <input type="text" className="form-control col-4" />
-                            </DateRangePicker>
+                        <Box className='d-flex flex-wrap align-items-center'>
+
+                            <Box sx={{ m: 1, width: 240 }}>
+                                <DateRangePicker className='m-0 p-0'>
+                                    <input type="text" className="form-control col-4" />
+                                </DateRangePicker>
+                            </Box>
+
+                            <Box className='clearfix'>
+                                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                                    <InputLabel id="demo-select-small-section">Section</InputLabel>
+                                    <Select
+                                        labelId="demo-select-small-section"
+                                        id="demo-select-small"
+                                        value={section}
+                                        label="Section"
+                                        onChange={handleChange}
+                                    >
+                                        <MenuItem value={10}>Section 1</MenuItem>
+                                        <MenuItem value={20}>Section 2</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Box>
+
+                            <Box className='clearfix'>
+                                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                                    <InputLabel id="demo-select-small-select">Select</InputLabel>
+                                    <Select
+                                        labelId="demo-select-small-select"
+                                        id="demo-select-small"
+                                        value={select}
+                                        label="Select"
+                                        onChange={handleChange2}
+                                        className='custom-dropdown'
+                                    >
+                                        <MenuItem value={10}>Select 1</MenuItem>
+                                        <MenuItem value={20}>Select 2</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Box>
+
+                            <Box className='clearfix'>
+                                <FormControl sx={{ m: 1, minWidth: 130 }} size="small">
+                                    <InputLabel id="demo-select-small-select">Select View</InputLabel>
+                                    <Select
+                                        labelId="demo-select-small-select"
+                                        id="demo-select-small"
+                                        value={select}
+                                        label="Select View"
+                                        onChange={handleChange2}
+                                        className='custom-dropdown'
+                                    >
+                                        <MenuItem value={10}>Select 1</MenuItem>
+                                        <MenuItem value={20}>Select 2</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Box>
+
+                            <Button className='btn-blue-2 mb-1 ms-1' onClick={() => handleDocumentsFilter("LastMonth")}>Save View</Button>
+
                         </Box>
 
                         <Box className='clearfix'>
                             <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                                <InputLabel id="demo-select-small-label">Age</InputLabel>
+                                <InputLabel id="demo-select-small-select">Select</InputLabel>
                                 <Select
-                                    labelId="demo-select-small-label"
+                                    labelId="demo-select-small-select"
                                     id="demo-select-small"
-                                    value={age}
-                                    label="Age"
-                                    onChange={handleChange}
+                                    value={select}
+                                    label="Select"
+                                    onChange={handleChange2}
+                                    className='custom-dropdown'
                                 >
-                                    <MenuItem value="">
-                                        <em>None</em>
-                                    </MenuItem>
-                                    <MenuItem value={10}>Ten</MenuItem>
-                                    <MenuItem value={20}>Twenty</MenuItem>
-                                    <MenuItem value={30}>Thirty</MenuItem>
+                                    <MenuItem value={10}>Group By</MenuItem>
+                                    <MenuItem value={20}>Sort By</MenuItem>
                                 </Select>
                             </FormControl>
                         </Box>
 
+
                     </Box>
-
-
-
-
 
                     <Grid
                         container
@@ -323,9 +377,7 @@ export default function DocumentList({ clientId }) {
                         alignItems="center"
 
                     >
-
                         <Grid item xs={12} sm={10} md={6} lg={5} className='white-box'>
-
                             <Box className='d-flex m-auto justify-content-center w-100 align-items-end'>
                                 <Layout className='d-flex w-100 d-none'>
                                     <AutocompleteWrapper className='w-100'>
@@ -353,7 +405,6 @@ export default function DocumentList({ clientId }) {
                                         )) : ""}
                                     </AutocompleteWrapper>
                                 </Layout>
-
                                 <Box className='row w-100 pe-3 d-non'>
                                     <Box className='col-md-6'>
                                         <Box className='mb-2'>
@@ -371,14 +422,14 @@ export default function DocumentList({ clientId }) {
                                     </Box>
                                 </Box>
 
-                                <Button className='btn-blue-2' sx={{ ml: '12px' }} onClick={() => handleDocumentsFilter("LastMonth")}>Toggle</Button>
+                                <Button className='btn-blue-2 mb-2 ms-2' onClick={() => handleDocumentsFilter("LastMonth")}>Submit</Button>
+                                <Button className='btn-blue-2 mb-2 ms-2' onClick={() => handleDocumentsFilter("LastMonth")}>Toggle</Button>
 
                             </Box>
 
                             <Box className='mt-2'>
                                 <Stack direction="row" spacing={1}>
                                     <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
-
                                     <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} />
 
                                 </Stack>

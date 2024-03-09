@@ -476,6 +476,103 @@ hr {
   border-radius: 10px;
   /* padding: 10px 20px 10px; */
 }
+.full-modal .MuiDialog-container .MuiDialog-paperWidthSm {
+  width: 100%;
+  max-width: 100%;
+}
+
+span.tox-statusbar__branding {
+  display: none;
+}
+
+/* timeline status */
+.activity-timeline {
+  margin-top: 50px;
+}
+
+.activity-timeline ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.activity-timeline ul li {
+  display: flex;
+  position: relative;
+}
+
+.activity-timeline ul li .datetime {
+  display: inline-block;
+  width: 80px;
+  padding-top: 3px;
+}
+
+.activity-timeline ul li .datetime span {
+  display: block;
+  font-size: 13px;
+  color: #7b7b7b;
+}
+
+.activity-timeline ul li .line-dotted {
+  display: inline-flex;
+  width: 20px;
+  justify-content: center;
+}
+
+.activity-timeline ul li .line-dotted .line-time {
+  width: 2px;
+  background: #cfcfcf;
+  height: 100%;
+  display: block;
+  position: absolute;
+  top: 0;
+}
+
+.activity-timeline ul li .line-dotted .circle-time {
+  width: 8px;
+  height: 8px;
+  background: #047bf8;
+  border-radius: 50%;
+  position: relative;
+  top: 14px;
+  z-index: 1;
+}
+
+.activity-timeline ul li .line-dotted .circle-border {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #047bf8;
+  border-radius: 50%;
+  position: absolute;
+  top: 10px;
+  background: #fff;
+}
+
+.activity-timeline ul li .timeline-details {
+  display: inline-block;
+  width: 100%;
+  margin-left: 10px;
+  border: 2px solid #eee;
+  border-radius: 3px;
+  padding: 5px 0;
+  margin-bottom: 15px;
+}
+
+.activity-timeline ul li .timeline-details .content-time {
+  display: inline-block;
+}
+
+.activity-timeline ul li .timeline-details .content-time h5 {
+  font-size: 17px;
+  margin-bottom: 5px;
+}
+
+.activity-timeline ul li .timeline-details .content-time p {
+  margin-bottom: 3px;
+}
+
+
+/* timeline status end */
 
 .client-box-row {
   display: flex;
@@ -647,6 +744,7 @@ hr {
   margin: 5px 5px 5px 0 !important;
   box-shadow: 2px 2px 0px #f1f1f1 !important;
 }
+
 .btn-white:hover span {
   color: #000 !important;
 }
@@ -1243,6 +1341,7 @@ hr {
   width: 184px;
   position: relative;
 }
+
 .uploaded-box .close-icon {
   font-size: 22px;
   position: absolute;

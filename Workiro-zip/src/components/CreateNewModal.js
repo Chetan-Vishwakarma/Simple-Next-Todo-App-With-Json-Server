@@ -1342,12 +1342,13 @@ export default function CreateNewModalTask() {
 
                                             {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup}></HtmlEditorDX>}
 
-                                            <textarea
+                                            {/* <textarea
                                                 className="form-control textarea resize-none"
                                                 placeholder="Description"
                                                 value={txtdescription} // Bind the value to the state
-                                                onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
-                                            ></textarea>
+                                                onChange={(e) => setTxtDescriptin(e.target.value)} 
+                                                // Handle changes to the textarea
+                                            ></textarea> */}
                                         </Box>
 
                                         <div className="mt-4">

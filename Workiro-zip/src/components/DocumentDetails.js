@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 // import LoginDetails from "../services/Utils";
 import Swal from "sweetalert2";
 // import React, { useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, Typography, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, Link, Chip, Stack, ListItemIcon, Radio, useMediaQuery, useTheme, Accordion, AccordionSummary, AccordionDetails, } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, Typography, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, Link, Chip, Stack, ListItemIcon, Radio, useMediaQuery, useTheme, Accordion, AccordionSummary, AccordionDetails, Checkbox } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 // import {AdapterDayjs,LocalizationProvider,DatePicker} from '@mui/x-date-pickers';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -29,12 +29,15 @@ import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+
 
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
+import DocumentsVewModal from "../client/utils/DocumentsVewModal";
+import Activity from "../client/utils/Activity";
+// import Activity from "../client/utils/Activity";
 
 
 // sadik code start
@@ -67,6 +70,12 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 function DocumentDetails() {
 
     // sadik js start
+
+    const [openPDFView, setOpenPDFView] = React.useState(false);
+
+    const handleClickOpenPDFView = () => {
+        setOpenPDFView(true);
+    };
 
     // dropdown add
     const [userDropdownanchorEl, setuserDropdownAnchorEl] = React.useState(null);
@@ -131,8 +140,11 @@ function DocumentDetails() {
 
     return (
         <>
+
+
             <Box>
 
+                <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView}></DocumentsVewModal>
 
                 <Box className='d-flex mb-3 mt-2'>
                     {/* <FormControlLabel control={<Checkbox />} className="p-0 m-0 ms-2 ps-1" size="small"/> */}
@@ -144,14 +156,10 @@ function DocumentDetails() {
                 </Box>
 
 
-
-
-
-
                 {Array(5).fill("").map(() => {
                     return <>
                         <Box className="file-uploads">
-                            <label className="file-uploads-label file-uploads-document">
+                            <label className="file-uploads-label file-uploads-document" onClick={handleClickOpenPDFView}>
                                 <Box className="d-flex align-items-center">
 
                                     <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
@@ -164,7 +172,7 @@ function DocumentDetails() {
                                     />
                                     <Box className="upload-content pe-3">
                                         <Typography variant="h4" >
-                                            thisisTest.pdf iu
+                                            thisisTest.pdf iu ss
                                         </Typography>
                                         <Typography variant="body1">
                                             Size:  <span className='sembold'>10MB</span> | Uploaded by <span className='sembold'>Patrick</span>
@@ -539,7 +547,6 @@ function DocumentDetails() {
                                 <AccordionDetails>
                                     <Box className='table-responsive'>
 
-
                                         <Box className="file-uploads">
                                             <label className="file-uploads-label file-uploads-document">
                                                 <Box className="d-flex align-items-center">
@@ -551,7 +558,7 @@ function DocumentDetails() {
                                                     />
                                                     <Box className="upload-content pe-3">
                                                         <Typography variant="h4" >
-                                                            This File is Test Files.pdf
+                                                            This File is Test Files.pdf 2
                                                         </Typography>
                                                         <Typography variant="body1">
                                                             12:36PM 28/12/2023 | File uploaded by Patrick
@@ -667,9 +674,12 @@ function DocumentDetails() {
                                 </AccordionSummary>
                                 <AccordionDetails>
 
-                                    {Array(5).fill("").map(() => {
-                                        return <>
-                                            <Box className='mb-3'>
+                                    <Activity></Activity>
+
+
+                                    {/* {Array(5).fill("").map(() => {
+                                        return <> */}
+                                    {/* <Box className='mb-3'>
                                                 <Typography variant="body1" className="text-black sembold font-16">
                                                     New version uploaded
                                                 </Typography>
@@ -678,9 +688,9 @@ function DocumentDetails() {
                                                     02:36PM 06/05/2023 | by Me
                                                 </Typography>
 
-                                            </Box>
-                                        </>
-                                    })}
+                                            </Box> */}
+                                    {/* </>
+                                    })} */}
                                 </AccordionDetails>
                             </Accordion>
 
