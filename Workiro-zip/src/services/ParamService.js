@@ -18,7 +18,7 @@ export default class AllServiceParamerter extends API {
         var Obj = this.MainObj;
         if (mainBool) {
             this[ParamName] = { ...Obj, ...value };
-            console.log("this111", value, Obj);
+           // console.log("this111", value, Obj);
         } else if (value) {
             this[ParamName] = value;
         } else {

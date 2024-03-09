@@ -9,7 +9,7 @@ export default class AllService extends AllServiceParamerter {
         //console.log("returnValue", MethodName, callBack);
        var ParamName = "Param_" + MethodName;
         var data = JSON.stringify(this[ParamName]);
-       console.log("returnValue", data);
+      // console.log("returnValue", data);
 
         super.Call(data, MethodName, function (returnValue) {           
             var str = JSON.parse(JSON.stringify(returnValue));			

@@ -29,8 +29,8 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DescriptionIcon from '@mui/icons-material/Description';
 
-
-
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 
 import Swal from 'sweetalert2';
 import {
@@ -103,7 +103,7 @@ export default function CreateNewModalTask() {
     const [messageId, setMessageId] = React.useState("");
 
     const [txtdescription, setTxtDescriptin] = React.useState("");
-    const [txtcomment, setTxtComment] = React.useState("");
+    // const [txtcomment, setTxtComment] = React.useState("");
     ///////////////////////////////////////////client Data
     const [clientList, setClientList] = useState([]);
     const [txtClient, settxtClient] = useState("Select Client");
@@ -138,6 +138,7 @@ export default function CreateNewModalTask() {
 
     ////////////////////////////////Attachment files
     const [selectedFiles, setSelectedFiles] = useState([]);
+    const [selectedFilesFromBrower, setSelectedFilesFromBrower] = useState([]);
     const [attachmentPath, setAttachmentPath] = useState([]);
 
     ////////////////////////////////End Attachment files
@@ -309,7 +310,7 @@ export default function CreateNewModalTask() {
     // Filter the userList based on filterText
     const filteredUserList = userList.filter((item) => {
         // Check if item and its properties are defined before accessing them
-        console.log("filterText", filterText);
+        // console.log("filterText", filterText);
         if (item && item.ForwardTo) {
             // You can customize the filtering logic here based on your requirements
             return item.ForwardTo.toLowerCase().includes(filterText.toLowerCase());
@@ -430,6 +431,7 @@ export default function CreateNewModalTask() {
 
         setNextDate(dayjs(getNextDate()));
         setRemiderDate(dayjs(getCurrentDate()));
+        setExpireDate(dayjs(getCurrentDate()));
 
         Json_GetFolders();
         Json_GetForwardUserList();
@@ -449,13 +451,14 @@ export default function CreateNewModalTask() {
             Email: Email,
             password: password
         }
+
         try {
             cls.Json_GetFolders(obj, function (sts, data) {
                 if (sts) {
                     if (data) {
                         let js = JSON.parse(data);
                         let tbl = js.Table;
-                        console.log("get folder list", tbl);
+                        // console.log("get folder list", tbl);
                         setFolderList(tbl);
                     }
                 }
@@ -497,7 +500,7 @@ export default function CreateNewModalTask() {
                 let fileByte = reader.result.split(";")[1].replace("base64,", "");
                 const fileData = {
                     FileName: file.name,
-                    Base64: fileByte, // Base64 data of the file
+                    Base64: fileByte?fileByte:"", // Base64 data of the file
                     FileSize: file.size,
                     Preview: reader.result, // Data URL for preview
                     DocId: ""
@@ -511,11 +514,48 @@ export default function CreateNewModalTask() {
                         ...prevUploadedFiles,
                         ...filesData,
                     ]);
+
+                    setSelectedFilesFromBrower((prevUploadedFiles) => [
+                        ...prevUploadedFiles,
+                        ...filesData,
+                    ]);
+
                 }
             };
             reader.readAsDataURL(file); // Read file as data URL (base64)
         });
     };
+
+
+    const SETDate = (date) => {
+        var d = new Date(date);
+        var dd = d.getDate();
+        var mm = d.getMonth() + 1;
+
+        var yy = d.getFullYear();
+        var DateVal;
+        if (dd < "10" || mm < "10") {
+            if (dd < "10" && mm < '10') {
+                return date = yy + "/0" + mm + "/0" + dd;
+            } else if (dd < "10") {
+                return date = yy + "/" + mm + "/0" + dd;
+            } else if (mm < "10") {
+                return date = yy + "/0" + mm + "/" + dd;
+            }
+
+        } else {
+            return DateVal = yy + "/" + mm + "/" + dd;
+        }
+    }
+
+    const handleSuccess = (mgsid) => {
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Your task has been created successfully.' + mgsid,
+        });
+    };
+
 
     async function UploadAttachment() {
 
@@ -574,80 +614,49 @@ export default function CreateNewModalTask() {
 
         }
 
-
-
     }
-    const SETDate = (date) => {
-        var d = new Date(date);
-        var dd = d.getDate();
-        var mm = d.getMonth() + 1;
-
-        var yy = d.getFullYear();
-        var DateVal;
-        if (dd < "10" || mm < "10") {
-            if (dd < "10" && mm < '10') {
-                return date = yy + "/0" + mm + "/0" + dd;
-            } else if (dd < "10") {
-                return date = yy + "/" + mm + "/0" + dd;
-            } else if (mm < "10") {
-                return date = yy + "/0" + mm + "/" + dd;
-            }
-
-        } else {
-            return DateVal = yy + "/" + mm + "/" + dd;
-        }
-    }
-
-    const handleSuccess = (mgsid) => {
-        Swal.fire({
-            icon: 'success',
-            title: 'Success!',
-            text: 'Your task has been created successfully.' + mgsid,
-        });
-    };
 
     async function Json_CRM_Task_Save() {
 
         if (addUser.length > 0) {
-            const idsString = selectedEmailCC.map(obj => obj.ID).join(',');
+            const isaddUser = addUser.map(obj => obj.ID).join(',');
             const attString = attachmentPath.map(obj => obj.Path).join(',');
             let obj = {
                 "ClientIsRecurrence": false,
                 "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
                 "ClientEnd": dayjs(nextDate).format("YYYY/MM/DD"),
-                "ClientDayNumber": "1",
-                "ClientMonth": "1",
-                "ClientOccurrenceCount": "1",
-                "ClientPeriodicity": "1",
 
-                "ClientRecurrenceRange": "0",
-                "ClientRecurrenceType": "0",
-                "ClientWeekDays": "1",
-                "ClientWeekOfMonth": "1",
+                "ClientDayNumber": 1,
+                "ClientMonth": 1,
+                "ClientOccurrenceCount": 1,
+                "ClientPeriodicity": 1,
+                "ClientRecurrenceRange": 0,
+                "ClientRecurrenceType": 0,
+                "ClientWeekDays": 1,
+                "ClientWeekOfMonth": 1,
+
 
                 "OwnerID": ownerID,
-                "AssignedToID": idsString,
-
+                "AssignedToID": isaddUser,
                 "AssociateWithID": textClientId,
-
                 "FolderId": txtFolderId,
-
                 "Subject": txtdescription,
-                "TypeofTaskID": "3",
-
+                "TypeofTaskID": txtSectionId,
                 "EndDateTime": dayjs(nextDate).format("YYYY/MM/DD"),
                 "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
                 "Status": txtStatus,
                 "Priority": txtPriorityId,
-                "PercentComplete": "1",
+                "PercentComplete": 0,
                 "ReminderSet": false,
                 "ReminderDateTime": dayjs(remiderDate).format("YYYY/MM/DD"),
-                "TaskNo": "0",
+                "TaskNo": 0,
                 "Attachments": attString ? attString : "",
                 "Details": "",
-                "YEDate": "1900/01/01",
-                "SubDeadline": "1900/01/01",
-                "DocRecdate": "1900/01/01",
+
+                // "YEDate": "1900/01/01",
+                //"SubDeadline": "1900/01/01",
+                //"DocRecdate": "1900/01/01",
+
                 // "YEDate": getCurrentDate(),
                 // "SubDeadline": getCurrentDate(),
                 // "DocRecdate":getCurrentDate(),
@@ -762,6 +771,9 @@ export default function CreateNewModalTask() {
     const [portalUser, setPortalUser] = React.useState([]);
     const [txtTaskType, settxtTaskType] = React.useState("Task Type");
 
+    const [isVisibleByTypeCRM, setIsVisibleByTypeCRM] = React.useState(false);
+
+
 
 
     const TastkType = Boolean(anchorElTastkType);
@@ -773,6 +785,17 @@ export default function CreateNewModalTask() {
         setAnchorElTastkType(null);
         settxtTaskType(e.target.textContent);
         // setCreateTaskButton(e.target.textContent)
+        let txt = e.target.textContent;
+        if (txt === "CRM") {
+            setIsVisibleByTypeCRM(false);
+        }
+        else if (txt === "Portal") {
+            setIsVisibleByTypeCRM(true);
+        }
+        else {
+            console.log("Else Part");
+        }
+
     };
 
     ////////////////// Priority
@@ -790,7 +813,8 @@ export default function CreateNewModalTask() {
     const handleSelectionChanged = (selectedItems) => {
         setSelectedRows(selectedItems.selectedRowsData);
         // You can perform further actions with the selectedRows array
-        console.log(selectedRows); // Log the selected rows data
+        console.log(selectedItems); // Log the selected rows data
+
     };
     const Json_GetClientCardDetails = (cid) => {
         try {
@@ -810,10 +834,10 @@ export default function CreateNewModalTask() {
 
                         if (tble6.length > 0) {
                             let filteredUsers = tble6.filter(el => el["Portal User"] === true && el["Portal User"] !== null);
-                            if(filteredUsers.length>0){
+                            if (filteredUsers.length > 0) {
                                 setPortalUser(filteredUsers.length > 0 ? filteredUsers : null);
                             }
-                           
+
                             console.log("Json_GetClientCardDetails", filteredUsers);
                         } else {
                             setPortalUser(null);
@@ -825,7 +849,18 @@ export default function CreateNewModalTask() {
             console.log("ExplorerSearchDoc", error);
         }
     };
+ // Define the function to render cells based on the 'Type' column
+ const renderTypeCell = (data) => {
+    // Define the condition based on which the icon will be rendered
+    if (data.value === 'pdf') {
+        return <PictureAsPdfIcon></PictureAsPdfIcon>;
+    } else if (data.value === 'txt') {
 
+        return <TextSnippetIcon></TextSnippetIcon>;
+    }
+    // You can add more conditions or return default content if needed
+    return data.value;
+};
 
     const getPortalUser = () => {
 
@@ -848,26 +883,36 @@ export default function CreateNewModalTask() {
     };
 
     //const filteredOptions = portalUser ? portalUser.filter(option => option["E-Mail"] !== selectedEmail) : [];
+    const [selectedDocumentFile, setSelectedDocumentFile] = useState([]);
 
     const AddDocuments = () => {
         let filesData = [];
         selectedRows.forEach((row, index) => {
-            const fileData = {
-                FileName: row.Path,
-                Base64: "", // Base64 data of the file
-                FileSize: row.FileSize,
-                Preview: "", // Data URL for preview
-                DocId: row.ItemId
-            };
-            filesData.push(fileData);
-            // Check if this is the last file
-            if (index === selectedRows.length - 1) {
-                // Add new files to the uploadedFiles array
-                setSelectedFiles((prevUploadedFiles) => [
-                    ...prevUploadedFiles,
-                    ...filesData,
-                ]);
-            }
+
+            Json_GetItemBase64DataById(row["Registration No."], function (base64data) {
+                const fileData = {
+                    FileName: row.Path,
+                    Base64: base64data?base64data:"", // Base64 data of the file
+                    FileSize: row.FileSize,
+                    Preview: "", // Data URL for preview
+                    DocId: row["Registration No."]
+                };
+                filesData.push(fileData);
+                // Check if this is the last file
+                if (index === selectedRows.length - 1) {
+                    // Add new files to the uploadedFiles array
+                    setSelectedFiles((prevUploadedFiles) => [
+                        ...prevUploadedFiles,
+                        ...filesData,
+                    ]);
+
+                    setSelectedDocumentFile((prevUploadedFiles) => [
+                        ...prevUploadedFiles,
+                        ...filesData,
+                    ]);
+                }
+            })
+
 
         })
 
@@ -875,7 +920,26 @@ export default function CreateNewModalTask() {
 
     }
 
+    function Json_GetItemBase64DataById(ItemId, callBack) {
+        try {
+            let obj = {};
+            obj.ItemId = ItemId
+            const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/"; // base url for api
+            //   let dt = new LoginDetails();
 
+            let cls = new CommanCLS(baseUrl, agrno, Email, password);
+            cls.Json_GetItemBase64DataById(obj, function (sts, data) {
+                if (sts && data) {
+                    // console.log("Json_GetItemBase64DataById data", data)
+                    return callBack(data);
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetItemBase64DataById error", error)
+        }
+
+    }
 
 
 
@@ -891,7 +955,7 @@ export default function CreateNewModalTask() {
 
     const handleSelectionChangedTemp = (selectedItems) => {
         setTxtTempId(selectedItems.selectedRowsData);
-        setShowComponent(true);
+
         // You can perform further actions with the selectedRows array
         console.log("Seleted Template", txtTemplateId); // Log the selected rows data
         if (selectedEmail.length > 0) {
@@ -931,7 +995,7 @@ export default function CreateNewModalTask() {
     }
 
     const [templateDataMarkup, setTemplateDataMarkup] = useState(null);
-    const [showComponent, setShowComponent] = useState(false);
+
 
 
     function Json_GetHtmlFromRtf(rtfdata) {
@@ -942,7 +1006,7 @@ export default function CreateNewModalTask() {
                 if (sts && data) {
 
                     let json = JSON.parse(data);
-                    console.log("Template Data html", json);
+                    //console.log("Template Data html", json);
 
                     setTemplateDataMarkup(json)
                 }
@@ -996,8 +1060,14 @@ export default function CreateNewModalTask() {
             let cls = new CommanCLS(urlLetter, agrno, Email, password);
             cls.Json_GetStandardLetterData(obj, function (sts, data) {
                 if (sts && data) {
-                    console.log("Json_GetStandardLetterData", data)
-                    Json_GetHtmlFromRtf(data);
+                    //console.log("Json_GetStandardLetterData", data)
+                    if(data.includes("File Not Found")){
+                        console.log("Json_GetStandardLetterData", data)
+                    }
+                    else{
+                        Json_GetHtmlFromRtf(data);
+                    }
+                   
                 }
             })
         } catch (error) {
@@ -1009,53 +1079,80 @@ export default function CreateNewModalTask() {
         GetSMSTemplate();
     }, [setTxtTempId])
 
-    const [textSubject,setTextSubject]=useState("Subject");
+    const [textSubject, setTextSubject] = useState("Subject");
+    const [editorContentValue, setEditorContentValue] = useState(null);
+
+    // Handle selection change
+
+
+    const [selectedUSer, setSelectedUSer] = useState(null);
+    const handleOptionChangeFromUser = (event, newValue) => {
+        setSelectedUSer(newValue);
+        // If newValue is not null, you can access its ID and perform any action you need
+        if (newValue) {
+            console.log('Selected ID:', newValue);
+            // Perform any action you need with the selected ID
+        }
+    };
+
 
     async function CreatePortalTask() {
 
-        if (addUser.length > 0) {
-            const ccEmail = selectedEmailCC.map(obj => obj["E-Mail"]).join(',');
-            const ToEmail = selectedEmail.map(obj => obj["E-Mail"]).join(',');
-            const ItemId = selectedRows.map(obj => obj["ItemId"]).join(',');
-            
+        if (selectedUSer.ID) {
+            let myNewArr = [...selectedFilesFromBrower, ...selectedDocumentFile];
+            console.log("myNewArr",myNewArr)
+            const ccEmail =selectedEmailCC?selectedEmailCC.map(obj => obj["E-Mail"]):"";
+            const ToEmail = selectedEmail.map(obj => obj["E-Mail"]);
+            const ItemId = selectedRows.map(obj => obj["Registration No."]);
+            const fileNames = myNewArr.map(obj => obj["FileName"]);
+            const fileDataBase64 =myNewArr.filter(obj => obj["Base64"] !== "").map(obj => obj["Base64"]);
+
             let obj = {
-                "senderID": textClientId,
-                "sectionID":txtSectionId,
-                "ccode":textClientId,
+                "accid": agrno,
+                "email": Email,
+                "password": password,
+                "senderID": selectedUSer.ID,
+                "sectionID": txtSectionId,
+                "ccode": textClientId,
                 "recipients": ToEmail,
-                "ccs": ccEmail,
-                "subject": textSubject,
+                "subject": textSubject ? textSubject : "",
+                "ccs": ccEmail?ccEmail:"",
                 "forApproval": isCheckedForApproval,
-                "highImportance":"" ,
-                "expiryDate":expireDate ,
-                "actionDate": currentDate,
+                "highImportance": false,
+                "expiryDate": dayjs(expireDate).format("YYYY/MM/DD"),
+                "actionDate": dayjs(currentDate).format("YYYY/MM/DD"),
                 "trackIt": false,
-                "docTemplateTaskId":0,
-                "docTemplateId":txtTemplateId[0]["TemplateID"],
-                "filenames":"" ,
-                "attachments": "",
-                "itemNos": ItemId,
+                "docTemplateTaskId": 0,
+                "docTemplateId": txtTemplateId? txtTemplateId[0]["TemplateID"] : 0,
+                "filenames": fileNames,
+                "attachments": fileDataBase64?fileDataBase64:[],
+                "itemNos": ItemId?ItemId:[],
                 "noMessage": isCheckedWithOutmgs,
-                "message": "",
+                "message": btoa(editorContentValue),
                 "docuBoxMessage": false,
                 "docuBoxEmails": "",
-                "daysToDelete": "",
+                "daysToDelete": 0,
                 "approvalResponse": "",
 
-               
+
             }
             console.log("final save data obj", obj);
-            cls.Json_CRM_Task_Save(obj, function (sts, data) {
+
+            var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
+            let cls = new CommanCLS(urlLetter, agrno, Email, password);
+
+            cls.MessagePublished_Json(obj, function (sts, data) {
                 if (sts) {
-                    let js = JSON.parse(data);
-                    if (js.Status == "success") {
-                        setMessageId(js.Message)
-                        setLoading(false);
-                        // Inside your function or event handler where you want to show the success message
-                        handleSuccess(js.Message);
-                        setOpen(false);
-                    }
-                    console.log("Response final", data)
+                    // let js = JSON.parse(data);
+                    console.log("MessagePublished_Json", data)
+                    // if (js.Status == "success") {
+                    //     //setMessageId(js.Message)
+                    //     //setLoading(false);
+                    //     // Inside your function or event handler where you want to show the success message
+                    //     //handleSuccess(js.Message);
+                    //     //setOpen(false);
+                    // }
+                    // console.log("Response final", data)
                     // setLoading(false);
                 }
             })
@@ -1072,7 +1169,7 @@ export default function CreateNewModalTask() {
     const handleCheckboxChangeForAppoval = (event) => {
         setIsCheckedForApproval(event.target.checked);
     };
-    
+
     const [isCheckedWithOutmgs, setisCheckedWithOutmgs] = useState(false);
 
     const handleCheckboxChangeisCheckedWithOutmgs = (event) => {
@@ -1182,7 +1279,7 @@ export default function CreateNewModalTask() {
                                             <Box className>
                                                 <input
                                                     className="input-text"
-                                                    onChange={(e)=>setTextSubject(e.value)}
+                                                    onChange={(e) => setTextSubject(e.target.value)}
                                                     type="text"
                                                     value={textSubject}
                                                 />
@@ -1204,151 +1301,157 @@ export default function CreateNewModalTask() {
                                         {/* attached to start */}
                                         <Box className='mt-3'>
 
-                                            {/* <Box className='mb-3'>
+                                           
+                                            {/* attached to end */}
+
+                                            {isVisibleByTypeCRM && (
+                                                <>
+                                                 <Box className='mb-3'>
                                                 <Autocomplete
                                                     disablePortal
                                                     id="combo-box-demo"
-                                                    options={userListName}
+                                                    options={userList}
+                                                    getOptionLabel={(option) => option.ForwardTo}
                                                     renderInput={(params) => <TextField {...params} label="From" />}
                                                     className="w-100"
+                                                    value={selectedUSer}
+                                                    onChange={handleOptionChangeFromUser}
                                                 />
-                                            </Box> */}
-                                            {/* attached to end */}
-
-
-                                            <Box className='mb-3'>
-
-                                                <Autocomplete
-                                                    multiple
-                                                    id="checkboxes-tags-demo"
-                                                    options={portalUser}
-                                                    disableCloseOnSelect
-                                                    getOptionLabel={(option) => option["E-Mail"]}
-                                                    renderOption={(props, option, { selected }) => (
-                                                        <li {...props}>
-                                                            <Checkbox
-                                                                icon={icon}
-                                                                checkedIcon={checkedIcon}
-                                                                style={{ marginRight: 8 }}
-                                                                checked={selected}
-                                                            />
-                                                            {option["First Name"] + " " + option["Last Name"] + " (" + option["E-Mail"] + ")"}
-                                                        </li>
-                                                    )}
-                                                    renderInput={(params) => (
-                                                        <TextField {...params} label="To:" limitTags={2} placeholder="" />
-                                                    )}
-                                                    onChange={handleAutocompleteChange} // Handle selection change
-
-                                                />
-
-
-
                                             </Box>
+                                                    <Box className='mb-3'>
 
-                                            <Box className='mb-3'>
-                                                <Autocomplete
-                                                    multiple
-                                                    id="checkboxes-tags-demo"
-                                                    options={portalUser}
-                                                    disableCloseOnSelect
-                                                    getOptionLabel={(option) => option["E-Mail"]}
-                                                    renderOption={(props, option, { selected }) => (
-                                                        <li {...props}>
-                                                            <Checkbox
-                                                                icon={icon}
-                                                                checkedIcon={checkedIcon}
-                                                                style={{ marginRight: 8 }}
-                                                                checked={selected}
-                                                            />
-                                                            {option["First Name"] + " " + option["Last Name"] + " (" + option["E-Mail"] + ")"}
-                                                        </li>
-                                                    )}
-                                                    renderInput={(params) => (
-                                                        <TextField {...params} label="CC:" limitTags={2} placeholder="" />
-                                                    )}
-                                                    onChange={handleAutocompleteChangeOnCC} // Handle selection change
-                                                />
+                                                        <Autocomplete
+                                                            multiple
+                                                            id="checkboxes-tags-demo"
+                                                            options={portalUser}
+                                                            disableCloseOnSelect
+                                                            getOptionLabel={(option) => option["E-Mail"]}
+                                                            renderOption={(props, option, { selected }) => (
+                                                                <li {...props}>
+                                                                    <Checkbox
+                                                                        icon={icon}
+                                                                        checkedIcon={checkedIcon}
+                                                                        style={{ marginRight: 8 }}
+                                                                        checked={selected}
+                                                                    />
+                                                                    {option["First Name"] + " " + option["Last Name"] + " (" + option["E-Mail"] + ")"}
+                                                                </li>
+                                                            )}
+                                                            renderInput={(params) => (
+                                                                <TextField {...params} label="To:" limitTags={2} placeholder="" />
+                                                            )}
+                                                            onChange={handleAutocompleteChange} // Handle selection change
 
-                                            </Box>
-
-                                            <Box className='mb-3'>
-                                                <FormControlLabel control={<Checkbox checked={isCheckedForApproval} onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
-                                                <FormControlLabel control={<Checkbox checked={isCheckedWithOutmgs} onChange={handleCheckboxChangeisCheckedWithOutmgs} />} label="Send Without Message" />
-
-                                                <Button
-                                                    variant="contained"
-                                                    id="fade-button"
-                                                    aria-controls={openTemp ? 'fade-menu' : undefined}
-                                                    aria-haspopup="true"
-                                                    aria-expanded={openTemp ? 'true' : undefined}
-                                                    onClick={handleClickAddTemplate}
-
-                                                >
-                                                    Add Template
-                                                </Button>
-                                                <Menu
-                                                    id="fade-menu"
-                                                    MenuListProps={{
-                                                        'aria-labelledby': 'fade-button',
-                                                    }}
-                                                    anchorEl={anchorElTemp}
-                                                    open={openTemp}
-                                                    onClose={handleCloseTemp}
-                                                    TransitionComponent={Fade}
-                                                    style={{ width: '50%', pending: "12px" }}
-                                                >
-                                                    {errorMgs ? (
-                                                        <span sx={{ color: "red" }}>Email is blank, please select the mail</span>
-                                                    ) : (
-                                                        null // or any other element you want to render when errorMgs is false
-                                                    )}
-                                                    <DataGrid
-                                                        dataSource={smsTemplate}
-                                                        allowColumnReordering={true}
-                                                        rowAlternationEnabled={true}
-                                                        showBorders={true}
-                                                        width={"100%"}
-                                                        selection={{ mode: 'single' }}
-                                                        onSelectionChanged={handleSelectionChangedTemp} // Handle selection change event
-                                                    >
-                                                        <FilterRow visible={true} />
-                                                        <SearchPanel visible={false} highlightCaseSensitive={true} />
-
-                                                        <Column
-                                                            dataField="Description"
-                                                            caption="Description"
                                                         />
 
-                                                        <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
-                                                        <Paging defaultPageSize={10} />
-                                                    </DataGrid>
-                                                </Menu>
 
 
+                                                    </Box>
+
+                                                    <Box className='mb-3'>
+                                                        <Autocomplete
+                                                            multiple
+                                                            id="checkboxes-tags-demo"
+                                                            options={portalUser}
+                                                            disableCloseOnSelect
+                                                            getOptionLabel={(option) => option["E-Mail"]}
+                                                            renderOption={(props, option, { selected }) => (
+                                                                <li {...props}>
+                                                                    <Checkbox
+                                                                        icon={icon}
+                                                                        checkedIcon={checkedIcon}
+                                                                        style={{ marginRight: 8 }}
+                                                                        checked={selected}
+                                                                    />
+                                                                    {option["First Name"] + " " + option["Last Name"] + " (" + option["E-Mail"] + ")"}
+                                                                </li>
+                                                            )}
+                                                            renderInput={(params) => (
+                                                                <TextField {...params} label="CC:" limitTags={2} placeholder="" />
+                                                            )}
+                                                            onChange={handleAutocompleteChangeOnCC} // Handle selection change
+                                                        />
+
+                                                    </Box>
+
+                                                    <Box className='mb-3'>
+                                                        <FormControlLabel control={<Checkbox checked={isCheckedForApproval} onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
+                                                        <FormControlLabel control={<Checkbox checked={isCheckedWithOutmgs} onChange={handleCheckboxChangeisCheckedWithOutmgs} />} label="Send Without Message" />
+
+                                                        <Button
+                                                            variant="contained"
+                                                            id="fade-button"
+                                                            aria-controls={openTemp ? 'fade-menu' : undefined}
+                                                            aria-haspopup="true"
+                                                            aria-expanded={openTemp ? 'true' : undefined}
+                                                            onClick={handleClickAddTemplate}
+
+                                                        >
+                                                            Add Template
+                                                        </Button>
+                                                        <Menu
+                                                            id="fade-menu"
+                                                            MenuListProps={{
+                                                                'aria-labelledby': 'fade-button',
+                                                            }}
+                                                            anchorEl={anchorElTemp}
+                                                            open={openTemp}
+                                                            onClose={handleCloseTemp}
+                                                            TransitionComponent={Fade}
+                                                            style={{ width: '50%', pending: "12px" }}
+                                                        >
+                                                            {errorMgs ? (
+                                                                <span sx={{ color: "red" }}>Email is blank, please select the mail</span>
+                                                            ) : (
+                                                                null // or any other element you want to render when errorMgs is false
+                                                            )}
+                                                            <DataGrid
+                                                                dataSource={smsTemplate}
+                                                                allowColumnReordering={true}
+                                                                rowAlternationEnabled={true}
+                                                                showBorders={true}
+                                                                width={"100%"}
+                                                                selection={{ mode: 'single' }}
+                                                                onSelectionChanged={handleSelectionChangedTemp} // Handle selection change event
+                                                            >
+                                                                <FilterRow visible={true} />
+                                                                <SearchPanel visible={false} highlightCaseSensitive={true} />
+
+                                                                <Column
+                                                                    dataField="Description"
+                                                                    caption="Description"
+                                                                />
+
+                                                                <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
+                                                                <Paging defaultPageSize={10} />
+                                                            </DataGrid>
+                                                        </Menu>
+                                                    </Box>
+
+                                                    {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+                                                </>
+
+                                            )}
+
+                                        </Box>
+
+
+
+
+
+
+                                        {!isVisibleByTypeCRM && (<>
+                                            <Box className="mt-3 mb-3">
+                                                <textarea
+                                                    className="form-control textarea resize-none"
+                                                    placeholder="Description"
+                                                    value={txtdescription} // Bind the value to the state
+                                                    onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
+                                                ></textarea>
                                             </Box>
+                                        </>)}
 
 
-                                        </Box>
-
-
-
-
-
-
-
-
-                                        <Box className="mt-3 mb-3">
-
-                                            {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup}></HtmlEditorDX>}
-
-                                            <textarea
-                                                className="form-control textarea resize-none"
-                                                placeholder="Description"
-                                                value={txtdescription} // Bind the value to the state
-                                                onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
-                                            ></textarea>
-                                        </Box>
 
                                         <div className="mt-4">
                                             <Button
@@ -1550,7 +1653,7 @@ export default function CreateNewModalTask() {
                                 <Box className="file-uploads">
                                     {selectedFiles
                                         ? selectedFiles.map((file, index) => {
-                                            console.log("Uploadin", file);
+                                            // console.log("Uploadin", file);
 
                                             return (
                                                 <>
@@ -1624,19 +1727,19 @@ export default function CreateNewModalTask() {
                                         : null}
                                 </Box>
 
-                                <Box className="mt-3 mb-3">
+                                {/* <Box className="mt-3 mb-3">
                                     <textarea
                                         className="form-control textarea resize-none"
                                         placeholder="Write a comment..."
                                         value={txtcomment} // Bind the value to the state
                                         onChange={(e) => setTxtComment(e.target.value)} // Handle changes to the textarea
                                     ></textarea>
-                                </Box>
+                                </Box> */}
                                 {txtTaskType === "CRM" && (
                                     <Button
                                         variant="contained"
                                         onClick={UploadAttachment}
-                                        disabled={loading}
+                                        // disabled={loading}
                                         className="btn-blue-2 mt-3"
                                     >
                                         {'CRM Task'}
@@ -2257,16 +2360,20 @@ export default function CreateNewModalTask() {
                             rowAlternationEnabled={true}
                             showBorders={true}
                             width="100%"
+                            selectedRowKeys={selectedRows}
                             selection={{ mode: 'multiple' }}
                             onSelectionChanged={handleSelectionChanged} // Handle selection change event
                         >
                             <FilterRow visible={true} />
                             <SearchPanel visible={true} highlightCaseSensitive={true} />
 
+
                             <Column
-                                dataField="Client"
-                                caption="Client"
+                                dataField="Type"
+                                caption="Type"
+                                cellRender={renderTypeCell} // Render cells based on condition
                             />
+
                             <Column
                                 dataField="Description"
                                 caption="Description"
@@ -2275,7 +2382,10 @@ export default function CreateNewModalTask() {
                                 dataField="Section"
                                 caption="Section"
                             />
-
+                            <Column
+                                dataField="Client"
+                                caption="Client"
+                            />
                             <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
                             <Paging defaultPageSize={10} />
                         </DataGrid>
