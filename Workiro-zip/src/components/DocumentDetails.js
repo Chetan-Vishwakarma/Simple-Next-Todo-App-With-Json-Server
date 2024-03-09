@@ -32,6 +32,11 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 
 
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { TreeView } from '@mui/x-tree-view/TreeView';
+import { TreeItem } from '@mui/x-tree-view/TreeItem';
+
+
 // sadik code start
 function createData(document, details) {
     return { document, details };
@@ -138,9 +143,13 @@ function DocumentDetails() {
 
                 </Box>
 
+
+
+
+
+
                 {Array(5).fill("").map(() => {
                     return <>
-
                         <Box className="file-uploads">
                             <label className="file-uploads-label file-uploads-document">
                                 <Box className="d-flex align-items-center">
@@ -162,7 +171,6 @@ function DocumentDetails() {
                                         </Typography>
                                     </Box>
                                 </Box>
-
                                 <Box>
                                     <Button
                                         id="basic-button"
@@ -220,10 +228,108 @@ function DocumentDetails() {
                         {/* file upload end */}
                     </>
                 })}
-            </Box>
+                {/* loop end */}
 
 
+                <TreeView
+                    aria-label="multi-select"
+                    defaultCollapseIcon={<ExpandMoreIcon />}
+                    defaultExpandIcon={<ChevronRightIcon />}
+                    multiSelect
+                >
+                    <TreeItem nodeId="1" label="Applications">
+                        <TreeItem nodeId="2" label="CLient Group A" />
+                        <TreeItem nodeId="3" label="CLient Group B" />
+                        <TreeItem nodeId="4" label="CLient Group C" />
+                    </TreeItem>
+                    <TreeItem nodeId="5" label="Documents">
+                        <TreeItem nodeId="6" label="CLient Group">
 
+                            {Array(4).fill("").map(() => {
+                                return <>
+                                    <Box className="file-uploads">
+                                        <label className="file-uploads-label file-uploads-document">
+                                            <Box className="d-flex align-items-center">
+
+                                                <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
+
+                                                <DescriptionIcon
+                                                    sx={{
+                                                        fontSize: 32,
+                                                    }}
+                                                    className='me-2 ms-0'
+                                                />
+                                                <Box className="upload-content pe-3">
+                                                    <Typography variant="h4" >
+                                                        thisisTest.pdf iu
+                                                    </Typography>
+                                                    <Typography variant="body1">
+                                                        Size:  <span className='sembold'>10MB</span> | Uploaded by <span className='sembold'>Patrick</span>
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+                                            <Box>
+                                                <Button
+                                                    id="basic-button"
+                                                    aria-controls={DocumentList ? 'basic-menu' : undefined}
+                                                    aria-haspopup="true"
+                                                    aria-expanded={DocumentList ? 'true' : undefined}
+                                                    onClick={handleClickDocumentList}
+                                                    className='min-width-auto'
+                                                >
+                                                    <MoreVertIcon />
+                                                </Button>
+                                                <Menu
+                                                    id="basic-menu"
+                                                    anchorEl={anchorElDocumentList}
+                                                    open={DocumentList}
+                                                    onClose={handleCloseDocument}
+                                                    MenuListProps={{
+                                                        'aria-labelledby': 'basic-button',
+                                                    }}
+                                                    className='custom-dropdown'
+                                                >
+                                                    <MenuItem onClick={() => {
+                                                        handleCloseDocument()
+                                                        handleClickOpenDocumentDetailsList()
+                                                    }}>
+                                                        <ListItemIcon>
+                                                            <ArticleIcon fontSize="medium" />
+                                                        </ListItemIcon>
+                                                        Document Details</MenuItem>
+
+                                                    <MenuItem onClick={handleCloseDocument}>
+                                                        <ListItemIcon>
+                                                            <CloudUploadIcon fontSize="medium" />
+                                                        </ListItemIcon>
+                                                        Upload New Version</MenuItem>
+                                                    <MenuItem onClick={handleCloseDocument}>
+                                                        <ListItemIcon>
+                                                            <DriveFileRenameOutlineIcon fontSize="medium" />
+                                                        </ListItemIcon>
+                                                        Rename Document</MenuItem>
+                                                    <MenuItem onClick={handleCloseDocument}>
+                                                        <ListItemIcon>
+                                                            <TravelExploreIcon fontSize="medium" />
+                                                        </ListItemIcon>
+                                                        Open in Browser</MenuItem>
+                                                    <MenuItem onClick={handleCloseDocument}>
+                                                        <ListItemIcon>
+                                                            <CloudDownloadIcon fontSize="medium" />
+                                                        </ListItemIcon>
+                                                        Download</MenuItem>
+                                                </Menu>
+                                            </Box>
+                                        </label>
+                                    </Box>
+                                    {/* file upload end */}
+                                </>
+                            })}
+
+                        </TreeItem>
+                    </TreeItem>
+                </TreeView>
+            </Box >
 
 
 

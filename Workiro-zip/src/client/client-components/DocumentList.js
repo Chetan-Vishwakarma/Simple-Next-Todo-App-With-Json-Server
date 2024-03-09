@@ -16,6 +16,10 @@ import DocumentDetails from '../../components/DocumentDetails';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 
 const Layout = styled('div')`  display: flex;
@@ -113,7 +117,14 @@ export default function DocumentList({ clientId }) {
     const [filteredDocResult, setFilteredDocResult] = useState([]);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [advFilteredResult, setAdvFilteredResult] = useState([]);
+    const [age, setAge] = React.useState('');
 
+
+
+    // 
+    const handleChange = (event) => {
+        setAge(event.target.value);
+    };
 
 
     const handleDelete = () => {
@@ -226,6 +237,8 @@ export default function DocumentList({ clientId }) {
     function getRootProps(params) { }
     function getListboxProps(params) { }
 
+
+
     return (
         <>
             <div style={{ textAlign: "end" }}>{toggleScreen ? <AppsIcon onClick={() => setToggleScreen(!toggleScreen)} /> : <ListIcon onClick={() => setToggleScreen(!toggleScreen)} />}</div>
@@ -268,11 +281,40 @@ export default function DocumentList({ clientId }) {
                         <button onClick={() => handleDocumentsFilter("LastSixMonth")}>LastSixMonth</button>
                     </div> */}
 
-                    <Box className='col-5 mb-4'>
-                        <DateRangePicker className=''>
-                            <input type="text" className="form-control col-4" />
-                        </DateRangePicker>
+
+
+                    <Box className='d-flex flex-wrap justify-content-between align-items-center'>
+
+                        <Box  sx={{ m: 1, width: 240 }}>
+                            <DateRangePicker className='m-0 p-0'>
+                                <input type="text" className="form-control col-4" />
+                            </DateRangePicker>
+                        </Box>
+
+                        <Box className='clearfix'>
+                            <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                                <InputLabel id="demo-select-small-label">Age</InputLabel>
+                                <Select
+                                    labelId="demo-select-small-label"
+                                    id="demo-select-small"
+                                    value={age}
+                                    label="Age"
+                                    onChange={handleChange}
+                                >
+                                    <MenuItem value="">
+                                        <em>None</em>
+                                    </MenuItem>
+                                    <MenuItem value={10}>Ten</MenuItem>
+                                    <MenuItem value={20}>Twenty</MenuItem>
+                                    <MenuItem value={30}>Thirty</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Box>
+
                     </Box>
+
+
+
 
 
                     <Grid
@@ -282,11 +324,10 @@ export default function DocumentList({ clientId }) {
 
                     >
 
-
                         <Grid item xs={12} sm={10} md={6} lg={5} className='white-box'>
 
                             <Box className='d-flex m-auto justify-content-center w-100 align-items-end'>
-                                <Layout className='d-flex w-100 d-non'>
+                                <Layout className='d-flex w-100 d-none'>
                                     <AutocompleteWrapper className='w-100'>
                                         <AutocompleteRoot
                                             className='w-100'
@@ -313,8 +354,7 @@ export default function DocumentList({ clientId }) {
                                     </AutocompleteWrapper>
                                 </Layout>
 
-
-                                <Box className='row w-100 pe-3 d-none'>
+                                <Box className='row w-100 pe-3 d-non'>
                                     <Box className='col-md-6'>
                                         <Box className='mb-2'>
                                             <label>Select Property</label>
@@ -335,14 +375,14 @@ export default function DocumentList({ clientId }) {
 
                             </Box>
 
-                            {/* <Box className='mt-2'>
+                            <Box className='mt-2'>
                                 <Stack direction="row" spacing={1}>
                                     <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
 
                                     <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} />
 
                                 </Stack>
-                            </Box> */}
+                            </Box>
 
                             <Box className='mt-4'>
                                 <DocumentDetails></DocumentDetails>

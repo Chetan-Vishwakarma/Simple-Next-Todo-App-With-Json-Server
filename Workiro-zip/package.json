@@ -10,6 +10,7 @@
     "@mui/material": "^5.15.10",
     "@mui/styled-engine-sc": "^6.0.0-alpha.16",
     "@mui/x-date-pickers": "^6.19.4",
+    "@mui/x-tree-view": "^6.17.0",
     "@pdftron/webviewer": "^10.7.2",
     "@reduxjs/toolkit": "^2.2.0",
     "@testing-library/jest-dom": "^5.17.0",
