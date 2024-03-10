@@ -5,13 +5,12 @@ import DataGrid, {
     Column, FilterRow, Search, SearchPanel, Selection,
     HeaderFilter, Scrolling,
     FilterPanel,
-    Pager, Paging, DataGridTypes,FormGroup,
+    Pager, Paging, DataGridTypes, FormGroup,
 } from 'devextreme-react/data-grid';
 import 'devextreme/dist/css/dx.light.css';
 import { Box, Typography, Button, Paper, Grid, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AppsIcon from '@mui/icons-material/Apps';
-import ListIcon from '@mui/icons-material/List';
 import DocumentDetails from '../../components/DocumentDetails';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
@@ -22,9 +21,15 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import DnsIcon from '@mui/icons-material/Dns';
 import CloseIcon from '@mui/icons-material/Close';
-
+import TableRowsIcon from '@mui/icons-material/TableRows';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
+import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
+import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
+import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 
 const Layout = styled('div')`  display: flex;
@@ -126,8 +131,11 @@ export default function DocumentList({ clientId }) {
     const [searchByPropertyKey, setSearchByPropertyKey] = useState("");
     const [searchByPropertyInput, setSearchByPropertyInput] = useState("");
     const [bulkSearch, setBulkSearch] = useState([]);
+    const [alignment, setAlignment] = React.useState('left');
 
-
+    const handleAlignment = (event, newAlignment) => {
+        setAlignment(newAlignment);
+    };
 
     // 
     const handleChange = (event) => {
@@ -873,17 +881,37 @@ export default function DocumentList({ clientId }) {
     }
     useEffect(() => {
         console.log(bulkSearch);
-        
-    },[bulkSearch]);
+
+    }, [bulkSearch]);
     return (
         <>
             {/* <div style={{ textAlign: "end" }}>{toggleScreen ? <AppsIcon onClick={() => setToggleScreen(!toggleScreen)} /> : <ListIcon onClick={() => setToggleScreen(!toggleScreen)} />}</div> */}
-            <div style={{ textAlign: "end" }}><DnsIcon onClick={() => setToggleScreen({ singleCardView: true, multipleCardView: false, tableGridView: false })} /> <AppsIcon onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: true, tableGridView: false })} /> <ListIcon onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: false, tableGridView: true })} /></div>
+
+            <div className='text-end mb-3'>
+
+                <ToggleButtonGroup
+                    value={alignment}
+                    exclusive
+                    onChange={handleAlignment}
+                    aria-label="text alignment"
+                >
+                    <ToggleButton value="left" aria-label="left aligned" onClick={() => setToggleScreen({ singleCardView: true, multipleCardView: false, tableGridView: false })}>
+                        <DnsIcon />
+                    </ToggleButton>
+                    <ToggleButton value="center" aria-label="centered" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: true, tableGridView: false })}>
+                        <AppsIcon />
+                    </ToggleButton>
+                    <ToggleButton value="right" aria-label="right aligned" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: false, tableGridView: true })}>
+                        <TableRowsIcon />
+                    </ToggleButton>
+                </ToggleButtonGroup>
+
+            </div>
 
             {toggleScreen.tableGridView ?
                 (documents.length > 0 && <DataGrid
                     id="dataGrid"
-                    style={{ width: "1600px" }}
+                    style={{ width: "100%" }}
                     dataSource={documents}
                     columnAutoWidth={true}
                     showBorders={true}>
@@ -1051,7 +1079,6 @@ export default function DocumentList({ clientId }) {
                                 </Select>
                             </FormControl>
 
-
                             <FormControl sx={{ m: 1, width: '110px' }} size="small" className='select-border'>
                                 <Select
                                     value={select}
@@ -1072,31 +1099,36 @@ export default function DocumentList({ clientId }) {
 
                             {/* <Button className='btn-blue-2 mb-1 ms-1' onClick={() => handleDocumentsFilter("LastMonth")}>Save View</Button> */}
 
-                            <FormControlLabel required control={<Switch />} label="Required" />
-
+                            <FormControlLabel control={<Switch />} label="Save View" className='ms-2' />
 
                         </Box>
 
-                        <Box className='clearfix'>
-                            <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
-                                <Select
-                                    value={select}
-                                    onChange={handleChange2}
-                                    displayEmpty
-                                    inputProps={{ 'aria-label': 'Without label' }}
-                                    className='custom-dropdown'
-                                >
-                                    <MenuItem value="">
-                                        Select
-                                    </MenuItem>
-                                    <MenuItem value={10}>Group By</MenuItem>
-                                    <MenuItem value={20}>Sort By</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
+
                     </Box>
 
                     <hr />
+
+
+                    {/* <div className='text-end mb-3'>
+
+                        <ToggleButtonGroup
+                            value={alignment}
+                            exclusive
+                            onChange={handleAlignment}
+                            aria-label="text alignment"
+                        >
+                            <ToggleButton value="left" aria-label="left aligned" onClick={() => setToggleScreen({ singleCardView: true, multipleCardView: false, tableGridView: false })}>
+                                <DnsIcon />
+                            </ToggleButton>
+                            <ToggleButton value="center" aria-label="centered" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: true, tableGridView: false })}>
+                                <AppsIcon />
+                            </ToggleButton>
+                            <ToggleButton value="right" aria-label="right aligned" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: false, tableGridView: true })}>
+                                <TableRowsIcon />
+                            </ToggleButton>
+                        </ToggleButtonGroup>
+
+                    </div> */}
 
                     <Grid
                         container
@@ -1104,7 +1136,7 @@ export default function DocumentList({ clientId }) {
                         alignItems="center"
 
                     >
-                        <Grid item xs={12} sm={10} md={toggleScreen.multipleCardView ? 12 : 6} lg={toggleScreen.multipleCardView ? 12 : 5} className='white-box'>
+                        <Grid item xs={12} sm={10} md={toggleScreen.multipleCardView ? 12 : 6} lg={toggleScreen.multipleCardView ? 12 : 6} className='white-box'>
                             <Box className={toggleScreen.multipleCardView ? 'd-flex m-auto justify-content-start w-100 align-items-end' : 'd-flex m-auto justify-content-center w-100 align-items-end'}>
                                 <Layout className='d-flex w-100 d-none'>
                                     <AutocompleteWrapper className='w-100'>
@@ -1152,23 +1184,82 @@ export default function DocumentList({ clientId }) {
                                     </Box>
                                 </Box>
 
-                                <Button disabled={searchByPropertyKey!==""&&searchByPropertyInput!==""?false:true} className={searchByPropertyKey!==""&&searchByPropertyInput!==""?'btn-blue-2mb-2 ms-2':'btn-grey-2 mb-2 ms-2'} onClick={() =>handleSearchByProperty()}>Submit</Button>
+                                <Button disabled={searchByPropertyKey !== "" && searchByPropertyInput !== "" ? false : true} className={searchByPropertyKey !== "" && searchByPropertyInput !== "" ? 'btn-blue-2 mb-2 ms-2' : 'btn-blue-2 btn-grey-2 mb-2 ms-2'} onClick={() => handleSearchByProperty()}>Submit</Button>
                                 <Button className='btn-blue-2 mb-2 ms-2' onClick={() => handleDocumentsFilter("LastMonth")}>Toggle</Button>
 
                             </Box>
 
-                            <Box className='mt-2'>
-                                <Stack direction="row" spacing={1}>
-                                    <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
-                                    <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} />
+                            <Box className='d-flex flex-wrap justify-content-between'>
+                                <Box className='mt-2'>
+                                    <Stack direction="row" spacing={1}>
+                                        <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
+                                        <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} />
+                                    </Stack>
+                                </Box>
 
-                                </Stack>
+                                <Box className='clearfix'>
+                                    <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
+                                        <Select
+                                            value={select}
+                                            onChange={handleChange2}
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            className='custom-dropdown'
+                                        >
+                                            <MenuItem value="">
+                                                Select Group
+                                            </MenuItem>
+                                            <MenuItem value={10}>Group By</MenuItem>
+                                            <MenuItem value={20}>Sort By</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Box>
+
                             </Box>
+
+
+
+
+
 
                             <Box className='mt-4'>
                                 {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
                                 {toggleScreen.singleCardView && <DocumentDetails documents={documents} advFilteredResult={advFilteredResult}></DocumentDetails>}
-                                {toggleScreen.multipleCardView && <h1>Mutiple card View</h1>}
+                                {toggleScreen.multipleCardView &&
+
+                                    <Box className='row'>
+
+                                        {Array(16).fill("").map(() => {
+                                            return <>
+                                                <Box className='col-xxl-3 col-xl-4 col-md-6'>
+                                                    <Box className="file-uploads">
+                                                        <label className="file-uploads-label file-uploads-document">
+                                                            <Box className="d-flex align-items-center">
+                                                                <DescriptionIcon
+                                                                    sx={{
+                                                                        fontSize: 32,
+                                                                    }}
+                                                                    className='me-2'
+                                                                />
+                                                                <Box className="upload-content pe-3">
+                                                                    <Typography variant="h4" >
+                                                                        test filter for last day
+                                                                    </Typography>
+                                                                    <Typography variant="body1">
+                                                                        Size: 0.00 KB | Uploaded by 21212
+                                                                    </Typography>
+                                                                </Box>
+                                                            </Box>
+                                                        </label>
+                                                    </Box>
+                                                </Box>
+                                            </>
+                                        })}
+
+
+
+                                    </Box>
+                                }
                             </Box>
 
                         </Grid>
