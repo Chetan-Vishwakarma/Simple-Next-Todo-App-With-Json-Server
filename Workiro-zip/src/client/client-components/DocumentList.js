@@ -119,6 +119,10 @@ export default function DocumentList({ clientId }) {
     const [select, setSelect] = React.useState('');
     const [selectedLastFilter,setSelectedLastFilter] = useState("");
     const [isRangeFilter,setIsRangeFilter] = useState(false);
+    const [documentKeys,setDocumentKeys] = useState([]);
+    const [searchByPropertyKey,setSearchByPropertyKey] = useState("");
+    const [searchByPropertyInput,setSearchByPropertyInput] = useState("");
+    const [bulkSearch,setBulkSearch] = useState([]);
 
 
 
@@ -158,6 +162,11 @@ export default function DocumentList({ clientId }) {
                     if (json.Table6) {
                         // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                         let docs = json.Table6;
+
+                        let docKeys = Object.keys(docs[0]);
+                        // console.log("documentKeys",docKeys);
+                        setDocumentKeys(docKeys);
+
                         docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
                         //docs.map((itm)=>console.log("check in map",itm["Item Date"]));
                         setDocuments(docs);
@@ -847,6 +856,21 @@ export default function DocumentList({ clientId }) {
     }
     function getRootProps(params) { }
     function getListboxProps(params) { }
+    const handleSearchByProperty=()=>{
+        setBulkSearch(prevState=>[...prevState,{key:searchByPropertyKey,value:searchByPropertyInput}]);
+        setSearchByPropertyInput("");
+        setSearchByPropertyKey("");
+        // console.log(bulkSearch);
+        // let fltByKeyVal = documents.filter((itm)=>{
+        //     if(itm[searchByPropertyKey]){
+        //         return String(itm[searchByPropertyKey]).toLowerCase().includes(searchByPropertyInput.toLowerCase());
+        //     }
+        // });
+        // console.log(fltByKeyVal);
+    }
+    useEffect(()=>{
+        console.log(bulkSearch);
+    },[bulkSearch]);
     return (
         <>
             {/* <div style={{ textAlign: "end" }}>{toggleScreen ? <AppsIcon onClick={() => setToggleScreen(!toggleScreen)} /> : <ListIcon onClick={() => setToggleScreen(!toggleScreen)} />}</div> */}
@@ -1074,20 +1098,23 @@ export default function DocumentList({ clientId }) {
                                     <Box className='col-md-6'>
                                         <Box className='mb-2'>
                                             <label>Select Property</label>
-                                            <select class="form-select" aria-label="Default select example">
-                                                <option>Select</option>
+                                            <select class="form-select" aria-label="Default select example" onChange={(e)=>setSearchByPropertyKey(e.target.value)}>
+                                                <option value={""}></option>
+                                                {documentKeys.length>0 && documentKeys.map((itm)=>{
+                                                    return <option value={itm}>{itm}</option>
+                                                })}
                                             </select>
                                         </Box>
                                     </Box>
                                     <Box className='col-md-6 px-0'>
                                         <Box className='mb-2'>
                                             <label>Value</label>
-                                            <input type="text" class="form-control" placeholder="Type Value" />
+                                            <input type="text" class="form-control" placeholder="Type Value" value={searchByPropertyInput} onChange={(e)=>setSearchByPropertyInput(e.target.value)}/>
                                         </Box>
                                     </Box>
                                 </Box>
 
-                                <Button className='btn-blue-2 mb-2 ms-2' onClick={() => handleDocumentsFilter("LastMonth")}>Submit</Button>
+                                <Button className='btn-blue-2 mb-2 ms-2' onClick={() =>handleSearchByProperty()}>Submit</Button>
                                 <Button className='btn-blue-2 mb-2 ms-2' onClick={() => handleDocumentsFilter("LastMonth")}>Toggle</Button>
 
                             </Box>
