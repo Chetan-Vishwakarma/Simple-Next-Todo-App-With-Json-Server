@@ -21,37 +21,8 @@ import user from "../images/user.jpg";
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import ArticleIcon from '@mui/icons-material/Article';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
-import TravelExploreIcon from '@mui/icons-material/TravelExplore';
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-
-
-
-// sadik code start
-function createData(document, details) {
-    return { document, details };
-}
-
-const rows = [
-    createData('Folder', 'Client'),
-    createData('Client', '212121Test'),
-    createData('Section', '01. General Correspondence'),
-    createData('Received Date', '02/03/2024'),
-    createData('Doc. Date', '02/03/2024'),
-    createData('Description', 'General Letter'),
-    createData('Notes', 'Yes'),
-    createData('Category', '1. Received'),
-    createData('DocDirection', 'Incoming'),
-    createData('ItemId', 998301),
-    createData('Tax Year', '18/19'),
-    createData('Financial Year', '2020'),
-    createData('From Email', 'test@gmail.com'),
-    createData('to Email', 'test@gmail.com'),
-    createData('CC', 'test@gmail.com')
-];
-// sadik code end
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import DocumentDetails from "./DocumentDetails";
 
 
 function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) {
@@ -346,7 +317,6 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         return o;
     }
 
-
     function DateFormet(timestamp) {
         const date = new Date(timestamp);
         console.log("date formet1", date);
@@ -422,8 +392,6 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         // setAnchorEl(null);
         setOpen(false);
     };
-
-
 
     const handalClickAddUser = (e) => {
         // Check if the object 'e' already exists in the array based on its 'id'
@@ -646,11 +614,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     // end
 
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+    // const [anchorEl, setAnchorEl] = React.useState(null);
+    // const open = Boolean(anchorEl);
+    // const handleClick = (event) => {
+    //     setAnchorEl(event.currentTarget);
+    // };
     // const handleClose = () => {
     //     // setAnchorEl(null);
     //     setOpen(false)
@@ -666,34 +634,8 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         setOpenDocumentList(false);
     };
 
-    // details dropdown
-    const [anchorElDocumentList, setAnchorElDocumentList] = React.useState(null);
-    const DocumentList = Boolean(anchorElDocumentList);
-    const handleClickDocumentList = (event) => {
-        setAnchorElDocumentList(event.currentTarget);
-    };
-    const handleCloseDocument = () => {
-        setAnchorElDocumentList(null);
-    };
 
 
-    // Document details List
-    const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
-    const handleClickOpenDocumentDetailsList = () => {
-        setOpenDocumentDetailsList(true);
-    };
-    const handleCloseDocumentDetailsList = () => {
-        setOpenDocumentDetailsList(false);
-    };
-
-    // accordian
-    const [expanded, setExpanded] = React.useState('panel1');
-
-    const handleChange = (panel) => (event, newExpanded) => {
-        setExpanded(newExpanded ? panel : false);
-    };
-
-    // end
 
 
 
@@ -1187,11 +1129,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                                 >
                                                     <Typography
                                                         variant="body1"
-                                                        className="font-16 sembold"
+                                                        className="font-14 sembold"
                                                     >
                                                         {item.Notes}
                                                     </Typography>
-                                                    <Typography variant="body1">
+                                                    <Typography variant="body1" className="font-12">
                                                         {dateAndTime(item.ActivityDate)}
                                                     </Typography>
                                                 </Box>
@@ -1209,11 +1151,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                                 </Box>
                                                 <Box className="chat-message me-2">
                                                     <Box className="inner-chat-message me-2">
-                                                        <Typography variant="body1">
+                                                        <Typography variant="body1" className="font-14">
                                                             {item.Notes}
                                                         </Typography>
                                                         <Box className="d-flex align-items-center justify-content-end">
-                                                            <Typography variant="body1">
+                                                            <Typography variant="body1" className="font-12">
                                                                 {dateAndTime(item.ActivityDate)}
                                                             </Typography>
 
@@ -1271,11 +1213,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                                 >
                                                     <Box class="chat-message">
                                                         <Box class="inner-chat-message ms-auto">
-                                                            <Typography variant="body1">
+                                                            <Typography variant="body1" className="font-14">
                                                                 {item.Notes}
                                                             </Typography>
                                                             <Box className="d-flex align-items-center justify-content-end">
-                                                                <Typography variant="body1">
+                                                                <Typography variant="body1" className="font-12">
                                                                     {dateAndTime(item.ActivityDate)}
                                                                 </Typography>
 
@@ -1456,512 +1398,13 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                             </Button>
                         </Box>
 
-                        <Box className="file-uploads">
-                            <label className="file-uploads-label file-uploads-document">
-                                <Box className="d-flex align-items-center">
-                                    <DescriptionIcon
-                                        sx={{
-                                            fontSize: 32,
-                                        }}
-                                        className='me-2'
-                                    />
-                                    <Box className="upload-content pe-3">
-                                        <Typography variant="h4" >
-                                            thisisTest.pdf
-                                        </Typography>
-                                        <Typography variant="body1">
-                                            Size:  <span className='sembold'>10MB</span> | Uploaded by <span className='sembold'>Patrick</span>
-                                        </Typography>
-                                    </Box>
-                                </Box>
+                        <DocumentDetails></DocumentDetails>
 
-                                <Box>
-                                    <Button
-                                        id="basic-button"
-                                        aria-controls={DocumentList ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={DocumentList ? 'true' : undefined}
-                                        onClick={handleClickDocumentList}
-                                        className='min-width-auto'
-                                    >
-                                        <MoreVertIcon />
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={anchorElDocumentList}
-                                        open={DocumentList}
-                                        onClose={handleCloseDocument}
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem onClick={() => {
-                                            handleCloseDocument()
-                                            handleClickOpenDocumentDetailsList()
-                                        }}>
-                                            <ListItemIcon>
-                                                <ArticleIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Document Details</MenuItem>
-
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <CloudUploadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Upload New Version</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <DriveFileRenameOutlineIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Rename Document</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <TravelExploreIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Open in Browser</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <CloudDownloadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Download</MenuItem>
-                                    </Menu>
-                                </Box>
-                            </label>
-                        </Box>
-                        {/* file upload end */}
-
-                        <Box className="file-uploads">
-                            <label className="file-uploads-label file-uploads-document">
-                                <Box className="d-flex align-items-center">
-                                    <DescriptionIcon
-                                        sx={{
-                                            fontSize: 32,
-                                        }}
-                                        className='me-2'
-                                    />
-                                    <Box className="upload-content pe-3">
-                                        <Typography variant="h4" >
-                                            file_names_123.pdf
-                                        </Typography>
-                                        <Typography variant="body1">
-                                            Size:  <span className='sembold'>10MB</span> | Uploaded by <span className='sembold'>Patrick</span>
-                                        </Typography>
-                                    </Box>
-                                </Box>
-
-                                <Box>
-                                    <Button
-                                        id="basic-button"
-                                        aria-controls={DocumentList ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={DocumentList ? 'true' : undefined}
-                                        onClick={handleClickDocumentList}
-                                        className='min-width-auto'
-                                    >
-                                        <MoreVertIcon />
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={anchorElDocumentList}
-                                        open={DocumentList}
-                                        onClose={handleCloseDocument}
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem onClick={() => {
-                                            handleCloseDocument()
-                                            handleClickOpenDocumentDetailsList()
-                                        }}>
-                                            <ListItemIcon>
-                                                <ArticleIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Document Details</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <CloudUploadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Upload New Version</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <DriveFileRenameOutlineIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Rename Document</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <TravelExploreIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Open in Browser</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <CloudDownloadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Download</MenuItem>
-                                    </Menu>
-                                </Box>
-                            </label>
-                        </Box>
-                        {/* file upload end */}
-
-                        <Box className="file-uploads">
-                            <label className="file-uploads-label file-uploads-document">
-                                <Box className="d-flex align-items-center">
-                                    <DescriptionIcon
-                                        sx={{
-                                            fontSize: 32,
-                                        }}
-                                        className='me-2'
-                                    />
-                                    <Box className="upload-content pe-3">
-                                        <Typography variant="h4" >
-                                            test_three.doc
-                                        </Typography>
-                                        <Typography variant="body1">
-                                            Size:  <span className='sembold'>10MB</span> | Uploaded by <span className='sembold'>Patrick</span>
-                                        </Typography>
-                                    </Box>
-                                </Box>
-
-                                <Box>
-                                    <Button
-                                        id="basic-button"
-                                        aria-controls={DocumentList ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={DocumentList ? 'true' : undefined}
-                                        onClick={handleClickDocumentList}
-                                        className='min-width-auto'
-                                    >
-                                        <MoreVertIcon />
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={anchorElDocumentList}
-                                        open={DocumentList}
-                                        onClose={handleCloseDocument}
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem onClick={() => {
-                                            handleCloseDocument()
-                                            handleClickOpenDocumentDetailsList()
-                                        }}>
-                                            <ListItemIcon>
-                                                <ArticleIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Document Details</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <CloudUploadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Upload New Version</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <DriveFileRenameOutlineIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Rename Document</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <TravelExploreIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Open in Browser</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <CloudDownloadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Download</MenuItem>
-                                    </Menu>
-                                </Box>
-                            </label>
-                        </Box>
-                        {/* file upload end */}
-
-                        <Box className="file-uploads">
-                            <label className="file-uploads-label file-uploads-document">
-                                <Box className="d-flex align-items-center">
-                                    <DescriptionIcon
-                                        sx={{
-                                            fontSize: 32,
-                                        }}
-                                        className='me-2'
-                                    />
-                                    <Box className="upload-content pe-3">
-                                        <Typography variant="h4" >
-                                            document_654.pdf
-                                        </Typography>
-                                        <Typography variant="body1">
-                                            Size:  <span className='sembold'>10MB</span> | Uploaded by <span className='sembold'>Patrick</span>
-                                        </Typography>
-                                    </Box>
-                                </Box>
-
-                                <Box>
-                                    <Button
-                                        id="basic-button"
-                                        aria-controls={DocumentList ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={DocumentList ? 'true' : undefined}
-                                        onClick={handleClickDocumentList}
-                                        className='min-width-auto'
-                                    >
-                                        <MoreVertIcon />
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={anchorElDocumentList}
-                                        open={DocumentList}
-                                        onClose={handleCloseDocument}
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem onClick={() => {
-                                            handleCloseDocument()
-                                            handleClickOpenDocumentDetailsList()
-                                        }}>
-                                            <ListItemIcon>
-                                                <ArticleIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Document Details</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <CloudUploadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Upload New Version</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <DriveFileRenameOutlineIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Rename Document</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <TravelExploreIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Open in Browser</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <CloudDownloadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Download</MenuItem>
-                                    </Menu>
-                                </Box>
-                            </label>
-                        </Box>
-                        {/* file upload end */}
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
 
 
-
-            {/* document modal list details */}
-            <Dialog
-                open={openDocumentDetailsList}
-                onClose={handleCloseDocumentDetailsList}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                className='custom-modal'
-                sx={{
-                    maxWidth: 640,
-                    margin: '0 auto'
-                }}
-            >
-                <DialogContent>
-                    <DialogContentText>
-
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="dropdown-box">
-                                <Typography variant="h4" className='font-18 bold mb-2 text-black'>
-                                    Document Details
-                                </Typography>
-                            </Box>
-
-                            {/*  */}
-                            <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-
-                        <div>
-                            <Accordion className='accordian-box' expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel1-content"
-                                    id="panel1-header"
-                                >
-                                    Document Details
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <TableContainer component={Paper}>
-                                        <Table sx={{ minWidth: '100%' }} aria-label="simple table" size="small">
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell className='bold'>Document</TableCell>
-                                                    <TableCell className='bold' align="right">Details</TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                {rows.map((row) => (
-                                                    <TableRow
-                                                        key={row.name}
-                                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                    >
-                                                        <TableCell align="left" className='bold'>{row.document}</TableCell>
-                                                        <TableCell align="left">{row.details}</TableCell>
-                                                    </TableRow>
-                                                ))}
-                                            </TableBody>
-                                        </Table>
-                                    </TableContainer>
-                                </AccordionDetails>
-                            </Accordion>
-
-                            <Accordion className='accordian-box' expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel2-content"
-                                    id="panel2-header"
-                                >
-                                    Document Versions
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <Box className='table-responsive'>
-
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            This File is Test Files.pdf
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            12:36PM 28/12/2023 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            test doc file.doc
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            11:16PM 09/012/2024 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            loremipsomedolorsite.pdf
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            02:36PM 06/05/2023 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            This File is Test Files.pdf
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            02:36PM 06/05/2023 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-
-                                    </Box>
-                                </AccordionDetails>
-                            </Accordion>
-                            {/* end */}
-
-
-
-                            <Accordion className='accordian-box' expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel3-content"
-                                    id="panel3-header"
-                                >
-                                    Attached To
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                </AccordionDetails>
-                            </Accordion>
-
-                            <Accordion className='accordian-box' expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel4-content"
-                                    id="panel4-header"
-                                >
-                                    Activity
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                </AccordionDetails>
-                            </Accordion>
-
-                        </div>
-
-
-
-                    </DialogContentText>
-                </DialogContent>
-
-            </Dialog>
 
 
         </React.Fragment>

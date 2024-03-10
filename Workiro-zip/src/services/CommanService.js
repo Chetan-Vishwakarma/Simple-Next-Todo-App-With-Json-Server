@@ -8,9 +8,78 @@ export default class CommanCLS extends AllService {
         super(APIUrl,agrno, Email, password);
     }
 
+    MessagePublished_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("MessagePublished_Json",obj,false);
+        super.CallNewService("MessagePublished_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+    Json_GetStandardLetterData(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetStandardLetterData",obj,false);
+        super.CallNewService("Json_GetStandardLetterData",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+    Json_GetHtmlFromRtf(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetHtmlFromRtf",obj,true);
+        super.CallNewService("Json_GetHtmlFromRtf",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+    Json_GetTemplateData(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetTemplateData",obj,false);
+        super.CallNewService("Json_GetTemplateData",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+     
+     Json_GetWebTemplatesList(callBack){   
+        super.CreateNewServiceParamObject("Json_GetWebTemplates");
+        super.CallNewService("Json_GetWebTemplates",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
     Json_ExplorerSearchDoc(obj,callBack){   
         super.CreateNewServiceParamObject("Json_ExplorerSearchDoc",obj,true);
         super.CallNewService("Json_ExplorerSearchDoc",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+     Json_GetClientCardDetails(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetClientCardDetails",obj,false);
+        super.CallNewService("Json_GetClientCardDetails",function(status,Data){
             if(status){
                 return callBack(true,Data);
             }
@@ -116,6 +185,17 @@ export default class CommanCLS extends AllService {
         })
     }
 
+    Json_GetItemBase64DataById(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetItemBase64DataById",obj,true);
+        super.CallNewService("Json_GetItemBase64DataById",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
     Json_AddSupplierActivity(obj,callBack){   
         super.CreateNewServiceParamObject("Json_AddSupplierActivity",obj,true);
         super.CallNewService("Json_AddSupplierActivity",function(status,Data){

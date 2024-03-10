@@ -20,6 +20,7 @@ import UdfCard from './UdfCard';
 import { useLocation } from 'react-router-dom';
 // import DocumentList from './Document';
 import DocumentList from './DocumentList';
+import UploadDocument from './UploadDocument';
 
 
 
@@ -48,6 +49,15 @@ function ClientDetails() {
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
     let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
+
+
+    // upload document modal start
+    const [openUploadDocument, setOpenUploadDocument] = React.useState(false);
+    const handleClickOpenUploadDocument = () => {
+        setOpenUploadDocument(true);
+    };
+    // upload document modal end
+
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -212,9 +222,13 @@ function ClientDetails() {
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<BorderColorIcon />}>Edit Client</Button>
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<GroupAddIcon />}>Add Client</Button>
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<DeleteIcon />}>Notes</Button>
-                    <Button className='btn-blue-2 mb-1' size="small" startIcon={<EmailIcon />}>Add Document</Button>
+                    <Button className='btn-blue-2 mb-1' size="small" startIcon={<EmailIcon />}
+                    onClick={handleClickOpenUploadDocument}
+                    >Add Document</Button>
                 </Box>
             </Box>
+
+            <UploadDocument setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument}></UploadDocument>
 
             <Box sx={{ width: '100%', typography: 'body1' }} className="mt-4 pt-1">
                 <TabContext value={value}>

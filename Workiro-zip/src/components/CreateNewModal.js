@@ -29,6 +29,9 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DescriptionIcon from '@mui/icons-material/Description';
 
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import TextSnippetIcon from '@mui/icons-material/TextSnippet';
+
 import Swal from 'sweetalert2';
 import {
     List,
@@ -48,6 +51,7 @@ import DataGrid, {
     DataGridTypes,
     Grouping,
     GroupPanel,
+    FilterRow,
     Pager,
     Paging,
     SearchPanel,
@@ -64,7 +68,8 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CommanCLS from "../services/CommanService";
 import { useEffect } from "react";
 import { useState } from "react";
-
+import Fade from '@mui/material/Fade';
+import HtmlEditorDX from "./HtmlEditor";
 
 
 // 
@@ -98,7 +103,7 @@ export default function CreateNewModalTask() {
     const [messageId, setMessageId] = React.useState("");
 
     const [txtdescription, setTxtDescriptin] = React.useState("");
-    const [txtcomment, setTxtComment] = React.useState("");
+    // const [txtcomment, setTxtComment] = React.useState("");
     ///////////////////////////////////////////client Data
     const [clientList, setClientList] = useState([]);
     const [txtClient, settxtClient] = useState("Select Client");
@@ -133,6 +138,7 @@ export default function CreateNewModalTask() {
 
     ////////////////////////////////Attachment files
     const [selectedFiles, setSelectedFiles] = useState([]);
+    const [selectedFilesFromBrower, setSelectedFilesFromBrower] = useState([]);
     const [attachmentPath, setAttachmentPath] = useState([]);
 
     ////////////////////////////////End Attachment files
@@ -143,6 +149,7 @@ export default function CreateNewModalTask() {
     const [currentDate, setCurrentDate] = useState(""); // Initialize with the current date in "dd/mm/yyyy" format
     const [nextDate, setNextDate] = useState("");
     const [remiderDate, setRemiderDate] = useState("");
+    const [expireDate, setExpireDate] = useState("");
     ///////////////////////////////////////end date set
 
     const [loading, setLoading] = useState(false);
@@ -257,6 +264,8 @@ export default function CreateNewModalTask() {
     //     setAnchorEl(null); // Close the menu by setting the anchor element to null
     //   };
 
+
+
     const userAdd = Boolean(anchorel);
 
     function Json_GetForwardUserList() {
@@ -301,7 +310,7 @@ export default function CreateNewModalTask() {
     // Filter the userList based on filterText
     const filteredUserList = userList.filter((item) => {
         // Check if item and its properties are defined before accessing them
-        console.log("filterText", filterText);
+        // console.log("filterText", filterText);
         if (item && item.ForwardTo) {
             // You can customize the filtering logic here based on your requirements
             return item.ForwardTo.toLowerCase().includes(filterText.toLowerCase());
@@ -410,6 +419,7 @@ export default function CreateNewModalTask() {
     }
 
 
+
     useEffect(() => {
 
         setAgrNo(localStorage.getItem("agrno"));
@@ -421,11 +431,13 @@ export default function CreateNewModalTask() {
 
         setNextDate(dayjs(getNextDate()));
         setRemiderDate(dayjs(getCurrentDate()));
+        setExpireDate(dayjs(getCurrentDate()));
 
         Json_GetFolders();
         Json_GetForwardUserList();
         Json_GetFolderData();
-        console.log(nextDate, currentDate)
+        //console.log(nextDate, currentDate)
+
     }, []);
 
     //////////////////////Folder Funciton
@@ -439,13 +451,14 @@ export default function CreateNewModalTask() {
             Email: Email,
             password: password
         }
+
         try {
             cls.Json_GetFolders(obj, function (sts, data) {
                 if (sts) {
                     if (data) {
                         let js = JSON.parse(data);
                         let tbl = js.Table;
-                        console.log("get folder list", tbl);
+                        // console.log("get folder list", tbl);
                         setFolderList(tbl);
                     }
                 }
@@ -487,9 +500,10 @@ export default function CreateNewModalTask() {
                 let fileByte = reader.result.split(";")[1].replace("base64,", "");
                 const fileData = {
                     FileName: file.name,
-                    Base64: fileByte, // Base64 data of the file
+                    Base64: fileByte?fileByte:"", // Base64 data of the file
                     FileSize: file.size,
                     Preview: reader.result, // Data URL for preview
+                    DocId: ""
                 };
                 filesData.push(fileData);
 
@@ -500,11 +514,48 @@ export default function CreateNewModalTask() {
                         ...prevUploadedFiles,
                         ...filesData,
                     ]);
+
+                    setSelectedFilesFromBrower((prevUploadedFiles) => [
+                        ...prevUploadedFiles,
+                        ...filesData,
+                    ]);
+
                 }
             };
             reader.readAsDataURL(file); // Read file as data URL (base64)
         });
     };
+
+
+    const SETDate = (date) => {
+        var d = new Date(date);
+        var dd = d.getDate();
+        var mm = d.getMonth() + 1;
+
+        var yy = d.getFullYear();
+        var DateVal;
+        if (dd < "10" || mm < "10") {
+            if (dd < "10" && mm < '10') {
+                return date = yy + "/0" + mm + "/0" + dd;
+            } else if (dd < "10") {
+                return date = yy + "/" + mm + "/0" + dd;
+            } else if (mm < "10") {
+                return date = yy + "/0" + mm + "/" + dd;
+            }
+
+        } else {
+            return DateVal = yy + "/" + mm + "/" + dd;
+        }
+    }
+
+    const handleSuccess = (mgsid) => {
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Your task has been created successfully.' + mgsid,
+        });
+    };
+
 
     async function UploadAttachment() {
 
@@ -563,80 +614,49 @@ export default function CreateNewModalTask() {
 
         }
 
-
-
     }
-    const SETDate = (date) => {
-        var d = new Date(date);
-        var dd = d.getDate();
-        var mm = d.getMonth() + 1;
-
-        var yy = d.getFullYear();
-        var DateVal;
-        if (dd < "10" || mm < "10") {
-            if (dd < "10" && mm < '10') {
-                return date = yy + "/0" + mm + "/0" + dd;
-            } else if (dd < "10") {
-                return date = yy + "/" + mm + "/0" + dd;
-            } else if (mm < "10") {
-                return date = yy + "/0" + mm + "/" + dd;
-            }
-
-        } else {
-            return DateVal = yy + "/" + mm + "/" + dd;
-        }
-    }
-
-    const handleSuccess = (mgsid) => {
-        Swal.fire({
-            icon: 'success',
-            title: 'Success!',
-            text: 'Your task has been created successfully.' + mgsid,
-        });
-    };
 
     async function Json_CRM_Task_Save() {
 
         if (addUser.length > 0) {
-            const idsString = addUser.map(obj => obj.ID).join(',');
+            const isaddUser = addUser.map(obj => obj.ID).join(',');
             const attString = attachmentPath.map(obj => obj.Path).join(',');
             let obj = {
                 "ClientIsRecurrence": false,
                 "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
                 "ClientEnd": dayjs(nextDate).format("YYYY/MM/DD"),
-                "ClientDayNumber": "1",
-                "ClientMonth": "1",
-                "ClientOccurrenceCount": "1",
-                "ClientPeriodicity": "1",
 
-                "ClientRecurrenceRange": "0",
-                "ClientRecurrenceType": "0",
-                "ClientWeekDays": "1",
-                "ClientWeekOfMonth": "1",
+                "ClientDayNumber": 1,
+                "ClientMonth": 1,
+                "ClientOccurrenceCount": 1,
+                "ClientPeriodicity": 1,
+                "ClientRecurrenceRange": 0,
+                "ClientRecurrenceType": 0,
+                "ClientWeekDays": 1,
+                "ClientWeekOfMonth": 1,
+
 
                 "OwnerID": ownerID,
-                "AssignedToID": idsString,
-
+                "AssignedToID": isaddUser,
                 "AssociateWithID": textClientId,
-
                 "FolderId": txtFolderId,
-
                 "Subject": txtdescription,
-                "TypeofTaskID": "3",
-
+                "TypeofTaskID": txtSectionId,
                 "EndDateTime": dayjs(nextDate).format("YYYY/MM/DD"),
                 "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
                 "Status": txtStatus,
                 "Priority": txtPriorityId,
-                "PercentComplete": "1",
+                "PercentComplete": 0,
                 "ReminderSet": false,
                 "ReminderDateTime": dayjs(remiderDate).format("YYYY/MM/DD"),
-                "TaskNo": "0",
+                "TaskNo": 0,
                 "Attachments": attString ? attString : "",
                 "Details": "",
-                "YEDate": "1900/01/01",
-                "SubDeadline": "1900/01/01",
-                "DocRecdate": "1900/01/01",
+
+                // "YEDate": "1900/01/01",
+                //"SubDeadline": "1900/01/01",
+                //"DocRecdate": "1900/01/01",
+
                 // "YEDate": getCurrentDate(),
                 // "SubDeadline": getCurrentDate(),
                 // "DocRecdate":getCurrentDate(),
@@ -667,19 +687,12 @@ export default function CreateNewModalTask() {
 
 
     }
+
+
+
     //////////////////////////////////////End Attachment data
 
-    ////////////////// Priority
-    let priorityarr = [{ id: 1, "name": "High" }, { id: 2, "name": "Normal" }, { id: 3, "name": "Low" }];
-    let statusarr = [
-        { id: 1, "name": "Not Started" },
-        { id: 2, "name": "In Progress" },
-        { id: 3, "name": "Waiting on someone else" },
-        { id: 4, "name": "Deferred" },
-        { id: 5, "name": "Done" },
-        { id: 6, "name": "Completed" },
-    ];
-    //////////////////End Priority
+
 
 
     /////////////////////////////Remove Assignee
@@ -707,8 +720,12 @@ export default function CreateNewModalTask() {
     ////////////////////////////////////DMS Document
     const [documentLisdoc, setOpenDocumentList] = React.useState(false);
     const [dmsDocumentList, setDMSDocumentList] = React.useState([]);
+    const [allMode, setAllMode] = useState('allPages');
+    const [selectedRows, setSelectedRows] = useState([]);
 
-
+    const onAllModeChanged = React.useCallback(({ value }) => {
+        setAllMode(value);
+    }, []);
 
     const Json_ExplorerSearchDoc = () => {
         try {
@@ -734,6 +751,8 @@ export default function CreateNewModalTask() {
 
     }
 
+
+
     const handleDocumentClickOpen = () => {
         Json_ExplorerSearchDoc();
         setOpenDocumentList(true);
@@ -749,14 +768,413 @@ export default function CreateNewModalTask() {
 
     // task dropdown 
     const [anchorElTastkType, setAnchorElTastkType] = React.useState(null);
+    const [portalUser, setPortalUser] = React.useState([]);
+    const [txtTaskType, settxtTaskType] = React.useState("Task Type");
+
+    const [isVisibleByTypeCRM, setIsVisibleByTypeCRM] = React.useState(false);
+
+
+
+
     const TastkType = Boolean(anchorElTastkType);
     const handleClickTastkType = (event) => {
         setAnchorElTastkType(event.currentTarget);
     };
-    const handleCloseTastkType = () => {
+
+    const handleCloseTastkType = (e) => {
         setAnchorElTastkType(null);
+        settxtTaskType(e.target.textContent);
+        // setCreateTaskButton(e.target.textContent)
+        let txt = e.target.textContent;
+        if (txt === "CRM") {
+            setIsVisibleByTypeCRM(false);
+        }
+        else if (txt === "Portal") {
+            setIsVisibleByTypeCRM(true);
+        }
+        else {
+            console.log("Else Part");
+        }
+
     };
 
+    ////////////////// Priority
+    let priorityarr = [{ id: 1, "name": "High" }, { id: 2, "name": "Normal" }, { id: 3, "name": "Low" }];
+    let statusarr = [
+        { id: 1, "name": "Not Started" },
+        { id: 2, "name": "In Progress" },
+        { id: 3, "name": "Waiting on someone else" },
+        { id: 4, "name": "Deferred" },
+        { id: 5, "name": "Done" },
+        { id: 6, "name": "Completed" },
+    ];
+    //////////////////End Priority
+
+    const handleSelectionChanged = (selectedItems) => {
+        setSelectedRows(selectedItems.selectedRowsData);
+        // You can perform further actions with the selectedRows array
+        console.log(selectedItems); // Log the selected rows data
+
+    };
+    const Json_GetClientCardDetails = (cid) => {
+        try {
+            if (txtFolderId && cid) {
+                let obj = {
+                    agrno: agrno,
+                    Email: Email,
+                    password: password,
+                    intProjectId: txtFolderId,
+                    strOrignatorNumber: cid
+                };
+
+                cls.Json_GetClientCardDetails(obj, function (sts, data) {
+                    if (sts && data) {
+                        let json = JSON.parse(data);
+                        let tble6 = json.Table6;
+
+                        if (tble6.length > 0) {
+                            let filteredUsers = tble6.filter(el => el["Portal User"] === true && el["Portal User"] !== null);
+                            if (filteredUsers.length > 0) {
+                                setPortalUser(filteredUsers.length > 0 ? filteredUsers : null);
+                            }
+
+                            console.log("Json_GetClientCardDetails", filteredUsers);
+                        } else {
+                            setPortalUser(null);
+                        }
+                    }
+                });
+            }
+        } catch (error) {
+            console.log("ExplorerSearchDoc", error);
+        }
+    };
+ // Define the function to render cells based on the 'Type' column
+ const renderTypeCell = (data) => {
+    // Define the condition based on which the icon will be rendered
+    if (data.value === 'pdf') {
+        return <PictureAsPdfIcon></PictureAsPdfIcon>;
+    } else if (data.value === 'txt') {
+
+        return <TextSnippetIcon></TextSnippetIcon>;
+    }
+    // You can add more conditions or return default content if needed
+    return data.value;
+};
+
+    const getPortalUser = () => {
+
+        Json_GetClientCardDetails();
+
+    }
+
+    const [selectedValues, setSelectedValues] = useState([]);
+    const [selectedEmail, setSelectedEmail] = useState([]);
+
+    const handleAutocompleteChange = (event, newValue) => {
+        setSelectedEmail(newValue ? newValue : null);
+        console.log("handleAutocompleteChange", newValue);
+    };
+
+    const [selectedEmailCC, setSelectedEmailCC] = useState(null);
+    const handleAutocompleteChangeOnCC = (event, newValue) => {
+        setSelectedEmailCC(newValue ? newValue : null);
+        console.log("handleAutocompleteChange CC", newValue);
+    };
+
+    //const filteredOptions = portalUser ? portalUser.filter(option => option["E-Mail"] !== selectedEmail) : [];
+    const [selectedDocumentFile, setSelectedDocumentFile] = useState([]);
+
+    const AddDocuments = () => {
+        let filesData = [];
+        selectedRows.forEach((row, index) => {
+
+            Json_GetItemBase64DataById(row["Registration No."], function (base64data) {
+                const fileData = {
+                    FileName: row.Path,
+                    Base64: base64data?base64data:"", // Base64 data of the file
+                    FileSize: row.FileSize,
+                    Preview: "", // Data URL for preview
+                    DocId: row["Registration No."]
+                };
+                filesData.push(fileData);
+                // Check if this is the last file
+                if (index === selectedRows.length - 1) {
+                    // Add new files to the uploadedFiles array
+                    setSelectedFiles((prevUploadedFiles) => [
+                        ...prevUploadedFiles,
+                        ...filesData,
+                    ]);
+
+                    setSelectedDocumentFile((prevUploadedFiles) => [
+                        ...prevUploadedFiles,
+                        ...filesData,
+                    ]);
+                }
+            })
+
+
+        })
+
+        setOpenDocumentList(false)
+
+    }
+
+    function Json_GetItemBase64DataById(ItemId, callBack) {
+        try {
+            let obj = {};
+            obj.ItemId = ItemId
+            const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/"; // base url for api
+            //   let dt = new LoginDetails();
+
+            let cls = new CommanCLS(baseUrl, agrno, Email, password);
+            cls.Json_GetItemBase64DataById(obj, function (sts, data) {
+                if (sts && data) {
+                    // console.log("Json_GetItemBase64DataById data", data)
+                    return callBack(data);
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetItemBase64DataById error", error)
+        }
+
+    }
+
+
+
+    const [editorContent, setEditorContent] = useState('');
+
+    // Handler function to update the editor content
+    const handleContentChange = (e) => {
+        setEditorContent(e.value);
+    };
+    //////////////////////////Template Start
+    const [txtTemplateId, setTxtTempId] = useState(null);
+    const [errorMgs, setErrorMgs] = useState(false);
+
+    const handleSelectionChangedTemp = (selectedItems) => {
+        setTxtTempId(selectedItems.selectedRowsData);
+
+        // You can perform further actions with the selectedRows array
+        console.log("Seleted Template", txtTemplateId); // Log the selected rows data
+        if (selectedEmail.length > 0) {
+            Json_GetStandardLetterData(selectedItems.selectedRowsData)
+        }
+        else {
+            setErrorMgs(true)
+        }
+
+        setTimeout(() => {
+            setErrorMgs(false); // Set error message state to false to hide the message
+        }, 3000);
+
+
+    };
+
+    function GetTemplateData(data) {
+        try {
+            let obj = {};
+            obj.agrno = agrno;
+            obj.UserEmail = Email;
+            obj.password = password;
+            obj.strFolderId = data[0].ProjectID;;
+            obj.strClientId = textClientId;
+            obj.strSectionId = data[0].ItemTypeId;
+            obj.strTemplateId = data[0].TemplateID;
+
+            cls.Json_GetTemplateData(obj, function (sts, data) {
+                if (sts && data) {
+                    console.log("Template Data ", data)
+                    Json_GetHtmlFromRtf(data);
+                }
+            })
+        } catch (error) {
+            console.log("Error for Tempalte", error)
+        }
+    }
+
+    const [templateDataMarkup, setTemplateDataMarkup] = useState(null);
+
+
+
+    function Json_GetHtmlFromRtf(rtfdata) {
+        try {
+            let obj = {};
+            obj.strRtf = rtfdata;
+            cls.Json_GetHtmlFromRtf(obj, function (sts, data) {
+                if (sts && data) {
+
+                    let json = JSON.parse(data);
+                    //console.log("Template Data html", json);
+
+                    setTemplateDataMarkup(json)
+                }
+            })
+        } catch (error) {
+            console.log("Error for Tempalte", error)
+        }
+    }
+
+    const [smsTemplate, setSMSTemplate] = useState([]);
+
+    const handleClickAddTemplate = (event) => {
+        setAnchorElTemp(event.currentTarget);
+    }
+
+    const [anchorElTemp, setAnchorElTemp] = React.useState(null);
+    const openTemp = Boolean(anchorElTemp);
+
+    const handleCloseTemp = () => {
+        setAnchorElTemp(null);
+    };
+
+    function GetSMSTemplate() {
+        cls.Json_GetWebTemplatesList(function (sts, data) {
+            if (sts && data) {
+                let json = JSON.parse(data);
+                console.log("Json_GetWebTemplatesList", json);
+                let tbl = json.Table;
+                setSMSTemplate(tbl)
+
+            }
+        });
+    }
+
+
+
+
+
+    function Json_GetStandardLetterData(data) {
+        try {
+            let obj = {};
+            obj.agrno = agrno;
+            obj.UserEmail = Email;
+            obj.password = password;
+            obj.strFolderId = data[0].ProjectID;
+            obj.strClientId = textClientId;
+            obj.strSectionId = data[0].ItemTypeId;
+            obj.strTemplateId = data[0].TemplateID;
+            obj.ContactEmail = selectedEmail[0]["E-Mail"];
+            var urlLetter = "https://docusms.uk/dsdesktopwebservice.asmx/";
+            let cls = new CommanCLS(urlLetter, agrno, Email, password);
+            cls.Json_GetStandardLetterData(obj, function (sts, data) {
+                if (sts && data) {
+                    //console.log("Json_GetStandardLetterData", data)
+                    if(data.includes("File Not Found")){
+                        console.log("Json_GetStandardLetterData", data)
+                    }
+                    else{
+                        Json_GetHtmlFromRtf(data);
+                    }
+                   
+                }
+            })
+        } catch (error) {
+            console.log("Error for Tempalte", error)
+        }
+    }
+
+    useEffect(() => {
+        GetSMSTemplate();
+    }, [setTxtTempId])
+
+    const [textSubject, setTextSubject] = useState("Subject");
+    const [editorContentValue, setEditorContentValue] = useState(null);
+
+    // Handle selection change
+
+
+    const [selectedUSer, setSelectedUSer] = useState(null);
+    const handleOptionChangeFromUser = (event, newValue) => {
+        setSelectedUSer(newValue);
+        // If newValue is not null, you can access its ID and perform any action you need
+        if (newValue) {
+            console.log('Selected ID:', newValue);
+            // Perform any action you need with the selected ID
+        }
+    };
+
+
+    async function CreatePortalTask() {
+
+        if (selectedUSer.ID) {
+            let myNewArr = [...selectedFilesFromBrower, ...selectedDocumentFile];
+            console.log("myNewArr",myNewArr)
+            const ccEmail =selectedEmailCC?selectedEmailCC.map(obj => obj["E-Mail"]):"";
+            const ToEmail = selectedEmail.map(obj => obj["E-Mail"]);
+            const ItemId = selectedRows.map(obj => obj["Registration No."]);
+            const fileNames = myNewArr.map(obj => obj["FileName"]);
+            const fileDataBase64 =myNewArr.filter(obj => obj["Base64"] !== "").map(obj => obj["Base64"]);
+
+            let obj = {
+                "accid": agrno,
+                "email": Email,
+                "password": password,
+                "senderID": selectedUSer.ID,
+                "sectionID": txtSectionId,
+                "ccode": textClientId,
+                "recipients": ToEmail,
+                "subject": textSubject ? textSubject : "",
+                "ccs": ccEmail?ccEmail:"",
+                "forApproval": isCheckedForApproval,
+                "highImportance": false,
+                "expiryDate": dayjs(expireDate).format("YYYY/MM/DD"),
+                "actionDate": dayjs(currentDate).format("YYYY/MM/DD"),
+                "trackIt": false,
+                "docTemplateTaskId": 0,
+                "docTemplateId": txtTemplateId? txtTemplateId[0]["TemplateID"] : 0,
+                "filenames": fileNames,
+                "attachments": fileDataBase64?fileDataBase64:[],
+                "itemNos": ItemId?ItemId:[],
+                "noMessage": isCheckedWithOutmgs,
+                "message": btoa(editorContentValue),
+                "docuBoxMessage": false,
+                "docuBoxEmails": "",
+                "daysToDelete": 0,
+                "approvalResponse": "",
+
+
+            }
+            console.log("final save data obj", obj);
+
+            var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
+            let cls = new CommanCLS(urlLetter, agrno, Email, password);
+
+            cls.MessagePublished_Json(obj, function (sts, data) {
+                if (sts) {
+                    // let js = JSON.parse(data);
+                    console.log("MessagePublished_Json", data)
+                    // if (js.Status == "success") {
+                    //     //setMessageId(js.Message)
+                    //     //setLoading(false);
+                    //     // Inside your function or event handler where you want to show the success message
+                    //     //handleSuccess(js.Message);
+                    //     //setOpen(false);
+                    // }
+                    // console.log("Response final", data)
+                    // setLoading(false);
+                }
+            })
+
+        }
+
+
+
+    }
+
+
+    const [isCheckedForApproval, setIsCheckedForApproval] = useState(false);
+
+    const handleCheckboxChangeForAppoval = (event) => {
+        setIsCheckedForApproval(event.target.checked);
+    };
+
+    const [isCheckedWithOutmgs, setisCheckedWithOutmgs] = useState(false);
+
+    const handleCheckboxChangeisCheckedWithOutmgs = (event) => {
+        setisCheckedWithOutmgs(event.target.checked);
+    };
 
     return (
         <React.Fragment>
@@ -774,6 +1192,8 @@ export default function CreateNewModalTask() {
                 onClose={handleClose}
                 aria-labelledby="responsive-dialog-title"
                 className="custom-modal"
+                maxWidth="xl" // Set maxWidth to control the width
+                fullWidth={true} // Ensure the dialog takes up the full width
             >
                 <DialogContent>
                     <DialogContentText>
@@ -788,7 +1208,7 @@ export default function CreateNewModalTask() {
                                     onClick={handleClickTastkType}
                                     className="btn-select"
                                 >
-                                    Task Type
+                                    {txtTaskType}
                                 </Button>
                                 <Menu
                                     id="basic-menu"
@@ -859,8 +1279,9 @@ export default function CreateNewModalTask() {
                                             <Box className>
                                                 <input
                                                     className="input-text"
+                                                    onChange={(e) => setTextSubject(e.target.value)}
                                                     type="text"
-                                                    value="This is Subject"
+                                                    value={textSubject}
                                                 />
                                             </Box>
                                         </Box>
@@ -880,91 +1301,150 @@ export default function CreateNewModalTask() {
                                         {/* attached to start */}
                                         <Box className='mt-3'>
 
-                                            <Box className='mb-3'>
+                                           
+                                            {/* attached to end */}
+
+                                            {isVisibleByTypeCRM && (
+                                                <>
+                                                 <Box className='mb-3'>
                                                 <Autocomplete
                                                     disablePortal
                                                     id="combo-box-demo"
-                                                    options={userListName}
+                                                    options={userList}
+                                                    getOptionLabel={(option) => option.ForwardTo}
                                                     renderInput={(params) => <TextField {...params} label="From" />}
                                                     className="w-100"
+                                                    value={selectedUSer}
+                                                    onChange={handleOptionChangeFromUser}
                                                 />
                                             </Box>
-                                            {/* attached to end */}
+                                                    <Box className='mb-3'>
+
+                                                        <Autocomplete
+                                                            multiple
+                                                            id="checkboxes-tags-demo"
+                                                            options={portalUser}
+                                                            disableCloseOnSelect
+                                                            getOptionLabel={(option) => option["E-Mail"]}
+                                                            renderOption={(props, option, { selected }) => (
+                                                                <li {...props}>
+                                                                    <Checkbox
+                                                                        icon={icon}
+                                                                        checkedIcon={checkedIcon}
+                                                                        style={{ marginRight: 8 }}
+                                                                        checked={selected}
+                                                                    />
+                                                                    {option["First Name"] + " " + option["Last Name"] + " (" + option["E-Mail"] + ")"}
+                                                                </li>
+                                                            )}
+                                                            renderInput={(params) => (
+                                                                <TextField {...params} label="To:" limitTags={2} placeholder="" />
+                                                            )}
+                                                            onChange={handleAutocompleteChange} // Handle selection change
+
+                                                        />
 
 
-                                            <Box className='mb-3'>
-                                                <Autocomplete
-                                                    multiple
-                                                    id="checkboxes-tags-demo"
-                                                    options={userListName}
-                                                    disableCloseOnSelect
-                                                    getOptionLabel={(option) => option.label}
-                                                    renderOption={(props, option, { selected }) => (
-                                                        <li {...props}>
-                                                            <Checkbox
-                                                                icon={icon}
-                                                                checkedIcon={checkedIcon}
-                                                                style={{ marginRight: 8 }}
-                                                                checked={selected}
-                                                            />
-                                                            {option.label}
-                                                        </li>
-                                                    )}
-                                                    renderInput={(params) => (
-                                                        <TextField {...params} label="To:" limitTags={2} placeholder="To" />
-                                                    )}
-                                                />
 
-                                            </Box>
+                                                    </Box>
 
-                                            <Box className='mb-3'>
-                                                <Autocomplete
-                                                    multiple
-                                                    id="checkboxes-tags-demo"
-                                                    options={userListName}
-                                                    disableCloseOnSelect
-                                                    getOptionLabel={(option) => option.label}
-                                                    renderOption={(props, option, { selected }) => (
-                                                        <li {...props}>
-                                                            <Checkbox
-                                                                icon={icon}
-                                                                checkedIcon={checkedIcon}
-                                                                style={{ marginRight: 8 }}
-                                                                checked={selected}
-                                                            />
-                                                            {option.label}
-                                                        </li>
-                                                    )}
-                                                    renderInput={(params) => (
-                                                        <TextField {...params} label="CC:" limitTags={2} placeholder="To" />
-                                                    )}
-                                                />
+                                                    <Box className='mb-3'>
+                                                        <Autocomplete
+                                                            multiple
+                                                            id="checkboxes-tags-demo"
+                                                            options={portalUser}
+                                                            disableCloseOnSelect
+                                                            getOptionLabel={(option) => option["E-Mail"]}
+                                                            renderOption={(props, option, { selected }) => (
+                                                                <li {...props}>
+                                                                    <Checkbox
+                                                                        icon={icon}
+                                                                        checkedIcon={checkedIcon}
+                                                                        style={{ marginRight: 8 }}
+                                                                        checked={selected}
+                                                                    />
+                                                                    {option["First Name"] + " " + option["Last Name"] + " (" + option["E-Mail"] + ")"}
+                                                                </li>
+                                                            )}
+                                                            renderInput={(params) => (
+                                                                <TextField {...params} label="CC:" limitTags={2} placeholder="" />
+                                                            )}
+                                                            onChange={handleAutocompleteChangeOnCC} // Handle selection change
+                                                        />
 
-                                            </Box>
+                                                    </Box>
 
-                                            <Box className='mb-3'>
-                                                <FormControlLabel control={<Checkbox Checkbox />} label="For Approval" />
-                                                <FormControlLabel control={<Checkbox Checkbox />} label="Send Without Message" />
-                                            </Box>
+                                                    <Box className='mb-3'>
+                                                        <FormControlLabel control={<Checkbox checked={isCheckedForApproval} onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
+                                                        <FormControlLabel control={<Checkbox checked={isCheckedWithOutmgs} onChange={handleCheckboxChangeisCheckedWithOutmgs} />} label="Send Without Message" />
 
+                                                        <Button
+                                                            variant="contained"
+                                                            id="fade-button"
+                                                            aria-controls={openTemp ? 'fade-menu' : undefined}
+                                                            aria-haspopup="true"
+                                                            aria-expanded={openTemp ? 'true' : undefined}
+                                                            onClick={handleClickAddTemplate}
+
+                                                        >
+                                                            Add Template
+                                                        </Button>
+                                                        <Menu
+                                                            id="fade-menu"
+                                                            MenuListProps={{
+                                                                'aria-labelledby': 'fade-button',
+                                                            }}
+                                                            anchorEl={anchorElTemp}
+                                                            open={openTemp}
+                                                            onClose={handleCloseTemp}
+                                                            TransitionComponent={Fade}
+                                                            style={{ width: '50%', pending: "12px" }}
+                                                        >
+                                                            {errorMgs ? (
+                                                                <span sx={{ color: "red" }}>Email is blank, please select the mail</span>
+                                                            ) : (
+                                                                null // or any other element you want to render when errorMgs is false
+                                                            )}
+                                                            <DataGrid
+                                                                dataSource={smsTemplate}
+                                                                allowColumnReordering={true}
+                                                                rowAlternationEnabled={true}
+                                                                showBorders={true}
+                                                                width={"100%"}
+                                                                selection={{ mode: 'single' }}
+                                                                onSelectionChanged={handleSelectionChangedTemp} // Handle selection change event
+                                                            >
+                                                                <FilterRow visible={true} />
+                                                                <SearchPanel visible={false} highlightCaseSensitive={true} />
+
+                                                                <Column
+                                                                    dataField="Description"
+                                                                    caption="Description"
+                                                                />
+
+                                                                <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
+                                                                <Paging defaultPageSize={10} />
+                                                            </DataGrid>
+                                                        </Menu>
+                                                    </Box>
+
+                                                    {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+                                                </>
+
+                                            )}
 
                                         </Box>
 
-
-
-
-
-
-
-
-                                        <Box className="mt-3 mb-3">
-                                            <textarea
-                                                className="form-control textarea resize-none"
-                                                placeholder="Description"
-                                                value={txtdescription} // Bind the value to the state
-                                                onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
-                                            ></textarea>
-                                        </Box>
+                                        {!isVisibleByTypeCRM && (<>
+                                            <Box className="mt-3 mb-3">
+                                                <textarea
+                                                    className="form-control textarea resize-none"
+                                                    placeholder="Description"
+                                                    value={txtdescription} // Bind the value to the state
+                                                    onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
+                                                ></textarea>
+                                            </Box>
+                                        </>)}
 
                                         <div className="mt-4">
                                             <Button
@@ -1166,7 +1646,7 @@ export default function CreateNewModalTask() {
                                 <Box className="file-uploads">
                                     {selectedFiles
                                         ? selectedFiles.map((file, index) => {
-                                            console.log("Uploadin", file);
+                                            // console.log("Uploadin", file);
 
                                             return (
                                                 <>
@@ -1240,23 +1720,37 @@ export default function CreateNewModalTask() {
                                         : null}
                                 </Box>
 
-                                <Box className="mt-3 mb-3">
+                                {/* <Box className="mt-3 mb-3">
                                     <textarea
                                         className="form-control textarea resize-none"
                                         placeholder="Write a comment..."
                                         value={txtcomment} // Bind the value to the state
                                         onChange={(e) => setTxtComment(e.target.value)} // Handle changes to the textarea
                                     ></textarea>
-                                </Box>
+                                </Box> */}
+                                {txtTaskType === "CRM" && (
+                                    <Button
+                                        variant="contained"
+                                        onClick={UploadAttachment}
+                                        // disabled={loading}
+                                        className="btn-blue-2 mt-3"
+                                    >
+                                        {'CRM Task'}
+                                    </Button>
+                                )}
 
-                                <Button
-                                    variant="contained"
-                                    onClick={UploadAttachment}
-                                    disabled={loading}
-                                    className="btn-blue-2 mt-3"
-                                >
-                                    {loading ? 'Submitting...' : 'Create Task'}
-                                </Button>
+                                {txtTaskType === "Portal" && (
+                                    <Button
+                                        variant="contained"
+                                        onClick={CreatePortalTask}
+                                        disabled={loading}
+                                        className="btn-blue-2 mt-3"
+                                    >
+                                        {'Portal Task'}
+                                    </Button>
+                                )}
+
+
                             </Box>
                             {/* col end */}
 
@@ -1407,10 +1901,13 @@ export default function CreateNewModalTask() {
                                                         <ListItem
                                                             alignItems="flex-start"
                                                             onClick={(e) => {
-                                                                console.log("client select", item.Client);
+                                                                //console.log("client select", item.Client);
                                                                 settxtClient(item.Client); // Assuming item.Client holds the value you want
                                                                 setTextClientId(item.ClientID);
                                                                 setClientAnchorEl(null);
+                                                                Json_GetClientCardDetails(item.ClientID)
+
+
                                                             }}
                                                             className="search-list"
                                                         >
@@ -1598,8 +2095,8 @@ export default function CreateNewModalTask() {
                                         dateAdapter={AdapterDayjs}
                                     >
                                         <DatePicker className="datepicker w-100"
-                                            defaultValue={remiderDate} // Set the default value using the value prop
-                                            onChange={(e) => setRemiderDate(e)} // Update the default date when the user changes it                      
+                                            defaultValue={expireDate} // Set the default value using the value prop
+                                            onChange={(e) => setExpireDate(e)} // Update the default date when the user changes it                      
                                             inputFormat="DD/MM/YYYY" // Set the input format to "dd/mm/yyyy"
                                         />
                                     </LocalizationProvider>
@@ -1773,7 +2270,7 @@ export default function CreateNewModalTask() {
                         </Box>
                     </DialogContentText>
 
-                    {/* <hr /> */}
+
 
                     <DialogActions className="px-0 w-100 p-0">
                         <Box className="d-flex align-items-center justify-content-end w-100">
@@ -1827,22 +2324,49 @@ export default function CreateNewModalTask() {
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
 
+                        <Box className="d-flex align-items-center justify-content-between">
+
+                            <div>
+                                <Button
+                                    id="basic-button"
+                                >
+                                    Document List
+                                </Button>
+
+                            </div>
+
+
+
+
+                            <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+                        </Box>
+
+                        <hr />
+
                         <DataGrid
                             dataSource={dmsDocumentList}
                             allowColumnReordering={true}
                             rowAlternationEnabled={true}
                             showBorders={true}
                             width="100%"
-                        //onContentReady={onContentReady}
+                            selectedRowKeys={selectedRows}
+                            selection={{ mode: 'multiple' }}
+                            onSelectionChanged={handleSelectionChanged} // Handle selection change event
                         >
-
+                            <FilterRow visible={true} />
                             <SearchPanel visible={true} highlightCaseSensitive={true} />
 
-                            <Column dataField="Product" groupIndex={0} />
+
                             <Column
-                                dataField="Client"
-                                caption="Client"
+                                dataField="Type"
+                                caption="Type"
+                                cellRender={renderTypeCell} // Render cells based on condition
                             />
+
                             <Column
                                 dataField="Description"
                                 caption="Description"
@@ -1850,31 +2374,28 @@ export default function CreateNewModalTask() {
                             <Column
                                 dataField="Section"
                                 caption="Section"
-
                             />
-
-
+                            <Column
+                                dataField="Client"
+                                caption="Client"
+                            />
                             <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
                             <Paging defaultPageSize={10} />
                         </DataGrid>
+
                         {/* file upload end */}
+
+                        <Button
+                            variant="contained"
+                            onClick={AddDocuments}
+                            className="btn-blue-2 mt-3"
+                        >
+                            {'Add Document'}
+                        </Button>
+
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
         </React.Fragment>
     );
 }
-
-
-
-// 
-const userListName = [
-    { label: 'Demo Account Creative Intell UK' },
-    { label: 'Demo Accountancy' },
-    { label: 'DemoUser4' },
-    { label: 'DemoUser4' },
-    { label: 'DemoUser4' },
-    { label: 'DemoUser4' },
-    { label: 'Demo Account Creative Intell UK' },
-    { label: 'Demo Accountancy' },
-];
