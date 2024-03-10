@@ -1,6 +1,6 @@
 import React from 'react';
 import user from "../../images/01.png";
-import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Link } from '@mui/material';
+import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Link,MenuItem,Menu } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
@@ -9,6 +9,12 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import Activity from '../../client/utils/Activity';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import CategoryIcon from '@mui/icons-material/Category';
+import GradingIcon from '@mui/icons-material/Grading';
+import InsertLinkIcon from '@mui/icons-material/InsertLink';
+import AddIcon from '@mui/icons-material/Add';
+import AlarmOnIcon from '@mui/icons-material/AlarmOn';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -21,6 +27,15 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
     // const handleChange = (event, newValue) => {
     //     setValue(newValue);
     // };
+
+    const [anchorElChangeIndex, setAnchorElChangeIndex] = React.useState(null);
+    const ChangeIndex = Boolean(anchorElChangeIndex);
+    const handleClickChangeIndex = (event) => {
+        setAnchorElChangeIndex(event.currentTarget);
+    };
+    const handleCloseChangeIndex = () => {
+        setAnchorElChangeIndex(null);
+    };
 
     const [value, setValue] = React.useState('1');
 
@@ -54,18 +69,38 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                     {/*  */}
 
                     <Box className="d-flex align-items-center justify-content-between flex-wrap">
-
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Rename</Button>
-
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Edit on browser</Button>
-
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Category</Button>
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Refile</Button>
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Links</Button>
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Add Activity</Button>
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button>
                         <Button className='btn-blue-2 me-2 mb-1' size="small" >Create Task</Button>
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button>
+
+                        <Box>
+                            <Button
+                                id="basic-button"
+                                aria-controls={ChangeIndex ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={ChangeIndex ? 'true' : undefined}
+                                onClick={handleClickChangeIndex}
+                                className='btn-blue-2'
+                            >
+                                Change Index <KeyboardArrowDownIcon className='ms-1'/>
+                            </Button>
+                            <Menu
+                                id="basic-menu"
+                                className='custom-dropdown'
+                                anchorEl={anchorElChangeIndex}
+                                open={ChangeIndex}
+                                onClose={handleCloseChangeIndex}
+                                MenuListProps={{
+                                    'aria-labelledby': 'basic-button',
+                                }}                                
+                            >
+                                <MenuItem onClick={handleCloseChangeIndex}> <CategoryIcon className='me-2'/> Category</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <GradingIcon className='me-2'/> Refile</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <InsertLinkIcon className='me-2'/> Links</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <AddIcon className='me-2'/> Add</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <AlarmOnIcon className='me-2'/> Activity</MenuItem>
+                            </Menu>
+                        </Box>
 
                         <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
                             <span className="material-symbols-outlined text-black">

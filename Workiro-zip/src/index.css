@@ -476,6 +476,7 @@ hr {
   border-radius: 10px;
   /* padding: 10px 20px 10px; */
 }
+
 .full-modal .MuiDialog-container .MuiDialog-paperWidthSm {
   width: 100%;
   max-width: 100%;
@@ -1364,6 +1365,49 @@ span.tox-statusbar__branding {
 .file-uploads .file-uploads-label:hover .hover-checkbox {
   opacity: 1;
   visibility: visible;
+}
+
+.text-editor-box-name .tox.tox-tinymce {
+  height: 160px !important;
+}
+
+.file-upload-height {
+  max-height: 118px;
+  overflow: auto;
+  margin-top: 8px;
+}
+.select-border .custom-dropdown fieldset {
+  border: 0px;
+}
+.select-border .custom-dropdown .MuiSvgIcon-root {
+  display: none;
+}
+.select-border .custom-dropdown .MuiSelect-select {
+  padding: 4px 30px 4px 0 !important;
+  /* background: #fff; */
+  /* color: #000000; */
+  font-size: 14px;
+  /* padding: 0px; */
+  font-weight: 600;
+  border-bottom: 2px solid;
+  border-radius: 0px;
+}
+/* .select-border .MuiPopover-paper.MuiMenu-paper {
+  background: #fff;
+  box-shadow: 0 9px 40px #ccc;
+  margin-top: 12px;
+  border-radius: 10px;
+  padding: 2px 7px;
+  min-width: 140px !important;
+  text-align: center;
+} */
+.MuiMenu-paper.MuiMenu-paper {
+  /* box-shadow: none; */
+  background: #fff;
+  box-shadow: 0 9px 40px #ccc;
+  margin-top: 10px;
+  border-radius: 6px;
+  padding: 0px 7px;
 }
 
 @media only screen and (max-width: 1366px) {

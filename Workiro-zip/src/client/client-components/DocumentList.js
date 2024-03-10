@@ -154,10 +154,10 @@ export default function DocumentList({ clientId }) {
                     if (json.Table6) {
                         // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                         let docs = json.Table6;
-                        docs.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
+                        docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
                         //docs.map((itm)=>console.log("check in map",itm["Item Date"]));
                         setDocuments(docs);
-                        let desc = docs.filter((item) => item.Description!=="");
+                        let desc = docs.filter((item) => item.Description !== "");
                         // console.log("desc", desc);
                         setgroupedOptions(desc);
                     }
@@ -205,28 +205,28 @@ export default function DocumentList({ clientId }) {
         const lastSixMonthsDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 6);
         const month = lastSixMonthsDate.getMonth() + 1; // Adding 1 because January is represented as 0
         const year = lastSixMonthsDate.getFullYear();
-        return month<10 ? `0${month}/${year}` : `${month}/${year}`;
+        return month < 10 ? `0${month}/${year}` : `${month}/${year}`;
     }
     function getLastEighteenMonthsDate() {
         const currentDate = new Date();
         const lastEighteenMonthsDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 18);
         const month = lastEighteenMonthsDate.getMonth() + 1; // Adding 1 because January is represented as 0
         const year = lastEighteenMonthsDate.getFullYear();
-        return month<10 ? `0${month}/${year}` : `${month}/${year}`;
+        return month < 10 ? `0${month}/${year}` : `${month}/${year}`;
     }
     function getLastTwelveMonthsDate() {
         const currentDate = new Date();
         const lastTwelveMonthsDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 11);
         const month = lastTwelveMonthsDate.getMonth() + 1; // Adding 1 because January is represented as 0
         const year = lastTwelveMonthsDate.getFullYear();
-        return month<10 ? `0${month}/${year}` : `${month}/${year}`;
+        return month < 10 ? `0${month}/${year}` : `${month}/${year}`;
     }
     function getLastThreeMonthsDate() {
         const currentDate = new Date();
         const lastThreeMonthsDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 3);
         const month = lastThreeMonthsDate.getMonth() + 1; // Adding 1 because January is represented as 0
         const year = lastThreeMonthsDate.getFullYear();
-        return month<10 ? `0${month}/${year}` : `${month}/${year}`;
+        return month < 10 ? `0${month}/${year}` : `${month}/${year}`;
     }
     function getLastDay() {
         const currentDate = new Date();
@@ -235,7 +235,7 @@ export default function DocumentList({ clientId }) {
         const month = currentDate.getMonth() + 1; // Adding 1 because January is represented as 0
         const year = currentDate.getFullYear();
 
-        return day<10 && month<10? `0${day}/0${month}/${year}`: day<10 && month>=10 ? `0${day}/${month}/${year}`: day>=10 && month<10 ? `${day}/0${month}/${year}`: `${day}/${month}/${year}`;
+        return day < 10 && month < 10 ? `0${day}/0${month}/${year}` : day < 10 && month >= 10 ? `0${day}/${month}/${year}` : day >= 10 && month < 10 ? `${day}/0${month}/${year}` : `${day}/${month}/${year}`;
     }
 
     function getLastWeek() {
@@ -247,7 +247,7 @@ export default function DocumentList({ clientId }) {
         const month = sevenDaysAgoDate.getMonth() + 1; // Adding 1 because January is represented as 0
         const year = sevenDaysAgoDate.getFullYear();
 
-        return day<10 && month<10? `0${day}/0${month}/${year}`: day<10 && month>=10 ? `0${day}/${month}/${year}`: day>=10 && month<10 ? `${day}/0${month}/${year}`: `${day}/${month}/${year}`;
+        return day < 10 && month < 10 ? `0${day}/0${month}/${year}` : day < 10 && month >= 10 ? `0${day}/${month}/${year}` : day >= 10 && month < 10 ? `${day}/0${month}/${year}` : `${day}/${month}/${year}`;
     }
 
     function getLast24Months() {
@@ -255,15 +255,15 @@ export default function DocumentList({ clientId }) {
         const lastTwentyFourMonthsDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 24);
         const month = lastTwentyFourMonthsDate.getMonth() + 1; // Adding 1 because January is represented as 0
         const year = lastTwentyFourMonthsDate.getFullYear();
-        return month<10 ? `0${month}/${year}`: `${month}/${year}`;
+        return month < 10 ? `0${month}/${year}` : `${month}/${year}`;
     }
-    
+
     function getLast30Months() {
         const currentDate = new Date();
         const lastTwentyFourMonthsDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 30);
         const month = lastTwentyFourMonthsDate.getMonth() + 1; // Adding 1 because January is represented as 0
         const year = lastTwentyFourMonthsDate.getFullYear();
-        return month<10 ? `0${month}/${year}`: `${month}/${year}`;
+        return month < 10 ? `0${month}/${year}` : `${month}/${year}`;
     }
 
     function getLast36Months() {
@@ -271,15 +271,15 @@ export default function DocumentList({ clientId }) {
         const lastTwentyFourMonthsDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 36);
         const month = lastTwentyFourMonthsDate.getMonth() + 1; // Adding 1 because January is represented as 0
         const year = lastTwentyFourMonthsDate.getFullYear();
-        return month<10 ? `0${month}/${year}`: `${month}/${year}`;
+        return month < 10 ? `0${month}/${year}` : `${month}/${year}`;
     }
-    
+
     function getLast42Months() {
         const currentDate = new Date();
         const lastTwentyFourMonthsDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 42);
         const month = lastTwentyFourMonthsDate.getMonth() + 1; // Adding 1 because January is represented as 0
         const year = lastTwentyFourMonthsDate.getFullYear();
-        return month<10 ? `0${month}/${year}`: `${month}/${year}`;
+        return month < 10 ? `0${month}/${year}` : `${month}/${year}`;
     }
 
     function getLast48Months() {
@@ -287,39 +287,39 @@ export default function DocumentList({ clientId }) {
         const lastTwentyFourMonthsDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 48);
         const month = lastTwentyFourMonthsDate.getMonth() + 1; // Adding 1 because January is represented as 0
         const year = lastTwentyFourMonthsDate.getFullYear();
-        return month<10 ? `0${month}/${year}`: `${month}/${year}`;
+        return month < 10 ? `0${month}/${year}` : `${month}/${year}`;
     }
     function getLast54Months() {
         const currentDate = new Date();
         const lastTwentyFourMonthsDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 54);
         const month = lastTwentyFourMonthsDate.getMonth() + 1; // Adding 1 because January is represented as 0
         const year = lastTwentyFourMonthsDate.getFullYear();
-        return month<10 ? `0${month}/${year}`: `${month}/${year}`;
+        return month < 10 ? `0${month}/${year}` : `${month}/${year}`;
     }
     function getLast60Months() {
         const currentDate = new Date();
         const lastTwentyFourMonthsDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 60);
         const month = lastTwentyFourMonthsDate.getMonth() + 1; // Adding 1 because January is represented as 0
         const year = lastTwentyFourMonthsDate.getFullYear();
-        return month<10 ? `0${month}/${year}`: `${month}/${year}`;
+        return month < 10 ? `0${month}/${year}` : `${month}/${year}`;
     }
-      
+
     const handleDocumentsFilter = (target) => {
         if (target === "LastMonth") {
             // console.log(getLastMonth().split("/"));
             let last = getLastMonth().split("/");
             // documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
             let test = [];
-            let fltData = documents.filter((itm)=>{
+            let fltData = documents.filter((itm) => {
                 let all = itm["Item Date"].split("/");
-                if(all[1]>=last[0] && all[2]===last[1]){
+                if (all[1] >= last[0] && all[2] === last[1]) {
                     test.push(itm["Item Date"]);
                     return itm;
                 }
             });
             // console.log("last indexed data of Last 3 Months Filtered Result",test[test.length-1]);
             // console.log(test.length);
-            fltData.map((item)=>console.log(item.Description,"----",item["Item Date"]));
+            fltData.map((item) => console.log(item.Description, "----", item["Item Date"]));
 
             setAdvFilteredResult(fltData);
         } else if (target === "LastSixMonth") {
@@ -330,15 +330,15 @@ export default function DocumentList({ clientId }) {
             // }
             // documents.map((itm)=>console.log(itm["Item Date"]));
             let test = [];
-            let fltData = documents.filter((itm)=>{
+            let fltData = documents.filter((itm) => {
                 let all = itm["Item Date"].split("/");
                 //console.log(all[1],"--",all[2],"-----",last[0],"--",last[1]);
-                if(all[2]>=last[1]){
-                    if(all[2]>last[1]){
+                if (all[2] >= last[1]) {
+                    if (all[2] > last[1]) {
                         // console.log("populated Data: ", itm["Item Date"]);
-                         test.push(itm["Item Date"])
+                        test.push(itm["Item Date"])
                         return itm;
-                    }else if(all[1]>=last[0]){
+                    } else if (all[1] >= last[0]) {
                         test.push(itm["Item Date"])
                         return itm
                     }
@@ -346,26 +346,26 @@ export default function DocumentList({ clientId }) {
             });
             // console.log("last indexed data of Last 6 Months Filtered Result",test[test.length-1]);
             // console.log(test.length);
-            fltData.map((item)=>console.log(item.Description,"----",item["Item Date"]));
+            fltData.map((item) => console.log(item.Description, "----", item["Item Date"]));
 
             // console.log("fltDatat------",fltData);
             // setIsLastSixMonth(true);
             setAdvFilteredResult(fltData);
-        }else if(target==="Last18Month"){
+        } else if (target === "Last18Month") {
             let last = getLastEighteenMonthsDate().split("/");
             // console.log(last);
             // documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
             // // documents.map((itm)=>console.log(itm["Item Date"]));
             let test = [];
-            let fltData = documents.filter((itm)=>{
+            let fltData = documents.filter((itm) => {
                 let all = itm["Item Date"].split("/");
                 //console.log(all[1],"--",all[2],"-----",last[0],"--",last[1]);
-                if(all[2]>=last[1]){
-                    if(all[2]>last[1]){
+                if (all[2] >= last[1]) {
+                    if (all[2] > last[1]) {
                         // console.log("populated Data: ", itm["Item Date"]);
-                         test.push(itm["Item Date"])
+                        test.push(itm["Item Date"])
                         return itm;
-                    }else if(all[1]>=last[0]){
+                    } else if (all[1] >= last[0]) {
                         test.push(itm["Item Date"])
                         return itm
                     }
@@ -374,25 +374,25 @@ export default function DocumentList({ clientId }) {
             // console.log("last indexed data of Last 18 Months Filtered Result",test[test.length-1]);
             // console.log(test.length);
             // test.map((item)=>console.log(item));
-            fltData.map((item)=>console.log(item.Description,"----",item["Item Date"]));
+            fltData.map((item) => console.log(item.Description, "----", item["Item Date"]));
 
             // console.log("fltDatat------",fltData);
             setAdvFilteredResult(fltData);
-        }else if(target==="Last12Month"){
+        } else if (target === "Last12Month") {
             let last = getLastTwelveMonthsDate().split("/");
             // console.log(last);
             // documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
             // // documents.map((itm)=>console.log(itm["Item Date"]));
             let test = [];
-            let fltData = documents.filter((itm)=>{
+            let fltData = documents.filter((itm) => {
                 let all = itm["Item Date"].split("/");
                 //console.log(all[1],"--",all[2],"-----",last[0],"--",last[1]);
-                if(all[2]>=last[1]){
-                    if(all[2]>last[1]){
+                if (all[2] >= last[1]) {
+                    if (all[2] > last[1]) {
                         // console.log("populated Data: ", itm["Item Date"]);
-                         test.push(itm["Item Date"])
+                        test.push(itm["Item Date"])
                         return itm;
-                    }else if(all[1]>=last[0]){
+                    } else if (all[1] >= last[0]) {
                         test.push(itm["Item Date"])
                         return itm
                     }
@@ -401,25 +401,25 @@ export default function DocumentList({ clientId }) {
             // console.log("last indexed data of Last 12 Months Filtered Result",test[test.length-1]);
             // console.log(test.length);
             // test.map((item)=>console.log(item));
-            fltData.map((item)=>console.log(item.Description,"----",item["Item Date"]));
+            fltData.map((item) => console.log(item.Description, "----", item["Item Date"]));
 
             // console.log("fltDatat------",fltData);
             setAdvFilteredResult(fltData);
-        }else if(target==="LastThreeMonth"){
+        } else if (target === "LastThreeMonth") {
             let last = getLastThreeMonthsDate().split("/");
             // console.log(last);
             // documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
             // // documents.map((itm)=>console.log(itm["Item Date"]));
             let test = [];
-            let fltData = documents.filter((itm)=>{
+            let fltData = documents.filter((itm) => {
                 let all = itm["Item Date"].split("/");
                 // console.log(all[1],"--",all[2],"-----",last[0],"--",last[1]);
-                if(all[2]>=last[1]){
-                    if(all[2]>last[1]){
+                if (all[2] >= last[1]) {
+                    if (all[2] > last[1]) {
                         //  console.log("populated Data: ", itm["Item Date"]);
-                         test.push(itm["Item Date"])
+                        test.push(itm["Item Date"])
                         return itm;
-                    }else if(all[1]>=last[0]){
+                    } else if (all[1] >= last[0]) {
                         test.push(itm["Item Date"])
                         return itm;
                     }
@@ -428,20 +428,20 @@ export default function DocumentList({ clientId }) {
             // console.log("last indexed data of Last Three Months Filtered Result",test[test.length-1]);
             //console.log(test.length);
             // console.log(fltData.length);
-            fltData.map((item)=>console.log(item.Description,"----",item["Item Date"]));
+            fltData.map((item) => console.log(item.Description, "----", item["Item Date"]));
 
             // console.log("fltDatat------",fltData);
             setAdvFilteredResult(fltData);
-        }else if(target==="LastDay"){
+        } else if (target === "LastDay") {
             let last = getLastDay().split("/");
             // console.log(last);
             // documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
             // // documents.map((itm)=>console.log(itm["Item Date"]));
             let test = [];
-            let fltData = documents.filter((itm)=>{
+            let fltData = documents.filter((itm) => {
                 let all = itm["Item Date"].split("/");
                 // console.log(all[1],"--",all[2],"-----",last[0],"--",last[1]);
-                if(all[2]>=last[2]){
+                if (all[2] >= last[2]) {
                     // if(all[2]>last[2]){
                     //     //  console.log("populated Data: ", itm["Item Date"]);
                     //      test.push(itm["Item Date"])
@@ -450,8 +450,8 @@ export default function DocumentList({ clientId }) {
                     //     test.push(itm["Item Date"])
                     //     return itm;
                     // }
-                    if(all[1]>=last[1]){
-                        if(all[0]>=last[0]){
+                    if (all[1] >= last[1]) {
+                        if (all[0] >= last[0]) {
                             test.push(itm["Item Date"])
                             return itm;
                         }
@@ -461,18 +461,18 @@ export default function DocumentList({ clientId }) {
             // console.log("last indexed data of Last Three Months Filtered Result",test[test.length-1]);
             //console.log(test.length);
             // console.log(fltData.length);
-            fltData.map((item)=>console.log(item.Description,"----",item["Item Date"]));
+            fltData.map((item) => console.log(item.Description, "----", item["Item Date"]));
 
             // console.log("fltDatat------",fltData);
             setAdvFilteredResult(fltData);
-        }else if(target === "LastWeek"){
+        } else if (target === "LastWeek") {
             let last = getLastWeek().split("/");
             console.log(last);
             let test = [];
-            let fltData = documents.filter((itm)=>{
+            let fltData = documents.filter((itm) => {
                 let all = itm["Item Date"].split("/");
                 // console.log(all[1],"--",all[2],"-----",last[0],"--",last[1]);
-                if(all[2]>=last[2]){
+                if (all[2] >= last[2]) {
                     // if(all[2]>last[2]){
                     //     //  console.log("populated Data: ", itm["Item Date"]);
                     //      test.push(itm["Item Date"])
@@ -481,8 +481,8 @@ export default function DocumentList({ clientId }) {
                     //     test.push(itm["Item Date"])
                     //     return itm;
                     // }
-                    if(all[1]>=last[1]){
-                        if(all[0]>=last[0]){
+                    if (all[1] >= last[1]) {
+                        if (all[0] >= last[0]) {
                             test.push(itm["Item Date"])
                             return itm;
                         }
@@ -496,23 +496,23 @@ export default function DocumentList({ clientId }) {
 
             // console.log("fltDatat------",fltData);
             setAdvFilteredResult(fltData);
-        }else if(target === "All"){
+        } else if (target === "All") {
             setAdvFilteredResult([]);
-        }else if(target === "Last24Months"){
+        } else if (target === "Last24Months") {
             let last = getLast24Months().split("/");
             // console.log(last);
             // documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
             // // documents.map((itm)=>console.log(itm["Item Date"]));
             let test = [];
-            let fltData = documents.filter((itm)=>{
+            let fltData = documents.filter((itm) => {
                 let all = itm["Item Date"].split("/");
                 //console.log(all[1],"--",all[2],"-----",last[0],"--",last[1]);
-                if(all[2]>=last[1]){
-                    if(all[2]>=last[1]){
+                if (all[2] >= last[1]) {
+                    if (all[2] >= last[1]) {
                         // console.log("populated Data: ", itm["Item Date"]);
-                         test.push(itm["Item Date"])
+                        test.push(itm["Item Date"])
                         return itm;
-                    }else if(all[1]>=last[0]){
+                    } else if (all[1] >= last[0]) {
                         test.push(itm["Item Date"])
                         return itm
                     }
@@ -525,21 +525,21 @@ export default function DocumentList({ clientId }) {
 
             // console.log("fltDatat------",fltData);
             setAdvFilteredResult(fltData);
-        }else if(target === "Last30Months"){
+        } else if (target === "Last30Months") {
             let last = getLast30Months().split("/");
             // console.log(last);
             // documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
             // // documents.map((itm)=>console.log(itm["Item Date"]));
             let test = [];
-            let fltData = documents.filter((itm)=>{
+            let fltData = documents.filter((itm) => {
                 let all = itm["Item Date"].split("/");
                 //console.log(all[1],"--",all[2],"-----",last[0],"--",last[1]);
-                if(all[2]>=last[1]){
-                    if(all[2]>=last[1]){
+                if (all[2] >= last[1]) {
+                    if (all[2] >= last[1]) {
                         // console.log("populated Data: ", itm["Item Date"]);
-                         test.push(itm["Item Date"])
+                        test.push(itm["Item Date"])
                         return itm;
-                    }else if(all[1]>=last[0]){
+                    } else if (all[1] >= last[0]) {
                         test.push(itm["Item Date"])
                         return itm
                     }
@@ -552,21 +552,21 @@ export default function DocumentList({ clientId }) {
 
             // console.log("fltDatat------",fltData);
             setAdvFilteredResult(fltData);
-        }else if(target === "Last36Months"){
+        } else if (target === "Last36Months") {
             let last = getLast36Months().split("/");
             // console.log(last);
             // documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
             // // documents.map((itm)=>console.log(itm["Item Date"]));
             let test = [];
-            let fltData = documents.filter((itm)=>{
+            let fltData = documents.filter((itm) => {
                 let all = itm["Item Date"].split("/");
                 //console.log(all[1],"--",all[2],"-----",last[0],"--",last[1]);
-                if(all[2]>=last[1]){
-                    if(all[2]>=last[1]){
+                if (all[2] >= last[1]) {
+                    if (all[2] >= last[1]) {
                         // console.log("populated Data: ", itm["Item Date"]);
-                         test.push(itm["Item Date"])
+                        test.push(itm["Item Date"])
                         return itm;
-                    }else if(all[1]>=last[0]){
+                    } else if (all[1] >= last[0]) {
                         test.push(itm["Item Date"])
                         return itm
                     }
@@ -575,25 +575,25 @@ export default function DocumentList({ clientId }) {
             // console.log("last indexed data of Last 12 Months Filtered Result",test[test.length-1]);
             // console.log(test.length);
             // test.map((item)=>console.log(item));
-            fltData.map((item)=>console.log(item.Description,"----",item["Item Date"]));
+            fltData.map((item) => console.log(item.Description, "----", item["Item Date"]));
 
             // console.log("fltDatat------",fltData);
             setAdvFilteredResult(fltData);
-        }else if(target === "Last42Months"){
+        } else if (target === "Last42Months") {
             let last = getLast42Months().split("/");
             console.log(last);
             // documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
             // // documents.map((itm)=>console.log(itm["Item Date"]));
             let test = [];
-            let fltData = documents.filter((itm)=>{
+            let fltData = documents.filter((itm) => {
                 let all = itm["Item Date"].split("/");
                 //console.log(all[1],"--",all[2],"-----",last[0],"--",last[1]);
-                if(all[2]>=last[1]){
-                    if(all[2]>=last[1]){
+                if (all[2] >= last[1]) {
+                    if (all[2] >= last[1]) {
                         // console.log("populated Data: ", itm["Item Date"]);
-                         test.push(itm["Item Date"])
+                        test.push(itm["Item Date"])
                         return itm;
-                    }else if(all[1]>=last[0]){
+                    } else if (all[1] >= last[0]) {
                         test.push(itm["Item Date"])
                         return itm
                     }
@@ -602,25 +602,25 @@ export default function DocumentList({ clientId }) {
             // console.log("last indexed data of Last 12 Months Filtered Result",test[test.length-1]);
             // console.log(test.length);
             // test.map((item)=>console.log(item));
-            fltData.map((item)=>console.log(item.Description,"----",item["Item Date"]));
+            fltData.map((item) => console.log(item.Description, "----", item["Item Date"]));
 
             // console.log("fltDatat------",fltData);
             setAdvFilteredResult(fltData);
-        }else if(target === "Last48Months"){
+        } else if (target === "Last48Months") {
             let last = getLast48Months().split("/");
             console.log(last);
             // documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
             // // documents.map((itm)=>console.log(itm["Item Date"]));
             let test = [];
-            let fltData = documents.filter((itm)=>{
+            let fltData = documents.filter((itm) => {
                 let all = itm["Item Date"].split("/");
                 //console.log(all[1],"--",all[2],"-----",last[0],"--",last[1]);
-                if(all[2]>=last[1]){
-                    if(all[2]>=last[1]){
+                if (all[2] >= last[1]) {
+                    if (all[2] >= last[1]) {
                         // console.log("populated Data: ", itm["Item Date"]);
-                         test.push(itm["Item Date"])
+                        test.push(itm["Item Date"])
                         return itm;
-                    }else if(all[1]>=last[0]){
+                    } else if (all[1] >= last[0]) {
                         test.push(itm["Item Date"])
                         return itm
                     }
@@ -629,25 +629,25 @@ export default function DocumentList({ clientId }) {
             // console.log("last indexed data of Last 12 Months Filtered Result",test[test.length-1]);
             // console.log(test.length);
             // test.map((item)=>console.log(item));
-            fltData.map((item)=>console.log(item.Description,"----",item["Item Date"]));
+            fltData.map((item) => console.log(item.Description, "----", item["Item Date"]));
 
             // console.log("fltDatat------",fltData);
             setAdvFilteredResult(fltData);
-        }else if(target === "Last54Months"){
+        } else if (target === "Last54Months") {
             let last = getLast54Months().split("/");
             console.log(last);
             // documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
             // // documents.map((itm)=>console.log(itm["Item Date"]));
             let test = [];
-            let fltData = documents.filter((itm)=>{
+            let fltData = documents.filter((itm) => {
                 let all = itm["Item Date"].split("/");
                 //console.log(all[1],"--",all[2],"-----",last[0],"--",last[1]);
-                if(all[2]>=last[1]){
-                    if(all[2]>=last[1]){
+                if (all[2] >= last[1]) {
+                    if (all[2] >= last[1]) {
                         // console.log("populated Data: ", itm["Item Date"]);
-                         test.push(itm["Item Date"])
+                        test.push(itm["Item Date"])
                         return itm;
-                    }else if(all[1]>=last[0]){
+                    } else if (all[1] >= last[0]) {
                         test.push(itm["Item Date"])
                         return itm
                     }
@@ -656,25 +656,25 @@ export default function DocumentList({ clientId }) {
             // console.log("last indexed data of Last 12 Months Filtered Result",test[test.length-1]);
             // console.log(test.length);
             // test.map((item)=>console.log(item));
-            fltData.map((item)=>console.log(item.Description,"----",item["Item Date"]));
+            fltData.map((item) => console.log(item.Description, "----", item["Item Date"]));
 
             // console.log("fltDatat------",fltData);
             setAdvFilteredResult(fltData);
-        }else if(target === "Last60Months"){
+        } else if (target === "Last60Months") {
             let last = getLast60Months().split("/");
             console.log(last);
             // documents.map((itm)=>itm["Item Date"]=formatDate(itm["Item Date"]));
             // // documents.map((itm)=>console.log(itm["Item Date"]));
             let test = [];
-            let fltData = documents.filter((itm)=>{
+            let fltData = documents.filter((itm) => {
                 let all = itm["Item Date"].split("/");
                 //console.log(all[1],"--",all[2],"-----",last[0],"--",last[1]);
-                if(all[2]>=last[1]){
-                    if(all[2]>=last[1]){
+                if (all[2] >= last[1]) {
+                    if (all[2] >= last[1]) {
                         // console.log("populated Data: ", itm["Item Date"]);
-                         test.push(itm["Item Date"])
+                        test.push(itm["Item Date"])
                         return itm;
-                    }else if(all[1]>=last[0]){
+                    } else if (all[1] >= last[0]) {
                         test.push(itm["Item Date"])
                         return itm
                     }
@@ -683,14 +683,14 @@ export default function DocumentList({ clientId }) {
             // console.log("last indexed data of Last 12 Months Filtered Result",test[test.length-1]);
             // console.log(test.length);
             // test.map((item)=>console.log(item));
-            fltData.map((item)=>console.log(item.Description,"----",item["Item Date"]));
+            fltData.map((item) => console.log(item.Description, "----", item["Item Date"]));
 
             // console.log("fltDatat------",fltData);
             setAdvFilteredResult(fltData);
         }
     }
 
-    const handleFilterByRange=()=>{
+    const handleFilterByRange = () => {
         let from = fromDate.split("-");
         let to = toDate.split("-");
         // console.log(from);
@@ -705,20 +705,20 @@ export default function DocumentList({ clientId }) {
         const endDateParts = formatTo.split('/');
 
         const startDate = new Date(startDateParts[2], startDateParts[1] - 1, startDateParts[0]); // -1 because months are 0-indexed
-  const endDate = new Date(endDateParts[2], endDateParts[1] - 1, endDateParts[0]); // -1 because months are 0-indexed
+        const endDate = new Date(endDateParts[2], endDateParts[1] - 1, endDateParts[0]); // -1 because months are 0-indexed
 
-  // Filter data array
-  const filteredData = documents.filter(item => {
-    // Parse item's docDate into a Date object
-    const docDateParts = item["Item Date"].split('/');
-    const docDate = new Date(docDateParts[2], docDateParts[1] - 1, docDateParts[0]); // -1 because months are 0-indexed
+        // Filter data array
+        const filteredData = documents.filter(item => {
+            // Parse item's docDate into a Date object
+            const docDateParts = item["Item Date"].split('/');
+            const docDate = new Date(docDateParts[2], docDateParts[1] - 1, docDateParts[0]); // -1 because months are 0-indexed
 
-    // Return true if the docDate is within the range
-    return docDate >= startDate && docDate <= endDate;
-  });
+            // Return true if the docDate is within the range
+            return docDate >= startDate && docDate <= endDate;
+        });
 
-   filteredData.map((itm)=>console.log(itm.Description,"---",itm["Item Date"]));
-   setAdvFilteredResult(filteredData);
+        filteredData.map((itm) => console.log(itm.Description, "---", itm["Item Date"]));
+        setAdvFilteredResult(filteredData);
 
 
 
@@ -784,7 +784,7 @@ export default function DocumentList({ clientId }) {
         // }
 
 
-        
+
         //  -----  working code starts From : 09/03/2024. To: 08/01/2024
         // if(from[0]===to[0]){
         //     if(from[1]>=to[1]){
@@ -809,38 +809,38 @@ export default function DocumentList({ clientId }) {
 
         // console.log("fltDatat------",fltData);
         // setAdvFilteredResult(fltData);
-        
+
         // console.log("From : ",fromDate.split("-"));
         // console.log("To : ",toDate.split("-"));
         // let from = `${fromRawFormat[2]}/${fromRawFormat[1]}/${fromRawFormat[0]}`;
         // let to = `${toRawFormat[2]}/${toRawFormat[1]}/${toRawFormat[0]}`;
         // console.log(from,"-----",to);
-            // let test = [];
-            // let fltData = documents.filter((itm)=>{
-            //     let all = itm["Item Date"].split("/");
-            //     //console.log(all[1],"--",all[2],"-----",last[0],"--",last[1]);
-            //     if(all[2]>=last[1]){
-            //         if(all[2]>=last[1]){
-            //             // console.log("populated Data: ", itm["Item Date"]);
-            //              test.push(itm["Item Date"])
-            //             return itm;
-            //         }else if(all[1]>=last[0]){
-            //             test.push(itm["Item Date"])
-            //             return itm
-            //         }
-            //     }
-            // });
-            // // console.log("last indexed data of Last 12 Months Filtered Result",test[test.length-1]);
-            // // console.log(test.length);
-            // // test.map((item)=>console.log(item));
-            // fltData.map((item)=>console.log(item.Description,"----",item["Item Date"]));
+        // let test = [];
+        // let fltData = documents.filter((itm)=>{
+        //     let all = itm["Item Date"].split("/");
+        //     //console.log(all[1],"--",all[2],"-----",last[0],"--",last[1]);
+        //     if(all[2]>=last[1]){
+        //         if(all[2]>=last[1]){
+        //             // console.log("populated Data: ", itm["Item Date"]);
+        //              test.push(itm["Item Date"])
+        //             return itm;
+        //         }else if(all[1]>=last[0]){
+        //             test.push(itm["Item Date"])
+        //             return itm
+        //         }
+        //     }
+        // });
+        // // console.log("last indexed data of Last 12 Months Filtered Result",test[test.length-1]);
+        // // console.log(test.length);
+        // // test.map((item)=>console.log(item));
+        // fltData.map((item)=>console.log(item.Description,"----",item["Item Date"]));
 
-            // // console.log("fltDatat------",fltData);
-            // setAdvFilteredResult(fltData);
+        // // console.log("fltDatat------",fltData);
+        // setAdvFilteredResult(fltData);
 
     }
-    function getRootProps(params) {}
-    function getListboxProps(params) {}
+    function getRootProps(params) { }
+    function getListboxProps(params) { }
     return (
         <>
             <div style={{ textAlign: "end" }}>{toggleScreen ? <AppsIcon onClick={() => setToggleScreen(!toggleScreen)} /> : <ListIcon onClick={() => setToggleScreen(!toggleScreen)} />}</div>
@@ -878,7 +878,7 @@ export default function DocumentList({ clientId }) {
                 (<>
 
 
-                {/* <div>
+                    {/* <div>
                     <button onClick={()=>handleDocumentsFilter("LastMonth")}>LastMonth</button>
                     <button onClick={()=>handleDocumentsFilter("LastSixMonth")}>LastSixMonth</button>
                     <button onClick={()=>handleDocumentsFilter("Last18Month")}>Last18Month</button>
@@ -912,7 +912,7 @@ export default function DocumentList({ clientId }) {
                                 </DateRangePicker>
                             </Box>
 
-                            <Box className='clearfix'>
+                            {/* <Box className='clearfix'>
                                 <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
                                     <InputLabel id="demo-select-small-section">Section</InputLabel>
                                     <Select
@@ -926,41 +926,60 @@ export default function DocumentList({ clientId }) {
                                         <MenuItem value={20}>Section 2</MenuItem>
                                     </Select>
                                 </FormControl>
-                            </Box>
+                            </Box> */}
 
-                            <Box className='clearfix'>
-                                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                                    <InputLabel id="demo-select-small-select">Select</InputLabel>
-                                    <Select
-                                        labelId="demo-select-small-select"
-                                        id="demo-select-small"
-                                        value={select}
-                                        label="Select"
-                                        onChange={handleChange2}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem value={10}>Select 1</MenuItem>
-                                        <MenuItem value={20}>Select 2</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>
 
-                            <Box className='clearfix'>
-                                <FormControl sx={{ m: 1, minWidth: 130 }} size="small">
-                                    <InputLabel id="demo-select-small-select">Select View</InputLabel>
-                                    <Select
-                                        labelId="demo-select-small-select"
-                                        id="demo-select-small"
-                                        value={select}
-                                        label="Select View"
-                                        onChange={handleChange2}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem value={10}>Select 1</MenuItem>
-                                        <MenuItem value={20}>Select 2</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>
+                            <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
+                                <Select
+                                    value={section}
+                                    onChange={handleChange}
+                                    displayEmpty
+                                    inputProps={{ 'aria-label': 'Without label' }}
+                                    className='custom-dropdown'
+                                >
+                                    <MenuItem value="">
+                                        <em>Select</em>
+                                    </MenuItem>
+                                    <MenuItem value={10}>Section 1</MenuItem>
+                                    <MenuItem value={20}>Section 2</MenuItem>
+                                </Select>
+                            </FormControl>
+
+
+                            <FormControl sx={{ m: 1, width: '90px' }} size="small" className='select-border'>
+                                <Select
+                                    value={select}
+                                    onChange={handleChange2}
+                                    displayEmpty
+                                    inputProps={{ 'aria-label': 'Without label' }}
+                                    className='custom-dropdown'
+                                >
+                                    <MenuItem value="">
+                                        <em>Select</em>
+                                    </MenuItem>
+                                    <MenuItem value={10}>Select 1</MenuItem>
+                                    <MenuItem value={20}>Select 2</MenuItem>
+                                </Select>
+                            </FormControl>
+
+
+                            <FormControl sx={{ m: 1, width: '110px' }} size="small" className='select-border'>
+                                <Select
+                                    value={select}
+                                    onChange={handleChange2}
+                                    displayEmpty
+                                    inputProps={{ 'aria-label': 'Without label' }}
+                                    className='custom-dropdown'
+                                >
+                                    <MenuItem value="">
+                                        <em>Select View</em>
+                                    </MenuItem>
+                                    <MenuItem value={10}>Select View</MenuItem>
+                                    <MenuItem value={20}>Select View</MenuItem>
+                                    <MenuItem value={30}>Select View</MenuItem>
+                                </Select>
+                            </FormControl>
+
 
                             <Button className='btn-blue-2 mb-1 ms-1' onClick={() => handleDocumentsFilter("LastMonth")}>Save View</Button>
 

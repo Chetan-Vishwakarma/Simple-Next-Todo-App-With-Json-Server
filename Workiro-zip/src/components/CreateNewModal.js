@@ -22,15 +22,15 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Checkbox from "@mui/material/Checkbox";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-
 import Autocomplete from '@mui/material/Autocomplete';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DescriptionIcon from '@mui/icons-material/Description';
-
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
+import DvrIcon from '@mui/icons-material/Dvr';
+import LanguageIcon from '@mui/icons-material/Language';
 
 import Swal from 'sweetalert2';
 import {
@@ -500,7 +500,7 @@ export default function CreateNewModalTask() {
                 let fileByte = reader.result.split(";")[1].replace("base64,", "");
                 const fileData = {
                     FileName: file.name,
-                    Base64: fileByte?fileByte:"", // Base64 data of the file
+                    Base64: fileByte ? fileByte : "", // Base64 data of the file
                     FileSize: file.size,
                     Preview: reader.result, // Data URL for preview
                     DocId: ""
@@ -849,18 +849,18 @@ export default function CreateNewModalTask() {
             console.log("ExplorerSearchDoc", error);
         }
     };
- // Define the function to render cells based on the 'Type' column
- const renderTypeCell = (data) => {
-    // Define the condition based on which the icon will be rendered
-    if (data.value === 'pdf') {
-        return <PictureAsPdfIcon></PictureAsPdfIcon>;
-    } else if (data.value === 'txt') {
+    // Define the function to render cells based on the 'Type' column
+    const renderTypeCell = (data) => {
+        // Define the condition based on which the icon will be rendered
+        if (data.value === 'pdf') {
+            return <PictureAsPdfIcon></PictureAsPdfIcon>;
+        } else if (data.value === 'txt') {
 
-        return <TextSnippetIcon></TextSnippetIcon>;
-    }
-    // You can add more conditions or return default content if needed
-    return data.value;
-};
+            return <TextSnippetIcon></TextSnippetIcon>;
+        }
+        // You can add more conditions or return default content if needed
+        return data.value;
+    };
 
     const getPortalUser = () => {
 
@@ -892,7 +892,7 @@ export default function CreateNewModalTask() {
             Json_GetItemBase64DataById(row["Registration No."], function (base64data) {
                 const fileData = {
                     FileName: row.Path,
-                    Base64: base64data?base64data:"", // Base64 data of the file
+                    Base64: base64data ? base64data : "", // Base64 data of the file
                     FileSize: row.FileSize,
                     Preview: "", // Data URL for preview
                     DocId: row["Registration No."]
@@ -1061,13 +1061,13 @@ export default function CreateNewModalTask() {
             cls.Json_GetStandardLetterData(obj, function (sts, data) {
                 if (sts && data) {
                     //console.log("Json_GetStandardLetterData", data)
-                    if(data.includes("File Not Found")){
+                    if (data.includes("File Not Found")) {
                         console.log("Json_GetStandardLetterData", data)
                     }
-                    else{
+                    else {
                         Json_GetHtmlFromRtf(data);
                     }
-                   
+
                 }
             })
         } catch (error) {
@@ -1100,12 +1100,12 @@ export default function CreateNewModalTask() {
 
         if (selectedUSer.ID) {
             let myNewArr = [...selectedFilesFromBrower, ...selectedDocumentFile];
-            console.log("myNewArr",myNewArr)
-            const ccEmail =selectedEmailCC?selectedEmailCC.map(obj => obj["E-Mail"]):"";
+            console.log("myNewArr", myNewArr)
+            const ccEmail = selectedEmailCC ? selectedEmailCC.map(obj => obj["E-Mail"]) : "";
             const ToEmail = selectedEmail.map(obj => obj["E-Mail"]);
             const ItemId = selectedRows.map(obj => obj["Registration No."]);
             const fileNames = myNewArr.map(obj => obj["FileName"]);
-            const fileDataBase64 =myNewArr.filter(obj => obj["Base64"] !== "").map(obj => obj["Base64"]);
+            const fileDataBase64 = myNewArr.filter(obj => obj["Base64"] !== "").map(obj => obj["Base64"]);
 
             let obj = {
                 "accid": agrno,
@@ -1116,17 +1116,17 @@ export default function CreateNewModalTask() {
                 "ccode": textClientId,
                 "recipients": ToEmail,
                 "subject": textSubject ? textSubject : "",
-                "ccs": ccEmail?ccEmail:"",
+                "ccs": ccEmail ? ccEmail : "",
                 "forApproval": isCheckedForApproval,
                 "highImportance": false,
                 "expiryDate": dayjs(expireDate).format("YYYY/MM/DD"),
                 "actionDate": dayjs(currentDate).format("YYYY/MM/DD"),
                 "trackIt": false,
                 "docTemplateTaskId": 0,
-                "docTemplateId": txtTemplateId? txtTemplateId[0]["TemplateID"] : 0,
+                "docTemplateId": txtTemplateId ? txtTemplateId[0]["TemplateID"] : 0,
                 "filenames": fileNames,
-                "attachments": fileDataBase64?fileDataBase64:[],
-                "itemNos": ItemId?ItemId:[],
+                "attachments": fileDataBase64 ? fileDataBase64 : [],
+                "itemNos": ItemId ? ItemId : [],
                 "noMessage": isCheckedWithOutmgs,
                 "message": btoa(editorContentValue),
                 "docuBoxMessage": false,
@@ -1199,7 +1199,7 @@ export default function CreateNewModalTask() {
                     <DialogContentText>
                         <Box className="d-flex align-items-center justify-content-between">
 
-                            <div>
+                            <Box>
                                 <Button
                                     id="basic-button"
                                     aria-controls={TastkType ? 'basic-menu' : undefined}
@@ -1218,12 +1218,13 @@ export default function CreateNewModalTask() {
                                     MenuListProps={{
                                         'aria-labelledby': 'basic-button',
                                     }}
-                                    className="dropdown-box"
+                                    className="custom-dropdown"
                                 >
-                                    <MenuItem onClick={handleCloseTastkType}>CRM</MenuItem>
-                                    <MenuItem onClick={handleCloseTastkType}>Portal</MenuItem>
+
+                                    <MenuItem onClick={handleCloseTastkType} className="font-14"><DvrIcon className='me-2' /> CRM</MenuItem>
+                                    <MenuItem onClick={handleCloseTastkType} className="font-14"><LanguageIcon className='me-2' />Portal</MenuItem>
                                 </Menu>
-                            </div>
+                            </Box>
 
 
                             {/* <Box className="dropdown-box">
@@ -1301,24 +1302,24 @@ export default function CreateNewModalTask() {
                                         {/* attached to start */}
                                         <Box className='mt-3'>
 
-                                           
+
                                             {/* attached to end */}
 
                                             {isVisibleByTypeCRM && (
                                                 <>
-                                                 <Box className='mb-3'>
-                                                <Autocomplete
-                                                    disablePortal
-                                                    id="combo-box-demo"
-                                                    options={userList}
-                                                    getOptionLabel={(option) => option.ForwardTo}
-                                                    renderInput={(params) => <TextField {...params} label="From" />}
-                                                    className="w-100"
-                                                    value={selectedUSer}
-                                                    onChange={handleOptionChangeFromUser}
-                                                />
-                                            </Box>
-                                                    <Box className='mb-3'>
+                                                    <Box className='mb-2'>
+                                                        <Autocomplete
+                                                            disablePortal
+                                                            id="combo-box-demo"
+                                                            options={userList}
+                                                            getOptionLabel={(option) => option.ForwardTo}
+                                                            renderInput={(params) => <TextField {...params} label="From" />}
+                                                            className="w-100"
+                                                            value={selectedUSer}
+                                                            onChange={handleOptionChangeFromUser}
+                                                        />
+                                                    </Box>
+                                                    <Box className='mb-2'>
 
                                                         <Autocomplete
                                                             multiple
@@ -1343,12 +1344,9 @@ export default function CreateNewModalTask() {
                                                             onChange={handleAutocompleteChange} // Handle selection change
 
                                                         />
-
-
-
                                                     </Box>
 
-                                                    <Box className='mb-3'>
+                                                    <Box className='mb-2'>
                                                         <Autocomplete
                                                             multiple
                                                             id="checkboxes-tags-demo"
@@ -1374,7 +1372,7 @@ export default function CreateNewModalTask() {
 
                                                     </Box>
 
-                                                    <Box className='mb-3'>
+                                                    <Box className='mb-2'>
                                                         <FormControlLabel control={<Checkbox checked={isCheckedForApproval} onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
                                                         <FormControlLabel control={<Checkbox checked={isCheckedWithOutmgs} onChange={handleCheckboxChangeisCheckedWithOutmgs} />} label="Send Without Message" />
 
@@ -1385,6 +1383,7 @@ export default function CreateNewModalTask() {
                                                             aria-haspopup="true"
                                                             aria-expanded={openTemp ? 'true' : undefined}
                                                             onClick={handleClickAddTemplate}
+                                                            className="btn-blue-2"
 
                                                         >
                                                             Add Template
@@ -1427,10 +1426,10 @@ export default function CreateNewModalTask() {
                                                             </DataGrid>
                                                         </Menu>
                                                     </Box>
-
-                                                    {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+                                                    <Box className='text-editor-box-name'>
+                                                        {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+                                                    </Box>
                                                 </>
-
                                             )}
 
                                         </Box>
@@ -1643,14 +1642,14 @@ export default function CreateNewModalTask() {
                                     </label>
                                 </Box>
 
-                                <Box className="file-uploads">
+                                <Box className="file-uploads file-upload-height">
                                     {selectedFiles
                                         ? selectedFiles.map((file, index) => {
                                             // console.log("Uploadin", file);
 
                                             return (
                                                 <>
-                                                    <label className="file-uploads-label" key={index}>
+                                                    <label className="file-uploads-label mb-2" key={index}>
                                                         <Box className="d-flex align-items-center">
                                                             <span className="material-symbols-outlined icon">
                                                                 description
@@ -1744,7 +1743,7 @@ export default function CreateNewModalTask() {
                                         variant="contained"
                                         onClick={CreatePortalTask}
                                         disabled={loading}
-                                        className="btn-blue-2 mt-3"
+                                        className="btn-blue-2 mt-1"
                                     >
                                         {'Portal Task'}
                                     </Button>
