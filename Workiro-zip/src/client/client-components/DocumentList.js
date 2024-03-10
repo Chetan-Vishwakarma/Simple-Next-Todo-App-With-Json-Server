@@ -870,6 +870,7 @@ export default function DocumentList({ clientId }) {
     }
     useEffect(()=>{
         console.log(bulkSearch);
+        
     },[bulkSearch]);
     return (
         <>
@@ -1114,7 +1115,7 @@ export default function DocumentList({ clientId }) {
                                     </Box>
                                 </Box>
 
-                                <Button className='btn-blue-2 mb-2 ms-2' onClick={() =>handleSearchByProperty()}>Submit</Button>
+                                <Button disabled={searchByPropertyKey!==""&&searchByPropertyInput!==""?false:true} className={searchByPropertyKey!==""&&searchByPropertyInput!==""?'btn-blue-2mb-2 ms-2':'btn-grey-2 mb-2 ms-2'} onClick={() =>handleSearchByProperty()}>Submit</Button>
                                 <Button className='btn-blue-2 mb-2 ms-2' onClick={() => handleDocumentsFilter("LastMonth")}>Toggle</Button>
 
                             </Box>

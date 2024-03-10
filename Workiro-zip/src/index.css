@@ -133,6 +133,12 @@ input,
   transition: .5s all ease;
 }
 
+.btn-grey-2 {
+  background: rgb(158, 141, 141) !important;
+  transition: .5s all ease;
+  color: white !important;
+}
+
 .btn-blue-2:hover,
 .btn-blue:hover {
   background: #d42027 !important;
