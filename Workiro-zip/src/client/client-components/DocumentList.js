@@ -8,7 +8,7 @@ import DataGrid, {
     Pager, Paging, DataGridTypes,
 } from 'devextreme-react/data-grid';
 import 'devextreme/dist/css/dx.light.css';
-import { Box, Typography, Button, Paper, Grid } from '@mui/material';
+import { Box, Typography, Button, Paper, Grid, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AppsIcon from '@mui/icons-material/Apps';
 import ListIcon from '@mui/icons-material/List';
@@ -20,6 +20,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import DnsIcon from '@mui/icons-material/Dns';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 const Layout = styled('div')`  display: flex;
@@ -109,12 +111,18 @@ export default function DocumentList({ clientId }) {
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
     const [documents, setDocuments] = useState([]);
     const [groupedOptions, setgroupedOptions] = useState([]);
-    const [toggleScreen, setToggleScreen] = useState(false);
+    const [toggleScreen, setToggleScreen] = useState({ singleCardView: true, multipleCardView: false, tableGridView: false });
     const [filteredDocResult, setFilteredDocResult] = useState([]);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [advFilteredResult, setAdvFilteredResult] = useState([]);
     const [section, setSection] = React.useState('');
     const [select, setSelect] = React.useState('');
+    const [selectedLastFilter, setSelectedLastFilter] = useState("");
+    const [isRangeFilter, setIsRangeFilter] = useState(false);
+    const [documentKeys, setDocumentKeys] = useState([]);
+    const [searchByPropertyKey, setSearchByPropertyKey] = useState("");
+    const [searchByPropertyInput, setSearchByPropertyInput] = useState("");
+    const [bulkSearch, setBulkSearch] = useState([]);
 
 
 
@@ -154,6 +162,11 @@ export default function DocumentList({ clientId }) {
                     if (json.Table6) {
                         // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                         let docs = json.Table6;
+
+                        let docKeys = Object.keys(docs[0]);
+                        // console.log("documentKeys",docKeys);
+                        setDocumentKeys(docKeys);
+
                         docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
                         //docs.map((itm)=>console.log("check in map",itm["Item Date"]));
                         setDocuments(docs);
@@ -305,6 +318,7 @@ export default function DocumentList({ clientId }) {
     }
 
     const handleDocumentsFilter = (target) => {
+        setSelectedLastFilter(target);
         if (target === "LastMonth") {
             // console.log(getLastMonth().split("/"));
             let last = getLastMonth().split("/");
@@ -690,7 +704,8 @@ export default function DocumentList({ clientId }) {
         }
     }
 
-    const handleFilterByRange = () => {
+    const handleFilterByRange = (a, b, c) => {
+        console.log(a, b, c);
         let from = fromDate.split("-");
         let to = toDate.split("-");
         // console.log(from);
@@ -841,11 +856,27 @@ export default function DocumentList({ clientId }) {
     }
     function getRootProps(params) { }
     function getListboxProps(params) { }
+    const handleSearchByProperty = () => {
+        setBulkSearch(prevState => [...prevState, { key: searchByPropertyKey, value: searchByPropertyInput }]);
+        setSearchByPropertyInput("");
+        setSearchByPropertyKey("");
+        // console.log(bulkSearch);
+        // let fltByKeyVal = documents.filter((itm)=>{
+        //     if(itm[searchByPropertyKey]){
+        //         return String(itm[searchByPropertyKey]).toLowerCase().includes(searchByPropertyInput.toLowerCase());
+        //     }
+        // });
+        // console.log(fltByKeyVal);
+    }
+    useEffect(() => {
+        console.log(bulkSearch);
+    }, [bulkSearch]);
     return (
         <>
-            <div style={{ textAlign: "end" }}>{toggleScreen ? <AppsIcon onClick={() => setToggleScreen(!toggleScreen)} /> : <ListIcon onClick={() => setToggleScreen(!toggleScreen)} />}</div>
+            {/* <div style={{ textAlign: "end" }}>{toggleScreen ? <AppsIcon onClick={() => setToggleScreen(!toggleScreen)} /> : <ListIcon onClick={() => setToggleScreen(!toggleScreen)} />}</div> */}
+            <div style={{ textAlign: "end" }}><DnsIcon onClick={() => setToggleScreen({ singleCardView: true, multipleCardView: false, tableGridView: false })} /> <AppsIcon onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: true, tableGridView: false })} /> <ListIcon onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: false, tableGridView: true })} /></div>
 
-            {toggleScreen ?
+            {toggleScreen.tableGridView ?
                 (documents.length > 0 && <DataGrid
                     id="dataGrid"
                     style={{ width: "1600px" }}
@@ -906,28 +937,84 @@ export default function DocumentList({ clientId }) {
 
                         <Box className='d-flex flex-wrap align-items-center'>
 
-                            <Box sx={{ m: 1, width: 240 }}>
+                            {isRangeFilter ? (
+                                <>
+                                    <Box>
+                                        {formatDate !== "" && toDate !== "" && <CloseIcon onClick={() => setIsRangeFilter(false)} />}
+                                        <input value={fromDate} onChange={(e) => setFormDate(e.target.value)} id="standard-basic" variant="standard" type="date" />
+                                        <input disabled={fromDate === "" ? true : false} min={fromDate} value={toDate} onChange={(e) => setToDate(e.target.value)} id="standard-basic" variant="standard" type="date" />
+                                        {
+                                            formatDate !== "" && toDate !== "" ? <button onClick={handleFilterByRange}>Submit</button>
+                                                : <button onClick={() => setIsRangeFilter(false)}>Close</button>
+                                        }
+                                    </Box>
+                                    {/* <Box sx={{ m: 1, width: 240 }}>
                                 <DateRangePicker className='m-0 p-0'>
                                     <input type="text" className="form-control col-4" />
                                 </DateRangePicker>
-                            </Box>
-
-                            {/* <Box className='clearfix'>
-                                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                                    <InputLabel id="demo-select-small-section">Section</InputLabel>
-                                    <Select
-                                        labelId="demo-select-small-section"
-                                        id="demo-select-small"
-                                        value={section}
-                                        label="Section"
-                                        onChange={handleChange}
-                                    >
-                                        <MenuItem value={10}>Section 1</MenuItem>
-                                        <MenuItem value={20}>Section 2</MenuItem>
-                                    </Select>
-                                </FormControl>
                             </Box> */}
 
+                                </>
+                            ) :
+                                (<Box className='clearfix'>
+
+
+                                    <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
+                                        <Select
+                                            value={selectedLastFilter}
+                                            onChange={(e) => handleDocumentsFilter(e.target.value)}
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            className='custom-dropdown'
+                                        >
+                                            <MenuItem value={"All"}>All</MenuItem>
+                                            <MenuItem value={"LastDay"}>Last Day</MenuItem>
+                                            <MenuItem value={"LastWeek"}>Last Week</MenuItem>
+                                            <MenuItem value={"LastMonth"}>Last Month</MenuItem>
+                                            <MenuItem value={"LastThreeMonth"}>Last 3 Month</MenuItem>
+                                            <MenuItem value={"LastSixMonth"}>Last 6 Month</MenuItem>
+                                            <MenuItem value={"Last12Month"}>Last 12 Month</MenuItem>
+                                            <MenuItem value={"Last18Month"}>Last 18 Month</MenuItem>
+                                            <MenuItem value={"Last24Months"}>Last 24 Months</MenuItem>
+                                            <MenuItem value={"Last30Months"}>Last 30 Months</MenuItem>
+                                            <MenuItem value={"Last36Months"}>Last 36 Months</MenuItem>
+                                            <MenuItem value={"Last42Months"}>Last 42 Months</MenuItem>
+                                            <MenuItem value={"Last48Months"}>Last 48 Months</MenuItem>
+                                            <MenuItem value={"Last54Months"}>Last 54 Months</MenuItem>
+                                            <MenuItem value={"Last60Months"}>Last 60 Months</MenuItem>
+                                            <MenuItem value={""} onClick={() => setIsRangeFilter(true)}>Full Range</MenuItem>
+                                        </Select>
+                                    </FormControl>
+
+
+                                    {/* <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                                        <InputLabel id="demo-select-small-section">Filter By</InputLabel>
+                                        <Select
+                                            labelId="demo-select-small-section"
+                                            id="demo-select-small"
+                                            value={selectedLastFilter}
+                                            label="Section"
+                                            onChange={(e) => handleDocumentsFilter(e.target.value)}
+                                        >
+                                            <MenuItem value={"All"}>All</MenuItem>
+                                            <MenuItem value={"LastDay"}>Last Day</MenuItem>
+                                            <MenuItem value={"LastWeek"}>Last Week</MenuItem>
+                                            <MenuItem value={"LastMonth"}>Last Month</MenuItem>
+                                            <MenuItem value={"LastThreeMonth"}>Last 3 Month</MenuItem>
+                                            <MenuItem value={"LastSixMonth"}>Last 6 Month</MenuItem>
+                                            <MenuItem value={"Last12Month"}>Last 12 Month</MenuItem>
+                                            <MenuItem value={"Last18Month"}>Last 18 Month</MenuItem>
+                                            <MenuItem value={"Last24Months"}>Last 24 Months</MenuItem>
+                                            <MenuItem value={"Last30Months"}>Last 30 Months</MenuItem>
+                                            <MenuItem value={"Last36Months"}>Last 36 Months</MenuItem>
+                                            <MenuItem value={"Last42Months"}>Last 42 Months</MenuItem>
+                                            <MenuItem value={"Last48Months"}>Last 48 Months</MenuItem>
+                                            <MenuItem value={"Last54Months"}>Last 54 Months</MenuItem>
+                                            <MenuItem value={"Last60Months"}>Last 60 Months</MenuItem>
+                                            <MenuItem value={""} onClick={() => setIsRangeFilter(true)}>Full Range</MenuItem>
+                                        </Select>
+                                    </FormControl> */}
+                                </Box>)}
 
                             <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
                                 <Select
@@ -1014,8 +1101,8 @@ export default function DocumentList({ clientId }) {
                         alignItems="center"
 
                     >
-                        <Grid item xs={12} sm={10} md={6} lg={5} className='white-box'>
-                            <Box className='d-flex m-auto justify-content-center w-100 align-items-end'>
+                        <Grid item xs={12} sm={10} md={toggleScreen.multipleCardView ? 12 : 6} lg={toggleScreen.multipleCardView ? 12 : 5} className='white-box'>
+                            <Box className={toggleScreen.multipleCardView ? 'd-flex m-auto justify-content-start w-100 align-items-end' : 'd-flex m-auto justify-content-center w-100 align-items-end'}>
                                 <Layout className='d-flex w-100 d-none'>
                                     <AutocompleteWrapper className='w-100'>
                                         <AutocompleteRoot
@@ -1042,24 +1129,27 @@ export default function DocumentList({ clientId }) {
                                         )) : ""}
                                     </AutocompleteWrapper>
                                 </Layout>
-                                <Box className='row w-100 pe-3 d-non'>
+                                <Box className={toggleScreen.multipleCardView ? 'row pe-3 d-non' : 'row w-100 pe-3 d-non'}>
                                     <Box className='col-md-6'>
                                         <Box className='mb-2'>
                                             <label>Select Property</label>
-                                            <select class="form-select" aria-label="Default select example">
-                                                <option>Select</option>
+                                            <select class="form-select" aria-label="Default select example" onChange={(e) => setSearchByPropertyKey(e.target.value)}>
+                                                <option value={""}></option>
+                                                {documentKeys.length > 0 && documentKeys.map((itm) => {
+                                                    return <option value={itm}>{itm}</option>
+                                                })}
                                             </select>
                                         </Box>
                                     </Box>
                                     <Box className='col-md-6 px-0'>
                                         <Box className='mb-2'>
                                             <label>Value</label>
-                                            <input type="text" class="form-control" placeholder="Type Value" />
+                                            <input type="text" class="form-control" placeholder="Type Value" value={searchByPropertyInput} onChange={(e) => setSearchByPropertyInput(e.target.value)} />
                                         </Box>
                                     </Box>
                                 </Box>
 
-                                <Button className='btn-blue-2 mb-2 ms-2' onClick={() => handleDocumentsFilter("LastMonth")}>Submit</Button>
+                                <Button className='btn-blue-2 mb-2 ms-2' onClick={() => handleSearchByProperty()}>Submit</Button>
                                 <Button className='btn-blue-2 mb-2 ms-2' onClick={() => handleDocumentsFilter("LastMonth")}>Toggle</Button>
 
                             </Box>
@@ -1073,7 +1163,9 @@ export default function DocumentList({ clientId }) {
                             </Box>
 
                             <Box className='mt-4'>
-                                <DocumentDetails></DocumentDetails>
+                                {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
+                                {toggleScreen.singleCardView && <DocumentDetails documents={documents} advFilteredResult={advFilteredResult}></DocumentDetails>}
+                                {toggleScreen.multipleCardView && <h1>Mutiple card View</h1>}
                             </Box>
 
                         </Grid>
