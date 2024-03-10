@@ -938,7 +938,7 @@ export default function DocumentList({ clientId }) {
                                     className='custom-dropdown'
                                 >
                                     <MenuItem value="">
-                                        <em>Select</em>
+                                        Select
                                     </MenuItem>
                                     <MenuItem value={10}>Section 1</MenuItem>
                                     <MenuItem value={20}>Section 2</MenuItem>
@@ -955,7 +955,7 @@ export default function DocumentList({ clientId }) {
                                     className='custom-dropdown'
                                 >
                                     <MenuItem value="">
-                                        <em>Select</em>
+                                        Select
                                     </MenuItem>
                                     <MenuItem value={10}>Select 1</MenuItem>
                                     <MenuItem value={20}>Select 2</MenuItem>
@@ -972,7 +972,7 @@ export default function DocumentList({ clientId }) {
                                     className='custom-dropdown'
                                 >
                                     <MenuItem value="">
-                                        <em>Select View</em>
+                                        Select View
                                     </MenuItem>
                                     <MenuItem value={10}>Select View</MenuItem>
                                     <MenuItem value={20}>Select View</MenuItem>
@@ -986,21 +986,24 @@ export default function DocumentList({ clientId }) {
                         </Box>
 
                         <Box className='clearfix'>
-                            <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                                <InputLabel id="demo-select-small-select">Select</InputLabel>
+                            <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
                                 <Select
-                                    labelId="demo-select-small-select"
-                                    id="demo-select-small"
                                     value={select}
-                                    label="Select"
                                     onChange={handleChange2}
+                                    displayEmpty
+                                    inputProps={{ 'aria-label': 'Without label' }}
                                     className='custom-dropdown'
                                 >
+                                    <MenuItem value="">
+                                        Select
+                                    </MenuItem>
                                     <MenuItem value={10}>Group By</MenuItem>
                                     <MenuItem value={20}>Sort By</MenuItem>
                                 </Select>
                             </FormControl>
                         </Box>
+
+
 
 
                     </Box>
