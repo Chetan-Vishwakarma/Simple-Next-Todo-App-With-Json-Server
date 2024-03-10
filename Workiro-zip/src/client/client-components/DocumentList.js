@@ -5,7 +5,7 @@ import DataGrid, {
     Column, FilterRow, Search, SearchPanel, Selection,
     HeaderFilter, Scrolling,
     FilterPanel,
-    Pager, Paging, DataGridTypes,
+    Pager, Paging, DataGridTypes,FormGroup,
 } from 'devextreme-react/data-grid';
 import 'devextreme/dist/css/dx.light.css';
 import { Box, Typography, Button, Paper, Grid, TextField } from '@mui/material';
@@ -22,6 +22,9 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import DnsIcon from '@mui/icons-material/Dns';
 import CloseIcon from '@mui/icons-material/Close';
+
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 
 
 const Layout = styled('div')`  display: flex;
@@ -117,12 +120,13 @@ export default function DocumentList({ clientId }) {
     const [advFilteredResult, setAdvFilteredResult] = useState([]);
     const [section, setSection] = React.useState('');
     const [select, setSelect] = React.useState('');
-    const [selectedLastFilter,setSelectedLastFilter] = useState("");
-    const [isRangeFilter,setIsRangeFilter] = useState(false);
-    const [documentKeys,setDocumentKeys] = useState([]);
-    const [searchByPropertyKey,setSearchByPropertyKey] = useState("");
-    const [searchByPropertyInput,setSearchByPropertyInput] = useState("");
-    const [bulkSearch,setBulkSearch] = useState([]);
+    const [selectedLastFilter, setSelectedLastFilter] = useState("");
+    const [isRangeFilter, setIsRangeFilter] = useState(false);
+    const [documentKeys, setDocumentKeys] = useState([]);
+    const [searchByPropertyKey, setSearchByPropertyKey] = useState("");
+    const [searchByPropertyInput, setSearchByPropertyInput] = useState("");
+    const [bulkSearch, setBulkSearch] = useState([]);
+    const [isAdvFilter,setIsAdvFilter] = useState(false);
 
 
 
@@ -704,8 +708,8 @@ export default function DocumentList({ clientId }) {
         }
     }
 
-    const handleFilterByRange = (a,b,c) => {
-        console.log(a,b,c);
+    const handleFilterByRange = (a, b, c) => {
+        console.log(a, b, c);
         let from = fromDate.split("-");
         let to = toDate.split("-");
         // console.log(from);
@@ -856,21 +860,20 @@ export default function DocumentList({ clientId }) {
     }
     function getRootProps(params) { }
     function getListboxProps(params) { }
-    const handleSearchByProperty=()=>{
-        setBulkSearch(prevState=>[...prevState,{key:searchByPropertyKey,value:searchByPropertyInput}]);
+    const handleSearchByProperty = () => {
+        setBulkSearch(prevState => [...prevState, { key: searchByPropertyKey, value: searchByPropertyInput }]);
+        // console.log(bulkSearch);
+        let fltByKeyVal = documents.filter((itm)=>{
+            if(itm[searchByPropertyKey]){
+                return String(itm[searchByPropertyKey]).toLowerCase().includes(searchByPropertyInput.toLowerCase());
+            }
+        });
+        // console.log(fltByKeyVal);
+        setAdvFilteredResult(fltByKeyVal);
+
         setSearchByPropertyInput("");
         setSearchByPropertyKey("");
-        // console.log(bulkSearch);
-        // let fltByKeyVal = documents.filter((itm)=>{
-        //     if(itm[searchByPropertyKey]){
-        //         return String(itm[searchByPropertyKey]).toLowerCase().includes(searchByPropertyInput.toLowerCase());
-        //     }
-        // });
-        // console.log(fltByKeyVal);
     }
-    useEffect(()=>{
-        console.log(bulkSearch);
-    },[bulkSearch]);
     return (
         <>
             {/* <div style={{ textAlign: "end" }}>{toggleScreen ? <AppsIcon onClick={() => setToggleScreen(!toggleScreen)} /> : <ListIcon onClick={() => setToggleScreen(!toggleScreen)} />}</div> */}
@@ -931,134 +934,175 @@ export default function DocumentList({ clientId }) {
                     <div><input type='date' value={fromDate} onChange={(e)=>setFormDate(e.target.value)}/><input disabled={fromDate===""?true:false} min={fromDate} type='date'value={toDate} onChange={(e)=>setToDate(e.target.value)}/><button onClick={handleFilterByRange}>Search</button></div>
                 </div> */}
 
-
+                    <hr />
 
                     <Box className='d-flex flex-wrap justify-content-between align-items-center mb-4'>
-
                         <Box className='d-flex flex-wrap align-items-center'>
-
-                            {isRangeFilter?(
-                            <>
-                            <Box>
-                              {formatDate!==""&&toDate!=="" && <CloseIcon onClick={()=>setIsRangeFilter(false)}/>}
-                              <input value={fromDate} onChange={(e)=>setFormDate(e.target.value)} id="standard-basic" variant="standard" type="date"/>
-                              <input  disabled={fromDate===""?true:false} min={fromDate} value={toDate} onChange={(e)=>setToDate(e.target.value)}  id="standard-basic" variant="standard" type="date"/>
-                              {
-                                formatDate!==""&&toDate!==""?<button onClick={handleFilterByRange}>Submit</button>
-                                : <button onClick={()=>setIsRangeFilter(false)}>Close</button>
-                            }
-                            </Box>
-                            {/* <Box sx={{ m: 1, width: 240 }}>
+                            {isRangeFilter ? (
+                                <>
+                                    <Box>
+                                        {formatDate !== "" && toDate !== "" && <CloseIcon onClick={() => {
+                                            setIsRangeFilter(false)
+                                            setSelectedLastFilter("");
+                                          }} />
+                                        }
+                                        <input value={fromDate} onChange={(e) => setFormDate(e.target.value)} id="standard-basic" variant="standard" type="date" />
+                                        <input disabled={fromDate === "" ? true : false} min={fromDate} value={toDate} onChange={(e) => setToDate(e.target.value)} id="standard-basic" variant="standard" type="date" />
+                                        {
+                                            formatDate !== "" && toDate !== "" ? <button onClick={handleFilterByRange}>Submit</button>
+                                                : <button onClick={() => {
+                                                    setIsRangeFilter(false);
+                                                    setSelectedLastFilter("");
+                                                }}>Close</button>
+                                        }
+                                    </Box>
+                                    {/* <Box sx={{ m: 1, width: 240 }}>
                                 <DateRangePicker className='m-0 p-0'>
                                     <input type="text" className="form-control col-4" />
                                 </DateRangePicker>
                             </Box> */}
 
-                            </>
-                            ):
-                            (<Box className='clearfix'>
-                                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                                    <InputLabel id="demo-select-small-section">Filter By</InputLabel>
-                                    <Select
-                                        labelId="demo-select-small-section"
-                                        id="demo-select-small"
-                                        value={selectedLastFilter}
-                                        label="Section"
-                                        onChange={(e) => handleDocumentsFilter(e.target.value)}
-                                    >
-                                        <MenuItem value={"All"}>All</MenuItem>
-                                        <MenuItem value={"LastDay"}>Last Day</MenuItem>
-                                        <MenuItem value={"LastWeek"}>Last Week</MenuItem>
-                                        <MenuItem value={"LastMonth"}>Last Month</MenuItem>
-                                        <MenuItem value={"LastThreeMonth"}>Last 3 Month</MenuItem>
-                                        <MenuItem value={"LastSixMonth"}>Last 6 Month</MenuItem>
-                                        <MenuItem value={"Last12Month"}>Last 12 Month</MenuItem>
-                                        <MenuItem value={"Last18Month"}>Last 18 Month</MenuItem>
-                                        <MenuItem value={"Last24Months"}>Last 24 Months</MenuItem>
-                                        <MenuItem value={"Last30Months"}>Last 30 Months</MenuItem>
-                                        <MenuItem value={"Last36Months"}>Last 36 Months</MenuItem>
-                                        <MenuItem value={"Last42Months"}>Last 42 Months</MenuItem>
-                                        <MenuItem value={"Last48Months"}>Last 48 Months</MenuItem>
-                                        <MenuItem value={"Last54Months"}>Last 54 Months</MenuItem>
-                                        <MenuItem value={"Last60Months"}>Last 60 Months</MenuItem>
-                                        <MenuItem value={""} onClick={()=>setIsRangeFilter(true)}>Full Range</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>)}
+                                </>
+                            ) :
+                                (<Box className='clearfix'>
 
-                            <Box className='clearfix'>
-                                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                                    <InputLabel id="demo-select-small-section">Section</InputLabel>
-                                    <Select
-                                        labelId="demo-select-small-section"
-                                        id="demo-select-small"
-                                        value={section}
-                                        label="Section"
-                                        onChange={handleChange}
-                                    >
-                                        <MenuItem value={10}>Section 1</MenuItem>
-                                        <MenuItem value={20}>Section 2</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>
 
-                            <Box className='clearfix'>
-                                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                                    <InputLabel id="demo-select-small-select">Select</InputLabel>
-                                    <Select
-                                        labelId="demo-select-small-select"
-                                        id="demo-select-small"
-                                        value={select}
-                                        label="Select"
-                                        onChange={handleChange2}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem value={10}>Select 1</MenuItem>
-                                        <MenuItem value={20}>Select 2</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>
+                                    <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
+                                        <Select
+                                            value={selectedLastFilter}
+                                            onChange={(e) => handleDocumentsFilter(e.target.value)}
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            className='custom-dropdown'
+                                        >
+                                            <MenuItem value={"All"}>All</MenuItem>
+                                            <MenuItem value={"LastDay"}>Last Day</MenuItem>
+                                            <MenuItem value={"LastWeek"}>Last Week</MenuItem>
+                                            <MenuItem value={"LastMonth"}>Last Month</MenuItem>
+                                            <MenuItem value={"LastThreeMonth"}>Last 3 Month</MenuItem>
+                                            <MenuItem value={"LastSixMonth"}>Last 6 Month</MenuItem>
+                                            <MenuItem value={"Last12Month"}>Last 12 Month</MenuItem>
+                                            <MenuItem value={"Last18Month"}>Last 18 Month</MenuItem>
+                                            <MenuItem value={"Last24Months"}>Last 24 Months</MenuItem>
+                                            <MenuItem value={"Last30Months"}>Last 30 Months</MenuItem>
+                                            <MenuItem value={"Last36Months"}>Last 36 Months</MenuItem>
+                                            <MenuItem value={"Last42Months"}>Last 42 Months</MenuItem>
+                                            <MenuItem value={"Last48Months"}>Last 48 Months</MenuItem>
+                                            <MenuItem value={"Last54Months"}>Last 54 Months</MenuItem>
+                                            <MenuItem value={"Last60Months"}>Last 60 Months</MenuItem>
+                                            <MenuItem value={""} onClick={() => setIsRangeFilter(true)}>Full Range</MenuItem>
+                                        </Select>
+                                    </FormControl>
 
-                            <Box className='clearfix'>
-                                <FormControl sx={{ m: 1, minWidth: 130 }} size="small">
-                                    <InputLabel id="demo-select-small-select">Select View</InputLabel>
-                                    <Select
-                                        labelId="demo-select-small-select"
-                                        id="demo-select-small"
-                                        value={select}
-                                        label="Select View"
-                                        onChange={handleChange2}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem value={10}>Select 1</MenuItem>
-                                        <MenuItem value={20}>Select 2</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>
 
-                            <Button className='btn-blue-2 mb-1 ms-1' onClick={() => handleDocumentsFilter("LastMonth")}>Save View</Button>
+                                    {/* <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                                        <InputLabel id="demo-select-small-section">Filter By</InputLabel>
+                                        <Select
+                                            labelId="demo-select-small-section"
+                                            id="demo-select-small"
+                                            value={selectedLastFilter}
+                                            label="Section"
+                                            onChange={(e) => handleDocumentsFilter(e.target.value)}
+                                        >
+                                            <MenuItem value={"All"}>All</MenuItem>
+                                            <MenuItem value={"LastDay"}>Last Day</MenuItem>
+                                            <MenuItem value={"LastWeek"}>Last Week</MenuItem>
+                                            <MenuItem value={"LastMonth"}>Last Month</MenuItem>
+                                            <MenuItem value={"LastThreeMonth"}>Last 3 Month</MenuItem>
+                                            <MenuItem value={"LastSixMonth"}>Last 6 Month</MenuItem>
+                                            <MenuItem value={"Last12Month"}>Last 12 Month</MenuItem>
+                                            <MenuItem value={"Last18Month"}>Last 18 Month</MenuItem>
+                                            <MenuItem value={"Last24Months"}>Last 24 Months</MenuItem>
+                                            <MenuItem value={"Last30Months"}>Last 30 Months</MenuItem>
+                                            <MenuItem value={"Last36Months"}>Last 36 Months</MenuItem>
+                                            <MenuItem value={"Last42Months"}>Last 42 Months</MenuItem>
+                                            <MenuItem value={"Last48Months"}>Last 48 Months</MenuItem>
+                                            <MenuItem value={"Last54Months"}>Last 54 Months</MenuItem>
+                                            <MenuItem value={"Last60Months"}>Last 60 Months</MenuItem>
+                                            <MenuItem value={""} onClick={() => setIsRangeFilter(true)}>Full Range</MenuItem>
+                                        </Select>
+                                    </FormControl> */}
+                                </Box>)}
+
+                            <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
+                                <Select
+                                    value={section}
+                                    onChange={handleChange}
+                                    displayEmpty
+                                    inputProps={{ 'aria-label': 'Without label' }}
+                                    className='custom-dropdown'
+                                >
+                                    <MenuItem value="">
+                                        Select
+                                    </MenuItem>
+                                    <MenuItem value={10}>Section 1</MenuItem>
+                                    <MenuItem value={20}>Section 2</MenuItem>
+                                </Select>
+                            </FormControl>
+
+
+                            <FormControl sx={{ m: 1, width: '90px' }} size="small" className='select-border'>
+                                <Select
+                                    value={select}
+                                    onChange={handleChange2}
+                                    displayEmpty
+                                    inputProps={{ 'aria-label': 'Without label' }}
+                                    className='custom-dropdown'
+                                >
+                                    <MenuItem value="">
+                                        Select
+                                    </MenuItem>
+                                    <MenuItem value={10}>Select 1</MenuItem>
+                                    <MenuItem value={20}>Select 2</MenuItem>
+                                </Select>
+                            </FormControl>
+
+
+                            <FormControl sx={{ m: 1, width: '110px' }} size="small" className='select-border'>
+                                <Select
+                                    value={select}
+                                    onChange={handleChange2}
+                                    displayEmpty
+                                    inputProps={{ 'aria-label': 'Without label' }}
+                                    className='custom-dropdown'
+                                >
+                                    <MenuItem value="">
+                                        Select View
+                                    </MenuItem>
+                                    <MenuItem value={10}>Select View</MenuItem>
+                                    <MenuItem value={20}>Select View</MenuItem>
+                                    <MenuItem value={30}>Select View</MenuItem>
+                                </Select>
+                            </FormControl>
+
+
+                            {/* <Button className='btn-blue-2 mb-1 ms-1' onClick={() => handleDocumentsFilter("LastMonth")}>Save View</Button> */}
+
+                            <FormControlLabel required control={<Switch />} label="Required" />
+
 
                         </Box>
 
                         <Box className='clearfix'>
-                            <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                                <InputLabel id="demo-select-small-select">Select</InputLabel>
+                            <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
                                 <Select
-                                    labelId="demo-select-small-select"
-                                    id="demo-select-small"
                                     value={select}
-                                    label="Select"
                                     onChange={handleChange2}
+                                    displayEmpty
+                                    inputProps={{ 'aria-label': 'Without label' }}
                                     className='custom-dropdown'
                                 >
+                                    <MenuItem value="">
+                                        Select
+                                    </MenuItem>
                                     <MenuItem value={10}>Group By</MenuItem>
                                     <MenuItem value={20}>Sort By</MenuItem>
                                 </Select>
                             </FormControl>
                         </Box>
-
-
                     </Box>
+
+                    <hr />
 
                     <Grid
                         container
@@ -1068,7 +1112,7 @@ export default function DocumentList({ clientId }) {
                     >
                         <Grid item xs={12} sm={10} md={toggleScreen.multipleCardView ? 12 : 6} lg={toggleScreen.multipleCardView ? 12 : 5} className='white-box'>
                             <Box className={toggleScreen.multipleCardView ? 'd-flex m-auto justify-content-start w-100 align-items-end' : 'd-flex m-auto justify-content-center w-100 align-items-end'}>
-                                <Layout className='d-flex w-100 d-none'>
+                                {isAdvFilter===false && <Layout className='d-flex w-100'>
                                     <AutocompleteWrapper className='w-100'>
                                         <AutocompleteRoot
                                             className='w-100'
@@ -1080,8 +1124,7 @@ export default function DocumentList({ clientId }) {
                                         // className={focused ? 'Mui-focused' : ''}
                                         >
                                             <span className="material-symbols-outlined search-icon">search</span>
-
-                                            <Input onClick={() => handleSearchOpen("InputSearch")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0 w-100' />
+                                            <Input onBlur={()=>setIsSearchOpen(false)} onClick={() => handleSearchOpen("InputSearch")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0 w-100' />
                                         </AutocompleteRoot>
                                         {isSearchOpen ? (groupedOptions.length > 0 && (
                                             <Listbox {...getListboxProps()}>
@@ -1093,14 +1136,14 @@ export default function DocumentList({ clientId }) {
                                             </Listbox>
                                         )) : ""}
                                     </AutocompleteWrapper>
-                                </Layout>
-                                <Box className={toggleScreen.multipleCardView ? 'row pe-3 d-non' : 'row w-100 pe-3 d-non'}>
+                                </Layout>}
+                                {isAdvFilter && <><Box className={toggleScreen.multipleCardView ? 'row pe-3 d-non' : 'row w-100 pe-3 d-non'}>
                                     <Box className='col-md-6'>
                                         <Box className='mb-2'>
                                             <label>Select Property</label>
-                                            <select class="form-select" aria-label="Default select example" onChange={(e)=>setSearchByPropertyKey(e.target.value)}>
+                                            <select class="form-select" aria-label="Default select example" value={searchByPropertyKey} onChange={(e) => setSearchByPropertyKey(e.target.value)}>
                                                 <option value={""}></option>
-                                                {documentKeys.length>0 && documentKeys.map((itm)=>{
+                                                {documentKeys.length > 0 && documentKeys.map((itm) => {
                                                     return <option value={itm}>{itm}</option>
                                                 })}
                                             </select>
@@ -1109,20 +1152,24 @@ export default function DocumentList({ clientId }) {
                                     <Box className='col-md-6 px-0'>
                                         <Box className='mb-2'>
                                             <label>Value</label>
-                                            <input type="text" class="form-control" placeholder="Type Value" value={searchByPropertyInput} onChange={(e)=>setSearchByPropertyInput(e.target.value)}/>
+                                            <input type="text" class="form-control" placeholder="Type Value" value={searchByPropertyInput} onChange={(e) => setSearchByPropertyInput(e.target.value)} />
                                         </Box>
                                     </Box>
                                 </Box>
 
-                                <Button className='btn-blue-2 mb-2 ms-2' onClick={() =>handleSearchByProperty()}>Submit</Button>
-                                <Button className='btn-blue-2 mb-2 ms-2' onClick={() => handleDocumentsFilter("LastMonth")}>Toggle</Button>
+                                <Button disabled={searchByPropertyKey!==""&&searchByPropertyInput!==""?false:true} className={searchByPropertyKey!==""&&searchByPropertyInput!==""?'btn-blue-2mb-2 ms-2':'btn-grey-2 mb-2 ms-2'} onClick={() =>handleSearchByProperty()}>Submit</Button></>}
+                                <Button className='btn-blue-2 mb-2 ms-2' onClick={() => setIsAdvFilter(!isAdvFilter)}>Toggle</Button>
 
                             </Box>
 
                             <Box className='mt-2'>
                                 <Stack direction="row" spacing={1}>
-                                    <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
-                                    <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} />
+                                    {bulkSearch.length>0 && bulkSearch.map((itm)=><Chip label={`${itm.key}: ${itm.value}`} variant="outlined" onDelete={()=>{
+                                        setBulkSearch([]);
+                                        setAdvFilteredResult([]);
+                                    }} />)}
+                                    {/* <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
+                                    <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} /> */}
 
                                 </Stack>
                             </Box>
