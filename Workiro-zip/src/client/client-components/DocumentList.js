@@ -5,7 +5,7 @@ import DataGrid, {
     Column, FilterRow, Search, SearchPanel, Selection,
     HeaderFilter, Scrolling,
     FilterPanel,
-    Pager, Paging, DataGridTypes,
+    Pager, Paging, DataGridTypes,FormGroup,
 } from 'devextreme-react/data-grid';
 import 'devextreme/dist/css/dx.light.css';
 import { Box, Typography, Button, Paper, Grid, TextField } from '@mui/material';
@@ -22,6 +22,9 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import DnsIcon from '@mui/icons-material/Dns';
 import CloseIcon from '@mui/icons-material/Close';
+
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 
 
 const Layout = styled('div')`  display: flex;
@@ -931,12 +934,10 @@ export default function DocumentList({ clientId }) {
                     <div><input type='date' value={fromDate} onChange={(e)=>setFormDate(e.target.value)}/><input disabled={fromDate===""?true:false} min={fromDate} type='date'value={toDate} onChange={(e)=>setToDate(e.target.value)}/><button onClick={handleFilterByRange}>Search</button></div>
                 </div> */}
 
-
+                    <hr />
 
                     <Box className='d-flex flex-wrap justify-content-between align-items-center mb-4'>
-
                         <Box className='d-flex flex-wrap align-items-center'>
-
                             {isRangeFilter ? (
                                 <>
                                     <Box>
@@ -1068,7 +1069,10 @@ export default function DocumentList({ clientId }) {
                             </FormControl>
 
 
-                            <Button className='btn-blue-2 mb-1 ms-1' onClick={() => handleDocumentsFilter("LastMonth")}>Save View</Button>
+                            {/* <Button className='btn-blue-2 mb-1 ms-1' onClick={() => handleDocumentsFilter("LastMonth")}>Save View</Button> */}
+
+                            <FormControlLabel required control={<Switch />} label="Required" />
+
 
                         </Box>
 
@@ -1089,11 +1093,9 @@ export default function DocumentList({ clientId }) {
                                 </Select>
                             </FormControl>
                         </Box>
-
-
-
-
                     </Box>
+
+                    <hr />
 
                     <Grid
                         container
