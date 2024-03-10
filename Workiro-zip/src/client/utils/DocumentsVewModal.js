@@ -1,13 +1,14 @@
 import React from 'react';
 import user from "../../images/01.png";
-import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, Tabs, Tab, Checkbox, } from '@mui/material';
+import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Link } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import DescriptionIcon from '@mui/icons-material/Description';
-
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import Activity from '../../client/utils/Activity';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -15,7 +16,13 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
 
-    const [value, setValue] = React.useState(0);
+    // const [value, setValue] = React.useState(1);
+
+    // const handleChange = (event, newValue) => {
+    //     setValue(newValue);
+    // };
+
+    const [value, setValue] = React.useState('1');
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -24,7 +31,6 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
     const handleClosePDFView = () => {
         setOpenPDFView(false);
     };
-
 
     return (
 
@@ -46,11 +52,28 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                     </Box>
 
                     {/*  */}
-                    <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
-                        <span className="material-symbols-outlined text-black">
-                            cancel
-                        </span>
-                    </Button>
+
+                    <Box className="d-flex align-items-center justify-content-between flex-wrap">
+
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Rename</Button>
+
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Edit on browser</Button>
+
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Category</Button>
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Refile</Button>
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Links</Button>
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Add Activity</Button>
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button>
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Create Task</Button>
+
+                        <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
+                            <span className="material-symbols-outlined text-black">
+                                cancel
+                            </span>
+                        </Button>
+
+                    </Box>
                 </Box>
 
                 <hr />
@@ -109,11 +132,32 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
 
                             </TabPanel>
                             <TabPanel value="3">
-
                                 Notes textarea here
+                            </TabPanel>
+
+                            <TabPanel value="4">
+
+                                <Box className='text-center'>
+
+                                    {Array(15).fill("").map(() => {
+                                        return <>
+                                            <Link href="#" className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />Contact agreement</Link>
+                                        </>
+                                    })}
+
+                                </Box>
 
                             </TabPanel>
-                            <TabPanel value="4">
+
+                            <TabPanel value="5" className='p-0'>
+                                <Activity></Activity>
+                            </TabPanel>
+
+                            {/* <TabPanel value="5">
+                        <DocumentList/>
+                    </TabPanel> */}
+                            <TabPanel value="6">
+
                                 <Box className='d-flex mb-3 mt-2'>
                                     {/* <FormControlLabel control={<Checkbox />} className="p-0 m-0 ms-2 ps-1" size="small"/> */}
                                     <Checkbox {...label} defaultChecked size="small" />
@@ -159,17 +203,8 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                                         </>
                                     })}
                                 </Box>
-                            </TabPanel>
 
-                            <TabPanel value="5" className='p-0'>
-                                <Activity></Activity>
                             </TabPanel>
-
-                            {/* <TabPanel value="5">
-                        <DocumentList/>
-                    </TabPanel> */}
-                            <TabPanel value="6">Item Three</TabPanel>
-                            <TabPanel value="7">Item Three</TabPanel>
                         </TabContext>
                     </Box>
                 </DialogContentText>
