@@ -126,6 +126,7 @@ export default function DocumentList({ clientId }) {
     const [searchByPropertyKey, setSearchByPropertyKey] = useState("");
     const [searchByPropertyInput, setSearchByPropertyInput] = useState("");
     const [bulkSearch, setBulkSearch] = useState([]);
+    const [isAdvFilter,setIsAdvFilter] = useState(false);
 
 
 
@@ -861,20 +862,18 @@ export default function DocumentList({ clientId }) {
     function getListboxProps(params) { }
     const handleSearchByProperty = () => {
         setBulkSearch(prevState => [...prevState, { key: searchByPropertyKey, value: searchByPropertyInput }]);
+        // console.log(bulkSearch);
+        let fltByKeyVal = documents.filter((itm)=>{
+            if(itm[searchByPropertyKey]){
+                return String(itm[searchByPropertyKey]).toLowerCase().includes(searchByPropertyInput.toLowerCase());
+            }
+        });
+        // console.log(fltByKeyVal);
+        setAdvFilteredResult(fltByKeyVal);
+
         setSearchByPropertyInput("");
         setSearchByPropertyKey("");
-        // console.log(bulkSearch);
-        // let fltByKeyVal = documents.filter((itm)=>{
-        //     if(itm[searchByPropertyKey]){
-        //         return String(itm[searchByPropertyKey]).toLowerCase().includes(searchByPropertyInput.toLowerCase());
-        //     }
-        // });
-        // console.log(fltByKeyVal);
     }
-    useEffect(() => {
-        console.log(bulkSearch);
-        
-    },[bulkSearch]);
     return (
         <>
             {/* <div style={{ textAlign: "end" }}>{toggleScreen ? <AppsIcon onClick={() => setToggleScreen(!toggleScreen)} /> : <ListIcon onClick={() => setToggleScreen(!toggleScreen)} />}</div> */}
@@ -942,12 +941,19 @@ export default function DocumentList({ clientId }) {
                             {isRangeFilter ? (
                                 <>
                                     <Box>
-                                        {formatDate !== "" && toDate !== "" && <CloseIcon onClick={() => setIsRangeFilter(false)} />}
+                                        {formatDate !== "" && toDate !== "" && <CloseIcon onClick={() => {
+                                            setIsRangeFilter(false)
+                                            setSelectedLastFilter("");
+                                          }} />
+                                        }
                                         <input value={fromDate} onChange={(e) => setFormDate(e.target.value)} id="standard-basic" variant="standard" type="date" />
                                         <input disabled={fromDate === "" ? true : false} min={fromDate} value={toDate} onChange={(e) => setToDate(e.target.value)} id="standard-basic" variant="standard" type="date" />
                                         {
                                             formatDate !== "" && toDate !== "" ? <button onClick={handleFilterByRange}>Submit</button>
-                                                : <button onClick={() => setIsRangeFilter(false)}>Close</button>
+                                                : <button onClick={() => {
+                                                    setIsRangeFilter(false);
+                                                    setSelectedLastFilter("");
+                                                }}>Close</button>
                                         }
                                     </Box>
                                     {/* <Box sx={{ m: 1, width: 240 }}>
@@ -1106,7 +1112,7 @@ export default function DocumentList({ clientId }) {
                     >
                         <Grid item xs={12} sm={10} md={toggleScreen.multipleCardView ? 12 : 6} lg={toggleScreen.multipleCardView ? 12 : 5} className='white-box'>
                             <Box className={toggleScreen.multipleCardView ? 'd-flex m-auto justify-content-start w-100 align-items-end' : 'd-flex m-auto justify-content-center w-100 align-items-end'}>
-                                <Layout className='d-flex w-100 d-none'>
+                                {isAdvFilter===false && <Layout className='d-flex w-100'>
                                     <AutocompleteWrapper className='w-100'>
                                         <AutocompleteRoot
                                             className='w-100'
@@ -1118,8 +1124,7 @@ export default function DocumentList({ clientId }) {
                                         // className={focused ? 'Mui-focused' : ''}
                                         >
                                             <span className="material-symbols-outlined search-icon">search</span>
-
-                                            <Input onClick={() => handleSearchOpen("InputSearch")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0 w-100' />
+                                            <Input onBlur={()=>setIsSearchOpen(false)} onClick={() => handleSearchOpen("InputSearch")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0 w-100' />
                                         </AutocompleteRoot>
                                         {isSearchOpen ? (groupedOptions.length > 0 && (
                                             <Listbox {...getListboxProps()}>
@@ -1131,12 +1136,12 @@ export default function DocumentList({ clientId }) {
                                             </Listbox>
                                         )) : ""}
                                     </AutocompleteWrapper>
-                                </Layout>
-                                <Box className={toggleScreen.multipleCardView ? 'row pe-3 d-non' : 'row w-100 pe-3 d-non'}>
+                                </Layout>}
+                                {isAdvFilter && <><Box className={toggleScreen.multipleCardView ? 'row pe-3 d-non' : 'row w-100 pe-3 d-non'}>
                                     <Box className='col-md-6'>
                                         <Box className='mb-2'>
                                             <label>Select Property</label>
-                                            <select class="form-select" aria-label="Default select example" onChange={(e) => setSearchByPropertyKey(e.target.value)}>
+                                            <select class="form-select" aria-label="Default select example" value={searchByPropertyKey} onChange={(e) => setSearchByPropertyKey(e.target.value)}>
                                                 <option value={""}></option>
                                                 {documentKeys.length > 0 && documentKeys.map((itm) => {
                                                     return <option value={itm}>{itm}</option>
@@ -1152,15 +1157,19 @@ export default function DocumentList({ clientId }) {
                                     </Box>
                                 </Box>
 
-                                <Button disabled={searchByPropertyKey!==""&&searchByPropertyInput!==""?false:true} className={searchByPropertyKey!==""&&searchByPropertyInput!==""?'btn-blue-2mb-2 ms-2':'btn-grey-2 mb-2 ms-2'} onClick={() =>handleSearchByProperty()}>Submit</Button>
-                                <Button className='btn-blue-2 mb-2 ms-2' onClick={() => handleDocumentsFilter("LastMonth")}>Toggle</Button>
+                                <Button disabled={searchByPropertyKey!==""&&searchByPropertyInput!==""?false:true} className={searchByPropertyKey!==""&&searchByPropertyInput!==""?'btn-blue-2mb-2 ms-2':'btn-grey-2 mb-2 ms-2'} onClick={() =>handleSearchByProperty()}>Submit</Button></>}
+                                <Button className='btn-blue-2 mb-2 ms-2' onClick={() => setIsAdvFilter(!isAdvFilter)}>Toggle</Button>
 
                             </Box>
 
                             <Box className='mt-2'>
                                 <Stack direction="row" spacing={1}>
-                                    <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
-                                    <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} />
+                                    {bulkSearch.length>0 && bulkSearch.map((itm)=><Chip label={`${itm.key}: ${itm.value}`} variant="outlined" onDelete={()=>{
+                                        setBulkSearch([]);
+                                        setAdvFilteredResult([]);
+                                    }} />)}
+                                    {/* <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
+                                    <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} /> */}
 
                                 </Stack>
                             </Box>
