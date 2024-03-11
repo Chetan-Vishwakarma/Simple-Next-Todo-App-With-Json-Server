@@ -41,6 +41,9 @@ function TodoList() {
     const [selectedTask,setSelectedTask] = useState({});
 
     const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const [loadMore, setLoadMore] = useState(20);
+
   
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -84,8 +87,16 @@ function TodoList() {
 
     const [isApi,setIsApi] = useState(false);
 
+
+    const eventHandler = (e) => {              
+        if (window.innerHeight + e.target.documentElement.scrollTop + 1 >= e.target.documentElement.scrollHeight) {
+            setLoadMore((preValue) => preValue + 20);
+        }
+    }
+
     useEffect(()=>{
         Json_CRM_GetOutlookTask();
+        window.addEventListener('scroll', eventHandler)
     },[isApi])
 
     
@@ -148,7 +159,7 @@ function TodoList() {
             <Box className='row'>
                 {
                     allTask.length > 0 &&
-                    allTask.map((item, index) => {
+                    allTask.slice(0, loadMore).map((item, index) => {
                         return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                             <Box className='todo-list-box white-box relative w-100' onClick={()=>handleClickOpen(item)}>
 

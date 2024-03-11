@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -16,6 +16,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Checkbox, FormControlLabel } from '@mui/material';
+import CommanCLS from '../../services/CommanService';
+import dayjs from 'dayjs';
+import CreateNewModalTask from '../../components/CreateNewModal';
 
 
 function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
@@ -24,11 +27,401 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         setOpenUploadDocument(false);
     };
 
+    const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
+    const [password, setPassword] = useState(localStorage.getItem("Password"));
+    const [Email, setEmail] = useState(localStorage.getItem("Email"));
+    const [txtFolderId, setTxtFolderId] = useState(localStorage.getItem("ProjectId"));
+
+    const [txtFolderData, setTextFolderData] = useState(null);
+
+
+    const [clientList, setClientList] = useState([]);
+    const [sectionList, setSectionList] = useState([]);
+    const [folderList, setFolderList] = useState([]);
+
+    const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/"; // base url for api
+    //   let dt = new LoginDetails();
+    let cls = new CommanCLS(baseUrl, agrno, Email, password);
+
+    const [selectedFiles, setSelectedFiles] = useState([]);////////////Set file selected and upload
+
+    const [txtClientId, setTxtClientId] = useState(null);/////////////////for clientid set
+
+    const [txtClientData, setTxtClientData] = useState(null);/////////////////for clientid set
+
+    const [txtSectionId, setTxtSectionId] = useState(null);//////for sectionid set
+
+    const [txtSectionData, setTxtSectionData] = useState(null);//////for sectionid set
+
+    const [documentDate, setDocumentDate] = useState(null); // Initialize the selected date state
+
+    const [receivedDate, setReceivedDate] = useState(null); // Initialize the selected date state
+
+    const [standarDescription, setStandarDescription] = useState([]); // Initialize the selected date state
+
+    const [txtStandarDescription, settxtStandarDescription] = useState(""); // Initialize the selected date state
+
+    const [subSectionData, setSubSectionData] = useState([]); // Initialize the selected date state
+
+    const [txtSubSectionData, setTxtSubSectionData] = useState(null); // Initialize the selected date state
+
+    const [subSectionBool, setSubSectionBool] = useState(false); // Initialize the selected date state
+
+    const [categoryid, setCategoryId] = useState(0);
+
+    const [categoryList, setCategoryList] = useState([])
+
+    // Event handler to handle file selection
+    const handleFileSelect = async (event) => {
+        const files = event.target.files;
+        const selectedFilesArray = Array.from(files);
+
+        for (let i = 0; i < selectedFilesArray.length; i++) {
+            const file = selectedFilesArray[i];
+            const isFileAlreadySelected = selectedFiles.some((selectedFile) => selectedFile.FileName === file.name);
+
+            if (!isFileAlreadySelected) {
+                await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        let fileByte = reader.result.split(";")[1].replace("base64,", "");
+                        const fileData = {
+                            FileName: file.name,
+                            Base64: fileByte ? fileByte : "", // Base64 data of the file
+                            FileSize: file.size,
+                            Preview: reader.result, // Data URL for preview
+                            DocId: "",
+                            GUID: generateGUID()
+                        };
+                        setSelectedFiles((prevUploadedFiles) => [...prevUploadedFiles, fileData]);
+                        resolve();
+                    };
+                    reader.readAsDataURL(file); // Read file as data URL (base64)
+                });
+            }
+        }
+    };
+
+
+
+    const RemoveFiles = (id) => {
+        // Filter out the object with the specified ID
+        const resutl = selectedFiles.filter(guid => guid.GUID !== id);
+        setSelectedFiles(resutl);
+    };
+
+    function generateGUID() {
+        const cryptoObj = window.crypto || window.msCrypto; // for IE 11 compatibility
+
+        if (cryptoObj && cryptoObj.getRandomValues) {
+            // Use crypto.getRandomValues to generate a GUID if available
+            const buf = new Uint16Array(8);
+            cryptoObj.getRandomValues(buf);
+
+            // Convert to string format
+            return (
+                pad4(buf[0]) + pad4(buf[1]) + '-' + pad4(buf[2]) + '-' + pad4(buf[3]) + '-' +
+                pad4(buf[4]) + '-' + pad4(buf[5]) + pad4(buf[6]) + pad4(buf[7])
+            );
+        } else {
+            // Fallback if crypto.getRandomValues is not supported
+            console.error("crypto.getRandomValues not supported. GUID generation failed.");
+            return null;
+        }
+    }
+
+    function pad4(num) {
+        let ret = num.toString(16);
+        while (ret.length < 4) {
+            ret = '0' + ret;
+        }
+        return ret;
+    }
+
+    useEffect(() => {
+        console.log("selectedFiles", selectedFiles);
+    }, [selectedFiles]);
+
+
+    //////////////////////////Get Foder Data
+    function Json_GetFolders() {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password
+        }
+
+        try {
+            cls.Json_GetFolders(obj, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        let tbl = js.Table;
+                        let result = tbl.filter((el) => el.FolderID === parseInt(txtFolderId));
+                        console.log("get folder list", tbl);
+                        setFolderList(tbl);
+                        if (result.length > 0) {
+                            console.log("get folder list", result);
+                            setTextFolderData(result[0])
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            console.log({
+                status: false,
+                message: "Folder is Blank Try again",
+                error: error,
+            });
+        }
+    }
+
+    function Json_GetFolderData() {
+        console.log("Json_GetFolderData11", txtFolderId);
+        try {
+            let o = {};
+            o.ProjectId = txtFolderId;
+            o.SectionId = "-1";
+            o.ClientId = "";
+            cls.Json_GetFolderData(o, function (sts, data) {
+                if (sts) {
+                    let js = JSON.parse(data);
+                    console.log("Json_GetFolderData", js);
+                    let clientList = js.Table1;
+                    if (clientList.length > 0) {
+                        setClientList(clientList);
+                    }
+                    let sectionList = js.Table;
+                    if (sectionList.length > 0) {
+                        setSectionList(sectionList);
+                    }
+                }
+            });
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
+        }
+    }
+
+
+
+
+
+    useEffect(() => {
+        Json_GetFolders();
+        Json_GetFolderData();
+        setDocumentDate(dayjs(cls.GetCurrentDayDate).format('YYYY/MM/DD')); // Update the selected date state with the new date value
+        setReceivedDate(dayjs(cls.GetNextDayDate).format('YYYY/MM/DD')); // Update the selected date state with the new date value
+        console.log("GetCurrentDayDate", cls.GetCurrentDayDate());
+        console.log("GetNextDayDate", cls.GetNextDayDate());
+    }, [])
+
+    const handleOnFolderClick = (data) => {
+        console.log("Get Folder On click", data);
+        setTxtFolderId(data.FolderID)
+        setTextFolderData(data)
+        Json_GetFolderData()
+    }
+
+    const handleClientChange = (data) => {
+        console.log("Get Clietn On click", data);
+        setTxtClientId(data.ClientID)
+        setTxtClientData(data)
+    }
+
+
+
+
+
+    const handleSectionChange = (data) => {
+        console.log("Get Clietn On click", data);
+        setTxtSectionId(data.SecID)
+        setTxtSectionData(data)
+        Json_GetCategory(data.SecID)
+        Json_GetSubSections(data.SecID)
+    }
+
+
+
+
+    const handleCategoryChange = (data) => {
+        console.log("Get Clietn On click", data);
+        setCategoryId(data.CatId)
+    }
+    const handleStandarDescriptionChange = (data) => {
+        console.log("Get Clietn On click", data);
+        settxtStandarDescription(data.Description)
+    }
+
+    const handleDescriptionChange = (e) => {
+        console.log("Get Clietn On click", e.target.value);
+        settxtStandarDescription(e.target.value)
+    }
+
+
+    function Json_GetSubSections(SectionId) {
+        try {
+            let o = {};
+            o.SectionId = SectionId;
+            o.ProjectId = txtFolderId;
+            cls.Json_GetSubSections(o, function (sts, data) {
+                if (sts) {
+                    console.log("Json_GetSubSections", data);
+                    let json = JSON.parse(data);
+                    let tbl1 = json.Table1;
+                    if (tbl1.length > 0) {
+                        setSubSectionBool(true);
+                        setSubSectionData(tbl1);
+                    }
+                    else {
+                        setSubSectionBool(false);
+                    }
+
+                }
+            });
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
+        }
+    }
+
+    const handleSubSectionChange = (data) => {
+        console.log("Get Clietn On click", data);
+        setTxtSubSectionData(data);
+    }
+
+    function Json_GetCategory(SectionId) {
+
+        try {
+            let o = {};
+            o.SectionId = SectionId;
+            cls.Json_GetCategory(o, function (sts, data) {
+                if (sts) {
+                    console.log("Json_GetCategory", data);
+                    let json = JSON.parse(data);
+                    let tbl1 = json.Table1;
+                    let tbl = json.Table;
+                    if (tbl.length > 0) {
+                        setCategoryList(tbl)
+                    }
+                    if (tbl1.length > 0) {
+                        setStandarDescription(tbl1);
+                    }
+
+
+
+                }
+            });
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
+        }
+    }
+    //////////////////////////End Get Foder Data
+    /////////////////////////////DAte Set
+
+
+
+    const handleDateChangeDocument = (date) => {
+        console.log("Get Clietn On click", dayjs(date).format('YYYY/MM/DD'));
+        setDocumentDate(date); // Update the selected date state
+    };
+
+    const handleDateChangeRecieved = (date) => {
+        console.log("Get Clietn On click", dayjs(date).format('YYYY/MM/DD'));
+        setReceivedDate(date); // Update the selected date state
+    };
+
+    const [createTaskChk, setCreateTaskChk] = useState(false);
+    const [buttonNameText, setButtonNameText] = useState("Submit");
+
+    const handleCheckboxChangeCreateTask = (event) => {
+        setCreateTaskChk(event.target.checked); // Update the createTask state when the checkbox value changes
+        if(event.target.checked){
+            setButtonNameText("Submit & Create Task")
+        }
+        else{
+            setButtonNameText("Submit")
+        }
+        
+    };
+
+    const [createPublishChk, setCreatePublishChk] = useState(false);
+
+    const handleCheckboxChangeCreatePublish = (event) => {
+        setCreatePublishChk(event.target.checked); // Update the createTask state when the checkbox value changes
+        if(event.target.checked){
+            setButtonNameText("Submit & Create Task")
+        }
+        else{
+            setButtonNameText("Submit")
+        }
+    };
+
+    const UploadDocumentCreattTask = async () => {
+        if (selectedFiles.length > 0) {
+            for (let i of selectedFiles) {
+                await Json_RegisterItem(i.FileName, i.Base64)
+            }
+            setOpenUploadDocument(false);
+        }
+        else {
+            Json_RegisterItem()
+        }
+    }
+
+    const [step, setStep] = useState(1);
+
+    const handleNext = () => {
+        setStep(step + 1);
+    };
+
+    const handlePrevious = () => {
+        setStep(step - 1);
+    };
+
+    function Json_RegisterItem(fileName = "", base64 = "") {
+        let obj = {
+            "sectionId": txtSectionData.SecID,
+            "deptId": 0,
+            "folderId": txtFolderData.FolderID,
+            "categoryId": categoryid ? categoryid : 0,
+            "subSectionId": txtSubSectionData ? txtSubSectionData.SubSectionID : 0,
+            "retForMonth": "-1",
+            "deptName": "",
+            "folderName": txtFolderData.Folder,
+            "originatorId": txtClientData.ClientID,
+            "senderId": txtClientData.ClientID,
+            "sectionName": txtSectionData.Sec,
+            "extDescription": "",
+            "docDirection": "Incoming",
+            "description": txtStandarDescription,
+            "priority": "",
+            "stickyNote": "",
+            "fileName": fileName ? fileName : "",
+            "forActionList": "",
+            "forInformationList": "",
+            "forGroupList": "",
+            "uDFList": "",
+            "sUDFList": "",
+            "clientname": txtClientData.Client,
+            "receiveDate": dayjs(receivedDate).format("YYYY/MM/DD"),
+            "actionByDate": "1990/01/01",
+            "actionDate": dayjs(documentDate).format("YYYY/MM/DD"),
+            "docViewedDate": dayjs(documentDate).format("YYYY/MM/DD"),
+            "strb64": base64 ? base64 : "",
+            "strtxt64": "",
+            "EmailMessageId": ""
+        }
+        console.log("Json_RegisterItem", obj)
+        cls.Json_RegisterItem(obj, function (sts, data) {
+            if (sts && data) {
+                let js = JSON.parse(data)
+                console.log("Json_RegisterItem", js)
+
+            }
+        })
+    }
+
     return (
-
         <React.Fragment>
-
-
             {/* <Button variant="outlined" onClick={handleClickOpenUploadDocument}>
                 OpenUploadDocument alert dialog
             </Button> */}
@@ -62,168 +455,229 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
 
                         {/* file upload */}
-                        <Box className="">
-                            <Box className='row'>
-                                <Box className='col-lg-8 m-auto'>
-                                    <Box className="file-upload-2 mt-4">
-                                        <input
-                                            type="file"
-                                            id="file-upload"
-                                            multiple
-                                        />
-                                        <label className="file-upload-2-label" for="file-upload">
-                                            <Box className="text-center">
-                                                <span className="material-symbols-outlined icon">
-                                                    cloud_upload
-                                                </span>
-                                                <Box className="upload-content-2">
-                                                    <Typography variant="h4" className='font-18 bold mb-1'>
-                                                        Select or drag file here
-                                                    </Typography>
-                                                    <Typography variant="body1" className='font-14'>
-                                                        JPG, PNG or PDF, file size no more than 10MB
-                                                    </Typography>
+                        {step === 1 && (<>
+                            <Box className="">
+                                <Box className='row'>
+                                    <Box className='col-lg-8 m-auto'>
+                                        <Box className="file-upload-2 mt-4">
+                                            <input
+                                                type="file"
+                                                id="file-upload"
+                                                multiple
+                                                onChange={handleFileSelect}
+                                            />
+                                            <label className="file-upload-2-label" for="file-upload">
+                                                <Box className="text-center">
+                                                    <span className="material-symbols-outlined icon">
+                                                        cloud_upload
+                                                    </span>
+                                                    <Box className="upload-content-2">
+                                                        <Typography variant="h4" className='font-18 bold mb-1'>
+                                                            Select or drag file here
+                                                        </Typography>
+                                                        <Typography variant="body1" className='font-14'>
+                                                            JPG, PNG or PDF, file size no more than 10MB
+                                                        </Typography>
+                                                    </Box>
                                                 </Box>
-                                            </Box>
-                                        </label>
+                                            </label>
+                                        </Box>
                                     </Box>
                                 </Box>
-                            </Box>
 
-                            <Box className='uploaded-list mt-4'>
-                                {Array(12).fill("").map(() => {
-                                    return <>
-                                        <Box className='uploaded-box'>
-                                            <CloseIcon className='close-icon' />
-                                            <DescriptionIcon />
-                                            <Typography variant="body1" className='font-14'>
-                                                Upload_Documen.pdf
-                                            </Typography>
-                                            <Typography variant="body1" className='font-12'>
-                                                1054KB
-                                            </Typography>
-                                        </Box>
-                                    </>
-                                })}
+                                <Box className='uploaded-list mt-4'>
+                                    {selectedFiles.map((item, index) => {
+                                        return <>
+                                            <Box className='uploaded-box' key={index}>
+                                                <CloseIcon className='close-icon' onClick={() => RemoveFiles(item.GUID)} />
+                                                <DescriptionIcon />
+                                                <Typography variant="body1" className='font-14'>
+                                                    {item.FileName}
+                                                </Typography>
+                                                <Typography variant="body1" className='font-12'>
+                                                    {item.File}
+                                                </Typography>
+                                            </Box>
+                                        </>
+                                    })}
+                                </Box>
                             </Box>
-                        </Box>
+                        </>)}
+                        {/*  */}
+                        {step === 2 && (<>
+                            <Box className='row d-non'>
+                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
 
-                        <Box className='row d-none'>
-                            <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-                                
-                                <Autocomplete
-                                    disablePortal
-                                    id="combo-box-demo"
-                                    options={Folder}
-                                    renderInput={(params) => <TextField {...params} label="Folder" />}
-                                />
-                                
-                            </Box>
-
-                            <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-                                <Autocomplete
-                                    disablePortal
-                                    id="combo-box-demo"
-                                    options={Folder}
-                                    renderInput={(params) => <TextField {...params} label="Scetion" />}
-                                />
-                            </Box>
-
-                            <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-                                <Autocomplete
-                                    disablePortal
-                                    id="combo-box-demo"
-                                    options={Folder}
-                                    renderInput={(params) => <TextField {...params} label="Reference" />}
-                                />
-                            </Box>
-
-                            <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-                                <Autocomplete
-                                    disablePortal
-                                    id="combo-box-demo"
-                                    options={Folder}
-                                    renderInput={(params) => <TextField {...params} label="Reference" />}
-                                />
-                            </Box>
-
-                            <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-                                <label className='font-14 text-black'>Document Date</label>
-                                <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                    <DatePicker className=" w-100"
-                                        format="DD/MM/YYYY"
+                                    <Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={folderList}
+                                        value={txtFolderData}
+                                        getOptionLabel={(option) => option.Folder} // Provide a function to extract the label from each option
+                                        onChange={(event, newValue) => handleOnFolderClick(newValue)} // Handle the onChange event
+                                        renderInput={(params) => <TextField {...params} label="Folder" />}
                                     />
-                                </LocalizationProvider>
-                            </Box>
 
-                            <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-                                <label className='font-14 text-black'>Received Date</label>
-                                <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                    <DatePicker className=" w-100"
-                                        format="DD/MM/YYYY"
+                                </Box>
+
+                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
+                                    <Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={clientList}
+                                        getOptionLabel={(option) => option.Client}
+                                        getOptionSelected={(option, value) => option.ClientID === value.ClientID} // Add this line
+                                        onChange={(event, newValue) => handleClientChange(newValue)} // Handle the onChange event
+                                        renderInput={(params) => <TextField {...params} label="Reference" />}
                                     />
-                                </LocalizationProvider>
+                                </Box>
+
+                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
+                                    <Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={sectionList}
+                                        getOptionLabel={(option) => option.Sec}
+                                        onChange={(event, newValue) => handleSectionChange(newValue)} // Handle the onChange event
+                                        renderInput={(params) => <TextField {...params} label="Section" />}
+                                    />
+                                </Box>
+
+                                {subSectionBool && <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
+                                    <Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={subSectionData}
+                                        getOptionLabel={(option) => option.SubSection}
+                                        onChange={(event, newValue) => handleSubSectionChange(newValue)} // Handle the onChange event
+                                        renderInput={(params) => <TextField {...params} label="Subsection" />}
+                                    />
+                                </Box>}
+
+                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
+                                    <label className='font-14 text-black'>Document Date</label>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                        <DatePicker className=" w-100"
+                                            defaultValue={documentDate}
+                                            onChange={handleDateChangeDocument} // Handle date changes
+                                            format="DD/MM/YYYY"
+                                        />
+                                    </LocalizationProvider>
+                                </Box>
+
+                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
+                                    <label className='font-14 text-black'>Received Date</label>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                        <DatePicker className=" w-100"
+                                            format="DD/MM/YYYY"
+                                            defaultValue={receivedDate}
+                                            onChange={handleDateChangeRecieved} // Handle date changes
+                                        />
+                                    </LocalizationProvider>
+                                </Box>
+
+                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
+                                    <Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={standarDescription}
+                                        getOptionLabel={(option) => option.Description}
+                                        onChange={(event, newValue) => handleStandarDescriptionChange(newValue)} // Handle the onChange event
+                                        renderInput={(params) => <TextField {...params} label="Standar Description" />}
+
+
+                                    />
+                                </Box>
+                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
+                                    <Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={categoryList}
+                                        getOptionLabel={(option) => option.CatName}
+                                        onChange={(event, newValue) => handleCategoryChange(newValue)} // Handle the onChange event
+                                        renderInput={(params) => <TextField {...params} label="Category" />}
+
+
+                                    />
+                                </Box>
+
+
+                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 pt-2'>
+                                    <FormControlLabel control={<Checkbox checked={createTaskChk} onChange={handleCheckboxChangeCreateTask} />} label="Create Task" />
+                                    <FormControlLabel control={<Checkbox checked={createPublishChk} onChange={handleCheckboxChangeCreatePublish} />} label="Publish" />
+                                </Box>
+
+                                <Box className='col-lg-12'>
+                                    <textarea className='textarea w-100' onChange={handleDescriptionChange} value={txtStandarDescription} placeholder='Description'></textarea>
+                                </Box>
+
+
                             </Box>
 
-                            <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-                                <Autocomplete
-                                    disablePortal
-                                    id="combo-box-demo"
-                                    options={Folder}
-                                    renderInput={(params) => <TextField {...params} label="Standard Description" />}
-                                />
-                            </Box>
 
-                            <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 pt-2'>
-                                <FormControlLabel control={<Checkbox />} label="Create Task" />
-                                <FormControlLabel control={<Checkbox />} label="Publish" />
-                            </Box>
+                        </>)}
 
-                            <Box className='col-lg-12'>
-                                <textarea className='textarea w-100' placeholder='Description'></textarea>
-                            </Box>
-
-                        </Box>
 
 
                         {/* row end */}
 
                         {/* UDF Start */}
 
-                        {/* <hr />
+                        <hr />
 
-                        <Typography variant="body1" className="font-18 bold mb-2 text-black">
-                            UDF Form
-                        </Typography>
+                        {step === 3 && (<>
+                            <Typography variant="body1" className="font-18 bold mb-2 text-black">
+                                UDF Form
+                            </Typography>
 
-                        <Box className='row'>
-                            <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-                                <TextField id="outlined-basic" label="Outlined" variant="outlined" className='w-100' />
+                            <Box className='row'>
+                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
+                                    <TextField id="outlined-basic" label="Outlined" variant="outlined" className='w-100' />
+                                </Box>
+
+                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
+                                    <Autocomplete
+
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={Folder}
+                                        renderInput={(params) => <TextField {...params} label="Financial Year" />}
+                                    />
+                                </Box>
                             </Box>
-
-                            <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-                                <Autocomplete
-
-                                    disablePortal
-                                    id="combo-box-demo"
-                                    options={Folder}
-                                    renderInput={(params) => <TextField {...params} label="Financial Year" />}
-                                />
-                            </Box>
-                        </Box> */}
-
+                        </>)}
+                        {/* {step===4 && (<>
+                    <CreateNewModalTask openModal={true}></CreateNewModalTask>
+                    </>)} */}
                         {/* UDF End */}
 
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Box className="d-flex mb-3 pe-3">
-                        <Button variant="text" className="btn-blue-2 me-2" onClick={handleCloseDocumentUpload}>
-                            Next
-                        </Button>
-                        <Button variant="text" className="btn-blue-2" onClick={handleCloseDocumentUpload}>
+                        {step === 2 && (<>
+                            <Button variant="text" className="btn-blue-2 me-2" onClick={handlePrevious} disabled={step === 1}>
+                                Previous
+                            </Button>
+
+                            <Button variant="text" style={{ float: 'right' }} className="btn-blue-2" onClick={UploadDocumentCreattTask}>
+
+                                {buttonNameText}
+
+                            </Button>
+
+
+                        </>)}
+
+                        {step === 1 && (<>
+                            <Button variant="text" className="btn-blue-2 me-2" onClick={handleNext}>
+                                Index
+                            </Button>
+                        </>)}
+
+                        {/* <Button variant="text" className="btn-blue-2" onClick={UploadDocumentCreattTask}>
                             Submit
-                        </Button>
+                        </Button> */}
                     </Box>
                 </DialogActions>
             </Dialog>
