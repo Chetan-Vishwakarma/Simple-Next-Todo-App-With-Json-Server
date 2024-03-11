@@ -89,6 +89,8 @@ function DocumentDetails({documents, advFilteredResult}) {
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState(null);
     const DocumentList = Boolean(anchorElDocumentList);
     const handleClickDocumentList = (event) => {
+        console.log(event.currentTarget);
+        event.stopPropagation();
         setAnchorElDocumentList(event.currentTarget);
     };
     const handleCloseDocument = () => {
@@ -138,7 +140,7 @@ function DocumentDetails({documents, advFilteredResult}) {
                             <label className="file-uploads-label file-uploads-document" onClick={handleClickOpenPDFView}>
                                 <Box className="d-flex align-items-center">
 
-                                    <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
+                                    <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" />
 
                                     <DescriptionIcon
                                         sx={{
@@ -166,7 +168,7 @@ function DocumentDetails({documents, advFilteredResult}) {
                                     >
                                         <MoreVertIcon />
                                     </Button>
-                                    <Menu
+                                    {/* <Menu
                                         id="basic-menu"
                                         anchorEl={anchorElDocumentList}
                                         open={DocumentList}
@@ -205,7 +207,7 @@ function DocumentDetails({documents, advFilteredResult}) {
                                                 <CloudDownloadIcon fontSize="medium" />
                                             </ListItemIcon>
                                             Download</MenuItem>
-                                    </Menu>
+                                    </Menu> */}
                                 </Box>
                             </label>
                         </Box>
@@ -245,7 +247,7 @@ function DocumentDetails({documents, advFilteredResult}) {
                                     >
                                         <MoreVertIcon />
                                     </Button>
-                                    <Menu
+                                    {/* <Menu
                                         id="basic-menu"
                                         anchorEl={anchorElDocumentList}
                                         open={DocumentList}
@@ -284,7 +286,7 @@ function DocumentDetails({documents, advFilteredResult}) {
                                                 <CloudDownloadIcon fontSize="medium" />
                                             </ListItemIcon>
                                             Download</MenuItem>
-                                    </Menu>
+                                    </Menu> */}
                                 </Box>
                             </label>
                         </Box>
