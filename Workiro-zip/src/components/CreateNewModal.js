@@ -79,7 +79,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-export default function CreateNewModalTask() {
+export default function CreateNewModalTask({openModal}) {
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -95,6 +95,9 @@ export default function CreateNewModalTask() {
     const [userList, setUserList] = React.useState([]);
     const [addUser, setAddUser] = useState([]);
 
+    const folderListRef = React.useRef(null);
+    const clientListRef = React.useRef(null);
+    const sectionListRef = React.useRef(null);
 
     const [searchQuery, setSearchQuery] = useState("");
     const [anchorel, setAnchorel] = React.useState(null);
@@ -418,10 +421,34 @@ export default function CreateNewModalTask() {
         return formattedDate;
     }
 
+ // Function to close the folder list
+    const closeFolderList = (e) => {
+        if (folderListRef.current && !folderListRef.current.contains(e.target)) {
+            setFolderAnchorEl(null);
+        }
+    };
 
+    // Function to close the client list
+   
+    const closeClientList = (e) => {
+        if (clientListRef.current && !clientListRef.current.contains(e.target)) {
+            setClientAnchorEl(null);
+        }
+    };
+
+
+   
+    
+
+    // Function to close the section list
+    const closeSectionList = (e) => {
+        if (sectionListRef.current && !sectionListRef.current.contains(e.target)) {
+            setSectionAnchorEl(null);
+        }
+    };
 
     useEffect(() => {
-
+        setOpen(openModal)
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
@@ -437,6 +464,20 @@ export default function CreateNewModalTask() {
         Json_GetForwardUserList();
         Json_GetFolderData();
         //console.log(nextDate, currentDate)
+
+        document.addEventListener('mousedown', closeFolderList);
+        document.addEventListener('mousedown', closeClientList);
+        document.addEventListener('mousedown', closeSectionList);
+        return () => {
+            document.removeEventListener('mousedown', closeFolderList);
+            document.removeEventListener('mousedown', closeClientList);
+            document.removeEventListener('mousedown', closeSectionList);
+        };
+
+      
+       
+        
+
 
     }, []);
 
@@ -1817,6 +1858,7 @@ export default function CreateNewModalTask() {
                                                                     Json_GetFolderData();
                                                                 }}
                                                                 className="search-list"
+                                                                ref={folderListRef}
                                                             >
                                                                 {/* <ListItemAvatar>
                                                                     <Avatar
@@ -1910,6 +1952,7 @@ export default function CreateNewModalTask() {
 
                                                             }}
                                                             className="search-list"
+                                                            ref={clientListRef}
                                                         >
                                                             {/* <ListItemAvatar>
                                                                 <Avatar
@@ -1997,6 +2040,7 @@ export default function CreateNewModalTask() {
                                                                     setSectionAnchorEl(null);
                                                                 }}
                                                                 className="search-list"
+                                                                ref={sectionListRef}
                                                             >
                                                                 {/* <ListItemAvatar>
                                                                     <Avatar

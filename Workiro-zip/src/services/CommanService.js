@@ -7,7 +7,66 @@ export default class CommanCLS extends AllService {
     constructor(APIUrl,agrno, Email, password) {
         super(APIUrl,agrno, Email, password);
     }
+     GetNextDayDate() {
+        const currentDate = new Date();
+        const nextDate = new Date(currentDate);
+        nextDate.setDate(currentDate.getDate() + 1); // Increment the day by 1 to get the next day's date
 
+        const day = nextDate.getDate().toString().padStart(2, '0'); // Get the day and pad with 0 if needed
+        const month = (nextDate.getMonth() + 1).toString().padStart(2, '0'); // Get the month (Note: January is 0)
+        const year = nextDate.getFullYear(); // Get the full year
+
+        // Construct the date string in "yyyy/mm/dd" format
+        const formattedDate = `${year}/${month}/${day}`;
+
+        return formattedDate;
+    }
+    GetCurrentDayDate() {
+        const currentDate = new Date();
+        const day = currentDate.getDate().toString().padStart(2, '0'); // Get the day and pad with 0 if needed
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Get the month (Note: January is 0)
+        const year = currentDate.getFullYear(); // Get the full year
+
+        // Construct the date string in "dd/mm/yyyy" format
+        const formattedDate = `${year}/${month}/${day}`;
+
+        return formattedDate;
+    }
+
+    Json_RegisterItem(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_RegisterItem",obj,true);
+        super.CallNewService("Json_RegisterItem",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+    Json_GetCategory(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetCategory",obj,true);
+        super.CallNewService("Json_GetCategory",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+    Json_GetSubSections(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetSubSections",obj,true);
+        super.CallNewService("Json_GetSubSections",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
     MessagePublished_Json(obj,callBack){   
         super.CreateNewServiceParamObject("MessagePublished_Json",obj,false);
         super.CallNewService("MessagePublished_Json",function(status,Data){
