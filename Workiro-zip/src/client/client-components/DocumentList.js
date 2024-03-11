@@ -123,7 +123,7 @@ export default function DocumentList({ clientId }) {
     const [filteredDocResult, setFilteredDocResult] = useState([]);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [advFilteredResult, setAdvFilteredResult] = useState([]);
-    const [section, setSection] = React.useState('');
+    const [selectedSection,setSelectedSection] = React.useState('');
     const [select, setSelect] = React.useState('');
     const [selectedLastFilter, setSelectedLastFilter] = useState("");
     const [isRangeFilter, setIsRangeFilter] = useState(false);
@@ -141,8 +141,14 @@ export default function DocumentList({ clientId }) {
     };
 
     // 
-    const handleChange = (event) => {
-        setSection(event.target.value);
+    const handleFilterBySection = (event) => {
+        let target = event.target.value;
+        setSelectedSection(event.target.value);
+        let filteredData = documents.filter((itm)=>{
+            return itm["Section"]===target;
+        });
+        // console.log("filteredData",filteredData);
+        setAdvFilteredResult(filteredData);
     };
     const handleChange2 = (event) => {
         setSelect(event.target.value);
@@ -1085,8 +1091,8 @@ export default function DocumentList({ clientId }) {
 
                             <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
                                 <Select
-                                    value={section}
-                                    onChange={handleChange}
+                                    value={selectedSection}
+                                    onChange={handleFilterBySection}
                                     displayEmpty
                                     inputProps={{ 'aria-label': 'Without label' }}
                                     className='custom-dropdown'
