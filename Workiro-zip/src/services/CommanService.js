@@ -447,5 +447,17 @@ export default class CommanCLS extends AllService {
         })
      }
 
+     Json_GetUserFolderList(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetUserFolderList",obj,true);
+        super.CallNewService("Json_GetUserFolderList",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
 
 }

@@ -123,7 +123,7 @@ export default function DocumentList({ clientId }) {
     const [filteredDocResult, setFilteredDocResult] = useState([]);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [advFilteredResult, setAdvFilteredResult] = useState([]);
-    const [selectedSection,setSelectedSection] = React.useState('');
+    const [selectedSection, setSelectedSection] = React.useState('');
     const [select, setSelect] = React.useState('');
     const [selectedLastFilter, setSelectedLastFilter] = useState("");
     const [isRangeFilter, setIsRangeFilter] = useState(false);
@@ -134,6 +134,8 @@ export default function DocumentList({ clientId }) {
     const [alignment, setAlignment] = React.useState('left');
     const [isAdvFilter, setIsAdvFilter] = useState(false);
     const [sections, setSections] = useState([]);
+    const [folders, setFolders] = useState([]);
+    const [selectedFolder, setSelectedFolder] = useState("");
 
 
     const handleAlignment = (event, newAlignment) => {
@@ -144,15 +146,24 @@ export default function DocumentList({ clientId }) {
     const handleFilterBySection = (event) => {
         let target = event.target.value;
         setSelectedSection(event.target.value);
-        let filteredData = documents.filter((itm)=>{
-            return itm["Section"]===target;
+        let filteredData = documents.filter((itm) => {
+            return itm["Section"] === target;
         });
         // console.log("filteredData",filteredData);
         setAdvFilteredResult(filteredData);
     };
-    const handleChange2 = (event) => {
-        setSelect(event.target.value);
-    };
+
+    // const handleChange2 = (event) => {
+    //     setSelect(event.target.value);
+    // };
+    const handleFilterByFolder = (e) => {
+        let target = e.target.value;
+        let filteredData = documents.filter((itm) => {
+            return itm["Folder"] === target;
+        });
+        console.log("handleFilterByFolder", filteredData);
+        setAdvFilteredResult(filteredData);
+    }
 
 
     const handleDelete = () => {
@@ -166,6 +177,28 @@ export default function DocumentList({ clientId }) {
             setIsSearchOpen(!isSearchOpen);
         } else {
             setIsSearchOpen(false);
+        }
+    }
+
+    function Json_GetFolders() {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password
+        }
+        try {
+            Cls.Json_GetFolders(obj, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        let tbl = js.Table;
+                        // console.log("Json_GetFolders", tbl);
+                        setFolders(tbl);
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_GetFolders", err);
         }
     }
 
@@ -188,7 +221,8 @@ export default function DocumentList({ clientId }) {
                             return false;
                         });
                         setSections(filteredArray);
-                        console.log("Json_GetFolderData", res.Table);
+                        console.log("Json_GetFolderData", res);
+                        Json_GetFolders();
                     }
                 }
             });
@@ -945,35 +979,56 @@ export default function DocumentList({ clientId }) {
             </div>
 
             {toggleScreen.tableGridView ?
-                (documents.length > 0 && <DataGrid
-                    id="dataGrid"
-                    style={{ width: "100%" }}
-                    dataSource={documents}
-                    columnAutoWidth={true}
-                    showBorders={true}>
-                    <Column dataField="Description" dataType="string" caption="Discount" />
-                    <Column dataField="Section" dataType="string" caption="Section" />
-                    <Column dataField="SubSection" dataType="string" caption="Sub" />
-                    <Column dataField="Item Date" dataType="date" caption="Doc. Date" />
-                    <Column dataField="Received Date" dataType="date" caption="Received Date" />
-                    <Column dataField="Category" dataType="string" caption="Category" />
-                    <Column dataField="Client" dataType="string" caption="Reference" />
-                    <Column dataField="FileSize" dataType="string" caption="File Size" />
-                    <FilterRow visible={true} />
-                    <FilterPanel visible={true} />
-                    <HeaderFilter visible={true} />
-                    <Scrolling mode="standard" />
-                    <Selection
-                        mode="multiple"
-                    />
-                    <Paging defaultPageSize={20} />
-                    <Pager
-                        visible={true} />
-                    <SearchPanel
-                        visible={true}
-                        width={240}
-                        placeholder="Search..." />
-                </DataGrid>) :
+                (documents.length > 0 && <>
+                    <div className='text-end mb-3'>
+
+                        <ToggleButtonGroup
+                            value={alignment}
+                            exclusive
+                            onChange={handleAlignment}
+                            aria-label="text alignment"
+                        >
+                            <ToggleButton value="left" aria-label="left aligned" onClick={() => setToggleScreen({ singleCardView: true, multipleCardView: false, tableGridView: false })}>
+                                <DnsIcon />
+                            </ToggleButton>
+                            <ToggleButton value="center" aria-label="centered" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: true, tableGridView: false })}>
+                                <AppsIcon />
+                            </ToggleButton>
+                            <ToggleButton value="right" aria-label="right aligned" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: false, tableGridView: true })}>
+                                <TableRowsIcon />
+                            </ToggleButton>
+                        </ToggleButtonGroup>
+
+                    </div>
+                    <DataGrid
+                        id="dataGrid"
+                        style={{ width: "100%" }}
+                        dataSource={documents}
+                        columnAutoWidth={true}
+                        showBorders={true}>
+                        <Column dataField="Description" dataType="string" caption="Discount" />
+                        <Column dataField="Section" dataType="string" caption="Section" />
+                        <Column dataField="SubSection" dataType="string" caption="Sub" />
+                        <Column dataField="Item Date" dataType="date" caption="Doc. Date" />
+                        <Column dataField="Received Date" dataType="date" caption="Received Date" />
+                        <Column dataField="Category" dataType="string" caption="Category" />
+                        <Column dataField="Client" dataType="string" caption="Reference" />
+                        <Column dataField="FileSize" dataType="string" caption="File Size" />
+                        <FilterRow visible={true} />
+                        <FilterPanel visible={true} />
+                        <HeaderFilter visible={true} />
+                        <Scrolling mode="standard" />
+                        <Selection
+                            mode="multiple"
+                        />
+                        <Paging defaultPageSize={20} />
+                        <Pager
+                            visible={true} />
+                        <SearchPanel
+                            visible={true}
+                            width={240}
+                            placeholder="Search..." />
+                    </DataGrid></>) :
                 (<>
 
 
@@ -1112,21 +1167,27 @@ export default function DocumentList({ clientId }) {
 
                             <FormControl sx={{ m: 1, width: '90px' }} size="small" className='select-border'>
                                 <Select
-                                    value={select}
-                                    onChange={handleChange2}
+                                    value={selectedFolder}
+                                    onChange={handleFilterByFolder}
                                     displayEmpty
                                     inputProps={{ 'aria-label': 'Without label' }}
                                     className='custom-dropdown'
                                 >
                                     <MenuItem value="">
+                                        Folders
+                                    </MenuItem>
+                                    {folders.length > 0 && folders.map((itm) => {
+                                        return <MenuItem value={itm.Folder}>{itm.Folder}</MenuItem>
+                                    })}
+                                    {/* <MenuItem value="">
                                         Select
                                     </MenuItem>
                                     <MenuItem value={10}>Select 1</MenuItem>
-                                    <MenuItem value={20}>Select 2</MenuItem>
+                                    <MenuItem value={20}>Select 2</MenuItem> */}
                                 </Select>
                             </FormControl>
 
-                            <FormControl sx={{ m: 1, width: '110px' }} size="small" className='select-border'>
+                            {/* <FormControl sx={{ m: 1, width: '110px' }} size="small" className='select-border'>
                                 <Select
                                     value={select}
                                     onChange={handleChange2}
@@ -1141,12 +1202,12 @@ export default function DocumentList({ clientId }) {
                                     <MenuItem value={20}>Select View</MenuItem>
                                     <MenuItem value={30}>Select View</MenuItem>
                                 </Select>
-                            </FormControl>
+                            </FormControl> */}
 
 
                             {/* <Button className='btn-blue-2 mb-1 ms-1' onClick={() => handleDocumentsFilter("LastMonth")}>Save View</Button> */}
 
-                            <FormControlLabel control={<Switch />} label="Save View" className='ms-2' />
+                            {/* <FormControlLabel control={<Switch />} label="Save View" className='ms-2' /> */}
 
                         </Box>
 
@@ -1258,7 +1319,7 @@ export default function DocumentList({ clientId }) {
                                     <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
                                         <Select
                                             value={select}
-                                            onChange={handleChange2}
+                                            //onChange={handleChange2}
                                             displayEmpty
                                             inputProps={{ 'aria-label': 'Without label' }}
                                             className='custom-dropdown'
@@ -1281,7 +1342,34 @@ export default function DocumentList({ clientId }) {
 
                                     <Box className='row'>
 
-                                        {Array(16).fill("").map(() => {
+                                        {advFilteredResult.length > 0 ? (
+                                            advFilteredResult.map((itm) => {
+                                                return <>
+                                                    <Box className='col-xxl-3 col-xl-4 col-md-6'>
+                                                        <Box className="file-uploads">
+                                                            <label className="file-uploads-label file-uploads-document">
+                                                                <Box className="d-flex align-items-center">
+                                                                    <DescriptionIcon
+                                                                        sx={{
+                                                                            fontSize: 32,
+                                                                        }}
+                                                                        className='me-2'
+                                                                    />
+                                                                    <Box className="upload-content pe-3">
+                                                                        <Typography variant="h4" >
+                                                                            {itm.Description ? itm.Description : "Demo"}
+                                                                        </Typography>
+                                                                        <Typography variant="body1">
+                                                                            Size: {itm["FileSize"] ? itm["FileSize"] : "0.00KB"} | Uploaded by {itm["Client"] ? itm["Client"] : ""}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                </Box>
+                                                            </label>
+                                                        </Box>
+                                                    </Box>
+                                                </>
+                                            })
+                                        ) : (documents.length > 0 && documents.map((itm) => {
                                             return <>
                                                 <Box className='col-xxl-3 col-xl-4 col-md-6'>
                                                     <Box className="file-uploads">
@@ -1295,10 +1383,10 @@ export default function DocumentList({ clientId }) {
                                                                 />
                                                                 <Box className="upload-content pe-3">
                                                                     <Typography variant="h4" >
-                                                                        test filter for last day
+                                                                        {itm.Description ? itm.Description : "Demo"}
                                                                     </Typography>
                                                                     <Typography variant="body1">
-                                                                        Size: 0.00 KB | Uploaded by 21212
+                                                                        Size: {itm["FileSize"] ? itm["FileSize"] : ""} | Uploaded by {itm["Client"] ? itm["Client"] : ""}
                                                                     </Typography>
                                                                 </Box>
                                                             </Box>
@@ -1306,10 +1394,7 @@ export default function DocumentList({ clientId }) {
                                                     </Box>
                                                 </Box>
                                             </>
-                                        })}
-
-
-
+                                        }))}
                                     </Box>
                                 }
                             </Box>
