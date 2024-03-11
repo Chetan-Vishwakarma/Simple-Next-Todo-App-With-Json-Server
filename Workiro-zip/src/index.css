@@ -1443,6 +1443,15 @@ span.tox-statusbar__branding {
 .pointer {
   cursor: pointer;
 }
+.desabled-link {
+  color: #7e7e7e;
+  cursor: no-drop;
+  pointer-events: none;
+}
+.client-details-scroll {
+  max-height: calc(100vh - 588px);
+  overflow-y: auto;
+}
 
 @media only screen and (max-width: 1366px) {
   .client-box-main {

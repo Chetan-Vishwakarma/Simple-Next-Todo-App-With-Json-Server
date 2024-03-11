@@ -1003,6 +1003,7 @@ export default function DocumentList({ clientId }) {
 
                     <Box className='clearfix'>
                         <Box className='d-flex flex-wrap align-items-center mb-4'>
+                            {/* sadik */}
                             {isRangeFilter ? (
                                 <>
                                     <Box className='d-flex me-2'>
@@ -1263,17 +1264,17 @@ export default function DocumentList({ clientId }) {
                                             className='custom-dropdown'
                                         >
                                             <MenuItem value="">
-                                                Select Group
+                                            Group By
                                             </MenuItem>
-                                            <MenuItem value={10}>Group By</MenuItem>
-                                            <MenuItem value={20}>Sort By</MenuItem>
+                                            <MenuItem value={10}>Group Name 1</MenuItem>
+                                            <MenuItem value={20}>Group Name 2</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </Box>
 
                             </Box>
 
-                            <Box className='mt-4'>
+                            <Box className='mt-4 client-details-scroll'>
                                 {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
                                 {toggleScreen.singleCardView && <DocumentDetails documents={documents} advFilteredResult={advFilteredResult}></DocumentDetails>}
                                 {toggleScreen.multipleCardView &&

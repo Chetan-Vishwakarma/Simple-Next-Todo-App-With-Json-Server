@@ -713,6 +713,7 @@ function DocumentDetails({documents, advFilteredResult}) {
                                         {Array(5).fill("").map(() => {
                                             return <>
                                                 <Link href="#" className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />Contact agreement</Link>
+                                                {/* desabled-link (desabled) add class on desabled link */}
                                             </>
                                         })}
 
