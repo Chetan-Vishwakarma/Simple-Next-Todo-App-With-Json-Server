@@ -964,25 +964,33 @@ export default function DocumentList({ clientId }) {
 
                     <hr />
 
-                    <Box className='d-flex flex-wrap justify-content-between align-items-center mb-4'>
-                        <Box className='d-flex flex-wrap align-items-center'>
+                    <Box className='clearfix'>
+                        <Box className='d-flex flex-wrap align-items-center mb-4'>
                             {isRangeFilter ? (
                                 <>
-                                    <Box>
+                                    <Box className='d-flex me-2'>
+
+                                        <input value={fromDate} onChange={(e) => setFormDate(e.target.value)} id="standard-basic" variant="standard" type="date" className='form-control me-2' />
+                                        <input disabled={fromDate === "" ? true : false} min={fromDate} value={toDate} onChange={(e) => setToDate(e.target.value)} id="standard-basic" variant="standard" type="date" className='form-control me-2' />
+
+
+
+                                        {
+                                            formatDate !== "" && toDate !== "" ? <Button className='btn-blue-2 min-width-auto' onClick={handleFilterByRange}>Submit</Button>
+                                                : <CloseIcon onClick={() => {
+                                                    setIsRangeFilter(false);
+                                                    setSelectedLastFilter("");
+                                                }}
+                                                    className='pointer mt-1 pt-1' />
+                                        }
+
                                         {formatDate !== "" && toDate !== "" && <CloseIcon onClick={() => {
                                             setIsRangeFilter(false)
                                             setSelectedLastFilter("");
-                                        }} />
+                                        }}
+                                            className='pointer mt-1 pt-1 ms-1' />
                                         }
-                                        <input value={fromDate} onChange={(e) => setFormDate(e.target.value)} id="standard-basic" variant="standard" type="date" />
-                                        <input disabled={fromDate === "" ? true : false} min={fromDate} value={toDate} onChange={(e) => setToDate(e.target.value)} id="standard-basic" variant="standard" type="date" />
-                                        {
-                                            formatDate !== "" && toDate !== "" ? <button onClick={handleFilterByRange}>Submit</button>
-                                                : <button onClick={() => {
-                                                    setIsRangeFilter(false);
-                                                    setSelectedLastFilter("");
-                                                }}>Close</button>
-                                        }
+
                                     </Box>
                                     {/* <Box sx={{ m: 1, width: 240 }}>
                                 <DateRangePicker className='m-0 p-0'>
@@ -993,8 +1001,6 @@ export default function DocumentList({ clientId }) {
                                 </>
                             ) :
                                 (<Box className='clearfix'>
-
-
                                     <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
                                         <Select
                                             value={selectedLastFilter}
@@ -1021,7 +1027,6 @@ export default function DocumentList({ clientId }) {
                                             <MenuItem value={""} onClick={() => setIsRangeFilter(true)}>Full Range</MenuItem>
                                         </Select>
                                     </FormControl>
-
 
                                     {/* <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
                                         <InputLabel id="demo-select-small-section">Filter By</InputLabel>
@@ -1145,7 +1150,7 @@ export default function DocumentList({ clientId }) {
                         <Grid item xs={12} sm={10} md={toggleScreen.multipleCardView ? 12 : 6} lg={toggleScreen.multipleCardView ? 12 : 6} className='white-box'>
                             <Box className={toggleScreen.multipleCardView ? 'd-flex m-auto justify-content-start w-100 align-items-end' : 'd-flex m-auto justify-content-center w-100 align-items-end'}>
                                 {isAdvFilter === false && <Layout className='d-flex w-100'>
-                                    <AutocompleteWrapper className='w-100'>
+                                    <AutocompleteWrapper className='w-100 mb-2'>
                                         <AutocompleteRoot
                                             className='w-100'
                                             sx={{
@@ -1191,13 +1196,7 @@ export default function DocumentList({ clientId }) {
 
                                     <Button disabled={searchByPropertyKey !== "" && searchByPropertyInput !== "" ? false : true} className={searchByPropertyKey !== "" && searchByPropertyInput !== "" ? 'btn-blue-2 mb-2 ms-2' : 'btn-blue-2 btn-grey-2 mb-2 ms-2'} onClick={() => handleSearchByProperty()}>Submit</Button></>}
                                 <Button className='btn-blue-2 mb-2 ms-2' onClick={() => setIsAdvFilter(!isAdvFilter)}>Toggle</Button>
-
-
-
-
-
                             </Box>
-
 
                             <Box className='d-flex flex-wrap justify-content-between'>
                                 <Box className='mt-2'>
@@ -1266,13 +1265,9 @@ export default function DocumentList({ clientId }) {
                                                 </Box>
                                             </>
                                         })}
-
-
-
                                     </Box>
                                 }
                             </Box>
-
                         </Grid>
                     </Grid>
 

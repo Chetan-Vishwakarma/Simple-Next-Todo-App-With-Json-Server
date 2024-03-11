@@ -499,7 +499,10 @@ span.tox-statusbar__branding {
 
 /* timeline status */
 .activity-timeline {
-  margin-top: 50px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .activity-timeline ul {
@@ -517,6 +520,7 @@ span.tox-statusbar__branding {
   display: inline-block;
   width: 80px;
   padding-top: 3px;
+  padding-right: 12px;
 }
 
 .activity-timeline ul li .datetime span {
@@ -533,7 +537,7 @@ span.tox-statusbar__branding {
 
 .activity-timeline ul li .line-dotted .line-time {
   width: 2px;
-  background: #cfcfcf;
+  background: #e6e6e6;
   height: 100%;
   display: block;
   position: absolute;
@@ -543,20 +547,20 @@ span.tox-statusbar__branding {
 .activity-timeline ul li .line-dotted .circle-time {
   width: 8px;
   height: 8px;
-  background: #047bf8;
+  background: #D41B20;
   border-radius: 50%;
   position: relative;
-  top: 14px;
+  top: 4px;
   z-index: 1;
 }
 
 .activity-timeline ul li .line-dotted .circle-border {
   width: 16px;
   height: 16px;
-  border: 1px solid #047bf8;
+  border: 1px solid #D41B20;
   border-radius: 50%;
   position: absolute;
-  top: 10px;
+  top: 0px;
   background: #fff;
 }
 
@@ -564,7 +568,7 @@ span.tox-statusbar__branding {
   display: inline-block;
   width: 100%;
   margin-left: 10px;
-  border: 2px solid #eee;
+  /* border: 2px solid #eee; */
   border-radius: 3px;
   padding: 5px 0;
   margin-bottom: 15px;
@@ -1435,6 +1439,9 @@ span.tox-statusbar__branding {
   align-items: center;
   justify-content: center;
   /* font-size: 26px; */
+}
+.pointer {
+  cursor: pointer;
 }
 
 @media only screen and (max-width: 1366px) {

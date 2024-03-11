@@ -23,8 +23,8 @@ function Activity() {
                                 <Box class="timeline-details">
                                     <Box class="icon-time-status"></Box>
                                     <Box class="content-time">
-                                        <h5>File Open </h5>
-                                        <p>UK, an hour</p>
+                                        <h5>Lorem ipsome dolor site a met this is a dummy text</h5>
+                                        <p>Lorem ipsome dolor</p>
                                     </Box>
                                 </Box>
                             </li>
