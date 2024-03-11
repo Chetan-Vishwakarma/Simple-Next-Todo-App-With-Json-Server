@@ -133,6 +133,8 @@ export default function DocumentList({ clientId }) {
     const [bulkSearch, setBulkSearch] = useState([]);
     const [alignment, setAlignment] = React.useState('left');
     const [isAdvFilter, setIsAdvFilter] = useState(false);
+    const [sections, setSections] = useState([]);
+
 
     const handleAlignment = (event, newAlignment) => {
         setAlignment(newAlignment);
@@ -161,6 +163,34 @@ export default function DocumentList({ clientId }) {
         }
     }
 
+    const Json_GetFolderData = () => {
+        let obj = {
+            ClientId: "", Email: Email, ProjectId: folderId, SectionId: "-1", agrno: agrno, password: password
+        };
+        try {
+            Cls.Json_GetFolderData(obj, function (sts, data) {
+                if (sts && data) {
+                    let res = JSON.parse(data);
+                    if (res.Table) {
+                        //setSections(res.Table);
+                        let uniqueSecIDs = {};
+                        const filteredArray = res.Table.filter(item => {
+                            if (!uniqueSecIDs[item.SecID]) {
+                                uniqueSecIDs[item.SecID] = true;
+                                return true;
+                            }
+                            return false;
+                        });
+                        setSections(filteredArray);
+                        console.log("Json_GetFolderData", res.Table);
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_GetFolderData", err);
+        }
+    }
+
     const Json_ExplorerSearchDoc = () => {
         try {
             let obj = {};
@@ -185,6 +215,7 @@ export default function DocumentList({ clientId }) {
                         let desc = docs.filter((item) => item.Description !== "");
                         // console.log("desc", desc);
                         setgroupedOptions(desc);
+                        Json_GetFolderData();
                     }
                 }
             })
@@ -1061,10 +1092,14 @@ export default function DocumentList({ clientId }) {
                                     className='custom-dropdown'
                                 >
                                     <MenuItem value="">
-                                        Select
+                                        Sections
                                     </MenuItem>
-                                    <MenuItem value={10}>Section 1</MenuItem>
-                                    <MenuItem value={20}>Section 2</MenuItem>
+                                    {sections.length > 0 && sections.map((itm) => {
+                                        return <MenuItem value={itm.Sec}>{itm.Sec}</MenuItem>
+                                    })}
+
+                                    {/* <MenuItem value={10}>Section 1</MenuItem>
+                                    <MenuItem value={20}>Section 2</MenuItem> */}
                                 </Select>
                             </FormControl>
 
