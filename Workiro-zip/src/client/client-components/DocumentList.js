@@ -939,20 +939,83 @@ export default function DocumentList({ clientId }) {
     }
     function getRootProps(params) { }
     function getListboxProps(params) { }
-    const handleSearchByProperty = () => {
-        setBulkSearch(prevState => [...prevState, { key: searchByPropertyKey, value: searchByPropertyInput }]);
-        // console.log(bulkSearch);
-        let fltByKeyVal = documents.filter((itm) => {
-            if (itm[searchByPropertyKey]) {
-                return String(itm[searchByPropertyKey]).toLowerCase().includes(searchByPropertyInput.toLowerCase());
+    const handleSearchByProperty = (flitData) => {
+        if (flitData && searchByPropertyKey==="" && searchByPropertyInput==="") {
+            if(flitData.length===0){
+                setAdvFilteredResult([]);
+            }else{
+                let arr = flitData;
+                if (arr.length > 1) {
+                    if (arr.length === 2) {
+                        let flt1 = documents.filter((itm) => {
+                            if (String(itm[arr[1].key]).toLowerCase().includes(arr[1].value)) {
+                                return itm;
+                            }
+                        });
+                        // console.log("flt1: ", flt1);
+                        setAdvFilteredResult(flt1);
+                    } else if (arr.length === 3) {
+                        let flt2 = documents.filter((itm) => {
+                            if (String(itm[arr[2].key]).toLowerCase().includes(arr[2].value)) {
+                                return itm;
+                            }
+                        });
+                        // console.log("flt1: ", flt2);
+                        setAdvFilteredResult(flt2);
+                    }
+                } else {
+                    let fltByKeyVal = documents.filter((itm) => {
+                        if (itm[searchByPropertyKey]) {
+                            return String(itm[searchByPropertyKey]).toLowerCase().includes(searchByPropertyInput.toLowerCase());
+                        }
+                    });
+                    console.log(fltByKeyVal);
+                    setAdvFilteredResult(fltByKeyVal);
+                }
             }
-        });
-        // console.log(fltByKeyVal);
-        setAdvFilteredResult(fltByKeyVal);
+            setBulkSearch(flitData);
+        } else {
+            let arr = [];
+            if (searchByPropertyKey !== "" && searchByPropertyInput !== "") {
+                arr = [...bulkSearch, { key: searchByPropertyKey, value: searchByPropertyInput }];
+            } else {
+                arr = [...bulkSearch];
+            }
+            // console.log("arr",arr)
+            setBulkSearch(arr);
+            if (arr.length > 1) {
+                if (arr.length === 2) {
+                    let flt1 = advFilteredResult.filter((itm) => {
+                        if (String(itm[arr[1].key]).toLowerCase().includes(arr[1].value)) {
+                            return itm;
+                        }
+                    });
+                    console.log("flt1: ", flt1);
+                    setAdvFilteredResult(flt1);
+                } else if (arr.length === 3) {
+                    let flt2 = advFilteredResult.filter((itm) => {
+                        if (String(itm[arr[2].key]).toLowerCase().includes(arr[2].value)) {
+                            return itm;
+                        }
+                    });
+                    console.log("flt1: ", flt2);
+                    setAdvFilteredResult(flt2);
+                }
+            } else {
+                let fltByKeyVal = documents.filter((itm) => {
+                    if (itm[searchByPropertyKey]) {
+                        return String(itm[searchByPropertyKey]).toLowerCase().includes(searchByPropertyInput.toLowerCase());
+                    }
+                });
+                console.log(fltByKeyVal);
+                setAdvFilteredResult(fltByKeyVal);
+            }
+        }
 
         setSearchByPropertyInput("");
         setSearchByPropertyKey("");
     }
+    console.log("bulkSearch", bulkSearch);
     return (
         <>
             {/* <div style={{ textAlign: "end" }}>{toggleScreen ? <AppsIcon onClick={() => setToggleScreen(!toggleScreen)} /> : <ListIcon onClick={() => setToggleScreen(!toggleScreen)} />}</div> */}
@@ -1305,8 +1368,14 @@ export default function DocumentList({ clientId }) {
                                         <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} /> */}
 
                                         {bulkSearch.length > 0 && bulkSearch.map((itm) => <Chip label={`${itm.key}: ${itm.value}`} variant="outlined" onDelete={() => {
-                                            setBulkSearch([]);
-                                            setAdvFilteredResult([]);
+                                            let filtData = [...bulkSearch].filter((ins) => {
+                                                return ins.key !== itm.key
+                                            });
+                                            console.log("filtData", filtData);
+                                            setBulkSearch(filtData);
+                                            handleSearchByProperty(filtData);
+
+                                            // handleSearchByProperty();
                                         }} />)}
 
                                     </Stack>
