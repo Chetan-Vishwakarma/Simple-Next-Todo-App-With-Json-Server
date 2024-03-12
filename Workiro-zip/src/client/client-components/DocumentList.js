@@ -193,7 +193,7 @@ export default function DocumentList({ clientId }) {
         try {
             Cls.Json_GetFolders(obj, function (sts, data) {
                 if (sts) {
-                    if (data) {
+                    if (data) {    
                         let js = JSON.parse(data);
                         let tbl = js.Table;
                         // console.log("Json_GetFolders", tbl);
@@ -1453,8 +1453,6 @@ export default function DocumentList({ clientId }) {
                                     checkedIcon={<VerticalAlignBottomIcon />}
                                     className='p-0'
                                 />
-
-
 
                             </Box>
                         </Box>
