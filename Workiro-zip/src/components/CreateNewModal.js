@@ -79,7 +79,20 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-export default function CreateNewModalTask({openModal}) {
+export default function CreateNewModalTask({ ...props }) {
+
+    let {
+        documentDate,
+        receivedDate,
+        createNewFileObj,
+        txtFolderData,
+        txtClientData,
+        txtSectionData,
+        TaskType,
+        openModal
+    } = props;
+
+    console.log("documentDate txtSectionId1", txtFolderData, txtClientData, txtSectionData)
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -137,11 +150,15 @@ export default function CreateNewModalTask({openModal}) {
     const boolSection = Boolean(sectionAnchorEl);
     const [searchSectionQuery, setSearchSectionQuery] = useState("");
 
+    
+
     /////////////////////////////////////////////////End Section data
 
     ////////////////////////////////Attachment files
     const [selectedFiles, setSelectedFiles] = useState([]);
+
     const [selectedFilesFromBrower, setSelectedFilesFromBrower] = useState([]);
+
     const [attachmentPath, setAttachmentPath] = useState([]);
 
     ////////////////////////////////End Attachment files
@@ -149,6 +166,7 @@ export default function CreateNewModalTask({openModal}) {
     ///////////////////////////////////////date set
     // State variables to hold current date and next day's date
     // Get the current date in "dd/mm/yyyy" format
+
     const [currentDate, setCurrentDate] = useState(""); // Initialize with the current date in "dd/mm/yyyy" format
     const [nextDate, setNextDate] = useState("");
     const [remiderDate, setRemiderDate] = useState("");
@@ -395,19 +413,30 @@ export default function CreateNewModalTask({openModal}) {
 
 
     function getCurrentDate() {
-        const currentDate = new Date();
+        console.log("documentDate22", documentDate)
+        let currentDate = new Date();
+        if (documentDate) {
+            currentDate = new Date(documentDate);
+
+        }
+
         const day = currentDate.getDate().toString().padStart(2, '0'); // Get the day and pad with 0 if needed
         const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Get the month (Note: January is 0)
         const year = currentDate.getFullYear(); // Get the full year
 
         // Construct the date string in "dd/mm/yyyy" format
-        const formattedDate = `${year}/${month}/${day}`;
+        const formattedDate = `${year}-${month}-${day}`;
+        console.log("documentDate22", formattedDate)
 
         return formattedDate;
     }
 
     function getNextDate() {
-        const currentDate = new Date();
+        let currentDate = new Date();
+        if (receivedDate) {
+            currentDate = new Date(receivedDate);
+        }
+
         const nextDate = new Date(currentDate);
         nextDate.setDate(currentDate.getDate() + 1); // Increment the day by 1 to get the next day's date
 
@@ -416,12 +445,12 @@ export default function CreateNewModalTask({openModal}) {
         const year = nextDate.getFullYear(); // Get the full year
 
         // Construct the date string in "yyyy/mm/dd" format
-        const formattedDate = `${year}/${month}/${day}`;
+        const formattedDate = `${year}-${month}-${day}`;
 
         return formattedDate;
     }
 
- // Function to close the folder list
+    // Function to close the folder list
     const closeFolderList = (e) => {
         if (folderListRef.current && !folderListRef.current.contains(e.target)) {
             setFolderAnchorEl(null);
@@ -429,7 +458,7 @@ export default function CreateNewModalTask({openModal}) {
     };
 
     // Function to close the client list
-   
+
     const closeClientList = (e) => {
         if (clientListRef.current && !clientListRef.current.contains(e.target)) {
             setClientAnchorEl(null);
@@ -437,8 +466,8 @@ export default function CreateNewModalTask({openModal}) {
     };
 
 
-   
-    
+
+
 
     // Function to close the section list
     const closeSectionList = (e) => {
@@ -446,6 +475,126 @@ export default function CreateNewModalTask({openModal}) {
             setSectionAnchorEl(null);
         }
     };
+
+    const handleMenuClose = () => {
+        setFolderAnchorEl(null);
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            // Check if the menu is open and the click is outside the menu and not in the search box
+            if (folderAnchorEl && folderListRef.current && !folderListRef.current.contains(event.target) && !event.target.closest('.px-3')) {
+                // Clicked outside the menu list, so close the menu
+                handleMenuClose();
+            }
+        };
+    
+        // Attach event listener when the menu is open
+        if (folderAnchorEl) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            // Remove event listener when the menu is closed
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+    
+        // Cleanup function to remove event listener when the component unmounts
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [folderAnchorEl]);
+    
+
+    const handleMenuCloseClient = () => {
+        setClientAnchorEl(null);
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            // Check if the menu is open and the click is outside the menu and not in the search box
+            if (clientAnchorEl && clientListRef.current && !clientListRef.current.contains(event.target) && !event.target.closest('.px-3')) {
+                // Clicked outside the menu list, so close the menu
+                handleMenuCloseClient();
+            }
+        };
+    
+        // Attach event listener when the menu is open
+        if (clientAnchorEl) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            // Remove event listener when the menu is closed
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+    
+        // Cleanup function to remove event listener when the component unmounts
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [clientAnchorEl]);
+
+
+    const handleMenuCloseSection = () => {
+        setSectionAnchorEl(null);
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            // Check if the menu is open and the click is outside the menu and not in the search box
+            if (sectionAnchorEl && sectionListRef.current && !sectionListRef.current.contains(event.target) && !event.target.closest('.px-3')) {
+                // Clicked outside the menu list, so close the menu
+                handleMenuCloseClient();
+            }
+        };
+    
+        // Attach event listener when the menu is open
+        if (sectionAnchorEl) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            // Remove event listener when the menu is closed
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+    
+        // Cleanup function to remove event listener when the component unmounts
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [sectionAnchorEl]);
+
+
+    useEffect(() => {
+        if (createNewFileObj) {
+            console.log("createNewFileObj1111", createNewFileObj)
+            setSelectedFiles(createNewFileObj)
+        }
+        if (txtFolderData) {
+            settxtFolder(txtFolderData.Folder);
+            setFolderId(txtFolderData.FolderID);
+        }
+        if (txtClientData) {
+            settxtClient(txtClientData.Client);
+            setTextClientId(txtClientData.ClientID);
+        }
+
+        if (txtSectionData) {
+            settxtSection(txtSectionData.Sec);
+            setTxtSectionId(txtSectionData.SecID);
+        }
+        if (TaskType) {
+            if (TaskType === "CRM") {
+                setIsVisibleByTypeCRM(false);
+            }
+            else if (TaskType === "Portal") {
+                setIsVisibleByTypeCRM(true);
+            }
+            else {
+                console.log("Else Part");
+            }
+
+            settxtTaskType(TaskType)
+        }
+
+       
+
+    }, [createNewFileObj]);
 
     useEffect(() => {
         setOpen(openModal)
@@ -465,18 +614,21 @@ export default function CreateNewModalTask({openModal}) {
         Json_GetFolderData();
         //console.log(nextDate, currentDate)
 
-        document.addEventListener('mousedown', closeFolderList);
-        document.addEventListener('mousedown', closeClientList);
-        document.addEventListener('mousedown', closeSectionList);
-        return () => {
-            document.removeEventListener('mousedown', closeFolderList);
-            document.removeEventListener('mousedown', closeClientList);
-            document.removeEventListener('mousedown', closeSectionList);
-        };
+        //document.addEventListener('mousedown', closeFolderList);
+        //document.addEventListener('mousedown', closeClientList);
+        //document.addEventListener('mousedown', closeSectionList);
 
-      
-       
-        
+
+
+
+        // return () => {
+        //     document.removeEventListener('mousedown', closeFolderList);
+        //     document.removeEventListener('mousedown', closeClientList);
+        //     document.removeEventListener('mousedown', closeSectionList);
+        // };
+
+
+
 
 
     }, []);
@@ -809,7 +961,9 @@ export default function CreateNewModalTask({openModal}) {
 
     // task dropdown 
     const [anchorElTastkType, setAnchorElTastkType] = React.useState(null);
+
     const [portalUser, setPortalUser] = React.useState([]);
+
     const [txtTaskType, settxtTaskType] = React.useState("Task Type");
 
     const [isVisibleByTypeCRM, setIsVisibleByTypeCRM] = React.useState(false);
@@ -1826,12 +1980,13 @@ export default function CreateNewModalTask({openModal}) {
                                             }}
                                             className="search-list-main"
                                         >
-                                            <Box className='px-3'>
+                                            <Box className='px-3' >
                                                 <TextField
                                                     label="Search"
                                                     variant="outlined"
                                                     value={searchFolderQuery}
                                                     onChange={handleSearchInputChangeFolder}
+                                                    onClick={(e) => e.stopPropagation()} // Prevent event propagation
                                                     sx={{ width: "100%" }}
                                                 />
                                             </Box>
@@ -1850,11 +2005,13 @@ export default function CreateNewModalTask({openModal}) {
                                                             <ListItem
                                                                 alignItems="flex-start"
                                                                 onClick={(e) => {
-                                                                    console.log("client select", item.Folder);
+                                                                    // console.log("client select", item.Folder);
                                                                     settxtFolder(item.Folder); // Assuming item.Client holds the value you want
                                                                     setFolderId(item.FolderID);
                                                                     setFolderAnchorEl(null);
                                                                     Json_GetFolderData();
+                                                                    settxtClient("Select Reference");
+                                                                    settxtSection("Select Section");
                                                                 }}
                                                                 className="search-list"
                                                                 ref={folderListRef}
@@ -1865,6 +2022,7 @@ export default function CreateNewModalTask({openModal}) {
                                                                         src="/static/images/avatar/1.jpg"
                                                                     />
                                                                 </ListItemAvatar> */}
+
                                                                 <ListItemText
                                                                     className='m-0'
                                                                     primary={item.Folder}
@@ -1876,6 +2034,7 @@ export default function CreateNewModalTask({openModal}) {
                                                                                 variant="body2"
                                                                                 color="text.primary"
                                                                             >
+
                                                                                 {/* {item.FolderID} */}
                                                                             </Typography>
                                                                             {/* {item.CLMandatory} */}
@@ -1919,7 +2078,7 @@ export default function CreateNewModalTask({openModal}) {
                                                 "aria-labelledby": "basic-button",
                                             }}
                                         >
-                                            <Box className='p-2'>
+                                            <Box className='px-3'>
                                                 <TextField
                                                     label="Search"
                                                     variant="outlined"
@@ -2010,11 +2169,11 @@ export default function CreateNewModalTask({openModal}) {
                                                 "aria-labelledby": "basic-button",
                                             }}
                                         >
-                                            <Box className='p-2'>
+                                            <Box className='px-3'>
                                                 <TextField
                                                     label="Search"
                                                     variant="outlined"
-                                                    value={searchFolderQuery}
+                                                    value={searchSectionQuery}
                                                     onChange={handleSearchInputChangeSection}
                                                     sx={{ width: "100%" }}
                                                 />

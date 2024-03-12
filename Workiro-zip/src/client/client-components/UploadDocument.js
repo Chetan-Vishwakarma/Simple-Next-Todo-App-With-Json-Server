@@ -14,11 +14,13 @@ import Autocomplete from '@mui/material/Autocomplete';
 import FolderIcon from '@mui/icons-material/Folder';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Checkbox, FormControlLabel } from '@mui/material';
 import CommanCLS from '../../services/CommanService';
 import dayjs from 'dayjs';
 import CreateNewModalTask from '../../components/CreateNewModal';
+import { red } from '@mui/material/colors';
 
 
 function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
@@ -71,12 +73,24 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const [categoryList, setCategoryList] = useState([])
 
+    const [showModalCreateTask, setshowModalCreateTask] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
+
+    const [inputValue, setInputValue] = useState(''); // State to manage the input value
+
+    const [fileLangth, setFileLength] = useState(0);
+
+    const [validation, setValidation] = useState("");
+
+    const [TaskType, setTaskType] = useState("");
+
     // Event handler to handle file selection
     const handleFileSelect = async (event) => {
         const files = event.target.files;
         const selectedFilesArray = Array.from(files);
-
+        let couter = 0;
         for (let i = 0; i < selectedFilesArray.length; i++) {
+            couter++;
             const file = selectedFilesArray[i];
             const isFileAlreadySelected = selectedFiles.some((selectedFile) => selectedFile.FileName === file.name);
 
@@ -102,7 +116,11 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         }
     };
 
-
+    useEffect(() => {
+        setTimeout(() => {
+            setFileLength(selectedFiles.length);
+        }, 2000);
+    }, [selectedFiles]);
 
     const RemoveFiles = (id) => {
         // Filter out the object with the specified ID
@@ -209,17 +227,21 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     useEffect(() => {
         Json_GetFolders();
         Json_GetFolderData();
-        setDocumentDate(dayjs(cls.GetCurrentDayDate).format('YYYY/MM/DD')); // Update the selected date state with the new date value
-        setReceivedDate(dayjs(cls.GetNextDayDate).format('YYYY/MM/DD')); // Update the selected date state with the new date value
+        setDocumentDate(dayjs(cls.GetCurrentDayDate)); // Update the selected date state with the new date value
+        setReceivedDate(dayjs(cls.GetNextDayDate)); // Update the selected date state with the new date value
         console.log("GetCurrentDayDate", cls.GetCurrentDayDate());
         console.log("GetNextDayDate", cls.GetNextDayDate());
+        setOpenModal(false);
+        setshowModalCreateTask(false)
     }, [])
 
     const handleOnFolderClick = (data) => {
+        setInputValue('');
         console.log("Get Folder On click", data);
         setTxtFolderId(data.FolderID)
         setTextFolderData(data)
         Json_GetFolderData()
+
     }
 
     const handleClientChange = (data) => {
@@ -321,51 +343,49 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const handleDateChangeDocument = (date) => {
         console.log("Get Clietn On click", dayjs(date).format('YYYY/MM/DD'));
-        setDocumentDate(date); // Update the selected date state
+        setDocumentDate(dayjs(date).format('YYYY/MM/DD')); // Update the selected date state
     };
 
     const handleDateChangeRecieved = (date) => {
         console.log("Get Clietn On click", dayjs(date).format('YYYY/MM/DD'));
-        setReceivedDate(date); // Update the selected date state
+        setReceivedDate(dayjs(date).format('YYYY/MM/DD')); // Update the selected date state
     };
 
     const [createTaskChk, setCreateTaskChk] = useState(false);
-    const [buttonNameText, setButtonNameText] = useState("Submit");
-
-    const handleCheckboxChangeCreateTask = (event) => {
-        setCreateTaskChk(event.target.checked); // Update the createTask state when the checkbox value changes
-        if(event.target.checked){
-            setButtonNameText("Submit & Create Task")
-        }
-        else{
-            setButtonNameText("Submit")
-        }
-        
-    };
 
     const [createPublishChk, setCreatePublishChk] = useState(false);
 
-    const handleCheckboxChangeCreatePublish = (event) => {
-        setCreatePublishChk(event.target.checked); // Update the createTask state when the checkbox value changes
-        if(event.target.checked){
-            setButtonNameText("Submit & Create Task")
-        }
-        else{
-            setButtonNameText("Submit")
-        }
-    };
+    const [buttonNameText, setButtonNameText] = useState("Submit");
 
-    const UploadDocumentCreattTask = async () => {
-        if (selectedFiles.length > 0) {
-            for (let i of selectedFiles) {
-                await Json_RegisterItem(i.FileName, i.Base64)
-            }
-            setOpenUploadDocument(false);
+
+    const handleCheckboxChangeCreateTask = (event) => {
+        setCreateTaskChk(event.target.checked); // Update the createTask state when the checkbox value changes
+        setTaskType("CRM");
+        if (event.target.checked || createPublishChk) {
+            setButtonNameText("Submit & Create Task");
+
         }
         else {
-            Json_RegisterItem()
+            setButtonNameText("Submit")
         }
-    }
+
+    };
+
+
+
+    const handleCheckboxChangeCreatePublish = (event) => {
+        setCreatePublishChk(event.target.checked); // Update the createTask state when the checkbox value changes
+        setTaskType("Portal");
+        if (event.target.checked || createTaskChk) {
+            setButtonNameText("Submit & Create Task")
+        }
+        else {
+            setButtonNameText("Submit")
+        }
+
+    };
+
+
 
     const [step, setStep] = useState(1);
 
@@ -377,48 +397,104 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         setStep(step - 1);
     };
 
-    function Json_RegisterItem(fileName = "", base64 = "") {
-        let obj = {
-            "sectionId": txtSectionData.SecID,
-            "deptId": 0,
-            "folderId": txtFolderData.FolderID,
-            "categoryId": categoryid ? categoryid : 0,
-            "subSectionId": txtSubSectionData ? txtSubSectionData.SubSectionID : 0,
-            "retForMonth": "-1",
-            "deptName": "",
-            "folderName": txtFolderData.Folder,
-            "originatorId": txtClientData.ClientID,
-            "senderId": txtClientData.ClientID,
-            "sectionName": txtSectionData.Sec,
-            "extDescription": "",
-            "docDirection": "Incoming",
-            "description": txtStandarDescription,
-            "priority": "",
-            "stickyNote": "",
-            "fileName": fileName ? fileName : "",
-            "forActionList": "",
-            "forInformationList": "",
-            "forGroupList": "",
-            "uDFList": "",
-            "sUDFList": "",
-            "clientname": txtClientData.Client,
-            "receiveDate": dayjs(receivedDate).format("YYYY/MM/DD"),
-            "actionByDate": "1990/01/01",
-            "actionDate": dayjs(documentDate).format("YYYY/MM/DD"),
-            "docViewedDate": dayjs(documentDate).format("YYYY/MM/DD"),
-            "strb64": base64 ? base64 : "",
-            "strtxt64": "",
-            "EmailMessageId": ""
-        }
-        console.log("Json_RegisterItem", obj)
-        cls.Json_RegisterItem(obj, function (sts, data) {
-            if (sts && data) {
-                let js = JSON.parse(data)
-                console.log("Json_RegisterItem", js)
 
+
+    const UploadDocumentCreattTask = async () => {
+        if (selectedFiles.length > 0) {
+            for (let i of selectedFiles) {
+                await Json_RegisterItem(i)
             }
-        })
+            // setOpenUploadDocument(false);
+        }
+        else {
+            Json_RegisterItem()
+        }
     }
+
+    const [createNewFileObj, setCreateNewFileObj] = useState([]);
+
+    function Json_RegisterItem(fileData) {
+
+
+        let validationMessage = '';
+
+        if (!txtFolderData || !txtFolderData.FolderID) {
+            validationMessage += "Please Select Folder. ";
+        }
+
+        if (!txtClientData || !txtClientData.ClientID) {
+            validationMessage += "Please Select Reference. ";
+        }
+
+        if (!txtSectionData || !txtSectionData.SecID) {
+            validationMessage += "Please Select Section. ";
+        }
+        if (validationMessage === '') {
+
+            let obj = {
+                "sectionId": txtSectionData.SecID,
+                "deptId": 0,
+                "folderId": txtFolderData.FolderID,
+                "categoryId": categoryid ? categoryid : 0,
+                "subSectionId": txtSubSectionData ? txtSubSectionData.SubSectionID : 0,
+                "retForMonth": "-1",
+                "deptName": "",
+                "folderName": txtFolderData.Folder,
+                "originatorId": txtClientData.ClientID,
+                "senderId": txtClientData.ClientID,
+                "sectionName": txtSectionData.Sec,
+                "extDescription": "",
+                "docDirection": "Incoming",
+                "description": txtStandarDescription,
+                "priority": "",
+                "stickyNote": "",
+                "fileName": fileData ? fileData.FileName : "",
+                "forActionList": "",
+                "forInformationList": "",
+                "forGroupList": "",
+                "uDFList": "",
+                "sUDFList": "",
+                "clientname": txtClientData.Client,
+                "receiveDate": dayjs(receivedDate).format("YYYY/MM/DD"),
+                "actionByDate": "1990/01/01",
+                "actionDate": dayjs(documentDate).format("YYYY/MM/DD"),
+                "docViewedDate": dayjs(documentDate).format("YYYY/MM/DD"),
+                "strb64": fileData ? fileData.Base64 : "",
+                "strtxt64": "",
+                "EmailMessageId": ""
+            }
+            console.log("Json_RegisterItem", obj)
+            setshowModalCreateTask(true);
+            setOpenModal(true)
+            fileData.DocId = "111111";
+
+            setCreateNewFileObj((Previous) => [...Previous, fileData]);
+
+
+            // cls.Json_RegisterItem1(obj, function (sts, data) {
+            //     if (sts && data) {
+            //         let js = JSON.parse(data)
+            //         console.log("Json_RegisterItem", js)
+
+
+
+            //     }
+            // })
+
+        } else {
+            // Data is invalid, set the validation message
+            setValidation(validationMessage);
+            // Hide validation message after 2 seconds
+            setTimeout(() => {
+                setValidation('');
+            }, 3000);
+        }
+
+
+
+    }
+
+
 
     return (
         <React.Fragment>
@@ -439,7 +515,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                         <Box className="d-flex align-items-center justify-content-between">
                             <Box className="dropdown-box">
                                 <Typography variant="h4" className='font-18 bold text-black'>
-                                    Upload Document
+                                    ({fileLangth}) Upload Document
                                 </Typography>
                             </Box>
 
@@ -523,10 +599,15 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                         disablePortal
                                         id="combo-box-demo"
                                         options={clientList}
+
                                         getOptionLabel={(option) => option.Client}
                                         getOptionSelected={(option, value) => option.ClientID === value.ClientID} // Add this line
+
                                         onChange={(event, newValue) => handleClientChange(newValue)} // Handle the onChange event
-                                        renderInput={(params) => <TextField {...params} label="Reference" />}
+
+                                        renderInput={(params) => (
+                                            <TextField {...params} label="Reference" />
+                                        )}
                                     />
                                 </Box>
 
@@ -535,6 +616,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                         disablePortal
                                         id="combo-box-demo"
                                         options={sectionList}
+
                                         getOptionLabel={(option) => option.Sec}
                                         onChange={(event, newValue) => handleSectionChange(newValue)} // Handle the onChange event
                                         renderInput={(params) => <TextField {...params} label="Section" />}
@@ -558,10 +640,14 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                     <label className='font-14 text-black'>Document Date</label>
                                     <LocalizationProvider dateAdapter={AdapterDayjs} >
                                         <DatePicker className=" w-100"
+                                            format="DD/MM/YYYY"
                                             defaultValue={documentDate}
                                             onChange={handleDateChangeDocument} // Handle date changes
-                                            format="DD/MM/YYYY"
                                         />
+
+
+
+
                                     </LocalizationProvider>
                                 </Box>
 
@@ -608,8 +694,24 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                 <Box className='col-lg-12'>
                                     <textarea className='textarea w-100' onChange={handleDescriptionChange} value={txtStandarDescription} placeholder='Description'></textarea>
                                 </Box>
+                                <Box component="section" sx={{ color: '#f44336' }}>
+                                    {validation}
+                                </Box>
+
                             </Box>
-                            
+
+
+
+                            {showModalCreateTask && <CreateNewModalTask
+                                documentDate={documentDate}
+                                receivedDate={receivedDate}
+                                createNewFileObj={createNewFileObj}
+                                txtFolderData={txtFolderData}
+                                txtClientData={txtClientData}
+                                txtSectionData={txtSectionData}
+                                TaskType={TaskType}
+                                openModal={openModal}
+                            ></CreateNewModalTask>}
                         </>)}
 
 
