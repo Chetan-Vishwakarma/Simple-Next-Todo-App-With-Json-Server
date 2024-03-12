@@ -89,6 +89,8 @@ export default function CreateNewModalTask({ ...props }) {
         txtClientData,
         txtSectionData,
         TaskType,
+       // passButtonHide,
+       // setPassButtonHide,
         openModal
     } = props;
 
@@ -561,6 +563,10 @@ export default function CreateNewModalTask({ ...props }) {
 
 
     useEffect(() => {
+        // if(passButtonHide){
+        //     setPassButtonHide(passButtonHide)
+        // }
+       
         if (createNewFileObj) {
             console.log("createNewFileObj1111", createNewFileObj)
             setSelectedFiles(createNewFileObj)
@@ -597,7 +603,8 @@ export default function CreateNewModalTask({ ...props }) {
     }, [createNewFileObj]);
 
     useEffect(() => {
-        setOpen(openModal)
+        setOpen(openModal);
+        
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
@@ -1380,6 +1387,7 @@ export default function CreateNewModalTask({ ...props }) {
                 <span className="material-symbols-outlined">edit_square</span>{" "}
                 <span className="ps-2 create-text">Create New</span>
             </Button>
+            
 
             <Dialog
                 fullScreen={fullScreen}
