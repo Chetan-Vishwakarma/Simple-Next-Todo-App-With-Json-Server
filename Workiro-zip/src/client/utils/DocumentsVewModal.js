@@ -201,7 +201,10 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                                     {/* <FormControlLabel control={<Checkbox />} className="p-0 m-0 ms-2 ps-1" size="small"/> */}
                                     <Checkbox {...label} defaultChecked size="small" />
 
-                                    <Button className='btn-blue-2 me-2 mb-1' startIcon={<AttachFileIcon />}>Upload Your File</Button>
+                                    <Button className='btn-blue-2 me-2 mb-1 pointer' for='file-upload' startIcon={<AttachFileIcon />}>
+                                        <input type='file' id='file-upload' className='file-input' />
+                                        <label for='file-upload' className='pointer '>Upload Your File</label>
+                                    </Button>
 
                                     <Button className='btn-red me-2 mb-1' startIcon={<AttachFileIcon />}>Delete</Button>
 
