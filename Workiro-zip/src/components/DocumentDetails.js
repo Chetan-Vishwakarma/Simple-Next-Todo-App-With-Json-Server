@@ -43,7 +43,7 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 // sadik code end
 
 
-function DocumentDetails({documents, advFilteredResult}) {
+function DocumentDetails({dataNotFound, documents, advFilteredResult}) {
 
     // sadik js start
 
