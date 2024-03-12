@@ -1640,7 +1640,7 @@ export default function CreateNewModalTask({ ...props }) {
                                             </Box>
                                         </>)}
 
-                                        <div className="mt-4">
+                                        <div className="mt-2">
                                             <Button
                                                 id="basic-button5"
                                                 aria-controls={

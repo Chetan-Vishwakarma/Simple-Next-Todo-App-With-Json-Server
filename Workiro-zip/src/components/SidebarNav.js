@@ -244,7 +244,6 @@ export default function SidebarNav() {
                   </Layout>
                 </Box>
 
-
                 <Box className="d-flex align-items-center">
 
                   <Box>

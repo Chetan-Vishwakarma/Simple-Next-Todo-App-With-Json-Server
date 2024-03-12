@@ -62,7 +62,7 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                 <Box className="d-flex align-items-center justify-content-between">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                            Document List
+                            Document List 
                         </Typography>
                     </Box>
 
@@ -245,12 +245,12 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                 </DialogContentText>
             </DialogContent>
 
-            <DialogActions>
+            {/* <DialogActions>
                 <Button onClick={handleClosePDFView}>Disagree</Button>
                 <Button onClick={handleClosePDFView} autoFocus>
                     Agree
                 </Button>
-            </DialogActions>
+            </DialogActions> */}
         </Dialog>
 
     )
