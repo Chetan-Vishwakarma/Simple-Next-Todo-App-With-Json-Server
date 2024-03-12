@@ -634,7 +634,7 @@ if(udfIdWithValue){
                                             <Box className='uploaded-box' key={index}>
                                                 <CloseIcon className='close-icon' onClick={() => RemoveFiles(item.GUID)} />
                                                 <DescriptionIcon />
-                                                <Typography variant="body1" className='font-14'>
+                                                <Typography variant="body1" className='font-14 uploaded-name'>
                                                     {item.FileName}
                                                 </Typography>
                                                 <Typography variant="body1" className='font-12'>
@@ -648,9 +648,8 @@ if(udfIdWithValue){
                         </>)}
                         {/*  */}
                         {step === 2 && (<>
-                            <Box className='row d-non'>
+                            <Box className='row'>
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-
                                     <Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
@@ -660,7 +659,6 @@ if(udfIdWithValue){
                                         onChange={(event, newValue) => handleOnFolderClick(newValue)} // Handle the onChange event
                                         renderInput={(params) => <TextField {...params} label="Folder" />}
                                     />
-
                                 </Box>
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
@@ -680,7 +678,7 @@ if(udfIdWithValue){
                                     />
                                 </Box>
 
-                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
+                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 d-flex align-items-end'>
                                     <Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
@@ -689,10 +687,11 @@ if(udfIdWithValue){
                                         getOptionLabel={(option) => option.Sec}
                                         onChange={(event, newValue) => handleSectionChange(newValue)} // Handle the onChange event
                                         renderInput={(params) => <TextField {...params} label="Section" />}
+                                        className='w-100'
                                     />
                                 </Box>
 
-                                {subSectionBool && <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
+                                {subSectionBool && <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 d-flex align-items-end'>
                                     <Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
@@ -700,6 +699,7 @@ if(udfIdWithValue){
                                         getOptionLabel={(option) => option.SubSection}
                                         onChange={(event, newValue) => handleSubSectionChange(newValue)} // Handle the onChange event
                                         renderInput={(params) => <TextField {...params} label="Subsection" />}
+                                        className='w-100'
                                     />
                                 </Box>}
 
@@ -729,7 +729,7 @@ if(udfIdWithValue){
                                     </LocalizationProvider>
                                 </Box>
 
-                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
+                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 d-flex align-items-end'>
                                     <Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
@@ -737,11 +737,11 @@ if(udfIdWithValue){
                                         getOptionLabel={(option) => option.Description}
                                         onChange={(event, newValue) => handleStandarDescriptionChange(newValue)} // Handle the onChange event
                                         renderInput={(params) => <TextField {...params} label="Standar Description" />}
-
+                                        className='w-100'
 
                                     />
                                 </Box>
-                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
+                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 d-flex align-items-end'>
                                     <Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
@@ -749,11 +749,9 @@ if(udfIdWithValue){
                                         getOptionLabel={(option) => option.CatName}
                                         onChange={(event, newValue) => handleCategoryChange(newValue)} // Handle the onChange event
                                         renderInput={(params) => <TextField {...params} label="Category" />}
-
-
+                                        className='w-100'
                                     />
                                 </Box>
-
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 pt-2'>
                                     <FormControlLabel control={<Checkbox checked={createTaskChk} onChange={handleCheckboxChangeCreateTask} />} label="Create Task" />

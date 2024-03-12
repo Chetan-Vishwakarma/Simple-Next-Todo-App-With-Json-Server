@@ -22,15 +22,15 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Checkbox from "@mui/material/Checkbox";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-
 import Autocomplete from '@mui/material/Autocomplete';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import DescriptionIcon from '@mui/icons-material/Description';
-
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
+import DvrIcon from '@mui/icons-material/Dvr';
+import LanguageIcon from '@mui/icons-material/Language';
 
 import Swal from 'sweetalert2';
 import {
@@ -1402,7 +1402,7 @@ export default function CreateNewModalTask({ ...props }) {
                     <DialogContentText>
                         <Box className="d-flex align-items-center justify-content-between">
 
-                            <div>
+                            <Box>
                                 <Button
                                     id="basic-button"
                                     aria-controls={TastkType ? 'basic-menu' : undefined}
@@ -1421,12 +1421,13 @@ export default function CreateNewModalTask({ ...props }) {
                                     MenuListProps={{
                                         'aria-labelledby': 'basic-button',
                                     }}
-                                    className="dropdown-box"
+                                    className="custom-dropdown"
                                 >
-                                    <MenuItem onClick={handleCloseTastkType}>CRM</MenuItem>
-                                    <MenuItem onClick={handleCloseTastkType}>Portal</MenuItem>
+
+                                    <MenuItem onClick={handleCloseTastkType} className="font-14"><DvrIcon className='me-2' /> CRM</MenuItem>
+                                    <MenuItem onClick={handleCloseTastkType} className="font-14"><LanguageIcon className='me-2' />Portal</MenuItem>
                                 </Menu>
-                            </div>
+                            </Box>
 
 
                             {/* <Box className="dropdown-box">
@@ -1509,7 +1510,7 @@ export default function CreateNewModalTask({ ...props }) {
 
                                             {isVisibleByTypeCRM && (
                                                 <>
-                                                    <Box className='mb-3'>
+                                                    <Box className='mb-2'>
                                                         <Autocomplete
                                                             disablePortal
                                                             id="combo-box-demo"
@@ -1521,7 +1522,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                             onChange={handleOptionChangeFromUser}
                                                         />
                                                     </Box>
-                                                    <Box className='mb-3'>
+                                                    <Box className='mb-2'>
 
                                                         <Autocomplete
                                                             multiple
@@ -1546,12 +1547,9 @@ export default function CreateNewModalTask({ ...props }) {
                                                             onChange={handleAutocompleteChange} // Handle selection change
 
                                                         />
-
-
-
                                                     </Box>
 
-                                                    <Box className='mb-3'>
+                                                    <Box className='mb-2'>
                                                         <Autocomplete
                                                             multiple
                                                             id="checkboxes-tags-demo"
@@ -1577,7 +1575,7 @@ export default function CreateNewModalTask({ ...props }) {
 
                                                     </Box>
 
-                                                    <Box className='mb-3'>
+                                                    <Box className='mb-2'>
                                                         <FormControlLabel control={<Checkbox checked={isCheckedForApproval} onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
                                                         <FormControlLabel control={<Checkbox checked={isCheckedWithOutmgs} onChange={handleCheckboxChangeisCheckedWithOutmgs} />} label="Send Without Message" />
 
@@ -1588,6 +1586,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                             aria-haspopup="true"
                                                             aria-expanded={openTemp ? 'true' : undefined}
                                                             onClick={handleClickAddTemplate}
+                                                            className="btn-blue-2"
 
                                                         >
                                                             Add Template
@@ -1630,10 +1629,10 @@ export default function CreateNewModalTask({ ...props }) {
                                                             </DataGrid>
                                                         </Menu>
                                                     </Box>
-
-                                                    {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+                                                    <Box className='text-editor-box-name'>
+                                                        {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+                                                    </Box>
                                                 </>
-
                                             )}
 
                                         </Box>
@@ -1649,7 +1648,7 @@ export default function CreateNewModalTask({ ...props }) {
                                             </Box>
                                         </>)}
 
-                                        <div className="mt-4">
+                                        <div className="mt-2">
                                             <Button
                                                 id="basic-button5"
                                                 aria-controls={
@@ -1846,14 +1845,14 @@ export default function CreateNewModalTask({ ...props }) {
                                     </label>
                                 </Box>
 
-                                <Box className="file-uploads">
+                                <Box className="file-uploads file-upload-height">
                                     {selectedFiles
                                         ? selectedFiles.map((file, index) => {
                                             // console.log("Uploadin", file);
 
                                             return (
                                                 <>
-                                                    <label className="file-uploads-label" key={index}>
+                                                    <label className="file-uploads-label mb-2" key={index}>
                                                         <Box className="d-flex align-items-center">
                                                             <span className="material-symbols-outlined icon">
                                                                 description
@@ -1947,7 +1946,7 @@ export default function CreateNewModalTask({ ...props }) {
                                         variant="contained"
                                         onClick={CreatePortalTask}
                                         disabled={loading}
-                                        className="btn-blue-2 mt-3"
+                                        className="btn-blue-2 mt-1"
                                     >
                                         {'Portal Task'}
                                     </Button>

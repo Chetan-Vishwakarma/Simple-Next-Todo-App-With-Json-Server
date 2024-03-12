@@ -67,6 +67,10 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
     const [isVisible, setIsVisible] = useState(false); // Initially visible
 
+    // 
+    const [scroll, setScroll] = React.useState('paper');
+
+
     const toggleVisibilityCancle = () => {
         setIsVisible(false); // Toggle visibility
     };
@@ -625,7 +629,6 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     // };
 
 
-    // document details modal
     const [documentLis, setOpenDocumentList] = React.useState(false);
     const handleClickOpen = () => {
         setOpenDocumentList(true);
@@ -633,6 +636,8 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     const handleCloseDocumentList = () => {
         setOpenDocumentList(false);
     };
+
+    // important sadik
 
 
 
@@ -647,8 +652,9 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 fullScreen={fullScreen}
                 open={openModal}
                 onClose={handleCloseModal}
-                aria-labelledby="responsive-dialog-title"
                 className="custom-modal"
+                aria-labelledby="scroll-dialog-title"
+                aria-describedby="scroll-dialog-description"
             >
                 <DialogContent>
                     <DialogContentText>
@@ -1051,12 +1057,10 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                         {/*  */}
 
                         <Box className="d-flex flex-wrap justify-content-between">
-                            <Link href="#" className="text-decoration-none d-flex">
-                                <Link href="#" className='text-decoration-none d-flex'
-                                    onClick={handleClickOpen}
-                                ><BallotIcon className='me-1' /> 15 Documents</Link>
-                                {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
-                            </Link>
+                            <Link href="#" className='text-decoration-none d-flex'
+                                onClick={handleClickOpen}
+                            ><BallotIcon className='me-1' /> 15 Documents</Link>
+                            {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
 
                             <Box className="d-flex">
                                 <Box className="mb-2 border-bottom me-3 width-150">
@@ -1114,105 +1118,44 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                         </Box>
 
                         <Box className="white-box pb-0 mb-0">
-                            {crmTaskAcivity
-                                ? crmTaskAcivity.map((item, index) => {
-                                    if (item.username === "Admin") {
-                                        return (
-                                            <>
-                                                <Box
-                                                    className="text-center py-3 file-uploaded"
-                                                    style={{
-                                                        backgroundColor: "rgb(148 221 255)",
-                                                        marginBottom: "10px",
-                                                        "border-radius": "8px",
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        variant="body1"
-                                                        className="font-14 sembold"
+                            <Box className="main-chatbox">
+                                {crmTaskAcivity
+                                    ? crmTaskAcivity.map((item, index) => {
+                                        if (item.username === "Admin") {
+                                            return (
+                                                <>
+                                                    <Box
+                                                        className="text-center py-3 file-uploaded"
+                                                        style={{
+                                                            backgroundColor: "rgb(148 221 255)",
+                                                            marginBottom: "10px",
+                                                            "border-radius": "8px",
+                                                        }}
                                                     >
-                                                        {item.Notes}
-                                                    </Typography>
-                                                    <Typography variant="body1" className="font-12">
-                                                        {dateAndTime(item.ActivityDate)}
-                                                    </Typography>
-                                                </Box>
-                                            </>
-                                        );
-                                    }
-                                    else if (item.username === addUser[0].ForwardTo) {
-                                        return (
-                                            <Box
-                                                className="chat-box d-flex align-items-end mb-3 reciever"
-                                                key={index}
-                                            >
-                                                <Box className="client-img me-3 mb-0 ms-0">
-                                                    <img src={user} alt="User" />
-                                                </Box>
-                                                <Box className="chat-message me-2">
-                                                    <Box className="inner-chat-message me-2">
-                                                        <Typography variant="body1" className="font-14">
+                                                        <Typography
+                                                            variant="body1"
+                                                            className="font-14 sembold"
+                                                        >
                                                             {item.Notes}
                                                         </Typography>
-                                                        <Box className="d-flex align-items-center justify-content-end">
-                                                            <Typography variant="body1" className="font-12">
-                                                                {dateAndTime(item.ActivityDate)}
-                                                            </Typography>
-
-                                                            <Box className="">
-                                                                <Button
-                                                                    id={`fade-button-${index}`} // Use unique IDs for each button
-                                                                    aria-controls={
-                                                                        anchorEl1
-                                                                            ? `fade-menu-${index}`
-                                                                            : undefined
-                                                                    }
-                                                                    aria-haspopup="true"
-                                                                    aria-expanded={
-                                                                        anchorEl1 ? "true" : undefined
-                                                                    }
-                                                                    onClick={(event) =>
-                                                                        handleClick2(event, index)
-                                                                    } // Pass index to handleClick
-                                                                    className="min-width-auto px-0 text-gray"
-                                                                >
-                                                                    <MoreVertIcon />
-                                                                </Button>
-                                                                <Menu
-                                                                    id={`fade-menu-${index}`} // Use unique IDs for each menu
-                                                                    MenuListProps={{
-                                                                        "aria-labelledby": `fade-button-${index}`,
-                                                                    }}
-                                                                    anchorEl={anchorEl1}
-                                                                    open={
-                                                                        selectedIndex === index &&
-                                                                        Boolean(anchorEl1)
-                                                                    } // Open menu if selectedIndex matches
-                                                                    onClose={handleClose2}
-                                                                >
-                                                                    <MenuItem onClick={handleClose2}>
-                                                                        Edit
-                                                                    </MenuItem>
-                                                                    <MenuItem onClick={handleClose2}>
-                                                                        Delete
-                                                                    </MenuItem>
-                                                                </Menu>
-                                                            </Box>
-                                                        </Box>
+                                                        <Typography variant="body1" className="font-12">
+                                                            {dateAndTime(item.ActivityDate)}
+                                                        </Typography>
                                                     </Box>
-                                                </Box>
-                                            </Box>
-                                        );
-                                    }
-                                    else {
-                                        return (
-                                            <>
+                                                </>
+                                            );
+                                        }
+                                        else if (item.username === addUser[0].ForwardTo) {
+                                            return (
                                                 <Box
-                                                    className="chat-box d-flex align-items-end mb-3 sender"
-                                                    justifyContent="flex-end"
+                                                    className="chat-box d-flex align-items-end mb-2 reciever"
+                                                    key={index}
                                                 >
-                                                    <Box class="chat-message">
-                                                        <Box class="inner-chat-message ms-auto">
+                                                    <Box className="client-img me-3 mb-0 ms-0">
+                                                        <img src={user} alt="User" />
+                                                    </Box>
+                                                    <Box className="chat-message me-2">
+                                                        <Box className="inner-chat-message me-2">
                                                             <Typography variant="body1" className="font-14">
                                                                 {item.Notes}
                                                             </Typography>
@@ -1264,26 +1207,91 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                                         </Box>
                                                     </Box>
                                                 </Box>
-                                            </>
-                                        );
-                                    }
-                                })
-                                : null}
+                                            );
+                                        }
+                                        else {
+                                            return (
+                                                <>
+                                                    <Box
+                                                        className="chat-box d-flex align-items-end mb-2 sender"
+                                                        justifyContent="flex-end"
+                                                    >
+                                                        <Box class="chat-message">
+                                                            <Box class="inner-chat-message ms-auto">
+                                                                <Typography variant="body1" className="font-14">
+                                                                    {item.Notes}
+                                                                </Typography>
+                                                                <Box className="d-flex align-items-center justify-content-end">
+                                                                    <Typography variant="body1" className="font-12">
+                                                                        {dateAndTime(item.ActivityDate)}
+                                                                    </Typography>
 
-                            {/* Reciever Start */}
+                                                                    <Box className="">
+                                                                        <Button
+                                                                            id={`fade-button-${index}`} // Use unique IDs for each button
+                                                                            aria-controls={
+                                                                                anchorEl1
+                                                                                    ? `fade-menu-${index}`
+                                                                                    : undefined
+                                                                            }
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded={
+                                                                                anchorEl1 ? "true" : undefined
+                                                                            }
+                                                                            onClick={(event) =>
+                                                                                handleClick2(event, index)
+                                                                            } // Pass index to handleClick
+                                                                            className="min-width-auto px-0 text-gray"
+                                                                        >
+                                                                            <MoreVertIcon />
+                                                                        </Button>
+                                                                        <Menu
+                                                                            id={`fade-menu-${index}`} // Use unique IDs for each menu
+                                                                            MenuListProps={{
+                                                                                "aria-labelledby": `fade-button-${index}`,
+                                                                            }}
+                                                                            anchorEl={anchorEl1}
+                                                                            open={
+                                                                                selectedIndex === index &&
+                                                                                Boolean(anchorEl1)
+                                                                            } // Open menu if selectedIndex matches
+                                                                            onClose={handleClose2}
+                                                                        >
+                                                                            <MenuItem onClick={handleClose2}>
+                                                                                Edit
+                                                                            </MenuItem>
+                                                                            <MenuItem onClick={handleClose2}>
+                                                                                Delete
+                                                                            </MenuItem>
+                                                                        </Menu>
+                                                                    </Box>
+                                                                </Box>
+                                                            </Box>
+                                                        </Box>
+                                                    </Box>
+                                                </>
+                                            );
+                                        }
+                                    })
+                                    : null}
 
-                            {/* Reciever End */}
+                                {/* Reciever Start */}
 
-                            {/* Sender Start */}
+                                {/* Reciever End */}
 
-                            {/* Sender End */}
+                                {/* Sender Start */}
 
-                            <Box className="text-center py-3 file-uploaded">
+                                {/* Sender End */}
+
+                            </Box>
+
+                            <Box className="text-center py-3 file-uploads">
                                 <input
                                     type="file"
                                     id={`file-upload ${selectedTask.ID}`}
                                     multiple
                                     onChange={handleFileSelect}
+                                    className="file-input"
                                 />
 
                                 <label
@@ -1295,8 +1303,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                             cloud_upload
                                         </span>
                                         <Box className="upload-content pe-3">
-                                            <Typography variant="h5">
+                                            <Typography variant="h4">
                                                 Select a file or drag and drop here
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                JPG, PNG or PDF, file size no more than 10MB
                                             </Typography>
                                         </Box>
                                     </Box>
@@ -1335,25 +1346,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
                     {/* <hr /> */}
 
-                    <DialogActions className="px-0 w-100">
-                        <Box className="d-flex align-items-center justify-content-end w-100">
-                            {/* <Box>
-    <Button autoFocus className='btn-red me-2' onClick={handleCloseModal}>
-        cancel
-    </Button>
-    <Button className='btn-green' onClick={handleCloseModal} autoFocus>
-        Save
-    </Button>
-</Box> */}
-                        </Box>
-                    </DialogActions>
+
                 </DialogContent>
             </Dialog>
             {/* end */}
 
 
-
-            {/* sadik new modal start  */}
             {/* // document list modal */}
 
             <Dialog
@@ -1362,7 +1360,6 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 className='custom-modal'
-
                 sx={{
                     maxWidth: 640,
                     margin: '0 auto'

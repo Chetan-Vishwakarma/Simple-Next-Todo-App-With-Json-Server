@@ -214,7 +214,6 @@ function ClientDetails() {
                         className='mb-2 btn-favorite'
                     >
                         <FavoriteIcon />
-                        Add to Favorites
                     </ToggleButton>
                 </Box>
 
@@ -224,7 +223,6 @@ function ClientDetails() {
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<DeleteIcon />}>Notes</Button>
                     <Button className='btn-blue-2 mb-1' size="small" startIcon={<EmailIcon />}
                     onClick={handleClickOpenUploadDocument}
-
                     >Add Document</Button>
                 </Box>
             </Box>

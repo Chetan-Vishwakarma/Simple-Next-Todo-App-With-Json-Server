@@ -1,21 +1,43 @@
 import React from 'react';
 import user from "../../images/01.png";
-import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, Tabs, Tab, Checkbox, } from '@mui/material';
+import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Link, MenuItem, Menu } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import DescriptionIcon from '@mui/icons-material/Description';
-
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import Activity from '../../client/utils/Activity';
-
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import CategoryIcon from '@mui/icons-material/Category';
+import GradingIcon from '@mui/icons-material/Grading';
+import InsertLinkIcon from '@mui/icons-material/InsertLink';
+import AddIcon from '@mui/icons-material/Add';
+import AlarmOnIcon from '@mui/icons-material/AlarmOn';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
 
-    const [value, setValue] = React.useState(0);
+    // const [value, setValue] = React.useState(1);
+
+    // const handleChange = (event, newValue) => {
+    //     setValue(newValue);
+    // };
+
+    const [anchorElChangeIndex, setAnchorElChangeIndex] = React.useState(null);
+    const ChangeIndex = Boolean(anchorElChangeIndex);
+    const handleClickChangeIndex = (event) => {
+        setAnchorElChangeIndex(event.currentTarget);
+    };
+    const handleCloseChangeIndex = () => {
+        setAnchorElChangeIndex(null);
+    };
+
+    const [value, setValue] = React.useState('1');
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -24,7 +46,6 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
     const handleClosePDFView = () => {
         setOpenPDFView(false);
     };
-
 
     return (
 
@@ -46,11 +67,48 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                     </Box>
 
                     {/*  */}
-                    <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
-                        <span className="material-symbols-outlined text-black">
-                            cancel
-                        </span>
-                    </Button>
+
+                    <Box className="d-flex align-items-center justify-content-between flex-wrap">
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Create Task</Button>
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
+                        {/* <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button> */}
+
+                        <Box>
+                            <Button
+                                id="basic-button"
+                                aria-controls={ChangeIndex ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={ChangeIndex ? 'true' : undefined}
+                                onClick={handleClickChangeIndex}
+                                className='btn-blue-2'
+                            >
+                                Change Index <KeyboardArrowDownIcon className='ms-1' />
+                            </Button>
+                            <Menu
+                                id="basic-menu"
+                                className='custom-dropdown'
+                                anchorEl={anchorElChangeIndex}
+                                open={ChangeIndex}
+                                onClose={handleCloseChangeIndex}
+                                MenuListProps={{
+                                    'aria-labelledby': 'basic-button',
+                                }}
+                            >
+                                <MenuItem onClick={handleCloseChangeIndex}> <CategoryIcon className='me-2' /> Category</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <GradingIcon className='me-2' /> Refile</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <InsertLinkIcon className='me-2' /> Links</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <AddIcon className='me-2' /> Add</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <AlarmOnIcon className='me-2' /> Activity</MenuItem>
+                            </Menu>
+                        </Box>
+
+                        <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
+                            <span className="material-symbols-outlined text-black">
+                                cancel
+                            </span>
+                        </Button>
+
+                    </Box>
                 </Box>
 
                 <hr />
@@ -70,8 +128,12 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                                 </TabList>
                             </Box>
                             <TabPanel value="1" className='p-0'>
-
                                 <Box className='white-box'>
+
+                                    <Box className='text-end mb-3'>
+                                        <DownloadForOfflineIcon className='text-red pointer font-32' />
+                                    </Box>
+
                                     <img src={user} alt="User" className='w-100' />
                                 </Box>
                             </TabPanel>
@@ -109,16 +171,40 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
 
                             </TabPanel>
                             <TabPanel value="3">
-
                                 Notes textarea here
+                            </TabPanel>
+
+                            <TabPanel value="4">
+
+                                <Box className='text-center'>
+
+                                    {Array(15).fill("").map(() => {
+                                        return <>
+                                            <Link href="#" className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />Contact agreement</Link>
+                                        </>
+                                    })}
+
+                                </Box>
 
                             </TabPanel>
-                            <TabPanel value="4">
+
+                            <TabPanel value="5" className='p-0'>
+                                <Activity></Activity>
+                            </TabPanel>
+
+                            {/* <TabPanel value="5">
+                        <DocumentList/>
+                    </TabPanel> */}
+                            <TabPanel value="6">
+
                                 <Box className='d-flex mb-3 mt-2'>
                                     {/* <FormControlLabel control={<Checkbox />} className="p-0 m-0 ms-2 ps-1" size="small"/> */}
                                     <Checkbox {...label} defaultChecked size="small" />
 
-                                    <Button className='btn-blue-2 me-2 mb-1' startIcon={<AttachFileIcon />}>Upload Your File</Button>
+                                    <Button className='btn-blue-2 me-2 mb-1 pointer' for='file-upload' startIcon={<AttachFileIcon />}>
+                                        <input type='file' id='file-upload' className='file-input' />
+                                        <label for='file-upload' className='pointer '>Upload Your File</label>
+                                    </Button>
 
                                     <Button className='btn-red me-2 mb-1' startIcon={<AttachFileIcon />}>Delete</Button>
 
@@ -131,7 +217,7 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                                 <Box className='row'>
                                     {Array(12).fill("").map(() => {
                                         return <>
-                                            <Box className='col-lg-3'>
+                                            <Box className='col-xxl-3 col-xl-4 col-md-6'>
                                                 <Box className="file-uploads">
                                                     <label className="file-uploads-label file-uploads-document">
                                                         <Box className="d-flex align-items-center">
@@ -159,28 +245,19 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                                         </>
                                     })}
                                 </Box>
-                            </TabPanel>
 
-                            <TabPanel value="5" className='p-0'>
-                                <Activity></Activity>
                             </TabPanel>
-
-                            {/* <TabPanel value="5">
-                        <DocumentList/>
-                    </TabPanel> */}
-                            <TabPanel value="6">Item Three</TabPanel>
-                            <TabPanel value="7">Item Three</TabPanel>
                         </TabContext>
                     </Box>
                 </DialogContentText>
             </DialogContent>
 
-            <DialogActions>
+            {/* <DialogActions>
                 <Button onClick={handleClosePDFView}>Disagree</Button>
                 <Button onClick={handleClosePDFView} autoFocus>
                     Agree
                 </Button>
-            </DialogActions>
+            </DialogActions> */}
         </Dialog>
 
     )

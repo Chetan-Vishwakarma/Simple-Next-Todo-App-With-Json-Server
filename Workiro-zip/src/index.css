@@ -49,6 +49,9 @@
 .font-18 {
   font-size: 18px !important;
 }
+.font-32 {
+  font-size: 32px !important;
+}
 
 select:focus,
 .form-control:focus {
@@ -61,6 +64,12 @@ select:focus,
   border: 1px solid rgba(0, 0, 0, 0.23);
   border-radius: 3px;
   font-size: 14px;
+}
+
+.form-control:focus,
+.form-select:focus,
+.textarea:focus {
+  box-shadow: none;
 }
 
 .textarea {
@@ -133,11 +142,16 @@ input,
   transition: .5s all ease;
 }
 
+.btn-grey-2 {
+  background: rgb(158, 141, 141) !important;
+  transition: .5s all ease;
+  color: white !important;
+}
+
 .btn-blue-2:hover,
 .btn-blue:hover {
   background: #d42027 !important;
 }
-
 
 button {
   text-transform: capitalize !important;
@@ -161,11 +175,8 @@ button {
 }
 
 .btn-favorite {
-  /* background: red; */
   color: #666666 !important;
-  padding: 6px 16px !important;
-  /* text-transform: capitalize !important; */
-  /* font-size: 14px !important; */
+  padding: 6px 8px !important;
   border-color: #666666;
 }
 
@@ -174,7 +185,69 @@ button {
   color: #fff !important;
 }
 
-.custom-tabs {
+.table-grid .dx-datagrid .dx-column-lines>td {
+  /* background: #d61226; */
+  padding: 12px;
+  border-bottom: 1px solid;
+  border-color: #e7e7e7;
+  /* background: #fff; */
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.table-grid .dx-datagrid-rowsview .dx-row:hover {
+  background: #ddd;
+  transition: .5s all ease;
+}
+
+
+.table-grid .dx-datagrid .dx-datagrid-headers .dx-header-row>td {
+  background: #4780FF;
+  color: #fff;
+  border-color: #6696ff;
+  font-weight: 600;
+}
+
+.table-grid .dx-datagrid .dx-datagrid-headers .dx-header-row>td .dx-header-filter {
+  color: #fff;
+}
+
+.table-grid .dx-datagrid-filter-panel-left {
+  background: #4780FF;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 3px;
+}
+
+.table-grid .dx-datagrid-filter-panel .dx-icon-filter,
+.table-grid .dx-datagrid-filter-panel-left .dx-datagrid-filter-panel-text {
+  color: #fff;
+}
+
+.table-grid .dx-pager .dx-pages .dx-page-indexes {
+  margin-top: 10px;
+}
+
+.table-grid .dx-pager .dx-pages .dx-selection {
+  background: #d42027;
+  color: #fff;
+  border-color: #d42027;
+}
+
+.table-grid .dx-pager .dx-pages .dx-page {
+  border: 1px solid #ccc;
+  width: 40px !important;
+  height: 40px !important;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  font-weight: 600;
+  margin-right: 2px;
+}
+
+.table-grid .custom-tabs {
   overflow: auto;
   border: 0px solid !important;
   margin-bottom: 10px;
@@ -230,25 +303,32 @@ button {
 }
 
 .side-navi li {
-  color: #ABB5BA;
+  color: #727272;
   transition: .5s all ease;
 }
 
-.side-navi li.active,
-.side-navi li:hover {
+.side-navi li.active {
   background: #d42027;
   border-radius: 90px;
   color: #fff;
 }
 
-.side-navi li.active svg,
+.side-navi li:hover {
+  background: #ccc;
+  border-radius: 90px;
+  color: #000;
+}
+
 .side-navi li:hover svg {
+  fill: #000;
+}
+
+.side-navi li.active svg {
   fill: #fff;
 }
 
-
 .side-navi li svg {
-  fill: #ABB5BA;
+  fill: #727272;
 }
 
 .header {
@@ -443,7 +523,7 @@ button {
 }
 
 .text-green {
-  color: #8be193 !important;
+  color: #2ba336 !important;
 }
 
 .min-width-auto {
@@ -476,9 +556,10 @@ hr {
   border-radius: 10px;
   /* padding: 10px 20px 10px; */
 }
+
 .full-modal .MuiDialog-container .MuiDialog-paperWidthSm {
   width: 100%;
-  max-width: 100%;
+  max-width: 70%;
 }
 
 span.tox-statusbar__branding {
@@ -487,7 +568,10 @@ span.tox-statusbar__branding {
 
 /* timeline status */
 .activity-timeline {
-  margin-top: 50px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .activity-timeline ul {
@@ -505,6 +589,7 @@ span.tox-statusbar__branding {
   display: inline-block;
   width: 80px;
   padding-top: 3px;
+  padding-right: 12px;
 }
 
 .activity-timeline ul li .datetime span {
@@ -521,7 +606,7 @@ span.tox-statusbar__branding {
 
 .activity-timeline ul li .line-dotted .line-time {
   width: 2px;
-  background: #cfcfcf;
+  background: #e6e6e6;
   height: 100%;
   display: block;
   position: absolute;
@@ -531,20 +616,20 @@ span.tox-statusbar__branding {
 .activity-timeline ul li .line-dotted .circle-time {
   width: 8px;
   height: 8px;
-  background: #047bf8;
+  background: #D41B20;
   border-radius: 50%;
   position: relative;
-  top: 14px;
+  top: 4px;
   z-index: 1;
 }
 
 .activity-timeline ul li .line-dotted .circle-border {
   width: 16px;
   height: 16px;
-  border: 1px solid #047bf8;
+  border: 1px solid #D41B20;
   border-radius: 50%;
   position: absolute;
-  top: 10px;
+  top: 0px;
   background: #fff;
 }
 
@@ -552,7 +637,7 @@ span.tox-statusbar__branding {
   display: inline-block;
   width: 100%;
   margin-left: 10px;
-  border: 2px solid #eee;
+  /* border: 2px solid #eee; */
   border-radius: 3px;
   padding: 5px 0;
   margin-bottom: 15px;
@@ -850,11 +935,12 @@ span.tox-statusbar__branding {
 .file-uploads,
 .file-upload {
   position: relative;
-  margin-top: 14px;
+  margin-top: 10px;
 }
 
 .file-uploads #file-upload,
-.file-upload-2 #file-upload {
+.file-upload-2 #file-upload,
+.file-input {
   position: absolute;
   left: 0;
   top: 0;
@@ -898,6 +984,7 @@ span.tox-statusbar__branding {
   padding: 20px;
   border-radius: 10px;
   display: block;
+  cursor: pointer;
 }
 
 .file-upload-2-label span {
@@ -951,7 +1038,7 @@ span.tox-statusbar__branding {
 }
 
 .title {
-  font-size: 28px !important;
+  font-size: 26px !important;
   font-weight: 600 !important;
 }
 
@@ -1022,6 +1109,12 @@ span.tox-statusbar__branding {
 
 .main-company-details {
   border-right: 2px solid #f1f1f1;
+}
+
+.main-accordian.main-accordian-single-row {
+  -moz-column-count: 1;
+  -webkit-column-count: 1;
+  column-count: 1;
 }
 
 .main-accordian {
@@ -1184,6 +1277,12 @@ span.tox-statusbar__branding {
   color: #ff9400d6 !important;
 } */
 
+.main-filter-box {
+  max-height: calc(100vh - 230px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .todo-list-box {
   border-radius: 20px;
   border: 2px dashed #e1e1e1;
@@ -1227,7 +1326,7 @@ span.tox-statusbar__branding {
   font-size: 14px;
   border-radius: 20px 20px 20px 0px;
   word-break: break-all;
-  width: 80%;
+  width: 100%;
 }
 
 .sender .chat-message .inner-chat-message {
@@ -1235,7 +1334,9 @@ span.tox-statusbar__branding {
   color: #fff;
 }
 
-.sender .chat-message .inner-chat-message {}
+.sender .chat-message .inner-chat-message svg {
+  color: #fff;
+}
 
 .file-uploaded svg {
   font-size: 40px;
@@ -1340,6 +1441,10 @@ span.tox-statusbar__branding {
   margin: 0 6px 12px;
   width: 184px;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .uploaded-box .close-icon {
@@ -1350,6 +1455,15 @@ span.tox-statusbar__branding {
   margin: 0;
   color: #d6192c;
   cursor: pointer;
+}
+
+.uploaded-box .uploaded-name {
+  height: 62px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hover-checkbox {
@@ -1366,6 +1480,92 @@ span.tox-statusbar__branding {
   visibility: visible;
 }
 
+.text-editor-box-name .tox.tox-tinymce {
+  height: 160px !important;
+}
+
+.file-upload-height {
+  max-height: 118px;
+  overflow: auto;
+  margin-top: 8px;
+}
+
+.select-border .custom-dropdown fieldset {
+  border: 0px;
+}
+
+.select-border .custom-dropdown .MuiSvgIcon-root {
+  display: none;
+}
+
+.select-border .custom-dropdown .MuiSelect-select {
+  padding: 4px 30px 4px 0 !important;
+  /* background: #fff; */
+  /* color: #000000; */
+  font-size: 14px;
+  /* padding: 0px; */
+  font-weight: 600;
+  border-bottom: 2px solid;
+  border-radius: 0px;
+}
+
+/* .select-border .MuiPopover-paper.MuiMenu-paper {
+  background: #fff;
+  box-shadow: 0 9px 40px #ccc;
+  margin-top: 12px;
+  border-radius: 10px;
+  padding: 2px 7px;
+  min-width: 140px !important;
+  text-align: center;
+} */
+.MuiMenu-paper.MuiMenu-paper {
+  /* box-shadow: none; */
+  background: #fff;
+  box-shadow: 0 9px 40px #ccc;
+  margin-top: 10px;
+  border-radius: 6px;
+  padding: 0px 7px;
+  max-height: 682px;
+}
+
+.btn-view {
+  background: #fff;
+  /* display: inline-block; */
+  height: 36px;
+  margin-left: 5px;
+  width: 36px;
+  text-align: center;
+  color: #424242;
+  border: 1px solid #b9b9b9;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* font-size: 26px; */
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.desabled-link {
+  color: #7e7e7e;
+  cursor: no-drop;
+  pointer-events: none;
+}
+
+.client-details-scroll {
+  max-height: calc(100vh - 488px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.main-chatbox {
+  max-height: 270px;
+  overflow: auto;
+  border-bottom: 1px solid #f1f1f1;
+}
+
 @media only screen and (max-width: 1366px) {
   .client-box-main {
     flex: 0 0 25%;
@@ -1375,6 +1575,31 @@ span.tox-statusbar__branding {
   .main-company-details {
     border-right: 0px solid #f1f1f1;
   }
+
+  .custom-tabs button.MuiTab-root {
+    margin-right: 6px;
+    padding: 5px 14px;
+    font-size: 13px;
+  }
+
+  .todo-list-box h2 {
+    font-size: 18px;
+  }
+
+  .form-control,
+  .form-select,
+  .textarea,
+  body {
+    font-size: 13px !important;
+  }
+
+  .btn-blue-2,
+  .btn-green,
+  .btn-red {
+    padding: 6px 14px !important;
+    font-size: 13px !important;
+  }
+
 }
 
 @media only screen and (max-width: 1199px) {
