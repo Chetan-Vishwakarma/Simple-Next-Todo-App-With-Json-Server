@@ -140,6 +140,23 @@ export default function DocumentList({ clientId }) {
     const [sections, setSections] = useState([]);
     const [folders, setFolders] = useState([]);
     const [selectedFolder, setSelectedFolder] = useState("");
+    const [sortByProperty, setSortByProperty] = useState("");
+
+    const testDocumentsKey = [
+        { key: "Registration No.", value: "Registration No" },
+        { key: "SenderId", value: "Filled By" },
+        { key: "SubSection", value: "Sub Section" },
+        { key: "Received Date", value: "Filled On" },
+        { key: "Item Date", value: "Document Creation Date" },
+        { key: "Description", value: "Document Name" },
+        { key: "Category", value: "Category" },
+        { key: "Notes", value: "Has Notes" },
+        { key: "Attach", value: "Has Attachments" },
+        { key: "Type", value: "Document Type" },
+        { key: "Comments", value: "Comment" },
+        { key: "CommentBy", value: "Comment By" },
+        { key: "Section", value: "Section" }
+    ];
 
 
     const handleAlignment = (event, newAlignment) => {
@@ -193,7 +210,7 @@ export default function DocumentList({ clientId }) {
         try {
             Cls.Json_GetFolders(obj, function (sts, data) {
                 if (sts) {
-                    if (data) {    
+                    if (data) {
                         let js = JSON.parse(data);
                         let tbl = js.Table;
                         // console.log("Json_GetFolders", tbl);
@@ -1019,7 +1036,48 @@ export default function DocumentList({ clientId }) {
         setSearchByPropertyInput("");
         setSearchByPropertyKey("");
     }
-    console.log("bulkSearch", bulkSearch);
+    function parseDate(dateStr) {
+        const [day, month, year] = dateStr.split('/');
+        return new Date(year, month - 1, day); // month - 1 because month is 0-indexed in Date objects
+    }
+    function handleAscendingSort() {
+        if (sortByProperty === "Date") {
+            if (advFilteredResult.length > 0) {
+                let sortedData = [...advFilteredResult].sort((a, b) => parseDate(a["Item Date"]) - parseDate(b["Item Date"]));
+                setAdvFilteredResult(sortedData);
+            } else {
+                let sortedData = [...documents].sort((a, b) => parseDate(a["Item Date"]) - parseDate(b["Item Date"]));
+                setAdvFilteredResult(sortedData);
+            }
+        } else if (sortByProperty === "Description") {
+            if (advFilteredResult.length > 0) {
+                let sortedData = [...advFilteredResult].sort((a, b) => a["Description"].localeCompare(b["Description"]));
+                setAdvFilteredResult(sortedData);
+            } else {
+                let sortedData = [...documents].sort((a, b) => a["Description"].localeCompare(b["Description"]));
+                setAdvFilteredResult(sortedData);
+            }
+        }
+    }
+    function handleDescendingSort() {
+        if (sortByProperty === "Date") {
+            if (advFilteredResult.length > 0) {
+                let sortedData = [...advFilteredResult].sort((a, b) => parseDate(b["Item Date"]) - parseDate(a["Item Date"]));
+                setAdvFilteredResult(sortedData);
+            } else {
+                let sortedData = [...documents].sort((a, b) => parseDate(b["Item Date"]) - parseDate(a["Item Date"]));
+                setAdvFilteredResult(sortedData);
+            }
+        } else if (sortByProperty === "Description") {
+            if (advFilteredResult.length > 0) {
+                let sortedData = [...advFilteredResult].sort((a, b) => b["Description"].localeCompare(a["Description"]));
+                setAdvFilteredResult(sortedData);
+            } else {
+                let sortedData = [...documents].sort((a, b) => b["Description"].localeCompare(a["Description"]));
+                setAdvFilteredResult(sortedData);
+            }
+        }
+    }
     return (
         <>
             {/* <div style={{ textAlign: "end" }}>{toggleScreen ? <AppsIcon onClick={() => setToggleScreen(!toggleScreen)} /> : <ListIcon onClick={() => setToggleScreen(!toggleScreen)} />}</div> */}
@@ -1376,8 +1434,11 @@ export default function DocumentList({ clientId }) {
                                         <label>Select Property</label>
                                         <select class="form-select" aria-label="Default select example" value={searchByPropertyKey} onChange={(e) => setSearchByPropertyKey(e.target.value)}>
                                             <option value={""}></option>
-                                            {documentKeys.length > 0 && documentKeys.map((itm) => {
+                                            {/* {documentKeys.length > 0 && documentKeys.map((itm) => {
                                                 return <option value={itm}>{itm}</option>
+                                            })} */}
+                                            {testDocumentsKey.length > 0 && testDocumentsKey.map((itm) => {
+                                                return <option value={itm.key}>{itm.value}</option>
                                             })}
                                         </select>
                                     </Box>
@@ -1414,11 +1475,46 @@ export default function DocumentList({ clientId }) {
                                 </Stack>
                             </Box>
 
+                            {/* <Box className='d-flex'>
+                                <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
+                                    <Select
+                                        value={select}
+                                        displayEmpty
+                                        inputProps={{ 'aria-label': 'Without label' }}
+                                        className='custom-dropdown'
+                                    >
+                                        <MenuItem value="">
+                                            Group By
+                                        </MenuItem>
+                                        <MenuItem value={10}>Group Name 1</MenuItem>
+                                        <MenuItem value={20}>Group Name 2</MenuItem>
+                                    </Select>
+                                </FormControl>
+
+                                <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
+                                    <Select
+                                        value={sortByProperty}
+                                        onChange={(e) => setSortByProperty(e.target.value)}
+                                        displayEmpty
+                                        inputProps={{ 'aria-label': 'Without label' }}
+                                        className='custom-dropdown'
+                                    >
+                                        <MenuItem value="">
+                                            Sort By
+                                        </MenuItem>
+                                        <MenuItem value="None">None</MenuItem>
+                                        <MenuItem value={"Date"}>By Date</MenuItem>
+                                        <MenuItem value={"Description"}>By Description</MenuItem>
+                                    </Select>
+                                    <button onClick={handleAscendingSort}>Asc</button><button onClick={handleDescendingSort}>Dsc</button>
+                                </FormControl>
+                            </Box> */}
+
+
                             <Box className='d-flex'>
                                 <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
                                     <Select
                                         value={select}
-                                        //onChange={handleChange2}
                                         displayEmpty
                                         inputProps={{ 'aria-label': 'Without label' }}
                                         className='custom-dropdown'
@@ -1434,7 +1530,6 @@ export default function DocumentList({ clientId }) {
                                 <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
                                     <Select
                                         value={select}
-                                        //onChange={handleChange2}
                                         displayEmpty
                                         inputProps={{ 'aria-label': 'Without label' }}
                                         className='custom-dropdown'
@@ -1453,9 +1548,10 @@ export default function DocumentList({ clientId }) {
                                     checkedIcon={<VerticalAlignBottomIcon />}
                                     className='p-0'
                                 />
-
                             </Box>
+
                         </Box>
+
 
                         <Box className='mt-4 client-details-scroll'>
                             {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
