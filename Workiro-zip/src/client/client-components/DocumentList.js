@@ -128,7 +128,6 @@ export default function DocumentList({ clientId }) {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [advFilteredResult, setAdvFilteredResult] = useState([]);
     const [selectedSection, setSelectedSection] = React.useState('');
-    const [select, setSelect] = React.useState('');
     const [selectedLastFilter, setSelectedLastFilter] = useState("");
     const [isRangeFilter, setIsRangeFilter] = useState(false);
     const [documentKeys, setDocumentKeys] = useState([]);
@@ -141,8 +140,9 @@ export default function DocumentList({ clientId }) {
     const [folders, setFolders] = useState([]);
     const [selectedFolder, setSelectedFolder] = useState("");
     const [sortByProperty, setSortByProperty] = useState("");
-    const [isGroupBy, setIsGroupBy] = useState(true);
+    const [isGroupBy, setIsGroupBy] = useState(false);
     const [groupByFilterResult, setGroupByFilterResult] = useState({});
+    const [selectedGroup, setSelectedGroup] = React.useState('Group By');
 
     const testDocumentsKey = [
         { key: "Registration No.", value: "Registration No" },
@@ -1090,6 +1090,7 @@ export default function DocumentList({ clientId }) {
       }
     function handleGroupByFilter(e){
         let target = e.target.value;
+        setSelectedGroup(target);
         if(target==="None"){
             setIsGroupBy(false);
             return;
@@ -1534,7 +1535,8 @@ export default function DocumentList({ clientId }) {
                             <Box className='d-flex'>
                                 <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
                                     <Select
-                                        value={select}
+                                        value={selectedGroup}
+                                        defaultValue='Group By'
                                         displayEmpty
                                         inputProps={{ 'aria-label': 'Without label' }}
                                         className='custom-dropdown'
