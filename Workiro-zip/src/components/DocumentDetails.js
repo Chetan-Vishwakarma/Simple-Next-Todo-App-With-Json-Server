@@ -397,7 +397,7 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                         </TreeItem>
                     </TreeItem> */}
                 </TreeView> 
-                ):(documents.length>0 && documents.map((item) => {
+                ):(documents.length>0 && documents.slice(0,20).map((item) => {
                     return <>
                         <Box className="file-uploads">
                             <label className="file-uploads-label file-uploads-document" onClick={handleClickOpenPDFView}>
