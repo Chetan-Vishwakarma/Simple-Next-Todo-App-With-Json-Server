@@ -1019,7 +1019,7 @@ export default function DocumentList({ clientId }) {
         <>
             {/* <div style={{ textAlign: "end" }}>{toggleScreen ? <AppsIcon onClick={() => setToggleScreen(!toggleScreen)} /> : <ListIcon onClick={() => setToggleScreen(!toggleScreen)} />}</div> */}
 
-            {toggleScreen.tableGridView ?
+            {/* {toggleScreen.tableGridView ?
                 (documents.length > 0 && <>
                     <div className='text-end mb-3'>
                         <ToggleButtonGroup
@@ -1070,7 +1070,8 @@ export default function DocumentList({ clientId }) {
                                 placeholder="Search..." />
                         </DataGrid>
                     </Box></>) :
-                (<>
+                ( */}
+                <>
 
                     {/* <div>
                     <button onClick={()=>handleDocumentsFilter("LastMonth")}>LastMonth</button>
@@ -1300,7 +1301,37 @@ export default function DocumentList({ clientId }) {
 
                     </div> */}
 
-                    <Grid
+                    {toggleScreen.tableGridView?<Box className='table-responsive table-grid'>
+                        <DataGrid
+                            id="dataGrid"
+                            style={{ width: "100%" }}
+                            dataSource={advFilteredResult.length>0?advFilteredResult:documents}
+                            columnAutoWidth={true}
+                            showBorders={true}>
+                            <Column dataField="Description" dataType="string" caption="Discount" />
+                            <Column dataField="Section" dataType="string" caption="Section" />
+                            <Column dataField="SubSection" dataType="string" caption="Sub" />
+                            <Column dataField="Item Date" dataType="date" caption="Doc. Date" />
+                            <Column dataField="Received Date" dataType="date" caption="Received Date" />
+                            <Column dataField="Category" dataType="string" caption="Category" />
+                            <Column dataField="Client" dataType="string" caption="Reference" />
+                            <Column dataField="FileSize" dataType="string" caption="File Size" />
+                            <FilterRow visible={true} />
+                            <FilterPanel visible={true} />
+                            <HeaderFilter visible={true} />
+                            <Scrolling mode="standard" />
+                            <Selection
+                                mode="multiple"
+                            />
+                            <Paging defaultPageSize={20} />
+                            <Pager
+                                visible={true} />
+                            <SearchPanel
+                                visible={true}
+                                width={240}
+                                placeholder="Search..." />
+                        </DataGrid>
+                    </Box>:<Grid
                         container
                         justifyContent="center"
                         alignItems="center"
@@ -1474,7 +1505,7 @@ export default function DocumentList({ clientId }) {
                                 }
                             </Box>
                         </Grid>
-                    </Grid>
+                    </Grid>}
 
                     {/* <Box className='row'>
                         {advFilteredResult.length > 0 ? (advFilteredResult.map((item) => {
@@ -1526,8 +1557,9 @@ export default function DocumentList({ clientId }) {
                             </Box>
                         }))}
                     </Box> */}
-                </>)
-            }
+                </>
+                {/* ) */}
+            {/* } */}
         </>
     );
 }
