@@ -142,7 +142,7 @@ export default function DocumentList({ clientId }) {
     const [sortByProperty, setSortByProperty] = useState("");
     const [isGroupBy, setIsGroupBy] = useState(false);
     const [groupByFilterResult, setGroupByFilterResult] = useState({});
-    const [selectedGroup, setSelectedGroup] = React.useState('Group By');
+    const [selectedGroup, setSelectedGroup] = React.useState("");
 
     const testDocumentsKey = [
         { key: "Registration No.", value: "Registration No" },
@@ -1091,7 +1091,7 @@ export default function DocumentList({ clientId }) {
     function handleGroupByFilter(e){
         let target = e.target.value;
         setSelectedGroup(target);
-        if(target==="None"){
+        if(target===""){
             setIsGroupBy(false);
             return;
         }
@@ -1536,13 +1536,12 @@ export default function DocumentList({ clientId }) {
                                 <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
                                     <Select
                                         value={selectedGroup}
-                                        defaultValue='Group By'
                                         displayEmpty
                                         inputProps={{ 'aria-label': 'Without label' }}
                                         className='custom-dropdown'
                                         onChange={handleGroupByFilter}
                                     >
-                                        <MenuItem value="None">
+                                        <MenuItem  value="">
                                             Group By
                                         </MenuItem>
                                         <MenuItem value="Description">
