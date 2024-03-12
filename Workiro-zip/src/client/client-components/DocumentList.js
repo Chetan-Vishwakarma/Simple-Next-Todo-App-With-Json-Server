@@ -141,6 +141,8 @@ export default function DocumentList({ clientId }) {
     const [folders, setFolders] = useState([]);
     const [selectedFolder, setSelectedFolder] = useState("");
     const [sortByProperty, setSortByProperty] = useState("");
+    const [isGroupBy, setIsGroupBy] = useState(true);
+    const [groupByFilterResult, setGroupByFilterResult] = useState({});
 
     const testDocumentsKey = [
         { key: "Registration No.", value: "Registration No" },
@@ -1078,6 +1080,24 @@ export default function DocumentList({ clientId }) {
             }
         }
     }
+    function groupByProperty(data, property) {
+        return data.reduce((acc, obj) => {
+          const value = obj[property];
+          acc[value] = acc[value] || [];
+          acc[value].push(obj);
+          return acc;
+        }, {});
+      }
+    function handleGroupByFilter(e){
+        let target = e.target.value;
+        if(target==="None"){
+            setIsGroupBy(false);
+            return;
+        }
+        setIsGroupBy(true);
+        let data = groupByProperty(documents,target);
+        setGroupByFilterResult(data);
+    }
     return (
         <>
             {/* <div style={{ textAlign: "end" }}>{toggleScreen ? <AppsIcon onClick={() => setToggleScreen(!toggleScreen)} /> : <ListIcon onClick={() => setToggleScreen(!toggleScreen)} />}</div> */}
@@ -1518,18 +1538,23 @@ export default function DocumentList({ clientId }) {
                                         displayEmpty
                                         inputProps={{ 'aria-label': 'Without label' }}
                                         className='custom-dropdown'
+                                        onChange={handleGroupByFilter}
                                     >
-                                        <MenuItem value="">
+                                        <MenuItem value="None">
                                             Group By
                                         </MenuItem>
-                                        <MenuItem value={10}>Group Name 1</MenuItem>
-                                        <MenuItem value={20}>Group Name 2</MenuItem>
+                                        <MenuItem value="Description">
+                                            Description
+                                        </MenuItem>
+                                        <MenuItem value={"CommentBy"}>Comment By</MenuItem>
+                                        {/* <MenuItem value={20}>Comment</MenuItem> */}
                                     </Select>
                                 </FormControl>
 
                                 <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
                                     <Select
-                                        value={select}
+                                        value={sortByProperty}
+                                        onChange={(e) => setSortByProperty(e.target.value)}
                                         displayEmpty
                                         inputProps={{ 'aria-label': 'Without label' }}
                                         className='custom-dropdown'
@@ -1537,24 +1562,32 @@ export default function DocumentList({ clientId }) {
                                         <MenuItem value="">
                                             Sort By
                                         </MenuItem>
-                                        <MenuItem value={10}>Group Name 1</MenuItem>
-                                        <MenuItem value={20}>Group Name 2</MenuItem>
+                                        <MenuItem value="None" onClick={()=>setAdvFilteredResult([])}>None</MenuItem>
+                                        <MenuItem value={"Date"}>By Date</MenuItem>
+                                        <MenuItem value={"Description"}>By Description</MenuItem>
                                     </Select>
                                 </FormControl>
 
-                                <Checkbox
+                                {sortByProperty!==""&&sortByProperty!=="None"&& <Checkbox
                                     {...label}
                                     icon={<UpgradeIcon />}
                                     checkedIcon={<VerticalAlignBottomIcon />}
                                     className='p-0'
-                                />
+                                    onChange={(e)=>{
+                                        if(e.target.checked){
+                                            handleAscendingSort();
+                                        }else{
+                                            handleDescendingSort();
+                                        }
+                                    }}
+                                />}
                             </Box>
                         </Box>
 
 
                         <Box className='mt-4 client-details-scroll'>
                             {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
-                            {toggleScreen.singleCardView && <DocumentDetails documents={documents} advFilteredResult={advFilteredResult}></DocumentDetails>}
+                            {toggleScreen.singleCardView && <DocumentDetails groupByFilterResult={groupByFilterResult} isGroupBy={isGroupBy} documents={documents} advFilteredResult={advFilteredResult}></DocumentDetails>}
                             {toggleScreen.multipleCardView &&
                                 <Box className='row'>
                                     {advFilteredResult.length > 0 ? (
