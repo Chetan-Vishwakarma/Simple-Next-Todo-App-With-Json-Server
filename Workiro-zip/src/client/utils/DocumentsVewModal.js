@@ -1,6 +1,6 @@
 import React from 'react';
 import user from "../../images/01.png";
-import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Link,MenuItem,Menu } from '@mui/material';
+import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Link, MenuItem, Menu } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
@@ -15,7 +15,7 @@ import InsertLinkIcon from '@mui/icons-material/InsertLink';
 import AddIcon from '@mui/icons-material/Add';
 import AlarmOnIcon from '@mui/icons-material/AlarmOn';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-
+import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -62,7 +62,7 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                 <Box className="d-flex align-items-center justify-content-between">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                            Document List 
+                            Document List
                         </Typography>
                     </Box>
 
@@ -71,7 +71,7 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                     <Box className="d-flex align-items-center justify-content-between flex-wrap">
                         <Button className='btn-blue-2 me-2 mb-1' size="small" >Create Task</Button>
                         <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button>
+                        {/* <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button> */}
 
                         <Box>
                             <Button
@@ -82,7 +82,7 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                                 onClick={handleClickChangeIndex}
                                 className='btn-blue-2'
                             >
-                                Change Index <KeyboardArrowDownIcon className='ms-1'/>
+                                Change Index <KeyboardArrowDownIcon className='ms-1' />
                             </Button>
                             <Menu
                                 id="basic-menu"
@@ -92,13 +92,13 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                                 onClose={handleCloseChangeIndex}
                                 MenuListProps={{
                                     'aria-labelledby': 'basic-button',
-                                }}                                
+                                }}
                             >
-                                <MenuItem onClick={handleCloseChangeIndex}> <CategoryIcon className='me-2'/> Category</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <GradingIcon className='me-2'/> Refile</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <InsertLinkIcon className='me-2'/> Links</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <AddIcon className='me-2'/> Add</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <AlarmOnIcon className='me-2'/> Activity</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <CategoryIcon className='me-2' /> Category</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <GradingIcon className='me-2' /> Refile</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <InsertLinkIcon className='me-2' /> Links</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <AddIcon className='me-2' /> Add</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <AlarmOnIcon className='me-2' /> Activity</MenuItem>
                             </Menu>
                         </Box>
 
@@ -128,8 +128,12 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                                 </TabList>
                             </Box>
                             <TabPanel value="1" className='p-0'>
-
                                 <Box className='white-box'>
+
+                                    <Box className='text-end mb-3'>
+                                        <DownloadForOfflineIcon className='text-red pointer font-32' />
+                                    </Box>
+
                                     <img src={user} alt="User" className='w-100' />
                                 </Box>
                             </TabPanel>

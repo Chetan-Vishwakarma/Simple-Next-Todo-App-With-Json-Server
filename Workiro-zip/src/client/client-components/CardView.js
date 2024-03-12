@@ -54,7 +54,7 @@ function CardView(props) {
                             </Layout>
                         </Box>
 
-                        <Box className="dropdown-box ms-4">
+                        <Box className="dropdown-box ms-4 d-flex align-items-center">
                             <Button className='btn-select' onClick={(e) => handleDialogsOpen(e,"Folder")}>{selectedFolder}</Button>
                             {isFolder && <Box className="btn-Select">
                                 {allFolders.map((item) => {
@@ -64,7 +64,7 @@ function CardView(props) {
                             </Box>}
                         </Box>
 
-                        <Box className="dropdown-box ms-4">
+                        <Box className="dropdown-box ms-4 d-flex align-items-center">
                             <Button className='btn-select' onClick={(e) => handleDialogsOpen(e,"Choice")}>{selectedChoice}</Button>
                             {isChoice && <Box className="btn-list-box btn-Select">
                                 {["All", "Clients", "Contacts"].map((item) => {
@@ -73,7 +73,7 @@ function CardView(props) {
                             </Box>}
                         </Box>
 
-                        <Box className="dropdown-box ms-4">
+                        <Box className="dropdown-box ms-4 d-flex align-items-center">
                             <Box>
                                 <Fab size="small" className='btn-plus' aria-label="add" onClick={(e) => handleDialogsOpen(e,"AdvFilter")}>
                                     <AddIcon />

@@ -1196,7 +1196,7 @@ export default function DocumentList({ clientId }) {
                             </>
                         ) :
                             (<Box className='clearfix'>
-                                <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
+                                <FormControl sx={{ m: 1, width: '120px', maxHeight: '200px', overflow: 'auto' }} size="small" className='select-border'>
                                     <Select
                                         value={selectedLastFilter}
                                         onChange={(e) => handleDocumentsFilter(e.target.value)}
@@ -1549,7 +1549,6 @@ export default function DocumentList({ clientId }) {
                                     className='p-0'
                                 />
                             </Box>
-
                         </Box>
 
 
