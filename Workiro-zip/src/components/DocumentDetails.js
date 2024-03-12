@@ -247,7 +247,7 @@ function DocumentDetails({dataNotFound, documents, advFilteredResult}) {
                                     >
                                         <MoreVertIcon />
                                     </Button>
-                                    {/* <Menu
+                                    <Menu
                                         id="basic-menu"
                                         anchorEl={anchorElDocumentList}
                                         open={DocumentList}
@@ -286,7 +286,7 @@ function DocumentDetails({dataNotFound, documents, advFilteredResult}) {
                                                 <CloudDownloadIcon fontSize="medium" />
                                             </ListItemIcon>
                                             Download</MenuItem>
-                                    </Menu> */}
+                                    </Menu>
                                 </Box>
                             </label>
                         </Box>
@@ -529,7 +529,6 @@ function DocumentDetails({dataNotFound, documents, advFilteredResult}) {
             </Dialog>
 
 
-
             {/* document modal list details */}
             <Dialog
                 open={openDocumentDetailsList}
@@ -547,7 +546,7 @@ function DocumentDetails({dataNotFound, documents, advFilteredResult}) {
 
                         <Box className="d-flex align-items-center justify-content-between">
                             <Box className="dropdown-box">
-                                <Typography variant="h4" className='font-18 bold mb-2 text-black'>
+                                <Typography variant="h4" className='font-18 bold mb-0 text-black'>
                                     Document Details
                                 </Typography>
                             </Box>
@@ -560,7 +559,9 @@ function DocumentDetails({dataNotFound, documents, advFilteredResult}) {
                             </Button>
                         </Box>
 
-                        <div>
+                        <hr />
+
+                        <Box className='main-accordian main-accordian-single-row'>
                             <Accordion className='accordian-box' expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
                                 <AccordionSummary
                                     expandIcon={<ExpandMoreIcon />}
@@ -710,14 +711,13 @@ function DocumentDetails({dataNotFound, documents, advFilteredResult}) {
                                     Attached To
                                 </AccordionSummary>
                                 <AccordionDetails>
-                                    <Box className=''>
+                                    <Box className='mt-3'>
 
                                         {Array(5).fill("").map(() => {
                                             return <>
                                                 <Link href="#" className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />Contact agreement</Link>
                                             </>
                                         })}
-
                                     </Box>
                                 </AccordionDetails>
                             </Accordion>
@@ -752,7 +752,7 @@ function DocumentDetails({dataNotFound, documents, advFilteredResult}) {
                                 </AccordionDetails>
                             </Accordion>
 
-                        </div>
+                        </Box>
 
                     </DialogContentText>
                 </DialogContent>
