@@ -1591,7 +1591,7 @@ export default function DocumentList({ clientId }) {
                             {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
                             {toggleScreen.singleCardView && <DocumentDetails groupByFilterResult={groupByFilterResult} isGroupBy={isGroupBy} documents={documents} advFilteredResult={advFilteredResult}></DocumentDetails>}
                             {toggleScreen.multipleCardView &&
-                                <Box className='row'>
+                                <Box className='row sadik-class'>
                                     {advFilteredResult.length > 0 ? (
                                         advFilteredResult.map((itm) => {
                                             return <>
