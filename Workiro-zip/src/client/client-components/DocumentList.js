@@ -31,7 +31,6 @@ import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-
 const Layout = styled('div')`  display: flex;
   flex-flow: column nowrap;  gap: 4px;
 `;
@@ -960,7 +959,6 @@ export default function DocumentList({ clientId }) {
             {toggleScreen.tableGridView ?
                 (documents.length > 0 && <>
                     <div className='text-end mb-3'>
-
                         <ToggleButtonGroup
                             value={alignment}
                             exclusive
@@ -977,39 +975,39 @@ export default function DocumentList({ clientId }) {
                                 <TableRowsIcon />
                             </ToggleButton>
                         </ToggleButtonGroup>
-
                     </div>
-                    <DataGrid
-                        id="dataGrid"
-                        style={{ width: "100%" }}
-                        dataSource={documents}
-                        columnAutoWidth={true}
-                        showBorders={true}>
-                        <Column dataField="Description" dataType="string" caption="Discount" />
-                        <Column dataField="Section" dataType="string" caption="Section" />
-                        <Column dataField="SubSection" dataType="string" caption="Sub" />
-                        <Column dataField="Item Date" dataType="date" caption="Doc. Date" />
-                        <Column dataField="Received Date" dataType="date" caption="Received Date" />
-                        <Column dataField="Category" dataType="string" caption="Category" />
-                        <Column dataField="Client" dataType="string" caption="Reference" />
-                        <Column dataField="FileSize" dataType="string" caption="File Size" />
-                        <FilterRow visible={true} />
-                        <FilterPanel visible={true} />
-                        <HeaderFilter visible={true} />
-                        <Scrolling mode="standard" />
-                        <Selection
-                            mode="multiple"
-                        />
-                        <Paging defaultPageSize={20} />
-                        <Pager
-                            visible={true} />
-                        <SearchPanel
-                            visible={true}
-                            width={240}
-                            placeholder="Search..." />
-                    </DataGrid></>) :
+                    <Box className='table-responsive table-grid'>
+                        <DataGrid
+                            id="dataGrid"
+                            style={{ width: "100%" }}
+                            dataSource={documents}
+                            columnAutoWidth={true}
+                            showBorders={true}>
+                            <Column dataField="Description" dataType="string" caption="Discount" />
+                            <Column dataField="Section" dataType="string" caption="Section" />
+                            <Column dataField="SubSection" dataType="string" caption="Sub" />
+                            <Column dataField="Item Date" dataType="date" caption="Doc. Date" />
+                            <Column dataField="Received Date" dataType="date" caption="Received Date" />
+                            <Column dataField="Category" dataType="string" caption="Category" />
+                            <Column dataField="Client" dataType="string" caption="Reference" />
+                            <Column dataField="FileSize" dataType="string" caption="File Size" />
+                            <FilterRow visible={true} />
+                            <FilterPanel visible={true} />
+                            <HeaderFilter visible={true} />
+                            <Scrolling mode="standard" />
+                            <Selection
+                                mode="multiple"
+                            />
+                            <Paging defaultPageSize={20} />
+                            <Pager
+                                visible={true} />
+                            <SearchPanel
+                                visible={true}
+                                width={240}
+                                placeholder="Search..." />
+                        </DataGrid>
+                    </Box></>) :
                 (<>
-
 
                     {/* <div>
                     <button onClick={()=>handleDocumentsFilter("LastMonth")}>LastMonth</button>
@@ -1044,8 +1042,6 @@ export default function DocumentList({ clientId }) {
 
                                         <input value={fromDate} onChange={(e) => setFormDate(e.target.value)} id="standard-basic" variant="standard" type="date" className='form-control me-2' />
                                         <input disabled={fromDate === "" ? true : false} min={fromDate} value={toDate} onChange={(e) => setToDate(e.target.value)} id="standard-basic" variant="standard" type="date" className='form-control me-2' />
-
-
 
                                         {
                                             formatDate !== "" && toDate !== "" ? <Button className='btn-blue-2 min-width-auto' onClick={handleFilterByRange}>Submit</Button>
@@ -1312,7 +1308,7 @@ export default function DocumentList({ clientId }) {
                                     </Stack>
                                 </Box>
 
-                                <Box className='clearfix'>
+                                <Box className='d-flex'>
                                     <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
                                         <Select
                                             value={select}
@@ -1328,17 +1324,30 @@ export default function DocumentList({ clientId }) {
                                             <MenuItem value={20}>Group Name 2</MenuItem>
                                         </Select>
                                     </FormControl>
-                                </Box>
 
+                                    <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
+                                        <Select
+                                            value={select}
+                                            //onChange={handleChange2}
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            className='custom-dropdown'
+                                        >
+                                            <MenuItem value="">
+                                                Sort By
+                                            </MenuItem>
+                                            <MenuItem value={10}>Group Name 1</MenuItem>
+                                            <MenuItem value={20}>Group Name 2</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Box>
                             </Box>
 
                             <Box className='mt-4 client-details-scroll'>
                                 {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
                                 {toggleScreen.singleCardView && <DocumentDetails documents={documents} advFilteredResult={advFilteredResult}></DocumentDetails>}
                                 {toggleScreen.multipleCardView &&
-
                                     <Box className='row'>
-
                                         {advFilteredResult.length > 0 ? (
                                             advFilteredResult.map((itm) => {
                                                 return <>

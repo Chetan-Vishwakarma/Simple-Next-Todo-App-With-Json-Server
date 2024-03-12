@@ -214,7 +214,6 @@ function ClientDetails() {
                         className='mb-2 btn-favorite'
                     >
                         <FavoriteIcon />
-                        Add to Favorites
                     </ToggleButton>
                 </Box>
 

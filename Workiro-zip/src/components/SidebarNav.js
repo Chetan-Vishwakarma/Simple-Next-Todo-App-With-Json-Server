@@ -200,7 +200,7 @@ export default function SidebarNav() {
     Json_Get_CRM_UserByProjectId();
   }, []);
 
-  const [tabs,setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active:false }, { tabLink: "/dashboard/TodoList", tabName: 'To do list', active:true }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active:false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active:false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active:false }]);
+  const [tabs,setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active:false }, { tabLink: "/dashboard/TodoList", tabName: 'My Tasks', active:true }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active:false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active:false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active:false }]);
   
   return (
     <>

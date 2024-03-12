@@ -210,7 +210,7 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                                 <Box className='row'>
                                     {Array(12).fill("").map(() => {
                                         return <>
-                                            <Box className='col-lg-3'>
+                                            <Box className='col-xxl-3 col-xl-4 col-md-6'>
                                                 <Box className="file-uploads">
                                                     <label className="file-uploads-label file-uploads-document">
                                                         <Box className="d-flex align-items-center">

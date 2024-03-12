@@ -45,9 +45,6 @@ const ClientGrid = () => {
         })
     }
 
-
-
-
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
@@ -83,7 +80,7 @@ const ClientGrid = () => {
     }
 
     return (
-        <div className='white-box' style={{ height: 'auto', overflowY: 'auto',width:'80vw' }}>
+        <div className='white-box table-grid' style={{ height: 'auto', overflowY: 'auto',width:'85vw' }}>
             <DataGrid
                 id="dataGrid"
                 ref={dataGridRef}

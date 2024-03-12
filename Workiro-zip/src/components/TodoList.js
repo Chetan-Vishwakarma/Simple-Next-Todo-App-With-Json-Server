@@ -30,7 +30,7 @@ function TodoList() {
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
 
-   
+
 
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 
@@ -38,13 +38,13 @@ function TodoList() {
     //let Clsp = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
     const [allTask, setAllTask] = useState([]);
-    const [selectedTask,setSelectedTask] = useState({});
+    const [selectedTask, setSelectedTask] = useState({});
 
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const [loadMore, setLoadMore] = useState(20);
 
-  
+
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -85,21 +85,21 @@ function TodoList() {
         }
     }
 
-    const [isApi,setIsApi] = useState(false);
+    const [isApi, setIsApi] = useState(false);
 
 
-    const eventHandler = (e) => {              
+    const eventHandler = (e) => {
         if (window.innerHeight + e.target.documentElement.scrollTop + 1 >= e.target.documentElement.scrollHeight) {
             setLoadMore((preValue) => preValue + 20);
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         Json_CRM_GetOutlookTask();
         window.addEventListener('scroll', eventHandler)
-    },[isApi])
+    }, [isApi])
 
-    
+
 
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
@@ -107,7 +107,7 @@ function TodoList() {
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
         Json_CRM_GetOutlookTask();
-    },[]);
+    }, []);
 
     function startFormattingDate(dt) {
         //const timestamp = parseInt(/\d+/.exec(dt));
@@ -123,19 +123,19 @@ function TodoList() {
 
     // modal
     const [openModal, setOpen] = React.useState(false);
-    
-    const handleClickOpen = (task=selectedTask) => {        
+
+    const handleClickOpen = (task = selectedTask) => {
         setSelectedTask(task);
-        
+
         setOpen(true);
-       
+
     };
 
 
 
     return (
         <Box className="container-fluid p-0">
-            <TaskDetailModal setIsApi={setIsApi} isApi={isApi}  selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
+            <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
             <Typography variant='subtitle1' className='font-18 bold mb-2'>Select Filter</Typography>
             <Box className="d-flex align-items-center mb-4 flex-wrap">
@@ -156,82 +156,83 @@ function TodoList() {
             </Box>
 
 
-            <Box className='row'>
-                {
-                    allTask.length > 0 &&
-                    allTask.slice(0, loadMore).map((item, index) => {
-                        return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
-                            <Box className='todo-list-box white-box relative w-100' onClick={()=>handleClickOpen(item)}>
+            <Box className='main-filter-box'>
+                <Box className='row'>
+                    {
+                        allTask.length > 0 &&
+                        allTask.slice(0, loadMore).map((item, index) => {
+                            return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                                <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
 
-                                {/* <Checkbox className='text-blue check-todo'
+                                    {/* <Checkbox className='text-blue check-todo'
                                     {...label}
                                     icon={<RadioButtonUncheckedIcon />}
                                     checkedIcon={<CheckCircleIcon />}
                                 /> */}
-                                <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
-                                    sx={{
-                                        '&.Mui-checked': {
-                                            color: "secondary",
-                                        },
-                                    }}
-                                />
+                                    <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
+                                        sx={{
+                                            '&.Mui-checked': {
+                                                color: "secondary",
+                                            },
+                                        }}
+                                    />
 
-                                <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> {item.Source}</Typography>
+                                    <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> {item.Source}</Typography>
 
-                                <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
+                                    <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
 
-                                <Box className='d-flex align-items-center justify-content-between'>
-                                    <Typography variant='subtitle1'><pan className='text-gray'>
-                                        {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
-                                        {/* <a href='#'>Patrick</a>, */}
-                                        <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +1</a></Typography>
-                                    <Typography variant='subtitle1 sembold'>{startFormattingDate(item["EndDateTime"])}</Typography>
+                                    <Box className='d-flex align-items-center justify-content-between'>
+                                        <Typography variant='subtitle1'><pan className='text-gray'>
+                                            {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
+                                            {/* <a href='#'>Patrick</a>, */}
+                                            <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +1</a></Typography>
+                                        <Typography variant='subtitle1 sembold'>{startFormattingDate(item["EndDateTime"])}</Typography>
+                                    </Box>
+
+                                    <Box className='d-flex align-items-center justify-content-between'>
+                                        <Typography variant='subtitle1'>{item.Client}</Typography>
+                                        <Typography variant='subtitle1'>
+
+                                            <Box>
+                                                <Button
+                                                    id="basic-button"
+                                                    aria-controls={open ? 'basic-menu' : undefined}
+                                                    aria-haspopup="true"
+                                                    aria-expanded={open ? 'true' : undefined}
+                                                    onClick={handleClick}
+                                                >
+                                                    {item.Status && item.Status}
+                                                </Button>
+                                                <Menu
+                                                    id="basic-menu"
+                                                    className='custom-dropdown'
+                                                    anchorEl={anchorEl}
+                                                    open={open}
+                                                    onClose={handleClose}
+                                                    MenuListProps={{
+                                                        'aria-labelledby': 'basic-button',
+                                                    }}
+                                                >
+                                                    <MenuItem onClick={handleClose}>High</MenuItem>
+                                                    <MenuItem onClick={handleClose}>Medium</MenuItem>
+                                                    <MenuItem onClick={handleClose}>Low</MenuItem>
+                                                </Menu>
+                                            </Box>
+
+                                        </Typography>
+                                    </Box>
+
+                                    <Box className='mt-2'>
+                                        <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
+                                        <Button variant="text" className='btn-blue-2'>Defer</Button>
+                                    </Box>
+
                                 </Box>
-
-                                <Box className='d-flex align-items-center justify-content-between'>
-                                    <Typography variant='subtitle1'>{item.Client}</Typography>
-                                    <Typography variant='subtitle1'>
-
-                                        <Box>
-                                            <Button
-                                                id="basic-button"
-                                                aria-controls={open ? 'basic-menu' : undefined}
-                                                aria-haspopup="true"
-                                                aria-expanded={open ? 'true' : undefined}
-                                                onClick={handleClick}
-                                            >
-                                                {item.Status && item.Status}
-                                            </Button>
-                                            <Menu
-                                                id="basic-menu"
-                                                className='custom-dropdown'
-                                                anchorEl={anchorEl}
-                                                open={open}
-                                                onClose={handleClose}
-                                                MenuListProps={{
-                                                    'aria-labelledby': 'basic-button',
-                                                }}
-                                            >
-                                                <MenuItem onClick={handleClose}>High</MenuItem>
-                                                <MenuItem onClick={handleClose}>Medium</MenuItem>
-                                                <MenuItem onClick={handleClose}>Low</MenuItem>
-                                            </Menu>
-                                        </Box>
-
-                                    </Typography>
-                                </Box>
-
-                                <Box className='mt-2'>
-                                    <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
-                                    <Button variant="text" className='btn-blue-2'>Defer</Button>
-                                </Box>
-
                             </Box>
-                        </Box>
-                    })
-                }
+                        })
+                    }
 
-                {/* <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                    {/* <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                     <Box className='todo-list-box white-box relative w-100'>
 
                         <Checkbox className='text-blue check-todo'
@@ -292,10 +293,10 @@ function TodoList() {
 
                     </Box>
                 </Box> */}
-                {/* col end */}
+                    {/* col end */}
 
 
-                {/* <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                    {/* <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                     <Box className='todo-list-box white-box relative w-100'>
 
                         <Checkbox className='text-blue check-todo'
@@ -356,10 +357,10 @@ function TodoList() {
 
                     </Box>
                 </Box> */}
-                {/* col end */}
+                    {/* col end */}
 
 
-                {/* <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                    {/* <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                     <Box className='todo-list-box white-box relative w-100'>
 
                         <Checkbox className='text-blue check-todo'
@@ -420,8 +421,9 @@ function TodoList() {
 
                     </Box>
                 </Box> */}
-                {/* col end */}
+                    {/* col end */}
 
+                </Box>
             </Box>
         </Box>
     )
