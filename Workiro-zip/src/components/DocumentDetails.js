@@ -43,7 +43,7 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 // sadik code end
 
 
-function DocumentDetails({documents, advFilteredResult}) {
+function DocumentDetails({dataNotFound, documents, advFilteredResult}) {
 
     // sadik js start
 
@@ -715,7 +715,6 @@ function DocumentDetails({documents, advFilteredResult}) {
                                         {Array(5).fill("").map(() => {
                                             return <>
                                                 <Link href="#" className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />Contact agreement</Link>
-                                                {/* desabled-link (desabled) add class on desabled link */}
                                             </>
                                         })}
 
