@@ -222,7 +222,7 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                     multiSelect
                 >
                     {Object.entries(groupByFilterResult).length>0 && Object.keys(groupByFilterResult).map((key)=>{
-                        return <TreeItem key={key} nodeId={key} label={key}>
+                        return <TreeItem key={key} nodeId={key} label={key!==""?key:"Demo"}>
                         {groupByFilterResult[key].map((item, index) => (
                         //   <TreeItem key={index} nodeId={`${key}-${index}`} label={item["Description"]}>
                             <Box className="file-uploads">
