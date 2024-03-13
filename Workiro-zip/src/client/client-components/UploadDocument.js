@@ -531,7 +531,6 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
                         <hr />
 
-
                         {/* file upload */}
                         {step === 1 && (<>
                             <Box className="">

@@ -82,9 +82,10 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                                 onClick={handleClickChangeIndex}
                                 className='btn-blue-2'
                             >
-                                Change Index <KeyboardArrowDownIcon className='ms-1' />
+                                Category 
+                                {/* <KeyboardArrowDownIcon className='ms-1' /> */}
                             </Button>
-                            <Menu
+                            {/* <Menu
                                 id="basic-menu"
                                 className='custom-dropdown'
                                 anchorEl={anchorElChangeIndex}
@@ -97,9 +98,9 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                                 <MenuItem onClick={handleCloseChangeIndex}> <CategoryIcon className='me-2' /> Category</MenuItem>
                                 <MenuItem onClick={handleCloseChangeIndex}> <GradingIcon className='me-2' /> Refile</MenuItem>
                                 <MenuItem onClick={handleCloseChangeIndex}> <InsertLinkIcon className='me-2' /> Links</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <AddIcon className='me-2' /> Add</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <AlarmOnIcon className='me-2' /> Activity</MenuItem>
-                            </Menu>
+                                <MenuItem onClick={handleCloseChangeIndex}> <AddIcon className='me-2' /> </MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <AlarmOnIcon className='me-2' /> Add Activity </MenuItem>
+                            </Menu> */}
                         </Box>
 
                         <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>

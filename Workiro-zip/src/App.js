@@ -5,6 +5,7 @@ import Login from './components/Login'
 import ClientDetails from './client/client-components/ClientDetails'
 import ContactDetails from './contact/contact-components/ContactDetails'
 import TodoList from './components/TodoList'
+import NewTodoList from './components/NewTodoList'
 import Logout from './components/Logout'
 
 function App() {
@@ -17,7 +18,8 @@ function App() {
           <Route path="Connections" element={<ClientDetails />} />
             <Route path="clientDetails" element={<ClientDetails />} />
             <Route path="ContactDetails" element={<ContactDetails />} />
-            <Route path="TodoList" element={<TodoList />} />
+            <Route path="MyTask" element={<TodoList />} />
+            <Route path="TodoList" element={<NewTodoList />} />
             <Route path="SmartViews" element={<></>} />
             <Route path="Logout" element={<Logout/>} />
             
