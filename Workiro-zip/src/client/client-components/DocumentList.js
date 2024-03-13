@@ -1609,7 +1609,7 @@ export default function DocumentList({ clientId }) {
                                                                         {itm.Description ? itm.Description : "Demo"}
                                                                     </Typography>
                                                                     <Typography variant="body1">
-                                                                        Size: {itm["FileSize"] ? itm["FileSize"] : "0.00KB"} | Uploaded by {itm["Client"] ? itm["Client"] : ""}
+                                                                        Size: {itm["FileSize"] ? itm["FileSize"] : "0.00KB"} | Date {itm["Item.Date"] ? itm["Item.Date"] : ""}
                                                                     </Typography>
                                                                 </Box>
                                                             </Box>
@@ -1635,7 +1635,7 @@ export default function DocumentList({ clientId }) {
                                                                     {itm.Description ? itm.Description : "Demo"}
                                                                 </Typography>
                                                                 <Typography variant="body1">
-                                                                    Size: {itm["FileSize"] ? itm["FileSize"] : ""} | Uploaded by {itm["Client"] ? itm["Client"] : ""}
+                                                                    Size: {itm["FileSize"] ? itm["FileSize"] : ""} | Date {itm["Item.Date"] ? itm["Item.Date"] : ""}
                                                                 </Typography>
                                                             </Box>
                                                         </Box>

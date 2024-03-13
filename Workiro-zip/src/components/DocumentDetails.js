@@ -154,7 +154,7 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                                         {item.Description ? item.Description : "Demo"}
                                         </Typography>
                                         <Typography variant="body1">
-                                            Size:  <span className='sembold'>{item["FileSize"] ? item["FileSize"] : ""}</span> | Uploaded by <span className='sembold'>{item.Client ? item.Client : "Demo"}</span>
+                                            Size:  <span className='sembold'>{item["FileSize"] ? item["FileSize"] : ""}</span> | Date <span className='sembold'>{item["Item Date"] ? item["Item Date"] : ""}</span>
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -242,7 +242,7 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                                                         {item["Description"]!=="" ? item["Description"]: "Demo"}
                                                     </Typography>
                                                     <Typography variant="body1">
-                                                        Size:  <span className='sembold'>{item["FileSize"]!==""?item["FileSize"]:""}</span> | Uploaded by <span className='sembold'>{item["Client"]!==""?item["Client"]:""}</span>
+                                                        Size:  <span className='sembold'>{item["FileSize"]!==""?item["FileSize"]:""}</span> | Date <span className='sembold'>{item["Item Date"]!==""?item["Item Date"]:""}</span>
                                                     </Typography>
                                                 </Box>
                                             </Box>
@@ -397,7 +397,7 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                         </TreeItem>
                     </TreeItem> */}
                 </TreeView> 
-                ):(documents.length>0 && documents.slice(0,20).map((item) => {
+                ):(documents.length>0 && documents.map((item) => {
                     return <>
                         <Box className="file-uploads">
                             <label className="file-uploads-label file-uploads-document" onClick={handleClickOpenPDFView}>
@@ -416,7 +416,7 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                                         {item.Description ? item.Description : "Demo"}
                                         </Typography>
                                         <Typography variant="body1">
-                                            Size:  <span className='sembold'>{item["FileSize"] ? item["FileSize"] : ""}</span> | Uploaded by <span className='sembold'>{item.Client ? item.Client : "Demo"}</span>
+                                            Size:  <span className='sembold'>{item["FileSize"] ? item["FileSize"] : ""}</span> | Date <span className='sembold'>{item["Item Date"] ? item["Item Date"] : "Demo"}</span>
                                         </Typography>
                                     </Box>
                                 </Box>
