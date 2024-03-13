@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import user from "../../images/01.png";
 import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Link, MenuItem, Menu } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
@@ -20,7 +20,7 @@ import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
-function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
+function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument}) {
 
     // const [value, setValue] = React.useState(1);
 
@@ -38,6 +38,7 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
     };
 
     const [value, setValue] = React.useState('1');
+    const [viewerUrl, setViwerUrl] = React.useState('');
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -46,6 +47,24 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
     const handleClosePDFView = () => {
         setOpenPDFView(false);
     };
+
+useEffect(()=>{
+    if(selectedDocument){
+        var IsApproved = selectedDocument["IsApproved"];
+        var PortalDocId = selectedDocument["PortalDocId"];
+   let IsApp="";
+   let PortalID="";
+   
+       if (IsApproved === "SIG" && PortalDocId !== "") {
+           IsApp = IsApproved;
+           PortalID = PortalDocId;
+       }
+      
+       setViwerUrl(`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${selectedDocument["Registration No."]}&ext=${selectedDocument.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`);
+   
+    }
+    
+},[selectedDocument])
 
     return (
 
@@ -116,6 +135,8 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                 <DialogContentText id="alert-dialog-description">
 
                     <Box sx={{ width: '100%', typography: 'body1' }} className="mt-4 pt-1">
+                    
+
                         <TabContext value={value}>
                             <Box>
                                 <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
@@ -133,8 +154,17 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                                     <Box className='text-end mb-3'>
                                         <DownloadForOfflineIcon className='text-red pointer font-32' />
                                     </Box>
+                                    <iframe
+                src={viewerUrl} // Specify the URL of the iframe
+                width="100%" // Set the width
+                height="700px" // Set the height
+                frameBorder="0" // Set frameborder to 0
+                allowFullScreen // Allow fullscreen mode
+                title="Embedded Content" // Set the title for accessibility
+            />
 
-                                    <img src={user} alt="User" className='w-100' />
+
+                                  
                                 </Box>
                             </TabPanel>
                             <TabPanel value="2">
@@ -215,6 +245,9 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
                                 <hr />
 
                                 <Box className='row'>
+
+                               
+
                                     {Array(12).fill("").map(() => {
                                         return <>
                                             <Box className='col-xxl-3 col-xl-4 col-md-6'>
@@ -248,6 +281,10 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView }) {
 
                             </TabPanel>
                         </TabContext>
+
+                        
+
+
                     </Box>
                 </DialogContentText>
             </DialogContent>

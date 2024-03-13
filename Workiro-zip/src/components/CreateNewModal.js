@@ -94,7 +94,7 @@ export default function CreateNewModalTask({ ...props }) {
         openModal
     } = props;
 
-    console.log("documentDate txtSectionId1", txtFolderData, txtClientData, txtSectionData)
+    console.log("documentDate txtSectionId1",createNewFileObj, txtFolderData, txtClientData, txtSectionData)
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -568,8 +568,11 @@ export default function CreateNewModalTask({ ...props }) {
         // }
        
         if (createNewFileObj) {
+
             console.log("createNewFileObj1111", createNewFileObj)
-            setSelectedFiles(createNewFileObj)
+            setSelectedFiles(createNewFileObj);
+            setSelectedDocumentFile(createNewFileObj);
+            
         }
         if (txtFolderData) {
             settxtFolder(txtFolderData.Folder);
@@ -1033,16 +1036,15 @@ export default function CreateNewModalTask({ ...props }) {
                     if (sts && data) {
                         let json = JSON.parse(data);
                         let tble6 = json.Table6;
-
                         if (tble6.length > 0) {
                             let filteredUsers = tble6.filter(el => el["Portal User"] === true && el["Portal User"] !== null);
                             if (filteredUsers.length > 0) {
                                 setPortalUser(filteredUsers.length > 0 ? filteredUsers : null);
                             }
-
                             console.log("Json_GetClientCardDetails", filteredUsers);
-                        } else {
-                            setPortalUser(null);
+                        } 
+                        else {
+                           // setPortalUser([]);
                         }
                     }
                 });
@@ -1302,10 +1304,10 @@ export default function CreateNewModalTask({ ...props }) {
 
         if (selectedUSer.ID) {
             let myNewArr = [...selectedFilesFromBrower, ...selectedDocumentFile];
-            console.log("myNewArr", myNewArr)
+           // console.log("myNewArr", myNewArr)
             const ccEmail = selectedEmailCC ? selectedEmailCC.map(obj => obj["E-Mail"]) : "";
             const ToEmail = selectedEmail.map(obj => obj["E-Mail"]);
-            const ItemId = selectedRows.map(obj => obj["Registration No."]);
+            const ItemId = selectedDocumentFile.map(obj => obj.DocId);
             const fileNames = myNewArr.map(obj => obj["FileName"]);
             const fileDataBase64 = myNewArr.filter(obj => obj["Base64"] !== "").map(obj => obj["Base64"]);
 

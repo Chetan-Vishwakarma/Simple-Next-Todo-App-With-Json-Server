@@ -143,6 +143,7 @@ export default function DocumentList({ clientId }) {
     const [isGroupBy, setIsGroupBy] = useState(false);
     const [groupByFilterResult, setGroupByFilterResult] = useState({});
     const [selectedGroup, setSelectedGroup] = React.useState('Group By');
+    
 
     const testDocumentsKey = [
         { key: "Registration No.", value: "Registration No" },
@@ -264,7 +265,7 @@ export default function DocumentList({ clientId }) {
                 if (sts && data) {
                     console.log("ExplorerSearchDoc", JSON.parse(data));
                     let json = JSON.parse(data);
-                    if (json.Table6) {
+                    if (json.Table6.length>0) {
                         // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                         let docs = json.Table6;
 
@@ -1589,7 +1590,7 @@ export default function DocumentList({ clientId }) {
 
                         <Box className='mt-4 client-details-scroll'>
                             {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
-                            {toggleScreen.singleCardView && <DocumentDetails groupByFilterResult={groupByFilterResult} isGroupBy={isGroupBy} documents={documents} advFilteredResult={advFilteredResult}></DocumentDetails>}
+                            {toggleScreen.singleCardView && <DocumentDetails groupByFilterResult={groupByFilterResult} isGroupBy={isGroupBy} documents={documents} advFilteredResult={advFilteredResult} ></DocumentDetails>}
                             {toggleScreen.multipleCardView &&
                                 <Box className='row'>
                                     {advFilteredResult.length > 0 ? (
