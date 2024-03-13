@@ -8,7 +8,7 @@ import DataGrid, {
     Pager, Paging, DataGridTypes, FormGroup,
 } from 'devextreme-react/data-grid';
 import 'devextreme/dist/css/dx.light.css';
-import { Box, Typography, Button, Paper, Grid, TextField } from '@mui/material';
+import { Box, Typography, Button, Paper, Grid, TextField, Autocomplete } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AppsIcon from '@mui/icons-material/Apps';
 import DocumentDetails from '../../components/DocumentDetails';
@@ -143,6 +143,11 @@ export default function DocumentList({ clientId }) {
     const [isGroupBy, setIsGroupBy] = useState(false);
     const [groupByFilterResult, setGroupByFilterResult] = useState({});
     const [selectedGroup, setSelectedGroup] = React.useState("");
+    const [suggestionList, setSuggestionList] = useState([]);
+    const [firstFilterResult, setFirstFilterResult] = useState([]);
+    const [secondFilterResult, setSecondFilterResult] = useState([]);
+    const [thirdFilterResult, setThirdFilterResult] = useState([]);
+    const [fourthFilterResult, setFourthFilterResult] = useState([]);
 
     const testDocumentsKey = [
         { key: "Registration No.", value: "Registration No" },
@@ -267,18 +272,19 @@ export default function DocumentList({ clientId }) {
                     if (json.Table6) {
                         // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                         let docs = json.Table6;
+                        if (docs.length > 0) {
+                            let docKeys = Object.keys(docs[0]);
+                            // console.log("documentKeys",docKeys);
+                            setDocumentKeys(docKeys);
 
-                        let docKeys = Object.keys(docs[0]);
-                        // console.log("documentKeys",docKeys);
-                        setDocumentKeys(docKeys);
-
-                        docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
-                        //docs.map((itm)=>console.log("check in map",itm["Item Date"]));
-                        setDocuments(docs);
-                        let desc = docs.filter((item) => item.Description !== "");
-                        // console.log("desc", desc);
-                        setgroupedOptions(desc);
-                        Json_GetFolderData();
+                            docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
+                            //docs.map((itm)=>console.log("check in map",itm["Item Date"]));
+                            setDocuments(docs);
+                            let desc = docs.filter((item) => item.Description !== "");
+                            // console.log("desc", desc);
+                            setgroupedOptions(desc);
+                            Json_GetFolderData();
+                        }
                     }
                 }
             })
@@ -962,6 +968,7 @@ export default function DocumentList({ clientId }) {
     }
     function getRootProps(params) { }
     function getListboxProps(params) { }
+
     const handleSearchByProperty = (flitData) => {
         if (flitData && searchByPropertyKey === "" && searchByPropertyInput === "") {
             if (flitData.length === 0) {
@@ -970,29 +977,23 @@ export default function DocumentList({ clientId }) {
                 let arr = flitData;
                 if (arr.length > 1) {
                     if (arr.length === 2) {
-                        let flt1 = documents.filter((itm) => {
-                            if (String(itm[arr[1].key]).toLowerCase().includes(arr[1].value)) {
-                                return itm;
-                            }
+                        let flt1 = secondFilterResult.filter((itm) => {
+                            return String(itm[arr[1].key]).toLowerCase().includes(String(arr[1].value).toLowerCase())
                         });
                         // console.log("flt1: ", flt1);
                         setAdvFilteredResult(flt1);
                     } else if (arr.length === 3) {
-                        let flt2 = documents.filter((itm) => {
-                            if (String(itm[arr[2].key]).toLowerCase().includes(arr[2].value)) {
-                                return itm;
-                            }
+                        let flt2 = thirdFilterResult.filter((itm) => {
+                            return String(itm[arr[2].key]).toLowerCase().includes(String(arr[2].value).toLowerCase())
                         });
                         // console.log("flt1: ", flt2);
                         setAdvFilteredResult(flt2);
                     }
                 } else {
-                    let fltByKeyVal = documents.filter((itm) => {
-                        if (itm[searchByPropertyKey]) {
-                            return String(itm[searchByPropertyKey]).toLowerCase().includes(searchByPropertyInput.toLowerCase());
-                        }
+                    let fltByKeyVal = firstFilterResult.filter((itm) => {
+                            return String(itm[arr[0].key]).toLowerCase().includes(String(arr[0].value).toLowerCase());
                     });
-                    console.log(fltByKeyVal);
+                    // console.log(fltByKeyVal);
                     setAdvFilteredResult(fltByKeyVal);
                 }
             }
@@ -1008,21 +1009,28 @@ export default function DocumentList({ clientId }) {
             setBulkSearch(arr);
             if (arr.length > 1) {
                 if (arr.length === 2) {
-                    let flt1 = advFilteredResult.filter((itm) => {
-                        if (String(itm[arr[1].key]).toLowerCase().includes(arr[1].value)) {
-                            return itm;
-                        }
+                    // console.log(arr[1].key);
+                    // console.log(arr[1].value);
+                    let flt1 = firstFilterResult.filter((itm) => {
+                        return String(itm[arr[1].key]).toLowerCase().includes(String(arr[1].value).toLowerCase());
                     });
-                    console.log("flt1: ", flt1);
+                    // console.log("flt1: ", flt1);
+                    setSecondFilterResult(flt1);
                     setAdvFilteredResult(flt1);
                 } else if (arr.length === 3) {
-                    let flt2 = advFilteredResult.filter((itm) => {
-                        if (String(itm[arr[2].key]).toLowerCase().includes(arr[2].value)) {
-                            return itm;
-                        }
+                    let flt2 = secondFilterResult.filter((itm) => {
+                        return String(itm[arr[2].key]).toLowerCase().includes(String(arr[2].value).toLowerCase())
                     });
-                    console.log("flt1: ", flt2);
+                    // console.log("flt1: ", flt2);
+                    setThirdFilterResult(flt2);
                     setAdvFilteredResult(flt2);
+                }else if (arr.length === 4) {
+                    let flt3 = secondFilterResult.filter((itm) => {
+                        return String(itm[arr[3].key]).toLowerCase().includes(String(arr[3].value).toLowerCase())
+                    });
+                    // console.log("flt1: ", flt2);
+                    setFourthFilterResult(flt3);
+                    setAdvFilteredResult(flt3);
                 }
             } else {
                 let fltByKeyVal = documents.filter((itm) => {
@@ -1030,7 +1038,8 @@ export default function DocumentList({ clientId }) {
                         return String(itm[searchByPropertyKey]).toLowerCase().includes(searchByPropertyInput.toLowerCase());
                     }
                 });
-                console.log(fltByKeyVal);
+                // console.log("First Filter Result",fltByKeyVal);
+                setFirstFilterResult(fltByKeyVal);
                 setAdvFilteredResult(fltByKeyVal);
             }
         }
@@ -1082,22 +1091,39 @@ export default function DocumentList({ clientId }) {
     }
     function groupByProperty(data, property) {
         return data.reduce((acc, obj) => {
-          const value = obj[property];
-          acc[value] = acc[value] || [];
-          acc[value].push(obj);
-          return acc;
+            const value = obj[property];
+            acc[value] = acc[value] || [];
+            acc[value].push(obj);
+            return acc;
         }, {});
-      }
-    function handleGroupByFilter(e){
+    }
+    function handleGroupByFilter(e) {
         let target = e.target.value;
         setSelectedGroup(target);
-        if(target===""){
+        if (target === "") {
             setIsGroupBy(false);
             return;
         }
         setIsGroupBy(true);
-        let data = groupByProperty(documents,target);
+        let data = groupByProperty(documents, target);
         setGroupByFilterResult(data);
+    }
+    function handleSearchBySuggestionList(val) {
+        if (val !== "") {
+            setSearchByPropertyKey(val);
+            let filteredData = documents.filter((itm) => {
+                if (itm[val] !== "" && itm[val] !== null && itm[val] !== undefined) {
+                    return itm[val];
+                }
+            }).map((itm) => itm[val]);
+            if (filteredData) {
+                let fltData = [...new Set(filteredData)];
+                // console.log("Suggestion List : ", fltData)
+                setSuggestionList(fltData);
+                setSearchByPropertyInput("");
+            }
+            //console.log("Suggestion List : ", filteredData)
+        }
     }
     return (
         <>
@@ -1452,22 +1478,58 @@ export default function DocumentList({ clientId }) {
                             {isAdvFilter && <><Box className={toggleScreen.multipleCardView ? 'row pe-3 d-non' : 'row w-100 pe-3 d-non'}>
                                 <Box className='col-md-6'>
                                     <Box className='mb-2'>
-                                        <label>Select Property</label>
-                                        <select class="form-select" aria-label="Default select example" value={searchByPropertyKey} onChange={(e) => setSearchByPropertyKey(e.target.value)}>
+                                        {/* <label>Select Property</label> */}
+                                        {/* <select class="form-select" aria-label="Default select example" value={searchByPropertyKey} onChange={(e) => setSearchByPropertyKey(e.target.value)}> */}
+                                        {/* <select class="form-select" aria-label="Default select example" value={searchByPropertyKey} onChange={(e) => handleSearchBySuggestionList(e.target.value)}>
                                             <option value={""}></option>
-                                            {/* {documentKeys.length > 0 && documentKeys.map((itm) => {
-                                                return <option value={itm}>{itm}</option>
-                                            })} */}
                                             {testDocumentsKey.length > 0 && testDocumentsKey.map((itm) => {
                                                 return <option value={itm.key}>{itm.value}</option>
                                             })}
-                                        </select>
+                                        </select> */}
+                                        <FormControl fullWidth size='small'>
+                                            <InputLabel id="demo-simple-select-label">Select Property</InputLabel>
+                                            <Select
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                value={searchByPropertyKey}
+                                                label="Select Property"
+                                                onChange={(e) => handleSearchBySuggestionList(e.target.value)}
+                                            >
+                                                {testDocumentsKey.length > 0 && testDocumentsKey.map((itm) => {
+                                                return <MenuItem value={itm.key}>{itm.value}</MenuItem>
+                                                })}
+                                                {/* <MenuItem value={10}>Ten</MenuItem>
+                                                <MenuItem value={20}>Twenty</MenuItem>
+                                                <MenuItem value={30}>Thirty</MenuItem> */}
+                                            </Select>
+                                        </FormControl>
                                     </Box>
                                 </Box>
                                 <Box className='col-md-6 px-0'>
                                     <Box className='mb-2'>
-                                        <label>Value</label>
-                                        <input type="text" class="form-control" placeholder="Type Value" value={searchByPropertyInput} onChange={(e) => setSearchByPropertyInput(e.target.value)} />
+                                        {/* <label>Value</label> */}
+                                        {/* <select class="form-select" aria-label="Default select example" value={""} onChange={(e) => { }}>
+                                            <option value={""}></option>
+                                            <input/>
+                                            {suggestionList.length > 0 && suggestionList.map((itm) => (
+                                                <option value={itm}>{itm}</option>
+                                            ))}
+                                        </select> */}
+                                        <Autocomplete
+                                            disablePortal
+                                            id="combo-box-demo"
+                                            options={suggestionList}
+                                            defaultValue={""}
+                                            sx={{ width: 300 }}
+                                            size='small'
+                                            onChange={(event, newValue) => {
+                                                // console.log("newValue", newValue);
+                                                // console.log("event", event.target.value);
+                                                setSearchByPropertyInput(newValue !== null ? newValue : "")
+                                            }}
+                                            renderInput={(params) => <TextField {...params} value={searchByPropertyInput} onChange={(e) => setSearchByPropertyInput(e.target.value)} label="Value" />}
+                                        />
+                                        {/* <input type="text" class="form-control" placeholder="Type Value" value={searchByPropertyInput} onChange={(e) => setSearchByPropertyInput(e.target.value)} /> */}
                                     </Box>
                                 </Box>
                             </Box>
@@ -1482,7 +1544,7 @@ export default function DocumentList({ clientId }) {
                                     {/* <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
                                         <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} /> */}
 
-                                    {bulkSearch.length > 0 && bulkSearch.map((itm) => <Chip label={`${itm.key}: ${itm.value}`} variant="outlined" onDelete={() => {
+                                    {bulkSearch.length > 0 && bulkSearch.map((itm) => <Chip disabled={bulkSearch[bulkSearch.length-1]?false:true} label={`${itm.key}: ${itm.value}`} variant="outlined" onDelete={() => {
                                         let filtData = [...bulkSearch].filter((ins) => {
                                             return ins.key !== itm.key
                                         });
@@ -1541,7 +1603,7 @@ export default function DocumentList({ clientId }) {
                                         className='custom-dropdown'
                                         onChange={handleGroupByFilter}
                                     >
-                                        <MenuItem  value="">
+                                        <MenuItem value="">
                                             Group By
                                         </MenuItem>
                                         <MenuItem value="Description">
@@ -1563,21 +1625,21 @@ export default function DocumentList({ clientId }) {
                                         <MenuItem value="">
                                             Sort By
                                         </MenuItem>
-                                        <MenuItem value="None" onClick={()=>setAdvFilteredResult([])}>None</MenuItem>
+                                        <MenuItem value="None" onClick={() => setAdvFilteredResult([])}>None</MenuItem>
                                         <MenuItem value={"Date"}>By Date</MenuItem>
                                         <MenuItem value={"Description"}>By Description</MenuItem>
                                     </Select>
                                 </FormControl>
 
-                                {sortByProperty!==""&&sortByProperty!=="None"&& <Checkbox
+                                {sortByProperty !== "" && sortByProperty !== "None" && <Checkbox
                                     {...label}
                                     icon={<UpgradeIcon />}
                                     checkedIcon={<VerticalAlignBottomIcon />}
                                     className='p-0'
-                                    onChange={(e)=>{
-                                        if(e.target.checked){
+                                    onChange={(e) => {
+                                        if (e.target.checked) {
                                             handleAscendingSort();
-                                        }else{
+                                        } else {
                                             handleDescendingSort();
                                         }
                                     }}
