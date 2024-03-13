@@ -49,6 +49,9 @@
 .font-18 {
   font-size: 18px !important;
 }
+.font-32 {
+  font-size: 32px !important;
+}
 
 select:focus,
 .form-control:focus {
@@ -300,25 +303,32 @@ button {
 }
 
 .side-navi li {
-  color: #ABB5BA;
+  color: #727272;
   transition: .5s all ease;
 }
 
-.side-navi li.active,
-.side-navi li:hover {
+.side-navi li.active {
   background: #d42027;
   border-radius: 90px;
   color: #fff;
 }
 
-.side-navi li.active svg,
+.side-navi li:hover {
+  background: #ccc;
+  border-radius: 90px;
+  color: #000;
+}
+
 .side-navi li:hover svg {
+  fill: #000;
+}
+
+.side-navi li.active svg {
   fill: #fff;
 }
 
-
 .side-navi li svg {
-  fill: #ABB5BA;
+  fill: #727272;
 }
 
 .header {
@@ -327,6 +337,7 @@ button {
 
 .user-dropdown .user-img,
 .user-img-list {
+  min-width: 40px;
   width: 40px;
   height: 40px;
   display: flex;
@@ -1556,6 +1567,42 @@ span.tox-statusbar__branding {
   border-bottom: 1px solid #f1f1f1;
 }
 
+.client-details-scroll .MuiTreeView-root {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  outline: 0;
+}
+.client-details-scroll .MuiTreeView-root .MuiTreeItem-root {
+  background: #f1f1f1;
+  padding: 15px 15px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+.client-details-scroll .MuiTreeView-root li .MuiTreeItem-content {
+  background: #fff;
+  margin-bottom: 0;
+  border: 2px dashed #f1f1f1;
+  padding: 12px;
+  border-radius: 4px;
+}
+.client-details-scroll .MuiTreeView-root li .MuiTreeItem-iconContainer {
+  border: 2px dashed #f1f1f1;
+  width: 32px;
+  height: 30px;
+  border-radius: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.todo-list-details {
+  border-radius: 12px;
+  margin-top: 20px;
+  background: #edf0ff;
+  padding: 15px;
+}
+
 @media only screen and (max-width: 1366px) {
   .client-box-main {
     flex: 0 0 25%;
@@ -1565,6 +1612,31 @@ span.tox-statusbar__branding {
   .main-company-details {
     border-right: 0px solid #f1f1f1;
   }
+
+  .custom-tabs button.MuiTab-root {
+    margin-right: 6px;
+    padding: 5px 14px;
+    font-size: 13px;
+  }
+
+  .todo-list-box h2 {
+    font-size: 18px;
+  }
+
+  .form-control,
+  .form-select,
+  .textarea,
+  body {
+    font-size: 13px !important;
+  }
+
+  .btn-blue-2,
+  .btn-green,
+  .btn-red {
+    padding: 6px 14px !important;
+    font-size: 13px !important;
+  }
+
 }
 
 @media only screen and (max-width: 1199px) {

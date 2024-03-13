@@ -10,18 +10,10 @@ import user from "../images/user.jpg";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommanCLS from '../services/CommanService';
 
-
 import { Radio } from '@mui/material';
-
 import TaskDetailModal from './TaskDetailModal';
 
-
-
-
 function TodoList() {
-
-
-
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -224,7 +216,7 @@ function TodoList() {
 
                                     <Box className='mt-2'>
                                         <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
-                                        <Button variant="text" className='btn-blue-2'>Defer</Button>
+                                        <Button variant="outlined">Defer</Button>
                                     </Box>
 
                                 </Box>

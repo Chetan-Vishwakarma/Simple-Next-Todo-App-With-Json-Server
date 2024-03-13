@@ -37,6 +37,7 @@ import ContactDetails from '../contact/contact-components/ContactDetails';
 import TodoList from './TodoList';
 import CommanCLS from '../services/CommanService';
 import Logout from './Logout';
+import NewTodoList from './NewTodoList';
 
 const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
 
@@ -200,7 +201,7 @@ export default function SidebarNav() {
     Json_Get_CRM_UserByProjectId();
   }, []);
 
-  const [tabs,setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active:false }, { tabLink: "/dashboard/TodoList", tabName: 'My Tasks', active:true }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active:false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active:false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active:false }]);
+  const [tabs,setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active:false }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active:false }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active:true },  { tabLink: "/dashboard/Connections", tabName: 'Connections', active:false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active:false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active:false }]);
   
   return (
     <>
@@ -468,10 +469,10 @@ export default function SidebarNav() {
             <Route path="/Connections" element={<Client />} />
             <Route path="/clientDetails" element={<ClientDetails />} />
             <Route path="/ContactDetails" element={<ContactDetails />} />
-            <Route path="/TodoList" element={<TodoList />} />
+            <Route path="/MyTask" element={<TodoList />} />
+            <Route path="/TodoList" element={<NewTodoList />} />
             <Route path="/SmartViews" element={<></>} />
             <Route path="/LogOut" element={<Logout/>} />
-
           </Routes>
         </Box>
       </Box>

@@ -238,8 +238,10 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     const handleOnFolderClick = (data) => {
         setInputValue('');
         console.log("Get Folder On click", data);
-        setTxtFolderId(data.FolderID)
-        setTextFolderData(data)
+        if(data){
+            setTxtFolderId(data.FolderID)
+            setTextFolderData(data)
+        }
         Json_GetFolderData()
 
     }
@@ -528,7 +530,6 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                         </Box>
 
                         <hr />
-
 
                         {/* file upload */}
                         {step === 1 && (<>

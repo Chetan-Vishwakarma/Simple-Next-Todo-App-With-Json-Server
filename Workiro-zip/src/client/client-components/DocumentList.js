@@ -272,18 +272,18 @@ export default function DocumentList({ clientId }) {
                     if (json.Table6) {
                         // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                         let docs = json.Table6;
-                        if (docs.length > 0) {
+                        if(docs.length>0){
                             let docKeys = Object.keys(docs[0]);
-                            // console.log("documentKeys",docKeys);
-                            setDocumentKeys(docKeys);
+                        // console.log("documentKeys",docKeys);
+                        setDocumentKeys(docKeys);
 
-                            docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
-                            //docs.map((itm)=>console.log("check in map",itm["Item Date"]));
-                            setDocuments(docs);
-                            let desc = docs.filter((item) => item.Description !== "");
-                            // console.log("desc", desc);
-                            setgroupedOptions(desc);
-                            Json_GetFolderData();
+                        docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
+                        //docs.map((itm)=>console.log("check in map",itm["Item Date"]));
+                        setDocuments(docs);
+                        let desc = docs.filter((item) => item.Description !== "");
+                        // console.log("desc", desc);
+                        setgroupedOptions(desc);
+                        Json_GetFolderData();
                         }
                     }
                 }
@@ -1243,7 +1243,7 @@ export default function DocumentList({ clientId }) {
                             </>
                         ) :
                             (<Box className='clearfix'>
-                                <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
+                                <FormControl sx={{ m: 1, width: '120px', maxHeight: '200px', overflow: 'auto' }} size="small" className='select-border'>
                                     <Select
                                         value={selectedLastFilter}
                                         onChange={(e) => handleDocumentsFilter(e.target.value)}
@@ -1645,7 +1645,6 @@ export default function DocumentList({ clientId }) {
                                     }}
                                 />}
                             </Box>
-
                         </Box>
 
 
@@ -1653,7 +1652,7 @@ export default function DocumentList({ clientId }) {
                             {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
                             {toggleScreen.singleCardView && <DocumentDetails groupByFilterResult={groupByFilterResult} isGroupBy={isGroupBy} documents={documents} advFilteredResult={advFilteredResult}></DocumentDetails>}
                             {toggleScreen.multipleCardView &&
-                                <Box className='row'>
+                                <Box className='row sadik-class'>
                                     {advFilteredResult.length > 0 ? (
                                         advFilteredResult.map((itm) => {
                                             return <>
@@ -1672,7 +1671,7 @@ export default function DocumentList({ clientId }) {
                                                                         {itm.Description ? itm.Description : "Demo"}
                                                                     </Typography>
                                                                     <Typography variant="body1">
-                                                                        Size: {itm["FileSize"] ? itm["FileSize"] : "0.00KB"} | Uploaded by {itm["Client"] ? itm["Client"] : ""}
+                                                                        Size: {itm["FileSize"] ? itm["FileSize"] : "0.00KB"} | Date {itm["Item.Date"] ? itm["Item.Date"] : ""}
                                                                     </Typography>
                                                                 </Box>
                                                             </Box>
@@ -1698,7 +1697,7 @@ export default function DocumentList({ clientId }) {
                                                                     {itm.Description ? itm.Description : "Demo"}
                                                                 </Typography>
                                                                 <Typography variant="body1">
-                                                                    Size: {itm["FileSize"] ? itm["FileSize"] : ""} | Uploaded by {itm["Client"] ? itm["Client"] : ""}
+                                                                    Size: {itm["FileSize"] ? itm["FileSize"] : ""} | Date {itm["Item.Date"] ? itm["Item.Date"] : ""}
                                                                 </Typography>
                                                             </Box>
                                                         </Box>
