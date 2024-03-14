@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-
 import user from "../images/user.jpg";
-
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommanCLS from '../services/CommanService';
-import { Radio } from '@mui/material';
 import TaskDetailModal from './TaskDetailModal';
-import Checkbox from '@mui/material/Checkbox';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, Typography, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, Link, Chip, Stack, ListItemIcon, Radio, useMediaQuery, useTheme, Accordion, AccordionSummary, AccordionDetails, Checkbox } from '@mui/material';
+import TravelExploreIcon from '@mui/icons-material/TravelExplore';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import ArticleIcon from '@mui/icons-material/Article';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import DescriptionIcon from '@mui/icons-material/Description';
+import PushPinIcon from '@mui/icons-material/PushPin';
+
+const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 function NewTodoList() {
@@ -124,6 +126,27 @@ function NewTodoList() {
     };
 
 
+    // details dropdown
+    const [anchorElDocumentList, setAnchorElDocumentList] = React.useState(null);
+    const DocumentList = Boolean(anchorElDocumentList);
+    const handleClickDocumentList = (event) => {
+        console.log(event.currentTarget);
+        event.stopPropagation();
+        setAnchorElDocumentList(event.currentTarget);
+    };
+    const handleCloseDocument = () => {
+        setAnchorElDocumentList(null);
+    };
+
+
+    // Document details List
+    const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
+    const handleClickOpenDocumentDetailsList = () => {
+        setOpenDocumentDetailsList(true);
+    };
+    const handleCloseDocumentDetailsList = () => {
+        setOpenDocumentDetailsList(false);
+    };
 
     return (
         <Box className="container-fluid p-0">
@@ -149,7 +172,7 @@ function NewTodoList() {
                 </Box> */}
 
                 <Box className='mb-3'>
-                    <Button variant="text" className='btn-blue-2 mb-2 ms-2'>New Task</Button>
+                    <Button variant="text" className='btn-blue-2 mb-2 ms-2'>Task Due Soon</Button>
                     <Button variant="text" className='btn-blue-2 mb-2 ms-2'>Recently Updated</Button>
                     <Button variant="text" className='btn-blue-2 mb-2 ms-2'>Pinned Task</Button>
                     <Button variant="text" className='btn-blue-2 mb-2 ms-2'>Recently Access Documents</Button>
@@ -158,7 +181,7 @@ function NewTodoList() {
 
             <Box className='clearfix'>
 
-                <Typography variant='subtitle1' className='font-18 bold mb-2'>New Task</Typography>
+                <Typography variant='subtitle1' className='font-18 bold mb-2'>Task Due Soon</Typography>
 
                 <Box className='row'>
                     {/* {
@@ -175,7 +198,7 @@ function NewTodoList() {
                                         }}
                                     />
 
-                                    <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> {item.Source}</Typography>
+                                    <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> {item.Source}</Typography>
 
                                     <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
 
@@ -238,9 +261,6 @@ function NewTodoList() {
                                     onClick={() => handleClickOpen()}>
 
                                     <Radio className='text-red check-todo'
-                                        // {...label}
-                                        // icon={<RadioButtonUncheckedIcon />}
-                                        // checkedIcon={<CheckCircleIcon />}
                                         checked
                                         sx={{
                                             '&.Mui-checked': {
@@ -249,7 +269,7 @@ function NewTodoList() {
                                         }}
                                     />
 
-                                    <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> Signature Tast</Typography>
+                                    <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> Signature Tast</Typography>
 
                                     <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography>
 
@@ -337,7 +357,7 @@ function NewTodoList() {
                                         }}
                                     />
 
-                                    <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> Signature Tast</Typography>
+                                    <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> Signature Tast</Typography>
 
                                     <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography>
 
@@ -408,6 +428,192 @@ function NewTodoList() {
                 <Box className='py-4 text-center'>
                     <Button variant="outlined">View More</Button>
                 </Box>
+
+                {/* row end */}
+                <hr />
+
+                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>Pinned Task</Typography>
+
+                <Box className='row'>
+                    {Array(9).fill("").map(() => {
+                        return <>
+
+                            <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                                <Box className='todo-list-box white-box relative w-100'
+                                    onClick={() => handleClickOpen()}>
+
+                                    <Box className='clearfix'>
+                                        <Radio className='text-red check-todo'
+                                            // {...label}
+                                            // icon={<RadioButtonUncheckedIcon />}
+                                            // checkedIcon={<CheckCircleIcon />}
+                                            checked
+                                            sx={{
+                                                '&.Mui-checked': {
+                                                    color: "secondary",
+                                                },
+                                            }}
+                                        />
+
+                                        <PushPinIcon className='pinicon'></PushPinIcon>
+
+                                    </Box>
+
+
+                                    <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> Signature Tast</Typography>
+
+                                    <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography>
+
+                                    <Box className='d-flex align-items-center justify-content-between'>
+                                        <Typography variant='subtitle1' ><pan className='text-gray'>
+                                            You <ArrowForwardIosIcon className='font-14' /> </pan>
+                                            <a href='#'>Patrick</a>,
+                                            <a href='#'>Patrick</a> <a href='#'> +2</a></Typography>
+                                        <Typography variant='subtitle1 sembold'>01/05/23</Typography>
+                                    </Box>
+
+                                    <Box className='d-flex align-items-center justify-content-between'>
+                                        <Typography variant='subtitle1'>Docusoft india pvt ltd</Typography>
+                                        <Typography variant='subtitle1'>
+
+                                            <Box>
+                                                <Button
+                                                    id="basic-button"
+                                                    aria-controls={open ? 'basic-menu' : undefined}
+                                                    aria-haspopup="true"
+                                                    aria-expanded={open ? 'true' : undefined}
+                                                    onClick={handleClick}
+                                                >
+                                                    priority
+                                                </Button>
+                                                <Menu
+                                                    id="basic-menu"
+                                                    className='custom-dropdown'
+                                                    anchorEl={anchorEl}
+                                                    open={open}
+                                                    onClose={handleClose}
+                                                    MenuListProps={{
+                                                        'aria-labelledby': 'basic-button',
+                                                    }}
+                                                >
+                                                    <MenuItem onClick={handleClose}>High</MenuItem>
+                                                    <MenuItem onClick={handleClose}>Medium</MenuItem>
+                                                    <MenuItem onClick={handleClose}>Low</MenuItem>
+                                                </Menu>
+                                            </Box>
+
+                                        </Typography>
+                                    </Box>
+
+                                    <Box className='mt-2'>
+                                        <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
+                                        <Button variant="outlined">Defer</Button>
+                                    </Box>
+
+                                </Box>
+                            </Box>
+                            {/* col end */}
+
+                        </>
+                    })}
+                </Box>
+
+
+
+                {/* row end */}
+                <hr />
+                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>Recently Access Documents</Typography>
+
+                {/* <DocumentDetails></DocumentDetails> */}
+
+                <Box className='row'>
+                    {Array(20).fill("").map(() => {
+                        return <>
+
+                            <Box className='col-xxl-3 col-xl-4 col-md-6'>
+                                <Box className="file-uploads">
+                                    <label className="file-uploads-label file-uploads-document">
+                                        <Box className="d-flex align-items-center">
+
+                                            <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
+
+                                            <DescriptionIcon
+                                                sx={{
+                                                    fontSize: 32,
+                                                }}
+                                                className='me-2 ms-0'
+                                            />
+                                            <Box className="upload-content pe-3">
+                                                <Typography variant="h4" >
+                                                    lorem ipsome dolor site amet
+                                                </Typography>
+                                                <Typography variant="body1">
+                                                    Size:  <span className='sembold'>0.00 KB</span> | Date <span className='sembold'>09/03/2024</span>
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                        <Box>
+                                            <Button
+                                                id="basic-button"
+                                                aria-controls={DocumentList ? 'basic-menu' : undefined}
+                                                aria-haspopup="true"
+                                                aria-expanded={DocumentList ? 'true' : undefined}
+                                                onClick={handleClickDocumentList}
+                                                className='min-width-auto'
+                                            >
+                                                <MoreVertIcon />
+                                            </Button>
+                                            <Menu
+                                                id="basic-menu"
+                                                anchorEl={anchorElDocumentList}
+                                                open={DocumentList}
+                                                onClose={handleCloseDocument}
+                                                MenuListProps={{
+                                                    'aria-labelledby': 'basic-button',
+                                                }}
+                                                className='custom-dropdown'
+                                            >
+                                                <MenuItem onClick={() => {
+                                                    handleCloseDocument()
+                                                    handleClickOpenDocumentDetailsList()
+                                                }}>
+                                                    <ListItemIcon>
+                                                        <ArticleIcon fontSize="medium" />
+                                                    </ListItemIcon>
+                                                    Document Details</MenuItem>
+
+                                                <MenuItem onClick={handleCloseDocument}>
+                                                    <ListItemIcon>
+                                                        <CloudUploadIcon fontSize="medium" />
+                                                    </ListItemIcon>
+                                                    Upload New Version</MenuItem>
+                                                <MenuItem onClick={handleCloseDocument}>
+                                                    <ListItemIcon>
+                                                        <DriveFileRenameOutlineIcon fontSize="medium" />
+                                                    </ListItemIcon>
+                                                    Rename Document</MenuItem>
+                                                <MenuItem onClick={handleCloseDocument}>
+                                                    <ListItemIcon>
+                                                        <TravelExploreIcon fontSize="medium" />
+                                                    </ListItemIcon>
+                                                    Open in Browser</MenuItem>
+                                                <MenuItem onClick={handleCloseDocument}>
+                                                    <ListItemIcon>
+                                                        <CloudDownloadIcon fontSize="medium" />
+                                                    </ListItemIcon>
+                                                    Download</MenuItem>
+                                            </Menu>
+                                        </Box>
+                                    </label>
+                                </Box>
+                            </Box>
+
+                        </>
+                    })}
+
+                </Box>
+
+
 
 
             </Box>

@@ -40,6 +40,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     const [clientList, setClientList] = useState([]);
     const [sectionList, setSectionList] = useState([]);
     const [folderList, setFolderList] = useState([]);
+    const [udfTable, setUDFTable] = useState([]);
+    const [getAllFolderData, setGetAllFolderData] = useState([]);
 
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/"; // base url for api
     //   let dt = new LoginDetails();
@@ -80,9 +82,19 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const [fileLangth, setFileLength] = useState(0);
 
+    const [countval, setCountval] = useState(2);
+
     const [validation, setValidation] = useState("");
 
     const [TaskType, setTaskType] = useState("");
+
+    let count = 2;
+
+    const [selectedValueUDF, setSelectedValueUDF] = useState([]);
+    const [selectedValueUDFText, setselectedValueUDFText] = useState("");
+    const [udfIdWithValue, setUDFidWithValue] = useState([]);
+
+    // const [passButtonHide, setPassButtonHide] = useState(false);
 
     // Event handler to handle file selection
     const handleFileSelect = async (event) => {
@@ -205,6 +217,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                 if (sts) {
                     let js = JSON.parse(data);
                     console.log("Json_GetFolderData", js);
+                    setGetAllFolderData(js);
                     let clientList = js.Table1;
                     if (clientList.length > 0) {
                         setClientList(clientList);
@@ -212,6 +225,10 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                     let sectionList = js.Table;
                     if (sectionList.length > 0) {
                         setSectionList(sectionList);
+                    }
+                    let udfTable2 = js.Table2;
+                    if (udfTable2.length > 0) {
+                        setUDFTable(udfTable2);
                     }
                 }
             });
@@ -416,7 +433,13 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     const [createNewFileObj, setCreateNewFileObj] = useState([]);
 
     function Json_RegisterItem(fileData) {
-
+        let  values;
+        let concatenatedString;
+if(udfIdWithValue){
+     values = Object.values(udfIdWithValue);
+     concatenatedString = values.join(', ');
+}
+       
 
         let validationMessage = '';
 
@@ -454,7 +477,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                 "forActionList": "",
                 "forInformationList": "",
                 "forGroupList": "",
-                "uDFList": "",
+                "uDFList": concatenatedString,
                 "sUDFList": "",
                 "clientname": txtClientData.Client,
                 "receiveDate": dayjs(receivedDate).format("YYYY/MM/DD"),
@@ -465,13 +488,20 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                 "strtxt64": "",
                 "EmailMessageId": ""
             }
-            console.log("Json_RegisterItem", obj)
-            setshowModalCreateTask(true);
-            setOpenModal(true)
-            fileData.DocId = "111111";
+            console.log("Json_RegisterItem", obj);
+            if(fileData){
+                fileData.DocId = "111111";
+            }
+           
 
             setCreateNewFileObj((Previous) => [...Previous, fileData]);
+            //setOpenUploadDocument(false);
+            setshowModalCreateTask(true);
+            setOpenModal(true);
 
+            //    setTimeout(() => {
+            //     setPassButtonHide(false);
+            // }, 3000);
 
             // cls.Json_RegisterItem1(obj, function (sts, data) {
             //     if (sts && data) {
@@ -496,13 +526,50 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     }
 
+   
 
+    const handleAutocompleteChangeUdf = (id, newValue,udf) => { 
+        let setUdf=newValue.UDFID+":"+newValue[udf];   
+
+        setSelectedValueUDF(prevState => ({
+            ...prevState,
+            [id]: newValue // Update selected value for a specific ComboBox
+        }));
+     //console.log("newValue",id,newValue,udf)
+
+        setUDFidWithValue(prevState => ({
+            ...prevState,
+            [id]: setUdf // Update selected value for a specific ComboBox
+        }));
+
+       
+      //  const stringRepresentation = JSON.stringify(udfIdWithValue);
+       // console.log("newValue11",stringRepresentation);
+    };
+
+    const handleAutocompleteChangeUdfText = (id, newValue) => {  
+        let setUdf=id+":"+newValue;      
+        setselectedValueUDFText(prevState => ({
+            ...prevState,
+            [id]: newValue // Update selected value for a specific ComboBox
+        }));
+
+        setUDFidWithValue(prevState => ({
+            ...prevState,
+            [id]: setUdf // Update selected value for a specific ComboBox
+        }));
+
+       // console.log("newValue",udfIdWithValue);
+
+    };
 
     return (
         <React.Fragment>
             {/* <Button variant="outlined" onClick={handleClickOpenUploadDocument}>
                 OpenUploadDocument alert dialog
             </Button> */}
+
+
             <Dialog
                 open={openUploadDocument}
                 onClose={handleCloseDocumentUpload}
@@ -702,6 +769,48 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                             </Box>
 
 
+                            <hr />
+                            <Typography variant="body1" className="font-18 bold mb-2 text-black">
+                                UDF Form
+                            </Typography>
+                            <Box className='row'>
+                                {udfTable ? udfTable.map((item, index) => {
+                                    switch (item.ControlType) {
+                                        case "ComboBox":
+                                            count++;
+                                            console.log("vlaueeee", count)
+                                            let data = getAllFolderData["Table" + count];
+                                            if (data && data.length > 0 && item.UDFId === data[0]["UDFID"]) {
+                                                return (
+                                                    <Box key={index} className='col-lg-6 mb-3 col-md-6 col-sm-12'>
+                                                        <Autocomplete
+                                                            disablePortal
+                                                            id="combo-box-demo"
+                                                            options={data}  
+                                                            value={selectedValueUDF['combo-box-1']}                                                         
+                                                            onChange={(event,vlaue)=>handleAutocompleteChangeUdf(index, vlaue,item.UDF)} // Handle onChange event
+                                                            getOptionLabel={(option) => option[item.UDF]} // Adjust this based on your option structure
+                                                            renderInput={(params) => <TextField {...params} label={item.UDF} />}
+                                                        />
+                                                    </Box>
+                                                );
+                                            }
+                                            break;
+                                        case "TextBox":
+                                            return (
+                                                <Box key={index} className='col-lg-6 mb-3 col-md-6 col-sm-12'>
+                                                    <TextField value={selectedValueUDFText[item.UDFId] || ""}   onChange={(event,vlaue)=>handleAutocompleteChangeUdfText(item.UDFId, event.target.value)}  id="outlined-basic" label={item.UDF} variant="outlined" className='w-100' />
+                                                </Box>
+                                            );
+                                        default:
+                                            return null; // Handle other ControlTypes if necessary
+                                    }
+                                    return null; // Default return in case no condition is met
+                                }) : null}
+
+
+
+                            </Box>
 
                             {showModalCreateTask && <CreateNewModalTask
                                 documentDate={documentDate}
@@ -711,8 +820,12 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                 txtClientData={txtClientData}
                                 txtSectionData={txtSectionData}
                                 TaskType={TaskType}
+                                // setPassButtonHide={setPassButtonHide}
+                                // passButtonHide={passButtonHide}
                                 openModal={openModal}
                             ></CreateNewModalTask>}
+
+
                         </>)}
 
 
@@ -721,29 +834,9 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
                         {/* UDF Start */}
 
-                        <hr />
 
-                        {step === 3 && (<>
-                            <Typography variant="body1" className="font-18 bold mb-2 text-black">
-                                UDF Form
-                            </Typography>
 
-                            <Box className='row'>
-                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-                                    <TextField id="outlined-basic" label="Outlined" variant="outlined" className='w-100' />
-                                </Box>
 
-                                <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-                                    <Autocomplete
-
-                                        disablePortal
-                                        id="combo-box-demo"
-                                        options={Folder}
-                                        renderInput={(params) => <TextField {...params} label="Financial Year" />}
-                                    />
-                                </Box>
-                            </Box>
-                        </>)}
                         {/* {step===4 && (<>
                     <CreateNewModalTask openModal={true}></CreateNewModalTask>
                     </>)} */}

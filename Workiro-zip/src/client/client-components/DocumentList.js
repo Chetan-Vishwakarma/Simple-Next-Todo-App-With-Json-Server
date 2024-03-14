@@ -33,6 +33,8 @@ import Checkbox from '@mui/material/Checkbox';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -142,7 +144,7 @@ export default function DocumentList({ clientId }) {
     const [sortByProperty, setSortByProperty] = useState("");
     const [isGroupBy, setIsGroupBy] = useState(false);
     const [groupByFilterResult, setGroupByFilterResult] = useState({});
-    const [selectedGroup, setSelectedGroup] = React.useState("");
+    const [selectedGroup, setSelectedGroup] = React.useState("Group By");
     const [suggestionList, setSuggestionList] = useState([]);
     const [firstFilterResult, setFirstFilterResult] = useState([]);
     const [secondFilterResult, setSecondFilterResult] = useState([]);
@@ -272,7 +274,7 @@ export default function DocumentList({ clientId }) {
                 if (sts && data) {
                     console.log("ExplorerSearchDoc", JSON.parse(data));
                     let json = JSON.parse(data);
-                    if (json.Table6) {
+                    if (json.Table6.length>0) {
                         // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                         let docs = json.Table6;
                         if(docs?.length>0){
@@ -1717,16 +1719,16 @@ export default function DocumentList({ clientId }) {
                             </Box>
                         </Box>
 
-
                         <Box className='mt-4 client-details-scroll'>
                             {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
-                            {toggleScreen.singleCardView && <DocumentDetails groupByFilterResult={groupByFilterResult} isGroupBy={isGroupBy} documents={documents} advFilteredResult={advFilteredResult}></DocumentDetails>}
+                            {toggleScreen.singleCardView && <DocumentDetails groupByFilterResult={groupByFilterResult} isGroupBy={isGroupBy} documents={documents} advFilteredResult={advFilteredResult} ></DocumentDetails>}
                             {toggleScreen.multipleCardView &&
-                                <Box className='row sadik-class'>
+                                <Box className='row'>
                                     {advFilteredResult.length > 0 ? (
                                         advFilteredResult.map((itm) => {
                                             return <>
                                                 <Box className='col-xxl-3 col-xl-4 col-md-6'>
+                                                    
                                                     <Box className="file-uploads">
                                                         <label className="file-uploads-label file-uploads-document">
                                                             <Box className="d-flex align-items-center">

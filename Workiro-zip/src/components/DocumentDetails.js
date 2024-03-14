@@ -48,8 +48,10 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
     // sadik js start
 
     const [openPDFView, setOpenPDFView] = React.useState(false);
-
-    const handleClickOpenPDFView = () => {
+    const [selectedDocument, setSelectedDocument] = React.useState(null);
+    const handleClickOpenPDFView = (data) => {
+        console.log("Selected Document",data)
+        setSelectedDocument(data)
         setOpenPDFView(true);
     };
 
@@ -123,7 +125,7 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
 
             <Box>
 
-                <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView}></DocumentsVewModal>
+                <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
 
                 {/* <Box className='d-flex mb-3 mt-2'>
                     {/* <FormControlLabel control={<Checkbox />} className="p-0 m-0 ms-2 ps-1" size="small"/> 
@@ -138,7 +140,7 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                 {advFilteredResult.length>0 ? (advFilteredResult.map((item) => {
                     return <>
                         <Box className="file-uploads">
-                            <label className="file-uploads-label file-uploads-document" onClick={handleClickOpenPDFView}>
+                            <label className="file-uploads-label file-uploads-document" onClick={() => handleClickOpenPDFView(item)}>
                                 <Box className="d-flex align-items-center">
 
                                     <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" />
@@ -400,7 +402,7 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                 ):(documents.length>0 && documents.map((item) => {
                     return <>
                         <Box className="file-uploads">
-                            <label className="file-uploads-label file-uploads-document" onClick={handleClickOpenPDFView}>
+                            <label className="file-uploads-label file-uploads-document" onClick={() => handleClickOpenPDFView(item)}>
                                 <Box className="d-flex align-items-center">
 
                                     <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />

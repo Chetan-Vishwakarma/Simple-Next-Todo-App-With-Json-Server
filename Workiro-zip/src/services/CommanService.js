@@ -33,6 +33,119 @@ export default class CommanCLS extends AllService {
         return formattedDate;
     }
 
+    DateForMate(jsonDate) {
+        // alert(jsonDate);
+         if (jsonDate != null && jsonDate !== "") {
+             var fullDate = new Date(parseInt(jsonDate.substr(6)));
+ 
+             var twoDigitMonth = (fullDate.getMonth()+1) + "";
+ 
+             if (twoDigitMonth.length === 1) twoDigitMonth = "0" + twoDigitMonth;
+ 
+             var twoDigitDate = fullDate.getDate() + "";
+ 
+             if (twoDigitDate.length === 1)
+ 
+                 twoDigitDate = "0" + twoDigitDate;
+             var hh = fullDate.getHours();
+             var mm = fullDate.getMinutes();
+             var ss = fullDate.getSeconds();
+ //let fulldate =twoDigitDate + "/" + twoDigitMonth + "/" + fullDate.getFullYear();
+ //let times =hh + ":" + mm + ":" + ss;
+           // return callBack(fulldate,times);
+ 
+             var currentDate = twoDigitDate + "/" + twoDigitMonth + "/" + fullDate.getFullYear() +" "+ hh + ":" + mm + ":" + ss;
+            return currentDate;
+         }
+         else {
+             return "";
+         }
+     
+     };
+
+     Json_DeleteAttachment(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_DeleteAttachment",obj,true);
+        super.CallNewService("Json_DeleteAttachment",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+     Json_AddAttachment(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_AddAttachment",obj,true);
+        super.CallNewService("Json_AddAttachment",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+     Json_GetItemStickyNotes(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetItemStickyNotes",obj,true);
+        super.CallNewService("Json_GetItemStickyNotes",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+     Json_SetItemStickyNotes(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_SetItemStickyNotes",obj,true);
+        super.CallNewService("Json_SetItemStickyNotes",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+     Json_GetAttachmentsByItemId(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetAttachmentsByItemId",obj,true);
+        super.CallNewService("Json_GetAttachmentsByItemId",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+     Json_DownloadZip(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_DownloadZip",obj,true);
+        super.CallNewService("Json_DownloadZip",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+    Json_GetAudit(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetAudit",obj,true);
+        super.CallNewService("Json_GetAudit",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
     Json_RegisterItem(obj,callBack){   
         super.CreateNewServiceParamObject("Json_RegisterItem",obj,true);
         super.CallNewService("Json_RegisterItem",function(status,Data){
