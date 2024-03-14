@@ -150,6 +150,9 @@ export default function DocumentList({ clientId }) {
     const [secondFilterResult, setSecondFilterResult] = useState([]);
     const [thirdFilterResult, setThirdFilterResult] = useState([]);
     const [fourthFilterResult, setFourthFilterResult] = useState([]);
+    const [dateWiseFilterResult, setDateWiseFilterResult] = useState([]);
+    const [sectionWiseFilterResult, setSectionWiseFilterResult] = useState([]);
+
 
     const testDocumentsKey = [
         { key: "Registration No.", value: "Registration No" },
@@ -274,18 +277,18 @@ export default function DocumentList({ clientId }) {
                     if (json.Table6) {
                         // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                         let docs = json.Table6;
-                        if (docs.length > 0) {
+                        if(docs.length>0){
                             let docKeys = Object.keys(docs[0]);
-                            // console.log("documentKeys",docKeys);
-                            setDocumentKeys(docKeys);
+                        // console.log("documentKeys",docKeys);
+                        setDocumentKeys(docKeys);
 
-                            docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
-                            //docs.map((itm)=>console.log("check in map",itm["Item Date"]));
-                            setDocuments(docs);
-                            let desc = docs.filter((item) => item.Description !== "");
-                            // console.log("desc", desc);
-                            setgroupedOptions(desc);
-                            Json_GetFolderData();
+                        docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
+                        //docs.map((itm)=>console.log("check in map",itm["Item Date"]));
+                        setDocuments(docs);
+                        let desc = docs.filter((item) => item.Description !== "");
+                        // console.log("desc", desc);
+                        setgroupedOptions(desc);
+                        Json_GetFolderData();
                         }
                     }
                 }
@@ -448,7 +451,7 @@ export default function DocumentList({ clientId }) {
             // console.log("last indexed data of Last 3 Months Filtered Result",test[test.length-1]);
             // console.log(test.length);
             fltData.map((item) => console.log(item.Description, "----", item["Item Date"]));
-
+            
             setAdvFilteredResult(fltData);
         } else if (target === "LastSixMonth") {
             let last = getLastSixMonthsDate().split("/");
@@ -990,6 +993,12 @@ export default function DocumentList({ clientId }) {
                         });
                         // console.log("flt1: ", flt2);
                         setAdvFilteredResult(flt2);
+                    }else if (arr.length === 4) {
+                        let flt2 = fourthFilterResult.filter((itm) => {
+                            return String(itm[arr[3].key]).toLowerCase().includes(String(arr[3].value).toLowerCase())
+                        });
+                        // console.log("flt1: ", flt2);
+                        setAdvFilteredResult(flt2);
                     }
                 } else {
                     let fltByKeyVal = firstFilterResult.filter((itm) => {
@@ -1054,42 +1063,103 @@ export default function DocumentList({ clientId }) {
         return new Date(year, month - 1, day); // month - 1 because month is 0-indexed in Date objects
     }
     function handleAscendingSort() {
+        // if (sortByProperty === "Date") {
+        //     if (advFilteredResult.length > 0) {
+        //         let sortedData = [...advFilteredResult].sort((a, b) => parseDate(a["Item Date"]) - parseDate(b["Item Date"]));
+        //         setAdvFilteredResult(sortedData);
+        //     } else {
+        //         let sortedData = [...documents].sort((a, b) => parseDate(a["Item Date"]) - parseDate(b["Item Date"]));
+        //         setAdvFilteredResult(sortedData);
+        //     }
+        // } else if (sortByProperty === "Description") {
+        //     if (advFilteredResult.length > 0) {
+        //         let sortedData = [...advFilteredResult].sort((a, b) => a["Description"].localeCompare(b["Description"]));
+        //         setAdvFilteredResult(sortedData);
+        //     } else {
+        //         let sortedData = [...documents].sort((a, b) => a["Description"].localeCompare(b["Description"]));
+        //         setAdvFilteredResult(sortedData);
+        //     }
+        // }
         if (sortByProperty === "Date") {
-            if (advFilteredResult.length > 0) {
-                let sortedData = [...advFilteredResult].sort((a, b) => parseDate(a["Item Date"]) - parseDate(b["Item Date"]));
-                setAdvFilteredResult(sortedData);
-            } else {
+            if(isGroupBy){
                 let sortedData = [...documents].sort((a, b) => parseDate(a["Item Date"]) - parseDate(b["Item Date"]));
-                setAdvFilteredResult(sortedData);
+                let data = groupByProperty(sortedData,selectedGroup);
+                setGroupByFilterResult(data);
+            }else{
+                if (advFilteredResult.length > 0) {
+                    let sortedData = [...advFilteredResult].sort((a, b) => parseDate(a["Item Date"]) - parseDate(b["Item Date"]));
+                    setAdvFilteredResult(sortedData);
+                } else {
+                    let sortedData = [...documents].sort((a, b) => parseDate(a["Item Date"]) - parseDate(b["Item Date"]));
+                    setAdvFilteredResult(sortedData);
+                }
             }
+            
         } else if (sortByProperty === "Description") {
-            if (advFilteredResult.length > 0) {
-                let sortedData = [...advFilteredResult].sort((a, b) => a["Description"].localeCompare(b["Description"]));
-                setAdvFilteredResult(sortedData);
-            } else {
+            if(isGroupBy){
                 let sortedData = [...documents].sort((a, b) => a["Description"].localeCompare(b["Description"]));
-                setAdvFilteredResult(sortedData);
+                let data = groupByProperty(sortedData,selectedGroup);
+                setGroupByFilterResult(data);
+            }else{
+                if (advFilteredResult.length > 0) {
+                    let sortedData = [...advFilteredResult].sort((a, b) => a["Description"].localeCompare(b["Description"]));
+                    setAdvFilteredResult(sortedData);
+                } else {
+                    let sortedData = [...documents].sort((a, b) => a["Description"].localeCompare(b["Description"]));
+                    setAdvFilteredResult(sortedData);
+                }
             }
+            
         }
     }
     function handleDescendingSort() {
         if (sortByProperty === "Date") {
-            if (advFilteredResult.length > 0) {
-                let sortedData = [...advFilteredResult].sort((a, b) => parseDate(b["Item Date"]) - parseDate(a["Item Date"]));
-                setAdvFilteredResult(sortedData);
-            } else {
+            if(isGroupBy){
                 let sortedData = [...documents].sort((a, b) => parseDate(b["Item Date"]) - parseDate(a["Item Date"]));
-                setAdvFilteredResult(sortedData);
+                let data = groupByProperty(sortedData,selectedGroup);
+                setGroupByFilterResult(data);
+            }else{
+                if (advFilteredResult.length > 0) {
+                    let sortedData = [...advFilteredResult].sort((a, b) => parseDate(b["Item Date"]) - parseDate(a["Item Date"]));
+                    setAdvFilteredResult(sortedData);
+                } else {
+                    let sortedData = [...documents].sort((a, b) => parseDate(b["Item Date"]) - parseDate(a["Item Date"]));
+                    setAdvFilteredResult(sortedData);
+                }
             }
         } else if (sortByProperty === "Description") {
-            if (advFilteredResult.length > 0) {
-                let sortedData = [...advFilteredResult].sort((a, b) => b["Description"].localeCompare(a["Description"]));
-                setAdvFilteredResult(sortedData);
-            } else {
+            if(isGroupBy){
                 let sortedData = [...documents].sort((a, b) => b["Description"].localeCompare(a["Description"]));
-                setAdvFilteredResult(sortedData);
+                let data = groupByProperty(sortedData,selectedGroup);
+                setGroupByFilterResult(data);
+            }else{
+                if (advFilteredResult.length > 0) {
+                    let sortedData = [...advFilteredResult].sort((a, b) => b["Description"].localeCompare(a["Description"]));
+                    setAdvFilteredResult(sortedData);
+                } else {
+                    let sortedData = [...documents].sort((a, b) => b["Description"].localeCompare(a["Description"]));
+                    setAdvFilteredResult(sortedData);
+                }
             }
+            
         }
+        // if (sortByProperty === "Date") {
+        //     if (advFilteredResult.length > 0) {
+        //         let sortedData = [...advFilteredResult].sort((a, b) => parseDate(b["Item Date"]) - parseDate(a["Item Date"]));
+        //         setAdvFilteredResult(sortedData);
+        //     } else {
+        //         let sortedData = [...documents].sort((a, b) => parseDate(b["Item Date"]) - parseDate(a["Item Date"]));
+        //         setAdvFilteredResult(sortedData);
+        //     }
+        // } else if (sortByProperty === "Description") {
+        //     if (advFilteredResult.length > 0) {
+        //         let sortedData = [...advFilteredResult].sort((a, b) => b["Description"].localeCompare(a["Description"]));
+        //         setAdvFilteredResult(sortedData);
+        //     } else {
+        //         let sortedData = [...documents].sort((a, b) => b["Description"].localeCompare(a["Description"]));
+        //         setAdvFilteredResult(sortedData);
+        //     }
+        // }
     }
     function groupByProperty(data, property) {
         return data.reduce((acc, obj) => {
