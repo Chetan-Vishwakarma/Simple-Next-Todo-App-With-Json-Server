@@ -20,6 +20,7 @@ import CommanCLS from '../../services/CommanService';
 import { json } from 'react-router-dom';
 
 import HtmlEditorDX from '../../components/HtmlEditor';
+import Toaster from '../../components/Toaster';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -284,9 +285,9 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
             ItemId: selectedDocument["Registration No."],
             strStickyNotes: window.btoa(editorContentValue)
         }
-        cls.Json_SetItemStickyNotes(o,function(sts, data){
-            if(sts && data){
-                if(data==="Success"){
+        cls.Json_SetItemStickyNotes(o, function (sts, data) {
+            if (sts && data) {
+                if (data === "Success") {
                     Json_GetItemStickyNotes();
                 }
             }
@@ -329,7 +330,7 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
                                 onClick={handleClickChangeIndex}
                                 className='btn-blue-2'
                             >
-                                Category 
+                                Category
                                 {/* <KeyboardArrowDownIcon className='ms-1' /> */}
                             </Button>
                             {/* <Menu
@@ -427,15 +428,17 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
                                         </>
                                     })}
                                 </Box>
-
                             </TabPanel>
+
                             <TabPanel value="3" className='p-0'>
-                            {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+                                {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+                                <Box className='text-end'>
+                                    <Button onClick={SaveStickyNotes} variant="contained" className='mt-3'>Save Notes</Button>
 
-<Button onClick={SaveStickyNotes} variant="contained">Save Notes</Button>
+                                    <Toaster></Toaster>
+
+                                </Box>
                             </TabPanel>
-
-                            
 
                             <TabPanel value="4">
 

@@ -277,6 +277,13 @@ button {
   display: none;
 }
 
+.custom-toaster {
+  position: fixed;
+  right: 5px;
+  top: 5px;
+  max-width: 400px;
+}
+
 .white-box {
   background: #fff;
   box-shadow: 0 0 10px #f3f1f1;
