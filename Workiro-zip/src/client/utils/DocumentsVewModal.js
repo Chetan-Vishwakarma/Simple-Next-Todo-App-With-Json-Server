@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import user from "../../images/01.png";
 import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Link, MenuItem, Menu } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
@@ -16,14 +16,29 @@ import AddIcon from '@mui/icons-material/Add';
 import AlarmOnIcon from '@mui/icons-material/AlarmOn';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import CommanCLS from '../../services/CommanService';
+import { json } from 'react-router-dom';
+
+import HtmlEditorDX from '../../components/HtmlEditor';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
-function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument}) {
+function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
 
+    const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
+    const [password, setPassword] = useState(localStorage.getItem("Password"));
+    const [Email, setEmail] = useState(localStorage.getItem("Email"));
+    const [txtFolderId, setFolderId] = useState(localStorage.getItem("FolderId"));
+    const [ViewerToken, setViewerToken] = useState(localStorage.getItem("ViewerToken"));
+    const [getAudit, setGetAudit] = useState([]);
+    const [getAttachment, setGetAttachment] = useState([]);
+    //const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
+
+    const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/"; // base url for api
+    //   let dt = new LoginDetails();
+    let cls = new CommanCLS(baseUrl, agrno, Email, password);
     // const [value, setValue] = React.useState(1);
-
     // const handleChange = (event, newValue) => {
     //     setValue(newValue);
     // };
@@ -39,6 +54,11 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument}) {
 
     const [value, setValue] = React.useState('1');
     const [viewerUrl, setViwerUrl] = React.useState('');
+    const [seletedFileData, setSeletedFileData] = React.useState([]);
+    const [selectedFiles, setSelectedFiles] = React.useState([]);
+
+    const [templateDataMarkup, setTemplateDataMarkup] = React.useState([]);
+    const [editorContentValue, setEditorContentValue] = React.useState([]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -48,23 +68,231 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument}) {
         setOpenPDFView(false);
     };
 
-useEffect(()=>{
-    if(selectedDocument){
-        var IsApproved = selectedDocument["IsApproved"];
-        var PortalDocId = selectedDocument["PortalDocId"];
-   let IsApp="";
-   let PortalID="";
-   
-       if (IsApproved === "SIG" && PortalDocId !== "") {
-           IsApp = IsApproved;
-           PortalID = PortalDocId;
-       }
-      
-       setViwerUrl(`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${selectedDocument["Registration No."]}&ext=${selectedDocument.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`);
-   
+    const Json_GetAudit = () => {
+        let obj = {
+            itemid: selectedDocument["Registration No."],
+
+        }
+        cls.Json_GetAudit(obj, function (sts, data) {
+            if (sts && data) {
+                let parse = JSON.parse(data);
+                let table = parse.Table;
+                if (table.length > 0) {
+                    setGetAudit(table);
+                }
+                console.log("Json_GetAudit", table)
+            }
+        })
     }
-    
-},[selectedDocument])
+    const Json_GetAttachmentsByItemId = () => {
+        let obj = {
+            ItemId: selectedDocument["Registration No."],
+            ViewerToken: ViewerToken,
+        }
+        cls.Json_GetAttachmentsByItemId(obj, function (sts, data) {
+            if (sts && data) {
+                let parse = JSON.parse(data);
+                console.log("Json_GetAttachmentsByItemId", parse)
+                let table = parse.Table;
+                if (table.length > 0) {
+                    setGetAttachment(table);
+                }
+
+            }
+        })
+    }
+    const Json_GetItemStickyNotes = () => {
+        let obj = {
+            ItemId: selectedDocument["Registration No."],
+        }
+        cls.Json_GetItemStickyNotes(obj, (sts, data) => {
+            if (sts && data) {
+
+                let atob = window.atob(data);
+                console.log("Json_GetItemStickyNotes", atob);
+                setTemplateDataMarkup(atob)
+            }
+        })
+    }
+    useEffect(() => {
+        setGetAttachment([]);
+        setAgrNo(localStorage.getItem("agrno"));
+        setFolderId(localStorage.getItem("FolderId"));
+        setPassword(localStorage.getItem("Password"));
+        setEmail(localStorage.getItem("Email"));
+        setViewerToken(localStorage.getItem("ViewerToken"));
+
+        if (selectedDocument) {
+            var IsApproved = selectedDocument["IsApproved"];
+            var PortalDocId = selectedDocument["PortalDocId"];
+            let IsApp = "";
+            let PortalID = "";
+
+            if (IsApproved === "SIG" && PortalDocId !== "") {
+                IsApp = IsApproved;
+                PortalID = PortalDocId;
+            }
+
+            setViwerUrl(`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${selectedDocument["Registration No."]}&ext=${selectedDocument.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`);
+            Json_GetAudit();
+            Json_GetAttachmentsByItemId();
+            Json_GetItemStickyNotes();
+        }
+        setSeletedFileData([]);
+
+    }, [selectedDocument])
+
+    const handeleAttachmentChange = (el) => {
+        console.log("handle change", el)
+        setSeletedFileData((pre) => [...pre, el]);
+
+    }
+
+
+
+    function DowloadSingleFileOnClick() {
+        console.log("seletedFileData", seletedFileData)
+        if (seletedFileData.length === 1) {
+            const uint8Array = new Uint8Array(seletedFileData[0].FileData);
+            const blob = new Blob([uint8Array], { type: 'application/octet-stream' });
+
+            // Create a URL representing the Blob
+            const url = URL.createObjectURL(blob);
+
+            // Create a link element pointing to the URL
+            const link = document.createElement('a');
+            link.href = url;
+
+            // Set the download attribute to specify the file name
+            link.download = seletedFileData[0].SubItemPath;
+
+            // Append the link to the document body
+            document.body.appendChild(link);
+
+            // Trigger a click event on the link to initiate the download
+            link.click();
+
+            // Remove the link from the document body
+            document.body.removeChild(link);
+        }
+        else {
+            Json_DownloadZip();
+        }
+    }
+
+    function Json_DownloadZip() {
+        if (seletedFileData.length > 1) {
+            let strGuid = seletedFileData.map((el) => el.Guid).join(',');
+            let obj = {};
+            obj.strFieldValues = strGuid;
+            obj.isattachments = 'yes';
+            obj.strFileName = "DemoTest";
+            let data = JSON.stringify(obj);
+
+            cls.Json_DownloadZip(obj, function (sts, data) {
+                if (sts && data) {
+                    // https://mydocusoft.com/DownloadFilesServer/0003/9/gfdgfdgfdgf.zip.zip
+
+                    var element = document.createElement('a');
+                    element.setAttribute('href', "https://docusms.uk/DownloadFilesServer/" + agrno + "/" + localStorage.getItem("UserId") + "/" + data);
+                    element.setAttribute('download', "DemoTest" + ".zip");
+                    element.style.display = 'none';
+                    document.body.appendChild(element);
+                    element.click();
+                    document.body.removeChild(element);
+
+                }
+            })
+        }
+
+    }
+
+    function DeleteDocumentAttachment() {
+        if (seletedFileData.length > 0) {
+            let strGuid = seletedFileData.map((el) => el.Guid).join(',');
+            // Display a confirmation dialog
+            const isConfirmed = window.confirm('Are you sure you want to delete this item?');
+            // Check if the user confirmed
+            if (isConfirmed) {
+                let obj = {};
+                obj.GuId = strGuid;
+                cls.Json_DeleteAttachment(obj, function (sts, data) {
+                    if (sts && data) {
+                        console.log("Json_DeleteAttachment", data);
+                        Json_GetAttachmentsByItemId()
+                    }
+                })
+            } else {
+                // Do nothing or handle cancel action
+                console.log('Deletion canceled');
+            }
+        }
+    }
+
+    // Event handler to handle file selection
+    const handleFileSelect = (event) => {
+        const files = event.target.files;
+        const selectedFilesArray = Array.from(files);
+        const filesData = [];
+        selectedFilesArray.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                let fileByte = reader.result.split(";")[1].replace("base64,", "");
+
+                const fileData = {
+                    FileName: file.name,
+                    Base64: fileByte ? fileByte : "", // Base64 data of the file
+                    FileSize: file.size,
+                    Preview: reader.result, // Data URL for preview
+                    DocId: ""
+                };
+
+                filesData.push(fileData);
+
+
+                let obj = {};
+                obj.ItemId = selectedDocument["Registration No."];
+                obj.FileName = file.name;
+                obj.base64data = fileByte;
+                obj.ViewerToken = ViewerToken;
+                cls.Json_AddAttachment(obj, (sts, data) => {
+                    if (sts && data) {
+                        console.log("Json_AddAttachment", data);
+                        if (data) {
+                            Json_GetAttachmentsByItemId()
+                        }
+                    }
+
+                })
+
+                // Check if this is the last file
+                if (index === selectedFilesArray.length - 1) {
+                    // Add new files to the uploadedFiles array
+                    setSelectedFiles((prevUploadedFiles) => [
+                        ...prevUploadedFiles,
+                        ...filesData,
+                    ]);
+                }
+            };
+            reader.readAsDataURL(file); // Read file as data URL (base64)
+        });
+    };
+
+    const SaveStickyNotes = () => {
+        console.log(editorContentValue)
+        let o = {
+            ItemId: selectedDocument["Registration No."],
+            strStickyNotes: window.btoa(editorContentValue)
+        }
+        cls.Json_SetItemStickyNotes(o,function(sts, data){
+            if(sts && data){
+                if(data==="Success"){
+                    Json_GetItemStickyNotes();
+                }
+            }
+        })
+    }
+
 
     return (
 
@@ -135,7 +363,7 @@ useEffect(()=>{
                 <DialogContentText id="alert-dialog-description">
 
                     <Box sx={{ width: '100%', typography: 'body1' }} className="mt-4 pt-1">
-                    
+
 
                         <TabContext value={value}>
                             <Box>
@@ -155,16 +383,16 @@ useEffect(()=>{
                                         <DownloadForOfflineIcon className='text-red pointer font-32' />
                                     </Box>
                                     <iframe
-                src={viewerUrl} // Specify the URL of the iframe
-                width="100%" // Set the width
-                height="700px" // Set the height
-                frameBorder="0" // Set frameborder to 0
-                allowFullScreen // Allow fullscreen mode
-                title="Embedded Content" // Set the title for accessibility
-            />
+                                        src={viewerUrl} // Specify the URL of the iframe
+                                        width="100%" // Set the width
+                                        height="700px" // Set the height
+                                        frameBorder="0" // Set frameborder to 0
+                                        allowFullScreen // Allow fullscreen mode
+                                        title="Embedded Content" // Set the title for accessibility
+                                    />
 
 
-                                  
+
                                 </Box>
                             </TabPanel>
                             <TabPanel value="2">
@@ -200,9 +428,13 @@ useEffect(()=>{
                                 </Box>
 
                             </TabPanel>
-                            <TabPanel value="3">
-                                Notes textarea here
+                            <TabPanel value="3" className='p-0'>
+                            {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+
+<Button onClick={SaveStickyNotes} variant="contained">Save Notes</Button>
                             </TabPanel>
+
+                            
 
                             <TabPanel value="4">
 
@@ -219,7 +451,7 @@ useEffect(()=>{
                             </TabPanel>
 
                             <TabPanel value="5" className='p-0'>
-                                <Activity></Activity>
+                                <Activity getAudit={getAudit}></Activity>
                             </TabPanel>
 
                             {/* <TabPanel value="5">
@@ -232,13 +464,13 @@ useEffect(()=>{
                                     <Checkbox {...label} defaultChecked size="small" />
 
                                     <Button className='btn-blue-2 me-2 mb-1 pointer' for='file-upload' startIcon={<AttachFileIcon />}>
-                                        <input type='file' id='file-upload' className='file-input' />
+                                        <input type='file' id='file-upload' multiple onChange={handleFileSelect} className='file-input' />
                                         <label for='file-upload' className='pointer '>Upload Your File</label>
                                     </Button>
 
-                                    <Button className='btn-red me-2 mb-1' startIcon={<AttachFileIcon />}>Delete</Button>
+                                    <Button className='btn-red me-2 mb-1' onClick={DeleteDocumentAttachment} startIcon={<AttachFileIcon />}>Delete</Button>
 
-                                    <Button className='btn-blue-2 me-2 mb-1' startIcon={<AttachFileIcon />}>Download</Button>
+                                    <Button className='btn-blue-2 me-2 mb-1' onClick={DowloadSingleFileOnClick} startIcon={<AttachFileIcon />}>Download</Button>
 
                                 </Box>
 
@@ -246,15 +478,13 @@ useEffect(()=>{
 
                                 <Box className='row'>
 
-                               
-
-                                    {Array(12).fill("").map(() => {
-                                        return <>
+                                    {getAttachment ? getAttachment.map((el, index) => {
+                                        return (<>
                                             <Box className='col-xxl-3 col-xl-4 col-md-6'>
                                                 <Box className="file-uploads">
                                                     <label className="file-uploads-label file-uploads-document">
                                                         <Box className="d-flex align-items-center">
-                                                            <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
+                                                            <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" onChange={() => handeleAttachmentChange(el)} />
 
                                                             <DescriptionIcon
                                                                 sx={{
@@ -264,10 +494,10 @@ useEffect(()=>{
                                                             />
                                                             <Box className="upload-content pe-3">
                                                                 <Typography variant="h4" >
-                                                                    cmd-extension
+                                                                    {el.Description}
                                                                 </Typography>
                                                                 <Typography variant="body1">
-                                                                    12:36PM 02/03/2024
+                                                                    {cls.DateForMate(el.DateAssigned)}
                                                                 </Typography>
                                                             </Box>
                                                         </Box>
@@ -275,14 +505,16 @@ useEffect(()=>{
                                                 </Box>
                                                 {/* file upload end */}
                                             </Box>
-                                        </>
-                                    })}
+                                        </>)
+                                    }) : ""}
+
+
                                 </Box>
 
                             </TabPanel>
                         </TabContext>
 
-                        
+
 
 
                     </Box>
