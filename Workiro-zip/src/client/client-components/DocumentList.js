@@ -144,7 +144,7 @@ export default function DocumentList({ clientId }) {
     const [sortByProperty, setSortByProperty] = useState("");
     const [isGroupBy, setIsGroupBy] = useState(false);
     const [groupByFilterResult, setGroupByFilterResult] = useState({});
-    const [selectedGroup, setSelectedGroup] = React.useState("Group By");
+    const [selectedGroup, setSelectedGroup] = React.useState("");
     const [suggestionList, setSuggestionList] = useState([]);
     const [firstFilterResult, setFirstFilterResult] = useState([]);
     const [secondFilterResult, setSecondFilterResult] = useState([]);
@@ -1176,9 +1176,14 @@ export default function DocumentList({ clientId }) {
             setIsGroupBy(false);
             return;
         }
+        if(firstFilterResult.length>0){
+            let data = groupByProperty(firstFilterResult, target);
+            setGroupByFilterResult(data);
+        }else{
+            let data = groupByProperty(documents, target);
+            setGroupByFilterResult(data);
+        }
         setIsGroupBy(true);
-        let data = groupByProperty(documents, target);
-        setGroupByFilterResult(data);
     }
     function handleSearchBySuggestionList(val) {
         if (val !== "") {

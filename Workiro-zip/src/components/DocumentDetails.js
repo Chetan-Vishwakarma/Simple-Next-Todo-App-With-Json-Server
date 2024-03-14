@@ -137,7 +137,7 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                 </Box> */}
 
 
-                {advFilteredResult.length>0 ? (advFilteredResult.map((item) => {
+                {!isGroupBy&&advFilteredResult.length>0 ? (advFilteredResult.map((item) => {
                     return <>
                         <Box className="file-uploads">
                             <label className="file-uploads-label file-uploads-document" onClick={() => handleClickOpenPDFView(item)}>
