@@ -51,6 +51,9 @@ function Client() {
     const [selectedPropertyValue, setSelectedPropertyValue] = useState("");
     const colorArr = ["#e26124", "#20aedb", "#075adb", "#be1de8", "#00983b", "#ed32b3"];
     const [selectedColor, setSelectedColor] = useState("");
+    const [firstAdvFilterResult,setFirstAdvFilterResult] = useState([]);
+    const [secondAdvFilterResult,setSecondAdvFilterResult] = useState([]);
+    const [thirdAdvFilterResult,setThirdAdvFilterResult] = useState([]);
     // advance filter states ends
     // search box states start
     const [isSearch, setIsSearch] = useState(false);
@@ -495,10 +498,17 @@ function Client() {
                                                     <label>Select Property</label>
                                                     <select value={selectedProperty} onChange={(e) => { setSelectedProperty(e.target.value) }} class="form-select" aria-label="Default select example">
                                                         <option value={""}>Select</option>
+                                                        {console.log("498",onlyContacts,onlyClients)}
                                                         {!onlyContacts&&clientKeys.map((item, i) => {
                                                             return <option key={i} value={item}>{item}</option>
                                                         })}
                                                         {!onlyClients&&contactKeys.map((item, i) => {
+                                                            return <option key={i} value={item}>{item}</option>
+                                                        })}
+                                                        {(onlyContacts&&onlyClients)&&clientKeys.map((item, i) => {
+                                                            return <option key={i} value={item}>{item}</option>
+                                                        })}
+                                                        {(onlyClients&&onlyContacts)&&contactKeys.map((item, i) => {
                                                             return <option key={i} value={item}>{item}</option>
                                                         })}
                                                     </select>
