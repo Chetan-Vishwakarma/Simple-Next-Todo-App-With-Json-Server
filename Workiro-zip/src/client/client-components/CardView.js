@@ -44,9 +44,9 @@ function CardView(props) {
                                             <Option key={i} onClick={() => handleClientNavigation(option.ClientID)}><ApartmentIcon className='me-1' />{option.Client}</Option>
                                         ))}
                                         {filteredContactsForSearchBox.length > 0 ? filteredContactsForSearchBox.map((option, i) => (
-                                            <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo,option.ContactNo)}><PersonIcon className='me-1' />{option["Company Name"]}</Option>
+                                            <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo,option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
                                         )) : contacts.map((option, i) => (
-                                            <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo,option.ContactNo)}><PersonIcon className='me-1' />{option["Company Name"]}</Option>
+                                            <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo,option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
                                         ))}
                                     </Listbox>}
 
@@ -59,7 +59,7 @@ function CardView(props) {
                             {isFolder && <Box className="btn-Select">
                                 {allFolders.map((item) => {
                                     // pass folder-id in onClick handler
-                                    return <Button className='btn-white' onClick={() => handleFolderSelection(item.FolderID, item.Folder)}>{item.Folder}</Button>
+                                    return <div><Button className='btn-white' onClick={() => handleFolderSelection(item.FolderID, item.Folder)}>{item.Folder}</Button></div>
                                 })}
                             </Box>}
                         </Box>
@@ -225,8 +225,8 @@ function CardView(props) {
                                         <Box className='client-img'>
                                             <img src={user} />
                                         </Box>
-                                        <Typography title={item["Company Name"]} variant="h2">{item["Company Name"]&& (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
-                                        <Typography variant='h4'>Admin</Typography>
+                                        <Typography variant="h2">{item["First Name"]&&item["First Name"]} {item["Last Name"]&&item["Last Name"]}</Typography>
+                                        <Typography variant='h4'>{item["Company Name"]&& item["Company Name"].substr(0.15)+'.'}</Typography>
                                         <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"] && item["E-Mail"].substr(0, 22) + "."}</Typography>
                                         <Box className='color-filter-box mt-3'>
                                             {advSearchKeyValue.map((data) => {
@@ -245,8 +245,8 @@ function CardView(props) {
                                         <Box className='client-img'>
                                             <img src={user} />
                                         </Box>
-                                        <Typography title={item["Company Name"]} variant="h2">{item["Company Name"]&& (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
-                                        <Typography variant='h4'>Admin</Typography>
+                                        <Typography variant="h2">{item["First Name"]&&item["First Name"]} {item["Last Name"]&&item["Last Name"]}</Typography>
+                                        <Typography variant='h4'>{item["Company Name"]&& item["Company Name"].substr(0.15)+'.'}</Typography>
                                         <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"]&& (item["E-Mail"].substr(0, 22) + ".")}</Typography>
                                         {/* <Box className='color-filter-box mt-3'>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>

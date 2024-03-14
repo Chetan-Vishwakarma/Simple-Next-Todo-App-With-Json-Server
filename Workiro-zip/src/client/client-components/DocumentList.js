@@ -274,7 +274,7 @@ export default function DocumentList({ clientId }) {
                 if (sts && data) {
                     console.log("ExplorerSearchDoc", JSON.parse(data));
                     let json = JSON.parse(data);
-                    if (json.Table6.length>0) {
+                    if (json?.Table6?.length>0) {
                         // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                         let docs = json.Table6;
                         if(docs?.length>0){
