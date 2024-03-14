@@ -275,7 +275,7 @@ export default function DocumentList({ clientId }) {
                     if (json.Table6) {
                         // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                         let docs = json.Table6;
-                        if(docs.length>0){
+                        if(docs?.length>0){
                             let docKeys = Object.keys(docs[0]);
                         // console.log("documentKeys",docKeys);
                         setDocumentKeys(docKeys);
