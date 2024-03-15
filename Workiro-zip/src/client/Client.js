@@ -50,7 +50,8 @@ function Client() {
     const [selectedProperty, setSelectedProperty] = useState("");
     const [selectedPropertyValue, setSelectedPropertyValue] = useState("");
     const colorArr = ["#e26124", "#20aedb", "#075adb", "#be1de8", "#00983b", "#ed32b3"];
-    const [selectedColor, setSelectedColor] = useState("");
+    const [selectedColor, setSelectedColor] = useState(advSearchKeyValue.length===1?colorArr[2]:advSearchKeyValue.length===2?colorArr[4]:colorArr[0]);
+    const [isFirstColorSelected,setIsFirstColorSelected] = useState(true);
     const [firstAdvFilterResult,setFirstAdvFilterResult] = useState([]);
     const [secondAdvFilterResult,setSecondAdvFilterResult] = useState([]);
     const [thirdAdvFilterResult,setThirdAdvFilterResult] = useState([]);
@@ -526,17 +527,43 @@ function Client() {
 
                                                     <Box className="color-box">
                                                         {
-                                                            advSearchKeyValue.length === 0 && <><button onClick={(e) => setSelectedColor(colorArr[0])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[0] }}></button>
-                                                                <button onClick={() => setSelectedColor(colorArr[1])} type='button' className='btn-color' style={{ backgroundColor: colorArr[1] }}></button></>
+                                                            advSearchKeyValue.length === 0 && <><button onClick={(e) => {
+                                                                setSelectedColor(colorArr[0]);
+                                                                setIsFirstColorSelected(true);
+                                                            }} type='button' className={isFirstColorSelected?'btn-color selected':'btn-color'} style={{ backgroundColor: colorArr[0] }}></button>
+                                                                <button onClick={() => {
+                                                                    setSelectedColor(colorArr[1]);
+                                                                    setIsFirstColorSelected(false);
+                                                                }} type='button' className={isFirstColorSelected?'btn-color':'btn-color selected'} style={{ backgroundColor: colorArr[1] }}></button></>
                                                         }
                                                         {
+                                                            advSearchKeyValue.length === 1 && <><button onClick={(e) => {
+                                                                setSelectedColor(colorArr[2]);
+                                                                setIsFirstColorSelected(true);
+                                                            }} type='button' className={isFirstColorSelected?'btn-color selected':'btn-color'} style={{ backgroundColor: colorArr[2] }}></button>
+                                                                <button onClick={() => {
+                                                                    setSelectedColor(colorArr[3]);
+                                                                    setIsFirstColorSelected(false);
+                                                                }} type='button' className={isFirstColorSelected?'btn-color':'btn-color selected'} style={{ backgroundColor: colorArr[3] }}></button></>
+                                                        }
+                                                        {
+                                                            advSearchKeyValue.length === 2 && <><button onClick={(e) => {
+                                                                setSelectedColor(colorArr[4]);
+                                                                setIsFirstColorSelected(true);
+                                                            }} type='button' className={isFirstColorSelected?'btn-color selected':'btn-color'} style={{ backgroundColor: colorArr[4] }}></button>
+                                                                <button onClick={() => {
+                                                                    setSelectedColor(colorArr[4]);
+                                                                    setIsFirstColorSelected(false);
+                                                                }} type='button' className={isFirstColorSelected?'btn-color':'btn-color selected'} style={{ backgroundColor: colorArr[5] }}></button></>
+                                                        }
+                                                        {/* {
                                                             advSearchKeyValue.length === 1 && <><button onClick={() => setSelectedColor(colorArr[2])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[2] }}></button>
                                                                 <button onClick={() => setSelectedColor(colorArr[3])} type='button' className='btn-color' style={{ backgroundColor: colorArr[3] }}></button></>
                                                         }
                                                         {
                                                             advSearchKeyValue.length === 2 && <><button onClick={() => setSelectedColor(colorArr[4])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[4] }}></button>
                                                                 <button onClick={() => setSelectedColor(colorArr[5])} type='button' className='btn-color' style={{ backgroundColor: colorArr[5] }}></button></>
-                                                        }
+                                                        } */}
                                                     </Box>
                                                 </Box>
                                             </Box>
