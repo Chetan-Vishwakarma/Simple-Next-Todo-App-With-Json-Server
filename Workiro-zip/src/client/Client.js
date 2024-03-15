@@ -16,6 +16,51 @@ import PersonIcon from '@mui/icons-material/Person';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 
+const CommonFilters = [
+    {key:"Company Name",val:"Company Name"},    {key:"Address 1",val:"Address Line 1"},
+    {key:"Address 2",val:"Address Line 2"},    {key:"Address 3",val:"Address Line 3"},
+    {key:"County",val:"County"},    {key:"Postcode",val:"Postcode"},
+    {key:"Country",val:"Country"},    {key:"ContactNo",val:"Contact Number"},
+    {key:"Mobile",val:"Mobile Number"},    {key:"E-Mail",val:"E-Mail"},
+    {key:"Status",val:"StatusName"},    {key:"SourceName",val:"Source"},
+    {key:"First Name",val:"First Name"},    {key:"Last Name",val:"Last Name"},
+    {key:"Title",val:"Title"}
+];
+
+const ContactFilters = [
+    {key:"Active",val:"Active"},    {key:"Address 1",val:"Address 1"},
+    {key:"Address 2",val:"Address 2"},    {key:"Address 3",val:"Address 3"},
+    {key:"Assigned Manager",val:"Assigned Manager"},    {key:"Company Name",val:"Company Name"},
+    {key:"ContactNo",val:"ContactNo"},    {key:"Country",val:"Country"},
+    {key:"County",val:"County"},    {key:"Date Of Birth",val:"Date Of Birth"},
+    {key:"E-Mail",val:"E-Mail"},    {key:"First Name",val:"First Name"},
+    {key:"Last Name",val:"Last Name"},    {key:"Main Contact",val:"Main Contact"},
+    {key:"ManagerName",val:"ManagerName"},   {key:"Mobile",val:"Mobile"},
+    {key:"Note",val:"Note"},    {key:"Date Of Birth",val:"Date Of Birth"},
+    {key:"E-Mail",val:"E-Mail"},    {key:"OriginatorNo",val:"OriginatorNo"},
+    {key:"Portal User",val:"Portal User"},    {key:"Postcode",val:"Postcode"},
+    {key:"Preferred Name",val:"Preferred Name"},{key:"Role",val:"Role"},
+    {key:"SourceName",val:"SourceName"},    {key:"StatusName",val:"StatusName"},
+    {key:"Tel",val:"Tel"},    {key:"Title",val:"Title"},
+    {key:"Town",val:"Town"},
+];
+
+const ClientFilters = [
+    {key:"OriginatorNo",val:"OriginatorNo"},    {key:"Company Name",val:"Company Name"},
+    {key:"Contact Number",val:"Contact Number"},    {key:"Mobile Number",val:"Mobile Number"},
+    {key:"Assigned Manager",val:"Assigned Manager"},    {key:"Company Name",val:"Company Name"},
+    {key:"Mobile Number",val:"Mobile Number"},    {key:"Address Line 1",val:"Address Line 1"},
+    {key:"Address Line 2",val:"Address Line 2"},    {key:"Address Line 3",val:"Address Line 3"},
+    {key:"Town",val:"Town"},    {key:"County",val:"County"},
+    {key:"Postcode",val:"Postcode"},    {key:"Country",val:"Country"},
+    {key:"Active Status",val:"Active Status"},   {key:"Business",val:"Business"},
+    {key:"Source",val:"Source"},    {key:"Status",val:"Status"},
+    {key:"First Name",val:"First Name"},    {key:"Last Name",val:"Last Name"},
+    {key:"Title",val:"Title"},    {key:"E-Mail",val:"E-Mail"},
+    {key:"Manager",val:"Manager"},
+    {key:"CompanyNo",val:"CompanyNo"}
+];
+
 
 function Client() {
 
@@ -299,6 +344,30 @@ function Client() {
             setFilteredContacts([]);
         }
     }, [advSearchKeyValue]);
+
+
+
+
+    function filterData(data, filters) {
+        return data.filter(item => {
+          // Check if item satisfies all filters
+          return filters.every(filter => {
+            // Check each filter criterion
+            return Object.entries(filter).every(([key, value]) => {
+              return item[key] === value;
+            });
+          });
+        });
+      }
+    useEffect(() => {
+        
+        filterData(clients,advSearchKeyValue);
+    }, [advSearchKeyValue]);
+
+
+
+
+
     let handleFilterRemove = (filterForRemove) => {
         let target = filterForRemove.key;
         if (advSearchKeyValue.length === 1) {
@@ -501,17 +570,26 @@ function Client() {
                                                     <label>Select Property</label>
                                                     <select value={selectedProperty} onChange={(e) => { setSelectedProperty(e.target.value) }} class="form-select" aria-label="Default select example">
                                                         <option value={""}>Select</option>
-                                                        {!onlyContacts&&clientKeys.map((item, i) => {
+                                                        {/* {!onlyContacts&&clientKeys.map((item, i) => {
                                                             return <option key={i} value={item}>{item}</option>
                                                         })}
                                                         {!onlyClients&&contactKeys.map((item, i) => {
                                                             return <option key={i} value={item}>{item}</option>
-                                                        })}
-                                                        {(onlyContacts&&onlyClients)&&clientKeys.map((item, i) => {
+                                                        })} */}
+                                                        {/* {(onlyContacts&&onlyClients)&&clientKeys.map((item, i) => {
                                                             return <option key={i} value={item}>{item}</option>
-                                                        })}
-                                                        {(onlyClients&&onlyContacts)&&contactKeys.map((item, i) => {
+                                                        })} */}
+                                                        {/* {(onlyClients&&onlyContacts)&&contactKeys.map((item, i) => {
                                                             return <option key={i} value={item}>{item}</option>
+                                                        })} */}
+                                                        {!onlyContacts&&ClientFilters.map((item, i) => {
+                                                            return <option key={i} value={item.key}>{item.val}</option>
+                                                        })}
+                                                        {!onlyClients&&ContactFilters.map((item, i) => {
+                                                            return <option key={i} value={item.key}>{item.val}</option>
+                                                        })}
+                                                        {(onlyContacts&&onlyClients)&&CommonFilters.map((item, i) => {
+                                                            return <option key={i} value={item.key}>{item.val}</option>
                                                         })}
                                                     </select>
                                                 </Box>
