@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, TextField, Typography } from '@mui/material';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
@@ -17,48 +17,48 @@ import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 
 const CommonFilters = [
-    {key:"Company Name",val:"Company Name"},    {key:"Address 1",val:"Address Line 1"},
-    {key:"Address 2",val:"Address Line 2"},    {key:"Address 3",val:"Address Line 3"},
-    {key:"County",val:"County"},    {key:"Postcode",val:"Postcode"},
-    {key:"Country",val:"Country"},    {key:"ContactNo",val:"Contact Number"},
-    {key:"Mobile",val:"Mobile Number"},    {key:"E-Mail",val:"E-Mail"},
-    {key:"Status",val:"StatusName"},    {key:"SourceName",val:"Source"},
-    {key:"First Name",val:"First Name"},    {key:"Last Name",val:"Last Name"},
-    {key:"Title",val:"Title"}
+    { key: "Company Name", val: "Company Name" }, { key: "Address 1", val: "Address Line 1" },
+    { key: "Address 2", val: "Address Line 2" }, { key: "Address 3", val: "Address Line 3" },
+    { key: "County", val: "County" }, { key: "Postcode", val: "Postcode" },
+    { key: "Country", val: "Country" }, { key: "ContactNo", val: "Contact Number" },
+    { key: "Mobile", val: "Mobile Number" }, { key: "E-Mail", val: "E-Mail" },
+    { key: "Status", val: "StatusName" }, { key: "SourceName", val: "Source" },
+    { key: "First Name", val: "First Name" }, { key: "Last Name", val: "Last Name" },
+    { key: "Title", val: "Title" }
 ];
 
 const ContactFilters = [
-    {key:"Active",val:"Active"},    {key:"Address 1",val:"Address 1"},
-    {key:"Address 2",val:"Address 2"},    {key:"Address 3",val:"Address 3"},
-    {key:"Assigned Manager",val:"Assigned Manager"},    {key:"Company Name",val:"Company Name"},
-    {key:"ContactNo",val:"ContactNo"},    {key:"Country",val:"Country"},
-    {key:"County",val:"County"},    {key:"Date Of Birth",val:"Date Of Birth"},
-    {key:"E-Mail",val:"E-Mail"},    {key:"First Name",val:"First Name"},
-    {key:"Last Name",val:"Last Name"},    {key:"Main Contact",val:"Main Contact"},
-    {key:"ManagerName",val:"ManagerName"},   {key:"Mobile",val:"Mobile"},
-    {key:"Note",val:"Note"},    {key:"Date Of Birth",val:"Date Of Birth"},
-    {key:"E-Mail",val:"E-Mail"},    {key:"OriginatorNo",val:"OriginatorNo"},
-    {key:"Portal User",val:"Portal User"},    {key:"Postcode",val:"Postcode"},
-    {key:"Preferred Name",val:"Preferred Name"},{key:"Role",val:"Role"},
-    {key:"SourceName",val:"SourceName"},    {key:"StatusName",val:"StatusName"},
-    {key:"Tel",val:"Tel"},    {key:"Title",val:"Title"},
-    {key:"Town",val:"Town"},
+    { key: "Active", val: "Active" }, { key: "Address 1", val: "Address 1" },
+    { key: "Address 2", val: "Address 2" }, { key: "Address 3", val: "Address 3" },
+    { key: "Assigned Manager", val: "Assigned Manager" }, { key: "Company Name", val: "Company Name" },
+    { key: "ContactNo", val: "ContactNo" }, { key: "Country", val: "Country" },
+    { key: "County", val: "County" }, { key: "Date Of Birth", val: "Date Of Birth" },
+    { key: "E-Mail", val: "E-Mail" }, { key: "First Name", val: "First Name" },
+    { key: "Last Name", val: "Last Name" }, { key: "Main Contact", val: "Main Contact" },
+    { key: "ManagerName", val: "ManagerName" }, { key: "Mobile", val: "Mobile" },
+    { key: "Note", val: "Note" }, { key: "Date Of Birth", val: "Date Of Birth" },
+    { key: "E-Mail", val: "E-Mail" }, { key: "OriginatorNo", val: "OriginatorNo" },
+    { key: "Portal User", val: "Portal User" }, { key: "Postcode", val: "Postcode" },
+    { key: "Preferred Name", val: "Preferred Name" }, { key: "Role", val: "Role" },
+    { key: "SourceName", val: "SourceName" }, { key: "StatusName", val: "StatusName" },
+    { key: "Tel", val: "Tel" }, { key: "Title", val: "Title" },
+    { key: "Town", val: "Town" },
 ];
 
 const ClientFilters = [
-    {key:"OriginatorNo",val:"OriginatorNo"},    {key:"Company Name",val:"Company Name"},
-    {key:"Contact Number",val:"Contact Number"},    {key:"Mobile Number",val:"Mobile Number"},
-    {key:"Assigned Manager",val:"Assigned Manager"},    {key:"Company Name",val:"Company Name"},
-    {key:"Mobile Number",val:"Mobile Number"},    {key:"Address Line 1",val:"Address Line 1"},
-    {key:"Address Line 2",val:"Address Line 2"},    {key:"Address Line 3",val:"Address Line 3"},
-    {key:"Town",val:"Town"},    {key:"County",val:"County"},
-    {key:"Postcode",val:"Postcode"},    {key:"Country",val:"Country"},
-    {key:"Active Status",val:"Active Status"},   {key:"Business",val:"Business"},
-    {key:"Source",val:"Source"},    {key:"Status",val:"Status"},
-    {key:"First Name",val:"First Name"},    {key:"Last Name",val:"Last Name"},
-    {key:"Title",val:"Title"},    {key:"E-Mail",val:"E-Mail"},
-    {key:"Manager",val:"Manager"},
-    {key:"CompanyNo",val:"CompanyNo"}
+    { key: "OriginatorNo", val: "OriginatorNo" }, { key: "Company Name", val: "Company Name" },
+    { key: "Contact Number", val: "Contact Number" }, { key: "Mobile Number", val: "Mobile Number" },
+    { key: "Assigned Manager", val: "Assigned Manager" }, { key: "Company Name", val: "Company Name" },
+    { key: "Mobile Number", val: "Mobile Number" }, { key: "Address Line 1", val: "Address Line 1" },
+    { key: "Address Line 2", val: "Address Line 2" }, { key: "Address Line 3", val: "Address Line 3" },
+    { key: "Town", val: "Town" }, { key: "County", val: "County" },
+    { key: "Postcode", val: "Postcode" }, { key: "Country", val: "Country" },
+    { key: "Active Status", val: "Active Status" }, { key: "Business", val: "Business" },
+    { key: "Source", val: "Source" }, { key: "Status", val: "Status" },
+    { key: "First Name", val: "First Name" }, { key: "Last Name", val: "Last Name" },
+    { key: "Title", val: "Title" }, { key: "E-Mail", val: "E-Mail" },
+    { key: "Manager", val: "Manager" },
+    { key: "CompanyNo", val: "CompanyNo" }
 ];
 
 
@@ -83,7 +83,7 @@ function Client() {
     const [allFolders, setAllFolders] = useState([]);
     const [isFolder, setIsFolder] = useState(false);
     const [selectedFolder, setSelectedFolder] = useState("Clients");
-    const [filteredFoldersList,setFilteredFoldersList] = useState([]);
+    const [filteredFoldersList, setFilteredFoldersList] = useState([]);
     // Folders state ends
     // advance filter states start
     const [isAdvFilter, setIsAdvFilter] = useState(false);
@@ -95,11 +95,11 @@ function Client() {
     const [selectedProperty, setSelectedProperty] = useState("");
     const [selectedPropertyValue, setSelectedPropertyValue] = useState("");
     const colorArr = ["#e26124", "#20aedb", "#075adb", "#be1de8", "#00983b", "#ed32b3"];
-    const [selectedColor, setSelectedColor] = useState(advSearchKeyValue.length===1?colorArr[2]:advSearchKeyValue.length===2?colorArr[4]:colorArr[0]);
-    const [isFirstColorSelected,setIsFirstColorSelected] = useState(true);
-    const [firstAdvFilterResult,setFirstAdvFilterResult] = useState([]);
-    const [secondAdvFilterResult,setSecondAdvFilterResult] = useState([]);
-    const [thirdAdvFilterResult,setThirdAdvFilterResult] = useState([]);
+    const [selectedColor, setSelectedColor] = useState(advSearchKeyValue.length === 1 ? colorArr[2] : advSearchKeyValue.length === 2 ? colorArr[4] : colorArr[0]);
+    const [isFirstColorSelected, setIsFirstColorSelected] = useState(true);
+    const [firstAdvFilterResult, setFirstAdvFilterResult] = useState([]);
+    const [secondAdvFilterResult, setSecondAdvFilterResult] = useState([]);
+    const [thirdAdvFilterResult, setThirdAdvFilterResult] = useState([]);
     // advance filter states ends
     // search box states start
     const [isSearch, setIsSearch] = useState(false);
@@ -350,18 +350,18 @@ function Client() {
 
     function filterData(data, filters) {
         return data.filter(item => {
-          // Check if item satisfies all filters
-          return filters.every(filter => {
-            // Check each filter criterion
-            return Object.entries(filter).every(([key, value]) => {
-              return item[key] === value;
+            // Check if item satisfies all filters
+            return filters.every(filter => {
+                // Check each filter criterion
+                return Object.entries(filter).every(([key, value]) => {
+                    return item[key] === value;
+                });
             });
-          });
         });
-      }
+    }
     useEffect(() => {
-        
-        filterData(clients,advSearchKeyValue);
+
+        filterData(clients, advSearchKeyValue);
     }, [advSearchKeyValue]);
 
 
@@ -480,7 +480,7 @@ function Client() {
                                         <Input onClick={(e) => handleDialogsOpen(e, "Search")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
                                     </AutocompleteRoot>
 
-                                    {isSearch && <Listbox sx={{zIndex:1}}>
+                                    {isSearch && <Listbox sx={{ zIndex: 1 }}>
                                         {filteredClientsForSearchBox.length > 0 ? filteredClientsForSearchBox.map((option, i) => (
                                             <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}>
                                                 <ApartmentIcon className='me-1' />
@@ -502,16 +502,16 @@ function Client() {
                         <Box className="dropdown-box ms-4 d-flex align-items-center">
                             <Button className='btn-select' onClick={(e) => handleDialogsOpen(e, "Folder")}>{selectedFolder}</Button>
                             {isFolder && <Box className="btn-Select">
-                                <TextField placeholder='Search...' size='small' sx={{display:"block"}} onChange={(e)=>{
+                                <TextField placeholder='Search...' size='small' sx={{ display: "block" }} onChange={(e) => {
                                     e.stopPropagation();
                                     let val = e.target.value;
-                                    let fltFolders = allFolders.filter((fld)=>fld.Folder.toLowerCase().includes(val.toLowerCase()));
+                                    let fltFolders = allFolders.filter((fld) => fld.Folder.toLowerCase().includes(val.toLowerCase()));
                                     setFilteredFoldersList(fltFolders);
-                                }} onClick={(e)=>e.stopPropagation()}/>
-                                {filteredFoldersList.length>0?filteredFoldersList.map((item) => {
+                                }} onClick={(e) => e.stopPropagation()} />
+                                {filteredFoldersList.length > 0 ? filteredFoldersList.map((item) => {
                                     // pass folder-id in onClick handler
                                     return <Button className='btn-white' onClick={() => handleFolderSelection(item.FolderID, item.Folder)}>{item.Folder}</Button>;
-                                }):allFolders.map((item) => {
+                                }) : allFolders.map((item) => {
                                     // pass folder-id in onClick handler
                                     return <Button className='btn-white' onClick={() => handleFolderSelection(item.FolderID, item.Folder)}>{item.Folder}</Button>;
                                 })}
@@ -519,7 +519,7 @@ function Client() {
                         </Box>
 
                         {isGridView && <Box className="dropdown-box ms-4 d-flex align-items-center">
-                            <Button className='btn-select' onClick={(e) => handleDialogsOpen(e, "Choice")}>{selectedChoice==="All"?"Contacts":selectedChoice}</Button>
+                            <Button className='btn-select' onClick={(e) => handleDialogsOpen(e, "Choice")}>{selectedChoice === "All" ? "Contacts" : selectedChoice}</Button>
                             {isChoice && <Box className="btn-list-box btn-Select">
                                 {["Clients", "Contacts"].map((item) => {
                                     return <Button className='btn-list' onClick={() => basedOnClientContactAndAll(item)}>{item}</Button>
@@ -536,22 +536,22 @@ function Client() {
                             </Box>}
                         </Box>
 
-                        <Box className="dropdown-box ms-4 d-flex align-items-center">
-                            <Box>
-                                <Fab size="small" className='btn-plus' aria-label="add" onClick={(e) => handleDialogsOpen(e, "AdvFilter")}>
-                                    <AddIcon />
-                                </Fab>
-                            </Box>
+                            <Box className="dropdown-box ms-4 d-flex align-items-center">
+                                <Box>
+                                    <Fab size="small" className='btn-plus' aria-label="add" onClick={(e) => handleDialogsOpen(e, "AdvFilter")}>
+                                        <AddIcon />
+                                    </Fab>
+                                </Box>
 
-                            {isAdvFilter && <Box className="btn-Select color-pic-box" onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                            }}>
-                                <Box className='clearfix'>
-
+                                {isAdvFilter && <Box className="btn-Select color-pic-box" onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                }}>
                                     <Box className='clearfix'>
-                                        <Typography variant='Body1' className='mb-2 d-block  bold'>Filter:</Typography>
-                                        {/* <Box className="mb-2">
+
+                                        <Box className='clearfix'>
+                                            <Typography variant='Body1' className='mb-2 d-block  bold'>Filter:</Typography>
+                                            {/* <Box className="mb-2">
                                             {advSearchKeyValue.map((item) => {
                                                 return <Button sx={{ backgroundColor: item.color }} className='btn-white'>{item.key}: {item.value}
                                                     <span onClick={() => handleFilterRemove(item)} className="material-symbols-outlined font-16 text-danger">
@@ -564,78 +564,136 @@ function Client() {
                                             </Fab>
                                         </Box> */}
 
-                                        <Box className='row'>
-                                            <Box className='col-md-4'>
-                                                <Box className='mb-2'>
-                                                    <label>Select Property</label>
-                                                    <select value={selectedProperty} onChange={(e) => { setSelectedProperty(e.target.value) }} class="form-select" aria-label="Default select example">
-                                                        <option value={""}>Select</option>
-                                                        {/* {!onlyContacts&&clientKeys.map((item, i) => {
+                                            <Box className='row'>
+                                                <Box className='col-md-4'>
+                                                    <Box className='mb-2'>
+
+                                                        {(onlyClients && onlyContacts) && <Autocomplete
+                                                            disablePortal
+                                                            id="combo-box-demo"
+                                                            onChange={(event, newValue) => {
+                                                                event.preventDefault();
+                                                                event.stopPropagation();
+                                                                // console.log(event.target, newValue);
+                                                                setSelectedProperty(newValue.value);
+                                                            }}
+                                                            options={CommonFilters.map(option => ({ value: option.key, label: option.val }))}
+                                                            sx={{ width: 300 }}
+                                                            renderInput={(params) => <TextField {...params} label="Select Property" />}
+                                                        />}
+
+                                                        {!onlyClients && <Autocomplete
+                                                            disablePortal
+                                                            id="combo-box-demo"
+                                                            onChange={(event, newValue) => {
+                                                                event.preventDefault();
+                                                                event.stopPropagation();
+                                                                // console.log(event.target, newValue);
+                                                                setSelectedProperty(newValue.value);
+                                                            }}
+                                                            options={ContactFilters.map(option => ({ value: option.key, label: option.val }))}
+                                                            sx={{ width: 300 }}
+                                                            renderInput={(params) => <TextField {...params} label="Select Property" />}
+                                                        />}
+
+                                                        {!onlyContacts && <Autocomplete
+                                                            disablePortal
+                                                            id="combo-box-demo"
+                                                            onChange={(event, newValue) => {
+                                                                event.preventDefault();
+                                                                event.stopPropagation();
+                                                                // console.log(newValue);
+                                                                setSelectedProperty(newValue.value);
+                                                            }}
+                                                            options={ClientFilters.map(option => ({ value: option.key, label: option.val }))}
+                                                            sx={{ width: 300 }}
+                                                            renderInput={(params) => <TextField {...params} label="Select Property" />}
+                                                        />}
+
+
+                                                        {/* <label>Select Property</label>
+                                                        <select value={selectedProperty} onChange={(e) => { setSelectedProperty(e.target.value) }} class="form-select" aria-label="Default select example">
+                                                            <option value={""}>Select</option>
+                                                            {/* {!onlyContacts&&clientKeys.map((item, i) => {
                                                             return <option key={i} value={item}>{item}</option>
                                                         })}
                                                         {!onlyClients&&contactKeys.map((item, i) => {
                                                             return <option key={i} value={item}>{item}</option>
-                                                        })} */}
-                                                        {/* {(onlyContacts&&onlyClients)&&clientKeys.map((item, i) => {
+                                                        })} 
+                                                            {/* {(onlyContacts&&onlyClients)&&clientKeys.map((item, i) => {
                                                             return <option key={i} value={item}>{item}</option>
-                                                        })} */}
-                                                        {/* {(onlyClients&&onlyContacts)&&contactKeys.map((item, i) => {
+                                                        })}
+                                                            {/* {(onlyClients&&onlyContacts)&&contactKeys.map((item, i) => {
                                                             return <option key={i} value={item}>{item}</option>
-                                                        })} */}
-                                                        {!onlyContacts&&ClientFilters.map((item, i) => {
-                                                            return <option key={i} value={item.key}>{item.val}</option>
-                                                        })}
-                                                        {!onlyClients&&ContactFilters.map((item, i) => {
-                                                            return <option key={i} value={item.key}>{item.val}</option>
-                                                        })}
-                                                        {(onlyContacts&&onlyClients)&&CommonFilters.map((item, i) => {
-                                                            return <option key={i} value={item.key}>{item.val}</option>
-                                                        })}
-                                                    </select>
+                                                        })} 
+                                                            {!onlyContacts && ClientFilters.map((item, i) => {
+                                                                return <option key={i} value={item.key}>{item.val}</option>
+                                                            })}
+                                                            {!onlyClients && ContactFilters.map((item, i) => {
+                                                                return <option key={i} value={item.key}>{item.val}</option>
+                                                            })}
+                                                            {(onlyContacts && onlyClients) && CommonFilters.map((item, i) => {
+                                                                return <option key={i} value={item.key}>{item.val}</option>
+                                                            })}
+                                                        </select> */}
+                                                    </Box>
                                                 </Box>
-                                            </Box>
-                                            <Box className='col-md-4 px-0'>
-                                                <Box className='mb-2'>
-                                                    <label>Value</label>
-                                                    <input value={selectedPropertyValue} onChange={(e) => { setSelectedPropertyValue(e.target.value) }} type="text" class="form-control" placeholder="Type Value" />
+                                                <Box className='col-md-4 px-0'>
+                                                    <Box className='mb-2'>
+                                                        <div>
+                                                        <Autocomplete
+                                                            disablePortal
+                                                            id="combo-box-demo"
+                                                            onChange={(event, newValue) => {
+                                                                event.preventDefault();
+                                                                event.stopPropagation();
+                                                                console.log(newValue);
+                                                            }}
+                                                            options={["A","B","C"]}
+                                                            sx={{ width: 300 }}
+                                                            renderInput={(params) => <TextField {...params} label="Select Property" />}
+                                                        />
+                                                        </div>
+                                                        {/* <label>Value</label>
+                                                        <input value={selectedPropertyValue} onChange={(e) => { setSelectedPropertyValue(e.target.value) }} type="text" class="form-control" placeholder="Type Value" /> */}
+                                                    </Box>
                                                 </Box>
-                                            </Box>
-                                            <Box className='col-md-4'>
-                                                <Box className='clearfix'>
-                                                    <Typography variant='Body1' className='mb-1'>Labels</Typography>
+                                                <Box className='col-md-4'>
+                                                    <Box className='clearfix'>
+                                                        <Typography variant='Body1' className='mb-1'>Labels</Typography>
 
-                                                    <Box className="color-box">
-                                                        {
-                                                            advSearchKeyValue.length === 0 && <><button onClick={(e) => {
-                                                                setSelectedColor(colorArr[0]);
-                                                                setIsFirstColorSelected(true);
-                                                            }} type='button' className={isFirstColorSelected?'btn-color selected':'btn-color'} style={{ backgroundColor: colorArr[0] }}></button>
-                                                                <button onClick={() => {
-                                                                    setSelectedColor(colorArr[1]);
-                                                                    setIsFirstColorSelected(false);
-                                                                }} type='button' className={isFirstColorSelected?'btn-color':'btn-color selected'} style={{ backgroundColor: colorArr[1] }}></button></>
-                                                        }
-                                                        {
-                                                            advSearchKeyValue.length === 1 && <><button onClick={(e) => {
-                                                                setSelectedColor(colorArr[2]);
-                                                                setIsFirstColorSelected(true);
-                                                            }} type='button' className={isFirstColorSelected?'btn-color selected':'btn-color'} style={{ backgroundColor: colorArr[2] }}></button>
-                                                                <button onClick={() => {
-                                                                    setSelectedColor(colorArr[3]);
-                                                                    setIsFirstColorSelected(false);
-                                                                }} type='button' className={isFirstColorSelected?'btn-color':'btn-color selected'} style={{ backgroundColor: colorArr[3] }}></button></>
-                                                        }
-                                                        {
-                                                            advSearchKeyValue.length === 2 && <><button onClick={(e) => {
-                                                                setSelectedColor(colorArr[4]);
-                                                                setIsFirstColorSelected(true);
-                                                            }} type='button' className={isFirstColorSelected?'btn-color selected':'btn-color'} style={{ backgroundColor: colorArr[4] }}></button>
-                                                                <button onClick={() => {
+                                                        <Box className="color-box">
+                                                            {
+                                                                advSearchKeyValue.length === 0 && <><button onClick={(e) => {
+                                                                    setSelectedColor(colorArr[0]);
+                                                                    setIsFirstColorSelected(true);
+                                                                }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[0] }}></button>
+                                                                    <button onClick={() => {
+                                                                        setSelectedColor(colorArr[1]);
+                                                                        setIsFirstColorSelected(false);
+                                                                    }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[1] }}></button></>
+                                                            }
+                                                            {
+                                                                advSearchKeyValue.length === 1 && <><button onClick={(e) => {
+                                                                    setSelectedColor(colorArr[2]);
+                                                                    setIsFirstColorSelected(true);
+                                                                }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[2] }}></button>
+                                                                    <button onClick={() => {
+                                                                        setSelectedColor(colorArr[3]);
+                                                                        setIsFirstColorSelected(false);
+                                                                    }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[3] }}></button></>
+                                                            }
+                                                            {
+                                                                advSearchKeyValue.length === 2 && <><button onClick={(e) => {
                                                                     setSelectedColor(colorArr[4]);
-                                                                    setIsFirstColorSelected(false);
-                                                                }} type='button' className={isFirstColorSelected?'btn-color':'btn-color selected'} style={{ backgroundColor: colorArr[5] }}></button></>
-                                                        }
-                                                        {/* {
+                                                                    setIsFirstColorSelected(true);
+                                                                }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[4] }}></button>
+                                                                    <button onClick={() => {
+                                                                        setSelectedColor(colorArr[4]);
+                                                                        setIsFirstColorSelected(false);
+                                                                    }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[5] }}></button></>
+                                                            }
+                                                            {/* {
                                                             advSearchKeyValue.length === 1 && <><button onClick={() => setSelectedColor(colorArr[2])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[2] }}></button>
                                                                 <button onClick={() => setSelectedColor(colorArr[3])} type='button' className='btn-color' style={{ backgroundColor: colorArr[3] }}></button></>
                                                         }
@@ -643,43 +701,43 @@ function Client() {
                                                             advSearchKeyValue.length === 2 && <><button onClick={() => setSelectedColor(colorArr[4])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[4] }}></button>
                                                                 <button onClick={() => setSelectedColor(colorArr[5])} type='button' className='btn-color' style={{ backgroundColor: colorArr[5] }}></button></>
                                                         } */}
+                                                        </Box>
                                                     </Box>
                                                 </Box>
                                             </Box>
-                                        </Box>
 
 
-                                        <Box className='mt-2'>
-                                            <Button onClick={handleAdvanceFilterAgain} variant="contained" size='small' color="success">
-                                                <span class="material-symbols-outlined">
-                                                    add
-                                                </span> Add
-                                            </Button>
+                                            <Box className='mt-2'>
+                                                <Button onClick={handleAdvanceFilterAgain} variant="contained" size='small' color="success">
+                                                    <span class="material-symbols-outlined">
+                                                        add
+                                                    </span> Add
+                                                </Button>
+                                            </Box>
                                         </Box>
                                     </Box>
-                                </Box>
-                            </Box>}
-                        </Box>
-                        {/*  */}
+                                </Box>}
+                            </Box>
+                            {/*  */}
 
-                        <Box className="mb-2 ms-3">
-                            {advSearchKeyValue.map((item) => {
-                                return <Button sx={{ backgroundColor: item.color }} className='btn-white text-white'><span className='text-white'>{item.key}: {item.value}</span>
-                                    <span onClick={() => handleFilterRemove(item)} className="material-symbols-outlined font-16 text-white">
-                                        close
-                                    </span></Button>
-                            })}
+                            <Box className="mb-2 ms-3">
+                                {advSearchKeyValue.map((item) => {
+                                    return <Button sx={{ backgroundColor: item.color }} className='btn-white text-white'><span className='text-white'>{item.key}: {item.value}</span>
+                                        <span onClick={() => handleFilterRemove(item)} className="material-symbols-outlined font-16 text-white">
+                                            close
+                                        </span></Button>
+                                })}
 
-                            {/* <Fab size="small" className='btn-plus  ms-2' aria-label="add">
+                                {/* <Fab size="small" className='btn-plus  ms-2' aria-label="add">
                                 <AddIcon />
                             </Fab> */}
-                        </Box></>}
+                            </Box></>}
 
 
                     </Box>
 
                     <Box className='row'>
-                        {isGridView && <ClientGrid onlyContacts={onlyClients} data={onlyContacts? contacts: clients}/>}
+                        {isGridView && <ClientGrid onlyContacts={onlyClients} data={onlyContacts ? contacts : clients} />}
 
                         {isCardView && <CardView
                             isSearch={isSearch}
