@@ -64,8 +64,10 @@ function Client() {
     // search box states ends
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+    const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
+    let practiceCls = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
     const Json_GetFolders = () => {
         let obj = {
@@ -112,7 +114,7 @@ function Client() {
         }
     }
 
-    const Json_GetClientsByFolder = (folder_id = folderId) => {
+    const Json_GetSupplierListByProject = (folder_id = folderId) => {
         let obj = {
             agrno: agrno,
             Email: Email,
@@ -120,19 +122,19 @@ function Client() {
             ProjectId: folder_id
         };
         try {
-            Cls.Json_GetClientsByFolder(obj, (sts, data) => {
+            practiceCls.Json_GetSupplierListByProject(obj, (sts, data) => {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_GetClientsByFolder", json);
-                        setClients(json?.Table1);
-                        setClientKeys(Object.keys(json.Table1[0]));
+                        console.log("Json_GetSupplierListByProject", json);
+                        setClients(json?.Table);
+                        setClientKeys(Object.keys(json.Table[0]));
                         Json_GetContactListByFolder(folder_id);
                     }
                 }
             });
         } catch (err) {
-            console.log("Error while calling Json_GetClientsByFolder", err);
+            console.log("Error while calling Json_GetSupplierListByProject", err);
         }
     }
 
@@ -161,7 +163,7 @@ function Client() {
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
-        Json_GetClientsByFolder();
+        Json_GetSupplierListByProject();
     }, []);
     const basedOnClientContactAndAll = (target) => {
         setSelectedChoice(target);
@@ -180,7 +182,7 @@ function Client() {
     let handleFolderSelection = (folderID, folderName) => {
         setSelectedFolder(folderName);
         setIsFolder(false);
-        Json_GetClientsByFolder(folderID);
+        Json_GetSupplierListByProject(folderID);
         Json_GetContactListByFolder(folderID);
     }
     const handleSearch = (value) => {
@@ -409,13 +411,13 @@ function Client() {
                                         <Input onClick={(e) => handleDialogsOpen(e, "Search")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
                                     </AutocompleteRoot>
 
-                                    {isSearch && <Listbox>
+                                    {isSearch && <Listbox sx={{zIndex:1}}>
                                         {filteredClientsForSearchBox.length > 0 ? filteredClientsForSearchBox.map((option, i) => (
-                                            <Option key={i} onClick={() => handleClientNavigation(option.ClientID)}>
+                                            <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}>
                                                 <ApartmentIcon className='me-1' />
-                                                {option.Client}</Option>
+                                                {option["Company Name"]}</Option>
                                         )) : clients.map((option, i) => (
-                                            <Option key={i} onClick={() => handleClientNavigation(option.ClientID)}><ApartmentIcon className='me-1' />{option.Client}</Option>
+                                            <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}><ApartmentIcon className='me-1' />{option["Company Name"]}</Option>
                                         ))}
                                         {filteredContactsForSearchBox.length > 0 ? filteredContactsForSearchBox.map((option, i) => (
                                             <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo, option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
@@ -448,7 +450,7 @@ function Client() {
                         </Box>
 
                         {isGridView && <Box className="dropdown-box ms-4 d-flex align-items-center">
-                            <Button className='btn-select' onClick={(e) => handleDialogsOpen(e, "Choice")}>{selectedChoice==="All"?"Clients":selectedChoice}</Button>
+                            <Button className='btn-select' onClick={(e) => handleDialogsOpen(e, "Choice")}>{selectedChoice==="All"?"Contacts":selectedChoice}</Button>
                             {isChoice && <Box className="btn-list-box btn-Select">
                                 {["Clients", "Contacts"].map((item) => {
                                     return <Button className='btn-list' onClick={() => basedOnClientContactAndAll(item)}>{item}</Button>
@@ -499,7 +501,6 @@ function Client() {
                                                     <label>Select Property</label>
                                                     <select value={selectedProperty} onChange={(e) => { setSelectedProperty(e.target.value) }} class="form-select" aria-label="Default select example">
                                                         <option value={""}>Select</option>
-                                                        {console.log("498",onlyContacts,onlyClients)}
                                                         {!onlyContacts&&clientKeys.map((item, i) => {
                                                             return <option key={i} value={item}>{item}</option>
                                                         })}

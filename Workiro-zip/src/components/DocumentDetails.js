@@ -14,6 +14,14 @@ import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import DocumentsVewModal from "../client/utils/DocumentsVewModal";
 import Activity from "../client/utils/Activity";
+import DataGrid, {
+    Column,
+    Grouping,
+    GroupPanel,
+    Pager,
+    Paging,
+    SearchPanel,
+  } from 'devextreme-react/data-grid';
 
 
 // sadik code start
@@ -135,6 +143,9 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                     <Button className="btn-blue-2 ms-2 py-1" size="small" variant="outlined"> Delete</Button>
 
                 </Box> */}
+
+
+                
 
 
                 {!isGroupBy&&advFilteredResult.length>0 ? (advFilteredResult.map((item) => {
