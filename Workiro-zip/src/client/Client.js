@@ -433,6 +433,17 @@ function Client() {
     }
     const [isGridView, setIsGridView] = useState(false);
     const [isCardView, setIsCardView] = useState(true);
+
+    function handleSuggestionList(value){
+        if(!onlyClients){
+            let fltData = contacts.map((itm)=>itm[value]);
+            console.log(fltData);
+        }else if(!onlyContacts){
+
+        }else{
+
+        }
+    }
     return (
         <Box className='container-fluid p-0' onClick={handleClick}>
 
@@ -590,6 +601,7 @@ function Client() {
                                                                 event.stopPropagation();
                                                                 // console.log(event.target, newValue);
                                                                 setSelectedProperty(newValue.value);
+                                                                handleSuggestionList(newValue.value);
                                                             }}
                                                             options={ContactFilters.map(option => ({ value: option.key, label: option.val }))}
                                                             sx={{ width: 300 }}
@@ -604,6 +616,7 @@ function Client() {
                                                                 event.stopPropagation();
                                                                 // console.log(newValue);
                                                                 setSelectedProperty(newValue.value);
+                                                                handleSuggestionList(newValue.value);
                                                             }}
                                                             options={ClientFilters.map(option => ({ value: option.key, label: option.val }))}
                                                             sx={{ width: 300 }}
