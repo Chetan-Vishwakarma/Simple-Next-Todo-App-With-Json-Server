@@ -369,14 +369,14 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
 
                         <TabContext value={value}>
                             <Box>
-                                <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
+                                <Tabs onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
                                     <Tab label="Documents" value="1" />
                                     <Tab label="Versions" value="2" />
                                     <Tab label="Notes" value="3" />
                                     <Tab label="Associated Tasks" value="4" />
                                     <Tab label="Activity" value="5" />
                                     <Tab label="Attachments" value="6" />
-                                </TabList>
+                                </Tabs>
                             </Box>
                             <TabPanel value="1" className='p-0'>
                                 <Box className='white-box'>
@@ -393,10 +393,9 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
                                         title="Embedded Content" // Set the title for accessibility
                                     />
 
-
-
                                 </Box>
                             </TabPanel>
+                            
                             <TabPanel value="2">
 
                                 <Box className='row'>
