@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-const ClientGrid = () => {
+const ClientGrid = ({onlyContacts,data}) => {
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -80,12 +80,13 @@ const ClientGrid = () => {
     }
 
     return (
+        <>
         <div className='white-box table-grid' style={{ height: 'auto', overflowY: 'auto',width:'85vw' }}>
             <DataGrid
                 id="dataGrid"
                 ref={dataGridRef}
-                dataSource={clientList}
-                keyExpr="OriginatorNo"
+                dataSource={data}
+                // keyExpr={}
                 columnAutoWidth={true}
                 showBorders={true}>
                 {/* onSelectionChanged={onSelectionChanged} */}
@@ -108,6 +109,7 @@ const ClientGrid = () => {
             </DataGrid>
 
         </div>
+        </>
     );
 };
 

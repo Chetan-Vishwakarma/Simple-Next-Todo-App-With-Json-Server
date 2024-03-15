@@ -9,6 +9,8 @@ import { styled } from '@mui/system';
 import PersonIcon from '@mui/icons-material/Person';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 
+
+
 function CardView(props) {
     const {
         isSearch, handleDialogsOpen, handleSearch, filteredClientsForSearchBox, handleClientNavigation, filteredContactsForSearchBox,
@@ -18,175 +20,18 @@ function CardView(props) {
         onlyContacts, filteredContacts, contacts, selectedFolder, selectedChoice, basedOnClientContactAndAll
     } = props;
   return (
-    <Box className='row'>
-                <Box className='col-lg-12'>
-                    <Box className='d-flex main-search-box mb-2'>
-                        <Box className="search-box">
-                            <Layout>
-                                <AutocompleteWrapper>
-                                    <AutocompleteRoot
-                                        sx={{
-                                            borderColor: '#D5D5D5',
-                                            color: 'success.main',
-                                        }}
-                                        className={isSearch ? 'Mui-focused' : ''}>
-                                        <span className="material-symbols-outlined search-icon">search</span>
-
-                                        <Input onClick={(e) => handleDialogsOpen(e,"Search")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
-                                    </AutocompleteRoot>
-
-                                    {isSearch && <Listbox>
-                                        {filteredClientsForSearchBox.length > 0 ? filteredClientsForSearchBox.map((option, i) => (
-                                            <Option key={i} onClick={() => handleClientNavigation(option.ClientID)}>
-                                                <ApartmentIcon className='me-1' />
-                                                {option.Client}</Option>
-                                        )) : clients.map((option, i) => (
-                                            <Option key={i} onClick={() => handleClientNavigation(option.ClientID)}><ApartmentIcon className='me-1' />{option.Client}</Option>
-                                        ))}
-                                        {filteredContactsForSearchBox.length > 0 ? filteredContactsForSearchBox.map((option, i) => (
-                                            <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo,option.ContactNo)}><PersonIcon className='me-1' />{option["Company Name"]}</Option>
-                                        )) : contacts.map((option, i) => (
-                                            <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo,option.ContactNo)}><PersonIcon className='me-1' />{option["Company Name"]}</Option>
-                                        ))}
-                                    </Listbox>}
-
-                                </AutocompleteWrapper>
-                            </Layout>
-                        </Box>
-
-                        <Box className="dropdown-box ms-4 d-flex align-items-center">
-                            <Button className='btn-select' onClick={(e) => handleDialogsOpen(e,"Folder")}>{selectedFolder}</Button>
-                            {isFolder && <Box className="btn-Select">
-                                {allFolders.map((item) => {
-                                    // pass folder-id in onClick handler
-                                    return <Button className='btn-white' onClick={() => handleFolderSelection(item.FolderID, item.Folder)}>{item.Folder}</Button>
-                                })}
-                            </Box>}
-                        </Box>
-
-                        <Box className="dropdown-box ms-4 d-flex align-items-center">
-                            <Button className='btn-select' onClick={(e) => handleDialogsOpen(e,"Choice")}>{selectedChoice}</Button>
-                            {isChoice && <Box className="btn-list-box btn-Select">
-                                {["All", "Clients", "Contacts"].map((item) => {
-                                    return <Button className='btn-list' onClick={() => basedOnClientContactAndAll(item)}>{item}</Button>
-                                })}
-                            </Box>}
-                        </Box>
-
-                        <Box className="dropdown-box ms-4 d-flex align-items-center">
-                            <Box>
-                                <Fab size="small" className='btn-plus' aria-label="add" onClick={(e) => handleDialogsOpen(e,"AdvFilter")}>
-                                    <AddIcon />
-                                </Fab>
-                            </Box>
-
-                            {isAdvFilter && <Box className="btn-Select color-pic-box" onClick={(e)=>{
-                                e.preventDefault();
-                                e.stopPropagation();
-                            }}>
-                                <Box className='clearfix'>
-
-                                    <Box className='clearfix'>
-                                        <Typography variant='Body1' className='mb-2 d-block  bold'>Filter:</Typography>
-                                        {/* <Box className="mb-2">
-                                            {advSearchKeyValue.map((item) => {
-                                                return <Button sx={{ backgroundColor: item.color }} className='btn-white'>{item.key}: {item.value}
-                                                    <span onClick={() => handleFilterRemove(item)} className="material-symbols-outlined font-16 text-danger">
-                                                        close
-                                                    </span></Button>
-                                            })}
-
-                                            <Fab size="small" className='btn-plus  ms-2' aria-label="add">
-                                                <AddIcon />
-                                            </Fab>
-                                        </Box> */}
-
-                                        <Box className='row'>
-                                            <Box className='col-md-4'>
-                                                <Box className='mb-2'>
-                                                    <label>Select Property</label>
-                                                    <select value={selectedProperty} onChange={(e) => { setSelectedProperty(e.target.value) }} class="form-select" aria-label="Default select example">
-                                                        <option value={""}>Select</option>
-                                                        {clientKeys.map((item, i) => {
-                                                            return <option key={i} value={item}>{item}</option>
-                                                        })}
-                                                        {contactKeys.map((item, i) => {
-                                                            return <option key={i} value={item}>{item}</option>
-                                                        })}
-                                                    </select>
-                                                </Box>
-                                            </Box>
-                                            <Box className='col-md-4 px-0'>
-                                                <Box className='mb-2'>
-                                                    <label>Value</label>
-                                                    <input value={selectedPropertyValue} onChange={(e) => { setSelectedPropertyValue(e.target.value) }} type="text" class="form-control" placeholder="Type Value" />
-                                                </Box>
-                                            </Box>
-                                            <Box className='col-md-4'>
-                                                <Box className='clearfix'>
-                                                    <Typography variant='Body1' className='mb-1'>Labels</Typography>
-
-                                                    <Box className="color-box">
-                                                        {
-                                                            advSearchKeyValue.length === 0 && <><button onClick={(e) => setSelectedColor(colorArr[0])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[0] }}></button>
-                                                                <button onClick={() => setSelectedColor(colorArr[1])} type='button' className='btn-color' style={{ backgroundColor: colorArr[1] }}></button></>
-                                                        }
-                                                        {
-                                                            advSearchKeyValue.length === 1 && <><button onClick={() => setSelectedColor(colorArr[2])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[2] }}></button>
-                                                                <button onClick={() => setSelectedColor(colorArr[3])} type='button' className='btn-color' style={{ backgroundColor: colorArr[3] }}></button></>
-                                                        }
-                                                        {
-                                                            advSearchKeyValue.length === 2 && <><button onClick={() => setSelectedColor(colorArr[4])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[4] }}></button>
-                                                                <button onClick={() => setSelectedColor(colorArr[5])} type='button' className='btn-color' style={{ backgroundColor: colorArr[5] }}></button></>
-                                                        }
-                                                    </Box>
-                                                </Box>
-                                            </Box>
-                                        </Box>
-
-
-                                        <Box className='mt-2'>
-                                            <Button onClick={handleAdvanceFilterAgain} variant="contained" size='small' color="success">
-                                                <span class="material-symbols-outlined">
-                                                    add
-                                                </span> Add
-                                            </Button>
-                                        </Box>
-                                    </Box>
-                                </Box>
-                            </Box>}
-                        </Box>
-                        {/*  */}
-
-                        <Box className="mb-2 ms-3">
-                            {advSearchKeyValue.map((item) => {
-                                return <Button sx={{ backgroundColor: item.color }} className='btn-white text-white'><span className='text-white'>{item.key}: {item.value}</span>
-                                    <span onClick={() => handleFilterRemove(item)} className="material-symbols-outlined font-16 text-white">
-                                        close
-                                    </span></Button>
-                            })}
-
-                            {/* <Fab size="small" className='btn-plus  ms-2' aria-label="add">
-                                <AddIcon />
-                            </Fab> */}
-                        </Box>
-
-
-                    </Box>
-
-                    <Box className='row'>
-
+    <>
                         {
                             onlyClients && (filteredClients.length > 0 ? filteredClients.map((item, i) => {
                                 return <Box key={i} className='client-box-main'>
-                                    <Box className='client-box' onClick={() => handleClientNavigation(item.ClientID)}>
+                                    <Box className='client-box' onClick={() => handleClientNavigation(item.OriginatorNo)}>
                                         {/* <img src={pin} className='pin-img' /> */}
                                         <Box className='client-img'>
                                             <img src={user} />
                                         </Box>
-                                        <Typography title={item.Client} variant="h2">{item.Client && item.Client.substr(0, 12) + "."}</Typography>
-                                        <Typography variant='h4'>Admin</Typography>
-                                        <Typography title={item.Email} variant='p' className='mb-0'>{item.Client && (item.Client.length > 25 ? (item.Client.substr(0, 20) + ".") : item.Client)}</Typography>
+                                        <Typography variant="h2">{item["Company Name"] && item["Company Name"].substr(0, 12) + "."}</Typography>
+                                        {/* <Typography variant='h4'>Admin</Typography> */}
+                                        <Typography variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].length > 25 ? (item.Client.substr(0, 20) + ".") : item.Client)}</Typography>
                                         <Box className='color-filter-box mt-3'>
                                             {advSearchKeyValue.map((data) => {
                                                 return <Typography variant='span' className='color-filter-row' style={{ color: data.color, borderColor: data.color }}>{item[data.key]}</Typography>;
@@ -199,14 +44,14 @@ function CardView(props) {
                                 </Box>
                             }) : clients.map((item, i) => {
                                 return <Box key={i} className='client-box-main'>
-                                    <Box className='client-box' onClick={() => handleClientNavigation(item.ClientID)}>
+                                    <Box className='client-box' onClick={() => handleClientNavigation(item.OriginatorNo)}>
                                         {/* <img src={pin} className='pin-img' /> */}
                                         <Box className='client-img'>
                                             <img src={user} />
                                         </Box>
-                                        <Typography title={item.Client} variant="h2">{item.Client && (item.Client.length > 25 ? (item.Client.substr(0, 20) + ".") : item.Client)}</Typography>
-                                        <Typography variant='h4'>Admin</Typography>
-                                        <Typography title={item.Email} variant='p' className='mb-0'>{item.Email && (item.Email.substr(0, 22) + ".")}</Typography>
+                                        <Typography variant="h2">{item["Company Name"] && (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
+                                        {/* <Typography variant='h4'>Admin</Typography> */}
+                                        <Typography variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].substr(0, 22) + ".")}</Typography>
                                         {/* <Box className='color-filter-box mt-3'>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
@@ -225,8 +70,8 @@ function CardView(props) {
                                         <Box className='client-img'>
                                             <img src={user} />
                                         </Box>
-                                        <Typography title={item["Company Name"]} variant="h2">{item["Company Name"]&& (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
-                                        <Typography variant='h4'>Admin</Typography>
+                                        <Typography variant="h2">{item["First Name"]&&item["First Name"]} {item["Last Name"]&&item["Last Name"]}</Typography>
+                                        <Typography variant='h4'>{item["Company Name"]&& item["Company Name"].substr(0.15)+'.'}</Typography>
                                         <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"] && item["E-Mail"].substr(0, 22) + "."}</Typography>
                                         <Box className='color-filter-box mt-3'>
                                             {advSearchKeyValue.map((data) => {
@@ -245,8 +90,8 @@ function CardView(props) {
                                         <Box className='client-img'>
                                             <img src={user} />
                                         </Box>
-                                        <Typography title={item["Company Name"]} variant="h2">{item["Company Name"]&& (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
-                                        <Typography variant='h4'>Admin</Typography>
+                                        <Typography variant="h2">{item["First Name"]&&item["First Name"]} {item["Last Name"]&&item["Last Name"]}</Typography>
+                                        <Typography variant='h4'>{item["Company Name"]&& item["Company Name"].substr(0.15)+'.'}</Typography>
                                         <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"]&& (item["E-Mail"].substr(0, 22) + ".")}</Typography>
                                         {/* <Box className='color-filter-box mt-3'>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
@@ -257,9 +102,7 @@ function CardView(props) {
                                 </Box>
                             }))
                         }
-                    </Box>
-                </Box>
-            </Box>
+                        </>
   )
 }
 

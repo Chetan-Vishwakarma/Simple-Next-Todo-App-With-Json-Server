@@ -144,7 +144,7 @@ export default function DocumentList({ clientId }) {
     const [sortByProperty, setSortByProperty] = useState("");
     const [isGroupBy, setIsGroupBy] = useState(false);
     const [groupByFilterResult, setGroupByFilterResult] = useState({});
-    const [selectedGroup, setSelectedGroup] = React.useState("Group By");
+    const [selectedGroup, setSelectedGroup] = React.useState("");
     const [suggestionList, setSuggestionList] = useState([]);
     const [firstFilterResult, setFirstFilterResult] = useState([]);
     const [secondFilterResult, setSecondFilterResult] = useState([]);
@@ -274,10 +274,10 @@ export default function DocumentList({ clientId }) {
                 if (sts && data) {
                     console.log("ExplorerSearchDoc", JSON.parse(data));
                     let json = JSON.parse(data);
-                    if (json.Table6.length>0) {
+                    if (json?.Table6?.length>0) {
                         // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                         let docs = json.Table6;
-                        if(docs.length>0){
+                        if(docs?.length>0){
                             let docKeys = Object.keys(docs[0]);
                         // console.log("documentKeys",docKeys);
                         setDocumentKeys(docKeys);
@@ -978,36 +978,37 @@ export default function DocumentList({ clientId }) {
         if (flitData && searchByPropertyKey === "" && searchByPropertyInput === "") {
             if (flitData.length === 0) {
                 setAdvFilteredResult([]);
-            } else {
-                let arr = flitData;
-                if (arr.length > 1) {
-                    if (arr.length === 2) {
-                        let flt1 = secondFilterResult.filter((itm) => {
-                            return String(itm[arr[1].key]).toLowerCase().includes(String(arr[1].value).toLowerCase())
-                        });
-                        // console.log("flt1: ", flt1);
-                        setAdvFilteredResult(flt1);
-                    } else if (arr.length === 3) {
-                        let flt2 = thirdFilterResult.filter((itm) => {
-                            return String(itm[arr[2].key]).toLowerCase().includes(String(arr[2].value).toLowerCase())
-                        });
-                        // console.log("flt1: ", flt2);
-                        setAdvFilteredResult(flt2);
-                    }else if (arr.length === 4) {
-                        let flt2 = fourthFilterResult.filter((itm) => {
-                            return String(itm[arr[3].key]).toLowerCase().includes(String(arr[3].value).toLowerCase())
-                        });
-                        // console.log("flt1: ", flt2);
-                        setAdvFilteredResult(flt2);
-                    }
-                } else {
-                    let fltByKeyVal = firstFilterResult.filter((itm) => {
-                            return String(itm[arr[0].key]).toLowerCase().includes(String(arr[0].value).toLowerCase());
-                    });
-                    // console.log(fltByKeyVal);
-                    setAdvFilteredResult(fltByKeyVal);
-                }
-            }
+            } 
+            // else {
+            //     let arr = flitData;
+            //     if (arr.length > 1) {
+            //         if (arr.length === 2) {
+            //             let flt1 = secondFilterResult.filter((itm) => {
+            //                 return String(itm[arr[1].key]).toLowerCase().includes(String(arr[1].value).toLowerCase())
+            //             });
+            //             // console.log("flt1: ", flt1);
+            //             setAdvFilteredResult(flt1);
+            //         } else if (arr.length === 3) {
+            //             let flt2 = thirdFilterResult.filter((itm) => {
+            //                 return String(itm[arr[2].key]).toLowerCase().includes(String(arr[2].value).toLowerCase())
+            //             });
+            //             // console.log("flt1: ", flt2);
+            //             setAdvFilteredResult(flt2);
+            //         }else if (arr.length === 4) {
+            //             let flt2 = fourthFilterResult.filter((itm) => {
+            //                 return String(itm[arr[3].key]).toLowerCase().includes(String(arr[3].value).toLowerCase())
+            //             });
+            //             // console.log("flt1: ", flt2);
+            //             setAdvFilteredResult(flt2);
+            //         }
+            //     } else {
+            //         let fltByKeyVal = firstFilterResult.filter((itm) => {
+            //                 return String(itm[arr[0].key]).toLowerCase().includes(String(arr[0].value).toLowerCase());
+            //         });
+            //         // console.log(fltByKeyVal);
+            //         setAdvFilteredResult(fltByKeyVal);
+            //     }
+            // }
             setBulkSearch(flitData);
         } else {
             let arr = [];
@@ -1018,41 +1019,42 @@ export default function DocumentList({ clientId }) {
             }
             // console.log("arr",arr)
             setBulkSearch(arr);
-            if (arr.length > 1) {
-                if (arr.length === 2) {
-                    // console.log(arr[1].key);
-                    // console.log(arr[1].value);
-                    let flt1 = firstFilterResult.filter((itm) => {
-                        return String(itm[arr[1].key]).toLowerCase().includes(String(arr[1].value).toLowerCase());
-                    });
-                    // console.log("flt1: ", flt1);
-                    setSecondFilterResult(flt1);
-                    setAdvFilteredResult(flt1);
-                } else if (arr.length === 3) {
-                    let flt2 = secondFilterResult.filter((itm) => {
-                        return String(itm[arr[2].key]).toLowerCase().includes(String(arr[2].value).toLowerCase())
-                    });
-                    // console.log("flt1: ", flt2);
-                    setThirdFilterResult(flt2);
-                    setAdvFilteredResult(flt2);
-                }else if (arr.length === 4) {
-                    let flt3 = secondFilterResult.filter((itm) => {
-                        return String(itm[arr[3].key]).toLowerCase().includes(String(arr[3].value).toLowerCase())
-                    });
-                    // console.log("flt1: ", flt2);
-                    setFourthFilterResult(flt3);
-                    setAdvFilteredResult(flt3);
-                }
-            } else {
-                let fltByKeyVal = documents.filter((itm) => {
-                    if (itm[searchByPropertyKey]) {
-                        return String(itm[searchByPropertyKey]).toLowerCase().includes(searchByPropertyInput.toLowerCase());
-                    }
-                });
-                // console.log("First Filter Result",fltByKeyVal);
-                setFirstFilterResult(fltByKeyVal);
-                setAdvFilteredResult(fltByKeyVal);
-            }
+            // if (arr.length > 1) {
+            //     if (arr.length === 2) {
+            //         // console.log(arr[1].key);
+            //         // console.log(arr[1].value);
+            //         let flt1 = firstFilterResult.filter((itm) => {
+            //             return String(itm[arr[1].key]).toLowerCase().includes(String(arr[1].value).toLowerCase());
+            //         });
+            //         // console.log("flt1: ", flt1);
+            //         setSecondFilterResult(flt1);
+            //         setAdvFilteredResult(flt1);
+            //     } else if (arr.length === 3) {
+            //         let flt2 = secondFilterResult.filter((itm) => {
+            //             return String(itm[arr[2].key]).toLowerCase().includes(String(arr[2].value).toLowerCase())
+            //         });
+            //         // console.log("flt1: ", flt2);
+            //         setThirdFilterResult(flt2);
+            //         setAdvFilteredResult(flt2);
+            //     }else if (arr.length === 4) {
+            //         let flt3 = secondFilterResult.filter((itm) => {
+            //             return String(itm[arr[3].key]).toLowerCase().includes(String(arr[3].value).toLowerCase())
+            //         });
+            //         // console.log("flt1: ", flt2);
+            //         setFourthFilterResult(flt3);
+            //         setAdvFilteredResult(flt3);
+            //     }
+            // } else {
+            //     let fltByKeyVal = documents.filter((itm) => {
+            //         if (itm[searchByPropertyKey]) {
+            //             return String(itm[searchByPropertyKey]).toLowerCase().includes(searchByPropertyInput.toLowerCase());
+            //         }
+            //     });
+            //     // console.log("First Filter Result",fltByKeyVal);
+            //     setFirstFilterResult(fltByKeyVal);
+            //     setAdvFilteredResult(fltByKeyVal);
+            // }
+
         }
 
         setSearchByPropertyInput("");
@@ -1176,9 +1178,14 @@ export default function DocumentList({ clientId }) {
             setIsGroupBy(false);
             return;
         }
+        if(firstFilterResult.length>0){
+            let data = groupByProperty(firstFilterResult, target);
+            setGroupByFilterResult(data);
+        }else{
+            let data = groupByProperty(documents, target);
+            setGroupByFilterResult(data);
+        }
         setIsGroupBy(true);
-        let data = groupByProperty(documents, target);
-        setGroupByFilterResult(data);
     }
     function handleSearchBySuggestionList(val) {
         if (val !== "") {
@@ -1197,6 +1204,20 @@ export default function DocumentList({ clientId }) {
             //console.log("Suggestion List : ", filteredData)
         }
     }
+
+    function filterData(data, filters) {
+        return data.filter(item => {
+          // Check if item satisfies all filters
+          return filters.every(filter => {
+            // Check if the filter key exists in the item and its value matches the filter value
+            return String(item[filter.key]).toLowerCase().includes(filter.value.toLowerCase());
+          });
+        });
+      }
+    useEffect(() => {
+        let result = filterData(documents,bulkSearch);
+        setAdvFilteredResult(result);
+    }, [bulkSearch]);
     return (
         <>
             {/* <div style={{ textAlign: "end" }}>{toggleScreen ? <AppsIcon onClick={() => setToggleScreen(!toggleScreen)} /> : <ListIcon onClick={() => setToggleScreen(!toggleScreen)} />}</div> */}
