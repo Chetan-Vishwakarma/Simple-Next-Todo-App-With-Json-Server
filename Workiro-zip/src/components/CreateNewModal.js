@@ -71,6 +71,12 @@ import { useState } from "react";
 import Fade from '@mui/material/Fade';
 import HtmlEditorDX from "./HtmlEditor";
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { renderTimeViewClock } from "@mui/x-date-pickers";
+import { relativeTimeRounding } from "moment";
+
+
 
 // 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -89,12 +95,12 @@ export default function CreateNewModalTask({ ...props }) {
         txtClientData,
         txtSectionData,
         TaskType,
-       // passButtonHide,
-       // setPassButtonHide,
+        // passButtonHide,
+        // setPassButtonHide,
         openModal
     } = props;
 
-    console.log("documentDate txtSectionId1",createNewFileObj, txtFolderData, txtClientData, txtSectionData)
+    console.log("documentDate txtSectionId1", createNewFileObj, txtFolderData, txtClientData, txtSectionData)
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -109,6 +115,7 @@ export default function CreateNewModalTask({ ...props }) {
     const [filterText, setFilterText] = React.useState("");
     const [userList, setUserList] = React.useState([]);
     const [addUser, setAddUser] = useState([]);
+    const [ownerRighClick, setOwnerRighClick] = useState(null)
 
     const folderListRef = React.useRef(null);
     const clientListRef = React.useRef(null);
@@ -152,7 +159,7 @@ export default function CreateNewModalTask({ ...props }) {
     const boolSection = Boolean(sectionAnchorEl);
     const [searchSectionQuery, setSearchSectionQuery] = useState("");
 
-    
+
 
     /////////////////////////////////////////////////End Section data
 
@@ -219,13 +226,22 @@ export default function CreateNewModalTask({ ...props }) {
     //
     const [userDropdownanchorEl, setuserDropdownAnchorEl] = React.useState(null);
     const UserDropdownopen = Boolean(userDropdownanchorEl);
+
+
     const [selectedMenu, setSelectedMenu] = useState(null);
+
+    const [userDropdownanchorElRight, setuserDropdownAnchorElRight] = React.useState(null);
+    const UserDropdownopenRight = Boolean(userDropdownanchorElRight);
+
+    const [dropdownVisible, setDropdownVisible] = useState(false);
+
 
     const handleUserClick = (event) => {
         setuserDropdownAnchorEl(event.currentTarget);
     };
     const handleUserClose = () => {
         setuserDropdownAnchorEl(null);
+        setuserDropdownAnchorElRight(null)
     };
 
 
@@ -307,13 +323,13 @@ export default function CreateNewModalTask({ ...props }) {
                         });
                         if (result.length > 0) {
                             result.map((el) => {
-                                if (el.ID == localStorage.getItem("UserId")) {
+                                if (el.ID === parseInt(localStorage.getItem("UserId"))) {
                                     console.log("Json_GetForwardUserList11", addUser);
 
 
 
                                     setOwnerID(el.ID);
-                                    setAddUser([el]);
+                                    setOwnerRighClick(el);
 
                                 }
                             })
@@ -490,7 +506,7 @@ export default function CreateNewModalTask({ ...props }) {
                 handleMenuClose();
             }
         };
-    
+
         // Attach event listener when the menu is open
         if (folderAnchorEl) {
             document.addEventListener('mousedown', handleClickOutside);
@@ -498,13 +514,13 @@ export default function CreateNewModalTask({ ...props }) {
             // Remove event listener when the menu is closed
             document.removeEventListener('mousedown', handleClickOutside);
         }
-    
+
         // Cleanup function to remove event listener when the component unmounts
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [folderAnchorEl]);
-    
+
 
     const handleMenuCloseClient = () => {
         setClientAnchorEl(null);
@@ -518,7 +534,7 @@ export default function CreateNewModalTask({ ...props }) {
                 handleMenuCloseClient();
             }
         };
-    
+
         // Attach event listener when the menu is open
         if (clientAnchorEl) {
             document.addEventListener('mousedown', handleClickOutside);
@@ -526,7 +542,7 @@ export default function CreateNewModalTask({ ...props }) {
             // Remove event listener when the menu is closed
             document.removeEventListener('mousedown', handleClickOutside);
         }
-    
+
         // Cleanup function to remove event listener when the component unmounts
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
@@ -546,7 +562,7 @@ export default function CreateNewModalTask({ ...props }) {
                 handleMenuCloseClient();
             }
         };
-    
+
         // Attach event listener when the menu is open
         if (sectionAnchorEl) {
             document.addEventListener('mousedown', handleClickOutside);
@@ -554,7 +570,7 @@ export default function CreateNewModalTask({ ...props }) {
             // Remove event listener when the menu is closed
             document.removeEventListener('mousedown', handleClickOutside);
         }
-    
+
         // Cleanup function to remove event listener when the component unmounts
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
@@ -566,13 +582,13 @@ export default function CreateNewModalTask({ ...props }) {
         // if(passButtonHide){
         //     setPassButtonHide(passButtonHide)
         // }
-       
+
         if (createNewFileObj) {
 
             console.log("createNewFileObj1111", createNewFileObj)
             setSelectedFiles(createNewFileObj);
             setSelectedDocumentFile(createNewFileObj);
-            
+
         }
         if (txtFolderData) {
             settxtFolder(txtFolderData.Folder);
@@ -590,24 +606,26 @@ export default function CreateNewModalTask({ ...props }) {
         if (TaskType) {
             if (TaskType === "CRM") {
                 setIsVisibleByTypeCRM(false);
+                settxtTaskType("CRM")
             }
             else if (TaskType === "Portal") {
                 setIsVisibleByTypeCRM(true);
+                settxtTaskType("Portal")
             }
             else {
                 console.log("Else Part");
             }
 
-            settxtTaskType(TaskType)
+
         }
 
-       
+
 
     }, [createNewFileObj]);
 
     useEffect(() => {
         setOpen(openModal);
-        
+
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
@@ -765,8 +783,8 @@ export default function CreateNewModalTask({ ...props }) {
         setLoading(true);
         // Your form submission logic, for example, making an API call
         try {
-            if (selectedFiles.length > 0) {
-                let promises = selectedFiles.map((item) => {
+            if (selectedFilesFromBrower.length > 0) {
+                let promises = selectedFilesFromBrower.map((item) => {
                     return new Promise((resolve, reject) => {
                         let o = {};
                         o.base64File = item.Base64;
@@ -842,7 +860,7 @@ export default function CreateNewModalTask({ ...props }) {
                 "OwnerID": ownerID,
                 "AssignedToID": isaddUser,
                 "AssociateWithID": textClientId,
-                "FolderId": txtFolderId,
+                "FolderId": parseInt(txtFolderId),
                 "Subject": txtdescription,
                 "TypeofTaskID": txtSectionId,
                 "EndDateTime": dayjs(nextDate).format("YYYY/MM/DD"),
@@ -873,12 +891,13 @@ export default function CreateNewModalTask({ ...props }) {
             cls.Json_CRM_Task_Save(obj, function (sts, data) {
                 if (sts) {
                     let js = JSON.parse(data);
-                    if (js.Status == "success") {
+                    if (js.Status === "success") {
                         setMessageId(js.Message)
-                        setLoading(false);
+                        Json_CRM_TaskDMSAttachmentInsert(js.Message);
+                        //setLoading(false);
                         // Inside your function or event handler where you want to show the success message
-                        handleSuccess(js.Message);
-                        setOpen(false);
+                        //handleSuccess(js.Message);
+                        // setOpen(false);
                     }
                     console.log("Response final", data)
                     // setLoading(false);
@@ -887,11 +906,22 @@ export default function CreateNewModalTask({ ...props }) {
 
         }
 
-
-
     }
 
+    function Json_CRM_TaskDMSAttachmentInsert(TaskID) {
 
+        const ItemId = selectedDocumentFile.map(obj => obj.DocId).join("|");
+        let obj = {
+            TaskID: TaskID,
+            DMSItems: ItemId,
+            Notes: ""
+        };
+        cls.Json_CRM_TaskDMSAttachmentInsert(obj, function (sts, data) {
+            if (sts && data) {
+                console.log('Json_CRM_TaskDMSAttachmentInsert', DataTransferItem);
+            }
+        })
+    }
 
     //////////////////////////////////////End Attachment data
 
@@ -974,7 +1004,7 @@ export default function CreateNewModalTask({ ...props }) {
 
     const [portalUser, setPortalUser] = React.useState([]);
 
-    const [txtTaskType, settxtTaskType] = React.useState("Task Type");
+    const [txtTaskType, settxtTaskType] = React.useState("CRM");
 
     const [isVisibleByTypeCRM, setIsVisibleByTypeCRM] = React.useState(false);
 
@@ -988,14 +1018,16 @@ export default function CreateNewModalTask({ ...props }) {
 
     const handleCloseTastkType = (e) => {
         setAnchorElTastkType(null);
-        settxtTaskType(e.target.textContent);
+
         // setCreateTaskButton(e.target.textContent)
-        let txt = e.target.textContent;
+        let txt = e.target.innerText;
         if (txt === "CRM") {
             setIsVisibleByTypeCRM(false);
+            settxtTaskType(txt);
         }
         else if (txt === "Portal") {
             setIsVisibleByTypeCRM(true);
+            settxtTaskType(txt);
         }
         else {
             console.log("Else Part");
@@ -1042,9 +1074,9 @@ export default function CreateNewModalTask({ ...props }) {
                                 setPortalUser(filteredUsers.length > 0 ? filteredUsers : null);
                             }
                             console.log("Json_GetClientCardDetails", filteredUsers);
-                        } 
+                        }
                         else {
-                           // setPortalUser([]);
+                            // setPortalUser([]);
                         }
                     }
                 });
@@ -1304,7 +1336,7 @@ export default function CreateNewModalTask({ ...props }) {
 
         if (selectedUSer.ID) {
             let myNewArr = [...selectedFilesFromBrower, ...selectedDocumentFile];
-           // console.log("myNewArr", myNewArr)
+            // console.log("myNewArr", myNewArr)
             const ccEmail = selectedEmailCC ? selectedEmailCC.map(obj => obj["E-Mail"]) : "";
             const ToEmail = selectedEmail.map(obj => obj["E-Mail"]);
             const ItemId = selectedDocumentFile.map(obj => obj.DocId);
@@ -1380,6 +1412,70 @@ export default function CreateNewModalTask({ ...props }) {
         setisCheckedWithOutmgs(event.target.checked);
     };
 
+
+
+
+
+    const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
+
+    const handleRightClick = (event) => {
+        event.preventDefault(); // Prevents the default context menu from appearing
+        setDropdownVisible(true);
+        console.log("slected user", event.target)
+        setuserDropdownAnchorElRight(event.currentTarget);
+        //setDropdownPosition({ x: event.clientX, y: event.clientY });
+    };
+
+  
+
+
+    const firsorScandCtr = (item) => {
+        if (item) {
+            const words = item.ForwardTo.split(" ");
+            // Extract the first letter of each word and concatenate them
+            let result = "";
+            for (
+                let i = 0;
+                i < words.length && i < 2;
+                i++
+            ) {
+                result += words[i].charAt(0);
+            }
+            return result;
+        }
+
+    }
+
+    const handleItemClick = (e) => {
+        console.log("handleItemClick111", e);
+        setOwnerRighClick(e);
+
+        // // Check if the object 'e' already exists in the array based on its 'id'
+        // if (!addUser.some(user => user.ID === e.ID)) {
+        //     // If it doesn't exist, add it to the 'addUser' array
+        //     setAddUser([...addUser, e]);
+
+        // }
+
+        // setTimeout(() => {
+        //     console.log("handleItemClick111333",addUser);
+        // }, 3000);
+
+    };
+
+    const closeDropdown = () => {
+        setDropdownVisible(false);
+    };
+
+
+
+
+
+
+
+
+
+
     return (
         <React.Fragment>
             <Button
@@ -1389,7 +1485,7 @@ export default function CreateNewModalTask({ ...props }) {
                 <span className="material-symbols-outlined">edit_square</span>{" "}
                 <span className="ps-2 create-text">Create New</span>
             </Button>
-            
+
 
             <Dialog
                 fullScreen={fullScreen}
@@ -1647,6 +1743,9 @@ export default function CreateNewModalTask({ ...props }) {
                                                     value={txtdescription} // Bind the value to the state
                                                     onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
                                                 ></textarea>
+
+
+
                                             </Box>
                                         </>)}
 
@@ -1659,10 +1758,23 @@ export default function CreateNewModalTask({ ...props }) {
                                                 aria-haspopup="true"
                                                 aria-expanded={UserDropdownopen ? "true" : undefined}
                                                 onClick={handleUserClick}
+                                                onContextMenu={handleRightClick}
                                                 className="p-0 w-auto d-inline-block"
-                                            >
-                                                <Box className="d-flex align-items-center">
 
+
+                                            >
+
+
+                                                <Box className="d-flex align-items-center">
+                                                    {ownerRighClick && (<>
+                                                        <Box
+                                                            className="user-img-list me-2 admin"
+                                                            title={ownerRighClick.ForwardTo}
+                                                            key={ownerRighClick.ID}
+                                                        >
+                                                            <p>{firsorScandCtr(ownerRighClick)}</p>
+                                                        </Box> <ArrowForwardIosIcon className='me-1' />
+                                                    </>)}
 
                                                     {addUser
                                                         ? addUser.map((item) => {
@@ -1676,37 +1788,19 @@ export default function CreateNewModalTask({ ...props }) {
                                                             ) {
                                                                 result += words[i].charAt(0);
                                                             }
+                                                            return (
+                                                                <>
+                                                                    <Box
+                                                                        className="user-img-list me-2 admin"
+                                                                        title={item.ForwardTo}
+                                                                        key={item.ID}
+                                                                    >
+                                                                        <p>{result}</p>
+                                                                    </Box>
 
-                                                            if (item.ID == localStorage.getItem("UserId")) {
 
-                                                                return (
-                                                                    <>
-                                                                        <Box
-                                                                            className="user-img-list me-2 admin"
-                                                                            title={item.ForwardTo}
-                                                                            key={item.ID}
-                                                                        >
-                                                                            <p>{result}</p>
-                                                                        </Box>
-
-                                                                        <ArrowForwardIosIcon className='me-1' />
-                                                                    </>
-                                                                );
-                                                            }
-                                                            else {
-                                                                return (
-                                                                    <>
-                                                                        <Box
-                                                                            className="user-img-list me-2"
-                                                                            title={item.ForwardTo}
-                                                                            key={item.ID}
-                                                                        >
-                                                                            <p>{result}</p>
-                                                                        </Box>
-                                                                    </>
-                                                                );
-                                                            }
-
+                                                                </>
+                                                            );
 
                                                         })
                                                         : null}
@@ -1716,8 +1810,77 @@ export default function CreateNewModalTask({ ...props }) {
                                                             person_add
                                                         </span>
                                                     </Box>
+
                                                 </Box>
+
                                             </Button>
+
+                                            {dropdownVisible && (<Menu
+                                                id="basic-menu5"
+                                                anchorEl={userDropdownanchorElRight}
+                                                open={UserDropdownopenRight}
+                                                onClose={handleUserClose}
+                                                MenuListProps={{
+                                                    "aria-labelledby": "basic-button5",
+                                                }}
+                                                className="user-list-dropdown"
+                                            >
+
+                                                <Box
+                                                    className="inner-user-list-dropdown"
+                                                    style={{ maxHeight: "200px", overflowY: "auto" }}
+                                                >
+                                                    <p className="sembold">Assigned11</p>
+
+                                                    <Box className="box-user-list-dropdown">
+
+
+
+                                                        {addUser
+                                                            ? addUser.map((item, ind) => {
+                                                                if (item.ID === parseInt(localStorage.getItem("UserId"))) {
+                                                                    return (
+                                                                        <React.Fragment key={ind}>
+                                                                            <button type="button"
+                                                                                id={item.ID}
+                                                                            >
+                                                                                <Box className="user-img-list me-2">
+                                                                                    <img src={user} alt="User" />
+                                                                                </Box>
+                                                                                <p>{item.ForwardTo}</p>
+                                                                            </button>
+                                                                        </React.Fragment>
+                                                                    );
+                                                                } else {
+                                                                    return (
+                                                                        <React.Fragment key={ind}>
+                                                                            <button type="button" id={item.ID}
+                                                                                onClick={() => handleItemClick(item)}
+                                                                            >
+                                                                                <Box className="user-img-list me-2">
+                                                                                    <img src={user} alt="User" />
+                                                                                </Box>
+                                                                                <p>{item.ForwardTo}</p>
+                                                                                <span
+                                                                                    className="close"
+                                                                                    onClick={() => handleRemoveUser(item.ID)}
+                                                                                    role="button" // Adding role="button" to indicate this element is clickable
+                                                                                    tabIndex="0" // Adding tabIndex to make the element focusable
+                                                                                >
+                                                                                    <span className="material-symbols-outlined">
+                                                                                        close
+                                                                                    </span>
+                                                                                </span>
+                                                                            </button>
+                                                                        </React.Fragment>
+                                                                    );
+                                                                }
+                                                            })
+                                                            : null}
+                                                    </Box>
+                                                </Box>
+                                            </Menu>)}
+
                                             <Menu
                                                 id="basic-menu5"
                                                 anchorEl={userDropdownanchorEl}
@@ -1736,12 +1899,15 @@ export default function CreateNewModalTask({ ...props }) {
                                                     <p className="sembold">Assigned</p>
 
                                                     <Box className="box-user-list-dropdown">
+
+
+
                                                         {addUser
                                                             ? addUser.map((item, ind) => {
                                                                 if (item.ID === parseInt(localStorage.getItem("UserId"))) {
                                                                     return (
                                                                         <React.Fragment key={ind}>
-                                                                            <button type="button" id={item.ID}>
+                                                                            <button type="button" id={item.ID} >
                                                                                 <Box className="user-img-list me-2">
                                                                                     <img src={user} alt="User" />
                                                                                 </Box>
@@ -1814,11 +1980,14 @@ export default function CreateNewModalTask({ ...props }) {
                                                     </Box>
                                                 </Box>
                                             </Menu>
+
+
                                         </div>
                                     </Box>
                                 </Box>
 
                                 {/* end */}
+
 
                                 <Box className="file-uploads">
                                     <input

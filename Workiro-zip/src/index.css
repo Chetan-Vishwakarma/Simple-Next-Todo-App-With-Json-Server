@@ -57,7 +57,12 @@ nav.navbar.navbar-dark.bg-dark .container {
 .font-32 {
   font-size: 32px !important;
 }
-
+.swal2-container.swal2-center.swal2-backdrop-show{
+  z-index: 9999 !important; 
+}
+.green{
+  color: green;
+}
 select:focus,
 .form-control:focus {
   box-shadow: none;

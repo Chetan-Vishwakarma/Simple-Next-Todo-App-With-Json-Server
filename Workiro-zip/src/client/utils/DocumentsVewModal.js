@@ -20,7 +20,11 @@ import CommanCLS from '../../services/CommanService';
 import { json } from 'react-router-dom';
 
 import HtmlEditorDX from '../../components/HtmlEditor';
-import Toaster from '../../components/Toaster';
+
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Swal from 'sweetalert2';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -60,6 +64,7 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
 
     const [templateDataMarkup, setTemplateDataMarkup] = React.useState([]);
     const [editorContentValue, setEditorContentValue] = React.useState([]);
+    const [getAssociatedTaskList, setGetAssociatedTaskList] = React.useState([]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -70,51 +75,89 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
     };
 
     const Json_GetAudit = () => {
-        let obj = {
-            itemid: selectedDocument["Registration No."],
+        try {
+            let obj = {
+                itemid: selectedDocument["Registration No."],
 
-        }
-        cls.Json_GetAudit(obj, function (sts, data) {
-            if (sts && data) {
-                let parse = JSON.parse(data);
-                let table = parse.Table;
-                if (table.length > 0) {
-                    setGetAudit(table);
-                }
-                console.log("Json_GetAudit", table)
             }
-        })
+            cls.Json_GetAudit(obj, function (sts, data) {
+                if (sts && data) {
+                    let parse = JSON.parse(data);
+                    let table = parse.Table;
+                    if (table.length > 0) {
+                        setGetAudit(table);
+                    }
+                    console.log("Json_GetAudit", table)
+                }
+            })
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
+        }
+
     }
     const Json_GetAttachmentsByItemId = () => {
-        let obj = {
-            ItemId: selectedDocument["Registration No."],
-            ViewerToken: ViewerToken,
-        }
-        cls.Json_GetAttachmentsByItemId(obj, function (sts, data) {
-            if (sts && data) {
-                let parse = JSON.parse(data);
-                console.log("Json_GetAttachmentsByItemId", parse)
-                let table = parse.Table;
-                if (table.length > 0) {
-                    setGetAttachment(table);
-                }
-
+        try {
+            let obj = {
+                ItemId: selectedDocument["Registration No."],
+                ViewerToken: ViewerToken,
             }
-        })
+            cls.Json_GetAttachmentsByItemId(obj, function (sts, data) {
+                if (sts && data) {
+                    let parse = JSON.parse(data);
+                    console.log("Json_GetAttachmentsByItemId", parse)
+                    let table = parse.Table;
+                    if (table.length > 0) {
+                        setGetAttachment(table);
+                    }
+
+                }
+            })
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
+        }
+
     }
     const Json_GetItemStickyNotes = () => {
-        let obj = {
-            ItemId: selectedDocument["Registration No."],
-        }
-        cls.Json_GetItemStickyNotes(obj, (sts, data) => {
-            if (sts && data) {
-
-                let atob = window.atob(data);
-                console.log("Json_GetItemStickyNotes", atob);
-                setTemplateDataMarkup(atob)
+        try {
+            let obj = {
+                ItemId: selectedDocument["Registration No."],
             }
-        })
+            cls.Json_GetItemStickyNotes(obj, (sts, data) => {
+                if (sts && data) {
+
+                    let atob = window.atob(data);
+                    console.log("Json_GetItemStickyNotes", atob);
+                    setTemplateDataMarkup(atob)
+                }
+            })
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
+        }
+
     }
+
+    const Json_getAssociatedTaskListByDocumentId = () => {
+        try {
+            let obj = {
+                ItemId: selectedDocument["Registration No."],
+            }
+            cls.Json_getAssociatedTaskListByDocumentId(obj, (sts, data) => {
+                if (sts && data) {
+                    let js = JSON.parse(data);
+                    let table = js.Table;
+                    if (table.length > 0) {
+                        setGetAssociatedTaskList(table)
+                        console.log("Json_getAssociatedTaskListByDocumentId", table)
+                    }
+
+                }
+            })
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
+        }
+
+    }
+
     useEffect(() => {
         setGetAttachment([]);
         setAgrNo(localStorage.getItem("agrno"));
@@ -138,6 +181,7 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
             Json_GetAudit();
             Json_GetAttachmentsByItemId();
             Json_GetItemStickyNotes();
+            Json_getAssociatedTaskListByDocumentId();
         }
         setSeletedFileData([]);
 
@@ -152,147 +196,187 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
 
 
     function DowloadSingleFileOnClick() {
-        console.log("seletedFileData", seletedFileData)
-        if (seletedFileData.length === 1) {
-            const uint8Array = new Uint8Array(seletedFileData[0].FileData);
-            const blob = new Blob([uint8Array], { type: 'application/octet-stream' });
+        try {
+            if (seletedFileData.length === 1) {
+                const uint8Array = new Uint8Array(seletedFileData[0].FileData);
+                const blob = new Blob([uint8Array], { type: 'application/octet-stream' });
 
-            // Create a URL representing the Blob
-            const url = URL.createObjectURL(blob);
+                // Create a URL representing the Blob
+                const url = URL.createObjectURL(blob);
 
-            // Create a link element pointing to the URL
-            const link = document.createElement('a');
-            link.href = url;
+                // Create a link element pointing to the URL
+                const link = document.createElement('a');
+                link.href = url;
 
-            // Set the download attribute to specify the file name
-            link.download = seletedFileData[0].SubItemPath;
+                // Set the download attribute to specify the file name
+                link.download = seletedFileData[0].SubItemPath;
 
-            // Append the link to the document body
-            document.body.appendChild(link);
+                // Append the link to the document body
+                document.body.appendChild(link);
 
-            // Trigger a click event on the link to initiate the download
-            link.click();
+                // Trigger a click event on the link to initiate the download
+                link.click();
 
-            // Remove the link from the document body
-            document.body.removeChild(link);
+                // Remove the link from the document body
+                document.body.removeChild(link);
+            }
+            else {
+                Json_DownloadZip();
+            }
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
         }
-        else {
-            Json_DownloadZip();
-        }
+
+
     }
 
     function Json_DownloadZip() {
-        if (seletedFileData.length > 1) {
-            let strGuid = seletedFileData.map((el) => el.Guid).join(',');
-            let obj = {};
-            obj.strFieldValues = strGuid;
-            obj.isattachments = 'yes';
-            obj.strFileName = "DemoTest";
-            let data = JSON.stringify(obj);
+        try {
+            if (seletedFileData.length > 1) {
+                let strGuid = seletedFileData.map((el) => el.Guid).join(',');
+                let obj = {};
+                obj.strFieldValues = strGuid;
+                obj.isattachments = 'yes';
+                obj.strFileName = "DemoTest";
+                let data = JSON.stringify(obj);
 
-            cls.Json_DownloadZip(obj, function (sts, data) {
-                if (sts && data) {
-                    // https://mydocusoft.com/DownloadFilesServer/0003/9/gfdgfdgfdgf.zip.zip
+                cls.Json_DownloadZip(obj, function (sts, data) {
+                    if (sts && data) {
+                        // https://mydocusoft.com/DownloadFilesServer/0003/9/gfdgfdgfdgf.zip.zip
 
-                    var element = document.createElement('a');
-                    element.setAttribute('href', "https://docusms.uk/DownloadFilesServer/" + agrno + "/" + localStorage.getItem("UserId") + "/" + data);
-                    element.setAttribute('download', "DemoTest" + ".zip");
-                    element.style.display = 'none';
-                    document.body.appendChild(element);
-                    element.click();
-                    document.body.removeChild(element);
+                        var element = document.createElement('a');
+                        element.setAttribute('href', "https://docusms.uk/DownloadFilesServer/" + agrno + "/" + localStorage.getItem("UserId") + "/" + data);
+                        element.setAttribute('download', "DemoTest" + ".zip");
+                        element.style.display = 'none';
+                        document.body.appendChild(element);
+                        element.click();
+                        document.body.removeChild(element);
 
-                }
-            })
+                    }
+                })
+            }
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
         }
+
 
     }
 
     function DeleteDocumentAttachment() {
-        if (seletedFileData.length > 0) {
-            let strGuid = seletedFileData.map((el) => el.Guid).join(',');
-            // Display a confirmation dialog
-            const isConfirmed = window.confirm('Are you sure you want to delete this item?');
-            // Check if the user confirmed
-            if (isConfirmed) {
-                let obj = {};
-                obj.GuId = strGuid;
-                cls.Json_DeleteAttachment(obj, function (sts, data) {
-                    if (sts && data) {
-                        console.log("Json_DeleteAttachment", data);
-                        Json_GetAttachmentsByItemId()
+        try {
+            if (seletedFileData.length > 0) {
+                let strGuid = seletedFileData.map((el) => el.Guid).join(',');
+                // Display a confirmation dialog
+                Swal.fire({
+                    // title: "Are you sure you want to delete this item?",
+                    text: "Are you sure you want to delete this item?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        let obj = {};
+                        obj.GuId = strGuid;
+                        cls.Json_DeleteAttachment(obj, function (sts, data) {
+                            if (sts && data) {
+                                console.log("Json_DeleteAttachment", data);
+                                Json_GetAttachmentsByItemId()
+                            }
+                        })
+
+                        //   Swal.fire({
+                        //     title: "Deleted!",
+                        //     text: "Your file has been deleted.",
+                        //     icon: "success"
+                        //   });
                     }
-                })
-            } else {
-                // Do nothing or handle cancel action
-                console.log('Deletion canceled');
+                });
             }
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
         }
+
     }
 
     // Event handler to handle file selection
     const handleFileSelect = (event) => {
-        const files = event.target.files;
-        const selectedFilesArray = Array.from(files);
-        const filesData = [];
-        selectedFilesArray.forEach((file, index) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                let fileByte = reader.result.split(";")[1].replace("base64,", "");
+        try {
+            const files = event.target.files;
+            const selectedFilesArray = Array.from(files);
+            const filesData = [];
+            selectedFilesArray.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    let fileByte = reader.result.split(";")[1].replace("base64,", "");
 
-                const fileData = {
-                    FileName: file.name,
-                    Base64: fileByte ? fileByte : "", // Base64 data of the file
-                    FileSize: file.size,
-                    Preview: reader.result, // Data URL for preview
-                    DocId: ""
-                };
+                    const fileData = {
+                        FileName: file.name,
+                        Base64: fileByte ? fileByte : "", // Base64 data of the file
+                        FileSize: file.size,
+                        Preview: reader.result, // Data URL for preview
+                        DocId: ""
+                    };
 
-                filesData.push(fileData);
+                    filesData.push(fileData);
 
 
-                let obj = {};
-                obj.ItemId = selectedDocument["Registration No."];
-                obj.FileName = file.name;
-                obj.base64data = fileByte;
-                obj.ViewerToken = ViewerToken;
-                cls.Json_AddAttachment(obj, (sts, data) => {
-                    if (sts && data) {
-                        console.log("Json_AddAttachment", data);
-                        if (data) {
-                            Json_GetAttachmentsByItemId()
+                    let obj = {};
+                    obj.ItemId = selectedDocument["Registration No."];
+                    obj.FileName = file.name;
+                    obj.base64data = fileByte;
+                    obj.ViewerToken = ViewerToken;
+                    cls.Json_AddAttachment(obj, (sts, data) => {
+                        if (sts && data) {
+                            console.log("Json_AddAttachment", data);
+                            if (data) {
+                                Json_GetAttachmentsByItemId()
+                            }
                         }
+
+                    })
+
+                    // Check if this is the last file
+                    if (index === selectedFilesArray.length - 1) {
+                        // Add new files to the uploadedFiles array
+                        setSelectedFiles((prevUploadedFiles) => [
+                            ...prevUploadedFiles,
+                            ...filesData,
+                        ]);
                     }
+                };
+                reader.readAsDataURL(file); // Read file as data URL (base64)
+            });
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
+        }
 
-                })
-
-                // Check if this is the last file
-                if (index === selectedFilesArray.length - 1) {
-                    // Add new files to the uploadedFiles array
-                    setSelectedFiles((prevUploadedFiles) => [
-                        ...prevUploadedFiles,
-                        ...filesData,
-                    ]);
-                }
-            };
-            reader.readAsDataURL(file); // Read file as data URL (base64)
-        });
     };
 
     const SaveStickyNotes = () => {
-        console.log(editorContentValue)
-        let o = {
-            ItemId: selectedDocument["Registration No."],
-            strStickyNotes: window.btoa(editorContentValue)
-        }
-        cls.Json_SetItemStickyNotes(o, function (sts, data) {
-            if (sts && data) {
-                if (data === "Success") {
-                    Json_GetItemStickyNotes();
-                }
+        try {
+            //  console.log(editorContentValue)
+            let o = {
+                ItemId: selectedDocument["Registration No."],
+                strStickyNotes: window.btoa(editorContentValue)
             }
-        })
+            cls.Json_SetItemStickyNotes(o, function (sts, data) {
+                if (sts && data) {
+                    if (data === "Success") {
+                        Json_GetItemStickyNotes();
+                        toast.success("Updated !");
+                    }
+                }
+            })
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
+        }
+
     }
+
+
 
 
     return (
@@ -435,7 +519,7 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
                                 <Box className='text-end'>
                                     <Button onClick={SaveStickyNotes} variant="contained" className='mt-3'>Save Notes</Button>
 
-                                    <Toaster></Toaster>
+                                    <ToastContainer></ToastContainer>
 
                                 </Box>
                             </TabPanel>
@@ -443,12 +527,20 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
                             <TabPanel value="4">
 
                                 <Box className='text-center'>
-
-                                    {Array(15).fill("").map(() => {
-                                        return <>
-                                            <Link href="#" className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />Contact agreement</Link>
-                                        </>
+                                    {getAssociatedTaskList && getAssociatedTaskList.map((item, index) => {
+                                        let str = item.AssignedToID;
+                                        let arr = str.split(',').map(Number);
+                                        let isUserAssigned = arr.includes(parseInt(localStorage.getItem('UserId')));
+                                        console.log("isUserAssigned", isUserAssigned)
+                                        return (
+                                            <label key={index} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex">
+                                                <RadioButtonUncheckedIcon className={`me-1 ${isUserAssigned ? 'green' : 'disabled'}`} />
+                                                {item.Subject}
+                                            </label>
+                                        );
                                     })}
+
+
 
                                 </Box>
 
