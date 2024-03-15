@@ -11,7 +11,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import DatePicker from 'react-datetime';
 import user from "../images/user.jpg";
 import Logout from "@mui/icons-material/Logout";
 import Menu from "@mui/material/Menu";
@@ -31,6 +31,7 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import DvrIcon from '@mui/icons-material/Dvr';
 import LanguageIcon from '@mui/icons-material/Language';
+import 'react-datetime/css/react-datetime.css';
 
 import Swal from 'sweetalert2';
 import {
@@ -74,7 +75,7 @@ import HtmlEditorDX from "./HtmlEditor";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { renderTimeViewClock } from "@mui/x-date-pickers";
-import { relativeTimeRounding } from "moment";
+import moment from "moment";
 
 
 
@@ -176,10 +177,13 @@ export default function CreateNewModalTask({ ...props }) {
     // State variables to hold current date and next day's date
     // Get the current date in "dd/mm/yyyy" format
 
-    const [currentDate, setCurrentDate] = useState(""); // Initialize with the current date in "dd/mm/yyyy" format
+    const [currentDate, setCurrentDate] = useState(new Date()); // Initialize with the current date in "dd/mm/yyyy" format
     const [nextDate, setNextDate] = useState("");
     const [remiderDate, setRemiderDate] = useState("");
     const [expireDate, setExpireDate] = useState("");
+
+
+
     ///////////////////////////////////////end date set
 
     const [loading, setLoading] = useState(false);
@@ -195,9 +199,11 @@ export default function CreateNewModalTask({ ...props }) {
 
     const [statusAnchorEl, setStatusAnchorEl] = React.useState(null);
     const [selectedStatusMenu, setSelectedStatusMenu] = useState(null);
+
     const boolStatus = Boolean(statusAnchorEl);
 
     //////////////////////End Priority
+
 
 
     const open2 = Boolean(anchorel);
@@ -304,6 +310,17 @@ export default function CreateNewModalTask({ ...props }) {
     //   };
 
 
+    // Function to disable past 
+
+
+    const disablePastDt = (date) => {
+        const today = new Date();
+        return date.isSameOrAfter(today, 'day'); // Disable past dates
+
+    };
+
+
+
 
     const userAdd = Boolean(anchorel);
 
@@ -325,11 +342,9 @@ export default function CreateNewModalTask({ ...props }) {
                             result.map((el) => {
                                 if (el.ID === parseInt(localStorage.getItem("UserId"))) {
                                     console.log("Json_GetForwardUserList11", addUser);
-
-
-
                                     setOwnerID(el.ID);
                                     setOwnerRighClick(el);
+                                    setAddUser((pre)=>[...pre,el])
 
                                 }
                             })
@@ -554,12 +569,13 @@ export default function CreateNewModalTask({ ...props }) {
         setSectionAnchorEl(null);
     };
 
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             // Check if the menu is open and the click is outside the menu and not in the search box
             if (sectionAnchorEl && sectionListRef.current && !sectionListRef.current.contains(event.target) && !event.target.closest('.px-3')) {
                 // Clicked outside the menu list, so close the menu
-                handleMenuCloseClient();
+                handleMenuCloseSection();
             }
         };
 
@@ -631,7 +647,7 @@ export default function CreateNewModalTask({ ...props }) {
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
 
-        setCurrentDate(dayjs(getCurrentDate()));
+        //setCurrentDate(dayjs(getCurrentDate()));
 
         setNextDate(dayjs(getNextDate()));
         setRemiderDate(dayjs(getCurrentDate()));
@@ -810,6 +826,7 @@ export default function CreateNewModalTask({ ...props }) {
                 Promise.all(promises)
                     .then((attachments) => {
                         setAttachmentPath((prevAttachments) => [...prevAttachments, ...attachments]);
+                        console.log('Attachments uploaded successfully:', attachments);
                         setTimeout(() => {
                             Json_CRM_Task_Save();
                         }, 2500);
@@ -839,72 +856,73 @@ export default function CreateNewModalTask({ ...props }) {
 
     async function Json_CRM_Task_Save() {
 
-        if (addUser.length > 0) {
-            const isaddUser = addUser.map(obj => obj.ID).join(',');
-            const attString = attachmentPath.map(obj => obj.Path).join(',');
-            let obj = {
-                "ClientIsRecurrence": false,
-                "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-                "ClientEnd": dayjs(nextDate).format("YYYY/MM/DD"),
+        const isaddUser = addUser.map(obj => obj.ID).join(',');
+        const attString = attachmentPath.map(obj => obj.Path).join(',');
+        let obj = {
+            "ClientIsRecurrence": false,
+            "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
+            "ClientEnd": dayjs(nextDate).format("YYYY/MM/DD"),
 
-                "ClientDayNumber": 1,
-                "ClientMonth": 1,
-                "ClientOccurrenceCount": 1,
-                "ClientPeriodicity": 1,
-                "ClientRecurrenceRange": 0,
-                "ClientRecurrenceType": 0,
-                "ClientWeekDays": 1,
-                "ClientWeekOfMonth": 1,
-
-
-                "OwnerID": ownerID,
-                "AssignedToID": isaddUser,
-                "AssociateWithID": textClientId,
-                "FolderId": parseInt(txtFolderId),
-                "Subject": txtdescription,
-                "TypeofTaskID": txtSectionId,
-                "EndDateTime": dayjs(nextDate).format("YYYY/MM/DD"),
-                "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
-                "Status": txtStatus,
-                "Priority": txtPriorityId,
-                "PercentComplete": 0,
-                "ReminderSet": false,
-                "ReminderDateTime": dayjs(remiderDate).format("YYYY/MM/DD"),
-                "TaskNo": 0,
-                "Attachments": attString ? attString : "",
-                "Details": "",
-
-                // "YEDate": "1900/01/01",
-                //"SubDeadline": "1900/01/01",
-                //"DocRecdate": "1900/01/01",
-
-                // "YEDate": getCurrentDate(),
-                // "SubDeadline": getCurrentDate(),
-                // "DocRecdate":getCurrentDate(),
-
-                "ElectronicFile": false,
-                "PaperFile": false,
-                "Notes": "",
-                "TaskSource": "CRM"
-            }
-            console.log("final save data obj", obj);
-            cls.Json_CRM_Task_Save(obj, function (sts, data) {
-                if (sts) {
-                    let js = JSON.parse(data);
-                    if (js.Status === "success") {
-                        setMessageId(js.Message)
-                        Json_CRM_TaskDMSAttachmentInsert(js.Message);
-                        //setLoading(false);
-                        // Inside your function or event handler where you want to show the success message
-                        //handleSuccess(js.Message);
-                        // setOpen(false);
-                    }
-                    console.log("Response final", data)
-                    // setLoading(false);
-                }
-            })
-
+            "ClientDayNumber": 1,
+            "ClientMonth": 1,
+            "ClientOccurrenceCount": 1,
+            "ClientPeriodicity": 1,
+            "ClientRecurrenceRange": 0,
+            "ClientRecurrenceType": 0,
+            "ClientWeekDays": 1,
+            "ClientWeekOfMonth": 1,
+            "OwnerID": ownerID,
+            "AssignedToID": isaddUser,
+            "AssociateWithID": textClientId,
+            "FolderId": parseInt(txtFolderId),
+            "Subject": textSubject,
+            "TypeofTaskID": txtSectionId,
+            "EndDateTime": dayjs(nextDate).format("YYYY/MM/DD"),
+            "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
+            "Status": txtStatus,
+            "Priority": txtPriorityId,
+            "PercentComplete": 0,
+            "ReminderSet": false,
+            "ReminderDateTime": dayjs(remiderDate).format("YYYY/MM/DD"),
+            "TaskNo": 0,
+            "Attachments": attString ? attString : "",
+            "Details": "",
+            // "YEDate": "1900/01/01",
+            //"SubDeadline": "1900/01/01",
+            //"DocRecdate": "1900/01/01",
+            // "YEDate": getCurrentDate(),
+            // "SubDeadline": getCurrentDate(),
+            // "DocRecdate":getCurrentDate(),
+            "ElectronicFile": false,
+            "PaperFile": false,
+            "Notes": "",
+            "TaskSource": "CRM"
         }
+        console.log("final save data obj", obj);
+        cls.Json_CRM_Task_Save(obj, function (sts, data) {
+            if (sts) {
+                let js = JSON.parse(data);
+
+                console.log("save task rerurn value", js);
+
+                if (js.Status === "success") {
+                    
+                    setMessageId(js.Message);
+                    if(selectedDocumentFile.length>0){
+                        Json_CRM_TaskDMSAttachmentInsert(js.Message);
+                    }
+                    toast.success("Created Task !");
+
+                    //setLoading(false);
+                    // Inside your function or event handler where you want to show the success message
+                    //handleSuccess(js.Message);
+                    // setOpen(false);
+                }
+                toast.error("Task Not Created Please Try Again");
+                console.log("Response final", data)
+                // setLoading(false);
+            }
+        })
 
     }
 
@@ -1315,7 +1333,7 @@ export default function CreateNewModalTask({ ...props }) {
         GetSMSTemplate();
     }, [setTxtTempId])
 
-    const [textSubject, setTextSubject] = useState("Subject");
+    const [textSubject, setTextSubject] = useState("Subject...");
     const [editorContentValue, setEditorContentValue] = useState(null);
 
     // Handle selection change
@@ -1414,19 +1432,14 @@ export default function CreateNewModalTask({ ...props }) {
 
 
 
-
-
-    const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
-
     const handleRightClick = (event) => {
         event.preventDefault(); // Prevents the default context menu from appearing
         setDropdownVisible(true);
-        console.log("slected user", event.target)
         setuserDropdownAnchorElRight(event.currentTarget);
         //setDropdownPosition({ x: event.clientX, y: event.clientY });
     };
 
-  
+
 
 
     const firsorScandCtr = (item) => {
@@ -1447,8 +1460,10 @@ export default function CreateNewModalTask({ ...props }) {
     }
 
     const handleItemClick = (e) => {
-        console.log("handleItemClick111", e);
+        //console.log("handleItemClick111", e);
         setOwnerRighClick(e);
+        console.log("slected user", e)     
+        setOwnerID(e.ID)
 
         // // Check if the object 'e' already exists in the array based on its 'id'
         // if (!addUser.some(user => user.ID === e.ID)) {
@@ -1499,7 +1514,7 @@ export default function CreateNewModalTask({ ...props }) {
                 <DialogContent>
                     <DialogContentText>
                         <Box className="d-flex align-items-center justify-content-between">
-
+                     
                             <Box>
                                 <Button
                                     id="basic-button"
@@ -1776,7 +1791,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                         </Box> <ArrowForwardIosIcon className='me-1' />
                                                     </>)}
 
-                                                    {addUser
+                                                    {addUser.length>1
                                                         ? addUser.map((item) => {
                                                             const words = item.ForwardTo.split(" ");
                                                             // Extract the first letter of each word and concatenate them
@@ -1788,19 +1803,22 @@ export default function CreateNewModalTask({ ...props }) {
                                                             ) {
                                                                 result += words[i].charAt(0);
                                                             }
-                                                            return (
-                                                                <>
-                                                                    <Box
-                                                                        className="user-img-list me-2 admin"
-                                                                        title={item.ForwardTo}
-                                                                        key={item.ID}
-                                                                    >
-                                                                        <p>{result}</p>
-                                                                    </Box>
-
-
-                                                                </>
-                                                            );
+                                                            if(item.ID !== parseInt(localStorage.getItem("UserId"))){
+                                                                return (
+                                                                    <>
+                                                                        <Box
+                                                                            className="user-img-list me-2 admin"
+                                                                            title={item.ForwardTo}
+                                                                            key={item.ID}
+                                                                        >
+                                                                            <p>{result}</p>
+                                                                        </Box>
+    
+    
+                                                                    </>
+                                                                );
+                                                            }
+                                                            
 
                                                         })
                                                         : null}
@@ -2123,7 +2141,7 @@ export default function CreateNewModalTask({ ...props }) {
                                     </Button>
                                 )}
 
-
+<ToastContainer></ToastContainer>
                             </Box>
                             {/* col end */}
 
@@ -2418,11 +2436,22 @@ export default function CreateNewModalTask({ ...props }) {
                                             className="pe-0"
                                             dateAdapter={AdapterDayjs}
                                         >
-                                            <DatePicker className="datepicker w-100"
+
+                                            <DatePicker className=" w-100"
+                                                dateFormat="DD/MM/YYYY"
+                                                defaultValue={currentDate}
+                                                onChange={(e) => setCurrentDate(e)} // Handle date changes
+                                                timeFormat={false}
+                                                isValidDate={disablePastDt}
+
+                                            />
+
+
+                                            {/* <DatePicker className="datepicker w-100"
                                                 defaultValue={currentDate}// Set the default value using the value prop
                                                 onChange={(e) => setCurrentDate(e)} // Update the default date when the user changes it                      
                                                 inputFormat="DD/MM/YYYY" // Set the input format to "dd/mm/yyyy"
-                                            />
+                                            /> */}
                                         </LocalizationProvider>
                                     </Box>
                                 </Box>
@@ -2443,11 +2472,17 @@ export default function CreateNewModalTask({ ...props }) {
                                         className="pe-0"
                                         dateAdapter={AdapterDayjs}
                                     >
-                                        <DatePicker className="datepicker w-100"
-                                            defaultValue={nextDate} // Set the default value using the value prop
-                                            onChange={(e) => setNextDate(e)} // Update the default date when the user changes it                      
-                                            inputFormat="DD/MM/YYYY" // Set the input format to "dd/mm/yyyy"
+
+                                        <DatePicker className=" w-100"
+                                            dateFormat="DD/MM/YYYY"
+                                            defaultValue={nextDate}
+                                            onChange={(e) => setNextDate(e)} // Handle date changes
+                                            timeFormat={false}
+                                            isValidDate={disablePastDt}
+
                                         />
+
+
                                     </LocalizationProvider>
                                 </Box>
 
@@ -2462,11 +2497,17 @@ export default function CreateNewModalTask({ ...props }) {
                                         className="pe-0"
                                         dateAdapter={AdapterDayjs}
                                     >
-                                        <DatePicker className="datepicker w-100"
-                                            defaultValue={remiderDate} // Set the default value using the value prop
-                                            onChange={(e) => setRemiderDate(e)} // Update the default date when the user changes it                      
-                                            inputFormat="DD/MM/YYYY" // Set the input format to "dd/mm/yyyy"
+
+                                        <DatePicker className=" w-100"
+                                            dateFormat="DD/MM/YYYY"
+                                            defaultValue={remiderDate}
+                                            onChange={(e) => setRemiderDate(e)} // Handle date changes
+                                            timeFormat={false}
+                                           
+
                                         />
+
+
                                     </LocalizationProvider>
 
 
@@ -2475,11 +2516,16 @@ export default function CreateNewModalTask({ ...props }) {
                                         className="pe-0"
                                         dateAdapter={AdapterDayjs}
                                     >
-                                        <DatePicker className="datepicker w-100"
-                                            defaultValue={expireDate} // Set the default value using the value prop
-                                            onChange={(e) => setExpireDate(e)} // Update the default date when the user changes it                      
-                                            inputFormat="DD/MM/YYYY" // Set the input format to "dd/mm/yyyy"
+
+                                        <DatePicker className=" w-100"
+                                            dateFormat="DD/MM/YYYY"
+                                            defaultValue={expireDate}
+                                            onChange={(e) => setExpireDate(e)} // Handle date changes
+                                            timeFormat={false}
+                                           
+
                                         />
+                                       
                                     </LocalizationProvider>
                                 </Box>
 
@@ -2773,7 +2819,7 @@ export default function CreateNewModalTask({ ...props }) {
                         >
                             {'Add Document'}
                         </Button>
-
+                      
                     </DialogContentText>
                 </DialogContent>
             </Dialog>

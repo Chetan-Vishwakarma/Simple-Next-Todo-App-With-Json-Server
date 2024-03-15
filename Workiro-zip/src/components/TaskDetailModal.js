@@ -25,6 +25,17 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import DocumentDetails from "./DocumentDetails";
 
 
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import ImageIcon from '@mui/icons-material/Image';
+import WorkIcon from '@mui/icons-material/Work';
+import BeachAccessIcon from '@mui/icons-material/BeachAccess';
+
+
+
 function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) {
     console.log("TaskDetailModal2222", selectedTask);
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -114,7 +125,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                             TaskId: 19101,
                             username: "User",
                         };
-                        setCRMTaskAcivity((el) => [...el, obj]);
+                        // setCRMTaskAcivity((el) => [...el, obj]);
                         // setAllTask(json.Table);
                     }
                 }
@@ -287,14 +298,14 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
                 let table6 = json.T6;
                 if (table6.length > 0) {
-                    let arrFile = [];
-                    for (let item of table6) {
-                        arrFile.push(getFilePath(item));
-                    }
-                    setAttachmentFile(arrFile);
-                    setTimeout(() => {
-                        console.log("attachmentFile", attachmentFile);
-                    }, 3000);
+                    // let arrFile = [];
+                    // for (let item of table6) {
+                    //     arrFile.push(getFilePath(item));
+                    // }
+                    setAttachmentFile(table6);
+                    // setTimeout(() => {
+                    //     console.log("attachmentFile", attachmentFile);
+                    // }, 3000);
                 }
             }
         });
@@ -333,6 +344,20 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         // return fullDate;
     }
 
+
+    const Json_GetTaskAttachmentList = () => {
+        let o = {
+            TaskId: selectedTask.ID,
+            StageId: 0,
+            SubStageId: 0
+        }
+        Cls.Json_GetTaskAttachmentList(o, function (sts, data) {
+            if (sts && data) {
+               console.log("Json_GetTaskAttachmentList",data)
+            }
+        })
+    }
+
     useEffect(() => {
         Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
         setCurrentDate(dayjs(startFormattingDate(selectedTask.CreationDate)));
@@ -342,7 +367,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         Json_Get_CRM_Task_ActivityByTaskId(selectedTask.ID);
         Json_GetForwardUserList();
         setStatus(selectedTask.Status);
-
+        Json_GetTaskAttachmentList();
         setTSubject(selectedTask.Subject)
         // const Json_CRM_GetOutlookTask=async()=>{
         //     let res = await axios.post(`${baseUrl}Json_CRM_GetOutlookTask`,{
@@ -1057,9 +1082,9 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                         {/*  */}
 
                         <Box className="d-flex flex-wrap justify-content-between">
-                            <Link href="#" className='text-decoration-none d-flex'
+                            <label className='text-decoration-none d-flex'
                                 onClick={handleClickOpen}
-                            ><BallotIcon className='me-1' /> 15 Documents</Link>
+                            ><BallotIcon className='me-1' /> {attachmentFile.length} Documents</label>
                             {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
 
                             <Box className="d-flex">
@@ -1395,7 +1420,27 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                             </Button>
                         </Box>
 
-                        <DocumentDetails></DocumentDetails>
+                        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+     {attachmentFile?attachmentFile.map((item, index)=>{
+       let Typest = item.FileName.lastIndexOf("\\");
+      let  fileName = item.FileName.slice(Typest + 1);
+        return(<>
+        <ListItem key={index}>
+        <ListItemAvatar>
+          <Avatar>
+            <ImageIcon />
+          </Avatar>
+        </ListItemAvatar>
+        <ListItemText primary="Photos" secondary={fileName} />
+      </ListItem>
+        </>)
+     }):""}     
+     
+    </List>
+
+                        {/* <DocumentDetails></DocumentDetails> */}
+
+
 
                     </DialogContentText>
                 </DialogContent>
