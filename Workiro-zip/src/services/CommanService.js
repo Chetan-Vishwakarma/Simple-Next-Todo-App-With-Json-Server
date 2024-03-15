@@ -7,6 +7,55 @@ export default class CommanCLS extends AllService {
     constructor(APIUrl,agrno, Email, password) {
         super(APIUrl,agrno, Email, password);
     }
+    
+    Json_GetTaskAttachmentList(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetTaskAttachmentList",obj,true);
+        super.CallNewService("Json_GetTaskAttachmentList",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+    GetBase64FromFilePath(obj,callBack){   
+        super.CreateNewServiceParamObject("GetBase64FromFilePath",obj,true);
+        super.CallNewService("GetBase64FromFilePath",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+    Json_getAssociatedTaskListByDocumentId(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_getAssociatedTaskListByDocumentId",obj,true);
+        super.CallNewService("Json_getAssociatedTaskListByDocumentId",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+    Json_CRM_TaskDMSAttachmentInsert(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_CRM_TaskDMSAttachmentInsert",obj,true);
+        super.CallNewService("Json_CRM_TaskDMSAttachmentInsert",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
      GetNextDayDate() {
         const currentDate = new Date();
         const nextDate = new Date(currentDate);
