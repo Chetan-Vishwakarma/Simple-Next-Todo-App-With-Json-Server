@@ -34,7 +34,7 @@ function TodoList() {
 
     const [anchorEl, setAnchorEl] = React.useState(null);
 
-    const [loadMore, setLoadMore] = useState(20);
+    const [loadMore, setLoadMore] = useState(40);
 
 
     const open = Boolean(anchorEl);
@@ -55,8 +55,9 @@ function TodoList() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_CRM_GetOutlookTask", json.Table);
-                        const formattedTasks = json.Table.map((task) => {
+                        console.log("Json_CRM_GetOutlookTask", json);
+                        let result = json.Table.filter((el)=>el.Source==="CRM");
+                        const formattedTasks = result.map((task) => {
                             let timestamp;
                             if (task.EndDateTime) {
                                 timestamp = parseInt(task.EndDateTime.slice(6, -2));
@@ -92,6 +93,40 @@ function TodoList() {
     }, [isApi])
 
 
+    function DownLoadAttachment(Path) {
+      let  OBJ = {};
+        OBJ.agrno = agrno;
+        OBJ.Email = Email;
+        OBJ.password = password;
+        OBJ.path = Path;       
+        Cls.CallNewService('GetBase64FromFilePath', function (status, Data) {
+            if (status) {
+                var jsonObj = JSON.parse(Data);
+                if (jsonObj.Status === "Success") {
+                    var dencodedData = window.atob(Path);
+                    var fileName = dencodedData;
+                    var Typest = fileName.lastIndexOf("\\");
+                    fileName = fileName.slice(Typest + 1);
+                    console.log('FileName', fileName);
+                    console.log("jsonObj.Status", jsonObj.Message);
+                    var a = document.createElement("a"); //Create <a>
+                    a.href = "data:" + FileType(fileName) + ";base64," + jsonObj.Message; //Image Base64 Goes here
+                    a.download = fileName; //File name Here
+                    a.click(); //Downloaded file
+
+                }
+
+            }
+        });
+    }
+
+    function FileType(fileName) {
+        // for (var i = 0; i < fileName.length; i++) {
+       let Typest = fileName.lastIndexOf(".");
+        var Type = fileName.slice(Typest + 1);
+        var type = Type.toUpperCase();
+        return type;
+    }
 
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
