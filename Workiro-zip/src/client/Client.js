@@ -436,8 +436,16 @@ function Client() {
 
     function handleSuggestionList(value){
         if(!onlyClients){
-            let fltData = contacts.map((itm)=>itm[value]);
-            console.log(fltData);
+            let fltRepeatData = [];
+            let fltData = contacts.map((itm)=>itm[value]).filter((flt)=>{
+                if (!fltRepeatData.includes(flt)) {
+                    fltRepeatData.push(flt)
+                }
+            });
+            
+            // console.log(fltData);
+            // console.log(fltRepeatData);
+
         }else if(!onlyContacts){
 
         }else{
