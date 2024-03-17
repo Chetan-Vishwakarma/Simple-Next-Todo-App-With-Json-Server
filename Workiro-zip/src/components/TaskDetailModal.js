@@ -23,7 +23,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import DocumentDetails from "./DocumentDetails";
-
+import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -33,7 +33,19 @@ import Avatar from '@mui/material/Avatar';
 import ImageIcon from '@mui/icons-material/Image';
 import WorkIcon from '@mui/icons-material/Work';
 import BeachAccessIcon from '@mui/icons-material/BeachAccess';
+import { styled } from '@mui/material/styles';
+import Grid from '@mui/material/Grid';
+import FolderIcon from '@mui/icons-material/Folder';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
 
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const Demo = styled('div')(({ theme }) => ({
+    backgroundColor: theme.palette.background.paper,
+}));
 
 
 function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) {
@@ -47,6 +59,9 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
     /////////////////////////////////////////Task Activity
+
+    const [dense, setDense] = React.useState(false);
+    const [secondary, setSecondary] = React.useState(false);
 
     const [crmTaskAcivity, setCRMTaskAcivity] = React.useState(null);
     //const [selectedTaskp, setselectedTask] = React.useState(selectedTask);
@@ -353,7 +368,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         }
         Cls.Json_GetTaskAttachmentList(o, function (sts, data) {
             if (sts && data) {
-               console.log("Json_GetTaskAttachmentList",data)
+                console.log("Json_GetTaskAttachmentList", data)
             }
         })
     }
@@ -664,6 +679,74 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
     // important sadik
 
+    const handleDownloadDoc = (objdata) => {
+        console.log(objdata)
+        let o = {
+            path: window.btoa(objdata.DestinationPath),
+        }
+        Cls.GetBase64FromFilePath(o, function (sts, data) {
+            if (sts && data) {
+                let js = JSON.parse(data);
+                if (js.Status === "Success") {
+                    // var dencodedData = window.atob(Path);
+                    // var fileName = dencodedData;
+                    var Typest = objdata.FileName.lastIndexOf("\\");
+                    let fileName = objdata.FileName.slice(Typest + 1);
+                    // console.log('FileName', fileName);
+                    // console.log("jsonObj.Status", js.Message);
+                    var a = document.createElement("a"); //Create <a>
+                    a.href = "data:" + Cls.FileType(fileName) + ";base64," + js.Message; //Image Base64 Goes here
+                    a.download = fileName; //File name Here
+                    a.click(); //Downloaded file
+
+                }
+
+            }
+        })
+    }
+
+    const DeleteTasksAttachment = (objdata) => {
+
+        try {
+            Swal.fire({
+                // title: "Are you sure you want to delete this item?",
+                text: "Are you sure you want to delete this item?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var Typest = objdata.FileName.lastIndexOf("\\");
+                    let fileName = objdata.FileName.slice(Typest + 1);
+                    let fname =fileName;
+                    let o = {
+                        agrno:agrno,
+                        EmailId:Email,
+                        password:password,
+                        fileName: fname,
+                        TaskId: selectedTask.ID,
+                    }
+                    Cls.DeleteTasksAttachment(o, function (sts, data) {
+                        if (sts && data) {
+                            let js = JSON.parse(data);
+                            console.log("DeleteTasksAttachment", data)
+                            if (js.Status === "Success") {
+                                toast.success("Deleted Attachment");
+                                Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
+                            }
+
+                        }
+                    })
+
+                }
+            });
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
+        }
+
+    }
 
 
 
@@ -1419,24 +1502,43 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 </span>
                             </Button>
                         </Box>
+                        <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
+                            <Grid item xs={12} md={6}>
 
-                        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-     {attachmentFile?attachmentFile.map((item, index)=>{
-       let Typest = item.FileName.lastIndexOf("\\");
-      let  fileName = item.FileName.slice(Typest + 1);
-        return(<>
-        <ListItem key={index}>
-        <ListItemAvatar>
-          <Avatar>
-            <ImageIcon />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary="Photos" secondary={fileName} />
-      </ListItem>
-        </>)
-     }):""}     
-     
-    </List>
+                                <Demo>
+                                    <List>
+
+                                        {attachmentFile ? attachmentFile.map((item, index) => {
+                                            let Typest = item.FileName.lastIndexOf("\\");
+                                            let fileName = item.FileName.slice(Typest + 1);
+                                            return (<>
+                                                <ListItem key={index}
+                                                    secondaryAction={
+                                                        <IconButton edge="end" aria-label="delete">
+                                                            <DeleteIcon onClick={()=>DeleteTasksAttachment(item)} />
+                                                            <DownloadForOfflineIcon onClick={() => handleDownloadDoc(item)} />
+                                                        </IconButton>
+                                                    }
+                                                >
+                                                    <ListItemAvatar>
+                                                        <Avatar>
+                                                            <FolderIcon />
+                                                        </Avatar>
+                                                    </ListItemAvatar>
+                                                    <ListItemText
+                                                        primary={fileName}
+                                                        secondary={secondary ? 'Secondary text' : null}
+                                                    />
+                                                </ListItem>
+                                            </>)
+                                        }) : ""}
+
+
+                                    </List>
+                                </Demo>
+                            </Grid>
+                        </Box>
+
 
                         {/* <DocumentDetails></DocumentDetails> */}
 

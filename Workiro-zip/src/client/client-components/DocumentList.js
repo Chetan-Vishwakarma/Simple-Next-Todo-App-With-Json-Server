@@ -1727,8 +1727,7 @@ export default function DocumentList({ clientId }) {
                                     {advFilteredResult.length > 0 ? (
                                         advFilteredResult.map((itm) => {
                                             return <>
-                                                <Box className='col-xxl-3 col-xl-4 col-md-6'>
-                                                    
+                                                <Box className='col-xxl-3 col-xl-4 col-md-6'>                                                    
                                                     <Box className="file-uploads">
                                                         <label className="file-uploads-label file-uploads-document">
                                                             <Box className="d-flex align-items-center">
