@@ -288,6 +288,70 @@ function Client() {
     }
     let handleAdvanceFilterAgain = () => {
         if (selectedProperty !== "" && selectedPropertyValue !== "") {
+            if(selectedChoice==="Clients"){
+                let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
+                setObjFilter(obj);
+                let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
+                let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
+                setObjFilterColor(obj2);
+                let fltData = handleSearchBy(clients, obj);
+                setFilteredClients(fltData);
+                // console.log("Filtered Clients: ",fltData.length);
+                if (fltData.length === 0) {
+                    setIsDataNotFoundInClient(true);
+                }
+                setSelectedProperty("");
+                setSelectedPropertyValue("");
+                return;
+            }else if(selectedChoice==="Contacts"){
+                let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
+                setObjFilter(obj);
+                let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
+                let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
+                setObjFilterColor(obj2);
+                let fltData = handleSearchBy(contacts, obj);
+                setFilteredContacts(fltData);
+                // console.log("Filtered Clients: ",fltData.length);
+                if (fltData.length === 0) {
+                    setIsDataNotFoundInContact(true);
+                }
+                setSelectedProperty("");
+                setSelectedPropertyValue("");
+                return;
+            }else if(selectedChoice==="All"){
+                let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
+                setObjFilter(obj);
+                let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
+                let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
+                setObjFilterColor(obj2);
+
+                // if (onlyClients) {
+                let obj4 = { ...objFilterClient, [selectedPropertyForClient]: [selectedPropertyValue] };
+                setObjFilterClient(obj4);
+                console.log("object for client: ",obj4);
+                let fltClients = handleSearchBy(clients, obj4);
+                let fltContacts = handleSearchBy(contacts, obj);
+                setFilteredClients(fltClients);
+                setFilteredContacts(fltContacts);
+                console.log("Filtered Clients: ",fltClients);
+                console.log("Filtered Contacts: ",fltContacts);
+                if(fltClients.length===0 && fltContacts.length===0){
+                    setIsDataNotFoundInBoth(true);
+                }else if(fltClients.length>0 && fltContacts.length===0){
+                    setOnlyClients(true);
+                    setOnlyContacts(false);
+                }else if(fltClients.length===0 && fltContacts.length>0){
+                    setOnlyClients(false);
+                    setOnlyContacts(true);
+                }
+                setSelectedProperty("");
+                setSelectedPropertyValue("");
+                return;
+            }
+
+
+
+
             if (onlyClients && !onlyContacts) {
                 let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
                 setObjFilter(obj);
@@ -338,8 +402,6 @@ function Client() {
                     setOnlyClients(false);
                 }
                 console.log("filtered Clients: ", fltClients);
-                // } else if (onlyContacts) {
-                // let obj5 = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
                 
                 if (fltContacts.length > 0) {
                     setFilteredContacts(fltContacts);
@@ -347,19 +409,6 @@ function Client() {
                     setOnlyContacts(false);
                 }
                 console.log("filtered Contacts: ", fltContacts);
-                // }
-
-                // let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
-                // setObjFilter(obj);
-                // let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
-                // let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
-                // setObjFilterColor(obj2);
-                // let fltClients = handleSearchBy(clients, obj);
-                // console.log("filtered Clients: ", fltClients);
-                // setFilteredClients(fltClients);
-                // let fltContacts = handleSearchBy(contacts, obj);
-                // console.log("filtered Contacts: ", fltContacts);
-                // setFilteredContacts(fltContacts);
             }
             setSelectedProperty("");
             setSelectedPropertyValue("");
@@ -374,22 +423,95 @@ function Client() {
             }, {}
             );
         // console.log("obj",obj);
+
+        if(selectedChoice==="Clients"){
+            let fltData = handleSearchBy(clients, obj);
+            // setFilteredClients(fltData);
+            if(Object.keys(obj).length===0){
+                setIsDataNotFoundInClient(false);
+            }else{
+                if(fltData.length===0){
+                    setIsDataNotFoundInClient(true);
+                }else{
+                    setIsDataNotFoundInClient(false);
+                }
+            }
+            setFilteredClients(fltData);
+            setObjFilter(obj);
+            return;
+        }else if(selectedChoice==="Contacts"){
+            let fltData = handleSearchBy(contacts, obj);
+            // setFilteredClients(fltData);
+            if(Object.keys(obj).length===0){
+                setIsDataNotFoundInContact(false);
+            }else{
+                if(fltData.length===0){
+                    setIsDataNotFoundInContact(true);
+                }else{
+                    setIsDataNotFoundInContact(false);
+                }
+            }
+            setFilteredContacts(fltData);
+            setObjFilter(obj);
+            return;
+        }else if(selectedChoice==="All"){
+            console.log("Obj for Contact: ",obj);
+            console.log("Obj for Client: ",objFilterClient);
+            let fltClients = handleSearchBy(clients, obj);
+            let fltContacts = handleSearchBy(contacts, obj);
+            console.log("FilteredClient: ",fltClients);
+            console.log("FilteredContact: ",fltContacts);
+            setFilteredClients(fltClients);
+            setFilteredContacts(fltContacts);
+            if(Object.keys(obj).length===0){
+                setIsDataNotFoundInBoth(false);
+            }else if(fltClients.length===0 && fltContacts.length===0){
+                setIsDataNotFoundInBoth(true);
+            }else if(fltClients.length>0 && fltContacts.length===0){
+                setOnlyClients(true);
+                setOnlyContacts(false);
+            }else if(fltClients.length===0 && fltContacts.length>0){
+                setOnlyClients(false);
+                setOnlyContacts(true);
+            }else if(fltClients.length>0 && fltContacts.length>0){
+                setOnlyClients(true);
+                setOnlyContacts(true);
+            }
+            setObjFilter(obj);
+            return;
+        } 
+
+
+
+
         if (onlyClients && !onlyContacts) {
             let fltData = handleSearchBy(clients, obj);
             setFilteredClients(fltData);
             if (Object.keys(obj).length === 0) {
-                // setOnlyContacts(true);
-                setOnlyClients(true);
+                if (selectedChoice === "Contacts") {
+                    setOnlyContacts(true);
+                    setOnlyClients(false);
+                }else if(selectedChoice==="All"){
+                    setOnlyContacts(true);
+                    setOnlyClients(true);
+                }else if(selectedChoice==="Clients"){
+                    setOnlyContacts(false);
+                    setOnlyClients(true);
+                }
             }
         } else if (!onlyClients && onlyContacts) {
             let fltData = handleSearchBy(contacts, obj);
             setFilteredContacts(fltData);
             if (Object.keys(obj).length === 0) {
-                // setOnlyContacts(true);
-                // setOnlyClients(true);
                 if (selectedChoice === "Contacts") {
                     setOnlyContacts(true);
-                    // setOnlyClients(true);
+                    setOnlyClients(false);
+                }else if(selectedChoice==="All"){
+                    setOnlyContacts(true);
+                    setOnlyClients(true);
+                }else if(selectedChoice==="Clients"){
+                    setOnlyContacts(false);
+                    setOnlyClients(true);
                 }
             }
         } else if (onlyClients && onlyContacts) {
@@ -780,7 +902,7 @@ function Client() {
                                                 <Box className='col-md-4'>
                                                     <Box className='mb-2'>
 
-                                                        {(onlyClients && onlyContacts) && <Autocomplete
+                                                        {selectedChoice==="All" && <Autocomplete
                                                             disablePortal
                                                             id="combo-box-demo"
                                                             value={selectedProperty}
@@ -793,12 +915,14 @@ function Client() {
                                                                     handleSuggestionList(newValue.value, newValue.label);
                                                                 }
                                                             }}
-                                                            options={CommonFilters.map(option => ({ value: option.key, label: option.val }))}
+                                                            options={CommonFilters.filter((itm)=>{
+                                                                return !Object.keys(objFilter).includes(itm.key)
+                                                            }).map(option => ({ value: option.key, label: option.val }))}
                                                             sx={{ width: 300 }}
                                                             renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
                                                         />}
 
-                                                        {!onlyClients && <Autocomplete
+                                                        {selectedChoice==="Contacts" && <Autocomplete
                                                             disablePortal
                                                             id="combo-box-demo"
                                                             value={selectedProperty}
@@ -811,13 +935,15 @@ function Client() {
                                                                     handleSuggestionList(newValue.value);
                                                                 }
                                                             }}
-                                                            options={ContactFilters.map(option => ({ value: option.key, label: option.val }))}
+                                                            options={ContactFilters.filter((itm)=>{
+                                                                return !Object.keys(objFilter).includes(itm.key)
+                                                            }).map(option => ({ value: option.key, label: option.val }))}
                                                             sx={{ width: 300 }}
                                                             renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
                                                         />}
 
                                                         {/* Only For Clients */}
-                                                        {!onlyContacts && <Autocomplete
+                                                        {selectedChoice==="Clients" && <Autocomplete
                                                             disablePortal
                                                             id="combo-box-demo"
                                                             value={selectedProperty}
@@ -829,7 +955,10 @@ function Client() {
                                                                     handleSuggestionList(newValue.value);
                                                                 }
                                                             }}
-                                                            options={ClientFilters.map(option => ({ value: option.key, label: option.val }))}
+                                                            // options={ClientFilters.map(option => ({ value: option.key, label: option.val }))}
+                                                            options={ClientFilters.filter((itm)=>{
+                                                                return !Object.keys(objFilter).includes(itm.key)
+                                                            }).map(option => ({ value: option.key, label: option.val }))}
                                                             sx={{ width: 300 }}
                                                             renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
                                                         />}
@@ -979,17 +1108,11 @@ function Client() {
                             isDataNotFoundInClient={isDataNotFoundInClient}
                             isDataNotFoundInContact={isDataNotFoundInContact}
                             isDataNotFoundInBoth={isDataNotFoundInBoth}
+                            objFilterColor={objFilterColor}
                         />}
                     </Box>
                 </Box>
             </Box>
-
-
-
-
-
-
-
         </Box>
     )
 }
