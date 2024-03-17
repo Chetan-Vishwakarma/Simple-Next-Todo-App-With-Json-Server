@@ -348,72 +348,11 @@ function Client() {
                 setSelectedPropertyValue("");
                 return;
             }
-
-
-
-
-            if (onlyClients && !onlyContacts) {
-                let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
-                setObjFilter(obj);
-                let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
-                let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
-                setObjFilterColor(obj2);
-                let fltData = handleSearchBy(clients, obj);
-                if (fltData.length > 0) {
-                    setFilteredClients(fltData);
-                } else {
-                    setIsDataNotFoundInClient(true);
-                }
-            } else if (!onlyClients && onlyContacts) {
-                let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
-                setObjFilter(obj);
-                let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
-                let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
-                setObjFilterColor(obj2);
-                let fltData = handleSearchBy(contacts, obj);
-                if (fltData.length > 0) {
-                    setFilteredContacts(fltData);
-                }else{
-                    setIsDataNotFoundInContact(true);
-                }
-            } else if (onlyClients && onlyClients) {
-                let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
-                setObjFilter(obj);
-                let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
-                let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
-                setObjFilterColor(obj2);
-
-                // if (onlyClients) {
-                let obj4 = { ...objFilterClient, [selectedPropertyForClient]: [selectedPropertyValue] };
-                setObjFilterClient(obj4);
-                let fltClients = handleSearchBy(clients, obj4);
-                let fltContacts = handleSearchBy(contacts, obj);
-                
-                if(fltClients.length===0 && fltContacts.length===0){
-                    setIsDataNotFoundInBoth(true);
-                    setSelectedProperty("");
-                    setSelectedPropertyValue("");
-                    return;
-                }
-
-                if (fltClients.length > 0) {
-                    setFilteredClients(fltClients);
-                } else {
-                    setOnlyClients(false);
-                }
-                console.log("filtered Clients: ", fltClients);
-                
-                if (fltContacts.length > 0) {
-                    setFilteredContacts(fltContacts);
-                } else {
-                    setOnlyContacts(false);
-                }
-                console.log("filtered Contacts: ", fltContacts);
-            }
             setSelectedProperty("");
             setSelectedPropertyValue("");
         }
     }
+
     let handleFilterDeletion = (target) => {
         // console.log("target", target);
         let obj = Object.keys(objFilter).filter(objKey =>
@@ -455,177 +394,40 @@ function Client() {
             setObjFilter(obj);
             return;
         }else if(selectedChoice==="All"){
-            console.log("Obj for Contact: ",obj);
-            console.log("Obj for Client: ",objFilterClient);
+            // console.log("Obj for Contact: ",obj);
+            // console.log("Obj for Client: ",objFilterClient);
+
             let fltClients = handleSearchBy(clients, obj);
             let fltContacts = handleSearchBy(contacts, obj);
-            console.log("FilteredClient: ",fltClients);
-            console.log("FilteredContact: ",fltContacts);
+            // console.log("FilteredClient: ",fltClients);
+            // console.log("FilteredContact: ",fltContacts);
             setFilteredClients(fltClients);
             setFilteredContacts(fltContacts);
             if(Object.keys(obj).length===0){
                 setIsDataNotFoundInBoth(false);
+                // setOnlyClients(true);
+                // setOnlyContacts(true);
             }else if(fltClients.length===0 && fltContacts.length===0){
                 setIsDataNotFoundInBoth(true);
             }else if(fltClients.length>0 && fltContacts.length===0){
                 setOnlyClients(true);
                 setOnlyContacts(false);
+                setIsDataNotFoundInBoth(false);
             }else if(fltClients.length===0 && fltContacts.length>0){
                 setOnlyClients(false);
                 setOnlyContacts(true);
+                setIsDataNotFoundInBoth(false);
             }else if(fltClients.length>0 && fltContacts.length>0){
                 setOnlyClients(true);
                 setOnlyContacts(true);
+                setIsDataNotFoundInBoth(false);
             }
             setObjFilter(obj);
             return;
-        } 
-
-
-
-
-        if (onlyClients && !onlyContacts) {
-            let fltData = handleSearchBy(clients, obj);
-            setFilteredClients(fltData);
-            if (Object.keys(obj).length === 0) {
-                if (selectedChoice === "Contacts") {
-                    setOnlyContacts(true);
-                    setOnlyClients(false);
-                }else if(selectedChoice==="All"){
-                    setOnlyContacts(true);
-                    setOnlyClients(true);
-                }else if(selectedChoice==="Clients"){
-                    setOnlyContacts(false);
-                    setOnlyClients(true);
-                }
-            }
-        } else if (!onlyClients && onlyContacts) {
-            let fltData = handleSearchBy(contacts, obj);
-            setFilteredContacts(fltData);
-            if (Object.keys(obj).length === 0) {
-                if (selectedChoice === "Contacts") {
-                    setOnlyContacts(true);
-                    setOnlyClients(false);
-                }else if(selectedChoice==="All"){
-                    setOnlyContacts(true);
-                    setOnlyClients(true);
-                }else if(selectedChoice==="Clients"){
-                    setOnlyContacts(false);
-                    setOnlyClients(true);
-                }
-            }
-        } else if (onlyClients && onlyContacts) {
-            let fltClients = handleSearchBy(clients, obj);
-            let fltContacts = handleSearchBy(contacts, obj);
-
-            if(Object.keys(obj).length===0){
-                setIsDataNotFoundInBoth(false);
-            }else if(Object.keys(obj).length>0){
-                if(fltClients.length===0 && fltContacts.length===0){
-                    setIsDataNotFoundInBoth(true);
-                    setObjFilter(obj);
-                    return;
-                }
-            }
-            
-
-            if (fltClients.length > 0) {
-                setFilteredClients(fltClients);
-                setOnlyClients(true);
-            } else {
-                setOnlyClients(false);
-            }
-
-            
-            if (fltContacts.length > 0) {
-                setFilteredContacts(fltContacts);
-                setOnlyContacts(true);
-            } else {
-                setOnlyContacts(false);
-            }
-
         }
 
         setObjFilter(obj);
     }
-
-    // useEffect(() => {
-    //     //console.log("advSearchKeyValue",advSearchKeyValue);
-    //     if (advSearchKeyValue.length === 1) {
-    //         let key = advSearchKeyValue[0].key;
-    //         let value = advSearchKeyValue[0].value;
-    //         if (clientKeys.includes(key)) {
-    //             let filteredClient = clients.filter((item) => {
-    //                 return Object.values(item).join('').toLowerCase().includes(value.toLowerCase());
-    //             });
-    //             //console.log("filteredCient", filteredClient);
-    //             if (filteredClient.length !== 0) {
-    //                 setFilteredClients(filteredClient);
-    //                 setOnlyClients(true);
-    //                 setOnlyContacts(false);
-    //             }
-    //         } else if (contactKeys.includes(key)) {
-    //             let filteredContact = contacts.filter((item) => {
-    //                 console.log(item[key]);
-    //                 return Object.values(item).join('').toLowerCase().includes(value.toLowerCase());
-    //             });
-    //             //console.log("filteredContact", filteredContact);
-    //             if (filteredContact.length !== 0) {
-    //                 setFilteredContacts(filteredContact);
-    //                 setOnlyClients(false);
-    //                 setOnlyContacts(true);
-    //             }
-    //         }
-    //     } else if (advSearchKeyValue.length > 1) {
-    //         let isCLientKey = advSearchKeyValue.map((item) => {
-    //             return clientKeys.includes(item.key);
-    //         }).every((item) => item === true);
-
-    //         let isContactKey = advSearchKeyValue.map((item) => {
-    //             return contactKeys.includes(item.key);
-    //         }).every((item) => item === true);
-
-    //         // console.log("isClientKey", isCLientKey);
-    //         // console.log("isContactKey", isContactKey);
-
-    //         if (isCLientKey) {
-    //             // console.log("isClientKey");
-    //             let advResult = advSearchKeyValue.map((item) => {
-    //                 return clients.filter((data) => {
-    //                     return data[item.key].toLowerCase().includes(item.value.toLowerCase());
-    //                 });
-    //             });
-    //             //console.log("advResult",advResult);
-    //             let isEmpty = advResult.slice(0, advResult.length - 1).some((item) => item.length === 0);
-    //             // console.log("isEmpty", isEmpty);
-    //             if (!isEmpty) {
-    //                 setFilteredClients(advResult[1]);
-    //                 setOnlyContacts(false);
-    //                 setOnlyClients(true);
-    //             }
-    //             //setFilteredClients(advResult[1]);
-    //         } else if (isContactKey) {
-    //             // console.log("isContactKey");
-    //             let advContactResult = advSearchKeyValue.map((item) => {
-    //                 return contacts.filter((data) => {
-    //                     return data[item.key].toLowerCase().includes(item.value.toLowerCase());
-    //                 });
-    //             });
-    //             // console.log("advContactResult",advContactResult[1]);
-    //             let isEmpty = advContactResult.slice(0, advContactResult.length - 1).some((item) => item.length === 0);
-    //             if (!isEmpty) {
-    //                 setFilteredContacts(advContactResult[1]);
-    //                 setOnlyContacts(true);
-    //                 setOnlyClients(false);
-    //             }
-    //         }
-    //     } else {
-    //         setFilteredClients([]);
-    //         setFilteredContacts([]);
-    //     }
-    // }, [advSearchKeyValue]);
-
-
 
 
     function filterData(data, filters) {
