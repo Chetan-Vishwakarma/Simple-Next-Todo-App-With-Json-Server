@@ -429,6 +429,22 @@ function Client() {
         setObjFilter(obj);
     }
 
+    const handleClearAll=()=>{
+        if(selectedChoice==="All"){
+            setIsDataNotFoundInBoth(false);
+            setOnlyClients(true);
+            setOnlyContacts(true);
+        }else if(selectedChoice==="Contacts"){
+            setIsDataNotFoundInContact(false);
+            setOnlyContacts(true);
+        }else if(selectedChoice==="Clients"){
+            setIsDataNotFoundInClient(false);
+            setOnlyClients(true);
+        }
+        setObjFilter({});
+        setObjFilterClient({}); 
+    }
+
 
     function filterData(data, filters) {
         return data.filter(item => {
@@ -855,12 +871,8 @@ function Client() {
                                             close
                                         </span></Button>
                                 })}
-                                {advSearchKeyValue.map((item) => {
-                                    return <Button sx={{ backgroundColor: item.color }} className='btn-white text-white'><span className='text-white'>{item.key}: {item.value}</span>
-                                        <span onClick={() => handleFilterRemove(item)} className="material-symbols-outlined font-16 text-white">
-                                            close
-                                        </span></Button>
-                                })}
+
+                                {Object.keys(objFilter).length>0 && <span onClick={handleClearAll}>Clear all</span>}
 
                                 {/* <Fab size="small" className='btn-plus  ms-2' aria-label="add">
                                 <AddIcon />
