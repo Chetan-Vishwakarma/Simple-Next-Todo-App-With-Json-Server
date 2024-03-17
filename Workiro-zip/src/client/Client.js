@@ -114,6 +114,7 @@ function Client() {
     const [selectedColor, setSelectedColor] = useState(Object.keys(objFilter).length === 1 ? colorArr[2] : Object.keys(objFilter).length === 2 ? colorArr[4] : colorArr[0]);
 
     const [selectedPropertyForClient, setSelectedPropertyForClient] = useState("");
+    const [isDataNotFoundInClient,setIsDataNotFoundInClient] = useState(false);
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -291,7 +292,11 @@ function Client() {
                 let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
                 setObjFilterColor(obj2);
                 let fltData = handleSearchBy(clients, obj);
-                setFilteredClients(fltData);
+                if(fltData.length>0){
+                    setFilteredClients(fltData);
+                }else{
+                    setIsDataNotFoundInClient(true);
+                }
             } else if (!onlyClients && onlyContacts) {
                 let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
                 setObjFilter(obj);
@@ -311,12 +316,20 @@ function Client() {
                     let obj4 = { ...objFilterClient, [selectedPropertyForClient]: [selectedPropertyValue] };
                     let fltClients = handleSearchBy(clients, obj4);
                     setObjFilterClient(obj4);
-                    setFilteredClients(fltClients);
+                    if(fltClients.length>0){
+                        setFilteredClients(fltClients);
+                    }else{
+                        setOnlyClients(false);
+                    }
                     console.log("filtered Clients: ", fltClients);
                 // } else if (onlyContacts) {
                     // let obj5 = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
                     let fltContacts = handleSearchBy(contacts, obj);
-                    setFilteredClients(fltContacts);
+                    if(fltContacts.length>0){
+                        setFilteredContacts(fltContacts);
+                    }else{
+                        setOnlyContacts(false);
+                    }
                     console.log("filtered Contacts: ", fltContacts);
                 // }
 
@@ -348,14 +361,37 @@ function Client() {
         if (onlyClients && !onlyContacts) {
             let fltData = handleSearchBy(clients, obj);
             setFilteredClients(fltData);
+            if(Object.keys(obj).length===0){
+                setOnlyContacts(true);
+                setOnlyClients(true);
+            }
         } else if (!onlyClients && onlyContacts) {
             let fltData = handleSearchBy(contacts, obj);
             setFilteredContacts(fltData);
+            if(Object.keys(obj).length===0){
+                setOnlyContacts(true);
+                setOnlyClients(true);
+                if(selectedChoice==="Clients"){
+                    
+                }
+            }
         } else if (onlyClients && onlyContacts) {
             let fltClients = handleSearchBy(clients, obj);
-            setFilteredClients(fltClients);
+            if(fltClients.length>0){
+                setFilteredClients(fltClients);
+                setOnlyClients(true);
+            }else{
+                setOnlyClients(false);
+            }
+            
             let fltContacts = handleSearchBy(contacts, obj);
-            setFilteredContacts(fltContacts);
+            if(fltContacts.length>0){
+                setFilteredContacts(fltContacts);
+                setOnlyContacts(true);
+            }else{
+                setOnlyContacts(false);
+            }
+            
         }
 
         setObjFilter(obj);
@@ -658,7 +694,7 @@ function Client() {
                         </Box>
 
                         <Box className="dropdown-box ms-4 d-flex align-items-center">
-                            <Button className='btn-select' onClick={(e) => handleDialogsOpen(e, "Folder")}>{selectedFolder}</Button>
+                            <Button disabled={Object.keys(objFilter).length>0? true:false} className='btn-select' onClick={(e) => handleDialogsOpen(e, "Folder")}>{selectedFolder}</Button>
                             {isFolder && <Box className="btn-Select">
                                 <TextField placeholder='Search...' size='small' sx={{ display: "block" }} onChange={(e) => {
                                     e.stopPropagation();
@@ -686,7 +722,7 @@ function Client() {
                         </Box>}
 
                         {isCardView && <><Box className="dropdown-box ms-4 d-flex align-items-center">
-                            <Button className='btn-select' onClick={(e) => handleDialogsOpen(e, "Choice")}>{selectedChoice}</Button>
+                            <Button disabled={Object.keys(objFilter).length>0? true:false} className='btn-select' onClick={(e) => handleDialogsOpen(e, "Choice")}>{selectedChoice}</Button>
                             {isChoice && <Box className="btn-list-box btn-Select">
                                 {["All", "Clients", "Contacts"].map((item) => {
                                     return <Button className='btn-list' onClick={() => basedOnClientContactAndAll(item)}>{item}</Button>
@@ -721,10 +757,11 @@ function Client() {
                                                             onChange={(event, newValue) => {
                                                                 event.preventDefault();
                                                                 event.stopPropagation();
-                                                                // console.log(event.target, newValue);
-                                                                setSelectedProperty(newValue.value);
-                                                                setSelectedPropertyForClient(newValue.label);
-                                                                handleSuggestionList(newValue.value, newValue.label);
+                                                                if(newValue!==null){
+                                                                    setSelectedProperty(newValue.value);
+                                                                    setSelectedPropertyForClient(newValue.label);
+                                                                    handleSuggestionList(newValue.value, newValue.label);
+                                                                }
                                                             }}
                                                             options={CommonFilters.map(option => ({ value: option.key, label: option.val }))}
                                                             sx={{ width: 300 }}
@@ -739,8 +776,10 @@ function Client() {
                                                                 event.preventDefault();
                                                                 event.stopPropagation();
                                                                 // console.log(event.target, newValue);
-                                                                setSelectedProperty(newValue.value);
-                                                                handleSuggestionList(newValue.value);
+                                                                if(newValue!==null){
+                                                                    setSelectedProperty(newValue.value);
+                                                                    handleSuggestionList(newValue.value);
+                                                                }
                                                             }}
                                                             options={ContactFilters.map(option => ({ value: option.key, label: option.val }))}
                                                             sx={{ width: 300 }}
@@ -755,8 +794,10 @@ function Client() {
                                                             onChange={(event, newValue) => {
                                                                 event.preventDefault();
                                                                 event.stopPropagation();
-                                                                setSelectedProperty(newValue.value);
-                                                                handleSuggestionList(newValue.value);
+                                                                if(newValue!==null){
+                                                                    setSelectedProperty(newValue.value);
+                                                                    handleSuggestionList(newValue.value);
+                                                                }
                                                             }}
                                                             options={ClientFilters.map(option => ({ value: option.key, label: option.val }))}
                                                             sx={{ width: 300 }}
@@ -905,6 +946,7 @@ function Client() {
                             selectedChoice={selectedChoice}
                             basedOnClientContactAndAll={basedOnClientContactAndAll}
                             objFilter={objFilter}
+                            isDataNotFoundInClient={isDataNotFoundInClient}
                         />}
                     </Box>
                 </Box>
