@@ -181,7 +181,7 @@ export default function CreateNewModalTask({ ...props }) {
     const [nextDate, setNextDate] = useState("");
     const [remiderDate, setRemiderDate] = useState("");
     const [expireDate, setExpireDate] = useState("");
-
+    const [startDate, setStartDate] = useState(new Date());
 
 
     ///////////////////////////////////////end date set
@@ -325,7 +325,7 @@ export default function CreateNewModalTask({ ...props }) {
     const userAdd = Boolean(anchorel);
 
     function Json_GetForwardUserList() {
-
+        setAddUser([])
         try {
             let o = {};
             o.ProjectId = txtFolderId;
@@ -344,7 +344,7 @@ export default function CreateNewModalTask({ ...props }) {
                                     console.log("Json_GetForwardUserList11", addUser);
                                     setOwnerID(el.ID);
                                     setOwnerRighClick(el);
-                                    setAddUser((pre)=>[...pre,el])
+                                    setAddUser((pre) => [...pre, el])
 
                                 }
                             })
@@ -422,10 +422,32 @@ export default function CreateNewModalTask({ ...props }) {
                     if (clientList.length > 0) {
                         setClientList(clientList);
                     }
+                    // let sectionList = js.Table;
+                    // if (sectionList.length > 0) {
+                    //     setSectionList(sectionList);
+                    // }
+                }
+            });
+        } catch (error) {
+            console.log("error", error);
+        }
+    }
+
+
+    function Json_GetSections(fid) {
+        try {
+            let o = {};
+            o.ProjectId = fid;
+            cls.Json_GetSections(o, function (sts, data) {
+                if (sts) {
+                    let js = JSON.parse(data);
+
                     let sectionList = js.Table;
                     if (sectionList.length > 0) {
                         setSectionList(sectionList);
                     }
+
+                    console.log("Json_GetSections", js);
                 }
             });
         } catch (error) {
@@ -647,10 +669,10 @@ export default function CreateNewModalTask({ ...props }) {
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
 
-        //setCurrentDate(dayjs(getCurrentDate()));
+        // setCurrentDate(dayjs(getCurrentDate()));
 
         setNextDate(dayjs(getNextDate()));
-        setRemiderDate(dayjs(getCurrentDate()));
+        //setRemiderDate(dayjs(getCurrentDate()));
         setExpireDate(dayjs(getCurrentDate()));
 
         Json_GetFolders();
@@ -743,6 +765,8 @@ export default function CreateNewModalTask({ ...props }) {
                     DocId: ""
                 };
                 filesData.push(fileData);
+                UploadAttachment(fileData)
+
 
                 // Check if this is the last file
                 if (index === selectedFilesArray.length - 1) {
@@ -794,121 +818,154 @@ export default function CreateNewModalTask({ ...props }) {
     };
 
 
-    async function UploadAttachment() {
+    async function UploadAttachment(filedata) {
 
         setLoading(true);
         // Your form submission logic, for example, making an API call
         try {
-            if (selectedFilesFromBrower.length > 0) {
-                let promises = selectedFilesFromBrower.map((item) => {
-                    return new Promise((resolve, reject) => {
-                        let o = {};
-                        o.base64File = item.Base64;
-                        o.FileName = item.FileName;
+            let o = {};
+                        o.base64File = filedata.Base64;
+                        o.FileName = filedata.FileName;
                         cls.SaveTaskAttachments(o, function (sts, data) {
                             if (sts && data) {
                                 let res = JSON.parse(data);
                                 if (res.Status === "Success") {
                                     let path = window.atob(res.Message);
-                                    let index = path.lastIndexOf("\\");
-                                    let fileName = path.slice(index + 1);
-                                    resolve({ Path: path, FileName: fileName });
-                                } else {
-                                    reject("Failed to save attachment.");
-                                }
-                            } else {
-                                reject("Failed to save attachment.");
+                                   let index = path.lastIndexOf("\\");
+                                     let fileName = path.slice(index + 1);
+                                     let o={ Path: path, FileName: fileName }
+                                     
+                                    setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+                                   
+                                } 
                             }
                         });
-                    });
-                });
-
-                Promise.all(promises)
-                    .then((attachments) => {
-                        setAttachmentPath((prevAttachments) => [...prevAttachments, ...attachments]);
-                        console.log('Attachments uploaded successfully:', attachments);
-                        setTimeout(() => {
-                            Json_CRM_Task_Save();
-                        }, 2500);
-
-                    })
-                    .catch((error) => {
-                        console.error("Error while saving attachments:", error);
-                    });
-            }
-            else {
-                Json_CRM_Task_Save();
-            }
-
-            console.log('Form submitted successfully');
-        } catch (error) {
+        } 
+        catch (error) {
             console.log({
                 status: false,
                 message: "Attachment is Not Uploaded Try again",
                 error: error,
             });
-        } finally {
-            // Reset loading state after submission is complete
-
-        }
+        } 
 
     }
+
+    // async function UploadAttachment(filedata) {
+
+    //     setLoading(true);
+    //     // Your form submission logic, for example, making an API call
+    //     try {
+    //         if (filedata) {
+    //             let promises = filedata.map((item) => {
+    //                 return new Promise((resolve, reject) => {
+    //                     let o = {};
+    //                     o.base64File = item.Base64;
+    //                     o.FileName = item.FileName;
+    //                     cls.SaveTaskAttachments(o, function (sts, data) {
+    //                         if (sts && data) {
+    //                             let res = JSON.parse(data);
+    //                             if (res.Status === "Success") {
+    //                                 let path = window.atob(res.Message);
+    //                                 let index = path.lastIndexOf("\\");
+    //                                 let fileName = path.slice(index + 1);
+    //                                 resolve({ Path: path, FileName: fileName });
+    //                             } else {
+    //                                 reject("Failed to save attachment.");
+    //                             }
+    //                         } else {
+    //                             reject("Failed to save attachment.");
+    //                         }
+    //                     });
+    //                 });
+    //             });
+
+    //             Promise.all(promises)
+    //                 .then((attachments) => {
+    //                     setAttachmentPath((prevAttachments) => [...prevAttachments, ...attachments]);
+    //                     console.log('Attachments uploaded successfully:', attachments);
+    //                     // setTimeout(() => {
+    //                     //     Json_CRM_Task_Save();
+    //                     // }, 2500);
+
+    //                 })
+    //                 .catch((error) => {
+    //                     console.error("Error while saving attachments:", error);
+    //                 });
+    //         }
+    //         else {
+    //            // Json_CRM_Task_Save();
+    //         }
+
+    //         console.log('Form submitted successfully');
+    //     } catch (error) {
+    //         console.log({
+    //             status: false,
+    //             message: "Attachment is Not Uploaded Try again",
+    //             error: error,
+    //         });
+    //     } finally {
+    //         // Reset loading state after submission is complete
+
+    //     }
+
+    // }
 
     async function Json_CRM_Task_Save() {
 
         const isaddUser = addUser.map(obj => obj.ID).join(',');
-        const attString = attachmentPath.map(obj => obj.Path).join(',');
-        let obj = {
-            "ClientIsRecurrence": false,
-            "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-            "ClientEnd": dayjs(nextDate).format("YYYY/MM/DD"),
+        const attString = attachmentPath.map(obj => obj.Path).join('|');
+       
+       
 
-            "ClientDayNumber": 1,
-            "ClientMonth": 1,
-            "ClientOccurrenceCount": 1,
-            "ClientPeriodicity": 1,
-            "ClientRecurrenceRange": 0,
-            "ClientRecurrenceType": 0,
-            "ClientWeekDays": 1,
-            "ClientWeekOfMonth": 1,
-            "OwnerID": ownerID,
-            "AssignedToID": isaddUser,
-            "AssociateWithID": textClientId,
-            "FolderId": parseInt(txtFolderId),
+        let ooo ={
+           
+            "ClientIsRecurrence": false,
+            "StartDate":dayjs(currentDate).format("YYYY/MM/DD"),
+            "ClientEnd":dayjs(nextDate).format("YYYY/MM/DD"),
+            "ClientDayNumber": "1",
+            "ClientMonth": "1",
+            "ClientOccurrenceCount": "1",
+            "ClientPeriodicity": "1",
+            "ClientRecurrenceRange": "0",
+            "ClientRecurrenceType": "0",
+            "ClientWeekDays": "1",
+            "ClientWeekOfMonth": "1",
+            "OwnerID": ownerID.toString(),
+            "AssignedToID": "77,9",
+            "AssociateWithID":textClientId,
+            "FolderId": txtFolderId.toString(),
             "Subject": textSubject,
-            "TypeofTaskID": txtSectionId,
-            "EndDateTime": dayjs(nextDate).format("YYYY/MM/DD"),
+            "TypeofTaskID": txtSectionId.toString(),
+            "EndDateTime":dayjs(nextDate).format("YYYY/MM/DD"),
             "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
-            "Status": txtStatus,
-            "Priority": txtPriorityId,
-            "PercentComplete": 0,
+            "Status":txtStatus,
+            "Priority":txtPriorityId.toString(),
+            "PercentComplete": "1",
             "ReminderSet": false,
-            "ReminderDateTime": dayjs(remiderDate).format("YYYY/MM/DD"),
-            "TaskNo": 0,
+            "ReminderDateTime": remiderDate? dayjs(remiderDate).format("YYYY/MM/DD"):"1900/01/01",
+            "TaskNo": "0",
             "Attachments": attString ? attString : "",
-            "Details": "",
-            // "YEDate": "1900/01/01",
-            //"SubDeadline": "1900/01/01",
-            //"DocRecdate": "1900/01/01",
-            // "YEDate": getCurrentDate(),
-            // "SubDeadline": getCurrentDate(),
-            // "DocRecdate":getCurrentDate(),
+            "Details":txtdescription,
+            "YEDate": "1900/01/01",
+            "SubDeadline": "1900/01/01",
+            "DocRecdate": "1900/01/01",
             "ElectronicFile": false,
             "PaperFile": false,
             "Notes": "",
             "TaskSource": "CRM"
         }
-        console.log("final save data obj", obj);
-        cls.Json_CRM_Task_Save(obj, function (sts, data) {
+        console.log("final save data obj", ooo);
+        cls.Json_CRM_Task_Save(ooo, function (sts, data) {
             if (sts) {
                 let js = JSON.parse(data);
 
                 console.log("save task rerurn value", js);
 
                 if (js.Status === "success") {
-                    
+
                     setMessageId(js.Message);
-                    if(selectedDocumentFile.length>0){
+                    if (selectedDocumentFile.length > 0) {
                         Json_CRM_TaskDMSAttachmentInsert(js.Message);
                     }
                     toast.success("Created Task !");
@@ -918,8 +975,11 @@ export default function CreateNewModalTask({ ...props }) {
                     //handleSuccess(js.Message);
                     // setOpen(false);
                 }
-                toast.error("Task Not Created Please Try Again");
-                console.log("Response final", data)
+                else{
+                    toast.error("Task Not Created Please Try Again");
+                    console.log("Response final", data)
+                }
+               
                 // setLoading(false);
             }
         })
@@ -1333,7 +1393,7 @@ export default function CreateNewModalTask({ ...props }) {
         GetSMSTemplate();
     }, [setTxtTempId])
 
-    const [textSubject, setTextSubject] = useState("Subject...");
+    const [textSubject, setTextSubject] = useState("");
     const [editorContentValue, setEditorContentValue] = useState(null);
 
     // Handle selection change
@@ -1462,7 +1522,7 @@ export default function CreateNewModalTask({ ...props }) {
     const handleItemClick = (e) => {
         //console.log("handleItemClick111", e);
         setOwnerRighClick(e);
-        console.log("slected user", e)     
+        console.log("slected user", e)
         setOwnerID(e.ID)
 
         // // Check if the object 'e' already exists in the array based on its 'id'
@@ -1483,8 +1543,13 @@ export default function CreateNewModalTask({ ...props }) {
     };
 
 
-
-
+    const [isRemindMe, setIsRemindMe] = useState(false);
+    const handleRemindMe = (e) => {
+        setIsRemindMe(e.target.checked);
+        if(!e.target.checked){
+            setRemiderDate("")
+        }
+    }
 
 
 
@@ -1514,7 +1579,7 @@ export default function CreateNewModalTask({ ...props }) {
                 <DialogContent>
                     <DialogContentText>
                         <Box className="d-flex align-items-center justify-content-between">
-                     
+
                             <Box>
                                 <Button
                                     id="basic-button"
@@ -1595,6 +1660,7 @@ export default function CreateNewModalTask({ ...props }) {
 
                                             <Box className>
                                                 <input
+                                                    placeholder="Subject..."
                                                     className="input-text"
                                                     onChange={(e) => setTextSubject(e.target.value)}
                                                     type="text"
@@ -1791,7 +1857,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                         </Box> <ArrowForwardIosIcon className='me-1' />
                                                     </>)}
 
-                                                    {addUser.length>1
+                                                    {addUser.length > 1
                                                         ? addUser.map((item) => {
                                                             const words = item.ForwardTo.split(" ");
                                                             // Extract the first letter of each word and concatenate them
@@ -1803,7 +1869,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                             ) {
                                                                 result += words[i].charAt(0);
                                                             }
-                                                            if(item.ID !== parseInt(localStorage.getItem("UserId"))){
+                                                            if (item.ID !== parseInt(localStorage.getItem("UserId"))) {
                                                                 return (
                                                                     <>
                                                                         <Box
@@ -1813,12 +1879,12 @@ export default function CreateNewModalTask({ ...props }) {
                                                                         >
                                                                             <p>{result}</p>
                                                                         </Box>
-    
-    
+
+
                                                                     </>
                                                                 );
                                                             }
-                                                            
+
 
                                                         })
                                                         : null}
@@ -2122,7 +2188,7 @@ export default function CreateNewModalTask({ ...props }) {
                                 {txtTaskType === "CRM" && (
                                     <Button
                                         variant="contained"
-                                        onClick={UploadAttachment}
+                                        onClick={Json_CRM_Task_Save}
                                         // disabled={loading}
                                         className="btn-blue-2 mt-3"
                                     >
@@ -2141,7 +2207,7 @@ export default function CreateNewModalTask({ ...props }) {
                                     </Button>
                                 )}
 
-<ToastContainer></ToastContainer>
+                                <ToastContainer></ToastContainer>
                             </Box>
                             {/* col end */}
 
@@ -2203,12 +2269,14 @@ export default function CreateNewModalTask({ ...props }) {
                                                                 alignItems="flex-start"
                                                                 onClick={(e) => {
                                                                     // console.log("client select", item.Folder);
+                                                                    setSearchFolderQuery("");
                                                                     settxtFolder(item.Folder); // Assuming item.Client holds the value you want
                                                                     setFolderId(item.FolderID);
                                                                     setFolderAnchorEl(null);
                                                                     Json_GetFolderData();
                                                                     settxtClient("Select Reference");
                                                                     settxtSection("Select Section");
+                                                                    Json_GetSections(item.FolderID);
                                                                 }}
                                                                 className="search-list"
                                                                 ref={folderListRef}
@@ -2298,6 +2366,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                         <ListItem
                                                             alignItems="flex-start"
                                                             onClick={(e) => {
+                                                                setSearchQuery("");
                                                                 //console.log("client select", item.Client);
                                                                 settxtClient(item.Client); // Assuming item.Client holds the value you want
                                                                 setTextClientId(item.ClientID);
@@ -2389,6 +2458,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                             <ListItem
                                                                 alignItems="flex-start"
                                                                 onClick={(e) => {
+                                                                    setSearchSectionQuery("")
                                                                     console.log("client select", item.Sec);
                                                                     settxtSection(item.Sec); // Assuming item.Client holds the value you want
                                                                     setTxtSectionId(item.SecID); // Assuming item.Client holds the value you want
@@ -2432,17 +2502,23 @@ export default function CreateNewModalTask({ ...props }) {
                                 <Box className="border-bottom mb-2">
                                     <Box className="mb-2 ">
                                         <label className="font-14 semibold">Due By</label>
+
+
+
                                         <LocalizationProvider
                                             className="pe-0"
                                             dateAdapter={AdapterDayjs}
                                         >
 
                                             <DatePicker className=" w-100"
+                                                showIcon
                                                 dateFormat="DD/MM/YYYY"
-                                                defaultValue={currentDate}
+                                                value={currentDate}
                                                 onChange={(e) => setCurrentDate(e)} // Handle date changes
                                                 timeFormat={false}
                                                 isValidDate={disablePastDt}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
 
                                             />
 
@@ -2474,11 +2550,14 @@ export default function CreateNewModalTask({ ...props }) {
                                     >
 
                                         <DatePicker className=" w-100"
+                                            showIcon
                                             dateFormat="DD/MM/YYYY"
-                                            defaultValue={nextDate}
+                                            value={nextDate}
                                             onChange={(e) => setNextDate(e)} // Handle date changes
                                             timeFormat={false}
                                             isValidDate={disablePastDt}
+                                            closeOnSelect={true}
+                                            icon="fa fa-calendar"
 
                                         />
 
@@ -2487,28 +2566,35 @@ export default function CreateNewModalTask({ ...props }) {
                                 </Box>
 
                                 <Box className="mb-2 border-bottom">
-                                    <label className="font-14 d-block">
+                                    <label className="font-14 d-block" sx={{ with: "30%" }}>
                                         Remind me
-                                        <Checkbox {...label} defaultChecked size="small" />
+                                        <Checkbox onChange={handleRemindMe} {...label} size="small" />
                                     </label>
 
-                                    <label className="font-14 d-block">Reminder Date</label>
-                                    <LocalizationProvider
-                                        className="pe-0"
-                                        dateAdapter={AdapterDayjs}
-                                    >
-
-                                        <DatePicker className=" w-100"
-                                            dateFormat="DD/MM/YYYY"
-                                            defaultValue={remiderDate}
-                                            onChange={(e) => setRemiderDate(e)} // Handle date changes
-                                            timeFormat={false}
-                                           
-
-                                        />
 
 
-                                    </LocalizationProvider>
+                                    {isRemindMe && (<>
+                                        <label className="font-14 d-block">Reminder Date</label>
+                                        <LocalizationProvider
+                                            className="pe-0"
+                                            dateAdapter={AdapterDayjs}
+                                        >
+
+                                            <DatePicker className=" w-100"
+                                                showIcon
+                                                dateFormat="DD/MM/YYYY"
+                                                value={remiderDate}
+                                                onChange={(e) => setRemiderDate(e)} // Handle date changes
+                                                timeFormat={false}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
+
+                                            />
+
+
+                                        </LocalizationProvider>
+                                    </>)}
+
 
 
                                     <label className="font-14 d-block">Expires On</label>
@@ -2517,15 +2603,20 @@ export default function CreateNewModalTask({ ...props }) {
                                         dateAdapter={AdapterDayjs}
                                     >
 
+
                                         <DatePicker className=" w-100"
+                                            showIcon
                                             dateFormat="DD/MM/YYYY"
-                                            defaultValue={expireDate}
+                                            value={expireDate}
                                             onChange={(e) => setExpireDate(e)} // Handle date changes
                                             timeFormat={false}
-                                           
+                                            closeOnSelect={true}
+                                            icon="fa fa-calendar"
 
                                         />
-                                       
+
+
+
                                     </LocalizationProvider>
                                 </Box>
 
@@ -2819,7 +2910,7 @@ export default function CreateNewModalTask({ ...props }) {
                         >
                             {'Add Document'}
                         </Button>
-                      
+
                     </DialogContentText>
                 </DialogContent>
             </Dialog>

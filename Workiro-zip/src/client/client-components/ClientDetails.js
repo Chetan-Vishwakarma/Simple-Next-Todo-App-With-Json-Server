@@ -27,13 +27,9 @@ import UploadDocument from './UploadDocument';
 function ClientDetails() {
 
     const location = useLocation();
-
     const { agrno, Email, password, folderId, originatorNo } = location.state;
-
     const [selected, setSelected] = React.useState(false);
-
     const [value, setValue] = React.useState('1');
-
     const [clientDetails, setClientDetails] = useState({});
 
     const [companyDetails, setCompanyDetails] = useState([]);

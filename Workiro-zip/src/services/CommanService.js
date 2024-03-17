@@ -8,8 +8,19 @@ export default class CommanCLS extends AllService {
         super(APIUrl,agrno, Email, password);
     }
     
+    DeleteTasksAttachment(obj,callBack){   
+        super.CreateNewServiceParamObject("DeleteTasksAttachment",obj,true);
+        super.CallNewService("DeleteTasksAttachment",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
     Json_GetTaskAttachmentList(obj,callBack){   
-        super.CreateNewServiceParamObject("Json_GetTaskAttachmentList",obj,true);
+        super.CreateNewServiceParamObject("Json_GetTaskAttachmentList",obj,false);
         super.CallNewService("Json_GetTaskAttachmentList",function(status,Data){
             if(status){
                 return callBack(true,Data);
@@ -19,7 +30,13 @@ export default class CommanCLS extends AllService {
             }
         })
      }
-
+      FileType(fileName) {
+        // for (var i = 0; i < fileName.length; i++) {
+        let Typest = fileName.lastIndexOf(".");
+        var Type = fileName.slice(Typest + 1);
+        var type = Type.toUpperCase();
+        return type;
+    }
     GetBase64FromFilePath(obj,callBack){   
         super.CreateNewServiceParamObject("GetBase64FromFilePath",obj,true);
         super.CallNewService("GetBase64FromFilePath",function(status,Data){

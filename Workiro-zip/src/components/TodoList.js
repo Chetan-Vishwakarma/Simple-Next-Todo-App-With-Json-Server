@@ -34,7 +34,7 @@ function TodoList() {
 
     const [anchorEl, setAnchorEl] = React.useState(null);
 
-    const [loadMore, setLoadMore] = useState(40);
+    const [loadMore, setLoadMore] = useState(50);
 
 
     const open = Boolean(anchorEl);
@@ -83,7 +83,7 @@ function TodoList() {
 
     const eventHandler = (e) => {
         if (window.innerHeight + e.target.documentElement.scrollTop + 1 >= e.target.documentElement.scrollHeight) {
-            setLoadMore((preValue) => preValue + 20);
+            setLoadMore((preValue) => preValue + 50);
         }
     }
 
