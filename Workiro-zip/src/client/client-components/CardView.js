@@ -17,12 +17,12 @@ function CardView(props) {
         handleContactNavigattion, handleFolderSelection, isFolder, allFolders, isChoice, isAdvFilter, selectedProperty, 
         setSelectedProperty, clientKeys, contactKeys, selectedPropertyValue, setSelectedPropertyValue, advSearchKeyValue,
         setSelectedColor, colorArr, handleAdvanceFilterAgain, handleFilterRemove, onlyClients, filteredClients, clients,
-        onlyContacts, filteredContacts, contacts, selectedFolder, selectedChoice, basedOnClientContactAndAll,objFilter,isDataNotFoundInClient,isDataNotFoundInContact
+        onlyContacts, filteredContacts, contacts, selectedFolder, selectedChoice, basedOnClientContactAndAll,objFilter,isDataNotFoundInClient,isDataNotFoundInContact,isDataNotFoundInBoth
     } = props;
   return (
     <>
                         {
-                            onlyClients && (filteredClients.length > 0 ? filteredClients.map((item, i) => {
+                            isDataNotFoundInBoth ? <h1>Data Not Found</h1> :(onlyClients && (filteredClients.length > 0 ? filteredClients.map((item, i) => {
                                 return <Box key={i} className='client-box-main'>
                                     <Box className='client-box' onClick={() => handleClientNavigation(item.OriginatorNo)}>
                                         {/* <img src={pin} className='pin-img' /> */}
@@ -59,11 +59,11 @@ function CardView(props) {
                                         </Box> */}
                                     </Box>
                                 </Box>
-                            }))
+                            })))
                         }
 
                         {
-                            onlyContacts && (filteredContacts.length > 0 ? filteredContacts.map((item, i) => {
+                            isDataNotFoundInBoth ? <></> :(onlyContacts && (filteredContacts.length > 0 ? filteredContacts.map((item, i) => {
                                 return <Box key={i} className='client-box-main'>
                                     <Box className='client-box' onClick={() => handleContactNavigattion(item.OriginatorNo,item.ContactNo)}>
                                         {/* <img src={pin} className='pin-img' /> */}
@@ -100,7 +100,7 @@ function CardView(props) {
                                         </Box> */}
                                     </Box>
                                 </Box>
-                            }))
+                            })))
                         }
                         </>
   )

@@ -116,6 +116,7 @@ function Client() {
     const [selectedPropertyForClient, setSelectedPropertyForClient] = useState("");
     const [isDataNotFoundInClient, setIsDataNotFoundInClient] = useState(false);
     const [isDataNotFoundInContact, setIsDataNotFoundInContact] = useState(false);
+    const [isDataNotFoundInBoth, setIsDataNotFoundInBoth] = useState(false);
     
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -320,8 +321,17 @@ function Client() {
 
                 // if (onlyClients) {
                 let obj4 = { ...objFilterClient, [selectedPropertyForClient]: [selectedPropertyValue] };
-                let fltClients = handleSearchBy(clients, obj4);
                 setObjFilterClient(obj4);
+                let fltClients = handleSearchBy(clients, obj4);
+                let fltContacts = handleSearchBy(contacts, obj);
+                
+                if(fltClients.length===0 && fltContacts.length===0){
+                    setIsDataNotFoundInBoth(true);
+                    setSelectedProperty("");
+                    setSelectedPropertyValue("");
+                    return;
+                }
+
                 if (fltClients.length > 0) {
                     setFilteredClients(fltClients);
                 } else {
@@ -330,7 +340,7 @@ function Client() {
                 console.log("filtered Clients: ", fltClients);
                 // } else if (onlyContacts) {
                 // let obj5 = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
-                let fltContacts = handleSearchBy(contacts, obj);
+                
                 if (fltContacts.length > 0) {
                     setFilteredContacts(fltContacts);
                 } else {
@@ -384,6 +394,19 @@ function Client() {
             }
         } else if (onlyClients && onlyContacts) {
             let fltClients = handleSearchBy(clients, obj);
+            let fltContacts = handleSearchBy(contacts, obj);
+
+            if(Object.keys(obj).length===0){
+                setIsDataNotFoundInBoth(false);
+            }else if(Object.keys(obj).length>0){
+                if(fltClients.length===0 && fltContacts.length===0){
+                    setIsDataNotFoundInBoth(true);
+                    setObjFilter(obj);
+                    return;
+                }
+            }
+            
+
             if (fltClients.length > 0) {
                 setFilteredClients(fltClients);
                 setOnlyClients(true);
@@ -391,7 +414,7 @@ function Client() {
                 setOnlyClients(false);
             }
 
-            let fltContacts = handleSearchBy(contacts, obj);
+            
             if (fltContacts.length > 0) {
                 setFilteredContacts(fltContacts);
                 setOnlyContacts(true);
@@ -955,6 +978,7 @@ function Client() {
                             objFilter={objFilter}
                             isDataNotFoundInClient={isDataNotFoundInClient}
                             isDataNotFoundInContact={isDataNotFoundInContact}
+                            isDataNotFoundInBoth={isDataNotFoundInBoth}
                         />}
                     </Box>
                 </Box>
