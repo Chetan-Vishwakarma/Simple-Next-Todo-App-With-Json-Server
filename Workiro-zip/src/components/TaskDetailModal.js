@@ -11,7 +11,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import BallotIcon from '@mui/icons-material/Ballot';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 import DescriptionIcon from '@mui/icons-material/Description';
 import SendIcon from '@mui/icons-material/Send';
 import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
@@ -39,9 +39,13 @@ import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 
+import DatePicker from 'react-datetime';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+
+
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -78,7 +82,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     const [nextDate, setNextDate] = useState("");
     const [remiderDate, setRemiderDate] = useState("");
 
-    const [status, setStatus] = useState("Status");
+    const [status, setStatus] = useState("");
     const [tSubject, setTSubject] = useState("");
 
     const messageContainerRef = useRef(null);
@@ -88,6 +92,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     const [attachmentPath, setAttachmentPath] = useState([]);
 
     const [attOpen, setAttOpen] = React.useState(false);
+    const [txtdescription, setTxtDescriptin] = React.useState("");
 
     ////////////////////////////////End Attachment files
 
@@ -107,6 +112,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         setTSubject(e.target.value); // Toggle visibility
     };
 
+    const disablePastDt = (date) => {
+        const today = new Date();
+        return date.isSameOrAfter(today, 'day'); // Disable past dates
+
+    };
 
     const Json_Get_CRM_Task_ActivityByTaskId = (taskid) => {
         console.log("selectedTask333333333", taskid);
@@ -213,7 +223,8 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                     lastModifiedDate: dateAndTime(file.lastModifiedDate),
                 };
                 filesData.push(fileData);
-                console.log("Attachment list", filesData);
+                UploadAttachment(fileData)
+               // console.log("Attachment list", filesData);
                 // Check if this is the last file
                 if (index === selectedFilesArray.length - 1) {
                     // Add new files to the uploadedFiles array
@@ -227,52 +238,33 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         });
     };
 
-    async function UploadAttachment() {
+    async function UploadAttachment(filedata) {
         // setLoading(true);
         // Your form submission logic, for example, making an API call
         try {
-            if (selectedFiles.length > 0) {
-                let promises = selectedFiles.map((item) => {
-                    return new Promise((resolve, reject) => {
-                        let o = {};
-                        o.base64File = item.Base64;
-                        o.FileName = item.FileName;
-                        Cls.SaveTaskAttachments(o, function (sts, data) {
-                            if (sts && data) {
-                                let res = JSON.parse(data);
-                                if (res.Status === "Success") {
-                                    let path = window.atob(res.Message);
-                                    let index = path.lastIndexOf("\\");
-                                    let fileName = path.slice(index + 1);
-                                    resolve({ Path: path, FileName: fileName });
-                                } else {
-                                    reject("Failed to save attachment.");
-                                }
-                            } else {
-                                reject("Failed to save attachment.");
-                            }
-                        });
-                    });
-                });
+            
+            let o = {};
+            o.base64File = filedata.Base64;
+            o.FileName = filedata.FileName;
+            Cls.SaveTaskAttachments(o, function (sts, data) {
+                if (sts && data) {
+                    let res = JSON.parse(data);
+                    if (res.Status === "Success") {
+                        let path = window.atob(res.Message);
+                        let index = path.lastIndexOf("\\");
+                          let fileName = path.slice(index + 1);
+                          let o={ Path: path, FileName: fileName }
+                          
+                         setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
 
-                Promise.all(promises)
-                    .then((attachments) => {
-                        setAttachmentPath((prevAttachments) => [
-                            ...prevAttachments,
-                            ...attachments,
-                        ]);
-                        setTimeout(() => {
-                            Json_CRM_Task_Save();
-                        }, 2500);
-                    })
-                    .catch((error) => {
-                        console.error("Error while saving attachments:", error);
-                    });
-            } else {
-                Json_CRM_Task_Save();
-            }
-
-            console.log("Form submitted successfully");
+                    } else {
+                        console.log("Failed to save attachment.");
+                    }
+                } else {
+                    console.log("Failed to save attachment.");
+                }
+            });
+           
         } catch (error) {
             console.log({
                 status: false,
@@ -354,9 +346,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     }
 
     function startFormattingDate(dt) {
-        // let fullDate = new Date(parseInt(dt.substr(6)));
-        // console.log("date formet111",fullDate);
-        // return fullDate;
+        if(dt){
+            let fullDate = new Date(parseInt(dt.substr(6)));
+            console.log("date formet111",fullDate);
+                return fullDate;
+        }
+     
     }
 
 
@@ -375,14 +370,14 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
     useEffect(() => {
         Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
-        setCurrentDate(dayjs(startFormattingDate(selectedTask.CreationDate)));
+        setCurrentDate(startFormattingDate(selectedTask.CreationDate));
 
-        setNextDate(dayjs(DateFormet(selectedTask.EndDateTime)));
+        setNextDate(DateFormet(selectedTask.EndDateTime));
         setRemiderDate(dayjs(Cls.getCurrentDate()));
         Json_Get_CRM_Task_ActivityByTaskId(selectedTask.ID);
         Json_GetForwardUserList();
-        setStatus(selectedTask.Status);
-        Json_GetTaskAttachmentList();
+        setStatus(selectedTask.mstatus);
+       // Json_GetTaskAttachmentList();
         setTSubject(selectedTask.Subject)
         // const Json_CRM_GetOutlookTask=async()=>{
         //     let res = await axios.post(`${baseUrl}Json_CRM_GetOutlookTask`,{
@@ -590,10 +585,10 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     };
 
 
-    async function Json_CRM_Task_Save() {
+    async function Json_CRM_Task_Update() {
         if (addUser.length > 0) {
             const idsString = addUser.map(obj => obj.ID).join(',');
-            const attString = attachmentPath.map((obj) => obj.Path).join(",");
+            const attString = attachmentPath.map((obj) => obj.Path).join("|");
 
             let obj = {
                 AssignedToID: idsString,
@@ -601,15 +596,15 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 DMSItems: "",
                 Attachments: attString ? attString : "",
                 Notes: "",
-                Details: "",
+                Details:txtdescription ,
                 ReminderSet: false,
                 ReminderDateTime: dayjs(remiderDate).format("YYYY/MM/DD"),
                 StartDateTime: dayjs(currentDate).format("YYYY/MM/DD"),
-                OwnerID: "8",
+                OwnerID: selectedTask.OwnerID,
                 AssociateWithID: selectedTask.ClientNo,
                 FolderId: selectedTask.FolderID,
                 Subject: tSubject,
-                TypeofTaskID: "3",
+                TypeofTaskID: selectedTask.SectionId,
                 EndDateTime: dayjs(nextDate).format("YYYY/MM/DD"),
                 Status: status,
                 Priority: selectedTask.Priority,
@@ -626,15 +621,26 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 if (sts) {
                     let js = JSON.parse(data);
                     if (js.Status === "success") {
+
                         setMessageId(js.Message);
                         // setLoading(false);
                         setIsApi(!isApi);
                         // Inside your function or event handler where you want to show the success message
                         //  handleSuccess(js.Message);
                         // setOpen(false);
-                        setIsVisible(false); // Toggle visibility
+                        toast.success("Updated Task !");
+                        //setIsVisible(false); // Toggle visibility
+                        setTimeout(() => {
+                            setAttachmentPath([]);
+                            Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
+                        }, 2000);
+                       
                     }
-                    console.log("Response final", data);
+                    else{
+                        console.log("Response final", data);
+                        toast.error("Task Not Updated Please Try Again");
+                    }
+                  
                     // setLoading(false);
                 }
             });
@@ -720,11 +726,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 if (result.isConfirmed) {
                     var Typest = objdata.FileName.lastIndexOf("\\");
                     let fileName = objdata.FileName.slice(Typest + 1);
-                    let fname =fileName;
+                    let fname = fileName;
                     let o = {
-                        agrno:agrno,
-                        EmailId:Email,
-                        password:password,
+                        agrno: agrno,
+                        EmailId: Email,
+                        password: password,
                         fileName: fname,
                         TaskId: selectedTask.ID,
                     }
@@ -974,7 +980,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 <Box className='mb-3 mt-2'>
                                     <Stack spacing={2} direction="row">
                                         <Button variant="outlined" onClick={toggleVisibilityCancle}>Cancel</Button>
-                                        <Button variant="contained" onClick={UploadAttachment}>Save</Button>
+                                        <Button variant="contained" onClick={Json_CRM_Task_Update}>Save</Button>
                                     </Stack>
                                 </Box>
                             )}
@@ -1164,30 +1170,38 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                         </Box>
                         {/*  */}
 
-                        <Box className="d-flex flex-wrap justify-content-between">
+                        <Box className="d-flex flex-wrap">
                             <label className='text-decoration-none d-flex'
                                 onClick={handleClickOpen}
                             ><BallotIcon className='me-1' /> {attachmentFile.length} Documents</label>
                             {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
 
-                            <Box className="d-flex">
+                            
+                        </Box>
+                        <Box className="d-flex">
                                 <Box className="mb-2 border-bottom me-3 width-150">
                                     <label className="font-14 text-black">Start Date</label>
                                     <LocalizationProvider
                                         className="pe-0 sadik"
                                         dateAdapter={AdapterDayjs}
                                     >
-                                        <DatePicker
-                                            className="datepicker w-100"
-                                            value={currentDate} // Use the value prop to set the current selected date
-                                            onChange={(date) => setCurrentDate(date)} // Update the state when the user changes the date
-                                            inputFormat="DD/MM/YYYY" // Set the input format to "dd/mm/yyyy"
-                                            disablePast={false} // Allow selection of dates before today
+                                        <DatePicker className=" w-100"
+                                            showIcon
+                                            dateFormat="DD/MM/YYYY"
+                                            value={currentDate}
+                                            onChange={(e) => setCurrentDate(e)} // Handle date changes
+                                            timeFormat={false}
+                                            isValidDate={disablePastDt}
+                                            closeOnSelect={true}
+                                            icon="fa fa-calendar"
+
                                         />
+
+
                                     </LocalizationProvider>
                                 </Box>
 
-                                <Box className="border-bottom mb-2 width-150">
+                                <Box className="border-bottom mb-2 width-150" sx={{float:"right"}}>
                                     <Box className="mb-2 ">
                                         <label className="font-14 semibold text-black">
                                             Due By
@@ -1196,23 +1210,29 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                             className="pe-0 sadik"
                                             dateAdapter={AdapterDayjs}
                                         >
-                                            <DatePicker
-                                                className="datepicker w-100"
-                                                value={nextDate} // Use the value prop to set the current selected date
-                                                onChange={(date) => setNextDate(date)} // Update the state when the user changes the date
-                                                inputFormat="DD/MM/YYYY" // Set the input format to "dd/mm/yyyy"
-                                                disablePast={false} // Allow selection of dates before today
+
+                                            <DatePicker className=" w-100"
+                                                showIcon
+                                                dateFormat="DD/MM/YYYY"
+                                                value={nextDate}
+                                                onChange={(e) => setNextDate(e)} // Handle date changes
+                                                timeFormat={false}
+                                                isValidDate={disablePastDt}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
+
                                             />
+                                           
                                         </LocalizationProvider>
                                     </Box>
                                 </Box>
                             </Box>
-                        </Box>
-
                         <Box className="mt-2 mb-3">
                             <textarea
                                 className="form-control textarea resize-none"
                                 placeholder="Description"
+                                value={txtdescription} // Bind the value to the state
+                                onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
                             ></textarea>
                         </Box>
 
@@ -1446,7 +1466,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     >
                                         Send
                                     </Button>
-
+                                    <ToastContainer></ToastContainer>
                                 </Box>
                             </Box>
                         </Box>
@@ -1515,7 +1535,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                                 <ListItem key={index}
                                                     secondaryAction={
                                                         <IconButton edge="end" aria-label="delete">
-                                                            <DeleteIcon onClick={()=>DeleteTasksAttachment(item)} />
+                                                            <DeleteIcon onClick={() => DeleteTasksAttachment(item)} />
                                                             <DownloadForOfflineIcon onClick={() => handleDownloadDoc(item)} />
                                                         </IconButton>
                                                     }
@@ -1542,7 +1562,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
                         {/* <DocumentDetails></DocumentDetails> */}
 
-
+                      
 
                     </DialogContentText>
                 </DialogContent>

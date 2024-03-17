@@ -189,9 +189,13 @@ export default function CreateNewModalTask({ ...props }) {
     const [loading, setLoading] = useState(false);
 
     //////////////////////Priority
-    const [txtPrioriy, setTxtPriority] = useState("Priority");
-    const [txtStatus, setTxtStatus] = useState("Status");
-    const [txtPriorityId, setTxtPriorityId] = useState("");
+    const [txtPrioriy, setTxtPriority] = useState("Normal");
+    const [txtStatus, setTxtStatus] = useState("Not Started");
+
+    const [txtPriorityId, setTxtPriorityId] = useState(2);
+
+   
+
 
     const [prioriyAnchorEl, setPrioriyAnchorEl] = React.useState(null);
     const [selectedPrioriyMenu, setSelectedPrioriyMenu] = useState(null);
@@ -292,6 +296,19 @@ export default function CreateNewModalTask({ ...props }) {
 
     };
 
+    const [anchorSelectFileEl, setAnchorSelectFileEl] = React.useState(null);
+
+    const openSelectFile = Boolean(anchorSelectFileEl);
+
+    const handleClickSelectFile = (event) => {
+        setAnchorSelectFileEl(event.currentTarget);
+    };
+
+    const handleSelectFileClose = () => {
+        setAnchorSelectFileEl(null);
+    };
+
+
     //   const handleClick3 = (event, menuType) => {
     //     console.log(menuType);
     //     if (menuType === "client") {
@@ -319,7 +336,14 @@ export default function CreateNewModalTask({ ...props }) {
 
     };
 
+    const disablePastDtTwoDate = (date) => {
+        const today = new Date();
+        today.setDate(today.getDate() - 1);
+        const twoDaysAhead = new Date(nextDate);
+        // twoDaysAhead.setDate(today.getDate() + 2); // Set two days ahead
 
+        return date.isBetween(today, twoDaysAhead, null, '[]'); // Disable past dates and dates beyond two days from today
+    };
 
 
     const userAdd = Boolean(anchorel);
@@ -536,6 +560,7 @@ export default function CreateNewModalTask({ ...props }) {
     };
 
     useEffect(() => {
+
         const handleClickOutside = (event) => {
             // Check if the menu is open and the click is outside the menu and not in the search box
             if (folderAnchorEl && folderListRef.current && !folderListRef.current.contains(event.target) && !event.target.closest('.px-3')) {
@@ -662,6 +687,9 @@ export default function CreateNewModalTask({ ...props }) {
     }, [createNewFileObj]);
 
     useEffect(() => {
+
+       
+        setAnchorSelectFileEl(null);
         setOpen(openModal);
 
         setAgrNo(localStorage.getItem("agrno"));
@@ -678,6 +706,7 @@ export default function CreateNewModalTask({ ...props }) {
         Json_GetFolders();
         Json_GetForwardUserList();
         Json_GetFolderData();
+        Json_GetSections(txtFolderId);
         //console.log(nextDate, currentDate)
 
         //document.addEventListener('mousedown', closeFolderList);
@@ -717,8 +746,13 @@ export default function CreateNewModalTask({ ...props }) {
                     if (data) {
                         let js = JSON.parse(data);
                         let tbl = js.Table;
-                        // console.log("get folder list", tbl);
+                         console.log("get folder list", tbl);
                         setFolderList(tbl);
+                    let res = tbl.filter((f)=>f.FolderID ===parseInt(localStorage.getItem("ProjectId")));
+                    if(res.length > 0){
+                        settxtFolder(res[0].Folder);
+                    }
+                      
                     }
                 }
             });
@@ -824,30 +858,30 @@ export default function CreateNewModalTask({ ...props }) {
         // Your form submission logic, for example, making an API call
         try {
             let o = {};
-                        o.base64File = filedata.Base64;
-                        o.FileName = filedata.FileName;
-                        cls.SaveTaskAttachments(o, function (sts, data) {
-                            if (sts && data) {
-                                let res = JSON.parse(data);
-                                if (res.Status === "Success") {
-                                    let path = window.atob(res.Message);
-                                   let index = path.lastIndexOf("\\");
-                                     let fileName = path.slice(index + 1);
-                                     let o={ Path: path, FileName: fileName }
-                                     
-                                    setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
-                                   
-                                } 
-                            }
-                        });
-        } 
+            o.base64File = filedata.Base64;
+            o.FileName = filedata.FileName;
+            cls.SaveTaskAttachments(o, function (sts, data) {
+                if (sts && data) {
+                    let res = JSON.parse(data);
+                    if (res.Status === "Success") {
+                        let path = window.atob(res.Message);
+                        let index = path.lastIndexOf("\\");
+                        let fileName = path.slice(index + 1);
+                        let o = { Path: path, FileName: fileName }
+
+                        setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+
+                    }
+                }
+            });
+        }
         catch (error) {
             console.log({
                 status: false,
                 message: "Attachment is Not Uploaded Try again",
                 error: error,
             });
-        } 
+        }
 
     }
 
@@ -915,14 +949,14 @@ export default function CreateNewModalTask({ ...props }) {
 
         const isaddUser = addUser.map(obj => obj.ID).join(',');
         const attString = attachmentPath.map(obj => obj.Path).join('|');
-       
-       
 
-        let ooo ={
-           
+
+
+        let ooo = {
+
             "ClientIsRecurrence": false,
-            "StartDate":dayjs(currentDate).format("YYYY/MM/DD"),
-            "ClientEnd":dayjs(nextDate).format("YYYY/MM/DD"),
+            "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
+            "ClientEnd": dayjs(nextDate).format("YYYY/MM/DD"),
             "ClientDayNumber": "1",
             "ClientMonth": "1",
             "ClientOccurrenceCount": "1",
@@ -933,20 +967,20 @@ export default function CreateNewModalTask({ ...props }) {
             "ClientWeekOfMonth": "1",
             "OwnerID": ownerID.toString(),
             "AssignedToID": "77,9",
-            "AssociateWithID":textClientId,
+            "AssociateWithID": textClientId,
             "FolderId": txtFolderId.toString(),
             "Subject": textSubject,
             "TypeofTaskID": txtSectionId.toString(),
-            "EndDateTime":dayjs(nextDate).format("YYYY/MM/DD"),
+            "EndDateTime": dayjs(nextDate).format("YYYY/MM/DD"),
             "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
-            "Status":txtStatus,
-            "Priority":txtPriorityId.toString(),
+            "Status": txtStatus,
+            "Priority": txtPriorityId.toString(),
             "PercentComplete": "1",
             "ReminderSet": false,
-            "ReminderDateTime": remiderDate? dayjs(remiderDate).format("YYYY/MM/DD"):"1900/01/01",
+            "ReminderDateTime": remiderDate ? dayjs(remiderDate).format("YYYY/MM/DD") : "1900/01/01",
             "TaskNo": "0",
             "Attachments": attString ? attString : "",
-            "Details":txtdescription,
+            "Details": txtdescription,
             "YEDate": "1900/01/01",
             "SubDeadline": "1900/01/01",
             "DocRecdate": "1900/01/01",
@@ -975,11 +1009,11 @@ export default function CreateNewModalTask({ ...props }) {
                     //handleSuccess(js.Message);
                     // setOpen(false);
                 }
-                else{
+                else {
                     toast.error("Task Not Created Please Try Again");
                     console.log("Response final", data)
                 }
-               
+
                 // setLoading(false);
             }
         })
@@ -1063,11 +1097,34 @@ export default function CreateNewModalTask({ ...props }) {
     }
 
 
+    const getButtonColor = () => {
+        if (textClientId) {
+            return {color: "#1976d2" }; // Example: Set color to green when conditions met
+        } else {
+            return { color: "red" }; // Example: Set color to blue when conditions not met
+        }        
+    };
+    const getButtonColorfolder = () => {
+        if (txtFolderId) {
+            return {color: "#1976d2" }; // Example: Set color to green when conditions met
+        } else {
+            return { color: "red" }; // Example: Set color to blue when conditions not met
+        }        
+    };
 
     const handleDocumentClickOpen = () => {
-        Json_ExplorerSearchDoc();
-        setOpenDocumentList(true);
+        
+        setAnchorSelectFileEl(null);
+        if(textClientId ){
+            Json_ExplorerSearchDoc();
+            setOpenDocumentList(true);
+        }else{
+            getButtonColor();
+            toast.warn("Select Referece !");
+        }  
     };
+   
+
     const handleCloseDocumentList = () => {
         setOpenDocumentList(false);
     };
@@ -1519,12 +1576,26 @@ export default function CreateNewModalTask({ ...props }) {
 
     }
 
+
+    const removeItemById = (array, idToRemove) => {
+        // Filter out the item with the specified id
+        return array.filter(item => item.ID !== idToRemove);
+    };
+
+
     const handleItemClick = (e) => {
         //console.log("handleItemClick111", e);
         setOwnerRighClick(e);
         console.log("slected user", e)
-        setOwnerID(e.ID)
+        setOwnerID(e.ID)     
 
+        const existingObj = addUser.find(obj => obj.ID === e.ID);
+        if (!existingObj) {
+           setAddUser((pre)=>[...pre,...e]);
+        }
+
+        //let res = addUser.filter(user => user.ID !==e.ID);
+        //setAddUser(res);
         // // Check if the object 'e' already exists in the array based on its 'id'
         // if (!addUser.some(user => user.ID === e.ID)) {
         //     // If it doesn't exist, add it to the 'addUser' array
@@ -1546,7 +1617,7 @@ export default function CreateNewModalTask({ ...props }) {
     const [isRemindMe, setIsRemindMe] = useState(false);
     const handleRemindMe = (e) => {
         setIsRemindMe(e.target.checked);
-        if(!e.target.checked){
+        if (!e.target.checked) {
             setRemiderDate("")
         }
     }
@@ -1869,7 +1940,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                             ) {
                                                                 result += words[i].charAt(0);
                                                             }
-                                                            if (item.ID !== parseInt(localStorage.getItem("UserId"))) {
+                                                            if (item.ID !== ownerID) {
                                                                 return (
                                                                     <>
                                                                         <Box
@@ -1883,7 +1954,7 @@ export default function CreateNewModalTask({ ...props }) {
 
                                                                     </>
                                                                 );
-                                                            }
+                                                         }
 
 
                                                         })
@@ -1922,7 +1993,7 @@ export default function CreateNewModalTask({ ...props }) {
 
                                                         {addUser
                                                             ? addUser.map((item, ind) => {
-                                                                if (item.ID === parseInt(localStorage.getItem("UserId"))) {
+                                                                if (item.ID ===ownerID ) {
                                                                     return (
                                                                         <React.Fragment key={ind}>
                                                                             <button type="button"
@@ -2094,9 +2165,34 @@ export default function CreateNewModalTask({ ...props }) {
                                                 </Typography>
                                             </Box>
                                         </Box>
-                                        <Button variant="text" className="btn-blue-2" onClick={handleDocumentClickOpen}>
+
+                                        <Button
+                                            id="basic-button"
+                                            variant="contained"
+                                            aria-controls={openSelectFile ? 'basic-menu' : undefined}
+                                            aria-haspopup="true"
+                                            aria-expanded={openSelectFile ? 'true' : undefined}
+                                            onClick={handleClickSelectFile}
+                                        >
                                             Select file
                                         </Button>
+                                        <Menu
+                                            id="basic-menu"
+                                            anchorEl={anchorSelectFileEl}
+                                            open={openSelectFile}
+                                            onClose={handleSelectFileClose}
+                                            MenuListProps={{
+                                                'aria-labelledby': 'basic-button',
+                                            }}
+                                        >
+                                            <label htmlFor="file-upload">
+                                                <MenuItem>Upload File(s)</MenuItem>
+                                            </label>
+                                            <MenuItem onClick={handleDocumentClickOpen}>Select From DMS</MenuItem>
+
+
+                                        </Menu>
+
                                     </label>
                                 </Box>
 
@@ -2123,9 +2219,13 @@ export default function CreateNewModalTask({ ...props }) {
                                                         </Box>
 
                                                         <Box className="d-flex align-items-center">
+                                                        {txtTaskType ==="Portal" && (<>
                                                             <Button variant="text" className="btn-blue-2">
-                                                                Sign
-                                                            </Button>
+                                                            Sign
+                                                               </Button>
+                                                                    
+                                                                </>)}
+                                                            
                                                             <Box className="ps-2">
                                                                 <Button
                                                                     className="p-0"
@@ -2189,7 +2289,7 @@ export default function CreateNewModalTask({ ...props }) {
                                     <Button
                                         variant="contained"
                                         onClick={Json_CRM_Task_Save}
-                                        // disabled={loading}
+                                         disabled={!textSubject?true:false}
                                         className="btn-blue-2 mt-3"
                                     >
                                         {'CRM Task'}
@@ -2218,6 +2318,7 @@ export default function CreateNewModalTask({ ...props }) {
                                     <Box className="select-dropdown">
                                         <Button
                                             id="basic-button-folder22"
+                                            style={getButtonColorfolder()}
                                             aria-controls={
                                                 boolFolder && selectedFolderMenu === "folder"
                                                     ? "basic-menu"
@@ -2318,6 +2419,7 @@ export default function CreateNewModalTask({ ...props }) {
                                     <Box className="select-dropdown">
                                         <Button
                                             id="basic-button-client"
+                                            style={getButtonColor()}
                                             aria-controls={
                                                 boolClient && selectedClientMenu === "client"
                                                     ? "basic-menu"
@@ -2459,7 +2561,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                                 alignItems="flex-start"
                                                                 onClick={(e) => {
                                                                     setSearchSectionQuery("")
-                                                                    console.log("client select", item.Sec);
+                                                                   // console.log("client select", item.Sec);
                                                                     settxtSection(item.Sec); // Assuming item.Client holds the value you want
                                                                     setTxtSectionId(item.SecID); // Assuming item.Client holds the value you want
                                                                     setSectionAnchorEl(null);
@@ -2578,6 +2680,8 @@ export default function CreateNewModalTask({ ...props }) {
                                         <LocalizationProvider
                                             className="pe-0"
                                             dateAdapter={AdapterDayjs}
+                                            timeFormat={false}
+                                            isValidDate={disablePastDtTwoDate}
                                         >
 
                                             <DatePicker className=" w-100"
@@ -2585,8 +2689,11 @@ export default function CreateNewModalTask({ ...props }) {
                                                 dateFormat="DD/MM/YYYY"
                                                 value={remiderDate}
                                                 onChange={(e) => setRemiderDate(e)} // Handle date changes
+
                                                 timeFormat={false}
+                                                isValidDate={disablePastDtTwoDate}
                                                 closeOnSelect={true}
+
                                                 icon="fa fa-calendar"
 
                                             />
@@ -2597,7 +2704,7 @@ export default function CreateNewModalTask({ ...props }) {
 
 
 
-                                    <label className="font-14 d-block">Expires On</label>
+                                    {/* <label className="font-14 d-block">Expires On</label>
                                     <LocalizationProvider
                                         className="pe-0"
                                         dateAdapter={AdapterDayjs}
@@ -2617,7 +2724,7 @@ export default function CreateNewModalTask({ ...props }) {
 
 
 
-                                    </LocalizationProvider>
+                                    </LocalizationProvider> */}
                                 </Box>
 
                                 <Box className="select-dropdown">
@@ -2738,7 +2845,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                         <ListItem
                                                             alignItems="flex-start"
                                                             onClick={(e) => {
-                                                                console.log("client select", item.name);
+                                                                //console.log("client select", item.name);
                                                                 setTxtStatus(item.name); // Assuming item.Client holds the value you want
 
                                                                 setStatusAnchorEl(null);
