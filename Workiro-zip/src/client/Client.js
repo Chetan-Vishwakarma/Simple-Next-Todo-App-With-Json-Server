@@ -434,12 +434,18 @@ function Client() {
             setIsDataNotFoundInBoth(false);
             setOnlyClients(true);
             setOnlyContacts(true);
+            setFilteredClients([]);
+            setFilteredContacts([]);
         }else if(selectedChoice==="Contacts"){
             setIsDataNotFoundInContact(false);
             setOnlyContacts(true);
+            // setFilteredClients([]);
+            setFilteredContacts([]);
         }else if(selectedChoice==="Clients"){
             setIsDataNotFoundInClient(false);
             setOnlyClients(true);
+            setFilteredClients([]);
+            // setFilteredContacts([]);
         }
         setObjFilter({});
         setObjFilterClient({}); 
