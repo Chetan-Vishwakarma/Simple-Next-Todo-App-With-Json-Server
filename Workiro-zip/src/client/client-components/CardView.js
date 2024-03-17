@@ -17,7 +17,7 @@ function CardView(props) {
         handleContactNavigattion, handleFolderSelection, isFolder, allFolders, isChoice, isAdvFilter, selectedProperty, 
         setSelectedProperty, clientKeys, contactKeys, selectedPropertyValue, setSelectedPropertyValue, advSearchKeyValue,
         setSelectedColor, colorArr, handleAdvanceFilterAgain, handleFilterRemove, onlyClients, filteredClients, clients,
-        onlyContacts, filteredContacts, contacts, selectedFolder, selectedChoice, basedOnClientContactAndAll,objFilter,isDataNotFoundInClient
+        onlyContacts, filteredContacts, contacts, selectedFolder, selectedChoice, basedOnClientContactAndAll,objFilter,isDataNotFoundInClient,isDataNotFoundInContact
     } = props;
   return (
     <>
@@ -83,7 +83,7 @@ function CardView(props) {
                                         </Box>
                                     </Box>
                                 </Box>
-                            }) : contacts.map((item, i) => {
+                            }) : isDataNotFoundInContact ? <h1>Data Not Found</h1> : contacts.map((item, i) => {
                                 return <Box key={i} className='client-box-main'>
                                     <Box className='client-box' onClick={() => handleContactNavigattion(item.OriginatorNo,item.ContactNo)}>
                                         {/* <img src={pin} className='pin-img' /> */}

@@ -114,7 +114,9 @@ function Client() {
     const [selectedColor, setSelectedColor] = useState(Object.keys(objFilter).length === 1 ? colorArr[2] : Object.keys(objFilter).length === 2 ? colorArr[4] : colorArr[0]);
 
     const [selectedPropertyForClient, setSelectedPropertyForClient] = useState("");
-    const [isDataNotFoundInClient,setIsDataNotFoundInClient] = useState(false);
+    const [isDataNotFoundInClient, setIsDataNotFoundInClient] = useState(false);
+    const [isDataNotFoundInContact, setIsDataNotFoundInContact] = useState(false);
+    
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -292,9 +294,9 @@ function Client() {
                 let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
                 setObjFilterColor(obj2);
                 let fltData = handleSearchBy(clients, obj);
-                if(fltData.length>0){
+                if (fltData.length > 0) {
                     setFilteredClients(fltData);
-                }else{
+                } else {
                     setIsDataNotFoundInClient(true);
                 }
             } else if (!onlyClients && onlyContacts) {
@@ -304,7 +306,11 @@ function Client() {
                 let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
                 setObjFilterColor(obj2);
                 let fltData = handleSearchBy(contacts, obj);
-                setFilteredContacts(fltData);
+                if (fltData.length > 0) {
+                    setFilteredContacts(fltData);
+                }else{
+                    setIsDataNotFoundInContact(true);
+                }
             } else if (onlyClients && onlyClients) {
                 let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
                 setObjFilter(obj);
@@ -313,24 +319,24 @@ function Client() {
                 setObjFilterColor(obj2);
 
                 // if (onlyClients) {
-                    let obj4 = { ...objFilterClient, [selectedPropertyForClient]: [selectedPropertyValue] };
-                    let fltClients = handleSearchBy(clients, obj4);
-                    setObjFilterClient(obj4);
-                    if(fltClients.length>0){
-                        setFilteredClients(fltClients);
-                    }else{
-                        setOnlyClients(false);
-                    }
-                    console.log("filtered Clients: ", fltClients);
+                let obj4 = { ...objFilterClient, [selectedPropertyForClient]: [selectedPropertyValue] };
+                let fltClients = handleSearchBy(clients, obj4);
+                setObjFilterClient(obj4);
+                if (fltClients.length > 0) {
+                    setFilteredClients(fltClients);
+                } else {
+                    setOnlyClients(false);
+                }
+                console.log("filtered Clients: ", fltClients);
                 // } else if (onlyContacts) {
-                    // let obj5 = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
-                    let fltContacts = handleSearchBy(contacts, obj);
-                    if(fltContacts.length>0){
-                        setFilteredContacts(fltContacts);
-                    }else{
-                        setOnlyContacts(false);
-                    }
-                    console.log("filtered Contacts: ", fltContacts);
+                // let obj5 = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
+                let fltContacts = handleSearchBy(contacts, obj);
+                if (fltContacts.length > 0) {
+                    setFilteredContacts(fltContacts);
+                } else {
+                    setOnlyContacts(false);
+                }
+                console.log("filtered Contacts: ", fltContacts);
                 // }
 
                 // let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
@@ -361,37 +367,38 @@ function Client() {
         if (onlyClients && !onlyContacts) {
             let fltData = handleSearchBy(clients, obj);
             setFilteredClients(fltData);
-            if(Object.keys(obj).length===0){
-                setOnlyContacts(true);
+            if (Object.keys(obj).length === 0) {
+                // setOnlyContacts(true);
                 setOnlyClients(true);
             }
         } else if (!onlyClients && onlyContacts) {
             let fltData = handleSearchBy(contacts, obj);
             setFilteredContacts(fltData);
-            if(Object.keys(obj).length===0){
-                setOnlyContacts(true);
-                setOnlyClients(true);
-                if(selectedChoice==="Clients"){
-                    
+            if (Object.keys(obj).length === 0) {
+                // setOnlyContacts(true);
+                // setOnlyClients(true);
+                if (selectedChoice === "Contacts") {
+                    setOnlyContacts(true);
+                    // setOnlyClients(true);
                 }
             }
         } else if (onlyClients && onlyContacts) {
             let fltClients = handleSearchBy(clients, obj);
-            if(fltClients.length>0){
+            if (fltClients.length > 0) {
                 setFilteredClients(fltClients);
                 setOnlyClients(true);
-            }else{
+            } else {
                 setOnlyClients(false);
             }
-            
+
             let fltContacts = handleSearchBy(contacts, obj);
-            if(fltContacts.length>0){
+            if (fltContacts.length > 0) {
                 setFilteredContacts(fltContacts);
                 setOnlyContacts(true);
-            }else{
+            } else {
                 setOnlyContacts(false);
             }
-            
+
         }
 
         setObjFilter(obj);
@@ -694,7 +701,7 @@ function Client() {
                         </Box>
 
                         <Box className="dropdown-box ms-4 d-flex align-items-center">
-                            <Button disabled={Object.keys(objFilter).length>0? true:false} className='btn-select' onClick={(e) => handleDialogsOpen(e, "Folder")}>{selectedFolder}</Button>
+                            <Button disabled={Object.keys(objFilter).length > 0 ? true : false} className='btn-select' onClick={(e) => handleDialogsOpen(e, "Folder")}>{selectedFolder}</Button>
                             {isFolder && <Box className="btn-Select">
                                 <TextField placeholder='Search...' size='small' sx={{ display: "block" }} onChange={(e) => {
                                     e.stopPropagation();
@@ -722,7 +729,7 @@ function Client() {
                         </Box>}
 
                         {isCardView && <><Box className="dropdown-box ms-4 d-flex align-items-center">
-                            <Button disabled={Object.keys(objFilter).length>0? true:false} className='btn-select' onClick={(e) => handleDialogsOpen(e, "Choice")}>{selectedChoice}</Button>
+                            <Button disabled={Object.keys(objFilter).length > 0 ? true : false} className='btn-select' onClick={(e) => handleDialogsOpen(e, "Choice")}>{selectedChoice}</Button>
                             {isChoice && <Box className="btn-list-box btn-Select">
                                 {["All", "Clients", "Contacts"].map((item) => {
                                     return <Button className='btn-list' onClick={() => basedOnClientContactAndAll(item)}>{item}</Button>
@@ -757,7 +764,7 @@ function Client() {
                                                             onChange={(event, newValue) => {
                                                                 event.preventDefault();
                                                                 event.stopPropagation();
-                                                                if(newValue!==null){
+                                                                if (newValue !== null) {
                                                                     setSelectedProperty(newValue.value);
                                                                     setSelectedPropertyForClient(newValue.label);
                                                                     handleSuggestionList(newValue.value, newValue.label);
@@ -776,7 +783,7 @@ function Client() {
                                                                 event.preventDefault();
                                                                 event.stopPropagation();
                                                                 // console.log(event.target, newValue);
-                                                                if(newValue!==null){
+                                                                if (newValue !== null) {
                                                                     setSelectedProperty(newValue.value);
                                                                     handleSuggestionList(newValue.value);
                                                                 }
@@ -794,7 +801,7 @@ function Client() {
                                                             onChange={(event, newValue) => {
                                                                 event.preventDefault();
                                                                 event.stopPropagation();
-                                                                if(newValue!==null){
+                                                                if (newValue !== null) {
                                                                     setSelectedProperty(newValue.value);
                                                                     handleSuggestionList(newValue.value);
                                                                 }
@@ -947,6 +954,7 @@ function Client() {
                             basedOnClientContactAndAll={basedOnClientContactAndAll}
                             objFilter={objFilter}
                             isDataNotFoundInClient={isDataNotFoundInClient}
+                            isDataNotFoundInContact={isDataNotFoundInContact}
                         />}
                     </Box>
                 </Box>
