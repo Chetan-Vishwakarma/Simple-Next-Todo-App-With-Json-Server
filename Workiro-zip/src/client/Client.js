@@ -22,7 +22,7 @@ const CommonFilters = [
     { key: "County", val: "County" }, { key: "Postcode", val: "Postcode" },
     { key: "Country", val: "Country" }, { key: "ContactNo", val: "Contact Number" },
     { key: "Mobile", val: "Mobile Number" }, { key: "E-Mail", val: "E-Mail" },
-    { key: "Status", val: "StatusName" }, { key: "SourceName", val: "Source" },
+    { key: "StatusName", val: "Status" }, { key: "SourceName", val: "Source" },
     { key: "First Name", val: "First Name" }, { key: "Last Name", val: "Last Name" },
     { key: "Title", val: "Title" }
 ];
@@ -95,7 +95,7 @@ function Client() {
     const [selectedProperty, setSelectedProperty] = useState("");
     const [selectedPropertyValue, setSelectedPropertyValue] = useState("");
     const colorArr = ["#e26124", "#20aedb", "#075adb", "#be1de8", "#00983b", "#ed32b3"];
-    const [selectedColor, setSelectedColor] = useState(advSearchKeyValue.length === 1 ? colorArr[2] : advSearchKeyValue.length === 2 ? colorArr[4] : colorArr[0]);
+
     const [isFirstColorSelected, setIsFirstColorSelected] = useState(true);
     const [firstAdvFilterResult, setFirstAdvFilterResult] = useState([]);
     const [secondAdvFilterResult, setSecondAdvFilterResult] = useState([]);
@@ -107,6 +107,14 @@ function Client() {
     const [filteredClientsForSearchBox, setFilteredClientsForSearchBox] = useState([]);
     const [filteredContactsForSearchBox, setFilteredContactsForSearchBox] = useState([]);
     // search box states ends
+    const [objFilter, setObjFilter] = useState({});
+    const [objFilterClient, setObjFilterClient] = useState({});
+    const [objFilterColor, setObjFilterColor] = useState({});
+
+    const [selectedColor, setSelectedColor] = useState(Object.keys(objFilter).length === 1 ? colorArr[2] : Object.keys(objFilter).length === 2 ? colorArr[4] : colorArr[0]);
+
+    const [selectedPropertyForClient, setSelectedPropertyForClient] = useState("");
+    const [isDataNotFoundInClient,setIsDataNotFoundInClient] = useState(false);
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -184,7 +192,7 @@ function Client() {
     }
 
     function startFormattingDate(dt) {
-        const timestamp = parseInt(/-\d+/.exec(dt));
+        const timestamp = parseInt(/\d+/.exec(dt));
         const date = new Date(timestamp);
         const formattedDate = date.toLocaleDateString("en-GB", {
             day: "2-digit",
@@ -257,93 +265,213 @@ function Client() {
             setFilteredContactsForSearchBox(filteredContactData);
         }
     }
+    function handleSearchBy(my_array, my_criteria) {
+        return my_array.filter(function (obj) {
+            return Object.keys(my_criteria).every(function (key) {
+                if (my_criteria[key][0].length > 0) {
+                    if (obj[key] && obj[key] !== undefined && obj[key] !== "") {
+                        return obj[key].toString().toLowerCase().includes(my_criteria[key][0].toString().toLowerCase());
+                    }
+                }
+
+
+                //   return (Array.isArray(my_criteria[key]) &&
+
+                // (my_criteria[key].some(function(criteria) {
+                //   return (typeof obj[key] === 'string' && obj[key].indexOf(criteria) === -1)
+                // })) || my_criteria[key].length === 0);
+            });
+        });
+    }
     let handleAdvanceFilterAgain = () => {
-        if (selectedProperty !== "" && selectedPropertyValue !== "" && selectedColor) {
-            //console.log("Success");
-            setAdvSearchKeyValue([...advSearchKeyValue, { key: selectedProperty, value: selectedPropertyValue, color: selectedColor }]);
+        if (selectedProperty !== "" && selectedPropertyValue !== "") {
+            if (onlyClients && !onlyContacts) {
+                let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
+                setObjFilter(obj);
+                let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
+                let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
+                setObjFilterColor(obj2);
+                let fltData = handleSearchBy(clients, obj);
+                if(fltData.length>0){
+                    setFilteredClients(fltData);
+                }else{
+                    setIsDataNotFoundInClient(true);
+                }
+            } else if (!onlyClients && onlyContacts) {
+                let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
+                setObjFilter(obj);
+                let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
+                let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
+                setObjFilterColor(obj2);
+                let fltData = handleSearchBy(contacts, obj);
+                setFilteredContacts(fltData);
+            } else if (onlyClients && onlyClients) {
+                let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
+                setObjFilter(obj);
+                let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
+                let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
+                setObjFilterColor(obj2);
+
+                // if (onlyClients) {
+                    let obj4 = { ...objFilterClient, [selectedPropertyForClient]: [selectedPropertyValue] };
+                    let fltClients = handleSearchBy(clients, obj4);
+                    setObjFilterClient(obj4);
+                    if(fltClients.length>0){
+                        setFilteredClients(fltClients);
+                    }else{
+                        setOnlyClients(false);
+                    }
+                    console.log("filtered Clients: ", fltClients);
+                // } else if (onlyContacts) {
+                    // let obj5 = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
+                    let fltContacts = handleSearchBy(contacts, obj);
+                    if(fltContacts.length>0){
+                        setFilteredContacts(fltContacts);
+                    }else{
+                        setOnlyContacts(false);
+                    }
+                    console.log("filtered Contacts: ", fltContacts);
+                // }
+
+                // let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
+                // setObjFilter(obj);
+                // let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
+                // let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
+                // setObjFilterColor(obj2);
+                // let fltClients = handleSearchBy(clients, obj);
+                // console.log("filtered Clients: ", fltClients);
+                // setFilteredClients(fltClients);
+                // let fltContacts = handleSearchBy(contacts, obj);
+                // console.log("filtered Contacts: ", fltContacts);
+                // setFilteredContacts(fltContacts);
+            }
             setSelectedProperty("");
             setSelectedPropertyValue("");
-            setSelectedColor("");
-        } else {
-            alert("All Fields Are Required Including Colors");
         }
     }
-
-    useEffect(() => {
-        //console.log("advSearchKeyValue",advSearchKeyValue);
-        if (advSearchKeyValue.length === 1) {
-            let key = advSearchKeyValue[0].key;
-            let value = advSearchKeyValue[0].value;
-            if (clientKeys.includes(key)) {
-                let filteredClient = clients.filter((item) => {
-                    return Object.values(item).join('').toLowerCase().includes(value.toLowerCase());
-                });
-                //console.log("filteredCient", filteredClient);
-                if (filteredClient.length !== 0) {
-                    setFilteredClients(filteredClient);
-                    setOnlyClients(true);
-                    setOnlyContacts(false);
-                }
-            } else if (contactKeys.includes(key)) {
-                let filteredContact = contacts.filter((item) => {
-                    console.log(item[key]);
-                    return Object.values(item).join('').toLowerCase().includes(value.toLowerCase());
-                });
-                //console.log("filteredContact", filteredContact);
-                if (filteredContact.length !== 0) {
-                    setFilteredContacts(filteredContact);
-                    setOnlyClients(false);
-                    setOnlyContacts(true);
+    let handleFilterDeletion = (target) => {
+        // console.log("target", target);
+        let obj = Object.keys(objFilter).filter(objKey =>
+            objKey !== target).reduce((newObj, key) => {
+                newObj[key] = objFilter[key];
+                return newObj;
+            }, {}
+            );
+        // console.log("obj",obj);
+        if (onlyClients && !onlyContacts) {
+            let fltData = handleSearchBy(clients, obj);
+            setFilteredClients(fltData);
+            if(Object.keys(obj).length===0){
+                setOnlyContacts(true);
+                setOnlyClients(true);
+            }
+        } else if (!onlyClients && onlyContacts) {
+            let fltData = handleSearchBy(contacts, obj);
+            setFilteredContacts(fltData);
+            if(Object.keys(obj).length===0){
+                setOnlyContacts(true);
+                setOnlyClients(true);
+                if(selectedChoice==="Clients"){
+                    
                 }
             }
-        } else if (advSearchKeyValue.length > 1) {
-            let isCLientKey = advSearchKeyValue.map((item) => {
-                return clientKeys.includes(item.key);
-            }).every((item) => item === true);
-
-            let isContactKey = advSearchKeyValue.map((item) => {
-                return contactKeys.includes(item.key);
-            }).every((item) => item === true);
-
-            // console.log("isClientKey", isCLientKey);
-            // console.log("isContactKey", isContactKey);
-
-            if (isCLientKey) {
-                // console.log("isClientKey");
-                let advResult = advSearchKeyValue.map((item) => {
-                    return clients.filter((data) => {
-                        return data[item.key].toLowerCase().includes(item.value.toLowerCase());
-                    });
-                });
-                //console.log("advResult",advResult);
-                let isEmpty = advResult.slice(0, advResult.length - 1).some((item) => item.length === 0);
-                // console.log("isEmpty", isEmpty);
-                if (!isEmpty) {
-                    setFilteredClients(advResult[1]);
-                    setOnlyContacts(false);
-                    setOnlyClients(true);
-                }
-                //setFilteredClients(advResult[1]);
-            } else if (isContactKey) {
-                // console.log("isContactKey");
-                let advContactResult = advSearchKeyValue.map((item) => {
-                    return contacts.filter((data) => {
-                        return data[item.key].toLowerCase().includes(item.value.toLowerCase());
-                    });
-                });
-                // console.log("advContactResult",advContactResult[1]);
-                let isEmpty = advContactResult.slice(0, advContactResult.length - 1).some((item) => item.length === 0);
-                if (!isEmpty) {
-                    setFilteredContacts(advContactResult[1]);
-                    setOnlyContacts(true);
-                    setOnlyClients(false);
-                }
+        } else if (onlyClients && onlyContacts) {
+            let fltClients = handleSearchBy(clients, obj);
+            if(fltClients.length>0){
+                setFilteredClients(fltClients);
+                setOnlyClients(true);
+            }else{
+                setOnlyClients(false);
             }
-        } else {
-            setFilteredClients([]);
-            setFilteredContacts([]);
+            
+            let fltContacts = handleSearchBy(contacts, obj);
+            if(fltContacts.length>0){
+                setFilteredContacts(fltContacts);
+                setOnlyContacts(true);
+            }else{
+                setOnlyContacts(false);
+            }
+            
         }
-    }, [advSearchKeyValue]);
+
+        setObjFilter(obj);
+    }
+
+    // useEffect(() => {
+    //     //console.log("advSearchKeyValue",advSearchKeyValue);
+    //     if (advSearchKeyValue.length === 1) {
+    //         let key = advSearchKeyValue[0].key;
+    //         let value = advSearchKeyValue[0].value;
+    //         if (clientKeys.includes(key)) {
+    //             let filteredClient = clients.filter((item) => {
+    //                 return Object.values(item).join('').toLowerCase().includes(value.toLowerCase());
+    //             });
+    //             //console.log("filteredCient", filteredClient);
+    //             if (filteredClient.length !== 0) {
+    //                 setFilteredClients(filteredClient);
+    //                 setOnlyClients(true);
+    //                 setOnlyContacts(false);
+    //             }
+    //         } else if (contactKeys.includes(key)) {
+    //             let filteredContact = contacts.filter((item) => {
+    //                 console.log(item[key]);
+    //                 return Object.values(item).join('').toLowerCase().includes(value.toLowerCase());
+    //             });
+    //             //console.log("filteredContact", filteredContact);
+    //             if (filteredContact.length !== 0) {
+    //                 setFilteredContacts(filteredContact);
+    //                 setOnlyClients(false);
+    //                 setOnlyContacts(true);
+    //             }
+    //         }
+    //     } else if (advSearchKeyValue.length > 1) {
+    //         let isCLientKey = advSearchKeyValue.map((item) => {
+    //             return clientKeys.includes(item.key);
+    //         }).every((item) => item === true);
+
+    //         let isContactKey = advSearchKeyValue.map((item) => {
+    //             return contactKeys.includes(item.key);
+    //         }).every((item) => item === true);
+
+    //         // console.log("isClientKey", isCLientKey);
+    //         // console.log("isContactKey", isContactKey);
+
+    //         if (isCLientKey) {
+    //             // console.log("isClientKey");
+    //             let advResult = advSearchKeyValue.map((item) => {
+    //                 return clients.filter((data) => {
+    //                     return data[item.key].toLowerCase().includes(item.value.toLowerCase());
+    //                 });
+    //             });
+    //             //console.log("advResult",advResult);
+    //             let isEmpty = advResult.slice(0, advResult.length - 1).some((item) => item.length === 0);
+    //             // console.log("isEmpty", isEmpty);
+    //             if (!isEmpty) {
+    //                 setFilteredClients(advResult[1]);
+    //                 setOnlyContacts(false);
+    //                 setOnlyClients(true);
+    //             }
+    //             //setFilteredClients(advResult[1]);
+    //         } else if (isContactKey) {
+    //             // console.log("isContactKey");
+    //             let advContactResult = advSearchKeyValue.map((item) => {
+    //                 return contacts.filter((data) => {
+    //                     return data[item.key].toLowerCase().includes(item.value.toLowerCase());
+    //                 });
+    //             });
+    //             // console.log("advContactResult",advContactResult[1]);
+    //             let isEmpty = advContactResult.slice(0, advContactResult.length - 1).some((item) => item.length === 0);
+    //             if (!isEmpty) {
+    //                 setFilteredContacts(advContactResult[1]);
+    //                 setOnlyContacts(true);
+    //                 setOnlyClients(false);
+    //             }
+    //         }
+    //     } else {
+    //         setFilteredClients([]);
+    //         setFilteredContacts([]);
+    //     }
+    // }, [advSearchKeyValue]);
 
 
 
@@ -433,6 +561,72 @@ function Client() {
     }
     const [isGridView, setIsGridView] = useState(false);
     const [isCardView, setIsCardView] = useState(true);
+    const [suggestionList, setSuggestionList] = useState([]);
+
+    const createSuggestionList = (value, data) => {
+        let fltRepeatData = [];
+        data.map((itm) => {
+            if (itm[value] && itm[value] !== "" && itm[value] !== null && itm[value] !== undefined && itm[value] !== "null" && itm[value] !== "undefined") {
+                return itm[value];
+            }
+        }).filter((flt) => {
+            if (flt && flt !== "undefined" && flt !== undefined) {
+                if (!fltRepeatData.includes(flt)) {
+                    fltRepeatData.push(flt)
+                }
+            }
+        });
+        return fltRepeatData;
+    }
+
+    function handleSuggestionList(value, label) {
+        if (!onlyClients) {
+            let fltRepeatData = createSuggestionList(value, contacts);
+            setSuggestionList(fltRepeatData);
+            //console.log("Contacts's Property suggestion list",fltRepeatData);
+
+        } else if (!onlyContacts) {
+            let fltRepeatData = createSuggestionList(value, clients);
+            setSuggestionList(fltRepeatData);
+        } else if (onlyClients && onlyContacts) {
+            let list1 = createSuggestionList(label, clients);
+            let list2 = createSuggestionList(value, contacts);
+            let fltRepeatData = [...list1];
+            // console.log("Suggestion for both client and contact",fltRepeatData);
+
+            list2.filter((itm) => {
+                if (!fltRepeatData.includes(itm)) {
+                    fltRepeatData.push(itm);
+                }
+            });
+            // let fltRepeatData = [];
+            // clients.map((itm)=>{
+            //     if(itm[label]&&itm[label]!==""&&itm[label]!==null&&itm[label]!==undefined&&itm[label]!=="null"&&itm[label]!=="undefined"){
+            //         return itm[label];
+            //     }
+            // }).filter((flt)=>{
+            //     if(flt&&flt!=="undefined"&&flt!==undefined){
+            //         if (!fltRepeatData.includes(flt)) {
+            //             fltRepeatData.push(flt)
+            //         }
+            //     }
+            // });
+            // console.log("Suggestion for both client and contact",fltRepeatData);
+            // contacts.map((itm)=>{
+            //     if(itm[value]&&itm[value]!==""&&itm[value]!==null&&itm[value]!==undefined&&itm[value]!=="null"&&itm[value]!=="undefined"){
+            //         return itm[value];
+            //     }
+            // }).filter((flt)=>{
+            //     if(flt&&flt!=="undefined"&&flt!==undefined){
+            //         if (!fltRepeatData.includes(flt)) {
+            //             fltRepeatData.push(flt)
+            //         }
+            //     }
+            // });
+            setSuggestionList(fltRepeatData);
+            // console.log("Suggestion for both client and contact",fltRepeatData);
+        }
+    }
     return (
         <Box className='container-fluid p-0' onClick={handleClick}>
 
@@ -500,7 +694,7 @@ function Client() {
                         </Box>
 
                         <Box className="dropdown-box ms-4 d-flex align-items-center">
-                            <Button className='btn-select' onClick={(e) => handleDialogsOpen(e, "Folder")}>{selectedFolder}</Button>
+                            <Button disabled={Object.keys(objFilter).length>0? true:false} className='btn-select' onClick={(e) => handleDialogsOpen(e, "Folder")}>{selectedFolder}</Button>
                             {isFolder && <Box className="btn-Select">
                                 <TextField placeholder='Search...' size='small' sx={{ display: "block" }} onChange={(e) => {
                                     e.stopPropagation();
@@ -528,7 +722,7 @@ function Client() {
                         </Box>}
 
                         {isCardView && <><Box className="dropdown-box ms-4 d-flex align-items-center">
-                            <Button className='btn-select' onClick={(e) => handleDialogsOpen(e, "Choice")}>{selectedChoice}</Button>
+                            <Button disabled={Object.keys(objFilter).length>0? true:false} className='btn-select' onClick={(e) => handleDialogsOpen(e, "Choice")}>{selectedChoice}</Button>
                             {isChoice && <Box className="btn-list-box btn-Select">
                                 {["All", "Clients", "Contacts"].map((item) => {
                                     return <Button className='btn-list' onClick={() => basedOnClientContactAndAll(item)}>{item}</Button>
@@ -551,18 +745,6 @@ function Client() {
 
                                         <Box className='clearfix'>
                                             <Typography variant='Body1' className='mb-2 d-block  bold'>Filter:</Typography>
-                                            {/* <Box className="mb-2">
-                                            {advSearchKeyValue.map((item) => {
-                                                return <Button sx={{ backgroundColor: item.color }} className='btn-white'>{item.key}: {item.value}
-                                                    <span onClick={() => handleFilterRemove(item)} className="material-symbols-outlined font-16 text-danger">
-                                                        close
-                                                    </span></Button>
-                                            })}
-
-                                            <Fab size="small" className='btn-plus  ms-2' aria-label="add">
-                                                <AddIcon />
-                                            </Fab>
-                                        </Box> */}
 
                                             <Box className='row'>
                                                 <Box className='col-md-4'>
@@ -571,91 +753,76 @@ function Client() {
                                                         {(onlyClients && onlyContacts) && <Autocomplete
                                                             disablePortal
                                                             id="combo-box-demo"
+                                                            value={selectedProperty}
                                                             onChange={(event, newValue) => {
                                                                 event.preventDefault();
                                                                 event.stopPropagation();
-                                                                // console.log(event.target, newValue);
-                                                                setSelectedProperty(newValue.value);
+                                                                if(newValue!==null){
+                                                                    setSelectedProperty(newValue.value);
+                                                                    setSelectedPropertyForClient(newValue.label);
+                                                                    handleSuggestionList(newValue.value, newValue.label);
+                                                                }
                                                             }}
                                                             options={CommonFilters.map(option => ({ value: option.key, label: option.val }))}
                                                             sx={{ width: 300 }}
-                                                            renderInput={(params) => <TextField {...params} label="Select Property" />}
+                                                            renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
                                                         />}
 
                                                         {!onlyClients && <Autocomplete
                                                             disablePortal
                                                             id="combo-box-demo"
+                                                            value={selectedProperty}
                                                             onChange={(event, newValue) => {
                                                                 event.preventDefault();
                                                                 event.stopPropagation();
                                                                 // console.log(event.target, newValue);
-                                                                setSelectedProperty(newValue.value);
+                                                                if(newValue!==null){
+                                                                    setSelectedProperty(newValue.value);
+                                                                    handleSuggestionList(newValue.value);
+                                                                }
                                                             }}
                                                             options={ContactFilters.map(option => ({ value: option.key, label: option.val }))}
                                                             sx={{ width: 300 }}
-                                                            renderInput={(params) => <TextField {...params} label="Select Property" />}
+                                                            renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
                                                         />}
 
+                                                        {/* Only For Clients */}
                                                         {!onlyContacts && <Autocomplete
                                                             disablePortal
                                                             id="combo-box-demo"
+                                                            value={selectedProperty}
                                                             onChange={(event, newValue) => {
                                                                 event.preventDefault();
                                                                 event.stopPropagation();
-                                                                // console.log(newValue);
-                                                                setSelectedProperty(newValue.value);
+                                                                if(newValue!==null){
+                                                                    setSelectedProperty(newValue.value);
+                                                                    handleSuggestionList(newValue.value);
+                                                                }
                                                             }}
                                                             options={ClientFilters.map(option => ({ value: option.key, label: option.val }))}
                                                             sx={{ width: 300 }}
-                                                            renderInput={(params) => <TextField {...params} label="Select Property" />}
+                                                            renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
                                                         />}
-
-
-                                                        {/* <label>Select Property</label>
-                                                        <select value={selectedProperty} onChange={(e) => { setSelectedProperty(e.target.value) }} class="form-select" aria-label="Default select example">
-                                                            <option value={""}>Select</option>
-                                                            {/* {!onlyContacts&&clientKeys.map((item, i) => {
-                                                            return <option key={i} value={item}>{item}</option>
-                                                        })}
-                                                        {!onlyClients&&contactKeys.map((item, i) => {
-                                                            return <option key={i} value={item}>{item}</option>
-                                                        })} 
-                                                            {/* {(onlyContacts&&onlyClients)&&clientKeys.map((item, i) => {
-                                                            return <option key={i} value={item}>{item}</option>
-                                                        })}
-                                                            {/* {(onlyClients&&onlyContacts)&&contactKeys.map((item, i) => {
-                                                            return <option key={i} value={item}>{item}</option>
-                                                        })} 
-                                                            {!onlyContacts && ClientFilters.map((item, i) => {
-                                                                return <option key={i} value={item.key}>{item.val}</option>
-                                                            })}
-                                                            {!onlyClients && ContactFilters.map((item, i) => {
-                                                                return <option key={i} value={item.key}>{item.val}</option>
-                                                            })}
-                                                            {(onlyContacts && onlyClients) && CommonFilters.map((item, i) => {
-                                                                return <option key={i} value={item.key}>{item.val}</option>
-                                                            })}
-                                                        </select> */}
                                                     </Box>
                                                 </Box>
                                                 <Box className='col-md-4 px-0'>
                                                     <Box className='mb-2'>
                                                         <div>
-                                                        <Autocomplete
-                                                            disablePortal
-                                                            id="combo-box-demo"
-                                                            onChange={(event, newValue) => {
-                                                                event.preventDefault();
-                                                                event.stopPropagation();
-                                                                console.log(newValue);
-                                                            }}
-                                                            options={["A","B","C"]}
-                                                            sx={{ width: 300 }}
-                                                            renderInput={(params) => <TextField {...params} label="Select Property" />}
-                                                        />
+                                                            <Autocomplete
+                                                                disablePortal
+                                                                id="combo-box-demo"
+                                                                value={selectedPropertyValue}
+                                                                onChange={(event, newValue) => {
+                                                                    event.preventDefault();
+                                                                    event.stopPropagation();
+                                                                    //console.log(newValue);
+                                                                    setSelectedPropertyValue(newValue);
+                                                                }}
+                                                                options={suggestionList}
+                                                                sx={{ width: 300 }}
+                                                                renderInput={(params) => <TextField {...params} value={selectedPropertyValue} onChange={(e) => setSelectedPropertyValue(e.target.value)} label="Select Property" />}
+                                                            />
                                                         </div>
-                                                        {/* <label>Value</label>
-                                                        <input value={selectedPropertyValue} onChange={(e) => { setSelectedPropertyValue(e.target.value) }} type="text" class="form-control" placeholder="Type Value" /> */}
                                                     </Box>
                                                 </Box>
                                                 <Box className='col-md-4'>
@@ -664,7 +831,7 @@ function Client() {
 
                                                         <Box className="color-box">
                                                             {
-                                                                advSearchKeyValue.length === 0 && <><button onClick={(e) => {
+                                                                Object.keys(objFilter).length === 0 && <><button onClick={(e) => {
                                                                     setSelectedColor(colorArr[0]);
                                                                     setIsFirstColorSelected(true);
                                                                 }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[0] }}></button>
@@ -674,7 +841,7 @@ function Client() {
                                                                     }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[1] }}></button></>
                                                             }
                                                             {
-                                                                advSearchKeyValue.length === 1 && <><button onClick={(e) => {
+                                                                Object.keys(objFilter).length === 1 && <><button onClick={(e) => {
                                                                     setSelectedColor(colorArr[2]);
                                                                     setIsFirstColorSelected(true);
                                                                 }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[2] }}></button>
@@ -684,7 +851,7 @@ function Client() {
                                                                     }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[3] }}></button></>
                                                             }
                                                             {
-                                                                advSearchKeyValue.length === 2 && <><button onClick={(e) => {
+                                                                Object.keys(objFilter).length === 2 && <><button onClick={(e) => {
                                                                     setSelectedColor(colorArr[4]);
                                                                     setIsFirstColorSelected(true);
                                                                 }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[4] }}></button>
@@ -721,6 +888,12 @@ function Client() {
                             {/*  */}
 
                             <Box className="mb-2 ms-3">
+                                {Object.keys(objFilter).map((item) => {
+                                    return <Button sx={{ backgroundColor: objFilterColor[item][0] }} className='btn-white text-white'><span className='text-white'>{item}: {objFilter[item][0]}</span>
+                                        <span onClick={() => handleFilterDeletion(item)} className="material-symbols-outlined font-16 text-white">
+                                            close
+                                        </span></Button>
+                                })}
                                 {advSearchKeyValue.map((item) => {
                                     return <Button sx={{ backgroundColor: item.color }} className='btn-white text-white'><span className='text-white'>{item.key}: {item.value}</span>
                                         <span onClick={() => handleFilterRemove(item)} className="material-symbols-outlined font-16 text-white">
@@ -772,6 +945,8 @@ function Client() {
                             selectedFolder={selectedFolder}
                             selectedChoice={selectedChoice}
                             basedOnClientContactAndAll={basedOnClientContactAndAll}
+                            objFilter={objFilter}
+                            isDataNotFoundInClient={isDataNotFoundInClient}
                         />}
                     </Box>
                 </Box>
