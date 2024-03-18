@@ -562,6 +562,7 @@ function Client() {
             //console.log("Contacts's Property suggestion list",fltRepeatData);
 
         } else if (!onlyContacts) {
+            
             let fltRepeatData = createSuggestionList(value, clients);
             setSuggestionList(fltRepeatData);
         } else if (onlyClients && onlyContacts) {
@@ -575,30 +576,6 @@ function Client() {
                     fltRepeatData.push(itm);
                 }
             });
-            // let fltRepeatData = [];
-            // clients.map((itm)=>{
-            //     if(itm[label]&&itm[label]!==""&&itm[label]!==null&&itm[label]!==undefined&&itm[label]!=="null"&&itm[label]!=="undefined"){
-            //         return itm[label];
-            //     }
-            // }).filter((flt)=>{
-            //     if(flt&&flt!=="undefined"&&flt!==undefined){
-            //         if (!fltRepeatData.includes(flt)) {
-            //             fltRepeatData.push(flt)
-            //         }
-            //     }
-            // });
-            // console.log("Suggestion for both client and contact",fltRepeatData);
-            // contacts.map((itm)=>{
-            //     if(itm[value]&&itm[value]!==""&&itm[value]!==null&&itm[value]!==undefined&&itm[value]!=="null"&&itm[value]!=="undefined"){
-            //         return itm[value];
-            //     }
-            // }).filter((flt)=>{
-            //     if(flt&&flt!=="undefined"&&flt!==undefined){
-            //         if (!fltRepeatData.includes(flt)) {
-            //             fltRepeatData.push(flt)
-            //         }
-            //     }
-            // });
             setSuggestionList(fltRepeatData);
             // console.log("Suggestion for both client and contact",fltRepeatData);
         }
@@ -889,7 +866,7 @@ function Client() {
                     </Box>
 
                     <Box className='row'>
-                        {isGridView && <ClientGrid onlyContacts={onlyClients} data={onlyContacts ? contacts : clients} />}
+                        {isGridView && <ClientGrid selectedChoice={selectedChoice} data={selectedChoice==="All" || selectedChoice==="Contacts" ? contacts : clients} handleContactNavigattion={handleContactNavigattion} handleClientNavigation={handleClientNavigation}/>}
 
                         {isCardView && <CardView
                             isSearch={isSearch}

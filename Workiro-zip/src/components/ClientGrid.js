@@ -9,11 +9,10 @@ import 'devextreme/dist/css/dx.light.css';
 
 // import LoginDetails from "../../services/Utils";
 import CommanCLS from '../services/CommanService';
-import { useNavigate } from 'react-router-dom';
 
 
 
-const ClientGrid = ({onlyContacts,data}) => {
+const ClientGrid = ({selectedChoice,data,handleContactNavigattion,handleClientNavigation}) => {
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -53,31 +52,18 @@ const ClientGrid = ({onlyContacts,data}) => {
         Json_GetSupplierListByProject();
     }, [])
 
-    const navigate = useNavigate();
-
-    const handleContactNavigattion = (originator_no, contact_no) => {
-        console.log("sdfsf",{
-            originator_no:originator_no,
-            contact_no:contact_no
-        });
-        navigate('/dashboard/ContactDetails', {
-            state: {
-                agrno: agrno,
-                Email: Email,
-                password: password,
-                folderId: folderId,
-                originatorNo: originator_no,
-                contactNo: contact_no
-            }
-        })
-    }
-
-    function onSelectionChanged(e) {
-        handleContactNavigattion(e.selectedRowsData[0].OriginatorNo,e.selectedRowsData[0].ContactNo);
-        console.log("sdfkjh",{
-            selectedRowsData: e.selectedRowsData
-        });
-    }
+    const handleRowDoubleClick = (e) => {
+        // Handle double click event on the row
+        console.log('Row double-clicked:', e.data);
+        if(selectedChoice==="All" || selectedChoice==="Contacts"){
+            let orgNo = e.data.OriginatorNo;
+            let contactNo = e.data.ContactNo;
+            handleContactNavigattion(orgNo, contactNo);
+        }else{
+            let originatorNo = e.data.OriginatorNo;
+            handleClientNavigation(originatorNo);
+        }
+      };
 
     return (
         <>
@@ -88,6 +74,7 @@ const ClientGrid = ({onlyContacts,data}) => {
                 dataSource={data}
                 // keyExpr={}
                 columnAutoWidth={true}
+                onRowDblClick={handleRowDoubleClick}
                 showBorders={true}>
                 {/* onSelectionChanged={onSelectionChanged} */}
                 <FilterRow visible={true} />

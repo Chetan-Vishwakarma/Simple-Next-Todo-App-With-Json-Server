@@ -323,6 +323,7 @@ export default function DocumentList({ clientId }) {
         const paddedMonth = month < 10 ? `0${month}` : month;
         return `${paddedDay}/${paddedMonth}/${year}`;
     }
+
     function getLastMonth() {
         const currentDate = new Date();
         const lastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1);
