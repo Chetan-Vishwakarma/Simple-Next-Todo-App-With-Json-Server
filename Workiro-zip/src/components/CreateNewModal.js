@@ -32,6 +32,7 @@ import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import DvrIcon from '@mui/icons-material/Dvr';
 import LanguageIcon from '@mui/icons-material/Language';
 import 'react-datetime/css/react-datetime.css';
+import { v4 as uuidv4 } from 'uuid';
 
 import Swal from 'sweetalert2';
 import {
@@ -106,6 +107,10 @@ export default function CreateNewModalTask({ ...props }) {
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
+
+
+    const [guid, setGuid] = useState('');
+
     //const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/"; // base url for api
@@ -114,6 +119,10 @@ export default function CreateNewModalTask({ ...props }) {
     let cls = new CommanCLS(baseUrl, agrno, Email, password);
 
     const [filterText, setFilterText] = React.useState("");
+
+    const [userFilter, setUserFilter] = React.useState([]);
+    const [userListData, setUserListData] = React.useState([]);
+
     const [userList, setUserList] = React.useState([]);
     const [addUser, setAddUser] = useState([]);
     const [ownerRighClick, setOwnerRighClick] = useState(null)
@@ -189,9 +198,13 @@ export default function CreateNewModalTask({ ...props }) {
     const [loading, setLoading] = useState(false);
 
     //////////////////////Priority
-    const [txtPrioriy, setTxtPriority] = useState("Priority");
-    const [txtStatus, setTxtStatus] = useState("Status");
-    const [txtPriorityId, setTxtPriorityId] = useState("");
+    const [txtPrioriy, setTxtPriority] = useState("Normal");
+    const [txtStatus, setTxtStatus] = useState("Not Started");
+
+    const [txtPriorityId, setTxtPriorityId] = useState(2);
+
+
+
 
     const [prioriyAnchorEl, setPrioriyAnchorEl] = React.useState(null);
     const [selectedPrioriyMenu, setSelectedPrioriyMenu] = useState(null);
@@ -292,6 +305,19 @@ export default function CreateNewModalTask({ ...props }) {
 
     };
 
+    const [anchorSelectFileEl, setAnchorSelectFileEl] = React.useState(null);
+
+    const openSelectFile = Boolean(anchorSelectFileEl);
+
+    const handleClickSelectFile = (event) => {
+        setAnchorSelectFileEl(event.currentTarget);
+    };
+
+    const handleSelectFileClose = () => {
+        setAnchorSelectFileEl(null);
+    };
+
+
     //   const handleClick3 = (event, menuType) => {
     //     console.log(menuType);
     //     if (menuType === "client") {
@@ -319,7 +345,14 @@ export default function CreateNewModalTask({ ...props }) {
 
     };
 
+    const disablePastDtTwoDate = (date) => {
+        const today = new Date();
+        today.setDate(today.getDate() - 1);
+        const twoDaysAhead = new Date(nextDate);
+        // twoDaysAhead.setDate(today.getDate() + 2); // Set two days ahead
 
+        return date.isBetween(today, twoDaysAhead, null, '[]'); // Disable past dates and dates beyond two days from today
+    };
 
 
     const userAdd = Boolean(anchorel);
@@ -341,7 +374,7 @@ export default function CreateNewModalTask({ ...props }) {
                         if (result.length > 0) {
                             result.map((el) => {
                                 if (el.ID === parseInt(localStorage.getItem("UserId"))) {
-                                    console.log("Json_GetForwardUserList11", addUser);
+                                    // console.log("Json_GetForwardUserList11", addUser);
                                     setOwnerID(el.ID);
                                     setOwnerRighClick(el);
                                     setAddUser((pre) => [...pre, el])
@@ -351,7 +384,9 @@ export default function CreateNewModalTask({ ...props }) {
                         }
 
                         setUserList(result);
-
+                        let removeuser = result.filter((e) => e.ID !== localStorage.getItem("UserId"));
+                        setUserListData(removeuser);
+                        setUserFilter(removeuser);
 
                     }
                 }
@@ -361,23 +396,17 @@ export default function CreateNewModalTask({ ...props }) {
         }
     }
 
-    // Filter the userList based on filterText
-    const filteredUserList = userList.filter((item) => {
-        // Check if item and its properties are defined before accessing them
-        // console.log("filterText", filterText);
-        if (item && item.ForwardTo) {
-            // You can customize the filtering logic here based on your requirements
-            return item.ForwardTo.toLowerCase().includes(filterText.toLowerCase());
-        } else {
-            return false; // Return false if any required property is undefined
-        }
-    });
+
+
 
     const handalClickAddUser = (e) => {
         // Check if the object 'e' already exists in the array based on its 'id'
         if (!addUser.some(user => user.ID === e.ID)) {
             // If it doesn't exist, add it to the 'addUser' array
             setAddUser([...addUser, e]);
+            let res = userFilter.filter((user) => user.ID !== e.ID);
+            setUserListData(res);
+            setUserFilter(res);
         }
 
 
@@ -514,28 +543,15 @@ export default function CreateNewModalTask({ ...props }) {
 
     // Function to close the client list
 
-    const closeClientList = (e) => {
-        if (clientListRef.current && !clientListRef.current.contains(e.target)) {
-            setClientAnchorEl(null);
-        }
-    };
 
 
-
-
-
-    // Function to close the section list
-    const closeSectionList = (e) => {
-        if (sectionListRef.current && !sectionListRef.current.contains(e.target)) {
-            setSectionAnchorEl(null);
-        }
-    };
 
     const handleMenuClose = () => {
         setFolderAnchorEl(null);
     };
 
     useEffect(() => {
+
         const handleClickOutside = (event) => {
             // Check if the menu is open and the click is outside the menu and not in the search box
             if (folderAnchorEl && folderListRef.current && !folderListRef.current.contains(event.target) && !event.target.closest('.px-3')) {
@@ -661,7 +677,28 @@ export default function CreateNewModalTask({ ...props }) {
 
     }, [createNewFileObj]);
 
+
     useEffect(() => {
+        // Filter the userList based on filterText
+        console.log("userFilter", userFilter)
+        let res = userListData.filter((item) => {
+            // Check if item and its properties are defined before accessing them
+            // console.log("filterText", filterText);
+            if (item && item.ForwardTo) {
+                // You can customize the filtering logic here based on your requirements
+                return item.ForwardTo.toLowerCase().includes(filterText.toLowerCase());
+            } else {
+                return false; // Return false if any required property is undefined
+            }
+        });
+
+        setUserFilter(res);
+    }, [filterText])
+
+    useEffect(() => {
+
+
+        setAnchorSelectFileEl(null);
         setOpen(openModal);
 
         setAgrNo(localStorage.getItem("agrno"));
@@ -678,6 +715,7 @@ export default function CreateNewModalTask({ ...props }) {
         Json_GetFolders();
         Json_GetForwardUserList();
         Json_GetFolderData();
+        Json_GetSections(txtFolderId);
         //console.log(nextDate, currentDate)
 
         //document.addEventListener('mousedown', closeFolderList);
@@ -717,8 +755,13 @@ export default function CreateNewModalTask({ ...props }) {
                     if (data) {
                         let js = JSON.parse(data);
                         let tbl = js.Table;
-                        // console.log("get folder list", tbl);
+                        console.log("get folder list", tbl);
                         setFolderList(tbl);
+                        let res = tbl.filter((f) => f.FolderID === parseInt(localStorage.getItem("ProjectId")));
+                        if (res.length > 0) {
+                            settxtFolder(res[0].Folder);
+                        }
+
                     }
                 }
             });
@@ -788,6 +831,38 @@ export default function CreateNewModalTask({ ...props }) {
     };
 
 
+function PrepareDocumentsForPublish_Json(){
+    try {
+        let o = {};
+        o.accid = agrno;
+        o.email =Email;
+        o.password =password;
+        o.uploadID =password;
+        cls.SaveTaskAttachments(o, function (sts, data) {
+            if (sts && data) {
+                let res = JSON.parse(data);
+                if (res.Status === "Success") {
+                    let path = window.atob(res.Message);
+                    let index = path.lastIndexOf("\\");
+                    let fileName = path.slice(index + 1);
+                    let o = { Path: path, FileName: fileName }
+
+                    setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+
+                }
+            }
+        });
+    }
+    catch (error) {
+        console.log({
+            status: false,
+            message: "Attachment is Not Uploaded Try again",
+            error: error,
+        });
+    }
+}
+
+
     const SETDate = (date) => {
         var d = new Date(date);
         var dd = d.getDate();
@@ -824,30 +899,30 @@ export default function CreateNewModalTask({ ...props }) {
         // Your form submission logic, for example, making an API call
         try {
             let o = {};
-                        o.base64File = filedata.Base64;
-                        o.FileName = filedata.FileName;
-                        cls.SaveTaskAttachments(o, function (sts, data) {
-                            if (sts && data) {
-                                let res = JSON.parse(data);
-                                if (res.Status === "Success") {
-                                    let path = window.atob(res.Message);
-                                   let index = path.lastIndexOf("\\");
-                                     let fileName = path.slice(index + 1);
-                                     let o={ Path: path, FileName: fileName }
-                                     
-                                    setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
-                                   
-                                } 
-                            }
-                        });
-        } 
+            o.base64File = filedata.Base64;
+            o.FileName = filedata.FileName;
+            cls.SaveTaskAttachments(o, function (sts, data) {
+                if (sts && data) {
+                    let res = JSON.parse(data);
+                    if (res.Status === "Success") {
+                        let path = window.atob(res.Message);
+                        let index = path.lastIndexOf("\\");
+                        let fileName = path.slice(index + 1);
+                        let o = { Path: path, FileName: fileName }
+
+                        setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+
+                    }
+                }
+            });
+        }
         catch (error) {
             console.log({
                 status: false,
                 message: "Attachment is Not Uploaded Try again",
                 error: error,
             });
-        } 
+        }
 
     }
 
@@ -915,14 +990,14 @@ export default function CreateNewModalTask({ ...props }) {
 
         const isaddUser = addUser.map(obj => obj.ID).join(',');
         const attString = attachmentPath.map(obj => obj.Path).join('|');
-       
-       
 
-        let ooo ={
-           
+
+
+        let ooo = {
+
             "ClientIsRecurrence": false,
-            "StartDate":dayjs(currentDate).format("YYYY/MM/DD"),
-            "ClientEnd":dayjs(nextDate).format("YYYY/MM/DD"),
+            "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
+            "ClientEnd": dayjs(nextDate).format("YYYY/MM/DD"),
             "ClientDayNumber": "1",
             "ClientMonth": "1",
             "ClientOccurrenceCount": "1",
@@ -932,21 +1007,21 @@ export default function CreateNewModalTask({ ...props }) {
             "ClientWeekDays": "1",
             "ClientWeekOfMonth": "1",
             "OwnerID": ownerID.toString(),
-            "AssignedToID": "77,9",
-            "AssociateWithID":textClientId,
+            "AssignedToID": isaddUser,
+            "AssociateWithID": textClientId,
             "FolderId": txtFolderId.toString(),
             "Subject": textSubject,
             "TypeofTaskID": txtSectionId.toString(),
-            "EndDateTime":dayjs(nextDate).format("YYYY/MM/DD"),
+            "EndDateTime": dayjs(nextDate).format("YYYY/MM/DD"),
             "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
-            "Status":txtStatus,
-            "Priority":txtPriorityId.toString(),
+            "Status": txtStatus,
+            "Priority": txtPriorityId.toString(),
             "PercentComplete": "1",
             "ReminderSet": false,
-            "ReminderDateTime": remiderDate? dayjs(remiderDate).format("YYYY/MM/DD"):"1900/01/01",
+            "ReminderDateTime": remiderDate ? dayjs(remiderDate).format("YYYY/MM/DD") : "1900/01/01",
             "TaskNo": "0",
             "Attachments": attString ? attString : "",
-            "Details":txtdescription,
+            "Details": txtdescription,
             "YEDate": "1900/01/01",
             "SubDeadline": "1900/01/01",
             "DocRecdate": "1900/01/01",
@@ -975,11 +1050,11 @@ export default function CreateNewModalTask({ ...props }) {
                     //handleSuccess(js.Message);
                     // setOpen(false);
                 }
-                else{
+                else {
                     toast.error("Task Not Created Please Try Again");
                     console.log("Response final", data)
                 }
-               
+
                 // setLoading(false);
             }
         })
@@ -1011,6 +1086,15 @@ export default function CreateNewModalTask({ ...props }) {
         // Filter out the object with the specified ID
         const updatedUsers = addUser.filter(user => user.ID !== id);
         setAddUser(updatedUsers);
+
+        // Find the object with the specified ID in userFilter
+        const removedUser = addUser.find(user => user.ID === id);
+
+        // If the object is found in userFilter, add it back to userFilter
+        if (removedUser) {
+            setUserFilter(prevUsers => [...prevUsers, removedUser]);
+        }
+
     };
     /////////////////////////////End Remove Assignee
     function rearrangeName(fullName) {
@@ -1062,12 +1146,38 @@ export default function CreateNewModalTask({ ...props }) {
 
     }
 
+    const [txtColor, setTxtColor] = useState({ color: "#1976d2" });
 
+    const getButtonColor = () => {
+        if (textClientId) {
+            setTxtColor({ color: "#1976d2" }); // Example: Set color to green when conditions met
+        } else {
+            setTxtColor({ color: "red" }); // Example: Set color to blue when conditions not met
+        }
+    };
+    const getButtonColorfolder = () => {
+        if (txtFolderId) {
+            return { color: "#1976d2" }; // Example: Set color to green when conditions met
+        } else {
+            return { color: "red" }; // Example: Set color to blue when conditions not met
+        }
+    };
 
     const handleDocumentClickOpen = () => {
-        Json_ExplorerSearchDoc();
-        setOpenDocumentList(true);
+
+        setAnchorSelectFileEl(null);
+        if (textClientId) {
+           
+            Json_ExplorerSearchDoc();
+            setOpenDocumentList(true);
+          
+        } else {          
+            toast.warn("Select Referece !");
+        }
+        getButtonColor();
     };
+
+
     const handleCloseDocumentList = () => {
         setOpenDocumentList(false);
     };
@@ -1409,10 +1519,21 @@ export default function CreateNewModalTask({ ...props }) {
         }
     };
 
+    // Function to generate and set the GUID without hyphens
+    const generateGuid = () => {
+        const newGuid = uuidv4().replace(/-/g, ''); // Removing hyphens from the generated GUID
+        setGuid(newGuid);
+    };
+
+
+
+
+
 
     async function CreatePortalTask() {
-
+        
         if (selectedUSer.ID) {
+            let strGuid =uuidv4().replace(/-/g, '');
             let myNewArr = [...selectedFilesFromBrower, ...selectedDocumentFile];
             // console.log("myNewArr", myNewArr)
             const ccEmail = selectedEmailCC ? selectedEmailCC.map(obj => obj["E-Mail"]) : "";
@@ -1447,6 +1568,7 @@ export default function CreateNewModalTask({ ...props }) {
                 "docuBoxEmails": "",
                 "daysToDelete": 0,
                 "approvalResponse": "",
+                "uploadID": strGuid
 
 
             }
@@ -1455,7 +1577,7 @@ export default function CreateNewModalTask({ ...props }) {
             var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
             let cls = new CommanCLS(urlLetter, agrno, Email, password);
 
-            cls.MessagePublished_Json(obj, function (sts, data) {
+            cls.MessagePublishedPortalTask_Json(obj, function (sts, data) {
                 if (sts) {
                     // let js = JSON.parse(data);
                     console.log("MessagePublished_Json", data)
@@ -1519,12 +1641,26 @@ export default function CreateNewModalTask({ ...props }) {
 
     }
 
+
+    const removeItemById = (array, idToRemove) => {
+        // Filter out the item with the specified id
+        return array.filter(item => item.ID !== idToRemove);
+    };
+
+
     const handleItemClick = (e) => {
         //console.log("handleItemClick111", e);
         setOwnerRighClick(e);
         console.log("slected user", e)
         setOwnerID(e.ID)
 
+        const existingObj = addUser.find(obj => obj.ID === e.ID);
+        if (!existingObj) {
+            setAddUser((pre) => [...pre, ...e]);
+        }
+
+        //let res = addUser.filter(user => user.ID !==e.ID);
+        //setAddUser(res);
         // // Check if the object 'e' already exists in the array based on its 'id'
         // if (!addUser.some(user => user.ID === e.ID)) {
         //     // If it doesn't exist, add it to the 'addUser' array
@@ -1546,7 +1682,7 @@ export default function CreateNewModalTask({ ...props }) {
     const [isRemindMe, setIsRemindMe] = useState(false);
     const handleRemindMe = (e) => {
         setIsRemindMe(e.target.checked);
-        if(!e.target.checked){
+        if (!e.target.checked) {
             setRemiderDate("")
         }
     }
@@ -1869,7 +2005,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                             ) {
                                                                 result += words[i].charAt(0);
                                                             }
-                                                            if (item.ID !== parseInt(localStorage.getItem("UserId"))) {
+                                                            if (item.ID !== ownerID) {
                                                                 return (
                                                                     <>
                                                                         <Box
@@ -1922,7 +2058,7 @@ export default function CreateNewModalTask({ ...props }) {
 
                                                         {addUser
                                                             ? addUser.map((item, ind) => {
-                                                                if (item.ID === parseInt(localStorage.getItem("UserId"))) {
+                                                                if (item.ID === ownerID) {
                                                                     return (
                                                                         <React.Fragment key={ind}>
                                                                             <button type="button"
@@ -1945,7 +2081,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                                                     <img src={user} alt="User" />
                                                                                 </Box>
                                                                                 <p>{item.ForwardTo}</p>
-                                                                                <span
+                                                                                {/* <span
                                                                                     className="close"
                                                                                     onClick={() => handleRemoveUser(item.ID)}
                                                                                     role="button" // Adding role="button" to indicate this element is clickable
@@ -1954,7 +2090,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                                                     <span className="material-symbols-outlined">
                                                                                         close
                                                                                     </span>
-                                                                                </span>
+                                                                                </span> */}
                                                                             </button>
                                                                         </React.Fragment>
                                                                     );
@@ -1988,7 +2124,7 @@ export default function CreateNewModalTask({ ...props }) {
 
                                                         {addUser
                                                             ? addUser.map((item, ind) => {
-                                                                if (item.ID === parseInt(localStorage.getItem("UserId"))) {
+                                                                if (item.ID === ownerID) {
                                                                     return (
                                                                         <React.Fragment key={ind}>
                                                                             <button type="button" id={item.ID} >
@@ -2041,7 +2177,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                         </Box>
                                                         <Box className="box-user-list-dropdown">
 
-                                                            {filteredUserList.map((item, ind) => (
+                                                            {userFilter.map((item, ind) => (
                                                                 <React.Fragment key={ind}>
                                                                     <button
                                                                         type="button"
@@ -2094,9 +2230,34 @@ export default function CreateNewModalTask({ ...props }) {
                                                 </Typography>
                                             </Box>
                                         </Box>
-                                        <Button variant="text" className="btn-blue-2" onClick={handleDocumentClickOpen}>
+
+                                        <Button
+                                            id="basic-button"
+                                            variant="contained"
+                                            aria-controls={openSelectFile ? 'basic-menu' : undefined}
+                                            aria-haspopup="true"
+                                            aria-expanded={openSelectFile ? 'true' : undefined}
+                                            onClick={handleClickSelectFile}
+                                        >
                                             Select file
                                         </Button>
+                                        <Menu
+                                            id="basic-menu"
+                                            anchorEl={anchorSelectFileEl}
+                                            open={openSelectFile}
+                                            onClose={handleSelectFileClose}
+                                            MenuListProps={{
+                                                'aria-labelledby': 'basic-button',
+                                            }}
+                                        >
+                                            <label htmlFor="file-upload">
+                                                <MenuItem>Upload File(s)</MenuItem>
+                                            </label>
+                                            <MenuItem onClick={handleDocumentClickOpen}>Select From DMS</MenuItem>
+
+
+                                        </Menu>
+
                                     </label>
                                 </Box>
 
@@ -2123,9 +2284,13 @@ export default function CreateNewModalTask({ ...props }) {
                                                         </Box>
 
                                                         <Box className="d-flex align-items-center">
-                                                            <Button variant="text" className="btn-blue-2">
-                                                                Sign
-                                                            </Button>
+                                                            {txtTaskType === "Portal" && (<>
+                                                                <Button variant="text" className="btn-blue-2">
+                                                                    Sign
+                                                                </Button>
+
+                                                            </>)}
+
                                                             <Box className="ps-2">
                                                                 <Button
                                                                     className="p-0"
@@ -2189,7 +2354,7 @@ export default function CreateNewModalTask({ ...props }) {
                                     <Button
                                         variant="contained"
                                         onClick={Json_CRM_Task_Save}
-                                        // disabled={loading}
+                                        disabled={!textSubject ? true : false}
                                         className="btn-blue-2 mt-3"
                                     >
                                         {'CRM Task'}
@@ -2200,7 +2365,8 @@ export default function CreateNewModalTask({ ...props }) {
                                     <Button
                                         variant="contained"
                                         onClick={CreatePortalTask}
-                                        disabled={loading}
+                                        disabled={!textSubject ? true : false}
+                                        // disabled={loading}
                                         className="btn-blue-2 mt-1"
                                     >
                                         {'Portal Task'}
@@ -2218,6 +2384,7 @@ export default function CreateNewModalTask({ ...props }) {
                                     <Box className="select-dropdown">
                                         <Button
                                             id="basic-button-folder22"
+                                            style={getButtonColorfolder()}
                                             aria-controls={
                                                 boolFolder && selectedFolderMenu === "folder"
                                                     ? "basic-menu"
@@ -2318,6 +2485,7 @@ export default function CreateNewModalTask({ ...props }) {
                                     <Box className="select-dropdown">
                                         <Button
                                             id="basic-button-client"
+                                            style={txtColor}
                                             aria-controls={
                                                 boolClient && selectedClientMenu === "client"
                                                     ? "basic-menu"
@@ -2343,7 +2511,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                 "aria-labelledby": "basic-button",
                                             }}
                                         >
-                                            <Box className='px-3'>
+                                            <Box className='px-3' >
                                                 <TextField
                                                     label="Search"
                                                     variant="outlined"
@@ -2372,7 +2540,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                                 setTextClientId(item.ClientID);
                                                                 setClientAnchorEl(null);
                                                                 Json_GetClientCardDetails(item.ClientID)
-
+                                                                setTxtColor({ color: "#1976d2" });
 
                                                             }}
                                                             className="search-list"
@@ -2459,7 +2627,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                                 alignItems="flex-start"
                                                                 onClick={(e) => {
                                                                     setSearchSectionQuery("")
-                                                                    console.log("client select", item.Sec);
+                                                                    // console.log("client select", item.Sec);
                                                                     settxtSection(item.Sec); // Assuming item.Client holds the value you want
                                                                     setTxtSectionId(item.SecID); // Assuming item.Client holds the value you want
                                                                     setSectionAnchorEl(null);
@@ -2578,6 +2746,8 @@ export default function CreateNewModalTask({ ...props }) {
                                         <LocalizationProvider
                                             className="pe-0"
                                             dateAdapter={AdapterDayjs}
+                                            timeFormat={false}
+                                            isValidDate={disablePastDtTwoDate}
                                         >
 
                                             <DatePicker className=" w-100"
@@ -2585,8 +2755,11 @@ export default function CreateNewModalTask({ ...props }) {
                                                 dateFormat="DD/MM/YYYY"
                                                 value={remiderDate}
                                                 onChange={(e) => setRemiderDate(e)} // Handle date changes
+
                                                 timeFormat={false}
+                                                isValidDate={disablePastDtTwoDate}
                                                 closeOnSelect={true}
+
                                                 icon="fa fa-calendar"
 
                                             />
@@ -2597,7 +2770,7 @@ export default function CreateNewModalTask({ ...props }) {
 
 
 
-                                    <label className="font-14 d-block">Expires On</label>
+                                    {/* <label className="font-14 d-block">Expires On</label>
                                     <LocalizationProvider
                                         className="pe-0"
                                         dateAdapter={AdapterDayjs}
@@ -2617,7 +2790,7 @@ export default function CreateNewModalTask({ ...props }) {
 
 
 
-                                    </LocalizationProvider>
+                                    </LocalizationProvider> */}
                                 </Box>
 
                                 <Box className="select-dropdown">
@@ -2738,7 +2911,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                         <ListItem
                                                             alignItems="flex-start"
                                                             onClick={(e) => {
-                                                                console.log("client select", item.name);
+                                                                //console.log("client select", item.name);
                                                                 setTxtStatus(item.name); // Assuming item.Client holds the value you want
 
                                                                 setStatusAnchorEl(null);
