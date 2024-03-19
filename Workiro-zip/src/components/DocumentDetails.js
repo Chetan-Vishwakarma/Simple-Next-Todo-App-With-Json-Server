@@ -24,7 +24,8 @@ import DataGrid, {
     DataGridTypes,
     Selection,
     Scrolling,
-    RemoteOperations
+    RemoteOperations,
+    Sorting
 } from 'devextreme-react/data-grid';
 
 
@@ -129,6 +130,12 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
     };
 
     // end
+    const customSortingMethod = (a, b) => {
+        console.log("dffdsf",a,b);
+        const dateA = new Date(a);
+        const dateB = new Date(b);
+        return dateA - dateB;
+      };
 
 
     return (
@@ -162,15 +169,14 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                     <Grouping autoExpandAll={false} />
                     <GroupPanel visible={true} />
 
-
+                    <Sorting mode="single" />
 
                     <Scrolling mode="virtual" />
                     <Selection mode="multiple" />
-                    {selectedGroup==="Type" && <Column dataField="Type" groupIndex={0} dataType="Type" width={75} />}
-                    {selectedGroup==="Comments" && <Column dataField="Comments" groupIndex={0} dataType="Comments" width={75} visible={false} /> }
-                    {selectedGroup==="Description" && <Column dataField="Description" groupIndex={0} dataType="Description" width={75} visible={false} /> }
-                    {selectedGroup==="CommentBy" && <Column dataField="CommentBy" groupIndex={0} dataType="CommentBy" width={75} visible={false} /> }
-                    {/* <Column dataField="Item Date" groupIndex={1} dataType="date" width={75} visible={false} /> */}
+                    {selectedGroup === "Type" && <Column dataField="Type" groupIndex={0} dataType="Type" width={75} />}
+                    {selectedGroup === "Comments" && <Column dataField="Comments" groupIndex={0} dataType="Comments" width={75} visible={false} />}
+                    {selectedGroup === "Description" && <Column dataField="Description" groupIndex={0} dataType="Description" width={75} visible={false} />}
+                    {selectedGroup === "CommentBy" && <Column dataField="CommentBy" groupIndex={0} dataType="CommentBy" width={75} visible={false} />}
                     <Column
                         dataField="Description"
                         caption="Description"
@@ -255,8 +261,6 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                             </Box>
                         }}
                     />
-
-
                 </DataGrid>
 
 

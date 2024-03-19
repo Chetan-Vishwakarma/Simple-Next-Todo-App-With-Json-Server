@@ -523,7 +523,7 @@ export default function DocumentList({ clientId }) {
     };
     
     const label =
-        start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY');
+        start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY');
 
     function handleDocumentsFilter(docs){
         let fltData =  docs.filter(function (obj) {
