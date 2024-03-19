@@ -919,6 +919,10 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         item.Client.toLowerCase().includes(searchClient1Query.toLowerCase())
     );
 
+    const handleDelete = () => {
+        console.info('You clicked the delete icon.');
+    };
+
     return (
         <React.Fragment>
 
@@ -1303,7 +1307,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     }}
                                     className="user-list-dropdown"
                                 >
-                                    <Box className="mb-1 mt-3 px-3">
+                                    <Box className="mb-1 mt-2 px-3">
                                         <input
                                             type="text"
                                             className="form-control"
@@ -1312,7 +1316,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     </Box>
 
                                     <Box className="inner-user-list-dropdown">
-                                        <p className="sembold">Assigned</p>
+                                        <p className="sembold mb-1">Assigned</p>
 
                                         <Box className="box-user-list-dropdown">
                                             {addUser
@@ -1359,11 +1363,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                         className="inner-user-list-dropdown"
                                         style={{ maxHeight: "200px", overflowY: "auto" }}
                                     >
-                                        <p className="sembold">My Team</p>
+                                        <p className="sembold mb-1">My Team</p>
 
                                         <input
                                             type="text"
-                                            className="form-control"
+                                            className="form-control mb-2"
                                             placeholder="Search..."
                                             value={filterText}
                                             onChange={(e) => setFilterText(e.target.value)}
@@ -1425,8 +1429,6 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                         icon="fa fa-calendar"
 
                                     />
-
-
                                 </LocalizationProvider>
                             </Box>
 
@@ -1675,9 +1677,8 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                             <Box className="d-flex align-items-end main-file-upload">
                                 <Box className="w-100">
                                     <Stack direction="row" className='py-3' spacing={1}>
-
-                                        <Chip label="fileName123.Doc" variant="outlined" onDelete={""} />
-                                        <Chip label="fileName123.PDF" variant="outlined" onDelete={""} />
+                                        <Chip label="fileName123.Doc" variant="outlined" onDelete={handleDelete} />
+                                        <Chip label="fileName123.PDF" variant="outlined" onDelete={handleDelete} />
                                     </Stack>
 
                                     <Box className='position-relative'>
@@ -1690,7 +1691,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                                 className="file-input"
                                             />
                                             <label for={`file-upload ${selectedTask.ID}`} className="pointer"><AttachFileIcon /></label>
-                                            
+
                                         </Box>
 
                                         <textarea
