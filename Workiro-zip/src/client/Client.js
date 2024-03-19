@@ -105,7 +105,9 @@ function Client() {
     const [isSearch, setIsSearch] = useState(false);
     const [searchInput, setSearchInput] = useState("");
     const [filteredClientsForSearchBox, setFilteredClientsForSearchBox] = useState([]);
+    const [clientsForSearchBoxNotFound, setClientsForSearchBoxNotFound] = useState(false);
     const [filteredContactsForSearchBox, setFilteredContactsForSearchBox] = useState([]);
+    const [contactsForSearchBoxNotFound, setContactsForSearchBoxNotFound] = useState(false);
     // search box states ends
     const [objFilter, setObjFilter] = useState({});
     const [objFilterClient, setObjFilterClient] = useState({});
@@ -245,26 +247,32 @@ function Client() {
         setSearchInput(value);
         // for clients filter
         let filteredClientData = clients.filter((item) => {
-            return Object.entries(item).join('').toLowerCase().includes(searchInput.toLowerCase());
+            return item["Company Name"]!=="" && item["Company Name"].toLowerCase().includes(searchInput.toLowerCase());
         });
         if (value === "") {
+            setClientsForSearchBoxNotFound(false);
             setFilteredClientsForSearchBox([]);  // when you will face some issue then make an folderId state and pass folderId parameter in this function
         }
         if (filteredClientData.length === 0) {
             setFilteredClientsForSearchBox([]);
+            setClientsForSearchBoxNotFound(true);
         } else {
+            setClientsForSearchBoxNotFound(false);
             setFilteredClientsForSearchBox(filteredClientData);
         }
         // for contacts filter
         let filteredContactData = contacts.filter((item) => {
-            return Object.entries(item).join('').toLowerCase().includes(searchInput.toLowerCase());
+            return (item["First Name"]!=="" || item["Last Name"]) && `${item["First Name"]} ${item["Last Name"]}`.toLowerCase().includes(searchInput.toLowerCase());
         });
         if (value === "") {
+            setContactsForSearchBoxNotFound(false);
             setFilteredClientsForSearchBox([]);  // when you will face some issue then make an folderId state and pass folderId parameter in this function
         }
         if (filteredContactData.length === 0) {
             setFilteredContactsForSearchBox([]);
+            setContactsForSearchBoxNotFound(true);
         } else {
+            setContactsForSearchBoxNotFound(false);
             setFilteredContactsForSearchBox(filteredContactData);
         }
     }
@@ -632,12 +640,12 @@ function Client() {
                                             <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}>
                                                 <ApartmentIcon className='me-1' />
                                                 {option["Company Name"]}</Option>
-                                        )) : clients.map((option, i) => (
+                                        )) : clientsForSearchBoxNotFound ? <></> : clients.map((option, i) => (
                                             <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}><ApartmentIcon className='me-1' />{option["Company Name"]}</Option>
                                         ))}
                                         {filteredContactsForSearchBox.length > 0 ? filteredContactsForSearchBox.map((option, i) => (
                                             <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo, option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
-                                        )) : contacts.map((option, i) => (
+                                        )) : contactsForSearchBoxNotFound ? <></> : contacts.map((option, i) => (
                                             <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo, option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
                                         ))}
                                     </Listbox>}

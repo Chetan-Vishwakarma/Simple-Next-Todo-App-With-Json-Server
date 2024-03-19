@@ -22,8 +22,10 @@ import DataGrid, {
     Paging,
     SearchPanel,
     DataGridTypes,
-    Selection
-  } from 'devextreme-react/data-grid';
+    Selection,
+    Scrolling,
+    RemoteOperations
+} from 'devextreme-react/data-grid';
 
 
 // sadik code start
@@ -51,83 +53,15 @@ const rows = [
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 // sadik code end
-const cellRender = (data) => (
-    <Box className="file-uploads">
-                            <label className="file-uploads-label file-uploads-document">
-                                <Box className="d-flex align-items-center">
 
-                                    {/* <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" /> */}
-
-                                    <DescriptionIcon
-                                        sx={{
-                                            fontSize: 32,
-                                        }}
-                                        className='me-2 ms-0'
-                                    />
-                                    <Box className="upload-content pe-3">
-                                        <Typography variant="h4" >
-                                            {data.data.Description && data.data.Description!=="" ? data.data.Description: "Demo"}
-                                        </Typography>
-                                        <Typography variant="body1">
-                                            Size:  <span className='sembold'>fgdfg</span> | Date <span className='sembold'>dffdg</span>
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                                <Box>
-                                    {/* <Menu
-                                        id="basic-menu"
-                                        anchorEl={anchorElDocumentList}
-                                        open={DocumentList}
-                                        onClose={handleCloseDocument}
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem onClick={() => {
-                                            handleCloseDocument()
-                                            handleClickOpenDocumentDetailsList()
-                                        }}>
-                                            <ListItemIcon>
-                                                <ArticleIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Document Details</MenuItem>
-
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <CloudUploadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Upload New Version</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <DriveFileRenameOutlineIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Rename Document</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <TravelExploreIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Open in Browser</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <CloudDownloadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Download</MenuItem>
-                                    </Menu> */}
-                                </Box>
-                            </label>
-                        </Box>
-);
-
-
-function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFilteredResult}) {
+function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFilteredResult, dataNotFoundBoolean }) {
 
     // sadik js start
-
+    console.log("Selected Document", documents)
     const [openPDFView, setOpenPDFView] = React.useState(false);
     const [selectedDocument, setSelectedDocument] = React.useState(null);
     const handleClickOpenPDFView = (data) => {
-        console.log("Selected Document",data)
+
         setSelectedDocument(data)
         setOpenPDFView(true);
     };
@@ -215,158 +149,116 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                 </Box> */}
 
 
-                {/* <DataGrid
-                   dataSource={documents}
-                   allowColumnReordering={true}
-                   rowAlternationEnabled={true}
-                   showBorders={true}
-                   width="100%"
+                <DataGrid
+                    dataSource={dataNotFoundBoolean ? [] : advFilteredResult.length > 0 ? advFilteredResult : documents}
+                    keyExpr="Guid"
+                    allowColumnReordering={true}
+                    rowAlternationEnabled={true}
+                    showBorders={true}
+                    width="100%"
+                    wordWrapEnabled={true}
                 >
-                    <Selection mode="multiple"/>
-                    <Column 
-                      dataField="Description" 
-                      caption="Document Name" 
-                      cellRender={(data)=>{
-                        return <Box className="file-uploads">
-                        <label className="file-uploads-label file-uploads-document" onClick={() => handleClickOpenPDFView(data.data)}>
-                            <Box className="d-flex align-items-center">
 
-                                {/* <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" /> 
+                    <Grouping autoExpandAll={false} />
+                    <GroupPanel visible={true} />
 
-                                <DescriptionIcon
-                                    sx={{
-                                        fontSize: 32,
-                                    }}
-                                    className='me-2 ms-0'
-                                />
-                                <Box className="upload-content pe-3">
-                                    <Typography variant="h4" >
-                                    {data.data.Description ? data.data.Description : "Demo"}
-                                    </Typography>
-                                    <Typography variant="body1">
-                                        Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span> | Date <span className='sembold'>{data.data["Item Date"] ? data.data["Item Date"] : ""}</span>
-                                    </Typography>
-                                </Box>
+
+
+                    <Scrolling mode="virtual" />
+                    <Selection mode="multiple" />
+                    {/* <Column dataField="Type" groupIndex={0} dataType="Type" width={75} /> */}
+                    {/* <Column dataField="Comments" groupIndex={1} dataType="Comments" width={75} visible={false} /> */}
+                    {/* <Column dataField="Item Date" groupIndex={1} dataType="date" width={75} visible={false} /> */}
+                    <Column
+                        dataField="Description"
+                        caption="Description"
+
+                        // Set the groupIndex to 0 to enable grouping by this column
+                        dataType="string"  // Set the data type to "string" for proper grouping
+                        cellRender={(data) => {
+                            return <Box className="file-uploads">
+                                <label className="file-uploads-label file-uploads-document" onClick={() => handleClickOpenPDFView(data.data)}>
+                                    <Box className="d-flex align-items-center">
+
+                                        {/* <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" />  */}
+
+                                        <DescriptionIcon
+                                            sx={{
+                                                fontSize: 32,
+                                            }}
+                                            className='me-2 ms-0'
+                                        />
+                                        <Box className="upload-content pe-3">
+                                            <Typography variant="h4" >
+                                                {data.data.Description ? data.data.Description : "Demo"}
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span> | Date <span className='sembold'>{data.data["Item Date"] ? data.data["Item Date"] : ""}</span>
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    <Box>
+                                        <Button
+                                            id="basic-button"
+                                            aria-controls={DocumentList ? 'basic-menu' : undefined}
+                                            aria-haspopup="true"
+                                            aria-expanded={DocumentList ? 'true' : undefined}
+                                            onClick={handleClickDocumentList}
+                                            className='min-width-auto'
+                                        >
+                                            <MoreVertIcon />
+                                        </Button>
+                                        <Menu
+                                            id="basic-menu"
+                                            anchorEl={anchorElDocumentList}
+                                            open={DocumentList}
+                                            onClose={handleCloseDocument}
+                                            MenuListProps={{
+                                                'aria-labelledby': 'basic-button',
+                                            }}
+                                            className='custom-dropdown'
+                                        >
+                                            <MenuItem onClick={() => {
+                                                handleCloseDocument()
+                                                handleClickOpenDocumentDetailsList()
+                                            }}>
+                                                <ListItemIcon>
+                                                    <ArticleIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Document Details</MenuItem>
+
+                                            <MenuItem onClick={handleCloseDocument}>
+                                                <ListItemIcon>
+                                                    <CloudUploadIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Upload New Version</MenuItem>
+                                            <MenuItem onClick={handleCloseDocument}>
+                                                <ListItemIcon>
+                                                    <DriveFileRenameOutlineIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Rename Document</MenuItem>
+                                            <MenuItem onClick={handleCloseDocument}>
+                                                <ListItemIcon>
+                                                    <TravelExploreIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Open in Browser</MenuItem>
+                                            <MenuItem onClick={handleCloseDocument}>
+                                                <ListItemIcon>
+                                                    <CloudDownloadIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Download</MenuItem>
+                                        </Menu>
+                                    </Box>
+                                </label>
                             </Box>
-                            {/* <Box>
-                                <Button
-                                    id="basic-button"
-                                    aria-controls={DocumentList ? 'basic-menu' : undefined}
-                                    aria-haspopup="true"
-                                    aria-expanded={DocumentList ? 'true' : undefined}
-                                    onClick={handleClickDocumentList}
-                                    className='min-width-auto'
-                                >
-                                    <MoreVertIcon />
-                                </Button>
-                                <Menu
-                                    id="basic-menu"
-                                    anchorEl={anchorElDocumentList}
-                                    open={DocumentList}
-                                    onClose={handleCloseDocument}
-                                    MenuListProps={{
-                                        'aria-labelledby': 'basic-button',
-                                    }}
-                                    className='custom-dropdown'
-                                >
-                                    <MenuItem onClick={() => {
-                                        handleCloseDocument()
-                                        handleClickOpenDocumentDetailsList()
-                                    }}>
-                                        <ListItemIcon>
-                                            <ArticleIcon fontSize="medium" />
-                                        </ListItemIcon>
-                                        Document Details</MenuItem>
-
-                                    <MenuItem onClick={handleCloseDocument}>
-                                        <ListItemIcon>
-                                            <CloudUploadIcon fontSize="medium" />
-                                        </ListItemIcon>
-                                        Upload New Version</MenuItem>
-                                    <MenuItem onClick={handleCloseDocument}>
-                                        <ListItemIcon>
-                                            <DriveFileRenameOutlineIcon fontSize="medium" />
-                                        </ListItemIcon>
-                                        Rename Document</MenuItem>
-                                    <MenuItem onClick={handleCloseDocument}>
-                                        <ListItemIcon>
-                                            <TravelExploreIcon fontSize="medium" />
-                                        </ListItemIcon>
-                                        Open in Browser</MenuItem>
-                                    <MenuItem onClick={handleCloseDocument}>
-                                        <ListItemIcon>
-                                            <CloudDownloadIcon fontSize="medium" />
-                                        </ListItemIcon>
-                                        Download</MenuItem>
-                                </Menu>
-                            </Box> 
-                        </label>
-                    </Box>
-                      }}
+                        }}
                     />
-                    <Column 
-                      caption="Action"
-                      width={60}
-                      cellRender={(data)=>{
-                        return <>
-                        <Box>
-                                <Button
-                                    id="basic-button"
-                                    aria-controls={DocumentList ? 'basic-menu' : undefined}
-                                    aria-haspopup="true"
-                                    aria-expanded={DocumentList ? 'true' : undefined}
-                                    onClick={handleClickDocumentList}
-                                    className='min-width-auto'
-                                >
-                                    <MoreVertIcon />
-                                </Button>
-                                <Menu
-                                    id="basic-menu"
-                                    anchorEl={anchorElDocumentList}
-                                    open={DocumentList}
-                                    onClose={handleCloseDocument}
-                                    MenuListProps={{
-                                        'aria-labelledby': 'basic-button',
-                                    }}
-                                    className='custom-dropdown'
-                                >
-                                    <MenuItem onClick={() => {
-                                        handleCloseDocument()
-                                        handleClickOpenDocumentDetailsList()
-                                    }}>
-                                        <ListItemIcon>
-                                            <ArticleIcon fontSize="medium" />
-                                        </ListItemIcon>
-                                        Document Details</MenuItem>
-
-                                    <MenuItem onClick={handleCloseDocument}>
-                                        <ListItemIcon>
-                                            <CloudUploadIcon fontSize="medium" />
-                                        </ListItemIcon>
-                                        Upload New Version</MenuItem>
-                                    <MenuItem onClick={handleCloseDocument}>
-                                        <ListItemIcon>
-                                            <DriveFileRenameOutlineIcon fontSize="medium" />
-                                        </ListItemIcon>
-                                        Rename Document</MenuItem>
-                                    <MenuItem onClick={handleCloseDocument}>
-                                        <ListItemIcon>
-                                            <TravelExploreIcon fontSize="medium" />
-                                        </ListItemIcon>
-                                        Open in Browser</MenuItem>
-                                    <MenuItem onClick={handleCloseDocument}>
-                                        <ListItemIcon>
-                                            <CloudDownloadIcon fontSize="medium" />
-                                        </ListItemIcon>
-                                        Download</MenuItem>
-                                </Menu>
-                            </Box></>
-                      }}
-                    />
-                </DataGrid> */}
 
 
-                {!isGroupBy&&advFilteredResult.length>0 ? (advFilteredResult.map((item) => {
+                </DataGrid>
+
+
+                {/* {!isGroupBy&&advFilteredResult.length>0 ? (advFilteredResult.map((item) => {
                     return <>
                         <Box className="file-uploads">
                             <label className="file-uploads-label file-uploads-document" onClick={() => handleClickOpenPDFView(item)}>
@@ -439,11 +331,11 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                                                 <CloudDownloadIcon fontSize="medium" />
                                             </ListItemIcon>
                                             Download</MenuItem>
-                                    </Menu> */}
+                                    </Menu> }
                                 </Box>
                             </label>
                         </Box>
-                        {/* file upload end */}
+                        {/* file upload end }
                     </>
                 })):isGroupBy?(
                     <TreeView
@@ -541,7 +433,7 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                         <TreeItem nodeId="4" label="CLient Group C" />
                     </TreeItem> */}
 
-                    {/* <TreeItem nodeId="5" label="Documents">
+                {/* <TreeItem nodeId="5" label="Documents">
                         <TreeItem nodeId="6" label="CLient Group">
 
                             {Array(4).fill("").map(() => {
@@ -626,7 +518,7 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                             })}
 
                         </TreeItem>
-                    </TreeItem> */}
+                    </TreeItem> }
                 </TreeView> 
                 ):(documents.length>0 && documents.map((item) => {
                     return <>
@@ -705,9 +597,15 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                                 </Box>
                             </label>
                         </Box>
-                        {/* file upload end */}
+                        {/* file upload end }
                     </>
-                }))}
+                }))} */}
+
+
+
+
+
+
                 {/* loop end */}
 
 
