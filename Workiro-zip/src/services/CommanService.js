@@ -19,6 +19,18 @@ export default class CommanCLS extends AllService {
             }
         })
      }
+     Json_UpdateTaskField(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_UpdateTaskField",obj,false);
+        super.CallNewService("Json_UpdateTaskField",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
     Json_GetTaskAttachmentList(obj,callBack){   
         super.CreateNewServiceParamObject("Json_GetTaskAttachmentList",obj,false);
         super.CallNewService("Json_GetTaskAttachmentList",function(status,Data){
@@ -246,9 +258,9 @@ export default class CommanCLS extends AllService {
             }
         })
      }
-    MessagePublished_Json(obj,callBack){   
-        super.CreateNewServiceParamObject("MessagePublished_Json",obj,false);
-        super.CallNewService("MessagePublished_Json",function(status,Data){
+     MessagePublishedPortalTask_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("MessagePublishedPortalTask_Json",obj,false);
+        super.CallNewService("MessagePublishedPortalTask_Json",function(status,Data){
             if(status){
                 return callBack(true,Data);
             }

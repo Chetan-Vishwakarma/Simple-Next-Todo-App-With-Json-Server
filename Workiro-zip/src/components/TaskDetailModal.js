@@ -44,7 +44,12 @@ import DatePicker from 'react-datetime';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import Fade from '@mui/material/Fade';
+import GetClientList from "./GetClientList";
+import {
 
+    TextField,
+} from "@mui/material";
 
 
 const Demo = styled('div')(({ theme }) => ({
@@ -66,6 +71,15 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
     const [dense, setDense] = React.useState(false);
     const [secondary, setSecondary] = React.useState(false);
+
+    const [txtSection, settxtSection] = React.useState(selectedTask.Section);
+    const [txtClient, setTxtClient] = React.useState(selectedTask.Client);
+    const [txtClientId, setTxtClientId] = React.useState(null);
+
+    const [txtSectionId, settxtSectionId] = React.useState(null);
+
+    const [anchorClsEl, setAnchorClsEl] = useState(null);
+
 
     const [crmTaskAcivity, setCRMTaskAcivity] = React.useState(null);
     //const [selectedTaskp, setselectedTask] = React.useState(selectedTask);
@@ -94,13 +108,23 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     const [attOpen, setAttOpen] = React.useState(false);
     const [txtdescription, setTxtDescriptin] = React.useState("");
 
+    const [clientList, setClientList] = useState([]);
+
+
+
     ////////////////////////////////End Attachment files
 
     const [isVisible, setIsVisible] = useState(false); // Initially visible
 
     // 
     const [scroll, setScroll] = React.useState('paper');
+    const [getUser, setGetUser] = React.useState({});
+    const [sectionList, setSectionList] = React.useState([]);
 
+    const [clientObject, setClientObject] = useState(null);
+
+    const [searchSectionQuery, setSearchSectionQuery] = useState("");
+    const [searchClient1Query, setSearchClient1Query] = useState("");
 
     const toggleVisibilityCancle = () => {
         setIsVisible(false); // Toggle visibility
@@ -118,8 +142,48 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
     };
 
+
+
+
+
+    const [anchorElSec, setAnchorSectionEl] = React.useState(null);
+
+    const openSection = Boolean(anchorElSec);
+    const handleClickSection = (event) => {
+        setAnchorSectionEl(event.currentTarget);
+    };
+    const handleCloseSection = (e) => {
+        settxtSection(e.Sec)
+        settxtSectionId(e.SecID)
+        setAnchorSectionEl(null);
+    };
+
+
+
+
+
+
+    const openClient = Boolean(anchorClsEl);
+
+    const handleClickClick = (event) => {
+        setAnchorClsEl(event.currentTarget);
+    };
+    const handleCloseClient = (e) => {
+        setClientObject(e)
+        setAnchorClsEl(null);
+        setTxtClient(e.Client);
+        setTxtClientId(e.ClientID);
+        
+
+    };
+
+
+
+
+
+
     const Json_Get_CRM_Task_ActivityByTaskId = (taskid) => {
-        console.log("selectedTask333333333", taskid);
+        // console.log("selectedTask333333333", taskid);
         let obj = {};
         obj.TaskID = taskid;
         try {
@@ -135,10 +199,10 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                             const date = new Date(ActivityDate);
                             return { ...activity, ActivityDate: date };
                         });
-                        console.log(
-                            "Json_Get_CRM_Task_ActivityByTaskId",
-                            formattedActivity
-                        );
+                        // console.log(
+                        //     "Json_Get_CRM_Task_ActivityByTaskId",
+                        //     formattedActivity
+                        // );
                         setCRMTaskAcivity(
                             formattedActivity.sort((a, b) => a.ActivityDate - b.ActivityDate)
                         );
@@ -160,6 +224,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         }
     };
 
+
+
+
+
+
     async function Json_GetForwardUserList() {
         try {
             let o = {};
@@ -173,11 +242,14 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                         let result = dt.filter((el) => {
                             return el.CGroup !== "Yes";
                         });
+
                         if (result.length > 0) {
                             result.map((el) => {
                                 if (el.ID === parseFloat(localStorage.getItem("UserId"))) {
                                     setOwnerID(el.ID);
+                                    setGetUser(el);
                                     setAddUser([el]);
+                                    console.log("Json_GetForwardUserList11333222", el);
 
                                 }
                             });
@@ -224,7 +296,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 };
                 filesData.push(fileData);
                 UploadAttachment(fileData)
-               // console.log("Attachment list", filesData);
+                // console.log("Attachment list", filesData);
                 // Check if this is the last file
                 if (index === selectedFilesArray.length - 1) {
                     // Add new files to the uploadedFiles array
@@ -242,7 +314,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         // setLoading(true);
         // Your form submission logic, for example, making an API call
         try {
-            
+
             let o = {};
             o.base64File = filedata.Base64;
             o.FileName = filedata.FileName;
@@ -252,10 +324,10 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                     if (res.Status === "Success") {
                         let path = window.atob(res.Message);
                         let index = path.lastIndexOf("\\");
-                          let fileName = path.slice(index + 1);
-                          let o={ Path: path, FileName: fileName }
-                          
-                         setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+                        let fileName = path.slice(index + 1);
+                        let o = { Path: path, FileName: fileName }
+
+                        setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
 
                     } else {
                         console.log("Failed to save attachment.");
@@ -264,7 +336,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                     console.log("Failed to save attachment.");
                 }
             });
-           
+
         } catch (error) {
             console.log({
                 status: false,
@@ -346,12 +418,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     }
 
     function startFormattingDate(dt) {
-        if(dt){
+        if (dt) {
             let fullDate = new Date(parseInt(dt.substr(6)));
-            console.log("date formet111",fullDate);
-                return fullDate;
+            console.log("date formet111", fullDate);
+            return fullDate;
         }
-     
+
     }
 
 
@@ -368,17 +440,77 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         })
     }
 
+
+
+    function Json_GetSections(fid) {
+        try {
+            let o = {};
+            o.ProjectId = fid;
+            Cls.Json_GetSections(o, function (sts, data) {
+                if (sts) {
+                    let js = JSON.parse(data);
+
+                    let sectionList = js.Table;
+                    if (sectionList.length > 0) {
+                        setSectionList(sectionList);
+                    }
+
+                    console.log("Json_GetSections", js);
+                }
+            });
+        } catch (error) {
+            console.log("error", error);
+        }
+    }
+
+
+    function Json_GetFolderData() {
+
+        try {
+            let o = {};
+            o.ProjectId = selectedTask.FolderID;
+            o.SectionId = "-1";//selectedTask.SectionId;
+            o.ClientId = "";
+            Cls.Json_GetFolderData(o, function (sts, data) {
+                if (sts) {
+                    let js = JSON.parse(data);
+                    console.log("Json_GetFolderData", js);
+                    let clientList = js.Table1;
+                    if (clientList.length > 0) {
+                        setClientList(clientList);
+                    }
+                    // let sectionList = js.Table;
+                    // if (sectionList.length > 0) {
+                    //     setSectionList(sectionList);
+                    // }
+                }
+            });
+        } catch (error) {
+            console.log("error", error);
+        }
+    }
+
     useEffect(() => {
+        
+        settxtSection(selectedTask.Section);
+        setTxtClient(selectedTask.Client);
+        setTxtClient(selectedTask.Client)
+        settxtSectionId(selectedTask.SectionId);
+        setTxtClientId(selectedTask.ClientNo);
+        setNotesMessage("");
         Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
         setCurrentDate(startFormattingDate(selectedTask.CreationDate));
 
         setNextDate(DateFormet(selectedTask.EndDateTime));
         setRemiderDate(dayjs(Cls.getCurrentDate()));
-        Json_Get_CRM_Task_ActivityByTaskId(selectedTask.ID);
+
+        Json_GetFolderData();
         Json_GetForwardUserList();
         setStatus(selectedTask.mstatus);
-       // Json_GetTaskAttachmentList();
+        // Json_GetTaskAttachmentList();
         setTSubject(selectedTask.Subject)
+
+        Json_GetSections(selectedTask.FolderID)
         // const Json_CRM_GetOutlookTask=async()=>{
         //     let res = await axios.post(`${baseUrl}Json_CRM_GetOutlookTask`,{
         //         Email: "nabs@docusoft.net",
@@ -391,7 +523,19 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         // return ()=>{
         //     console.log("Modal is Closed");
         // }
+        setTimeout(() => {
+            // console.log("Hello 1s")
+            Json_Get_CRM_Task_ActivityByTaskId(selectedTask.ID);
+        }, 5000);
+
     }, [selectedTask]);
+
+
+
+
+
+
+
 
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -553,6 +697,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 if (sts && data) {
                     console.log(data);
                     Json_Get_CRM_Task_ActivityByTaskId(selectedTask.ID);
+                    setNotesMessage("");
                 }
             });
         } catch (error) {
@@ -563,6 +708,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     const [notesMessage, setNotesMessage] = useState(null);
     const handleChangeNotes = (e) => {
         setNotesMessage(e.target.value);
+
     };
 
     // Function to scroll to the bottom of the message container
@@ -574,6 +720,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     };
     useEffect(() => {
         scrollToBottom();
+
     }, [notesMessage]);
 
     const handleSuccess = (mgsid) => {
@@ -596,7 +743,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 DMSItems: "",
                 Attachments: attString ? attString : "",
                 Notes: "",
-                Details:txtdescription ,
+                Details: txtdescription,
                 ReminderSet: false,
                 ReminderDateTime: dayjs(remiderDate).format("YYYY/MM/DD"),
                 StartDateTime: dayjs(currentDate).format("YYYY/MM/DD"),
@@ -634,13 +781,13 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                             setAttachmentPath([]);
                             Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
                         }, 2000);
-                       
+
                     }
-                    else{
+                    else {
                         console.log("Response final", data);
                         toast.error("Task Not Updated Please Try Again");
                     }
-                  
+
                     // setLoading(false);
                 }
             });
@@ -756,7 +903,21 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
 
 
+    const handleSearchInputChangeSection = (event) => {
+        setSearchSectionQuery(event.target.value);
+    };
 
+    const filtereSectionList = sectionList.filter((item) =>
+        item.Sec.toLowerCase().includes(searchSectionQuery.toLowerCase())
+    );
+
+    const handleSearchInputChangeClient = (event) => {
+        setSearchClient1Query(event.target.value);
+    };
+
+    const filtereClient = clientList.filter((item) =>
+        item.Client.toLowerCase().includes(searchClient1Query.toLowerCase())
+    );
 
     return (
         <React.Fragment>
@@ -990,14 +1151,82 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
                         <Box className="d-flex flex-wrap justify-content-between">
                             <Box className="d-flex flex-wrap align-items-center">
-                                <p className="pe-2 me-2 border-end">
-                                    <span className="text-black">Client:</span>
-                                    {selectedTask.Client}
-                                </p>
-                                <p>
-                                    <span className="text-black">Section:</span>{" "}
-                                    {selectedTask.Section}
-                                </p>
+                                Client:- 
+                                <Button
+                                    id="fade-button"
+                                    aria-controls={openClient ? 'fade-menu' : undefined}
+                                    aria-haspopup="true"
+                                    aria-expanded={openClient ? 'true' : undefined}
+                                    onClick={handleClickClick}
+                                >
+                                    {txtClient?txtClient:selectedTask.Client}
+                                </Button>
+                                <Menu
+                                    id="fade-menu11"
+                                    MenuListProps={{
+                                        'aria-labelledby': 'fade-button',
+                                    }}
+                                    anchorEl={anchorClsEl}
+                                    open={openClient}
+                                    onClose={handleCloseClient}
+                                    TransitionComponent={Fade}
+                                >
+
+                                    <TextField
+                                        label="Search"
+                                        variant="outlined"
+                                       // value={searchClient1Query}
+                                       // onChange={handleSearchInputChangeClient}
+                                        sx={{ width: "100%" }}
+                                    />
+
+{filtereClient ? filtereClient.map((item, index) => {
+                                        return <MenuItem key={index} onClick={() => handleCloseClient(item)}>{item.Client}</MenuItem>
+                                    }) : ""}
+
+                                   
+
+
+                                </Menu>
+
+
+                                Section:-
+                                <Button
+                                    id="fade-button"
+                                    aria-controls={openSection ? 'fade-menu' : undefined}
+                                    aria-haspopup="true"
+                                    aria-expanded={openSection ? 'true' : undefined}
+                                    onClick={handleClickSection}
+                                >
+                                    {txtSection?txtSection:selectedTask.Section}
+                                </Button>
+                                <Menu
+                                    id="fade-menu"
+                                    MenuListProps={{
+                                        'aria-labelledby': 'fade-button',
+                                    }}
+                                    anchorEl={anchorElSec}
+                                    open={openSection}
+                                    onClose={handleCloseSection}
+                                    TransitionComponent={Fade}
+                                >
+
+                                    <TextField
+                                        label="Search"
+                                        variant="outlined"
+                                        value={searchSectionQuery}
+                                        onChange={handleSearchInputChangeSection}
+                                        sx={{ width: "100%" }}
+                                    />
+
+                                    {filtereSectionList ? filtereSectionList.map((item, index) => {
+                                        return <MenuItem key={index} onClick={() => handleCloseSection(item)}>{item.Sec}</MenuItem>
+                                    }) : ""}
+
+
+                                </Menu>
+
+
                             </Box>
 
                             {/* <Box className="d-flex align-items-center mb-4 flex-wrap">
@@ -1176,20 +1405,46 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                             ><BallotIcon className='me-1' /> {attachmentFile.length} Documents</label>
                             {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
 
-                            
+
                         </Box>
                         <Box className="d-flex">
-                                <Box className="mb-2 border-bottom me-3 width-150">
-                                    <label className="font-14 text-black">Start Date</label>
+                            <Box className="mb-2 border-bottom me-3 width-150">
+                                <label className="font-14 text-black">Start Date</label>
+                                <LocalizationProvider
+                                    className="pe-0 sadik"
+                                    dateAdapter={AdapterDayjs}
+                                >
+                                    <DatePicker className=" w-100"
+                                        showIcon
+                                        dateFormat="DD/MM/YYYY"
+                                        value={currentDate}
+                                        onChange={(e) => setCurrentDate(e)} // Handle date changes
+                                        timeFormat={false}
+                                        isValidDate={disablePastDt}
+                                        closeOnSelect={true}
+                                        icon="fa fa-calendar"
+
+                                    />
+
+
+                                </LocalizationProvider>
+                            </Box>
+
+                            <Box className="border-bottom mb-2 width-150" sx={{ float: "right" }}>
+                                <Box className="mb-2 ">
+                                    <label className="font-14 semibold text-black">
+                                        Due By
+                                    </label>
                                     <LocalizationProvider
                                         className="pe-0 sadik"
                                         dateAdapter={AdapterDayjs}
                                     >
+
                                         <DatePicker className=" w-100"
                                             showIcon
                                             dateFormat="DD/MM/YYYY"
-                                            value={currentDate}
-                                            onChange={(e) => setCurrentDate(e)} // Handle date changes
+                                            value={nextDate}
+                                            onChange={(e) => setNextDate(e)} // Handle date changes
                                             timeFormat={false}
                                             isValidDate={disablePastDt}
                                             closeOnSelect={true}
@@ -1197,36 +1452,10 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
                                         />
 
-
                                     </LocalizationProvider>
                                 </Box>
-
-                                <Box className="border-bottom mb-2 width-150" sx={{float:"right"}}>
-                                    <Box className="mb-2 ">
-                                        <label className="font-14 semibold text-black">
-                                            Due By
-                                        </label>
-                                        <LocalizationProvider
-                                            className="pe-0 sadik"
-                                            dateAdapter={AdapterDayjs}
-                                        >
-
-                                            <DatePicker className=" w-100"
-                                                showIcon
-                                                dateFormat="DD/MM/YYYY"
-                                                value={nextDate}
-                                                onChange={(e) => setNextDate(e)} // Handle date changes
-                                                timeFormat={false}
-                                                isValidDate={disablePastDt}
-                                                closeOnSelect={true}
-                                                icon="fa fa-calendar"
-
-                                            />
-                                           
-                                        </LocalizationProvider>
-                                    </Box>
-                                </Box>
                             </Box>
+                        </Box>
                         <Box className="mt-2 mb-3">
                             <textarea
                                 className="form-control textarea resize-none"
@@ -1273,71 +1502,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                                 </>
                                             );
                                         }
-                                        else if (item.username === addUser[0].ForwardTo) {
-                                            return (
-                                                <Box
-                                                    className="chat-box d-flex align-items-end mb-2 reciever"
-                                                    key={index}
-                                                >
-                                                    <Box className="client-img me-3 mb-0 ms-0">
-                                                        <img src={user} alt="User" />
-                                                    </Box>
-                                                    <Box className="chat-message me-2">
-                                                        <Box className="inner-chat-message me-2">
-                                                            <Typography variant="body1" className="font-14">
-                                                                {item.Notes}
-                                                            </Typography>
-                                                            <Box className="d-flex align-items-center justify-content-end">
-                                                                <Typography variant="body1" className="font-12">
-                                                                    {dateAndTime(item.ActivityDate)}
-                                                                </Typography>
-
-                                                                <Box className="">
-                                                                    <Button
-                                                                        id={`fade-button-${index}`} // Use unique IDs for each button
-                                                                        aria-controls={
-                                                                            anchorEl1
-                                                                                ? `fade-menu-${index}`
-                                                                                : undefined
-                                                                        }
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded={
-                                                                            anchorEl1 ? "true" : undefined
-                                                                        }
-                                                                        onClick={(event) =>
-                                                                            handleClick2(event, index)
-                                                                        } // Pass index to handleClick
-                                                                        className="min-width-auto px-0 text-gray"
-                                                                    >
-                                                                        <MoreVertIcon />
-                                                                    </Button>
-                                                                    <Menu
-                                                                        id={`fade-menu-${index}`} // Use unique IDs for each menu
-                                                                        MenuListProps={{
-                                                                            "aria-labelledby": `fade-button-${index}`,
-                                                                        }}
-                                                                        anchorEl={anchorEl1}
-                                                                        open={
-                                                                            selectedIndex === index &&
-                                                                            Boolean(anchorEl1)
-                                                                        } // Open menu if selectedIndex matches
-                                                                        onClose={handleClose2}
-                                                                    >
-                                                                        <MenuItem onClick={handleClose2}>
-                                                                            Edit
-                                                                        </MenuItem>
-                                                                        <MenuItem onClick={handleClose2}>
-                                                                            Delete
-                                                                        </MenuItem>
-                                                                    </Menu>
-                                                                </Box>
-                                                            </Box>
-                                                        </Box>
-                                                    </Box>
-                                                </Box>
-                                            );
-                                        }
-                                        else {
+                                        else if (item.username === getUser.ForwardTo) {
                                             return (
                                                 <>
                                                     <Box
@@ -1400,6 +1565,71 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                                 </>
                                             );
                                         }
+                                        else {
+                                            return (
+                                                <Box
+                                                    className="chat-box d-flex align-items-end mb-2 reciever"
+                                                    key={index}
+                                                >
+                                                    <Box className="client-img me-3 mb-0 ms-0">
+                                                        <img src={user} alt="User" />
+                                                    </Box>
+                                                    <Box className="chat-message me-2">
+                                                        <Box className="inner-chat-message me-2">
+                                                            <Typography variant="body1" className="font-14">
+                                                                {item.Notes}
+                                                            </Typography>
+                                                            <Box className="d-flex align-items-center justify-content-end">
+                                                                <Typography variant="body1" className="font-12">
+                                                                    {dateAndTime(item.ActivityDate)}
+                                                                </Typography>
+
+                                                                <Box className="">
+                                                                    <Button
+                                                                        id={`fade-button-${index}`} // Use unique IDs for each button
+                                                                        aria-controls={
+                                                                            anchorEl1
+                                                                                ? `fade-menu-${index}`
+                                                                                : undefined
+                                                                        }
+                                                                        aria-haspopup="true"
+                                                                        aria-expanded={
+                                                                            anchorEl1 ? "true" : undefined
+                                                                        }
+                                                                        onClick={(event) =>
+                                                                            handleClick2(event, index)
+                                                                        } // Pass index to handleClick
+                                                                        className="min-width-auto px-0 text-gray"
+                                                                    >
+                                                                        <MoreVertIcon />
+                                                                    </Button>
+                                                                    <Menu
+                                                                        id={`fade-menu-${index}`} // Use unique IDs for each menu
+                                                                        MenuListProps={{
+                                                                            "aria-labelledby": `fade-button-${index}`,
+                                                                        }}
+                                                                        anchorEl={anchorEl1}
+                                                                        open={
+                                                                            selectedIndex === index &&
+                                                                            Boolean(anchorEl1)
+                                                                        } // Open menu if selectedIndex matches
+                                                                        onClose={handleClose2}
+                                                                    >
+                                                                        <MenuItem onClick={handleClose2}>
+                                                                            Edit
+                                                                        </MenuItem>
+                                                                        <MenuItem onClick={handleClose2}>
+                                                                            Delete
+                                                                        </MenuItem>
+                                                                    </Menu>
+                                                                </Box>
+                                                            </Box>
+                                                        </Box>
+                                                    </Box>
+                                                </Box>
+                                            );
+
+                                        }
                                     })
                                     : null}
 
@@ -1444,10 +1674,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
                             <Box className="d-flex align-items-center main-file-upload">
                                 <Box className="w-100">
-                                    {/* <Stack direction="row" className='py-3' spacing={1}>
-                                <Chip label="fileName123.Doc" variant="outlined" onDelete={handleDelete} />
-                                <Chip label="fileName123.PDF" variant="outlined" onDelete={handleDelete} />
-                            </Stack> */}
+                                    <Stack direction="row" className='py-3' spacing={1}>
+
+                                        <Chip label="fileName123.Doc" variant="outlined" onDelete={""} />
+                                        <Chip label="fileName123.PDF" variant="outlined" onDelete={""} />
+                                    </Stack>
 
                                     <textarea
                                         className="textarea"
@@ -1562,7 +1793,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
                         {/* <DocumentDetails></DocumentDetails> */}
 
-                      
+
 
                     </DialogContentText>
                 </DialogContent>

@@ -114,6 +114,10 @@ export default function CreateNewModalTask({ ...props }) {
     let cls = new CommanCLS(baseUrl, agrno, Email, password);
 
     const [filterText, setFilterText] = React.useState("");
+
+    const [userFilter, setUserFilter] = React.useState([]);
+    const [userListData, setUserListData] = React.useState([]);
+
     const [userList, setUserList] = React.useState([]);
     const [addUser, setAddUser] = useState([]);
     const [ownerRighClick, setOwnerRighClick] = useState(null)
@@ -365,7 +369,7 @@ export default function CreateNewModalTask({ ...props }) {
                         if (result.length > 0) {
                             result.map((el) => {
                                 if (el.ID === parseInt(localStorage.getItem("UserId"))) {
-                                    console.log("Json_GetForwardUserList11", addUser);
+                                   // console.log("Json_GetForwardUserList11", addUser);
                                     setOwnerID(el.ID);
                                     setOwnerRighClick(el);
                                     setAddUser((pre) => [...pre, el])
@@ -375,7 +379,9 @@ export default function CreateNewModalTask({ ...props }) {
                         }
 
                         setUserList(result);
-
+                        let removeuser = result.filter((e)=>e.ID !==localStorage.getItem("UserId"));
+                        setUserListData(removeuser);
+                        setUserFilter(removeuser);
 
                     }
                 }
@@ -385,23 +391,17 @@ export default function CreateNewModalTask({ ...props }) {
         }
     }
 
-    // Filter the userList based on filterText
-    const filteredUserList = userList.filter((item) => {
-        // Check if item and its properties are defined before accessing them
-        // console.log("filterText", filterText);
-        if (item && item.ForwardTo) {
-            // You can customize the filtering logic here based on your requirements
-            return item.ForwardTo.toLowerCase().includes(filterText.toLowerCase());
-        } else {
-            return false; // Return false if any required property is undefined
-        }
-    });
+   
+    
 
     const handalClickAddUser = (e) => {
         // Check if the object 'e' already exists in the array based on its 'id'
         if (!addUser.some(user => user.ID === e.ID)) {
             // If it doesn't exist, add it to the 'addUser' array
             setAddUser([...addUser, e]);
+            let res = userFilter.filter((user)=>user.ID !==e.ID);
+            setUserListData(res);
+            setUserFilter(res);
         }
 
 
@@ -686,8 +686,26 @@ export default function CreateNewModalTask({ ...props }) {
 
     }, [createNewFileObj]);
 
-    useEffect(() => {
 
+useEffect(()=>{
+    // Filter the userList based on filterText
+    console.log("userFilter",userFilter)
+ let res = userListData.filter((item) => {
+    // Check if item and its properties are defined before accessing them
+    // console.log("filterText", filterText);
+    if (item && item.ForwardTo) {
+        // You can customize the filtering logic here based on your requirements
+        return item.ForwardTo.toLowerCase().includes(filterText.toLowerCase());
+    } else {
+        return false; // Return false if any required property is undefined
+    }
+});
+
+setUserFilter(res);
+},[filterText])
+
+    useEffect(() => {
+ 
        
         setAnchorSelectFileEl(null);
         setOpen(openModal);
@@ -966,7 +984,7 @@ export default function CreateNewModalTask({ ...props }) {
             "ClientWeekDays": "1",
             "ClientWeekOfMonth": "1",
             "OwnerID": ownerID.toString(),
-            "AssignedToID": "77,9",
+            "AssignedToID": isaddUser,
             "AssociateWithID": textClientId,
             "FolderId": txtFolderId.toString(),
             "Subject": textSubject,
@@ -1045,6 +1063,15 @@ export default function CreateNewModalTask({ ...props }) {
         // Filter out the object with the specified ID
         const updatedUsers = addUser.filter(user => user.ID !== id);
         setAddUser(updatedUsers);
+
+        // Find the object with the specified ID in userFilter
+    const removedUser = addUser.find(user => user.ID === id);
+
+    // If the object is found in userFilter, add it back to userFilter
+    if (removedUser) {
+        setUserFilter(prevUsers => [...prevUsers, removedUser]);
+    }
+
     };
     /////////////////////////////End Remove Assignee
     function rearrangeName(fullName) {
@@ -1096,12 +1123,13 @@ export default function CreateNewModalTask({ ...props }) {
 
     }
 
+const [txtColor, setTxtColor]=useState({color:"#1976d2"});
 
     const getButtonColor = () => {
         if (textClientId) {
-            return {color: "#1976d2" }; // Example: Set color to green when conditions met
+            setTxtColor({color: "#1976d2" }); // Example: Set color to green when conditions met
         } else {
-            return { color: "red" }; // Example: Set color to blue when conditions not met
+            setTxtColor({ color: "red" }); // Example: Set color to blue when conditions not met
         }        
     };
     const getButtonColorfolder = () => {
@@ -1504,6 +1532,7 @@ export default function CreateNewModalTask({ ...props }) {
                 "docuBoxEmails": "",
                 "daysToDelete": 0,
                 "approvalResponse": "",
+                "uploadID":""
 
 
             }
@@ -1512,7 +1541,7 @@ export default function CreateNewModalTask({ ...props }) {
             var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
             let cls = new CommanCLS(urlLetter, agrno, Email, password);
 
-            cls.MessagePublished_Json(obj, function (sts, data) {
+            cls.MessagePublishedPortalTask_Json(obj, function (sts, data) {
                 if (sts) {
                     // let js = JSON.parse(data);
                     console.log("MessagePublished_Json", data)
@@ -2016,7 +2045,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                                                     <img src={user} alt="User" />
                                                                                 </Box>
                                                                                 <p>{item.ForwardTo}</p>
-                                                                                <span
+                                                                                {/* <span
                                                                                     className="close"
                                                                                     onClick={() => handleRemoveUser(item.ID)}
                                                                                     role="button" // Adding role="button" to indicate this element is clickable
@@ -2025,7 +2054,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                                                     <span className="material-symbols-outlined">
                                                                                         close
                                                                                     </span>
-                                                                                </span>
+                                                                                </span> */}
                                                                             </button>
                                                                         </React.Fragment>
                                                                     );
@@ -2059,7 +2088,7 @@ export default function CreateNewModalTask({ ...props }) {
 
                                                         {addUser
                                                             ? addUser.map((item, ind) => {
-                                                                if (item.ID === parseInt(localStorage.getItem("UserId"))) {
+                                                                if (item.ID ===ownerID ) {
                                                                     return (
                                                                         <React.Fragment key={ind}>
                                                                             <button type="button" id={item.ID} >
@@ -2112,7 +2141,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                         </Box>
                                                         <Box className="box-user-list-dropdown">
 
-                                                            {filteredUserList.map((item, ind) => (
+                                                            {userFilter.map((item, ind) => (
                                                                 <React.Fragment key={ind}>
                                                                     <button
                                                                         type="button"
@@ -2419,7 +2448,7 @@ export default function CreateNewModalTask({ ...props }) {
                                     <Box className="select-dropdown">
                                         <Button
                                             id="basic-button-client"
-                                            style={getButtonColor()}
+                                            style={txtColor}
                                             aria-controls={
                                                 boolClient && selectedClientMenu === "client"
                                                     ? "basic-menu"
@@ -2445,7 +2474,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                 "aria-labelledby": "basic-button",
                                             }}
                                         >
-                                            <Box className='px-3'>
+                                            <Box>
                                                 <TextField
                                                     label="Search"
                                                     variant="outlined"
