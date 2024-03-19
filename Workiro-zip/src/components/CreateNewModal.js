@@ -32,6 +32,7 @@ import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import DvrIcon from '@mui/icons-material/Dvr';
 import LanguageIcon from '@mui/icons-material/Language';
 import 'react-datetime/css/react-datetime.css';
+import { v4 as uuidv4 } from 'uuid';
 
 import Swal from 'sweetalert2';
 import {
@@ -106,6 +107,10 @@ export default function CreateNewModalTask({ ...props }) {
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
+
+
+    const [guid, setGuid] = useState('');
+
     //const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/"; // base url for api
@@ -198,7 +203,7 @@ export default function CreateNewModalTask({ ...props }) {
 
     const [txtPriorityId, setTxtPriorityId] = useState(2);
 
-   
+
 
 
     const [prioriyAnchorEl, setPrioriyAnchorEl] = React.useState(null);
@@ -369,7 +374,7 @@ export default function CreateNewModalTask({ ...props }) {
                         if (result.length > 0) {
                             result.map((el) => {
                                 if (el.ID === parseInt(localStorage.getItem("UserId"))) {
-                                   // console.log("Json_GetForwardUserList11", addUser);
+                                    // console.log("Json_GetForwardUserList11", addUser);
                                     setOwnerID(el.ID);
                                     setOwnerRighClick(el);
                                     setAddUser((pre) => [...pre, el])
@@ -379,7 +384,7 @@ export default function CreateNewModalTask({ ...props }) {
                         }
 
                         setUserList(result);
-                        let removeuser = result.filter((e)=>e.ID !==localStorage.getItem("UserId"));
+                        let removeuser = result.filter((e) => e.ID !== localStorage.getItem("UserId"));
                         setUserListData(removeuser);
                         setUserFilter(removeuser);
 
@@ -391,15 +396,15 @@ export default function CreateNewModalTask({ ...props }) {
         }
     }
 
-   
-    
+
+
 
     const handalClickAddUser = (e) => {
         // Check if the object 'e' already exists in the array based on its 'id'
         if (!addUser.some(user => user.ID === e.ID)) {
             // If it doesn't exist, add it to the 'addUser' array
             setAddUser([...addUser, e]);
-            let res = userFilter.filter((user)=>user.ID !==e.ID);
+            let res = userFilter.filter((user) => user.ID !== e.ID);
             setUserListData(res);
             setUserFilter(res);
         }
@@ -538,22 +543,8 @@ export default function CreateNewModalTask({ ...props }) {
 
     // Function to close the client list
 
-    const closeClientList = (e) => {
-        if (clientListRef.current && !clientListRef.current.contains(e.target)) {
-            setClientAnchorEl(null);
-        }
-    };
 
 
-
-
-
-    // Function to close the section list
-    const closeSectionList = (e) => {
-        if (sectionListRef.current && !sectionListRef.current.contains(e.target)) {
-            setSectionAnchorEl(null);
-        }
-    };
 
     const handleMenuClose = () => {
         setFolderAnchorEl(null);
@@ -687,26 +678,26 @@ export default function CreateNewModalTask({ ...props }) {
     }, [createNewFileObj]);
 
 
-useEffect(()=>{
-    // Filter the userList based on filterText
-    console.log("userFilter",userFilter)
- let res = userListData.filter((item) => {
-    // Check if item and its properties are defined before accessing them
-    // console.log("filterText", filterText);
-    if (item && item.ForwardTo) {
-        // You can customize the filtering logic here based on your requirements
-        return item.ForwardTo.toLowerCase().includes(filterText.toLowerCase());
-    } else {
-        return false; // Return false if any required property is undefined
-    }
-});
+    useEffect(() => {
+        // Filter the userList based on filterText
+        console.log("userFilter", userFilter)
+        let res = userListData.filter((item) => {
+            // Check if item and its properties are defined before accessing them
+            // console.log("filterText", filterText);
+            if (item && item.ForwardTo) {
+                // You can customize the filtering logic here based on your requirements
+                return item.ForwardTo.toLowerCase().includes(filterText.toLowerCase());
+            } else {
+                return false; // Return false if any required property is undefined
+            }
+        });
 
-setUserFilter(res);
-},[filterText])
+        setUserFilter(res);
+    }, [filterText])
 
     useEffect(() => {
- 
-       
+
+
         setAnchorSelectFileEl(null);
         setOpen(openModal);
 
@@ -764,13 +755,13 @@ setUserFilter(res);
                     if (data) {
                         let js = JSON.parse(data);
                         let tbl = js.Table;
-                         console.log("get folder list", tbl);
+                        console.log("get folder list", tbl);
                         setFolderList(tbl);
-                    let res = tbl.filter((f)=>f.FolderID ===parseInt(localStorage.getItem("ProjectId")));
-                    if(res.length > 0){
-                        settxtFolder(res[0].Folder);
-                    }
-                      
+                        let res = tbl.filter((f) => f.FolderID === parseInt(localStorage.getItem("ProjectId")));
+                        if (res.length > 0) {
+                            settxtFolder(res[0].Folder);
+                        }
+
                     }
                 }
             });
@@ -838,6 +829,38 @@ setUserFilter(res);
             reader.readAsDataURL(file); // Read file as data URL (base64)
         });
     };
+
+
+function PrepareDocumentsForPublish_Json(){
+    try {
+        let o = {};
+        o.accid = agrno;
+        o.email =Email;
+        o.password =password;
+        o.uploadID =password;
+        cls.SaveTaskAttachments(o, function (sts, data) {
+            if (sts && data) {
+                let res = JSON.parse(data);
+                if (res.Status === "Success") {
+                    let path = window.atob(res.Message);
+                    let index = path.lastIndexOf("\\");
+                    let fileName = path.slice(index + 1);
+                    let o = { Path: path, FileName: fileName }
+
+                    setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+
+                }
+            }
+        });
+    }
+    catch (error) {
+        console.log({
+            status: false,
+            message: "Attachment is Not Uploaded Try again",
+            error: error,
+        });
+    }
+}
 
 
     const SETDate = (date) => {
@@ -1065,12 +1088,12 @@ setUserFilter(res);
         setAddUser(updatedUsers);
 
         // Find the object with the specified ID in userFilter
-    const removedUser = addUser.find(user => user.ID === id);
+        const removedUser = addUser.find(user => user.ID === id);
 
-    // If the object is found in userFilter, add it back to userFilter
-    if (removedUser) {
-        setUserFilter(prevUsers => [...prevUsers, removedUser]);
-    }
+        // If the object is found in userFilter, add it back to userFilter
+        if (removedUser) {
+            setUserFilter(prevUsers => [...prevUsers, removedUser]);
+        }
 
     };
     /////////////////////////////End Remove Assignee
@@ -1123,35 +1146,37 @@ setUserFilter(res);
 
     }
 
-const [txtColor, setTxtColor]=useState({color:"#1976d2"});
+    const [txtColor, setTxtColor] = useState({ color: "#1976d2" });
 
     const getButtonColor = () => {
         if (textClientId) {
-            setTxtColor({color: "#1976d2" }); // Example: Set color to green when conditions met
+            setTxtColor({ color: "#1976d2" }); // Example: Set color to green when conditions met
         } else {
             setTxtColor({ color: "red" }); // Example: Set color to blue when conditions not met
-        }        
+        }
     };
     const getButtonColorfolder = () => {
         if (txtFolderId) {
-            return {color: "#1976d2" }; // Example: Set color to green when conditions met
+            return { color: "#1976d2" }; // Example: Set color to green when conditions met
         } else {
             return { color: "red" }; // Example: Set color to blue when conditions not met
-        }        
+        }
     };
 
     const handleDocumentClickOpen = () => {
-        
+
         setAnchorSelectFileEl(null);
-        if(textClientId ){
+        if (textClientId) {
+           
             Json_ExplorerSearchDoc();
             setOpenDocumentList(true);
-        }else{
-            getButtonColor();
+          
+        } else {          
             toast.warn("Select Referece !");
-        }  
+        }
+        getButtonColor();
     };
-   
+
 
     const handleCloseDocumentList = () => {
         setOpenDocumentList(false);
@@ -1494,10 +1519,21 @@ const [txtColor, setTxtColor]=useState({color:"#1976d2"});
         }
     };
 
+    // Function to generate and set the GUID without hyphens
+    const generateGuid = () => {
+        const newGuid = uuidv4().replace(/-/g, ''); // Removing hyphens from the generated GUID
+        setGuid(newGuid);
+    };
+
+
+
+
+
 
     async function CreatePortalTask() {
-
+        
         if (selectedUSer.ID) {
+            let strGuid =uuidv4().replace(/-/g, '');
             let myNewArr = [...selectedFilesFromBrower, ...selectedDocumentFile];
             // console.log("myNewArr", myNewArr)
             const ccEmail = selectedEmailCC ? selectedEmailCC.map(obj => obj["E-Mail"]) : "";
@@ -1532,7 +1568,7 @@ const [txtColor, setTxtColor]=useState({color:"#1976d2"});
                 "docuBoxEmails": "",
                 "daysToDelete": 0,
                 "approvalResponse": "",
-                "uploadID":""
+                "uploadID": strGuid
 
 
             }
@@ -1616,11 +1652,11 @@ const [txtColor, setTxtColor]=useState({color:"#1976d2"});
         //console.log("handleItemClick111", e);
         setOwnerRighClick(e);
         console.log("slected user", e)
-        setOwnerID(e.ID)     
+        setOwnerID(e.ID)
 
         const existingObj = addUser.find(obj => obj.ID === e.ID);
         if (!existingObj) {
-           setAddUser((pre)=>[...pre,...e]);
+            setAddUser((pre) => [...pre, ...e]);
         }
 
         //let res = addUser.filter(user => user.ID !==e.ID);
@@ -1983,7 +2019,7 @@ const [txtColor, setTxtColor]=useState({color:"#1976d2"});
 
                                                                     </>
                                                                 );
-                                                         }
+                                                            }
 
 
                                                         })
@@ -2022,7 +2058,7 @@ const [txtColor, setTxtColor]=useState({color:"#1976d2"});
 
                                                         {addUser
                                                             ? addUser.map((item, ind) => {
-                                                                if (item.ID ===ownerID ) {
+                                                                if (item.ID === ownerID) {
                                                                     return (
                                                                         <React.Fragment key={ind}>
                                                                             <button type="button"
@@ -2088,7 +2124,7 @@ const [txtColor, setTxtColor]=useState({color:"#1976d2"});
 
                                                         {addUser
                                                             ? addUser.map((item, ind) => {
-                                                                if (item.ID ===ownerID ) {
+                                                                if (item.ID === ownerID) {
                                                                     return (
                                                                         <React.Fragment key={ind}>
                                                                             <button type="button" id={item.ID} >
@@ -2248,13 +2284,13 @@ const [txtColor, setTxtColor]=useState({color:"#1976d2"});
                                                         </Box>
 
                                                         <Box className="d-flex align-items-center">
-                                                        {txtTaskType ==="Portal" && (<>
-                                                            <Button variant="text" className="btn-blue-2">
-                                                            Sign
-                                                               </Button>
-                                                                    
-                                                                </>)}
-                                                            
+                                                            {txtTaskType === "Portal" && (<>
+                                                                <Button variant="text" className="btn-blue-2">
+                                                                    Sign
+                                                                </Button>
+
+                                                            </>)}
+
                                                             <Box className="ps-2">
                                                                 <Button
                                                                     className="p-0"
@@ -2318,7 +2354,7 @@ const [txtColor, setTxtColor]=useState({color:"#1976d2"});
                                     <Button
                                         variant="contained"
                                         onClick={Json_CRM_Task_Save}
-                                         disabled={!textSubject?true:false}
+                                        disabled={!textSubject ? true : false}
                                         className="btn-blue-2 mt-3"
                                     >
                                         {'CRM Task'}
@@ -2329,7 +2365,8 @@ const [txtColor, setTxtColor]=useState({color:"#1976d2"});
                                     <Button
                                         variant="contained"
                                         onClick={CreatePortalTask}
-                                        disabled={loading}
+                                        disabled={!textSubject ? true : false}
+                                        // disabled={loading}
                                         className="btn-blue-2 mt-1"
                                     >
                                         {'Portal Task'}
@@ -2474,7 +2511,7 @@ const [txtColor, setTxtColor]=useState({color:"#1976d2"});
                                                 "aria-labelledby": "basic-button",
                                             }}
                                         >
-                                            <Box>
+                                            <Box className='px-3' >
                                                 <TextField
                                                     label="Search"
                                                     variant="outlined"
@@ -2503,7 +2540,7 @@ const [txtColor, setTxtColor]=useState({color:"#1976d2"});
                                                                 setTextClientId(item.ClientID);
                                                                 setClientAnchorEl(null);
                                                                 Json_GetClientCardDetails(item.ClientID)
-
+                                                                setTxtColor({ color: "#1976d2" });
 
                                                             }}
                                                             className="search-list"
@@ -2590,7 +2627,7 @@ const [txtColor, setTxtColor]=useState({color:"#1976d2"});
                                                                 alignItems="flex-start"
                                                                 onClick={(e) => {
                                                                     setSearchSectionQuery("")
-                                                                   // console.log("client select", item.Sec);
+                                                                    // console.log("client select", item.Sec);
                                                                     settxtSection(item.Sec); // Assuming item.Client holds the value you want
                                                                     setTxtSectionId(item.SecID); // Assuming item.Client holds the value you want
                                                                     setSectionAnchorEl(null);

@@ -258,6 +258,17 @@ export default class CommanCLS extends AllService {
             }
         })
      }
+     PrepareDocumentsForPublish_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("PrepareDocumentsForPublish_Json",obj,false);
+        super.CallNewService("PrepareDocumentsForPublish_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
      MessagePublishedPortalTask_Json(obj,callBack){   
         super.CreateNewServiceParamObject("MessagePublishedPortalTask_Json",obj,false);
         super.CallNewService("MessagePublishedPortalTask_Json",function(status,Data){
