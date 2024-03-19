@@ -1369,7 +1369,7 @@ span.tox-statusbar__branding {
 }
 
 .main-file-upload {
-  border-top: 1px solid #f1f1f1;
+  /* border-top: 1px solid #f1f1f1; */
 }
 
 .main-file-upload textarea {

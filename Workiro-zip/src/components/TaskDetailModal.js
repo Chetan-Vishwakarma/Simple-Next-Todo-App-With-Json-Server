@@ -1411,25 +1411,20 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
 
                         </Box>
-                        <Box className="d-flex">
+                        <Box className="d-flex mt-3">
                             <Box className="mb-2 border-bottom me-3 width-150">
                                 <label className="font-14 text-black">Start Date</label>
-                                <LocalizationProvider
-                                    className="pe-0 sadik"
-                                    dateAdapter={AdapterDayjs}
-                                >
-                                    <DatePicker className=" w-100"
-                                        showIcon
-                                        dateFormat="DD/MM/YYYY"
-                                        value={currentDate}
-                                        onChange={(e) => setCurrentDate(e)} // Handle date changes
-                                        timeFormat={false}
-                                        isValidDate={disablePastDt}
-                                        closeOnSelect={true}
-                                        icon="fa fa-calendar"
+                                <DatePicker className=" w-100"
+                                    showIcon
+                                    dateFormat="DD/MM/YYYY"
+                                    value={currentDate}
+                                    onChange={(e) => setCurrentDate(e)} // Handle date changes
+                                    timeFormat={false}
+                                    isValidDate={disablePastDt}
+                                    closeOnSelect={true}
+                                    icon="fa fa-calendar"
 
-                                    />
-                                </LocalizationProvider>
+                                />
                             </Box>
 
                             <Box className="border-bottom mb-2 width-150" sx={{ float: "right" }}>
@@ -1437,24 +1432,17 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     <label className="font-14 semibold text-black">
                                         Due By
                                     </label>
-                                    <LocalizationProvider
-                                        className="pe-0 sadik"
-                                        dateAdapter={AdapterDayjs}
-                                    >
+                                    <DatePicker className=" w-100"
+                                        showIcon
+                                        dateFormat="DD/MM/YYYY"
+                                        value={nextDate}
+                                        onChange={(e) => setNextDate(e)} // Handle date changes
+                                        timeFormat={false}
+                                        isValidDate={disablePastDt}
+                                        closeOnSelect={true}
+                                        icon="fa fa-calendar"
 
-                                        <DatePicker className=" w-100"
-                                            showIcon
-                                            dateFormat="DD/MM/YYYY"
-                                            value={nextDate}
-                                            onChange={(e) => setNextDate(e)} // Handle date changes
-                                            timeFormat={false}
-                                            isValidDate={disablePastDt}
-                                            closeOnSelect={true}
-                                            icon="fa fa-calendar"
-
-                                        />
-
-                                    </LocalizationProvider>
+                                    />
                                 </Box>
                             </Box>
                         </Box>
@@ -1475,8 +1463,8 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 Defer
                             </Button>
                         </Box>
-
-                        <Box className="white-box pb-0 mb-0">
+                        
+                        <Box className="pb-0 mb-0">
                             <Box className="main-chatbox">
                                 {crmTaskAcivity
                                     ? crmTaskAcivity.map((item, index) => {
@@ -1674,9 +1662,9 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 </label>
                             </Box> */}
 
-                            <Box className="d-flex align-items-end main-file-upload">
+                            <Box className="d-flex align-items-end main-file-upload  pt-3">
                                 <Box className="w-100">
-                                    <Stack direction="row" className='py-3' spacing={1}>
+                                    <Stack direction="row" className='pb-3' spacing={1}>
                                         <Chip label="fileName123.Doc" variant="outlined" onDelete={handleDelete} />
                                         <Chip label="fileName123.PDF" variant="outlined" onDelete={handleDelete} />
                                     </Stack>
