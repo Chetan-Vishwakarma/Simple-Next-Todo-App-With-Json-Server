@@ -945,7 +945,7 @@ export default function DocumentList({ clientId }) {
                                     displayEmpty
                                     inputProps={{ 'aria-label': 'Without label' }}
                                     className='custom-dropdown'
-                                    onChange={() => { }}
+                                    onChange={(e) => setSelectedGroup(e.target.value)}
                                 >
                                     <MenuItem value="">
                                         Group By
@@ -954,6 +954,8 @@ export default function DocumentList({ clientId }) {
                                         Description
                                     </MenuItem>
                                     <MenuItem value={"CommentBy"}>Comment By</MenuItem>
+                                    <MenuItem value={"Type"}>Type</MenuItem>
+                                    <MenuItem value={"Comments"}>Comments</MenuItem>
                                     {/* <MenuItem value={20}>Comment</MenuItem> */}
                                 </Select>
                             </FormControl>
@@ -993,7 +995,7 @@ export default function DocumentList({ clientId }) {
 
                     <Box className='mt-4 client-details-scroll'>
                         {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
-                        {toggleScreen.singleCardView && <DocumentDetails groupByFilterResult={groupByFilterResult} isGroupBy={isGroupBy} documents={documents} advFilteredResult={advFilteredResult} dataNotFoundBoolean={dataNotFoundBoolean} ></DocumentDetails>}
+                        {toggleScreen.singleCardView && <DocumentDetails groupByFilterResult={groupByFilterResult} isGroupBy={isGroupBy} documents={documents} advFilteredResult={advFilteredResult} dataNotFoundBoolean={dataNotFoundBoolean} selectedGroup={selectedGroup}></DocumentDetails>}
                         {toggleScreen.multipleCardView &&
                             <Box className='row'>
                                 {advFilteredResult.length > 0 ? (

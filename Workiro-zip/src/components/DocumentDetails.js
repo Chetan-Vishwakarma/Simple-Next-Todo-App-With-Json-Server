@@ -54,7 +54,7 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 // sadik code end
 
-function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFilteredResult, dataNotFoundBoolean }) {
+function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFilteredResult, dataNotFoundBoolean, selectedGroup }) {
 
     // sadik js start
     console.log("Selected Document", documents)
@@ -166,8 +166,10 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
 
                     <Scrolling mode="virtual" />
                     <Selection mode="multiple" />
-                    {/* <Column dataField="Type" groupIndex={0} dataType="Type" width={75} /> */}
-                    {/* <Column dataField="Comments" groupIndex={1} dataType="Comments" width={75} visible={false} /> */}
+                    {selectedGroup==="Type" && <Column dataField="Type" groupIndex={0} dataType="Type" width={75} />}
+                    {selectedGroup==="Comments" && <Column dataField="Comments" groupIndex={0} dataType="Comments" width={75} visible={false} /> }
+                    {selectedGroup==="Description" && <Column dataField="Description" groupIndex={0} dataType="Description" width={75} visible={false} /> }
+                    {selectedGroup==="CommentBy" && <Column dataField="CommentBy" groupIndex={0} dataType="CommentBy" width={75} visible={false} /> }
                     {/* <Column dataField="Item Date" groupIndex={1} dataType="date" width={75} visible={false} /> */}
                     <Column
                         dataField="Description"
