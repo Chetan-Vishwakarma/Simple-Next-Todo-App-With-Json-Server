@@ -43,6 +43,7 @@ import DatePicker from 'react-datetime';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 import Fade from '@mui/material/Fade';
 import GetClientList from "./GetClientList";
@@ -985,6 +986,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 onClose={handleClose}
                                 MenuListProps={{
                                     'aria-labelledby': 'basic-button-status',
+                                    
                                 }}
                             >
                                 <MenuItem onClick={handleClose}>Profile</MenuItem>
@@ -1036,42 +1038,42 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     >
 
                                         {/*  */}
-                                        <MenuItem onClick={handleCloseStatus}>
+                                        <MenuItem onClick={handleCloseStatus} className="text-secondary">
                                             <ListItemIcon>
-                                                <DoNotDisturbAltIcon fontSize="medium" />
+                                                <DoNotDisturbAltIcon fontSize="medium" className="text-secondary" />
                                             </ListItemIcon>
                                             Not Started
                                         </MenuItem>
-                                        <MenuItem onClick={handleCloseStatus}>
+                                        <MenuItem onClick={handleCloseStatus} className="text-primary">
                                             <ListItemIcon>
-                                                <PublishedWithChangesIcon fontSize="medium" />
+                                                <PublishedWithChangesIcon fontSize="medium" className="text-primary" />
                                             </ListItemIcon>
                                             In Progress
                                         </MenuItem>
 
-                                        <MenuItem onClick={handleCloseStatus}>
+                                        <MenuItem onClick={handleCloseStatus} className="text-primary">
                                             <ListItemIcon>
-                                                <HourglassBottomIcon fontSize="medium" />
+                                                <HourglassBottomIcon fontSize="medium" className="text-primary" />
                                             </ListItemIcon>
-                                            Waiting on someone else
+                                            On Hold
                                         </MenuItem>
 
-                                        <MenuItem onClick={handleCloseStatus}>
+                                        {/* <MenuItem onClick={handleCloseStatus} className="text-warning">
                                             <ListItemIcon>
-                                                <ErrorOutlineIcon fontSize="medium" />
+                                                <ErrorOutlineIcon fontSize="medium" className="text-warning" />
                                             </ListItemIcon>
                                             Deferred</MenuItem>
 
-                                        <MenuItem onClick={handleCloseStatus}>
+                                        <MenuItem onClick={handleCloseStatus} className="text-success">
                                             <ListItemIcon>
-                                                <CheckCircleOutlineIcon fontSize="medium" />
+                                                <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
                                             </ListItemIcon>
-                                            Done</MenuItem>
+                                            Done</MenuItem> */}
 
-                                        <MenuItem onClick={handleCloseStatus}><ListItemIcon>
-                                            <CheckCircleOutlineIcon fontSize="medium" />
+                                        <MenuItem onClick={handleCloseStatus} className="text-success"><ListItemIcon>
+                                            <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
                                         </ListItemIcon>
-                                            Complete
+                                            Completed
                                         </MenuItem>
                                         {/*  */}
 
@@ -1141,6 +1143,16 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 onClick={handalClickEditeSubject}
                                 value={tSubject}
                             />
+
+                            <Box className="mt-2 mb-3">
+                                <textarea
+                                    className="form-control textarea textarea-ony-read resize-none"
+                                    placeholder="Description"
+                                    value={txtdescription} // Bind the value to the state
+                                    onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
+                                ></textarea>
+                            </Box>
+
                             {isVisible && ( // Show the box if isVisible is true
                                 <Box className='mb-3 mt-2'>
                                     <Stack spacing={2} direction="row">
@@ -1150,8 +1162,6 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 </Box>
                             )}
                         </Box>
-
-
 
                         <Box className="d-flex flex-wrap justify-content-between">
                             <Box className="d-flex flex-wrap align-items-center">
@@ -1174,6 +1184,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     open={openClient}
                                     onClose={handleCloseClient}
                                     TransitionComponent={Fade}
+                                    className="menu-height"
                                 >
 
                                     <TextField
@@ -1182,14 +1193,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                         // value={searchClient1Query}
                                         // onChange={handleSearchInputChangeClient}
                                         sx={{ width: "100%" }}
+                                        size="small"
                                     />
 
                                     {filtereClient ? filtereClient.map((item, index) => {
                                         return <MenuItem key={index} onClick={() => handleCloseClient(item)}>{item.Client}</MenuItem>
                                     }) : ""}
-
-
-
 
                                 </Menu>
 
@@ -1213,6 +1222,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     open={openSection}
                                     onClose={handleCloseSection}
                                     TransitionComponent={Fade}
+                                    className="menu-height"
                                 >
 
                                     <TextField
@@ -1221,6 +1231,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                         value={searchSectionQuery}
                                         onChange={handleSearchInputChangeSection}
                                         sx={{ width: "100%" }}
+                                        size="small"
                                     />
 
                                     {filtereSectionList ? filtereSectionList.map((item, index) => {
@@ -1412,31 +1423,15 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
                         </Box>
                         <Box className="d-flex mt-3">
-                            <Box className="mb-2 border-bottom me-3 width-150">
+                            <Box className="mb-2 me-3">
                                 <label className="font-14 text-black">Start Date</label>
-                                <DatePicker className=" w-100"
-                                    showIcon
-                                    dateFormat="DD/MM/YYYY"
-                                    value={currentDate}
-                                    onChange={(e) => setCurrentDate(e)} // Handle date changes
-                                    timeFormat={false}
-                                    isValidDate={disablePastDt}
-                                    closeOnSelect={true}
-                                    icon="fa fa-calendar"
-
-                                />
-                            </Box>
-
-                            <Box className="border-bottom mb-2 width-150" sx={{ float: "right" }}>
-                                <Box className="mb-2 ">
-                                    <label className="font-14 semibold text-black">
-                                        Due By
-                                    </label>
-                                    <DatePicker className=" w-100"
+                                <Box className='custom-datepicker'>
+                                    <CalendarMonthIcon />
+                                    <DatePicker
                                         showIcon
                                         dateFormat="DD/MM/YYYY"
-                                        value={nextDate}
-                                        onChange={(e) => setNextDate(e)} // Handle date changes
+                                        value={currentDate}
+                                        onChange={(e) => setCurrentDate(e)} // Handle date changes
                                         timeFormat={false}
                                         isValidDate={disablePastDt}
                                         closeOnSelect={true}
@@ -1445,15 +1440,29 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     />
                                 </Box>
                             </Box>
+
+                            <Box className="mb-2" sx={{ float: "right" }}>
+                                <Box className="mb-2 ">
+                                    <label className="font-14 semibold text-black">
+                                        Due By
+                                    </label>
+                                    <Box className='custom-datepicker'>
+                                        <CalendarMonthIcon />
+                                        <DatePicker
+                                            showIcon
+                                            dateFormat="DD/MM/YYYY"
+                                            value={nextDate}
+                                            onChange={(e) => setNextDate(e)} // Handle date changes
+                                            timeFormat={false}
+                                            isValidDate={disablePastDt}
+                                            closeOnSelect={true}
+                                            icon="fa fa-calendar"
+                                        />
+                                    </Box>
+                                </Box>
+                            </Box>
                         </Box>
-                        <Box className="mt-2 mb-3">
-                            <textarea
-                                className="form-control textarea resize-none"
-                                placeholder="Description"
-                                value={txtdescription} // Bind the value to the state
-                                onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
-                            ></textarea>
-                        </Box>
+
 
                         <Box className="d-flex mb-3">
                             <Button variant="text" className="btn-blue-2 me-2">
@@ -1463,7 +1472,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 Defer
                             </Button>
                         </Box>
-                        
+
                         <Box className="pb-0 mb-0">
                             <Box className="main-chatbox">
                                 {crmTaskAcivity
@@ -1694,7 +1703,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
                                 <Box className="d-flex d-flex align-items-center ms-3">
                                     <Button
-                                        className="btn-blue-2 ms-3 mb-2"
+                                        className="btn-blue-2 ms-0 mb-2"
                                         size="small"
                                         onClick={addActivitySave}
                                         startIcon={<SendIcon />}

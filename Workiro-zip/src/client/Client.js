@@ -15,6 +15,7 @@ import { styled } from '@mui/system';
 import PersonIcon from '@mui/icons-material/Person';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const CommonFilters = [
     { key: "Company Name", val: "Company Name" }, { key: "Address 1", val: "Address Line 1" },
@@ -117,7 +118,7 @@ function Client() {
     const [isDataNotFoundInClient, setIsDataNotFoundInClient] = useState(false);
     const [isDataNotFoundInContact, setIsDataNotFoundInContact] = useState(false);
     const [isDataNotFoundInBoth, setIsDataNotFoundInBoth] = useState(false);
-    
+
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -288,7 +289,7 @@ function Client() {
     }
     let handleAdvanceFilterAgain = () => {
         if (selectedProperty !== "" && selectedPropertyValue !== "") {
-            if(selectedChoice==="Clients"){
+            if (selectedChoice === "Clients") {
                 let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
                 setObjFilter(obj);
                 let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
@@ -303,7 +304,7 @@ function Client() {
                 setSelectedProperty("");
                 setSelectedPropertyValue("");
                 return;
-            }else if(selectedChoice==="Contacts"){
+            } else if (selectedChoice === "Contacts") {
                 let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
                 setObjFilter(obj);
                 let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
@@ -318,7 +319,7 @@ function Client() {
                 setSelectedProperty("");
                 setSelectedPropertyValue("");
                 return;
-            }else if(selectedChoice==="All"){
+            } else if (selectedChoice === "All") {
                 let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
                 setObjFilter(obj);
                 let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
@@ -328,19 +329,19 @@ function Client() {
                 // if (onlyClients) {
                 let obj4 = { ...objFilterClient, [selectedPropertyForClient]: [selectedPropertyValue] };
                 setObjFilterClient(obj4);
-                console.log("object for client: ",obj4);
+                console.log("object for client: ", obj4);
                 let fltClients = handleSearchBy(clients, obj4);
                 let fltContacts = handleSearchBy(contacts, obj);
                 setFilteredClients(fltClients);
                 setFilteredContacts(fltContacts);
-                console.log("Filtered Clients: ",fltClients);
-                console.log("Filtered Contacts: ",fltContacts);
-                if(fltClients.length===0 && fltContacts.length===0){
+                console.log("Filtered Clients: ", fltClients);
+                console.log("Filtered Contacts: ", fltContacts);
+                if (fltClients.length === 0 && fltContacts.length === 0) {
                     setIsDataNotFoundInBoth(true);
-                }else if(fltClients.length>0 && fltContacts.length===0){
+                } else if (fltClients.length > 0 && fltContacts.length === 0) {
                     setOnlyClients(true);
                     setOnlyContacts(false);
-                }else if(fltClients.length===0 && fltContacts.length>0){
+                } else if (fltClients.length === 0 && fltContacts.length > 0) {
                     setOnlyClients(false);
                     setOnlyContacts(true);
                 }
@@ -363,37 +364,37 @@ function Client() {
             );
         // console.log("obj",obj);
 
-        if(selectedChoice==="Clients"){
+        if (selectedChoice === "Clients") {
             let fltData = handleSearchBy(clients, obj);
             // setFilteredClients(fltData);
-            if(Object.keys(obj).length===0){
+            if (Object.keys(obj).length === 0) {
                 setIsDataNotFoundInClient(false);
-            }else{
-                if(fltData.length===0){
+            } else {
+                if (fltData.length === 0) {
                     setIsDataNotFoundInClient(true);
-                }else{
+                } else {
                     setIsDataNotFoundInClient(false);
                 }
             }
             setFilteredClients(fltData);
             setObjFilter(obj);
             return;
-        }else if(selectedChoice==="Contacts"){
+        } else if (selectedChoice === "Contacts") {
             let fltData = handleSearchBy(contacts, obj);
             // setFilteredClients(fltData);
-            if(Object.keys(obj).length===0){
+            if (Object.keys(obj).length === 0) {
                 setIsDataNotFoundInContact(false);
-            }else{
-                if(fltData.length===0){
+            } else {
+                if (fltData.length === 0) {
                     setIsDataNotFoundInContact(true);
-                }else{
+                } else {
                     setIsDataNotFoundInContact(false);
                 }
             }
             setFilteredContacts(fltData);
             setObjFilter(obj);
             return;
-        }else if(selectedChoice==="All"){
+        } else if (selectedChoice === "All") {
             // console.log("Obj for Contact: ",obj);
             // console.log("Obj for Client: ",objFilterClient);
 
@@ -403,21 +404,21 @@ function Client() {
             // console.log("FilteredContact: ",fltContacts);
             setFilteredClients(fltClients);
             setFilteredContacts(fltContacts);
-            if(Object.keys(obj).length===0){
+            if (Object.keys(obj).length === 0) {
                 setIsDataNotFoundInBoth(false);
                 // setOnlyClients(true);
                 // setOnlyContacts(true);
-            }else if(fltClients.length===0 && fltContacts.length===0){
+            } else if (fltClients.length === 0 && fltContacts.length === 0) {
                 setIsDataNotFoundInBoth(true);
-            }else if(fltClients.length>0 && fltContacts.length===0){
+            } else if (fltClients.length > 0 && fltContacts.length === 0) {
                 setOnlyClients(true);
                 setOnlyContacts(false);
                 setIsDataNotFoundInBoth(false);
-            }else if(fltClients.length===0 && fltContacts.length>0){
+            } else if (fltClients.length === 0 && fltContacts.length > 0) {
                 setOnlyClients(false);
                 setOnlyContacts(true);
                 setIsDataNotFoundInBoth(false);
-            }else if(fltClients.length>0 && fltContacts.length>0){
+            } else if (fltClients.length > 0 && fltContacts.length > 0) {
                 setOnlyClients(true);
                 setOnlyContacts(true);
                 setIsDataNotFoundInBoth(false);
@@ -429,26 +430,26 @@ function Client() {
         setObjFilter(obj);
     }
 
-    const handleClearAll=()=>{
-        if(selectedChoice==="All"){
+    const handleClearAll = () => {
+        if (selectedChoice === "All") {
             setIsDataNotFoundInBoth(false);
             setOnlyClients(true);
             setOnlyContacts(true);
             setFilteredClients([]);
             setFilteredContacts([]);
-        }else if(selectedChoice==="Contacts"){
+        } else if (selectedChoice === "Contacts") {
             setIsDataNotFoundInContact(false);
             setOnlyContacts(true);
             // setFilteredClients([]);
             setFilteredContacts([]);
-        }else if(selectedChoice==="Clients"){
+        } else if (selectedChoice === "Clients") {
             setIsDataNotFoundInClient(false);
             setOnlyClients(true);
             setFilteredClients([]);
             // setFilteredContacts([]);
         }
         setObjFilter({});
-        setObjFilterClient({}); 
+        setObjFilterClient({});
     }
 
 
@@ -562,7 +563,7 @@ function Client() {
             //console.log("Contacts's Property suggestion list",fltRepeatData);
 
         } else if (!onlyContacts) {
-            
+
             let fltRepeatData = createSuggestionList(value, clients);
             setSuggestionList(fltRepeatData);
         } else if (onlyClients && onlyContacts) {
@@ -697,130 +698,131 @@ function Client() {
                                     <Box className='clearfix'>
 
                                         <Box className='clearfix'>
-                                            <Typography variant='Body1' className='mb-2 d-block  bold'>Filter:</Typography>
+                                            <Typography variant='Body1' className='mb-3 d-block  bold'>Filter:</Typography>
 
-                                            <Box className='row'>
-                                                <Box className='col-md-4'>
-                                                    <Box className='mb-2'>
+                                            <Box className='d-flex justify-content-between'>
+                                                <Box className='row w-100 pe-3'>
+                                                    <Box className='col-md-6'>
+                                                        <Box className='mb-2'>
 
-                                                        {selectedChoice==="All" && <Autocomplete
-                                                            disablePortal
-                                                            id="combo-box-demo"
-                                                            value={selectedProperty}
-                                                            onChange={(event, newValue) => {
-                                                                event.preventDefault();
-                                                                event.stopPropagation();
-                                                                if (newValue !== null) {
-                                                                    setSelectedProperty(newValue.value);
-                                                                    setSelectedPropertyForClient(newValue.label);
-                                                                    handleSuggestionList(newValue.value, newValue.label);
-                                                                }
-                                                            }}
-                                                            options={CommonFilters.filter((itm)=>{
-                                                                return !Object.keys(objFilter).includes(itm.key)
-                                                            }).map(option => ({ value: option.key, label: option.val }))}
-                                                            sx={{ width: 300 }}
-                                                            renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
-                                                        />}
-
-                                                        {selectedChoice==="Contacts" && <Autocomplete
-                                                            disablePortal
-                                                            id="combo-box-demo"
-                                                            value={selectedProperty}
-                                                            onChange={(event, newValue) => {
-                                                                event.preventDefault();
-                                                                event.stopPropagation();
-                                                                // console.log(event.target, newValue);
-                                                                if (newValue !== null) {
-                                                                    setSelectedProperty(newValue.value);
-                                                                    handleSuggestionList(newValue.value);
-                                                                }
-                                                            }}
-                                                            options={ContactFilters.filter((itm)=>{
-                                                                return !Object.keys(objFilter).includes(itm.key)
-                                                            }).map(option => ({ value: option.key, label: option.val }))}
-                                                            sx={{ width: 300 }}
-                                                            renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
-                                                        />}
-
-                                                        {/* Only For Clients */}
-                                                        {selectedChoice==="Clients" && <Autocomplete
-                                                            disablePortal
-                                                            id="combo-box-demo"
-                                                            value={selectedProperty}
-                                                            onChange={(event, newValue) => {
-                                                                event.preventDefault();
-                                                                event.stopPropagation();
-                                                                if (newValue !== null) {
-                                                                    setSelectedProperty(newValue.value);
-                                                                    handleSuggestionList(newValue.value);
-                                                                }
-                                                            }}
-                                                            // options={ClientFilters.map(option => ({ value: option.key, label: option.val }))}
-                                                            options={ClientFilters.filter((itm)=>{
-                                                                return !Object.keys(objFilter).includes(itm.key)
-                                                            }).map(option => ({ value: option.key, label: option.val }))}
-                                                            sx={{ width: 300 }}
-                                                            renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
-                                                        />}
-                                                    </Box>
-                                                </Box>
-                                                <Box className='col-md-4 px-0'>
-                                                    <Box className='mb-2'>
-                                                        <div>
-                                                            <Autocomplete
+                                                            {selectedChoice === "All" && <Autocomplete
                                                                 disablePortal
                                                                 id="combo-box-demo"
-                                                                value={selectedPropertyValue}
+                                                                value={selectedProperty}
                                                                 onChange={(event, newValue) => {
                                                                     event.preventDefault();
                                                                     event.stopPropagation();
-                                                                    //console.log(newValue);
-                                                                    setSelectedPropertyValue(newValue);
+                                                                    if (newValue !== null) {
+                                                                        setSelectedProperty(newValue.value);
+                                                                        setSelectedPropertyForClient(newValue.label);
+                                                                        handleSuggestionList(newValue.value, newValue.label);
+                                                                    }
                                                                 }}
-                                                                options={suggestionList}
-                                                                sx={{ width: 300 }}
-                                                                renderInput={(params) => <TextField {...params} value={selectedPropertyValue} onChange={(e) => setSelectedPropertyValue(e.target.value)} label="Select Property" />}
-                                                            />
-                                                        </div>
+                                                                options={CommonFilters.filter((itm) => {
+                                                                    return !Object.keys(objFilter).includes(itm.key)
+                                                                }).map(option => ({ value: option.key, label: option.val }))}
+                                                                sx={{ width: '100%' }}
+                                                                renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
+                                                            />}
+
+                                                            {selectedChoice === "Contacts" && <Autocomplete
+                                                                disablePortal
+                                                                id="combo-box-demo"
+                                                                value={selectedProperty}
+                                                                onChange={(event, newValue) => {
+                                                                    event.preventDefault();
+                                                                    event.stopPropagation();
+                                                                    // console.log(event.target, newValue);
+                                                                    if (newValue !== null) {
+                                                                        setSelectedProperty(newValue.value);
+                                                                        handleSuggestionList(newValue.value);
+                                                                    }
+                                                                }}
+                                                                options={ContactFilters.filter((itm) => {
+                                                                    return !Object.keys(objFilter).includes(itm.key)
+                                                                }).map(option => ({ value: option.key, label: option.val }))}
+                                                                sx={{ width: '100%' }}
+                                                                renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
+                                                            />}
+
+                                                            {/* Only For Clients */}
+                                                            {selectedChoice === "Clients" && <Autocomplete
+                                                                disablePortal
+                                                                id="combo-box-demo"
+                                                                value={selectedProperty}
+                                                                onChange={(event, newValue) => {
+                                                                    event.preventDefault();
+                                                                    event.stopPropagation();
+                                                                    if (newValue !== null) {
+                                                                        setSelectedProperty(newValue.value);
+                                                                        handleSuggestionList(newValue.value);
+                                                                    }
+                                                                }}
+                                                                // options={ClientFilters.map(option => ({ value: option.key, label: option.val }))}
+                                                                options={ClientFilters.filter((itm) => {
+                                                                    return !Object.keys(objFilter).includes(itm.key)
+                                                                }).map(option => ({ value: option.key, label: option.val }))}
+                                                                sx={{ width: '100%' }}
+                                                                renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
+                                                            />}
+                                                        </Box>
+                                                    </Box>
+                                                    <Box className='col-md-6 px-0'>
+                                                        <Box className='mb-2'>
+                                                            <div>
+                                                                <Autocomplete
+                                                                    disablePortal
+                                                                    id="combo-box-demo"
+                                                                    value={selectedPropertyValue}
+                                                                    onChange={(event, newValue) => {
+                                                                        event.preventDefault();
+                                                                        event.stopPropagation();
+                                                                        //console.log(newValue);
+                                                                        setSelectedPropertyValue(newValue);
+                                                                    }}
+                                                                    options={suggestionList}
+                                                                    sx={{ width: '100%' }}
+                                                                    renderInput={(params) => <TextField {...params} value={selectedPropertyValue} onChange={(e) => setSelectedPropertyValue(e.target.value)} label="Select Property" />}
+                                                                />
+                                                            </div>
+                                                        </Box>
                                                     </Box>
                                                 </Box>
-                                                <Box className='col-md-4'>
-                                                    <Box className='clearfix'>
-                                                        <Typography variant='Body1' className='mb-1'>Labels</Typography>
+                                                <Box className='ps-3'>
+                                                    <Typography variant='Body1' className='mb-1 bold'>Labels</Typography>
 
-                                                        <Box className="color-box">
-                                                            {
-                                                                Object.keys(objFilter).length === 0 && <><button onClick={(e) => {
-                                                                    setSelectedColor(colorArr[0]);
-                                                                    setIsFirstColorSelected(true);
-                                                                }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[0] }}></button>
-                                                                    <button onClick={() => {
-                                                                        setSelectedColor(colorArr[1]);
-                                                                        setIsFirstColorSelected(false);
-                                                                    }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[1] }}></button></>
-                                                            }
-                                                            {
-                                                                Object.keys(objFilter).length === 1 && <><button onClick={(e) => {
-                                                                    setSelectedColor(colorArr[2]);
-                                                                    setIsFirstColorSelected(true);
-                                                                }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[2] }}></button>
-                                                                    <button onClick={() => {
-                                                                        setSelectedColor(colorArr[3]);
-                                                                        setIsFirstColorSelected(false);
-                                                                    }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[3] }}></button></>
-                                                            }
-                                                            {
-                                                                Object.keys(objFilter).length === 2 && <><button onClick={(e) => {
+                                                    <Box className="color-box">
+                                                        {
+                                                            Object.keys(objFilter).length === 0 && <><button onClick={(e) => {
+                                                                setSelectedColor(colorArr[0]);
+                                                                setIsFirstColorSelected(true);
+                                                            }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[0] }}></button>
+                                                                <button onClick={() => {
+                                                                    setSelectedColor(colorArr[1]);
+                                                                    setIsFirstColorSelected(false);
+                                                                }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[1] }}></button></>
+                                                        }
+                                                        {
+                                                            Object.keys(objFilter).length === 1 && <><button onClick={(e) => {
+                                                                setSelectedColor(colorArr[2]);
+                                                                setIsFirstColorSelected(true);
+                                                            }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[2] }}></button>
+                                                                <button onClick={() => {
+                                                                    setSelectedColor(colorArr[3]);
+                                                                    setIsFirstColorSelected(false);
+                                                                }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[3] }}></button></>
+                                                        }
+                                                        {
+                                                            Object.keys(objFilter).length === 2 && <><button onClick={(e) => {
+                                                                setSelectedColor(colorArr[4]);
+                                                                setIsFirstColorSelected(true);
+                                                            }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[4] }}></button>
+                                                                <button onClick={() => {
                                                                     setSelectedColor(colorArr[4]);
-                                                                    setIsFirstColorSelected(true);
-                                                                }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[4] }}></button>
-                                                                    <button onClick={() => {
-                                                                        setSelectedColor(colorArr[4]);
-                                                                        setIsFirstColorSelected(false);
-                                                                    }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[5] }}></button></>
-                                                            }
-                                                            {/* {
+                                                                    setIsFirstColorSelected(false);
+                                                                }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[5] }}></button></>
+                                                        }
+                                                        {/* {
                                                             advSearchKeyValue.length === 1 && <><button onClick={() => setSelectedColor(colorArr[2])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[2] }}></button>
                                                                 <button onClick={() => setSelectedColor(colorArr[3])} type='button' className='btn-color' style={{ backgroundColor: colorArr[3] }}></button></>
                                                         }
@@ -828,7 +830,6 @@ function Client() {
                                                             advSearchKeyValue.length === 2 && <><button onClick={() => setSelectedColor(colorArr[4])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[4] }}></button>
                                                                 <button onClick={() => setSelectedColor(colorArr[5])} type='button' className='btn-color' style={{ backgroundColor: colorArr[5] }}></button></>
                                                         } */}
-                                                        </Box>
                                                     </Box>
                                                 </Box>
                                             </Box>
@@ -855,7 +856,9 @@ function Client() {
                                         </span></Button>
                                 })}
 
-                                {Object.keys(objFilter).length>0 && <span onClick={handleClearAll}>Clear all</span>}
+                                {Object.keys(objFilter).length > 0 && <span className='pointer text-danger ms-2' onClick={handleClearAll}>   
+                                <ClearIcon className='font-32'/>
+                                    </span>}
 
                                 {/* <Fab size="small" className='btn-plus  ms-2' aria-label="add">
                                 <AddIcon />
@@ -865,8 +868,9 @@ function Client() {
 
                     </Box>
 
+
                     <Box className='row'>
-                        {isGridView && <ClientGrid selectedChoice={selectedChoice} data={selectedChoice==="All" || selectedChoice==="Contacts" ? contacts : clients} handleContactNavigattion={handleContactNavigattion} handleClientNavigation={handleClientNavigation}/>}
+                        {isGridView && <ClientGrid selectedChoice={selectedChoice} data={selectedChoice === "All" || selectedChoice === "Contacts" ? contacts : clients} handleContactNavigattion={handleContactNavigattion} handleClientNavigation={handleClientNavigation} />}
 
                         {isCardView && <CardView
                             isSearch={isSearch}
