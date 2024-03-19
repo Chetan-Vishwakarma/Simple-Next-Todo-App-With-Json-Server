@@ -1662,9 +1662,21 @@ span.tox-statusbar__branding {
     padding: 6px 14px !important;
     font-size: 13px !important;
   }
-
 }
 
+.upload-chat-file {
+  position: absolute;
+  right: 10px;
+  top: 18px;
+  z-index: 9;
+  cursor: pointer;
+}
+.upload-chat-file .file-input {
+  width: 0;
+}
+.main-file-upload .textarea {
+  border: 1px solid #ccc;
+}
 @media only screen and (max-width: 1199px) {
   .client-box-main {
     flex: 0 0 33.33%;

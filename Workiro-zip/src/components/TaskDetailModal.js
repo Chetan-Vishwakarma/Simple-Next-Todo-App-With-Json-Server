@@ -40,7 +40,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 
 import DatePicker from 'react-datetime';
-
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -173,7 +173,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         setAnchorClsEl(null);
         setTxtClient(e.Client);
         setTxtClientId(e.ClientID);
-        
+
 
     };
 
@@ -491,7 +491,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     }
 
     useEffect(() => {
-        
+
         settxtSection(selectedTask.Section);
         setTxtClient(selectedTask.Client);
         setTxtClient(selectedTask.Client)
@@ -1151,7 +1151,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
                         <Box className="d-flex flex-wrap justify-content-between">
                             <Box className="d-flex flex-wrap align-items-center">
-                                Client:- 
+                                Client:-
                                 <Button
                                     id="fade-button"
                                     aria-controls={openClient ? 'fade-menu' : undefined}
@@ -1159,7 +1159,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     aria-expanded={openClient ? 'true' : undefined}
                                     onClick={handleClickClick}
                                 >
-                                    {txtClient?txtClient:selectedTask.Client}
+                                    {txtClient ? txtClient : selectedTask.Client}
                                 </Button>
                                 <Menu
                                     id="fade-menu11"
@@ -1175,16 +1175,16 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     <TextField
                                         label="Search"
                                         variant="outlined"
-                                       // value={searchClient1Query}
-                                       // onChange={handleSearchInputChangeClient}
+                                        // value={searchClient1Query}
+                                        // onChange={handleSearchInputChangeClient}
                                         sx={{ width: "100%" }}
                                     />
 
-{filtereClient ? filtereClient.map((item, index) => {
+                                    {filtereClient ? filtereClient.map((item, index) => {
                                         return <MenuItem key={index} onClick={() => handleCloseClient(item)}>{item.Client}</MenuItem>
                                     }) : ""}
 
-                                   
+
 
 
                                 </Menu>
@@ -1198,7 +1198,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     aria-expanded={openSection ? 'true' : undefined}
                                     onClick={handleClickSection}
                                 >
-                                    {txtSection?txtSection:selectedTask.Section}
+                                    {txtSection ? txtSection : selectedTask.Section}
                                 </Button>
                                 <Menu
                                     id="fade-menu"
@@ -1643,7 +1643,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
                             </Box>
 
-                            <Box className="text-center py-3 file-uploads">
+                            {/* <Box className="text-center py-3 file-uploads">
                                 <input
                                     type="file"
                                     id={`file-upload ${selectedTask.ID}`}
@@ -1670,9 +1670,9 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                         </Box>
                                     </Box>
                                 </label>
-                            </Box>
+                            </Box> */}
 
-                            <Box className="d-flex align-items-center main-file-upload">
+                            <Box className="d-flex align-items-end main-file-upload">
                                 <Box className="w-100">
                                     <Stack direction="row" className='py-3' spacing={1}>
 
@@ -1680,17 +1680,32 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                         <Chip label="fileName123.PDF" variant="outlined" onDelete={""} />
                                     </Stack>
 
-                                    <textarea
-                                        className="textarea"
-                                        placeholder="Write message"
-                                        value={notesMessage}
-                                        onChange={handleChangeNotes}
-                                    ></textarea>
+                                    <Box className='position-relative'>
+                                        <Box className='upload-chat-file'>
+                                            <input
+                                                type="file"
+                                                id={`file-upload ${selectedTask.ID}`}
+                                                multiple
+                                                onChange={handleFileSelect}
+                                                className="file-input"
+                                            />
+                                            <label for={`file-upload ${selectedTask.ID}`} className="pointer"><AttachFileIcon /></label>
+                                            
+                                        </Box>
+
+                                        <textarea
+                                            className="textarea"
+                                            placeholder="Write message"
+                                            value={notesMessage}
+                                            onChange={handleChangeNotes}
+                                        ></textarea>
+                                    </Box>
+
                                 </Box>
 
                                 <Box className="d-flex d-flex align-items-center ms-3">
                                     <Button
-                                        className="btn-blue-2 ms-3"
+                                        className="btn-blue-2 ms-3 mb-2"
                                         size="small"
                                         onClick={addActivitySave}
                                         startIcon={<SendIcon />}
