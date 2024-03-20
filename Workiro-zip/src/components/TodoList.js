@@ -201,7 +201,6 @@ function TodoList() {
                             label="Folder"
                             onChange={handleChange}
                             className='custom-dropdown'
-
                         >
                             <MenuItem value={10}>Ten</MenuItem>
                             <MenuItem value={20}>Twenty</MenuItem>
@@ -210,7 +209,7 @@ function TodoList() {
                     </FormControl>
 
                     <FormControl size="small" className='select-border ms-3'>
-                        {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                        {/* <InputLabel id="demo-simple-select-label">Type</InputLabel> */}
                         <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
@@ -227,7 +226,7 @@ function TodoList() {
                     </FormControl>
 
                     <FormControl size="small" className='select-border ms-3'>
-                        {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                        {/* <InputLabel id="demo-simple-select-label">Status</InputLabel> */}
                         <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
@@ -246,7 +245,7 @@ function TodoList() {
 
                 <Box className='d-flex align-items-center'>
                     <FormControl size="small" className='select-border ms-3'>
-                        {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                        {/* <InputLabel id="demo-simple-select-label">Group By</InputLabel> */}
                         <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
@@ -262,7 +261,7 @@ function TodoList() {
                         </Select>
                     </FormControl>
                     <FormControl size="small" className='select-border ms-3'>
-                        {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                        {/* <InputLabel id="demo-simple-select-label">Sort By</InputLabel> */}
                         <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
