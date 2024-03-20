@@ -810,7 +810,7 @@ export default function DocumentList({ clientId }) {
                 <DataGrid
                     id="dataGrid"
                     style={{ width: "100%" }}
-                    dataSource={advFilteredResult.length > 0 ? advFilteredResult : documents}
+                    dataSource={dataNotFoundBoolean? []: advFilteredResult.length > 0 ? advFilteredResult : documents}
                     columnAutoWidth={true}
                     showBorders={true}>
                     <Column dataField="Description" dataType="string" caption="Discount" />
