@@ -20,6 +20,7 @@ function TodoList() {
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
 
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
+    const [userId,setUserId] = useState(localStorage.getItem("UserId"));
 
 
 
@@ -30,6 +31,7 @@ function TodoList() {
     //let Clsp = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
     const [allTask, setAllTask] = useState([]);
+    const [actualData,setActualData] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
 
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -39,6 +41,8 @@ function TodoList() {
 
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
@@ -56,7 +60,8 @@ function TodoList() {
                     if (data) {
                         let json = JSON.parse(data);
                         console.log("Json_CRM_GetOutlookTask", json);
-                        let result = json.Table.filter((el)=>el.Source==="CRM");
+                        // let result = json.Table.filter((el)=>el.Source==="CRM");
+                        let result = json.Table;
                         const formattedTasks = result.map((task) => {
                             let timestamp;
                             if (task.EndDateTime) {
@@ -68,7 +73,15 @@ function TodoList() {
                             return { ...task, EndDateTime: date };
                         });
 
-                        setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
+                        // setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
+                        
+                        let tasks = formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime);
+                        let myTasks = tasks.filter((item)=>item.AssignedToID.split(",").includes(userId));
+                        setActualData([...myTasks]);
+                        setAllTask([...myTasks]);
+                        // console.log("modified tasks: ",myTasks);
+                        
+                        // console.log("modified tasks",formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
                         // setAllTask(json.Table);
                     }
                 }
@@ -133,6 +146,7 @@ function TodoList() {
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
+        setUserId(localStorage.getItem("UserId"));
         Json_CRM_GetOutlookTask();
     }, []);
 
@@ -163,6 +177,10 @@ function TodoList() {
     return (
         <Box className="container-fluid p-0">
             <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
+
+
+            
+
 
             <Box className='main-filter-box'>
                 <Box className='row'>
