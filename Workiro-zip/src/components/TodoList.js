@@ -164,25 +164,6 @@ function TodoList() {
         <Box className="container-fluid p-0">
             <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
-            <Typography variant='subtitle1' className='font-18 bold mb-2'>Select Filter</Typography>
-            <Box className="d-flex align-items-center mb-4 flex-wrap">
-                <Box className="user-img-list me-2">
-                    <img src={user} />
-                    {/* <p>PJ</p> */}
-                </Box>
-                <Box className="user-img-list me-2">
-                    <p>PJ</p>
-                </Box>
-                <Box className="user-img-list me-2">
-                    <img src={user} />
-                    {/* <p>PJ</p> */}
-                </Box>
-                <Box className="user-img-list me-2">
-                    <p>AP</p>
-                </Box>
-            </Box>
-
-
             <Box className='main-filter-box'>
                 <Box className='row'>
                     {

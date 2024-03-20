@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Autocomplete, Box, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, TextField, Typography, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
@@ -16,6 +16,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
+
 
 const CommonFilters = [
     { key: "Company Name", val: "Company Name" }, { key: "Address 1", val: "Address Line 1" },
@@ -581,18 +582,22 @@ function Client() {
             // console.log("Suggestion for both client and contact",fltRepeatData);
         }
     }
+
+
+    const [alignment, setAlignment] = React.useState('left');
+
+    const handleAlignment = (event, newAlignment) => {
+        setAlignment(newAlignment);
+    };
+
+
+
     return (
         <Box className='container-fluid p-0' onClick={handleClick}>
 
-            {isGridView && <div style={{ textAlign: "end" }}><AppsIcon onClick={() => {
-                setIsCardView(!isCardView);
-                setIsGridView(!isGridView);
-            }} /></div>}
 
-            {isCardView && <div style={{ textAlign: "end" }}><ListIcon onClick={() => {
-                setIsCardView(!isCardView);
-                setIsGridView(!isGridView);
-            }} /></div>}
+
+
             {/* <div role="presentation" className='mb-2 mb-3 '>
                 <Breadcrumbs aria-label="breadcrumb">
                     <Link underline="hover" color="inherit" href="/">
@@ -613,216 +618,221 @@ function Client() {
 
             <Box className='row'>
                 <Box className='col-lg-12'>
-                    <Box className='d-flex main-search-box mb-2'>
-                        <Box className="search-box">
-                            <Layout>
-                                <AutocompleteWrapper>
-                                    <AutocompleteRoot
-                                        sx={{
-                                            borderColor: '#D5D5D5',
-                                            color: 'success.main',
-                                        }}
-                                        className={isSearch ? 'Mui-focused' : ''}>
-                                        <span className="material-symbols-outlined search-icon">search</span>
+                    <Box className='d-flex main-search-box mb-2 align-items-center justify-content-between'>
+                        <Box className='d-flex'>
+                            <Box className="search-box">
+                                <Layout>
+                                    <AutocompleteWrapper>
+                                        <AutocompleteRoot
+                                            sx={{
+                                                borderColor: '#D5D5D5',
+                                                color: 'success.main',
+                                            }}
+                                            className={isSearch ? 'Mui-focused' : ''}>
+                                            <span className="material-symbols-outlined search-icon">search</span>
 
-                                        <Input onClick={(e) => handleDialogsOpen(e, "Search")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
-                                    </AutocompleteRoot>
+                                            <Input onClick={(e) => handleDialogsOpen(e, "Search")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
+                                        </AutocompleteRoot>
 
-                                    {isSearch && <Listbox sx={{ zIndex: 1 }}>
-                                        {filteredClientsForSearchBox.length > 0 ? filteredClientsForSearchBox.map((option, i) => (
-                                            <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}>
-                                                <ApartmentIcon className='me-1' />
-                                                {option["Company Name"]}</Option>
-                                        )) : clients.map((option, i) => (
-                                            <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}><ApartmentIcon className='me-1' />{option["Company Name"]}</Option>
-                                        ))}
-                                        {filteredContactsForSearchBox.length > 0 ? filteredContactsForSearchBox.map((option, i) => (
-                                            <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo, option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
-                                        )) : contacts.map((option, i) => (
-                                            <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo, option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
-                                        ))}
-                                    </Listbox>}
+                                        {isSearch && <Listbox sx={{ zIndex: 1 }}>
+                                            {filteredClientsForSearchBox.length > 0 ? filteredClientsForSearchBox.map((option, i) => (
+                                                <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}>
+                                                    <ApartmentIcon className='me-1' />
+                                                    {option["Company Name"]}</Option>
+                                            )) : clients.map((option, i) => (
+                                                <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}><ApartmentIcon className='me-1' />{option["Company Name"]}</Option>
+                                            ))}
+                                            {filteredContactsForSearchBox.length > 0 ? filteredContactsForSearchBox.map((option, i) => (
+                                                <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo, option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
+                                            )) : contacts.map((option, i) => (
+                                                <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo, option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
+                                            ))}
+                                        </Listbox>}
 
-                                </AutocompleteWrapper>
-                            </Layout>
-                        </Box>
-
-                        <Box className="dropdown-box ms-4 d-flex align-items-center">
-                            <Button disabled={Object.keys(objFilter).length > 0 ? true : false} className='btn-select' onClick={(e) => handleDialogsOpen(e, "Folder")}>{selectedFolder}</Button>
-                            {isFolder && <Box className="btn-Select">
-                                <TextField placeholder='Search...' size='small' sx={{ display: "block" }} onChange={(e) => {
-                                    e.stopPropagation();
-                                    let val = e.target.value;
-                                    let fltFolders = allFolders.filter((fld) => fld.Folder.toLowerCase().includes(val.toLowerCase()));
-                                    setFilteredFoldersList(fltFolders);
-                                }} onClick={(e) => e.stopPropagation()} />
-                                {filteredFoldersList.length > 0 ? filteredFoldersList.map((item) => {
-                                    // pass folder-id in onClick handler
-                                    return <Button className='btn-white' onClick={() => handleFolderSelection(item.FolderID, item.Folder)}>{item.Folder}</Button>;
-                                }) : allFolders.map((item) => {
-                                    // pass folder-id in onClick handler
-                                    return <Button className='btn-white' onClick={() => handleFolderSelection(item.FolderID, item.Folder)}>{item.Folder}</Button>;
-                                })}
-                            </Box>}
-                        </Box>
-
-                        {isGridView && <Box className="dropdown-box ms-4 d-flex align-items-center">
-                            <Button className='btn-select' onClick={(e) => handleDialogsOpen(e, "Choice")}>{selectedChoice === "All" ? "Contacts" : selectedChoice}</Button>
-                            {isChoice && <Box className="btn-list-box btn-Select">
-                                {["Clients", "Contacts"].map((item) => {
-                                    return <Button className='btn-list' onClick={() => basedOnClientContactAndAll(item)}>{item}</Button>
-                                })}
-                            </Box>}
-                        </Box>}
-
-                        {isCardView && <><Box className="dropdown-box ms-4 d-flex align-items-center">
-                            <Button disabled={Object.keys(objFilter).length > 0 ? true : false} className='btn-select' onClick={(e) => handleDialogsOpen(e, "Choice")}>{selectedChoice}</Button>
-                            {isChoice && <Box className="btn-list-box btn-Select">
-                                {["All", "Clients", "Contacts"].map((item) => {
-                                    return <Button className='btn-list' onClick={() => basedOnClientContactAndAll(item)}>{item}</Button>
-                                })}
-                            </Box>}
-                        </Box>
+                                    </AutocompleteWrapper>
+                                </Layout>
+                            </Box>
 
                             <Box className="dropdown-box ms-4 d-flex align-items-center">
-                                <Box>
-                                    <Fab size="small" className='btn-plus' aria-label="add" onClick={(e) => handleDialogsOpen(e, "AdvFilter")}>
-                                        <AddIcon />
-                                    </Fab>
-                                </Box>
+                                <Button disabled={Object.keys(objFilter).length > 0 ? true : false} className='btn-select' onClick={(e) => handleDialogsOpen(e, "Folder")}>{selectedFolder}</Button>
+                                {isFolder && <Box className="btn-Select">
+                                    <TextField placeholder='Search...' size='small' sx={{ display: "block" }} onChange={(e) => {
+                                        e.stopPropagation();
+                                        let val = e.target.value;
+                                        let fltFolders = allFolders.filter((fld) => fld.Folder.toLowerCase().includes(val.toLowerCase()));
+                                        setFilteredFoldersList(fltFolders);
+                                    }} onClick={(e) => e.stopPropagation()} />
+                                    {filteredFoldersList.length > 0 ? filteredFoldersList.map((item) => {
+                                        // pass folder-id in onClick handler
+                                        return <Button className='btn-white' onClick={() => handleFolderSelection(item.FolderID, item.Folder)}>{item.Folder}</Button>;
+                                    }) : allFolders.map((item) => {
+                                        // pass folder-id in onClick handler
+                                        return <Button className='btn-white' onClick={() => handleFolderSelection(item.FolderID, item.Folder)}>{item.Folder}</Button>;
+                                    })}
+                                </Box>}
+                            </Box>
 
-                                {isAdvFilter && <Box className="btn-Select color-pic-box" onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                }}>
-                                    <Box className='clearfix'>
+                            {isGridView && <Box className="dropdown-box ms-4 d-flex align-items-center">
+                                <Button className='btn-select' onClick={(e) => handleDialogsOpen(e, "Choice")}>{selectedChoice === "All" ? "Contacts" : selectedChoice}</Button>
+                                {isChoice && <Box className="btn-list-box btn-Select">
+                                    {["Clients", "Contacts"].map((item) => {
+                                        return <Button className='btn-list' onClick={() => basedOnClientContactAndAll(item)}>{item}</Button>
+                                    })}
+                                </Box>}
+                            </Box>}
 
+                            {isCardView && <><Box className="dropdown-box ms-4 d-flex align-items-center">
+                                <Button disabled={Object.keys(objFilter).length > 0 ? true : false} className='btn-select' onClick={(e) => handleDialogsOpen(e, "Choice")}>{selectedChoice}</Button>
+                                {isChoice && <Box className="btn-list-box btn-Select">
+                                    {["All", "Clients", "Contacts"].map((item) => {
+                                        return <Button className='btn-list' onClick={() => basedOnClientContactAndAll(item)}>{item}</Button>
+                                    })}
+                                </Box>}
+                            </Box>
+
+                                <Box className="dropdown-box ms-4 d-flex align-items-center">
+                                    <Box>
+                                        <Fab size="small" className='btn-plus' aria-label="add" onClick={(e) => handleDialogsOpen(e, "AdvFilter")}>
+                                            <AddIcon />
+                                        </Fab>
+                                    </Box>
+
+                                    {isAdvFilter && <Box className="btn-Select color-pic-box" onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                    }}>
                                         <Box className='clearfix'>
-                                            <Typography variant='Body1' className='mb-3 d-block  bold'>Filter:</Typography>
 
-                                            <Box className='d-flex justify-content-between'>
-                                                <Box className='row w-100 pe-3'>
-                                                    <Box className='col-md-6'>
-                                                        <Box className='mb-2'>
+                                            <Box className='clearfix'>
+                                                <Typography variant='Body1' className='mb-2 d-block  bold'>Filter:</Typography>
 
-                                                            {selectedChoice === "All" && <Autocomplete
-                                                                disablePortal
-                                                                id="combo-box-demo"
-                                                                value={selectedProperty}
-                                                                onChange={(event, newValue) => {
-                                                                    event.preventDefault();
-                                                                    event.stopPropagation();
-                                                                    if (newValue !== null) {
-                                                                        setSelectedProperty(newValue.value);
-                                                                        setSelectedPropertyForClient(newValue.label);
-                                                                        handleSuggestionList(newValue.value, newValue.label);
-                                                                    }
-                                                                }}
-                                                                options={CommonFilters.filter((itm) => {
-                                                                    return !Object.keys(objFilter).includes(itm.key)
-                                                                }).map(option => ({ value: option.key, label: option.val }))}
-                                                                sx={{ width: '100%' }}
-                                                                renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
-                                                            />}
+                                                <Box className='d-flex justify-content-between'>
+                                                    <Box className='row w-100 pe-3'>
+                                                        <Box className='col-md-6'>
+                                                            <Box className='mb-2'>
 
-                                                            {selectedChoice === "Contacts" && <Autocomplete
-                                                                disablePortal
-                                                                id="combo-box-demo"
-                                                                value={selectedProperty}
-                                                                onChange={(event, newValue) => {
-                                                                    event.preventDefault();
-                                                                    event.stopPropagation();
-                                                                    // console.log(event.target, newValue);
-                                                                    if (newValue !== null) {
-                                                                        setSelectedProperty(newValue.value);
-                                                                        handleSuggestionList(newValue.value);
-                                                                    }
-                                                                }}
-                                                                options={ContactFilters.filter((itm) => {
-                                                                    return !Object.keys(objFilter).includes(itm.key)
-                                                                }).map(option => ({ value: option.key, label: option.val }))}
-                                                                sx={{ width: '100%' }}
-                                                                renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
-                                                            />}
-
-                                                            {/* Only For Clients */}
-                                                            {selectedChoice === "Clients" && <Autocomplete
-                                                                disablePortal
-                                                                id="combo-box-demo"
-                                                                value={selectedProperty}
-                                                                onChange={(event, newValue) => {
-                                                                    event.preventDefault();
-                                                                    event.stopPropagation();
-                                                                    if (newValue !== null) {
-                                                                        setSelectedProperty(newValue.value);
-                                                                        handleSuggestionList(newValue.value);
-                                                                    }
-                                                                }}
-                                                                // options={ClientFilters.map(option => ({ value: option.key, label: option.val }))}
-                                                                options={ClientFilters.filter((itm) => {
-                                                                    return !Object.keys(objFilter).includes(itm.key)
-                                                                }).map(option => ({ value: option.key, label: option.val }))}
-                                                                sx={{ width: '100%' }}
-                                                                renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
-                                                            />}
-                                                        </Box>
-                                                    </Box>
-                                                    <Box className='col-md-6 px-0'>
-                                                        <Box className='mb-2'>
-                                                            <div>
-                                                                <Autocomplete
+                                                                {selectedChoice === "All" && <Autocomplete
                                                                     disablePortal
                                                                     id="combo-box-demo"
-                                                                    value={selectedPropertyValue}
+                                                                    value={selectedProperty}
+                                                                    size='small'
                                                                     onChange={(event, newValue) => {
                                                                         event.preventDefault();
                                                                         event.stopPropagation();
-                                                                        //console.log(newValue);
-                                                                        setSelectedPropertyValue(newValue);
+                                                                        if (newValue !== null) {
+                                                                            setSelectedProperty(newValue.value);
+                                                                            setSelectedPropertyForClient(newValue.label);
+                                                                            handleSuggestionList(newValue.value, newValue.label);
+                                                                        }
                                                                     }}
-                                                                    options={suggestionList}
+                                                                    options={CommonFilters.filter((itm) => {
+                                                                        return !Object.keys(objFilter).includes(itm.key)
+                                                                    }).map(option => ({ value: option.key, label: option.val }))}
                                                                     sx={{ width: '100%' }}
-                                                                    renderInput={(params) => <TextField {...params} value={selectedPropertyValue} onChange={(e) => setSelectedPropertyValue(e.target.value)} label="Select Property" />}
-                                                                />
-                                                            </div>
+                                                                    renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
+                                                                />}
+
+                                                                {selectedChoice === "Contacts" && <Autocomplete
+                                                                    disablePortal
+                                                                    id="combo-box-demo"
+                                                                    value={selectedProperty}
+                                                                    size='small'
+                                                                    onChange={(event, newValue) => {
+                                                                        event.preventDefault();
+                                                                        event.stopPropagation();
+                                                                        // console.log(event.target, newValue);
+                                                                        if (newValue !== null) {
+                                                                            setSelectedProperty(newValue.value);
+                                                                            handleSuggestionList(newValue.value);
+                                                                        }
+                                                                    }}
+                                                                    options={ContactFilters.filter((itm) => {
+                                                                        return !Object.keys(objFilter).includes(itm.key)
+                                                                    }).map(option => ({ value: option.key, label: option.val }))}
+                                                                    sx={{ width: '100%' }}
+                                                                    renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
+                                                                />}
+
+                                                                {/* Only For Clients */}
+                                                                {selectedChoice === "Clients" && <Autocomplete
+                                                                    disablePortal
+                                                                    id="combo-box-demo"
+                                                                    value={selectedProperty}
+                                                                    size='small'
+                                                                    onChange={(event, newValue) => {
+                                                                        event.preventDefault();
+                                                                        event.stopPropagation();
+                                                                        if (newValue !== null) {
+                                                                            setSelectedProperty(newValue.value);
+                                                                            handleSuggestionList(newValue.value);
+                                                                        }
+                                                                    }}
+                                                                    // options={ClientFilters.map(option => ({ value: option.key, label: option.val }))}
+                                                                    options={ClientFilters.filter((itm) => {
+                                                                        return !Object.keys(objFilter).includes(itm.key)
+                                                                    }).map(option => ({ value: option.key, label: option.val }))}
+                                                                    sx={{ width: '100%' }}
+                                                                    renderInput={(params) => <TextField {...params} value={selectedProperty} label="Select Property" />}
+                                                                />}
+                                                            </Box>
+                                                        </Box>
+                                                        <Box className='col-md-6 px-0'>
+                                                            <Box className='mb-2'>
+                                                                <div>
+                                                                    <Autocomplete
+                                                                        disablePortal
+                                                                        id="combo-box-demo"
+                                                                        value={selectedPropertyValue}
+                                                                        onChange={(event, newValue) => {
+                                                                            event.preventDefault();
+                                                                            event.stopPropagation();
+                                                                            //console.log(newValue);
+                                                                            setSelectedPropertyValue(newValue);
+                                                                        }}
+                                                                        options={suggestionList}
+                                                                        sx={{ width: '100%' }}
+                                                                        size='small'
+                                                                        renderInput={(params) => <TextField {...params} value={selectedPropertyValue} onChange={(e) => setSelectedPropertyValue(e.target.value)} label="Select Property" />}
+                                                                    />
+                                                                </div>
+                                                            </Box>
                                                         </Box>
                                                     </Box>
-                                                </Box>
-                                                <Box className='ps-3'>
-                                                    <Typography variant='Body1' className='mb-1 bold'>Labels</Typography>
+                                                    <Box className='ps-1'>
+                                                        {/* <Typography variant='Body1' className='mb-1 bold' sx={{ lineHeight: '12px' }}>Labels</Typography> */}
 
-                                                    <Box className="color-box">
-                                                        {
-                                                            Object.keys(objFilter).length === 0 && <><button onClick={(e) => {
-                                                                setSelectedColor(colorArr[0]);
-                                                                setIsFirstColorSelected(true);
-                                                            }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[0] }}></button>
-                                                                <button onClick={() => {
-                                                                    setSelectedColor(colorArr[1]);
-                                                                    setIsFirstColorSelected(false);
-                                                                }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[1] }}></button></>
-                                                        }
-                                                        {
-                                                            Object.keys(objFilter).length === 1 && <><button onClick={(e) => {
-                                                                setSelectedColor(colorArr[2]);
-                                                                setIsFirstColorSelected(true);
-                                                            }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[2] }}></button>
-                                                                <button onClick={() => {
-                                                                    setSelectedColor(colorArr[3]);
-                                                                    setIsFirstColorSelected(false);
-                                                                }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[3] }}></button></>
-                                                        }
-                                                        {
-                                                            Object.keys(objFilter).length === 2 && <><button onClick={(e) => {
-                                                                setSelectedColor(colorArr[4]);
-                                                                setIsFirstColorSelected(true);
-                                                            }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[4] }}></button>
-                                                                <button onClick={() => {
+                                                        <Box className="color-box">
+                                                            {
+                                                                Object.keys(objFilter).length === 0 && <><button onClick={(e) => {
+                                                                    setSelectedColor(colorArr[0]);
+                                                                    setIsFirstColorSelected(true);
+                                                                }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[0] }}></button>
+                                                                    <button onClick={() => {
+                                                                        setSelectedColor(colorArr[1]);
+                                                                        setIsFirstColorSelected(false);
+                                                                    }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[1] }}></button></>
+                                                            }
+                                                            {
+                                                                Object.keys(objFilter).length === 1 && <><button onClick={(e) => {
+                                                                    setSelectedColor(colorArr[2]);
+                                                                    setIsFirstColorSelected(true);
+                                                                }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[2] }}></button>
+                                                                    <button onClick={() => {
+                                                                        setSelectedColor(colorArr[3]);
+                                                                        setIsFirstColorSelected(false);
+                                                                    }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[3] }}></button></>
+                                                            }
+                                                            {
+                                                                Object.keys(objFilter).length === 2 && <><button onClick={(e) => {
                                                                     setSelectedColor(colorArr[4]);
-                                                                    setIsFirstColorSelected(false);
-                                                                }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[5] }}></button></>
-                                                        }
-                                                        {/* {
+                                                                    setIsFirstColorSelected(true);
+                                                                }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[4] }}></button>
+                                                                    <button onClick={() => {
+                                                                        setSelectedColor(colorArr[4]);
+                                                                        setIsFirstColorSelected(false);
+                                                                    }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[5] }}></button></>
+                                                            }
+                                                            {/* {
                                                             advSearchKeyValue.length === 1 && <><button onClick={() => setSelectedColor(colorArr[2])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[2] }}></button>
                                                                 <button onClick={() => setSelectedColor(colorArr[3])} type='button' className='btn-color' style={{ backgroundColor: colorArr[3] }}></button></>
                                                         }
@@ -830,48 +840,96 @@ function Client() {
                                                             advSearchKeyValue.length === 2 && <><button onClick={() => setSelectedColor(colorArr[4])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[4] }}></button>
                                                                 <button onClick={() => setSelectedColor(colorArr[5])} type='button' className='btn-color' style={{ backgroundColor: colorArr[5] }}></button></>
                                                         } */}
+                                                        </Box>
                                                     </Box>
                                                 </Box>
-                                            </Box>
 
 
-                                            <Box className='mt-2'>
-                                                <Button onClick={handleAdvanceFilterAgain} variant="contained" size='small' color="success">
-                                                    <span class="material-symbols-outlined">
-                                                        add
-                                                    </span> Add
-                                                </Button>
+                                                <Box className='mt-2'>
+                                                    <Button onClick={handleAdvanceFilterAgain} variant="contained" size='small' color="success">
+                                                        <span class="material-symbols-outlined">
+                                                            add
+                                                        </span> Add
+                                                    </Button>
+                                                </Box>
                                             </Box>
                                         </Box>
-                                    </Box>
-                                </Box>}
-                            </Box>
-                            {/*  */}
+                                    </Box>}
+                                </Box>
+                                {/*  */}
 
-                            <Box className="mb-2 ms-3">
-                                {Object.keys(objFilter).map((item) => {
-                                    return <Button sx={{ backgroundColor: objFilterColor[item][0] }} className='btn-white text-white'><span className='text-white'>{item}: {objFilter[item][0]}</span>
-                                        <span onClick={() => handleFilterDeletion(item)} className="material-symbols-outlined font-16 text-white">
-                                            close
-                                        </span></Button>
-                                })}
+                                <Box className="mb-2 ms-3">
+                                    {Object.keys(objFilter).map((item) => {
+                                        return <Button sx={{ backgroundColor: objFilterColor[item][0] }} className='btn-white text-white'><span className='text-white'>{item}: {objFilter[item][0]}</span>
+                                            <span onClick={() => handleFilterDeletion(item)} className="material-symbols-outlined font-16 text-white">
+                                                close
+                                            </span></Button>
+                                    })}
 
-                                {Object.keys(objFilter).length > 0 && <span className='pointer text-danger ms-2' onClick={handleClearAll}>   
-                                <ClearIcon className='font-32'/>
+                                    {Object.keys(objFilter).length > 0 && <span className='pointer text-danger ms-2' onClick={handleClearAll}>
+                                        <ClearIcon className='font-26' />
                                     </span>}
 
-                                {/* <Fab size="small" className='btn-plus  ms-2' aria-label="add">
+                                    {/* <Fab size="small" className='btn-plus  ms-2' aria-label="add">
                                 <AddIcon />
                             </Fab> */}
-                            </Box></>}
+                                </Box></>}
+                        </Box>
+
+                        <Box className=''>
+                            <ToggleButtonGroup
+                                value={alignment}
+                                exclusive
+                                onChange={handleAlignment}
+                                aria-label="text alignment"
+                            >
+
+                                {isGridView &&
+                                    <ToggleButton value="left" aria-label="left aligned"
+                                        onClick={() => {
+                                            setIsCardView(!isCardView);
+                                            setIsGridView(!isGridView);
+                                        }}>
+                                        <AppsIcon />
+                                    </ToggleButton>
+                                }
+
+                                {isCardView &&
+                                    <ToggleButton value="center" aria-label="centered"
+                                        onClick={() => {
+                                            setIsCardView(!isCardView);
+                                            setIsGridView(!isGridView);
+                                        }}>
+                                        <ListIcon />
+                                    </ToggleButton>
+                                }
 
 
+                            </ToggleButtonGroup>
+                        </Box>
+
+
+                        {/* {isGridView &&
+                            <div style={{ textAlign: "end" }}><AppsIcon onClick={() => {
+                                setIsCardView(!isCardView);
+                                setIsGridView(!isGridView);
+                            }} />
+                            </div>}
+
+                        {isCardView &&
+                            <div style={{ textAlign: "end" }}><ListIcon onClick={() => {
+                                setIsCardView(!isCardView);
+                                setIsGridView(!isGridView);
+                            }} />
+                            </div>} */}
                     </Box>
 
 
-                    <Box className='row'>
+                    <Box className='mt-4'>
                         {isGridView && <ClientGrid selectedChoice={selectedChoice} data={selectedChoice === "All" || selectedChoice === "Contacts" ? contacts : clients} handleContactNavigattion={handleContactNavigattion} handleClientNavigation={handleClientNavigation} />}
+                    </Box>
 
+                    <Box className='row'>
                         {isCardView && <CardView
                             isSearch={isSearch}
                             handleDialogsOpen={handleDialogsOpen}
