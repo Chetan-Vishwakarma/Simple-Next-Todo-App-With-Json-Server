@@ -4,14 +4,25 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 import user from "../images/user.jpg";
-
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
+import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
+import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
+import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommanCLS from '../services/CommanService';
 
 import { Radio } from '@mui/material';
 import TaskDetailModal from './TaskDetailModal';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import DownloadIcon from '@mui/icons-material/Download';
+
 
 function TodoList() {
 
@@ -56,7 +67,7 @@ function TodoList() {
                     if (data) {
                         let json = JSON.parse(data);
                         console.log("Json_CRM_GetOutlookTask", json);
-                        let result = json.Table.filter((el)=>el.Source==="CRM");
+                        let result = json.Table.filter((el) => el.Source === "CRM");
                         const formattedTasks = result.map((task) => {
                             let timestamp;
                             if (task.EndDateTime) {
@@ -94,11 +105,11 @@ function TodoList() {
 
 
     function DownLoadAttachment(Path) {
-      let  OBJ = {};
+        let OBJ = {};
         OBJ.agrno = agrno;
         OBJ.Email = Email;
         OBJ.password = password;
-        OBJ.path = Path;       
+        OBJ.path = Path;
         Cls.CallNewService('GetBase64FromFilePath', function (status, Data) {
             if (status) {
                 var jsonObj = JSON.parse(Data);
@@ -122,7 +133,7 @@ function TodoList() {
 
     function FileType(fileName) {
         // for (var i = 0; i < fileName.length; i++) {
-       let Typest = fileName.lastIndexOf(".");
+        let Typest = fileName.lastIndexOf(".");
         var Type = fileName.slice(Typest + 1);
         var type = Type.toUpperCase();
         return type;
@@ -158,13 +169,129 @@ function TodoList() {
 
     };
 
+    const [age, setAge] = React.useState('');
+
+    const handleChange = (event) => {
+        setAge(event.target.value);
+    };
+
 
 
     return (
         <Box className="container-fluid p-0">
             <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
-            <Box className='main-filter-box'>
+            <Box className='d-flex main-search-box mb-3 align-items-center justify-content-between'>
+                <Box className='d-flex align-items-center'>
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        options={top100Films}
+                        sx={{ width: 230 }}
+                        size='small'
+                        renderInput={(params) => <TextField sx={{ fontSize: 14 }} {...params} label="Subject" className='font-14' />}
+                    />
+
+                    <FormControl size="small" className='select-border ms-3'>
+                        {/* <InputLabel id="demo-simple-select-label">Folder</InputLabel> */}
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={age}
+                            label="Folder"
+                            onChange={handleChange}
+                            className='custom-dropdown'
+
+                        >
+                            <MenuItem value={10}>Ten</MenuItem>
+                            <MenuItem value={20}>Twenty</MenuItem>
+                            <MenuItem value={30}>Thirty</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    <FormControl size="small" className='select-border ms-3'>
+                        {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={age}
+                            label="Type"
+                            onChange={handleChange}
+                            className='custom-dropdown'
+
+                        >
+                            <MenuItem value={10}>Ten</MenuItem>
+                            <MenuItem value={20}>Twenty</MenuItem>
+                            <MenuItem value={30}>Thirty</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    <FormControl size="small" className='select-border ms-3'>
+                        {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={age}
+                            label="Status"
+                            onChange={handleChange}
+                            className='custom-dropdown'
+
+                        >
+                            <MenuItem value={10}>Ten</MenuItem>
+                            <MenuItem value={20}>Twenty</MenuItem>
+                            <MenuItem value={30}>Thirty</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Box>
+
+                <Box className='d-flex align-items-center'>
+                    <FormControl size="small" className='select-border ms-3'>
+                        {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={age}
+                            label="Group By"
+                            onChange={handleChange}
+                            className='custom-dropdown'
+
+                        >
+                            <MenuItem value={10}>Ten</MenuItem>
+                            <MenuItem value={20}>Twenty</MenuItem>
+                            <MenuItem value={30}>Thirty</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <FormControl size="small" className='select-border ms-3'>
+                        {/* <InputLabel id="demo-simple-select-label">Age</InputLabel> */}
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={age}
+                            label="Sort By"
+                            onChange={handleChange}
+                            className='custom-dropdown'
+
+                        >
+                            <MenuItem value={10}>Ten</MenuItem>
+                            <MenuItem value={20}>Twenty</MenuItem>
+                            <MenuItem value={30}>Thirty</MenuItem>
+                        </Select>
+
+                    </FormControl>
+
+
+                    <ToggleButtonGroup className='ms-3' size='small'>
+                        <ToggleButton value="left" aria-label="left aligned">
+                            <DownloadIcon />
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+
+
+                    
+                </Box>
+            </Box>
+
+            <Box className='main-filter-box mt-1'>
                 <Box className='row'>
                     {
                         allTask.length > 0 &&
@@ -439,5 +566,14 @@ function TodoList() {
 
 export default TodoList
 
+// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
+const top100Films = [
+    { label: 'Subject 1' },
+    { label: 'Subject 2' },
+    { label: 'Subject 3' },
+    { label: 'Subject 4' },
+    { label: 'Subject 5' },
+    { label: 'Subject 6' },
+];
 
 // rfce
