@@ -56,7 +56,7 @@ function TodoList() {
                     if (data) {
                         let json = JSON.parse(data);
                         console.log("Json_CRM_GetOutlookTask", json);
-                        let result = json.Table.filter((el)=>el.Source==="CRM");
+                        let result = json.Table.filter((el)=>el.Source==="CRM" || el.Source==="Portal");
                         const formattedTasks = result.map((task) => {
                             let timestamp;
                             if (task.EndDateTime) {
