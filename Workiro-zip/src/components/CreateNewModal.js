@@ -77,6 +77,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { renderTimeViewClock } from "@mui/x-date-pickers";
 import moment from "moment";
+import { Toast } from "devextreme-react";
 
 
 
@@ -808,7 +809,7 @@ export default function CreateNewModalTask({ ...props }) {
             const reader = new FileReader();
             reader.onload = () => {
                 let fileByte = reader.result.split(";")[1].replace("base64,", "");
-              
+
                 const fileData = {
                     FileName: file.name,
                     Base64: fileByte ? fileByte : "", // Base64 data of the file
@@ -816,7 +817,7 @@ export default function CreateNewModalTask({ ...props }) {
                     Preview: reader.result, // Data URL for preview
                     DocId: "",
                     Guid: localStorage.getItem("GUID"),
-                    FileType:getFileExtension(file.name).toLowerCase()
+                    FileType: getFileExtension(file.name).toLowerCase()
                 };
                 console.log("get folder list 2222222222", fileData);
                 filesData.push(fileData);
@@ -1269,7 +1270,7 @@ export default function CreateNewModalTask({ ...props }) {
     const handleSelectionChanged = (selectedItems) => {
         setSelectedRows(selectedItems.selectedRowsData);
         // You can perform further actions with the selectedRows array
-        console.log("selectedItems11",selectedItems); // Log the selected rows data
+        console.log("selectedItems11", selectedItems); // Log the selected rows data
 
     };
     const Json_GetClientCardDetails = (cid) => {
@@ -1352,7 +1353,7 @@ export default function CreateNewModalTask({ ...props }) {
                     Preview: "", // Data URL for preview
                     DocId: row["Registration No."],
                     Guid: localStorage.getItem("GUID"),
-                    FileType:row["Type"].toLowerCase(),
+                    FileType: row["Type"].toLowerCase(),
                 };
                 filesData.push(fileData);
                 // Check if this is the last file
@@ -1565,77 +1566,167 @@ export default function CreateNewModalTask({ ...props }) {
 
 
 
-
-
-
-    async function CreatePortalTask() {
-
-        if (selectedUSer.ID) {
-            // let myNewArr = [...selectedFiles, ...selectedDocumentFile];
-            // console.log("myNewArr", myNewArr)
-            const ccEmail = selectedEmailCC ? selectedEmailCC.map(obj => obj["E-Mail"]) : "";
-            const ToEmail = selectedEmail.map(obj => obj["E-Mail"]);
-            // const ItemId = selectedDocumentFile.map(obj => obj.DocId);
-            // const fileNames = myNewArr.map(obj => obj["FileName"]);
-            // const fileDataBase64 = myNewArr.filter(obj => obj["Base64"] !== "").map(obj => obj["Base64"]);
-
-
-            let obj = {
-                "accid": agrno,
-                "email": Email,
-                "password": password,
-                "senderID": selectedUSer.ID,
-                "sectionID": txtSectionId,
-                "ccode": textClientId,
-                "recipients": ToEmail,
-                "subject": textSubject ? textSubject : "",
-                "ccs": ccEmail ? ccEmail : "",
-                "forApproval": isCheckedForApproval,
-                "highImportance": false,
-                "expiryDate": dayjs(expireDate).format("YYYY/MM/DD"),
-                "actionDate": dayjs(currentDate).format("YYYY/MM/DD"),
-                "trackIt": false,
-                "docTemplateTaskId": 0,
-                "docTemplateId": txtTemplateId ? txtTemplateId[0]["TemplateID"] : 0,
-                //"filenames": fileNames,
-                //  "attachments": fileDataBase64 ? fileDataBase64 : [],
-                //"itemNos": ItemId ? ItemId : [],
-                "noMessage": isCheckedWithOutmgs,
-                "message": btoa(editorContentValue),
-                "docuBoxMessage": false,
-                "docuBoxEmails": "",
-                "daysToDelete": 0,
-                "approvalResponse": "",
-                "uploadID": localStorage.getItem("GUID")
-
-
+    function CreatePortalTask() {
+        try {
+            const isaddUser = addUser.map(obj => obj.ID).join(',');
+            let ooo = {
+                "ClientIsRecurrence": false,
+                "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
+                "ClientEnd": dayjs(nextDate).format("YYYY/MM/DD"),
+                "ClientDayNumber": "1",
+                "ClientMonth": "1",
+                "ClientOccurrenceCount": "1",
+                "ClientPeriodicity": "1",
+                "ClientRecurrenceRange": "0",
+                "ClientRecurrenceType": "0",
+                "ClientWeekDays": "1",
+                "ClientWeekOfMonth": "1",
+                "OwnerID": ownerID.toString(),
+                "AssignedToID": isaddUser,
+                "AssociateWithID": textClientId,
+                "FolderId": txtFolderId.toString(),
+                "Subject": textSubject,
+                "TypeofTaskID": txtSectionId.toString(),
+                "EndDateTime": dayjs(nextDate).format("YYYY/MM/DD"),
+                "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
+                "Status": txtStatus,
+                "Priority": txtPriorityId.toString(),
+                "PercentComplete": "1",
+                "ReminderSet": false,
+                "ReminderDateTime": remiderDate ? dayjs(remiderDate).format("YYYY/MM/DD") : "1900/01/01",
+                "TaskNo": "0",
+                "Attachments": "",
+                "Details": txtdescription,
+                "YEDate": "1900/01/01",
+                "SubDeadline": "1900/01/01",
+                "DocRecdate": "1900/01/01",
+                "ElectronicFile": false,
+                "PaperFile": false,
+                "Notes": "",
+                "TaskSource": "CRM"
             }
-            console.log("final save data obj", obj);
-
-            var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
-            let cls = new CommanCLS(urlLetter, agrno, Email, password);
-
-            cls.MessagePublishedPortalTask_Json(obj, function (sts, data) {
+            console.log("final save data obj", ooo);
+            cls.Json_CRM_Task_Save(ooo, function (sts, data) {
                 if (sts) {
-                    console.log("MessagePublished_Json", data)
-                    if (data === "") {
-                        toast.success("Task Created");
+                    let js = JSON.parse(data);
+                    console.log("Json_CRM_Task_Save ", js);
+                    if (js.Status === "success") {
+                        setMessageId(js.Message);
+                        UploadPortalTaskRelation_Json(js.Message);
                     }
-                    // let js = JSON.parse(data);
+                    else {
+                        toast.error("Task Not Created Please Try Again");
+                        console.log("Response final", data)
+                    }
 
-                    // if (js.Status == "success") {
-                    //     //setMessageId(js.Message)
-                    //     //setLoading(false);
-                    //     // Inside your function or event handler where you want to show the success message
-                    //     //handleSuccess(js.Message);
-                    //     //setOpen(false);
-                    // }
-                    // console.log("Response final", data)
                     // setLoading(false);
                 }
             })
-
+        } catch (error) {
+            console.log({
+                status: false,
+                message: "Faild Portal task Try again",
+                error: error,
+            });
         }
+    }
+
+    function UploadPortalTaskRelation_Json(tid) {
+        let obj = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            uploadID:localStorage.getItem("GUID"),
+            TaskId: tid,
+        }
+        var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
+        let cls = new CommanCLS(urlLetter, agrno, Email, password);
+        cls.UploadPortalTaskRelation_Json(obj,function(sts,data){
+            if(sts){
+                console.log("UploadPortalTaskRelation_Json",data)
+                CreatePortalMessage();
+            }
+        })
+    }
+
+    async function CreatePortalMessage() {
+
+        try {
+            if (selectedUSer.ID) {
+                // let myNewArr = [...selectedFiles, ...selectedDocumentFile];
+                // console.log("myNewArr", myNewArr)
+                const ccEmail = selectedEmailCC ? selectedEmailCC.map(obj => obj["E-Mail"]) : "";
+                const ToEmail = selectedEmail.map(obj => obj["E-Mail"]);
+                // const ItemId = selectedDocumentFile.map(obj => obj.DocId);
+                // const fileNames = myNewArr.map(obj => obj["FileName"]);
+                // const fileDataBase64 = myNewArr.filter(obj => obj["Base64"] !== "").map(obj => obj["Base64"]);
+
+
+                let obj = {
+                    "accid": agrno,
+                    "email": Email,
+                    "password": password,
+                    "senderID": selectedUSer.ID,
+                    "sectionID": txtSectionId,
+                    "ccode": textClientId,
+                    "recipients": ToEmail,
+                    "subject": textSubject ? textSubject : "",
+                    "ccs": ccEmail ? ccEmail : [],
+                    "forApproval": isCheckedForApproval,
+                    "highImportance": false,
+                    "expiryDate": dayjs(expireDate).format("YYYY/MM/DD"),
+                    "actionDate": dayjs(currentDate).format("YYYY/MM/DD"),
+                    "trackIt": false,
+                    "docTemplateTaskId": 0,
+                    "docTemplateId": txtTemplateId ? txtTemplateId[0]["TemplateID"] : 0,
+                    //"filenames": fileNames,
+                    //  "attachments": fileDataBase64 ? fileDataBase64 : [],
+                    //"itemNos": ItemId ? ItemId : [],
+                    "noMessage": isCheckedWithOutmgs,
+                    "message": btoa(editorContentValue),
+                    "docuBoxMessage": false,
+                    "docuBoxEmails": "",
+                    "daysToDelete": 0,
+                    "approvalResponse": "",
+                    "uploadID": localStorage.getItem("GUID")
+
+
+                }
+                console.log("final save data obj", obj);
+
+                var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
+                let cls = new CommanCLS(urlLetter, agrno, Email, password);
+
+                cls.MessagePublishedPortalTask_Json(obj, function (sts, data) {
+                    if (sts) {
+                        console.log("MessagePublished_Json", data)
+                        if (data === "") {
+                            toast.success("Task Created");
+                        }
+                        // let js = JSON.parse(data);
+
+                        // if (js.Status == "success") {
+                        //     //setMessageId(js.Message)
+                        //     //setLoading(false);
+                        //     // Inside your function or event handler where you want to show the success message
+                        //     //handleSuccess(js.Message);
+                        //     //setOpen(false);
+                        // }
+                        // console.log("Response final", data)
+                        // setLoading(false);
+                    }
+                })
+
+            }
+        } catch (error) {
+            console.log({
+                status: false,
+                message: "PortMessage Faild Try again",
+                error: error,
+            });
+        }
+
+
 
 
 
@@ -1809,10 +1900,11 @@ export default function CreateNewModalTask({ ...props }) {
         return parts[0];
     };
 
-    
+
 
     function ConvertToPdf_Json(d) {
-        console.log("ConvertToPdf_Json", selectedFiles)
+        setAnchorElDoc(null);
+       // console.log("ConvertToPdf_Json", selectedFiles)
         try {
             let o = {
                 accid: agrno,
@@ -1824,7 +1916,7 @@ export default function CreateNewModalTask({ ...props }) {
             var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
             let cls = new CommanCLS(urlLetter, agrno, Email, password);
             cls.ConvertToPdf_Json(o, function (sts, data) {
-                if (sts && data) {
+                if (sts) {
                     console.log("ConvertToPdf_Json", data)
                     if (data) {
                         let fname = getFileName(data);
@@ -1837,6 +1929,10 @@ export default function CreateNewModalTask({ ...props }) {
                             }
                         })
                         setSelectedFiles(res)
+                        toast.success("Converted File !")
+                    }
+                    else{
+                        toast.error("Not Converted !")
                     }
                 }
             })
@@ -2474,7 +2570,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                                     MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
                                                                 >
                                                                     <MenuItem onClick={() => DeleteFile(file)}>Delete</MenuItem>
-                                                                    {txtTaskType === "Portal" && ( file.FileType==="docx" || file.FileType==="doc" || file.FileType==="xls" || file.FileType==="xlsx" || file.FileType==="msg") && (
+                                                                    {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
                                                                         <MenuItem onClick={(e) => ConvertToPdf_Json(file)}>Convert To Pdf</MenuItem>
                                                                     )}
 
@@ -2921,30 +3017,30 @@ export default function CreateNewModalTask({ ...props }) {
                                     </>)}
 
 
-{txtTaskType==="Portal" && (<>
-    <label className="font-14 d-block">Expires On</label>
-                                    <LocalizationProvider
-                                        className="pe-0"
-                                        dateAdapter={AdapterDayjs}
-                                    >
+                                    {txtTaskType === "Portal" && (<>
+                                        <label className="font-14 d-block">Expires On</label>
+                                        <LocalizationProvider
+                                            className="pe-0"
+                                            dateAdapter={AdapterDayjs}
+                                        >
 
 
-                                        <DatePicker className=" w-100"
-                                            showIcon
-                                            dateFormat="DD/MM/YYYY"
-                                            value={expireDate}
-                                            onChange={(e) => setExpireDate(e)} // Handle date changes
-                                            timeFormat={false}
-                                            closeOnSelect={true}
-                                            icon="fa fa-calendar"
+                                            <DatePicker className=" w-100"
+                                                showIcon
+                                                dateFormat="DD/MM/YYYY"
+                                                value={expireDate}
+                                                onChange={(e) => setExpireDate(e)} // Handle date changes
+                                                timeFormat={false}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
 
-                                        />
+                                            />
 
 
 
-                                    </LocalizationProvider>
-</>)}
-                                    
+                                        </LocalizationProvider>
+                                    </>)}
+
                                 </Box>
 
                                 <Box className="select-dropdown">
