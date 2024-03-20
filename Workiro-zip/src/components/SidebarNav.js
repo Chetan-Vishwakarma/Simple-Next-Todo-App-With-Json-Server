@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React,{useState,useEffect, useReducer} from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -18,12 +18,30 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
-import Home from './Home';
-import Contacts from "./Contact"
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Menu, MenuItem } from '@mui/material';
+import logo from "../images/logo.png";
+import user from "../images/user.jpg";
+import Button from '@mui/material/Button';
+import PersonAdd from '@mui/icons-material/PersonAdd';
+import Settings from '@mui/icons-material/Settings';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import CreateNewModal from './CreateNewModal';
+import Client from '../client/Client';
 
-const drawerWidth = 240;
+import Badge from '@mui/material/Badge';
+
+import { useAutocomplete } from '@mui/base/useAutocomplete';
+import ClientDetails from '../client/client-components/ClientDetails';
+import ContactDetails from '../contact/contact-components/ContactDetails';
+import TodoList from './TodoList';
+import CommanCLS from '../services/CommanService';
+import Logout from './Logout';
+import NewTodoList from './NewTodoList';
+
+const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
+
+const drawerWidth = 220;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -91,84 +109,528 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function SidebarNav() {
+
+  const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
+  const [password, setPassword] = useState(localStorage.getItem("Password"));
+  const [Email, setEmail] = useState(localStorage.getItem("Email"));
+  const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
+
+  const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+    let Cls = new CommanCLS(baseUrl, agrno, Email, password);
+
   const navigate = useNavigate();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
+  const [userName, setUserName] = React.useState("");
+  const [userEmail,setUserEmail] = useState("");
 
   const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
     setOpen(false);
   };
 
+  const handleDrawerClose = () => {
+    setOpen(true);
+  };
+
+
+  const [value, setValue] = React.useState(options[0]);
+  const [inputValue, setInputValue] = React.useState('');
+
+  const {
+    getRootProps,
+    getInputProps,
+    getListboxProps,
+    getOptionProps,
+    groupedOptions,
+    focused,
+  } = useAutocomplete({
+    id: 'controlled-state-demo',
+    options,
+    value,
+    onChange: (event, newValue) => setValue(newValue),
+    inputValue,
+    onInputChange: (event, newInputValue) => setInputValue(newInputValue),
+  });
+
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const opens = Boolean(anchorEl);
+  const opens2 = Boolean(anchorEl);
+  const handleClick = (event) => {
+    console.log("current target",event.currentTarget);
+    event.preventDefault();
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
+  }
+
+  const Json_Get_CRM_UserByProjectId=()=>{
+    let obj = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      ProjectId: folderId
+  };
+    Cls.Json_Get_CRM_UserByProjectId(obj, (sts, data) => {
+      if (sts) {
+          if (data) {
+              let json = JSON.parse(data);
+              console.log("Json_Get_CRM_UserByProjectId", json.Table);
+              json.Table.map((item)=>{
+                if(item.loggedInUser==="True"){
+                  setUserName(item.DisplayName);
+                  setUserEmail(item.Name);
+                }
+              });
+          }
+      }
+  });
+  }
+
+  React.useEffect(() => {
+    setAgrNo(localStorage.getItem("agrno"));
+    setFolderId(localStorage.getItem("FolderId"));
+    setPassword(localStorage.getItem("Password"));
+    setEmail(localStorage.getItem("Email"));
+    Json_Get_CRM_UserByProjectId();
+  }, []);
+
+  const [tabs,setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active:false }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active:false }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active:true },  { tabLink: "/dashboard/Connections", tabName: 'Connections', active:false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active:false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active:false }]);
+  
   return (
     <>
-      <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar position="fixed" color='inherit'>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={()=>setOpen(!open)}
-            edge="start"
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Mini variant drawer
-          </Typography>
-          <Box>
-            <Menu>
-                <MenuItem>Contacts</MenuItem>
-            </Menu>
+      <Box className='d-block d-md-flex'>
+        <CssBaseline />
+        <AppBar className='header' position="fixed" open={open} color='inherit'>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={() => setOpen(!open)}
+              edge="start"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Box className="w-100">
+
+              <Box className="d-flex align-items-center justify-content-between w-100">
+                <Box className="search-box ms-4">
+                  <Layout>
+                    <AutocompleteWrapper>
+                      <AutocompleteRoot
+                        sx={{
+                          borderColor: '#D5D5D5',
+                          color: 'success.main',
+                        }}
+                        {...getRootProps()}
+                        className={focused ? 'Mui-focused' : ''}>
+                        <span className="material-symbols-outlined search-icon">search</span>
+
+                        <Input {...getInputProps()} placeholder='Search' className='ps-0' />
+                      </AutocompleteRoot>
+                      {groupedOptions.length > 0 && (
+                        <Listbox {...getListboxProps()}>
+                          {groupedOptions.map((option, index) => (
+                            <Option {...getOptionProps({ option, index })}>{option}</Option>
+                          ))}
+                        </Listbox>
+                      )}
+                    </AutocompleteWrapper>
+                  </Layout>
+                </Box>
+
+                <Box className="d-flex align-items-center">
+
+                  <Box>
+                    <Button
+                      id="basic-button3"
+                      aria-controls={opens2 ? 'basic-menu3' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={opens2 ? 'true' : undefined}
+                      onClick={handleClick}
+                    >
+
+                      <Badge badgeContent={4} color="primary" sx={{ "& .MuiBadge-badge": { top: 3, right: 4, fontSize: 11, backgroundColor: '#F93C65', height: 18, minWidth: 16 } }}>
+                        <span className="material-symbols-outlined">
+                          notifications
+                        </span>
+                      </Badge>
+
+                    </Button>
+
+                    {/* <Menu
+                      id="basic-menu3"
+                      className='custom-dropdown'
+                      anchorEl={anchorEl}
+                      open={opens2}
+                      onClose={handleClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button3',
+                      }}
+                    >
+                      
+                      <li className="dotification-list">
+                        <Box className="notification-box">
+                          <Box className="notification-box-img">
+                            <img src={user} />
+                          </Box>    
+                          <Box className="notification-content">
+                          <span className='notification-date'>10h ago</span>
+
+                            <h4>Petrick Joy.</h4>
+                            <p>lorem ipsome dolor site amer this is a dummy text world tours.</p>
+                          </Box>
+                        </Box>
+                      </li>
+
+                      <li className="dotification-list">
+                        <Box className="notification-box">
+                          <Box className="notification-box-img">
+                            <img src={user} />
+                          </Box>    
+                          <Box className="notification-content">
+                          <span className='notification-date'>10h ago</span>
+
+                            <h4>Petrick Joy.</h4>
+                            <p>lorem ipsome dolor site amer this is a dummy text world tours.</p>
+                          </Box>
+                        </Box>
+                      </li>
+
+                      <li className="dotification-list">
+                        <Box className="notification-box">
+                          <Box className="notification-box-img">
+                            <img src={user} />
+                          </Box>    
+                          <Box className="notification-content">
+                            <span className='notification-date'>10h ago</span>
+                            <h4>Petrick Joy.</h4>
+                            <p>lorem ipsome dolor site amer this is a dummy text world tours.</p>
+                          </Box>
+                        </Box>
+                      </li>
+
+                      <li className="dotification-list">
+                        <Box className="notification-box">
+                          <Box className="notification-box-img">
+                            <img src={user} />
+                          </Box>    
+                          <Box className="notification-content">
+                          <span className='notification-date'>10h ago</span>
+                            <h4>Petrick Joy.</h4>
+                            <p>lorem ipsome dolor site amer this is a dummy text world tours.</p>
+                          </Box>
+                        </Box>
+                      </li>
+                      
+                    </Menu> */}
+
+                  </Box>
+
+
+
+                  <Box>
+                    <Button
+                      id="basic-button2"
+                      aria-controls={opens ? 'basic-menu2' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={opens ? 'true' : undefined}
+                      onClick={handleClick}
+                    >
+                      <Box className="d-flex align-items-center user-dropdown">
+                        <Box className="user-img me-2">
+                          <img src={user} />
+                        </Box>
+                        <Box className="user-content text-start">
+                          <Typography variant='h2'>{userName}</Typography>
+                          <Typography variant='body1'>{userEmail}</Typography>
+                        </Box>
+                      </Box>
+                    </Button>
+
+                    
+                    <Menu
+                      id="basic-menu2"
+                      className='custom-dropdown'
+                      anchorEl={anchorEl}
+                      open={opens}
+                      onClose={handleClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button2',
+                      }}
+                    >
+
+                      <MenuItem onClick={handleClose}>
+                        <ListItemIcon>
+                          <PersonAdd fontSize="small" />
+                        </ListItemIcon>
+                        My Account
+                      </MenuItem>
+                      <MenuItem onClick={handleClose}>
+                        <ListItemIcon>
+                          <Settings fontSize="small" />
+                        </ListItemIcon>
+                        Settings
+                      </MenuItem>
+                      <MenuItem onClick={() => {
+                        handleClose();
+                        handleLogout();
+                      }}>
+                        <ListItemIcon>
+                          <ExitToAppIcon fontSize="small" />
+                        </ListItemIcon>
+                        Logout
+                      </MenuItem>
+
+                    </Menu>
+                  </Box>
+
+                </Box>
+              </Box>
+
+
+              <Menu>
+                {/* <MenuItem>Contacts</MenuItem> */}
+              </Menu>
+            </Box>
+
+          </Toolbar>
+        </AppBar>
+        {/* header end */}
+
+        <Drawer variant="permanent" className='left-sidebar' open={open}>
+          <DrawerHeader className='d-none'>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            </IconButton>
+          </DrawerHeader>
+          <Divider />
+
+          <Box className="text-center">
+            <a href='#' className='logo'><img src={logo} /></a>
           </Box>
-        </Toolbar>
-      </AppBar>
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
-          {['Dashboard', 'Contacts', 'Mails', 'Meetings'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-                onClick={()=>{text==="Dashboard"?navigate("/"):navigate("/"+text)}}
-              >
-                <ListItemIcon
+
+          <CreateNewModal></CreateNewModal>
+
+          <List className='side-navi'>
+
+            {tabs.map((text, index, arr) => (
+              <ListItem className={text.active? 'active': ''} key={index} disablePadding sx={{ display: 'block' }}>
+                <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
+                  }}
+                  onClick={() => {
+                    navigate(text.tabLink);
+                    let test = tabs.map((item)=>{
+                      if(item.tabName===text.tabName){
+                        item.active = true;
+                      }else{
+                        item.active = false;
+                      }
+                      return item;
+                    })
+                    setTabs(test);
+                    // setTabs(tabs.map(()))
                   }}
                 >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <DrawerHeader />
-        {/* <Home/> */}
-        <Routes>
-            <Route path="/" element={<Home/>}/>
-            <Route path="/Contacts" element={<Contacts/>}/>
-        </Routes>
-      </Box>
+                  
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 2 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  </ListItemIcon>
+                  <ListItemText primary={text.tabName} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Drawer>
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <DrawerHeader />
+          {/* <Home/> */}
+
+          <Routes>
+            {/* <Route path="/" element={<Login/>}/> */}
+            {/* <Route path="/" element={<Client />} /> */}
+            <Route index element={<h1></h1>} />
+            <Route path="/Connections" element={<Client />} />
+            <Route path="/clientDetails" element={<ClientDetails />} />
+            <Route path="/ContactDetails" element={<ContactDetails />} />
+            <Route path="/MyTask" element={<TodoList />} />
+            <Route path="/TodoList" element={<NewTodoList />} />
+            <Route path="/SmartViews" element={<></>} />
+            <Route path="/LogOut" element={<Logout/>} />
+          </Routes>
+        </Box>
       </Box>
     </>
   );
 }
+
+const blue = {
+  100: '#DAECFF',
+  200: '#99CCF3',
+  400: '#3399FF',
+  500: '#007FFF',
+  600: '#0072E5',
+  700: '#0059B2',
+  900: '#003A75',
+};
+
+const grey = {
+  50: '#F3F6F9',
+  100: '#E5EAF2',
+  200: '#DAE2ED',
+  300: '#C7D0DD',
+  400: '#B0B8C4',
+  500: '#9DA8B7',
+  600: '#6B7A90',
+  700: '#434D5B',
+  800: '#303740',
+  900: '#1C2025',
+};
+
+const AutocompleteWrapper = styled('div')`
+  position: relative;
+`;
+
+const AutocompleteRoot = styled('div')(
+  ({ theme }) => `
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 400;
+  border-radius: 8px;
+  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[500]};
+  background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+  border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+  box-shadow: 0px 2px 4px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.5)' : 'rgba(0,0,0, 0.05)'
+    };
+  display: flex;
+  gap: 5px;
+  padding-right: 5px;
+  overflow: hidden;
+  width: 320px;
+
+  &.Mui-focused {
+    border-color: ${blue[400]};
+    box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[700] : blue[200]};
+  }
+
+  &:hover {
+    border-color: ${blue[400]};
+  }
+
+  &:focus-visible {
+    outline: 0;
+  }
+`,
+);
+
+const Input = styled('input')(
+  ({ theme }) => `
+  font-size: 0.875rem;
+  font-family: inherit;
+  font-weight: 400;
+  line-height: 1.5;
+  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+  background: inherit;
+  border: none;
+  border-radius: inherit;
+  padding: 8px 12px;
+  outline: 0;
+  flex: 1 0 auto;
+`,
+);
+
+const Listbox = styled('ul')(
+  ({ theme }) => `
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.875rem;
+  box-sizing: border-box;
+  padding: 6px;
+  margin: 12px 0;
+  max-width: 320px;
+  border-radius: 12px;
+  overflow: auto;
+  outline: 0px;
+  max-height: 300px;
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+  border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+  box-shadow: 0px 4px 6px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.50)' : 'rgba(0,0,0, 0.05)'
+    };
+  `,
+);
+
+const Option = styled('li')(
+  ({ theme }) => `
+  list-style: none;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: default;
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &[aria-selected=true] {
+    background-color: ${theme.palette.mode === 'dark' ? blue[900] : blue[100]};
+    color: ${theme.palette.mode === 'dark' ? blue[100] : blue[900]};
+  }
+
+  &.base--focused,
+  &.base--focusVisible {
+    background-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[100]};
+    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+  }
+
+  &.base--focusVisible {
+    box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[500] : blue[200]};
+  }
+
+  &[aria-selected=true].base--focused,
+  &[aria-selected=true].base--focusVisible {
+    background-color: ${theme.palette.mode === 'dark' ? blue[900] : blue[100]};
+    color: ${theme.palette.mode === 'dark' ? blue[100] : blue[900]};
+  }
+  `,
+);
+
+const Layout = styled('div')`
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 4px;
+`;
+
+const Pre = styled('pre')(({ theme }) => ({
+  margin: '0.5rem 0',
+  fontSize: '0.75rem',
+  '& code': {
+    backgroundColor: theme.palette.mode === 'light' ? grey[100] : grey[900],
+    border: '1px solid',
+    borderColor: theme.palette.mode === 'light' ? grey[300] : grey[700],
+    color: theme.palette.mode === 'light' ? '#000' : '#fff',
+    padding: '0.125rem 0.25rem',
+    borderRadius: 3,
+  },
+}));
