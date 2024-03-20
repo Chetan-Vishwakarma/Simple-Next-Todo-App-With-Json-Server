@@ -639,7 +639,7 @@ export default function CreateNewModalTask({ ...props }) {
 
         if (createNewFileObj) {
 
-            console.log("createNewFileObj1111", createNewFileObj)
+            //console.log("createNewFileObj1111", createNewFileObj)
             setSelectedFiles(createNewFileObj);
             setSelectedDocumentFile(createNewFileObj);
 
@@ -697,7 +697,8 @@ export default function CreateNewModalTask({ ...props }) {
 
     useEffect(() => {
 
-
+        let strGuid = uuidv4().replace(/-/g, '');
+        localStorage.setItem("GUID", strGuid)
         setAnchorSelectFileEl(null);
         setOpen(openModal);
 
@@ -791,24 +792,39 @@ export default function CreateNewModalTask({ ...props }) {
     ////////////////////////////// End Section Function
     //////////////////////////////////////Attachment data
     // Event handler to handle file selection
+    // Function to get file extension from file name
+    const getFileExtension = (fileName) => {
+        // Split the file name by the dot (.)
+        const parts = fileName.split('.');
+        // Return the last part, which is the extension
+        return parts[parts.length - 1];
+    };
+
     const handleFileSelect = (event) => {
         const files = event.target.files;
         const selectedFilesArray = Array.from(files);
         const filesData = [];
-
         selectedFilesArray.forEach((file, index) => {
             const reader = new FileReader();
             reader.onload = () => {
                 let fileByte = reader.result.split(";")[1].replace("base64,", "");
+              
                 const fileData = {
                     FileName: file.name,
                     Base64: fileByte ? fileByte : "", // Base64 data of the file
                     FileSize: file.size,
                     Preview: reader.result, // Data URL for preview
-                    DocId: ""
+                    DocId: "",
+                    Guid: localStorage.getItem("GUID"),
+                    FileType:getFileExtension(file.name).toLowerCase()
                 };
+                console.log("get folder list 2222222222", fileData);
                 filesData.push(fileData);
-                UploadAttachment(fileData)
+
+                if (txtTaskType === "CRM") {
+                    UploadAttachment(fileData)
+                }
+
 
 
                 // Check if this is the last file
@@ -828,39 +844,54 @@ export default function CreateNewModalTask({ ...props }) {
             };
             reader.readAsDataURL(file); // Read file as data URL (base64)
         });
+
+        setTimeout(() => {
+
+            if (txtTaskType === "Portal") {
+                PrepareDocumentsForPublish_Json(filesData, 1);
+            }
+        }, 3000);
     };
 
 
-function PrepareDocumentsForPublish_Json(){
-    try {
-        let o = {};
-        o.accid = agrno;
-        o.email =Email;
-        o.password =password;
-        o.uploadID =password;
-        cls.SaveTaskAttachments(o, function (sts, data) {
-            if (sts && data) {
-                let res = JSON.parse(data);
-                if (res.Status === "Success") {
-                    let path = window.atob(res.Message);
-                    let index = path.lastIndexOf("\\");
-                    let fileName = path.slice(index + 1);
-                    let o = { Path: path, FileName: fileName }
+    function PrepareDocumentsForPublish_Json(filedata, ids) {
+        try {
+            // let myNewArr = [...selectedFilesFromBrower, ...selectedDocumentFile];
+            // console.log("myNewArr", myNewArr)
 
-                    setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+            const ItemId = filedata.map(obj => obj.DocId);
+            const fileNames = filedata.map(obj => obj["FileName"]);
+            const fileDataBase64 = filedata.filter(obj => obj["Base64"] !== "").map(obj => obj["Base64"]);
 
+
+            let o = {};
+            o.accid = agrno;
+            o.email = Email;
+            o.password = password;
+            o.uploadID = localStorage.getItem("GUID");
+            o.filenames = fileNames;
+            o.attachments = fileDataBase64;
+            o.itemNos = ids === 1 ? null : ItemId;
+            var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
+            let cls = new CommanCLS(urlLetter, agrno, Email, password);
+            cls.PrepareDocumentsForPublish_Json(o, function (sts, data) {
+                if (sts && data) {
+                    console.log("PrepareDocumentsForPublish_Json", data);
+
+                    if (data === "Success") {
+
+                    }
                 }
-            }
-        });
+            });
+        }
+        catch (error) {
+            console.log({
+                status: false,
+                message: "Attachment is Not Uploaded Try again",
+                error: error,
+            });
+        }
     }
-    catch (error) {
-        console.log({
-            status: false,
-            message: "Attachment is Not Uploaded Try again",
-            error: error,
-        });
-    }
-}
 
 
     const SETDate = (date) => {
@@ -1167,11 +1198,11 @@ function PrepareDocumentsForPublish_Json(){
 
         setAnchorSelectFileEl(null);
         if (textClientId) {
-           
+
             Json_ExplorerSearchDoc();
             setOpenDocumentList(true);
-          
-        } else {          
+
+        } else {
             toast.warn("Select Referece !");
         }
         getButtonColor();
@@ -1238,7 +1269,7 @@ function PrepareDocumentsForPublish_Json(){
     const handleSelectionChanged = (selectedItems) => {
         setSelectedRows(selectedItems.selectedRowsData);
         // You can perform further actions with the selectedRows array
-        console.log(selectedItems); // Log the selected rows data
+        console.log("selectedItems11",selectedItems); // Log the selected rows data
 
     };
     const Json_GetClientCardDetails = (cid) => {
@@ -1319,7 +1350,9 @@ function PrepareDocumentsForPublish_Json(){
                     Base64: base64data ? base64data : "", // Base64 data of the file
                     FileSize: row.FileSize,
                     Preview: "", // Data URL for preview
-                    DocId: row["Registration No."]
+                    DocId: row["Registration No."],
+                    Guid: localStorage.getItem("GUID"),
+                    FileType:row["Type"].toLowerCase(),
                 };
                 filesData.push(fileData);
                 // Check if this is the last file
@@ -1339,6 +1372,11 @@ function PrepareDocumentsForPublish_Json(){
 
 
         })
+
+        setTimeout(() => {
+            PrepareDocumentsForPublish_Json(filesData, 2)
+        }, 3000);
+
 
         setOpenDocumentList(false)
 
@@ -1531,16 +1569,16 @@ function PrepareDocumentsForPublish_Json(){
 
 
     async function CreatePortalTask() {
-        
+
         if (selectedUSer.ID) {
-            let strGuid =uuidv4().replace(/-/g, '');
-            let myNewArr = [...selectedFilesFromBrower, ...selectedDocumentFile];
+            // let myNewArr = [...selectedFiles, ...selectedDocumentFile];
             // console.log("myNewArr", myNewArr)
             const ccEmail = selectedEmailCC ? selectedEmailCC.map(obj => obj["E-Mail"]) : "";
             const ToEmail = selectedEmail.map(obj => obj["E-Mail"]);
-            const ItemId = selectedDocumentFile.map(obj => obj.DocId);
-            const fileNames = myNewArr.map(obj => obj["FileName"]);
-            const fileDataBase64 = myNewArr.filter(obj => obj["Base64"] !== "").map(obj => obj["Base64"]);
+            // const ItemId = selectedDocumentFile.map(obj => obj.DocId);
+            // const fileNames = myNewArr.map(obj => obj["FileName"]);
+            // const fileDataBase64 = myNewArr.filter(obj => obj["Base64"] !== "").map(obj => obj["Base64"]);
+
 
             let obj = {
                 "accid": agrno,
@@ -1559,16 +1597,16 @@ function PrepareDocumentsForPublish_Json(){
                 "trackIt": false,
                 "docTemplateTaskId": 0,
                 "docTemplateId": txtTemplateId ? txtTemplateId[0]["TemplateID"] : 0,
-                "filenames": fileNames,
-                "attachments": fileDataBase64 ? fileDataBase64 : [],
-                "itemNos": ItemId ? ItemId : [],
+                //"filenames": fileNames,
+                //  "attachments": fileDataBase64 ? fileDataBase64 : [],
+                //"itemNos": ItemId ? ItemId : [],
                 "noMessage": isCheckedWithOutmgs,
                 "message": btoa(editorContentValue),
                 "docuBoxMessage": false,
                 "docuBoxEmails": "",
                 "daysToDelete": 0,
                 "approvalResponse": "",
-                "uploadID": strGuid
+                "uploadID": localStorage.getItem("GUID")
 
 
             }
@@ -1579,8 +1617,12 @@ function PrepareDocumentsForPublish_Json(){
 
             cls.MessagePublishedPortalTask_Json(obj, function (sts, data) {
                 if (sts) {
-                    // let js = JSON.parse(data);
                     console.log("MessagePublished_Json", data)
+                    if (data === "") {
+                        toast.success("Task Created");
+                    }
+                    // let js = JSON.parse(data);
+
                     // if (js.Status == "success") {
                     //     //setMessageId(js.Message)
                     //     //setLoading(false);
@@ -1688,7 +1730,124 @@ function PrepareDocumentsForPublish_Json(){
     }
 
 
+    const SigningMethods = (e) => {
+        const ToEmail = selectedEmail.map(obj => obj["E-Mail"]).join(",");
+        let url = `https://signing.docusms.uk/Signing.aspx?accid=${agrno}&email=${Email}&password=${password}&sendclient=${textClientId}&sendemail=&clientname=${txtClient}&option=upload&file=${agrno}-${localStorage.getItem("GUID")}/${e.FileName}&to=${ToEmail}&rwndrnd=0.8166129123678032`;
+        window.open(url);
+    }
 
+    const [anchorElDoc, setAnchorElDoc] = React.useState(null);
+    const openDoc = Boolean(anchorElDoc);
+    const [selectedFileIndex, setSelectedFileIndex] = useState(null); // State for the index of the selected file in the menu
+    const handleClickDoc = (event, index) => {
+        setAnchorElDoc(event.currentTarget);
+        setSelectedFileIndex(index);
+    };
+    const handleCloseDoc = () => {
+        setAnchorElDoc(null);
+
+    };
+
+    function DeleteFile(d) {
+        Swal.fire({
+            // title: "Are you sure you want to delete this item?",
+            text: "Are you sure you want to delete this item?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                RemoveFilesForUpload_Json(d)
+            }
+        });
+    }
+
+
+    function RemoveFilesForUpload_Json(d) {
+        console.log("RemoveFilesForUpload_Json", selectedFiles)
+        try {
+            let o = {
+                accid: agrno,
+                email: Email,
+                password: password,
+                uploadID: d.Guid,
+                filename: d.FileName
+            }
+            var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
+            let cls = new CommanCLS(urlLetter, agrno, Email, password);
+            cls.RemoveFilesForUpload_Json(o, function (sts, data) {
+                if (sts && data) {
+
+                    if (data === "Success") {
+                        toast.success("Removed File !");
+                        const updatedFiles = selectedFiles.filter(e => e.FileName !== d.FileName);
+                        console.log("updatedFiles", updatedFiles);
+                        setSelectedFiles(updatedFiles);
+                    }
+                }
+            })
+        } catch (error) {
+            console.log({
+                status: false,
+                message: "Folder is Blank Try again",
+                error: error,
+            });
+        }
+
+
+    }
+
+
+
+    // Function to get file extension from file name
+    const getFileName = (fileName) => {
+        // Split the file name by the dot (.)
+        const parts = fileName.split('.');
+        // Return the last part, which is the extension
+        return parts[0];
+    };
+
+    
+
+    function ConvertToPdf_Json(d) {
+        console.log("ConvertToPdf_Json", selectedFiles)
+        try {
+            let o = {
+                accid: agrno,
+                email: Email,
+                password: password,
+                Guid: d.Guid,
+                FileName: d.FileName
+            }
+            var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
+            let cls = new CommanCLS(urlLetter, agrno, Email, password);
+            cls.ConvertToPdf_Json(o, function (sts, data) {
+                if (sts && data) {
+                    console.log("ConvertToPdf_Json", data)
+                    if (data) {
+                        let fname = getFileName(data);
+                        let res = selectedFiles.map((file) => {
+                            if (getFileName(file.FileName) === fname) {
+                                return { ...file, FileName: data };
+                            }
+                            else {
+                                return file;
+                            }
+                        })
+                        setSelectedFiles(res)
+                    }
+                }
+            })
+        } catch (error) {
+            console.log({
+                status: false,
+                message: "Folder is Blank Try again",
+                error: error,
+            });
+        }
+    }
 
 
 
@@ -1787,12 +1946,12 @@ function PrepareDocumentsForPublish_Json(){
                                                 sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
                                             /> */}
 
-                                            <Checkbox
+                                            {/* <Checkbox
                                                 {...label}
                                                 icon={<RadioButtonUncheckedOutlinedIcon />}
                                                 checkedIcon={<CheckCircleIcon />}
                                                 className="p-0"
-                                            />
+                                            /> */}
 
                                             <Box className>
                                                 <input
@@ -2285,53 +2444,46 @@ function PrepareDocumentsForPublish_Json(){
 
                                                         <Box className="d-flex align-items-center">
                                                             {txtTaskType === "Portal" && (<>
-                                                                <Button variant="text" className="btn-blue-2">
+                                                                <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
                                                                     Sign
                                                                 </Button>
+
+
 
                                                             </>)}
 
                                                             <Box className="ps-2">
+
                                                                 <Button
-                                                                    className="p-0"
-                                                                    sx={{
-                                                                        minWidth: 24,
-                                                                    }}
                                                                     id="basic-button"
-                                                                    aria-controls={
-                                                                        open ? "basic-menu2" : undefined
-                                                                    }
+                                                                    aria-controls={openDoc ? 'basic-menu' : undefined}
                                                                     aria-haspopup="true"
-                                                                    aria-expanded={open ? "true" : undefined}
-                                                                    onClick={handleClick}
+                                                                    aria-expanded={openDoc ? 'true' : undefined}
+                                                                    onClick={(event) => handleClickDoc(event, index)} // Pass index to handleClickDoc
                                                                 >
                                                                     <span className="material-symbols-outlined">
                                                                         more_vert
                                                                     </span>
                                                                 </Button>
+
                                                                 <Menu
                                                                     id="basic-menu"
-                                                                    anchorel={anchorel}
-                                                                    open={open2}
-                                                                    onClose={handleClose2}
-                                                                    MenuListProps={{
-                                                                        "aria-labelledby": "basic-button",
-                                                                    }}
+                                                                    anchorEl={anchorElDoc}
+                                                                    open={openDoc && selectedFileIndex === index} // Ensure the menu opens only for the selected file
+                                                                    onClose={handleCloseDoc}
+                                                                    MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
                                                                 >
-                                                                    <MenuItem onClick={handleClose2}>
-                                                                        <ListItemIcon>
-                                                                            <LibraryAddIcon fontSize="small" />
-                                                                        </ListItemIcon>
-                                                                        Add
-                                                                    </MenuItem>
+                                                                    <MenuItem onClick={() => DeleteFile(file)}>Delete</MenuItem>
+                                                                    {txtTaskType === "Portal" && ( file.FileType==="docx" || file.FileType==="doc" || file.FileType==="xls" || file.FileType==="xlsx" || file.FileType==="msg") && (
+                                                                        <MenuItem onClick={(e) => ConvertToPdf_Json(file)}>Convert To Pdf</MenuItem>
+                                                                    )}
 
-                                                                    <MenuItem onClick={handleClose2}>
-                                                                        <ListItemIcon>
-                                                                            <DeleteIcon fontSize="small" />
-                                                                        </ListItemIcon>{" "}
-                                                                        Remove
-                                                                    </MenuItem>
+
                                                                 </Menu>
+
+
+
+
                                                             </Box>
                                                         </Box>
                                                         {/* <Button variant="text" className='btn-blue-2'>Select file</Button> */}
@@ -2769,8 +2921,8 @@ function PrepareDocumentsForPublish_Json(){
                                     </>)}
 
 
-
-                                    {/* <label className="font-14 d-block">Expires On</label>
+{txtTaskType==="Portal" && (<>
+    <label className="font-14 d-block">Expires On</label>
                                     <LocalizationProvider
                                         className="pe-0"
                                         dateAdapter={AdapterDayjs}
@@ -2790,7 +2942,9 @@ function PrepareDocumentsForPublish_Json(){
 
 
 
-                                    </LocalizationProvider> */}
+                                    </LocalizationProvider>
+</>)}
+                                    
                                 </Box>
 
                                 <Box className="select-dropdown">

@@ -258,6 +258,29 @@ export default class CommanCLS extends AllService {
             }
         })
      }
+     RemoveFilesForUpload_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("RemoveFilesForUpload_Json",obj,false);
+        super.CallNewService("RemoveFilesForUpload_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+     ConvertToPdf_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("ConvertToPdf_Json",obj,false);
+        super.CallNewService("ConvertToPdf_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
      PrepareDocumentsForPublish_Json(obj,callBack){   
         super.CreateNewServiceParamObject("PrepareDocumentsForPublish_Json",obj,false);
         super.CallNewService("PrepareDocumentsForPublish_Json",function(status,Data){

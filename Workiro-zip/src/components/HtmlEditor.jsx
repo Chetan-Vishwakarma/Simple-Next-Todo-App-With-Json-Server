@@ -45,7 +45,7 @@ return(<>
         onInit={(evt, editor) => editorRef.current = editor}
         initialValue={templateDataMarkup}
         init={{
-        height: 400,
+        height: 600,
         menubar: false,
         plugins: [
            'a11ychecker','advlist','advcode','advtable','autolink','checklist','export',
