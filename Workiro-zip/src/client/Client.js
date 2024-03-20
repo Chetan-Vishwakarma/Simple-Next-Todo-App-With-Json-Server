@@ -566,16 +566,16 @@ function Client() {
     }
 
     function handleSuggestionList(value, label) {
-        if (!onlyClients) {
+        if (selectedChoice==="Contacts") {
             let fltRepeatData = createSuggestionList(value, contacts);
             setSuggestionList(fltRepeatData);
             //console.log("Contacts's Property suggestion list",fltRepeatData);
 
-        } else if (!onlyContacts) {
-
+        } else if (selectedChoice==="Clients") {
             let fltRepeatData = createSuggestionList(value, clients);
             setSuggestionList(fltRepeatData);
-        } else if (onlyClients && onlyContacts) {
+            
+        } else if (selectedChoice==="All") {
             let list1 = createSuggestionList(label, clients);
             let list2 = createSuggestionList(value, contacts);
             let fltRepeatData = [...list1];
