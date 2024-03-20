@@ -8,6 +8,17 @@ export default class CommanCLS extends AllService {
         super(APIUrl,agrno, Email, password);
     }
     
+    UploadPortalTaskRelation_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("UploadPortalTaskRelation_Json",obj,false);
+        super.CallNewService("UploadPortalTaskRelation_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
     DeleteTasksAttachment(obj,callBack){   
         super.CreateNewServiceParamObject("DeleteTasksAttachment",obj,true);
         super.CallNewService("DeleteTasksAttachment",function(status,Data){
