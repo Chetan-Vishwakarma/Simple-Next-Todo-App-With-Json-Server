@@ -121,6 +121,7 @@ function Client() {
     const [isDataNotFoundInClient, setIsDataNotFoundInClient] = useState(false);
     const [isDataNotFoundInContact, setIsDataNotFoundInContact] = useState(false);
     const [isDataNotFoundInBoth, setIsDataNotFoundInBoth] = useState(false);
+    const [loadMore, setLoadMore] = useState(20);
 
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -218,12 +219,18 @@ function Client() {
         })
         return data;
     }
+    const eventHandler = (e) => {
+        if (window.innerHeight + e.target.documentElement.scrollTop + 1 >= e.target.documentElement.scrollHeight) {
+            setLoadMore((preValue) => preValue + 20);
+        }
+    }
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
         Json_GetSupplierListByProject();
+        window.addEventListener('scroll', eventHandler)
     }, []);
     const basedOnClientContactAndAll = (target) => {
         setSelectedChoice(target);
@@ -1001,6 +1008,7 @@ function Client() {
                             isDataNotFoundInBoth={isDataNotFoundInBoth}
                             objFilterColor={objFilterColor}
                             objFilterClient={objFilterClient}
+                            loadMore={loadMore}
                         />}
                     </Box>
                 </Box>
