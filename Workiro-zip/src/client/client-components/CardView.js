@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material';
 import user from "../../images/user.jpg";
+import noData from "../../images/no-data.gif";
 import Button from "@mui/material/Button";
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
@@ -28,7 +29,9 @@ function CardView(props) {
   return (
     <>
       {
-        isDataNotFoundInBoth ? <h1>Data Not Found</h1> : (onlyClients && (filteredClients.length > 0 ? filteredClients.map((item, i) => {
+        isDataNotFoundInBoth ? <Box className='text-center no-data-found'>
+        <img src={noData} />
+        <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : (onlyClients && (filteredClients.length > 0 ? filteredClients.map((item, i) => {
           return <Box key={i} className='client-box-main'>
             <Box className='client-box' onClick={() => handleClientNavigation(item.OriginatorNo)}>
 
@@ -42,7 +45,7 @@ function CardView(props) {
                     <ul className='p-0 mb-0'>
                       <li>
                         <ApartmentIcon />
-                        test32@gmail.com</li>
+                         test32@gmail.com</li>
                       <li>
                         <ApartmentIcon />
                         +1 324 714-4949
@@ -79,7 +82,9 @@ function CardView(props) {
               </Box>
             </Box>
           </Box>
-        }) : isDataNotFoundInClient ? <h1>Data Not Found</h1> : clients.map((item, i) => {
+        }) : isDataNotFoundInClient ? <Box className='text-center no-data-found'>
+          <img src={noData} />
+          <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : clients.map((item, i) => {
           return <Box key={i} className='client-box-main'>
             <Box className='client-box sadik' onClick={() => handleClientNavigation(item.OriginatorNo)}>
               {/* <img src={pin} className='pin-img' /> */}
@@ -99,19 +104,20 @@ function CardView(props) {
                   </Tooltip>
 
                   <Box className='inner-info-details'>
-                    <Tooltip title="Copy Details" className='my-1'>
+                    <Tooltip title="Copy Details" className='my-1 copy-icon'>
                       <IconButton>
                         <ContentCopyIcon className='font-18' />
                       </IconButton>
                     </Tooltip>
                     <ul className='p-0 mb-0'>
                       <li>
-                        <EmailIcon className='font-16' />
-                        test32@gmail.com</li>
-                      <li>
                         <LocalPhoneIcon />
                         +1 324 714-4949
                       </li>
+                      <li>
+                        <EmailIcon className='font-16' />
+                         test32@gmail.com</li>
+                      
                       <li>
                         <LocationOnIcon />
 
@@ -158,19 +164,20 @@ function CardView(props) {
                   </Tooltip>
 
                   <Box className='inner-info-details'>
-                    <Tooltip title="Copy Details" className='my-1'>
+                    <Tooltip title="Copy Details" className='my-1 copy-icon'>
                       <IconButton>
                         <ContentCopyIcon className='font-18' />
                       </IconButton>
                     </Tooltip>
                     <ul className='p-0 mb-0'>
                       <li>
-                        <EmailIcon className='font-16' />
-                        test32@gmail.com</li>
-                      <li>
                         <LocalPhoneIcon />
                         +1 324 714-4949
                       </li>
+                      <li>
+                        <EmailIcon className='font-16' />
+                         test32@gmail.com</li>
+                      
                       <li>
                         <LocationOnIcon />
                         Fourth Floor Abbots House
@@ -201,7 +208,9 @@ function CardView(props) {
               </Box>
             </Box>
           </Box>
-        }) : isDataNotFoundInContact ? <h1>Data Not Found</h1> : contacts.map((item, i) => {
+        }) : isDataNotFoundInContact ? <Box className='text-center no-data-found'>
+        <img src={noData} />
+        <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : contacts.map((item, i) => {
           return <Box key={i} className='client-box-main'>
             <Box className='client-box sadik' onClick={() => handleContactNavigattion(item.OriginatorNo, item.ContactNo)}>
 
@@ -220,22 +229,22 @@ function CardView(props) {
                   </Tooltip>
 
                   <Box className='inner-info-details'>
-                    <Tooltip title="Copy Details" className='my-1'>
+                    <Tooltip title="Copy Details" className='my-1 copy-icon'>
                       <IconButton>
                         <ContentCopyIcon className='font-18' />
                       </IconButton>
                     </Tooltip>
                     <ul className='p-0 mb-0'>
                       <li>
-                        <EmailIcon className='font-16' />
-                        test32@gmail.com</li>
-                      <li>
                         <LocalPhoneIcon />
                         +1 324 714-4949
                       </li>
                       <li>
+                        <EmailIcon className='font-16' />
+                         test32@gmail.com</li>
+                      
+                      <li>
                         <LocationOnIcon />
-
                         Fourth Floor Abbots House
                       </li>
                     </ul>
