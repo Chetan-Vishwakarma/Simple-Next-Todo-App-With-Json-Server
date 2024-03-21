@@ -1734,6 +1734,7 @@ export default function CreateNewModalTask({ ...props }) {
 
 
     const [isCheckedForApproval, setIsCheckedForApproval] = useState(false);
+    const [isDisabledForApproval, setIsDisabledForApproval] = useState(false);
 
     const handleCheckboxChangeForAppoval = (event) => {
         setIsCheckedForApproval(event.target.checked);
@@ -1822,6 +1823,8 @@ export default function CreateNewModalTask({ ...props }) {
 
 
     const SigningMethods = (e) => {
+        setIsCheckedForApproval(true);
+        setIsDisabledForApproval(true);
         const ToEmail = selectedEmail.map(obj => obj["E-Mail"]).join(",");
         let url = `https://signing.docusms.uk/Signing.aspx?accid=${agrno}&email=${Email}&password=${password}&sendclient=${textClientId}&sendemail=&clientname=${txtClient}&option=upload&file=${agrno}-${localStorage.getItem("GUID")}/${e.FileName}&to=${ToEmail}&rwndrnd=0.8166129123678032`;
         window.open(url);
@@ -2146,7 +2149,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                     </Box>
 
                                                     <Box className='mb-2'>
-                                                        <FormControlLabel control={<Checkbox checked={isCheckedForApproval} onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
+                                                        <FormControlLabel control={<Checkbox checked={isCheckedForApproval} disabled={isDisabledForApproval}  onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
                                                         <FormControlLabel control={<Checkbox checked={isCheckedWithOutmgs} onChange={handleCheckboxChangeisCheckedWithOutmgs} />} label="Send Without Message" />
 
                                                         <Button
