@@ -1,8 +1,8 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material';
-import company from "../../images/building.jpg";
+import company from "../../images/building.svg";
 import user from "../../images/user.jpg";
-import user2 from "../../images/user-2.png";
+import user2 from "../../images/user-2.svg";
 import noData from "../../images/no-data.gif";
 import Button from "@mui/material/Button";
 import Fab from '@mui/material/Fab';
