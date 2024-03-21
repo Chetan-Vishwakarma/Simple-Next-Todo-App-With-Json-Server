@@ -480,7 +480,7 @@ function Client() {
             });
         });
     }
-    
+
     useEffect(() => {
         filterData(clients, advSearchKeyValue);
     }, [advSearchKeyValue]);
@@ -575,19 +575,33 @@ function Client() {
 
     function handleSuggestionList(value, label) {
         if (selectedChoice === "Contacts") {
-            let fltRepeatData = createSuggestionList(value, contacts);
-            setSuggestionList(fltRepeatData);
+            if (filteredContacts.length > 0) {
+                let fltRepeatData = createSuggestionList(value, filteredContacts);
+                setSuggestionList(fltRepeatData);
+                return;
+            } else {
+                let fltRepeatData = createSuggestionList(value, contacts);
+                setSuggestionList(fltRepeatData);
+                return;
+            }
             //console.log("Contacts's Property suggestion list",fltRepeatData);
 
         } else if (selectedChoice === "Clients") {
-            let fltRepeatData = createSuggestionList(value, clients);
-            setSuggestionList(fltRepeatData);
+            if (filteredClients.length > 0) {
+                let fltRepeatData = createSuggestionList(value, filteredClients);
+                setSuggestionList(fltRepeatData);
+                return;
+            } else {
+                let fltRepeatData = createSuggestionList(value, clients);
+                setSuggestionList(fltRepeatData);
+                return;
+            }
+
 
         } else if (selectedChoice === "All") {
             let list1 = createSuggestionList(label, clients);
             let list2 = createSuggestionList(value, contacts);
             let fltRepeatData = [...list1];
-            // console.log("Suggestion for both client and contact",fltRepeatData);
 
             list2.filter((itm) => {
                 if (!fltRepeatData.includes(itm)) {
@@ -595,7 +609,6 @@ function Client() {
                 }
             });
             setSuggestionList(fltRepeatData);
-            // console.log("Suggestion for both client and contact",fltRepeatData);
         }
     }
 

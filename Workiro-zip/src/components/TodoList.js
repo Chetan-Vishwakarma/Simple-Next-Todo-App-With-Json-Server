@@ -20,6 +20,7 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import moment from 'moment';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
+import { data } from 'jquery';
 
 
 function TodoList() {
@@ -54,6 +55,9 @@ function TodoList() {
     const [taskFilter, setTaskFilter] = useState({});
 
     const [selectedSortBy, setSelectedSortBy] = useState("Sort By");
+    const [selectedGroupBy, setSelectedGroupBy] = useState("Group By");
+
+    const [dataInGroup, setDataInGroup] = useState([]);
 
     // for date datepicker
     const [state, setState] = useState({
@@ -419,6 +423,22 @@ function TodoList() {
             handleAscending();
         }
     }
+    function groupByProperty(data, property) {
+        return data.reduce((acc, obj) => {
+            const value = obj[property];
+            acc[value] = acc[value] || [];
+            acc[value].push(obj);
+            return acc;
+        }, {});
+    }
+    const handleGrouping=(val)=>{
+        setSelectedGroupBy(val);
+        if(val!=="Group By"){
+            let groupedData = groupByProperty(allTask,val);
+            // console.log("Grouped Data: ",groupedData);
+            setDataInGroup(groupedData);
+        }
+    }
 
     return (
         <Box className="container-fluid p-0">
@@ -584,15 +604,19 @@ function TodoList() {
                         <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
-                            value={age}
+                            value={selectedGroupBy}
                             label="Sort By"
-                            onChange={handleChange}
+                            onChange={(e)=>handleGrouping(e.target.value)}
                             className='custom-dropdown'
 
                         >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
+                            <MenuItem value="Group By">Group By</MenuItem>
+                            <MenuItem value="Client">Client Name</MenuItem>
+                            <MenuItem value="EndDateTime">Due Date</MenuItem>
+                            <MenuItem value="Priority">Priority</MenuItem>
+                            <MenuItem value="Section">Section</MenuItem>
+                            <MenuItem value="CreationDate">Start Date</MenuItem>
+                            <MenuItem value="Subject">Subject</MenuItem>
                         </Select>
 
                     </FormControl>
@@ -612,16 +636,83 @@ function TodoList() {
             <Box className='main-filter-box mt-1'>
                 <Box className='row'>
                     {
-                        allTask.length > 0 &&
+                        Object.keys(dataInGroup).length>0?(<>
+                            {Object.keys(dataInGroup).map((key)=>{
+                                return <>
+                                  <h4>{key==1?"High":key==2?"Medium":key}</h4>
+                                  {dataInGroup[key].length>0&& dataInGroup[key].map((item,index)=>{
+                                    return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                                    <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
+    
+                                        <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
+                                            sx={{
+                                                '&.Mui-checked': {
+                                                    color: "secondary",
+                                                },
+                                            }}
+                                        />
+    
+                                        <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> {item.Source}</Typography>
+    
+                                        <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
+    
+                                        <Box className='d-flex align-items-center justify-content-between'>
+                                            <Typography variant='subtitle1'><pan className='text-gray'>
+                                                {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
+                                                {/* <a href='#'>Patrick</a>, */}
+                                                <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +1</a></Typography>
+                                            <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
+                                        </Box>
+    
+                                        <Box className='d-flex align-items-center justify-content-between'>
+                                            <Typography variant='subtitle1'>{item.Client}</Typography>
+                                            <Typography variant='subtitle1'>
+    
+                                                <Box>
+                                                    <Button
+                                                        id="basic-button"
+                                                        aria-controls={open ? 'basic-menu' : undefined}
+                                                        aria-haspopup="true"
+                                                        aria-expanded={open ? 'true' : undefined}
+                                                        onClick={handleClick}
+                                                        className='font-14'
+                                                    >
+                                                        {item.Status && item.Status}
+                                                    </Button>
+                                                    <Menu
+                                                        id="basic-menu"
+                                                        className='custom-dropdown'
+                                                        anchorEl={anchorEl}
+                                                        open={open}
+                                                        onClose={handleClose}
+                                                        MenuListProps={{
+                                                            'aria-labelledby': 'basic-button',
+                                                        }}
+                                                    >
+                                                        <MenuItem onClick={handleClose}>High</MenuItem>
+                                                        <MenuItem onClick={handleClose}>Medium</MenuItem>
+                                                        <MenuItem onClick={handleClose}>Low</MenuItem>
+                                                    </Menu>
+                                                </Box>
+    
+                                            </Typography>
+                                        </Box>
+    
+                                        <Box className='mt-2'>
+                                            <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
+                                            <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
+                                        </Box>
+    
+                                    </Box>
+                                </Box>
+                                  })}
+                                </>
+                            })}
+                        </>):(allTask.length > 0 &&
                         allTask.slice(0, loadMore).map((item, index) => {
                             return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                 <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
 
-                                    {/* <Checkbox className='text-blue check-todo'
-                                    {...label}
-                                    icon={<RadioButtonUncheckedIcon />}
-                                    checkedIcon={<CheckCircleIcon />}
-                                /> */}
                                     <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
                                         sx={{
                                             '&.Mui-checked': {
@@ -683,7 +774,7 @@ function TodoList() {
 
                                 </Box>
                             </Box>
-                        })
+                        }))
                     }
 
                     {/* <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
