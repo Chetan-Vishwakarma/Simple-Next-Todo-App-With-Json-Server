@@ -54,6 +54,10 @@ nav.navbar.navbar-dark.bg-dark .container {
   font-size: 18px !important;
 }
 
+.font-20 {
+  font-size: 20px !important;
+}
+
 .font-26 {
   font-size: 26px !important;
 }
@@ -182,6 +186,7 @@ button {
   text-transform: capitalize !important;
   font-size: 14px !important;
 }
+
 .btn-outlin-2 {
   padding: 6px 20px !important;
   font-size: 14px !important;
@@ -359,16 +364,20 @@ button {
   fill: #727272;
   font-size: 20px;
 }
+
 .side-navi li .MuiTypography-body1 {
   font-size: 14px;
 }
+
 .side-navi li .MuiButtonBase-root {
   min-height: 38px !important;
   padding: 4px 0px 4px 20px;
 }
+
 .side-navi li .MuiListItemIcon-root {
   margin-right: 10px;
 }
+
 .header {
   box-shadow: 2px 0 5px #f1f1f1 !important;
 }
@@ -707,7 +716,7 @@ span.tox-statusbar__branding {
 
 .client-box {
   background: #fff;
-  padding: 30px 10px 25px 10px;
+  padding: 45px 10px 25px 10px;
   border-radius: 18px;
   text-align: center;
   margin: 12px 0;
@@ -717,6 +726,9 @@ span.tox-statusbar__branding {
   transition: .5s all ease;
   border: 2px solid transparent;
   box-shadow: rgb(133 133 133 / 10%) 0px 10px 15px -3px, rgb(104 104 104 / 5%) 0px 4px 6px -2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .client-box:hover {
@@ -730,6 +742,45 @@ span.tox-statusbar__branding {
   display: flex;
 }
 
+.client-box-icons {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+}
+
+.client-box-icons>svg {
+  font-size: 22px;
+  margin-left: 8px;
+  color: #727272;
+}
+.info-details:hover .inner-info-details {
+  opacity: 1;
+  visibility: visible;
+}
+.inner-info-details {
+  position: absolute;
+  right: 0;
+  top: 44px;
+  background: #fff;
+  border-radius: 4px;
+  z-index: 1;
+  text-align: right;
+  padding: 1px 10px 10px 10px;
+  border: 1px solid #f1f1f1;
+  min-width: 240px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: .5s all ease;
+}
+.inner-info-details ul li {
+  display: flex;
+  align-items: center;
+  padding: 5px 2px;
+  text-align: left;
+  font-size: 11px;
+  border-top: 1px solid #f1f1f1;
+}
 .search-icon {
   display: flex;
   align-items: center;
@@ -737,6 +788,11 @@ span.tox-statusbar__branding {
   font-size: 18px;
   padding-top: 3px;
   color: #c9c9c9;
+}
+
+.inner-info-details ul li svg {
+  margin-right: 5px;
+  font-size: 18px;
 }
 
 ::-ms-input-placeholder {
@@ -1431,7 +1487,8 @@ span.tox-statusbar__branding {
   height: 0;
 }
 
-.search-list span, .MuiAutocomplete-root .MuiFormLabel-root {
+.search-list span,
+.MuiAutocomplete-root .MuiFormLabel-root {
   font-size: 14px;
 }
 
@@ -1683,7 +1740,8 @@ span.tox-statusbar__branding {
     font-size: 12px;
   }
 
-  .todo-list-box h2, .client-box h2 {
+  .todo-list-box h2,
+  .client-box h2 {
     font-size: 14px;
   }
 
@@ -1692,62 +1750,90 @@ span.tox-statusbar__branding {
   .textarea,
   body,
   .select-dropdown button,
-  .file-uploads .file-uploads-label h4, .dropdown-box .btn-select, .cd-nugget-info a, .notification-box h4, .select-dropdown button, .btn-white, .dropdown-box .btn-list {
+  .file-uploads .file-uploads-label h4,
+  .dropdown-box .btn-select,
+  .cd-nugget-info a,
+  .notification-box h4,
+  .select-dropdown button,
+  .btn-white,
+  .dropdown-box .btn-list, .select-border .custom-dropdown .MuiSelect-select {
     font-size: 12px !important;
   }
 
   .btn-blue-2,
   .btn-green,
-  .btn-red,.btn-outlin-2, .btn-blue {
+  .btn-red,
+  .btn-outlin-2,
+  .btn-blue {
     padding: 5px 10px !important;
     font-size: 12px !important;
   }
+
   .file-uploads .file-uploads-label p {
     font-size: 11px;
   }
+
   .todo-list-box {
     border: 1px dashed #e1e1e1;
   }
+
   .white-box {
     border-radius: 5px;
     padding: 16px;
   }
-  .todo-list-box h6, .btn-blue .create-text, .input-text, .input-text:focus {
+
+  .todo-list-box h6,
+  .btn-blue .create-text,
+  .input-text,
+  .input-text:focus {
     font-size: 12px;
   }
+
   .font-16 {
     font-size: 14px !important;
   }
+
   .btn-blue .material-symbols-outlined {
     font-size: 16px;
   }
-  
-  .font-14, .user-dropdown .user-content p,
-  .user-dropdown .user-content h2, .btn-blue .create-text
-   {
+
+  .font-14,
+  .user-dropdown .user-content p,
+  .user-dropdown .user-content h2,
+  .btn-blue .create-text {
     font-size: 12px !important;
   }
+
   .font-18 {
     font-size: 16px !important;
   }
+
   .check-todo svg {
     font-size: 22px;
   }
+
   .user-img-list.admin {
     width: 30px;
     height: 30px;
   }
-  .user-dropdown .user-img, .user-img-list {
+
+  .user-dropdown .user-img,
+  .user-img-list {
     min-width: 30px;
     width: 30px;
     height: 30px;
   }
-  .user-dropdown .user-img p, .user-img-list p {
+
+  .user-dropdown .user-img p,
+  .user-img-list p {
     font-size: 11px;
   }
+
   .main-search-box {
     padding: 15px;
+    border: 1px dashed #e6e6e6;
   }
+
   .search-list span {
     font-size: 12px;
   }
@@ -2571,7 +2657,7 @@ span.tox-statusbar__branding {
 }
 
 .cd-vertical-nav a.active .label {
-  color: #d42027; 
+  color: #d42027;
 }
 
 /* hover effect css end */

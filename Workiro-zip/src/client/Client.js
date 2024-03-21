@@ -926,7 +926,7 @@ function Client() {
                     </Box>
 
 
-                    <Box className="mb-2 ms-3">
+                    <Box className="">
                         {Object.keys(objFilter).map((item) => {
                             return <Button sx={{ backgroundColor: objFilterColor[item][0] }} className='btn-white text-white'><span className='text-white'>{item}: {objFilter[item][0]}</span>
                                 <span onClick={() => handleFilterDeletion(item)} className="material-symbols-outlined font-16 text-white">
@@ -944,9 +944,9 @@ function Client() {
                     </Box>
 
 
-                    <Box className='mt-4'>
-                        {isGridView && <ClientGrid selectedChoice={selectedChoice} data={selectedChoice === "All" || selectedChoice === "Contacts" ? contacts : clients} handleContactNavigattion={handleContactNavigattion} handleClientNavigation={handleClientNavigation} />}
-                    </Box>
+                    
+                        {isGridView && <Box className='mt-3'><ClientGrid selectedChoice={selectedChoice} data={selectedChoice === "All" || selectedChoice === "Contacts" ? contacts : clients} handleContactNavigattion={handleContactNavigattion} handleClientNavigation={handleClientNavigation} /></Box>}
+                    
 
                     <Box className='row'>
                         {isCardView && <CardView
