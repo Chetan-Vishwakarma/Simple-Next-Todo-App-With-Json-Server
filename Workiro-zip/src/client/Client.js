@@ -115,7 +115,7 @@ function Client() {
     const [objFilterClient, setObjFilterClient] = useState({});
     const [objFilterColor, setObjFilterColor] = useState({});
 
-    const [selectedColor, setSelectedColor] = useState(Object.keys(objFilter).length === 1 ? colorArr[2] : Object.keys(objFilter).length === 2 ? colorArr[4] : colorArr[0]);
+    const [selectedColor, setSelectedColor] = useState(colorArr[0]);
 
     const [selectedPropertyForClient, setSelectedPropertyForClient] = useState("");
     const [isDataNotFoundInClient, setIsDataNotFoundInClient] = useState(false);
@@ -301,9 +301,11 @@ function Client() {
             if (selectedChoice === "Clients") {
                 let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
                 setObjFilter(obj);
-                let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
-                let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
+                // let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
+                let obj2 = { ...objFilterColor, [selectedProperty]: [selectedColor] };
                 setObjFilterColor(obj2);
+                setSelectedColor(Object.keys(obj).length === 1 ? colorArr[2] : Object.keys(obj).length === 2 ? colorArr[4] : colorArr[5]);
+                setIsFirstColorSelected(true);
                 let fltData = handleSearchBy(clients, obj);
                 setFilteredClients(fltData);
                 // console.log("Filtered Clients: ",fltData.length);
@@ -316,9 +318,11 @@ function Client() {
             } else if (selectedChoice === "Contacts") {
                 let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
                 setObjFilter(obj);
-                let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
-                let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
+                // let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
+                let obj2 = { ...objFilterColor, [selectedProperty]: [selectedColor] };
                 setObjFilterColor(obj2);
+                setSelectedColor(Object.keys(obj).length === 1 ? colorArr[2] : Object.keys(obj).length === 2 ? colorArr[4] : colorArr[5]);
+                setIsFirstColorSelected(true);
                 let fltData = handleSearchBy(contacts, obj);
                 setFilteredContacts(fltData);
                 // console.log("Filtered Clients: ",fltData.length);
@@ -331,9 +335,11 @@ function Client() {
             } else if (selectedChoice === "All") {
                 let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
                 setObjFilter(obj);
-                let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
-                let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
+                // let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
+                let obj2 = { ...objFilterColor, [selectedProperty]: [selectedColor] };
                 setObjFilterColor(obj2);
+                setSelectedColor(Object.keys(obj).length === 1 ? colorArr[2] : Object.keys(obj).length === 2 ? colorArr[4] : colorArr[5]);
+                setIsFirstColorSelected(true);
 
                 // if (onlyClients) {
                 let obj4 = { ...objFilterClient, [selectedPropertyForClient]: [selectedPropertyValue] };
@@ -459,6 +465,7 @@ function Client() {
         }
         setObjFilter({});
         setObjFilterClient({});
+        setSelectedColor(colorArr[0]);
     }
 
 
@@ -473,8 +480,8 @@ function Client() {
             });
         });
     }
+    
     useEffect(() => {
-
         filterData(clients, advSearchKeyValue);
     }, [advSearchKeyValue]);
 
@@ -490,6 +497,7 @@ function Client() {
             setAdvSearchKeyValue(advSearchKeyValue.filter((item) => item.key !== target));
         }
     }
+
     let handleDialogsOpen = (e, toOpen) => {
         e.stopPropagation();
         if (toOpen === "Folder") {
@@ -836,7 +844,7 @@ function Client() {
                                                                     setIsFirstColorSelected(true);
                                                                 }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[4] }}></button>
                                                                     <button onClick={() => {
-                                                                        setSelectedColor(colorArr[4]);
+                                                                        setSelectedColor(colorArr[5]);
                                                                         setIsFirstColorSelected(false);
                                                                     }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[5] }}></button></>
                                                             }
@@ -979,6 +987,7 @@ function Client() {
                             isDataNotFoundInContact={isDataNotFoundInContact}
                             isDataNotFoundInBoth={isDataNotFoundInBoth}
                             objFilterColor={objFilterColor}
+                            objFilterClient={objFilterClient}
                         />}
                     </Box>
                 </Box>

@@ -628,9 +628,6 @@ export default function DocumentList({ clientId }) {
                                 <span>{label==="Invalid date - Invalid date"?"All":label}</span> <i className="fa fa-caret-down"></i>
                             </div>
                         </DateRangePicker>
-                        {/* <DateRangePicker className='m-0 p-0'>
-                                    <input type="text" className="form-control col-4" />
-                                </DateRangePicker> */}
                     </Box>
                     {/* {isRangeFilter ? (
                             <>

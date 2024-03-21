@@ -12,34 +12,31 @@ import ApartmentIcon from '@mui/icons-material/Apartment';
 
 
 function CardView(props) {
-  const {
-    isSearch, handleDialogsOpen, handleSearch, filteredClientsForSearchBox, handleClientNavigation, filteredContactsForSearchBox,
-    handleContactNavigattion, handleFolderSelection, isFolder, allFolders, isChoice, isAdvFilter, selectedProperty,
-    setSelectedProperty, clientKeys, contactKeys, selectedPropertyValue, setSelectedPropertyValue, advSearchKeyValue,
-    setSelectedColor, colorArr, handleAdvanceFilterAgain, handleFilterRemove, onlyClients, filteredClients, clients,
-    onlyContacts, filteredContacts, contacts, selectedFolder, selectedChoice, basedOnClientContactAndAll, objFilter, isDataNotFoundInClient, isDataNotFoundInContact, isDataNotFoundInBoth, objFilterColor
-  } = props;
+    const {
+        isSearch, handleDialogsOpen, handleSearch, filteredClientsForSearchBox, handleClientNavigation, filteredContactsForSearchBox,
+        handleContactNavigattion, handleFolderSelection, isFolder, allFolders, isChoice, isAdvFilter, selectedProperty, 
+        setSelectedProperty, clientKeys, contactKeys, selectedPropertyValue, setSelectedPropertyValue, advSearchKeyValue,
+        setSelectedColor, colorArr, handleAdvanceFilterAgain, handleFilterRemove, onlyClients, filteredClients, clients,
+        onlyContacts, filteredContacts, contacts, selectedFolder, selectedChoice, basedOnClientContactAndAll,objFilter,isDataNotFoundInClient,isDataNotFoundInContact,isDataNotFoundInBoth,objFilterColor,objFilterClient
+    } = props;
   return (
     <>
-      {
-        isDataNotFoundInBoth ? <h1>Data Not Found</h1> : (onlyClients && (filteredClients.length > 0 ? filteredClients.map((item, i) => {
-          return <Box key={i} className='client-box-main'>
-            <Box className='client-box sadik' onClick={() => handleClientNavigation(item.OriginatorNo)}>
-              {/* <img src={pin} className='pin-img' /> */}
-              <Box className=''>
-                <Box className='client-img'>
-                  <img src={user} />
-                </Box>
-                <Typography variant="h2">{item["Company Name"] && (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
-                {/* <Typography variant='h4'>Admin</Typography> */}
-                <Typography variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].substr(0, 22) + ".")}</Typography>
-              </Box>
-
-              <Box className='color-filter-box mt-3'>
-                {Object.keys(objFilter).map((key) => {
-                  return <Typography variant='span' className='color-filter-row' style={{ color: objFilterColor[key], borderColor: objFilterColor[key] }}>{item[key]}</Typography>;
-                })}
-                {/* <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
+                        {
+                            isDataNotFoundInBoth ? <h1>Data Not Found</h1> :(onlyClients && (filteredClients.length > 0 ? filteredClients.map((item, i) => {
+                                return <Box key={i} className='client-box-main'>
+                                    <Box className='client-box' onClick={() => handleClientNavigation(item.OriginatorNo)}>
+                                        {/* <img src={pin} className='pin-img' /> */}
+                                        <Box className='client-img'>
+                                            <img src={user} />
+                                        </Box>
+                                        <Typography variant="h2">{item["Company Name"] && (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
+                                        {/* <Typography variant='h4'>Admin</Typography> */}
+                                        <Typography variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].substr(0, 22) + ".")}</Typography>
+                                        <Box className='color-filter-box mt-3'>
+                                            {Object.keys(objFilter).map((key)=>{
+                                              return <Typography variant='span' className='color-filter-row' style={{ color: objFilterColor[key], borderColor: objFilterColor[key] }}>{key==="SourceName"?item["Source"]:item[key]}</Typography>;
+                                            })}
+                                            {/* <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#01018d", borderColor: "#01018d" }}>Blue</Typography> */}
               </Box>
