@@ -348,6 +348,7 @@ function TodoList() {
                                                     aria-haspopup="true"
                                                     aria-expanded={open ? 'true' : undefined}
                                                     onClick={handleClick}
+                                                    className='font-14'
                                                 >
                                                     {item.Status && item.Status}
                                                 </Button>
@@ -372,7 +373,7 @@ function TodoList() {
 
                                     <Box className='mt-2'>
                                         <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
-                                        <Button variant="outlined">Defer</Button>
+                                        <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
                                     </Box>
 
                                 </Box>

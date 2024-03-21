@@ -249,7 +249,7 @@ function Client() {
         setSearchInput(value);
         // for clients filter
         let filteredClientData = clients.filter((item) => {
-            return item["Company Name"]!=="" && item["Company Name"].toLowerCase().includes(searchInput.toLowerCase());
+            return item["Company Name"] !== "" && item["Company Name"].toLowerCase().includes(searchInput.toLowerCase());
         });
         if (value === "") {
             setClientsForSearchBoxNotFound(false);
@@ -264,7 +264,7 @@ function Client() {
         }
         // for contacts filter
         let filteredContactData = contacts.filter((item) => {
-            return (item["First Name"]!=="" || item["Last Name"]) && `${item["First Name"]} ${item["Last Name"]}`.toLowerCase().includes(searchInput.toLowerCase());
+            return (item["First Name"] !== "" || item["Last Name"]) && `${item["First Name"]} ${item["Last Name"]}`.toLowerCase().includes(searchInput.toLowerCase());
         });
         if (value === "") {
             setContactsForSearchBoxNotFound(false);
@@ -566,16 +566,16 @@ function Client() {
     }
 
     function handleSuggestionList(value, label) {
-        if (selectedChoice==="Contacts") {
+        if (selectedChoice === "Contacts") {
             let fltRepeatData = createSuggestionList(value, contacts);
             setSuggestionList(fltRepeatData);
             //console.log("Contacts's Property suggestion list",fltRepeatData);
 
-        } else if (selectedChoice==="Clients") {
+        } else if (selectedChoice === "Clients") {
             let fltRepeatData = createSuggestionList(value, clients);
             setSuggestionList(fltRepeatData);
-            
-        } else if (selectedChoice==="All") {
+
+        } else if (selectedChoice === "All") {
             let list1 = createSuggestionList(label, clients);
             let list2 = createSuggestionList(value, contacts);
             let fltRepeatData = [...list1];
@@ -642,20 +642,20 @@ function Client() {
                                             <Input onClick={(e) => handleDialogsOpen(e, "Search")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
                                         </AutocompleteRoot>
 
-                                    {isSearch && <Listbox sx={{ zIndex: 1 }}>
-                                        {filteredClientsForSearchBox.length > 0 ? filteredClientsForSearchBox.map((option, i) => (
-                                            <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}>
-                                                <ApartmentIcon className='me-1' />
-                                                {option["Company Name"]}</Option>
-                                        )) : clientsForSearchBoxNotFound ? <></> : clients.map((option, i) => (
-                                            <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}><ApartmentIcon className='me-1' />{option["Company Name"]}</Option>
-                                        ))}
-                                        {filteredContactsForSearchBox.length > 0 ? filteredContactsForSearchBox.map((option, i) => (
-                                            <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo, option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
-                                        )) : contactsForSearchBoxNotFound ? <></> : contacts.map((option, i) => (
-                                            <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo, option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
-                                        ))}
-                                    </Listbox>}
+                                        {isSearch && <Listbox sx={{ zIndex: 1 }}>
+                                            {filteredClientsForSearchBox.length > 0 ? filteredClientsForSearchBox.map((option, i) => (
+                                                <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}>
+                                                    <ApartmentIcon className='me-1' />
+                                                    {option["Company Name"]}</Option>
+                                            )) : clientsForSearchBoxNotFound ? <></> : clients.map((option, i) => (
+                                                <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}><ApartmentIcon className='me-1' />{option["Company Name"]}</Option>
+                                            ))}
+                                            {filteredContactsForSearchBox.length > 0 ? filteredContactsForSearchBox.map((option, i) => (
+                                                <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo, option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
+                                            )) : contactsForSearchBoxNotFound ? <></> : contacts.map((option, i) => (
+                                                <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo, option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
+                                            ))}
+                                        </Listbox>}
 
                                     </AutocompleteWrapper>
                                 </Layout>
@@ -866,22 +866,7 @@ function Client() {
                                 </Box>
                                 {/*  */}
 
-                                <Box className="mb-2 ms-3">
-                                    {Object.keys(objFilter).map((item) => {
-                                        return <Button sx={{ backgroundColor: objFilterColor[item][0] }} className='btn-white text-white'><span className='text-white'>{item}: {objFilter[item][0]}</span>
-                                            <span onClick={() => handleFilterDeletion(item)} className="material-symbols-outlined font-16 text-white">
-                                                close
-                                            </span></Button>
-                                    })}
-
-                                    {Object.keys(objFilter).length > 0 && <span className='pointer text-danger ms-2' onClick={handleClearAll}>
-                                        <ClearIcon className='font-26' />
-                                    </span>}
-
-                                    {/* <Fab size="small" className='btn-plus  ms-2' aria-label="add">
-                                <AddIcon />
-                            </Fab> */}
-                                </Box></>}
+                            </>}
                         </Box>
 
                         <Box className=''>
@@ -930,6 +915,24 @@ function Client() {
                                 setIsGridView(!isGridView);
                             }} />
                             </div>} */}
+                    </Box>
+
+
+                    <Box className="mb-2 ms-3">
+                        {Object.keys(objFilter).map((item) => {
+                            return <Button sx={{ backgroundColor: objFilterColor[item][0] }} className='btn-white text-white'><span className='text-white'>{item}: {objFilter[item][0]}</span>
+                                <span onClick={() => handleFilterDeletion(item)} className="material-symbols-outlined font-16 text-white">
+                                    close
+                                </span></Button>
+                        })}
+
+                        {Object.keys(objFilter).length > 0 && <span className='pointer text-danger ms-2' onClick={handleClearAll}>
+                            <ClearIcon className='font-26' />
+                        </span>}
+
+                        {/* <Fab size="small" className='btn-plus  ms-2' aria-label="add">
+                                <AddIcon />
+                            </Fab> */}
                     </Box>
 
 

@@ -12,6 +12,8 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import DescriptionIcon from '@mui/icons-material/Description';
 import PushPinIcon from '@mui/icons-material/PushPin';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -179,7 +181,23 @@ function NewTodoList() {
                 </Box>
             </Box>
 
-            <Box className='clearfix'>
+
+            {/*  */}
+            <Box className='no-touch'>
+                <nav class="cd-vertical-nav">
+                    <ul>
+                        <li><a href="#section1" class="active"><span class="label">Task Due <br />Soon</span>
+                        <EventNoteIcon className='hover-icon' />
+                        </a></li>
+                        <li><a href="#section2" class=""><span class="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li><a href="#section3" class=""><span class="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li><a href="#section4" class=""><span class="label">Recently Access Documents</span><EventNoteIcon className='hover-icon' /></a></li>
+                    </ul>
+                </nav>
+            </Box>
+            {/*  */}
+
+            <Box className='pe-5'>
 
                 <Typography variant='subtitle1' className='font-18 bold mb-2'>Task Due Soon</Typography>
 
@@ -292,6 +310,7 @@ function NewTodoList() {
                                                     aria-haspopup="true"
                                                     aria-expanded={open ? 'true' : undefined}
                                                     onClick={handleClick}
+                                                    className='font-14'
                                                 >
                                                     priority
                                                 </Button>
@@ -316,7 +335,7 @@ function NewTodoList() {
 
                                     <Box className='mt-2'>
                                         <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
-                                        <Button variant="outlined">Defer</Button>
+                                        <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
                                     </Box>
 
                                 </Box>
@@ -404,7 +423,7 @@ function NewTodoList() {
 
                                     <Box className='mt-2'>
                                         <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
-                                        <Button variant="outlined">Defer</Button>
+                                        <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
                                     </Box>
 
                                     <Box className="todo-list-details d-flex align-items-center user-dropdown">
@@ -507,7 +526,7 @@ function NewTodoList() {
 
                                     <Box className='mt-2'>
                                         <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
-                                        <Button variant="outlined">Defer</Button>
+                                        <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
                                     </Box>
 
                                 </Box>

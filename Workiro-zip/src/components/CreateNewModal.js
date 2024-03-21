@@ -2493,6 +2493,7 @@ export default function CreateNewModalTask({ ...props }) {
                                             aria-haspopup="true"
                                             aria-expanded={openSelectFile ? 'true' : undefined}
                                             onClick={handleClickSelectFile}
+                                            className="btn-blue-2"
                                         >
                                             Select file
                                         </Button>
