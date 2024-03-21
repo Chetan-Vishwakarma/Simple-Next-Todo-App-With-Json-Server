@@ -18,7 +18,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, MenuItem } from '@mui/material';
 import logo from "../images/logo.png";
 import user from "../images/user.jpg";
@@ -110,6 +110,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export default function SidebarNav() {
 
+  const location = useLocation();
+
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -157,7 +159,6 @@ export default function SidebarNav() {
   const opens = Boolean(anchorEl);
   const opens2 = Boolean(anchorEl);
   const handleClick = (event) => {
-    console.log("current target",event.currentTarget);
     event.preventDefault();
     setAnchorEl(event.currentTarget);
   };
@@ -193,15 +194,25 @@ export default function SidebarNav() {
   });
   }
 
+  const [tabs,setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active:false }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active:false }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active:false },  { tabLink: "/dashboard/Connections", tabName: 'Connections', active:false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active:false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active:false }]);
+
   React.useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setFolderId(localStorage.getItem("FolderId"));
     setPassword(localStorage.getItem("Password"));
     setEmail(localStorage.getItem("Email"));
     Json_Get_CRM_UserByProjectId();
+    // console.log("location Object",location.pathname.split("/").pop());
+    tabs.length>0&&tabs.map(itm=>{
+      if(itm.tabLink.split("/").pop() === location.pathname.split("/").pop()){
+        itm.active=true;
+      }else{
+        itm.active=false;
+      }
+    })
+    
   }, []);
-
-  const [tabs,setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active:false }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active:false }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active:true },  { tabLink: "/dashboard/Connections", tabName: 'Connections', active:false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active:false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active:false }]);
+  
   
   return (
     <>

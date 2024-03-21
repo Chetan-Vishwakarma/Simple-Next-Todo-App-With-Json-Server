@@ -20,6 +20,7 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import moment from 'moment';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
+import { data } from 'jquery';
 
 
 function TodoList() {
@@ -29,7 +30,7 @@ function TodoList() {
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
 
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
-    const [userId,setUserId] = useState(localStorage.getItem("UserId"));
+    const [userId, setUserId] = useState(localStorage.getItem("UserId"));
 
 
 
@@ -40,20 +41,23 @@ function TodoList() {
     //let Clsp = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
     const [allTask, setAllTask] = useState([]);
-    const [actualData,setActualData] = useState([]);
+    const [actualData, setActualData] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
 
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const [loadMore, setLoadMore] = useState(50);
 
-    const [folders,setFolders] = useState([]);
-    const [selectedFolder,setSelectedFolder] = useState("Folder");
-    const [selectedStatus,setSelectedStatus] = useState("Status");
-    const [selectedType,setSelectedType] = useState("Source");
-    const [taskFilter,setTaskFilter] = useState({}); 
+    const [folders, setFolders] = useState([]);
+    const [selectedFolder, setSelectedFolder] = useState("Folder");
+    const [selectedStatus, setSelectedStatus] = useState("Status");
+    const [selectedType, setSelectedType] = useState("Source");
+    const [taskFilter, setTaskFilter] = useState({});
 
-    const [selectedSortBy,setSelectedSortBy] = useState("Sort By");
+    const [selectedSortBy, setSelectedSortBy] = useState("Sort By");
+    const [selectedGroupBy, setSelectedGroupBy] = useState("Group By");
+
+    const [dataInGroup, setDataInGroup] = useState([]);
 
     // for date datepicker
     const [state, setState] = useState({
@@ -105,7 +109,7 @@ function TodoList() {
                     if (data) {
                         let json = JSON.parse(data);
                         console.log("Json_CRM_GetOutlookTask", json);
-                        let result = json.Table.filter((el)=>el.Source==="CRM" || el.Source==="Portal");
+                        let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
                         const formattedTasks = result.map((task) => {
                             let timestamp;
                             if (task.EndDateTime) {
@@ -119,12 +123,12 @@ function TodoList() {
                         });
 
                         // setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
-                        
+
                         // let tasks = formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime);
                         // let myTasks = tasks.filter((item)=>item.AssignedToID.split(",").includes(userId));
-                        let myTasks = formattedTasks.filter((item)=>item.AssignedToID.split(",").includes(userId));
+                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
 
-                        let hasCreationDate = myTasks.filter((item)=>item.CreationDate!==null).map((task) => {
+                        let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                             let timestamp;
                             if (task.CreationDate) {
                                 timestamp = parseInt(task.CreationDate.slice(6, -2));
@@ -150,11 +154,12 @@ function TodoList() {
 
 
 
-                        setActualData([...myTasks]);
+                        // setActualData([...myTasks]);
+                        setActualData([...hasCreationDate]);
                         setAllTask([...hasCreationDate]);
                         Json_GetFolders();
                         // console.log("modified tasks: ",myTasks);
-                        
+
                         // console.log("modified tasks",formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
                         // setAllTask(json.Table);
                     }
@@ -252,12 +257,12 @@ function TodoList() {
         setAge(event.target.value);
     };
 
-    useEffect(()=>{
-        let fltData =  actualData.filter(function (obj) {
+    useEffect(() => {
+        let fltData = actualData.filter(function (obj) {
             return Object.keys(taskFilter).every(function (key) {
-                if (taskFilter[key][0].length > 0 || typeof taskFilter[key][0]==="object") {
+                if (taskFilter[key][0].length > 0 || typeof taskFilter[key][0] === "object") {
                     if (obj[key] && obj[key] !== undefined && obj[key] !== "") {
-                        if(key === "EndDateTime"){
+                        if (key === "EndDateTime") {
                             let docDate = obj[key];
                             let sDate = taskFilter[key][0];
                             let eDate = taskFilter[key][1];
@@ -278,8 +283,8 @@ function TodoList() {
 
                             // console.log("For Filter Criteria",df1,"------------",df2);
                             // console.log("For Filter Criteria",fltD1,"------------",fltD2);
-                        }else{
-                            return obj[key].toString().toLowerCase().includes(taskFilter[key][0].toString().toLowerCase()); 
+                        } else {
+                            return obj[key].toString().toLowerCase().includes(taskFilter[key][0].toString().toLowerCase());
                         }
                         // return obj[key].toString().toLowerCase().includes(my_criteria[key][0].toString().toLowerCase());
                     }
@@ -298,31 +303,30 @@ function TodoList() {
         // }
         // setDataNotFoundBoolean(false);
         // setAdvFilteredResult(fltData);
-    },[taskFilter]);
+    }, [taskFilter]);
 
-    function handleFilterDeletion(target){
+    function handleFilterDeletion(target) {
         let obj = Object.keys(taskFilter).filter(objKey =>
-            objKey !== target).reduce((newObj, key) =>
-            {
+            objKey !== target).reduce((newObj, key) => {
                 newObj[key] = taskFilter[key];
                 return newObj;
             }, {}
-        );
+            );
         setTaskFilter(obj);
     }
-    const formatDatePickerDate = (dateString) =>{
+    const formatDatePickerDate = (dateString) => {
         const dateObject = new Date(dateString);
 
         const day = String(dateObject.getDate()).padStart(2, '0');
         const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Adding 1 to adjust for zero-based index
         const year = dateObject.getFullYear();
-        
+
         return `${day}/${month}/${year}`;
     }
     const handleCallback = (start, end) => {
         // let startDate = formatDatePickerDate(start._d);
         // let endDate = formatDatePickerDate(end._d);
-        setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});
+        setTaskFilter({ ...taskFilter, "EndDateTime": [start._d, end._d] });
 
         // console.log("Start: ",start._d);
         // console.log("End: ",end._d);
@@ -350,19 +354,89 @@ function TodoList() {
     const label =
         start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY');
 
-    const handleDescending=()=>{
-        switch(selectedSortBy){
-            // case selectedSortBy
+    const handleDescending = () => {
+        switch (selectedSortBy) {
+            case "EndDateTime":
+                let sotEndDate = [...actualData].sort((a, b) => b.EndDateTime - a.EndDateTime);
+                setAllTask(sotEndDate);
+                return;
+            case "CreationDate":
+                let sortStartDate = [...actualData].sort((a, b) => b.CreationDate - a.CreationDate);
+                setAllTask(sortStartDate);
+                return;
+            case "Subject":
+                let sortSubject = [...actualData].sort((a, b) => b.Subject.localeCompare(a.Subject));
+                setAllTask(sortSubject);
+                return;
+            case "Client":
+                let fltData = [...actualData].filter(itm => itm.Client !== null);
+                let sortClient = [...fltData].sort((a, b) => b.Client.localeCompare(a.Client));
+                setAllTask(sortClient);
+                return;
+            case "Priority":
+                let sortPriority = [...actualData].sort((a, b) => b.Priority - a.Priority);
+                setAllTask(sortPriority);
+                return;
+            case "Section":
+                let sortSection = [...actualData].sort((a, b) => b.Section.split(" ")[1] - a.Section.split(" ")[1]);
+                setAllTask(sortSection);
+                return;
+            default:
+                return;
         }
     }
-    const handleAscending=()=>{
-
+    const handleAscending = () => {
+        switch (selectedSortBy) {
+            case "EndDateTime":
+                let sotEndDate = [...actualData].sort((a, b) => a.EndDateTime - b.EndDateTime);
+                setAllTask(sotEndDate);
+                return;
+            case "CreationDate":
+                let sortStartDate = [...actualData].sort((a, b) => a.CreationDate - b.CreationDate);
+                setAllTask(sortStartDate);
+                return;
+            case "Subject":
+                let sortSubject = [...actualData].sort((a, b) => a.Subject.localeCompare(b.Subject));
+                setAllTask(sortSubject);
+                return;
+            case "Client":
+                let fltData = [...actualData].filter(itm => itm.Client !== null);
+                let sortClient = [...fltData].sort((a, b) => a.Client.localeCompare(b.Client));
+                setAllTask(sortClient);
+                return;
+            case "Priority":
+                let sortPriority = [...actualData].sort((a, b) => a.Priority - b.Priority);
+                setAllTask(sortPriority);
+                return;
+            case "Section":
+                let sortSection = [...actualData].sort((a, b) => a.Section.split(" ")[1] - b.Section.split(" ")[1]);
+                setAllTask(sortSection);
+                return;
+            default:
+                return;
+        }
     }
-    const handleSortBy=(check)=>{
-        if(check){
+    const handleSortBy = (check) => {
+        if (check) {
             handleDescending();
-        }else{
+        } else {
             handleAscending();
+        }
+    }
+    function groupByProperty(data, property) {
+        return data.reduce((acc, obj) => {
+            const value = obj[property];
+            acc[value] = acc[value] || [];
+            acc[value].push(obj);
+            return acc;
+        }, {});
+    }
+    const handleGrouping=(val)=>{
+        setSelectedGroupBy(val);
+        if(val!=="Group By"){
+            let groupedData = groupByProperty(allTask,val);
+            // console.log("Grouped Data: ",groupedData);
+            setDataInGroup(groupedData);
         }
     }
 
@@ -375,7 +449,7 @@ function TodoList() {
                     <Autocomplete
                         disablePortal
                         id="combo-box-demo"
-                        options={allTask.map((itm)=>({value:itm.Subject,label:itm.Subject}))}
+                        options={allTask.map((itm) => ({ value: itm.Subject, label: itm.Subject }))}
                         sx={{ width: 230 }}
                         size='small'
                         renderInput={(params) => <TextField sx={{ fontSize: 14 }} {...params} label="Subject" className='font-14' />}
@@ -388,19 +462,19 @@ function TodoList() {
                             id="demo-simple-select"
                             value={selectedFolder}
                             label="Folder"
-                            onChange={(e)=>{
+                            onChange={(e) => {
                                 setSelectedFolder(e.target.value);
-                                if(e.target.value==="Folder"){
+                                if (e.target.value === "Folder") {
                                     handleFilterDeletion("Folder");
                                     return;
-                                }else{
-                                    setTaskFilter({...taskFilter,Folder:[e.target.value]})
+                                } else {
+                                    setTaskFilter({ ...taskFilter, Folder: [e.target.value] })
                                 }
                             }}
                             className='custom-dropdown'
                         >
                             <MenuItem value="Folder">Folders</MenuItem>
-                            {folders.length>0 && folders.map(fld=><MenuItem value={fld.Folder}>{fld.Folder}</MenuItem>)}
+                            {folders.length > 0 && folders.map(fld => <MenuItem value={fld.Folder}>{fld.Folder}</MenuItem>)}
                         </Select>
                     </FormControl>
 
@@ -411,13 +485,13 @@ function TodoList() {
                             id="demo-simple-select"
                             value={selectedType}
                             label="Type"
-                            onChange={(e)=>{
+                            onChange={(e) => {
                                 setSelectedType(e.target.value);
-                                if(e.target.value==="Source"){
+                                if (e.target.value === "Source") {
                                     handleFilterDeletion("Source");
                                     return;
-                                }else{
-                                    setTaskFilter({...taskFilter,Source:[e.target.value]});
+                                } else {
+                                    setTaskFilter({ ...taskFilter, Source: [e.target.value] });
                                 }
                             }}
                             className='custom-dropdown'
@@ -435,30 +509,30 @@ function TodoList() {
                             id="demo-simple-select"
                             value={selectedStatus}
                             label="Status"
-                            onChange={(e)=>{
+                            onChange={(e) => {
                                 setSelectedStatus(e.target.value);
-                                if(e.target.value==="Status"){
+                                if (e.target.value === "Status") {
                                     handleFilterDeletion("Status");
                                     return;
-                                }else{
-                                    setTaskFilter({...taskFilter,Status:[e.target.value]});
+                                } else {
+                                    setTaskFilter({ ...taskFilter, Status: [e.target.value] });
                                 }
                             }}
                             className='custom-dropdown'
                         >
-                            {["Status","Done","Not Started","In Progress","Waiting on someone else","Deferred","Deleted","Completed"].map(itm=><MenuItem value={itm}>{itm}</MenuItem>)}
+                            {["Status", "Done", "Not Started", "In Progress", "Waiting on someone else", "Deferred", "Deleted", "Completed"].map(itm => <MenuItem value={itm}>{itm}</MenuItem>)}
                         </Select>
                     </FormControl>
                 </Box>
 
                 <Box className='d-flex align-items-center'>
-                <Box sx={{ m: 1, width: 240 }}>
+                    <Box sx={{ m: 1, width: 240 }}>
                         <DateRangePicker
                             initialSettings={{
                                 startDate: start.toDate(),
                                 endDate: end.toDate(),
                                 ranges: {
-                                    'All':[
+                                    'All': [
                                         moment({ year: 1990, month: 0, day: 1 }).toDate(),
                                         moment().toDate()
                                     ],
@@ -499,7 +573,7 @@ function TodoList() {
                                 }}
                             >
                                 <i className="fa fa-calendar"></i>&nbsp;
-                                <span>{label==="Invalid date - Invalid date"?"All":label}</span> <i className="fa fa-caret-down"></i>
+                                <span>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
                             </div>
                         </DateRangePicker>
                     </Box>
@@ -511,35 +585,38 @@ function TodoList() {
                             id="demo-simple-select"
                             value={selectedSortBy}
                             label="Group By"
-                            onChange={(e)=>setSelectedSortBy(e.target.value)}
+                            onChange={(e) => setSelectedSortBy(e.target.value)}
                             className='custom-dropdown'
 
                         >
-                            <MenuItem value="Sort By">Sort By</MenuItem>
+                            <MenuItem value="Sort By" onClick={()=>setAllTask([...actualData])}>Sort By</MenuItem>
                             <MenuItem value="Client">Client Name</MenuItem>
                             <MenuItem value="EndDateTime">Due Date</MenuItem>
                             <MenuItem value="Priority">Priority</MenuItem>
                             <MenuItem value="Section">Section</MenuItem>
                             <MenuItem value="CreationDate">Start Date</MenuItem>
-                            <MenuItem value="Status">Status</MenuItem>
                             <MenuItem value="Subject">Subject</MenuItem>
                         </Select>
                     </FormControl>
-                        {selectedSortBy!=="Sort By"&&<Checkbox onClick={(e)=>handleSortBy(e.target.checked)} className='p-0' {...label} icon={<UpgradeIcon />} checkedIcon={<VerticalAlignBottomIcon />} />}
+                    {selectedSortBy !== "Sort By" && <Checkbox onClick={(e) => handleSortBy(e.target.checked)} className='p-0' {...label} icon={<UpgradeIcon />} checkedIcon={<VerticalAlignBottomIcon />} />}
                     <FormControl size="small" className='select-border ms-3'>
                         {/* <InputLabel id="demo-simple-select-label">Sort By</InputLabel> */}
                         <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
-                            value={age}
+                            value={selectedGroupBy}
                             label="Sort By"
-                            onChange={handleChange}
+                            onChange={(e)=>handleGrouping(e.target.value)}
                             className='custom-dropdown'
 
                         >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
+                            <MenuItem value="Group By">Group By</MenuItem>
+                            <MenuItem value="Client">Client Name</MenuItem>
+                            <MenuItem value="EndDateTime">Due Date</MenuItem>
+                            <MenuItem value="Priority">Priority</MenuItem>
+                            <MenuItem value="Section">Section</MenuItem>
+                            <MenuItem value="CreationDate">Start Date</MenuItem>
+                            <MenuItem value="Subject">Subject</MenuItem>
                         </Select>
 
                     </FormControl>
@@ -552,23 +629,90 @@ function TodoList() {
                     </ToggleButtonGroup>
 
 
-                    
+
                 </Box>
             </Box>
 
             <Box className='main-filter-box mt-1'>
                 <Box className='row'>
                     {
-                        allTask.length > 0 &&
+                        Object.keys(dataInGroup).length>0?(<>
+                            {Object.keys(dataInGroup).map((key)=>{
+                                return <>
+                                  <h4>{key==1?"High":key==2?"Medium":key}</h4>
+                                  {dataInGroup[key].length>0&& dataInGroup[key].map((item,index)=>{
+                                    return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                                    <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
+    
+                                        <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
+                                            sx={{
+                                                '&.Mui-checked': {
+                                                    color: "secondary",
+                                                },
+                                            }}
+                                        />
+    
+                                        <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> {item.Source}</Typography>
+    
+                                        <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
+    
+                                        <Box className='d-flex align-items-center justify-content-between'>
+                                            <Typography variant='subtitle1'><pan className='text-gray'>
+                                                {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
+                                                {/* <a href='#'>Patrick</a>, */}
+                                                <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +1</a></Typography>
+                                            <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
+                                        </Box>
+    
+                                        <Box className='d-flex align-items-center justify-content-between'>
+                                            <Typography variant='subtitle1'>{item.Client}</Typography>
+                                            <Typography variant='subtitle1'>
+    
+                                                <Box>
+                                                    <Button
+                                                        id="basic-button"
+                                                        aria-controls={open ? 'basic-menu' : undefined}
+                                                        aria-haspopup="true"
+                                                        aria-expanded={open ? 'true' : undefined}
+                                                        onClick={handleClick}
+                                                        className='font-14'
+                                                    >
+                                                        {item.Status && item.Status}
+                                                    </Button>
+                                                    <Menu
+                                                        id="basic-menu"
+                                                        className='custom-dropdown'
+                                                        anchorEl={anchorEl}
+                                                        open={open}
+                                                        onClose={handleClose}
+                                                        MenuListProps={{
+                                                            'aria-labelledby': 'basic-button',
+                                                        }}
+                                                    >
+                                                        <MenuItem onClick={handleClose}>High</MenuItem>
+                                                        <MenuItem onClick={handleClose}>Medium</MenuItem>
+                                                        <MenuItem onClick={handleClose}>Low</MenuItem>
+                                                    </Menu>
+                                                </Box>
+    
+                                            </Typography>
+                                        </Box>
+    
+                                        <Box className='mt-2'>
+                                            <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
+                                            <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
+                                        </Box>
+    
+                                    </Box>
+                                </Box>
+                                  })}
+                                </>
+                            })}
+                        </>):(allTask.length > 0 &&
                         allTask.slice(0, loadMore).map((item, index) => {
                             return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                 <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
 
-                                    {/* <Checkbox className='text-blue check-todo'
-                                    {...label}
-                                    icon={<RadioButtonUncheckedIcon />}
-                                    checkedIcon={<CheckCircleIcon />}
-                                /> */}
                                     <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
                                         sx={{
                                             '&.Mui-checked': {
@@ -586,7 +730,7 @@ function TodoList() {
                                             {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
                                             {/* <a href='#'>Patrick</a>, */}
                                             <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +1</a></Typography>
-                                        <Typography variant='subtitle1 sembold'>{item["EndDateTime"]&&startFormattingDate(item["EndDateTime"])}</Typography>
+                                        <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                     </Box>
 
                                     <Box className='d-flex align-items-center justify-content-between'>
@@ -630,7 +774,7 @@ function TodoList() {
 
                                 </Box>
                             </Box>
-                        })
+                        }))
                     }
 
                     {/* <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
