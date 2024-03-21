@@ -1,6 +1,8 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material';
+import company from "../../images/building.jpg";
 import user from "../../images/user.jpg";
+import user2 from "../../images/user-2.png";
 import noData from "../../images/no-data.gif";
 import Button from "@mui/material/Button";
 import Fab from '@mui/material/Fab';
@@ -66,7 +68,7 @@ function CardView(props) {
               <Box className='inner-client-box'>
                 {/* <img src={pin} className='pin-img' /> */}
                 <Box className='client-img'>
-                  <img src={user} />
+                  <img src={company} />
                 </Box>
                 <Typography variant="h2">{item["Company Name"] && (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
                 {/* <Typography variant='h4'>Admin</Typography> */}
@@ -140,7 +142,7 @@ function CardView(props) {
               </Box>
 
               <Box className='client-img'>
-                <img src={user} />
+                <img src={company} />
               </Box>
               <Typography variant="h2">{item["Company Name"] && (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
               {/* <Typography variant='h4'>Admin</Typography> */}
@@ -262,7 +264,7 @@ function CardView(props) {
 
               {/* <img src={pin} className='pin-img' /> */}
               <Box className='client-img'>
-                <img src={user} />
+                <img src={user2} />
               </Box>
               <Typography variant="h2">{item["First Name"] && item["First Name"]} {item["Last Name"] && item["Last Name"]}</Typography>
               <Typography variant='h4'>{item["Company Name"] && item["Company Name"].substr(0.15) + '.'}</Typography>
