@@ -17,7 +17,7 @@ function CardView(props) {
         handleContactNavigattion, handleFolderSelection, isFolder, allFolders, isChoice, isAdvFilter, selectedProperty, 
         setSelectedProperty, clientKeys, contactKeys, selectedPropertyValue, setSelectedPropertyValue, advSearchKeyValue,
         setSelectedColor, colorArr, handleAdvanceFilterAgain, handleFilterRemove, onlyClients, filteredClients, clients,
-        onlyContacts, filteredContacts, contacts, selectedFolder, selectedChoice, basedOnClientContactAndAll,objFilter,isDataNotFoundInClient,isDataNotFoundInContact,isDataNotFoundInBoth,objFilterColor
+        onlyContacts, filteredContacts, contacts, selectedFolder, selectedChoice, basedOnClientContactAndAll,objFilter,isDataNotFoundInClient,isDataNotFoundInContact,isDataNotFoundInBoth,objFilterColor,objFilterClient
     } = props;
   return (
     <>
@@ -34,7 +34,7 @@ function CardView(props) {
                                         <Typography variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].substr(0, 22) + ".")}</Typography>
                                         <Box className='color-filter-box mt-3'>
                                             {Object.keys(objFilter).map((key)=>{
-                                              return <Typography variant='span' className='color-filter-row' style={{ color: objFilterColor[key], borderColor: objFilterColor[key] }}>{item[key]}</Typography>;
+                                              return <Typography variant='span' className='color-filter-row' style={{ color: objFilterColor[key], borderColor: objFilterColor[key] }}>{key==="SourceName"?item["Source"]:item[key]}</Typography>;
                                             })}
                                             {/* <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
                                             <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>

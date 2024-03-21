@@ -6,24 +6,20 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import user from "../images/user.jpg";
-import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
-import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
-import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
-import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommanCLS from '../services/CommanService';
 
-import { Radio } from '@mui/material';
+import { Checkbox, Radio } from '@mui/material';
 import TaskDetailModal from './TaskDetailModal';
-import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import DownloadIcon from '@mui/icons-material/Download';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import moment from 'moment';
+import UpgradeIcon from '@mui/icons-material/Upgrade';
+import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 
 
 function TodoList() {
@@ -56,6 +52,8 @@ function TodoList() {
     const [selectedStatus,setSelectedStatus] = useState("Status");
     const [selectedType,setSelectedType] = useState("Source");
     const [taskFilter,setTaskFilter] = useState({}); 
+
+    const [selectedSortBy,setSelectedSortBy] = useState("Sort By");
 
     // for date datepicker
     const [state, setState] = useState({
@@ -117,9 +115,9 @@ function TodoList() {
                             }
 
                             const date = new Date(timestamp);
-                            let dateForm = startFormattingDate(date);
+                            // let dateForm = startFormattingDate(date);
 
-                            return { ...task, EndDateTime: dateForm };
+                            return { ...task, EndDateTime: date };
                         });
 
                         // setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
@@ -259,22 +257,26 @@ function TodoList() {
     useEffect(()=>{
         let fltData =  actualData.filter(function (obj) {
             return Object.keys(taskFilter).every(function (key) {
-                if (taskFilter[key][0].length > 0) {
+                if (taskFilter[key][0].length > 0 || typeof taskFilter[key][0]==="object") {
                     if (obj[key] && obj[key] !== undefined && obj[key] !== "") {
                         if(key === "EndDateTime"){
-                            let d = obj[key].split("/");
-                            let df = `${d[2]}-${d[1]}-${d[0]}`
-                            // console.log("For Filter Criteria Before",df);
-                            let docDate = new Date(df);
-                            // console.log("For Filter Criteria",docDate);
-                            let d1 = taskFilter[key][0].split("/");
-                            let df1 = `${d1[2]}-${d1[1]}-${d1[0]}`;
-                            let fltD1 = new Date(df1);
-                            let d2 = taskFilter[key][1].split("/");
-                            let df2 = `${d2[2]}-${d2[1]}-${d2[0]}`;
-                            let fltD2 = new Date(df2);
+                            let docDate = obj[key];
+                            let sDate = taskFilter[key][0];
+                            let eDate = taskFilter[key][1];
+                            return docDate >= sDate && docDate <= eDate;
+                            // let d = obj[key].split("/");
+                            // let df = `${d[2]}-${d[1]}-${d[0]}`
+                            // // console.log("For Filter Criteria Before",df);
+                            // let docDate = new Date(df);
+                            // // console.log("For Filter Criteria",docDate);
+                            // let d1 = taskFilter[key][0].split("/");
+                            // let df1 = `${d1[2]}-${d1[1]}-${d1[0]}`;
+                            // let fltD1 = new Date(df1);
+                            // let d2 = taskFilter[key][1].split("/");
+                            // let df2 = `${d2[2]}-${d2[1]}-${d2[0]}`;
+                            // let fltD2 = new Date(df2);
 
-                            return docDate >= fltD1 && docDate <= fltD2;
+                            // return docDate >= fltD1 && docDate <= fltD2;
 
                             // console.log("For Filter Criteria",df1,"------------",df2);
                             // console.log("For Filter Criteria",fltD1,"------------",fltD2);
@@ -320,9 +322,9 @@ function TodoList() {
         return `${day}/${month}/${year}`;
     }
     const handleCallback = (start, end) => {
-        let startDate = formatDatePickerDate(start._d);
-        let endDate = formatDatePickerDate(end._d);
-        setTaskFilter({...taskFilter, "EndDateTime": [startDate, endDate]});
+        // let startDate = formatDatePickerDate(start._d);
+        // let endDate = formatDatePickerDate(end._d);
+        setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});
 
         // console.log("Start: ",start._d);
         // console.log("End: ",end._d);
@@ -349,6 +351,22 @@ function TodoList() {
 
     const label =
         start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY');
+
+    const handleDescending=()=>{
+        switch(selectedSortBy){
+            // case selectedSortBy
+        }
+    }
+    const handleAscending=()=>{
+
+    }
+    const handleSortBy=(check)=>{
+        if(check){
+            handleDescending();
+        }else{
+            handleAscending();
+        }
+    }
 
     return (
         <Box className="container-fluid p-0">
@@ -493,17 +511,23 @@ function TodoList() {
                         <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
-                            value={age}
+                            value={selectedSortBy}
                             label="Group By"
-                            onChange={handleChange}
+                            onChange={(e)=>setSelectedSortBy(e.target.value)}
                             className='custom-dropdown'
 
                         >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
+                            <MenuItem value="Sort By">Sort By</MenuItem>
+                            <MenuItem value="Client">Client Name</MenuItem>
+                            <MenuItem value="EndDateTime">Due Date</MenuItem>
+                            <MenuItem value="Priority">Priority</MenuItem>
+                            <MenuItem value="Section">Section</MenuItem>
+                            <MenuItem value="CreationDate">Start Date</MenuItem>
+                            <MenuItem value="Status">Status</MenuItem>
+                            <MenuItem value="Subject">Subject</MenuItem>
                         </Select>
                     </FormControl>
+                        {selectedSortBy!=="Sort By"&&<Checkbox onClick={(e)=>handleSortBy(e.target.checked)} className='p-0' {...label} icon={<UpgradeIcon />} checkedIcon={<VerticalAlignBottomIcon />} />}
                     <FormControl size="small" className='select-border ms-3'>
                         {/* <InputLabel id="demo-simple-select-label">Sort By</InputLabel> */}
                         <Select
@@ -564,7 +588,7 @@ function TodoList() {
                                             {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
                                             {/* <a href='#'>Patrick</a>, */}
                                             <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +1</a></Typography>
-                                        <Typography variant='subtitle1 sembold'>{item["EndDateTime"]&&item["EndDateTime"]}</Typography>
+                                        <Typography variant='subtitle1 sembold'>{item["EndDateTime"]&&startFormattingDate(item["EndDateTime"])}</Typography>
                                     </Box>
 
                                     <Box className='d-flex align-items-center justify-content-between'>
