@@ -24,7 +24,7 @@ function CardView(props) {
     handleContactNavigattion, handleFolderSelection, isFolder, allFolders, isChoice, isAdvFilter, selectedProperty,
     setSelectedProperty, clientKeys, contactKeys, selectedPropertyValue, setSelectedPropertyValue, advSearchKeyValue,
     setSelectedColor, colorArr, handleAdvanceFilterAgain, handleFilterRemove, onlyClients, filteredClients, clients,
-    onlyContacts, filteredContacts, contacts, selectedFolder, selectedChoice, basedOnClientContactAndAll, objFilter, isDataNotFoundInClient, isDataNotFoundInContact, isDataNotFoundInBoth, objFilterColor, objFilterClient
+    onlyContacts, filteredContacts, contacts, selectedFolder, selectedChoice, basedOnClientContactAndAll, objFilter, isDataNotFoundInClient, isDataNotFoundInContact, isDataNotFoundInBoth, objFilterColor, loadMore
   } = props;
   return (
     <>
@@ -95,7 +95,7 @@ function CardView(props) {
           </Box>
         }) : isDataNotFoundInClient ? <Box className='text-center no-data-found'>
           <img src={noData} />
-          <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : clients.map((item, i) => {
+          <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : clients.slice(0,loadMore).map((item, i) => {
           return <Box key={i} className='client-box-main'>
             <Box className='client-box sadik' onClick={() => handleClientNavigation(item.OriginatorNo)}>
               {/* <img src={pin} className='pin-img' /> */}
@@ -123,16 +123,15 @@ function CardView(props) {
                     <ul className='p-0 mb-0'>
                       <li>
                         <LocalPhoneIcon />
-                        +1 324 714-4949
+                        {(item["Contact Number"]&&item["Contact Number"]!=="")? item["Contact Number"]: "ContactNo Not Found"}
                       </li>
                       <li>
                         <EmailIcon className='font-16' />
-                         test32@gmail.com</li>
-                      
+                        {(item["E-Mail"]&&item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Found"}
+                      </li>
                       <li>
                         <LocationOnIcon />
-
-                        Fourth Floor Abbots House
+                        {(item["Address Line 1"]&&item["Address Line 1"]!=="")? item["Address Line 1"]: "Address Not Found"}
                       </li>
                     </ul>
                   </Box>
@@ -144,12 +143,7 @@ function CardView(props) {
               </Box>
               <Typography variant="h2">{item["Company Name"] && (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
               {/* <Typography variant='h4'>Admin</Typography> */}
-              <Typography variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].substr(0, 22) + ".")}</Typography>
-              {/* <Box className='color-filter-box mt-3'>
-                    <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
-                    <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
-                    <Typography variant='span' className='color-filter-row' style={{ color: "#01018d", borderColor: "#01018d" }}>Blue</Typography>
-                </Box> */}
+              <Typography variant='p' className='mb-0'>{item["CompanyNo"]!==""&&item["CompanyNo"]!==null ? item["CompanyNo"] : "CH No. Not Found"}</Typography>
             </Box>
           </Box>
         })))
@@ -206,7 +200,7 @@ function CardView(props) {
                 </Box>
                 <Typography variant="h2">{item["First Name"] && item["First Name"]} {item["Last Name"] && item["Last Name"]}</Typography>
                 <Typography variant='h4'>{item["Company Name"] && item["Company Name"].substr(0.15) + '.'}</Typography>
-                <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"] && item["E-Mail"].substr(0, 22) + "."}</Typography>
+                <Typography variant='p' className='mb-0'>{item["E-Mail"] && item["E-Mail"].substr(0, 22) + "."}</Typography>
               </Box>
 
               <Box className='color-filter-box mt-3'>
@@ -218,7 +212,7 @@ function CardView(props) {
           </Box>
         }) : isDataNotFoundInContact ? <Box className='text-center no-data-found'>
         <img src={noData} />
-        <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : contacts.map((item, i) => {
+        <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : contacts.slice(0, loadMore).map((item, i) => {
           return <Box key={i} className='client-box-main'>
             <Box className='client-box sadik' onClick={() => handleContactNavigattion(item.OriginatorNo, item.ContactNo)}>
 
