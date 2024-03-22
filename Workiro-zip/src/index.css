@@ -799,10 +799,35 @@ span.tox-statusbar__branding {
 }
 
 .copy-icon {
-  position: absolute;
-  top: 0;
+  position: absolute !important;
+  top: -3px;
   z-index: 1;
   right: 5px;
+}
+
+.btn-arrow {
+  font-size: 12px !important;
+  position: relative;
+  /* border-radius: 2px 0px 0px 2px !important; */
+  margin-right: 32px !important;
+}
+.btn-arrow .arrow-icon {
+  position: absolute;
+  right: -36px;
+  font-size: 56px;
+  /* color: #20aedb; */
+  top: -12px;
+  transition: .1s all ease;
+}
+.btn-arrow:hover {
+  background-color: #4780FF !important;
+}
+.btn-arrow:hover .arrow-icon {
+  color: #4780FF;
+}
+.btn-arrow .close {
+  position: relative;
+  z-index: 3;
 }
 
 .inner-info-details ul li {

@@ -2198,7 +2198,7 @@ export default function CreateNewModalTask({ ...props }) {
                                         {!isVisibleByTypeCRM && (<>
                                             <Box className="mt-3 mb-3">
                                                 <textarea
-                                                    className="form-control textarea textarea-text resize-none"
+                                                    className="form-control textarea-text resize-none"
                                                     placeholder="Description"
                                                     value={txtdescription} // Bind the value to the state
                                                     onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
@@ -2411,6 +2411,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                                 type="text"
                                                                 className="form-control"
                                                                 placeholder="Search..."
+                                                                size='small'
                                                                 value={filterText}
                                                                 onChange={(e) => setFilterText(e.target.value)}
                                                             />
@@ -2490,6 +2491,7 @@ export default function CreateNewModalTask({ ...props }) {
                                             MenuListProps={{
                                                 'aria-labelledby': 'basic-button',
                                             }}
+                                            className="custom-dropdown"
                                         >
                                             <label htmlFor="file-upload">
                                                 <MenuItem>Upload File(s)</MenuItem>
@@ -2549,6 +2551,7 @@ export default function CreateNewModalTask({ ...props }) {
 
                                                                 <Menu
                                                                     id="basic-menu"
+                                                                    className="custom-dropdown"
                                                                     anchorEl={anchorElDoc}
                                                                     open={openDoc && selectedFileIndex === index} // Ensure the menu opens only for the selected file
                                                                     onClose={handleCloseDoc}
@@ -2643,7 +2646,7 @@ export default function CreateNewModalTask({ ...props }) {
                                             }}
                                             className="search-list-main"
                                         >
-                                            <Box className=''>
+                                            <Box className='px-1'>
                                                 <TextField
                                                     label="Search"
                                                     variant="outlined"
@@ -2742,17 +2745,19 @@ export default function CreateNewModalTask({ ...props }) {
                                             anchorEl={clientAnchorEl}
                                             open={Boolean(clientAnchorEl)}
                                             onClose={handleCloseClient}
+                                            className="search-list-main"
                                             MenuListProps={{
                                                 "aria-labelledby": "basic-button",
                                             }}
                                         >
-                                            <Box className='px-3' >
+                                            <Box className='px-1' >
                                                 <TextField
                                                     label="Search"
                                                     variant="outlined"
                                                     value={searchQuery}
                                                     onChange={handleSearchInputChange}
                                                     sx={{ width: "100%" }}
+                                                    size="small"
                                                 />
                                             </Box>
 
@@ -2789,6 +2794,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                             </ListItemAvatar> */}
                                                             <ListItemText
                                                                 primary={item.Client}
+                                                                className='m-0'
                                                                 secondary={
                                                                     <React.Fragment>
                                                                         <Typography
@@ -2834,17 +2840,19 @@ export default function CreateNewModalTask({ ...props }) {
                                             id="basic-menu"
                                             anchorEl={sectionAnchorEl}
                                             open={Boolean(sectionAnchorEl)}
+                                            className="search-list-main"
                                             MenuListProps={{
                                                 "aria-labelledby": "basic-button",
                                             }}
                                         >
-                                            <Box className='px-3'>
+                                            <Box className='px-1'>
                                                 <TextField
                                                     label="Search"
                                                     variant="outlined"
                                                     value={searchSectionQuery}
                                                     onChange={handleSearchInputChangeSection}
                                                     sx={{ width: "100%" }}
+                                                    size="small"
                                                 />
                                             </Box>
                                             <List
@@ -2878,6 +2886,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                                 </ListItemAvatar> */}
                                                                 <ListItemText
                                                                     primary={item.Sec}
+                                                                    className='m-0'
                                                                     secondary={
                                                                         <React.Fragment>
                                                                             <Typography
@@ -3056,6 +3065,8 @@ export default function CreateNewModalTask({ ...props }) {
                                         MenuListProps={{
                                             "aria-labelledby": "basic-button",
                                         }}
+                                        className="sadik"
+                                        className="search-list-main"
                                     >
 
                                         <List
@@ -3086,6 +3097,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                             </ListItemAvatar> */}
                                                             <ListItemText
                                                                 primary={item.name}
+                                                                className='m-0'
                                                                 secondary={
                                                                     <React.Fragment>
                                                                         <Typography
@@ -3133,6 +3145,7 @@ export default function CreateNewModalTask({ ...props }) {
                                         MenuListProps={{
                                             "aria-labelledby": "basic-button",
                                         }}
+                                        className="search-list-main"
                                     >
                                         <List
                                             sx={{
@@ -3163,6 +3176,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                             </ListItemAvatar> */}
                                                             <ListItemText
                                                                 primary={item.name}
+                                                                className='m-0'
                                                                 secondary={
                                                                     <React.Fragment>
                                                                         <Typography

@@ -16,6 +16,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 
 const CommonFilters = [
@@ -945,13 +946,14 @@ function Client() {
                             </div>} */}
                     </Box>
 
-
                     <Box className="">
                         {Object.keys(objFilter).map((item) => {
-                            return <Button sx={{ backgroundColor: objFilterColor[item][0] }} className='btn-white text-white'><span className='text-white'>{item}: {objFilter[item][0]}</span>
-                                <span onClick={() => handleFilterDeletion(item)} className="material-symbols-outlined font-16 text-white">
+                            return <Button sx={{ backgroundColor: objFilterColor[item][0] }} className='btn-arrow'><span className='text-white me-1'>{item}: {objFilter[item][0]}</span>
+                                <span onClick={() => handleFilterDeletion(item)} className="material-symbols-outlined font-16 text-white close">
                                     close
-                                </span></Button>
+                                </span>
+                                <PlayArrowIcon className='arrow-icon' sx={{ color: objFilterColor[item][0] }}  />
+                            </Button>
                         })}
 
                         {Object.keys(objFilter).length > 0 && <span className='pointer text-danger ms-2' onClick={handleClearAll}>
@@ -963,10 +965,7 @@ function Client() {
                             </Fab> */}
                     </Box>
 
-
-                    
-                        {isGridView && <Box className='mt-3'><ClientGrid selectedChoice={selectedChoice} data={selectedChoice === "All" || selectedChoice === "Contacts" ? contacts : clients} handleContactNavigattion={handleContactNavigattion} handleClientNavigation={handleClientNavigation} /></Box>}
-                    
+                    {isGridView && <Box className='mt-3'><ClientGrid selectedChoice={selectedChoice} data={selectedChoice === "All" || selectedChoice === "Contacts" ? contacts : clients} handleContactNavigattion={handleContactNavigattion} handleClientNavigation={handleClientNavigation} /></Box>}
 
                     <Box className='row'>
                         {isCardView && <CardView

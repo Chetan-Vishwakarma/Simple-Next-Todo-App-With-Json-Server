@@ -10,6 +10,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import user from "../images/user.jpg";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommanCLS from '../services/CommanService';
@@ -526,8 +527,8 @@ function TodoList() {
                     </FormControl>
                 </Box>
 
-                <Box className='d-flex align-items-center'>
-                    <Box sx={{ m: 1, width: 240 }}>
+                <Box className='d-flex align-items-end'>
+                    <Box>
                         <DateRangePicker
                             initialSettings={{
                                 startDate: start.toDate(),
@@ -562,18 +563,11 @@ function TodoList() {
                             }}
                             onCallback={handleCallback}
                         >
-                            <div
-                                id="reportrange"
-                                className="col-4"
-                                style={{
-                                    background: '#fff',
-                                    cursor: 'pointer',
-                                    padding: '5px 10px',
-                                    border: '1px solid #ccc',
-                                    width: '100%',
-                                }}
+                            <div className='pointer me-2 d-flex align-items-center' id="reportrange"
                             >
-                                <i className="fa fa-calendar"></i>&nbsp;
+                                <i className="fa fa-calendar"></i>
+                                <CalendarMonthIcon className='me-2 text-red' />
+
                                 <span>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
                             </div>
                         </DateRangePicker>
@@ -588,7 +582,6 @@ function TodoList() {
                             label="Group By"
                             onChange={(e) => setSelectedSortBy(e.target.value)}
                             className='custom-dropdown'
-
                         >
                             <MenuItem value="Sort By" onClick={()=>setAllTask([...actualData])}>Sort By</MenuItem>
                             <MenuItem value="Client">Client Name</MenuItem>
