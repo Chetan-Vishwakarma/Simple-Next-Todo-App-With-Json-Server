@@ -4,10 +4,6 @@ import company from "../../images/building.svg";
 import user from "../../images/user.jpg";
 import user2 from "../../images/user-2.svg";
 import noData from "../../images/no-data.gif";
-import Button from "@mui/material/Button";
-import Fab from '@mui/material/Fab';
-import AddIcon from '@mui/icons-material/Add';
-import { styled } from '@mui/system';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 
@@ -46,15 +42,16 @@ function CardView(props) {
 
                     <ul className='p-0 mb-0'>
                       <li>
-                        <ApartmentIcon />
-                         test32@gmail.com</li>
-                      <li>
-                        <ApartmentIcon />
-                        +1 324 714-4949
+                        <LocalPhoneIcon />
+                        {(item["Contact Number"]&&item["Contact Number"]!=="")? item["Contact Number"]: "ContactNo Not Found"}
                       </li>
                       <li>
-                        <ApartmentIcon />
-                        Fourth Floor Abbots House
+                        <EmailIcon className='font-16' />
+                        {(item["E-Mail"]&&item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Found"}
+                      </li>
+                      <li>
+                        <LocationOnIcon />
+                        {(item["Address Line 1"]&&item["Address Line 1"]!=="")? item["Address Line 1"]: "Address Not Found"}
                       </li>
                     </ul>
                   </Box>
@@ -74,7 +71,7 @@ function CardView(props) {
                 {/* <Typography variant='h4'>Admin</Typography> */}
                 <Typography variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].substr(0, 22) + ".")}</Typography>
               </Box>
-              <Box className='color-filter-box mt-3'>
+              {Object.keys(objFilter).length>0&&<Box className='color-filter-box mt-3'>
                 {Object.keys(objFilter).map((key) => {
                   console.log("sdfkfdsksdfj",key);
                   return <Typography variant='span' className='color-filter-row' style={{ color: objFilterColor[key], borderColor: objFilterColor[key] }}>
@@ -89,10 +86,7 @@ function CardView(props) {
                       : item[key]
                     }</Typography>;
                 })}
-                {/* <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
-                                            <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
-                                            <Typography variant='span' className='color-filter-row' style={{ color: "#01018d", borderColor: "#01018d" }}>Blue</Typography> */}
-              </Box>
+              </Box>}
             </Box>
           </Box>
         }) : isDataNotFoundInClient ? <Box className='text-center no-data-found'>
@@ -179,15 +173,15 @@ function CardView(props) {
                     <ul className='p-0 mb-0'>
                       <li>
                         <LocalPhoneIcon />
-                        +1 324 714-4949
+                        {(item["Mobile"] && item["Mobile"]!=="")? item["Mobile"]: "Mobile No. Not Found"}
                       </li>
                       <li>
                         <EmailIcon className='font-16' />
-                         test32@gmail.com</li>
-                      
+                        {(item["E-Mail"] && item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Found"}
+                      </li>
                       <li>
                         <LocationOnIcon />
-                        Fourth Floor Abbots House
+                        {(item["Address 1"] && item["Address 1"]!=="")? item["Address 1"]: "Address Not Found"}
                       </li>
                     </ul>
                   </Box>
@@ -202,7 +196,7 @@ function CardView(props) {
                 </Box>
                 <Typography variant="h2">{item["First Name"] && item["First Name"]} {item["Last Name"] && item["Last Name"]}</Typography>
                 <Typography variant='h4'>{item["Company Name"] && item["Company Name"].substr(0.15) + '.'}</Typography>
-                <Typography variant='p' className='mb-0'>{item["E-Mail"] && item["E-Mail"].substr(0, 22) + "."}</Typography>
+                {/* <Typography variant='p' className='mb-0'>{item["E-Mail"] && item["E-Mail"].substr(0, 22) + "."}</Typography> */}
               </Box>
 
               <Box className='color-filter-box mt-3'>
@@ -241,15 +235,15 @@ function CardView(props) {
                     <ul className='p-0 mb-0'>
                       <li>
                         <LocalPhoneIcon />
-                        +1 324 714-4949
+                        {(item["Mobile"] && item["Mobile"]!=="")? item["Mobile"]: "Mobile No. Not Found"}
                       </li>
                       <li>
                         <EmailIcon className='font-16' />
-                         test32@gmail.com</li>
-                      
+                        {(item["E-Mail"] && item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Found"}
+                      </li>
                       <li>
                         <LocationOnIcon />
-                        Fourth Floor Abbots House
+                        {(item["Address 1"] && item["Address 1"]!=="")? item["Address 1"]: "Address Not Found"}
                       </li>
                     </ul>
                   </Box>
@@ -262,7 +256,7 @@ function CardView(props) {
               </Box>
               <Typography variant="h2">{item["First Name"] && item["First Name"]} {item["Last Name"] && item["Last Name"]}</Typography>
               <Typography variant='h4'>{item["Company Name"] && item["Company Name"].substr(0.15) + '.'}</Typography>
-              <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].substr(0, 22) + ".")}</Typography>
+              {/* <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].substr(0, 22) + ".")}</Typography> */}
             </Box>
           </Box>
         })))
@@ -270,6 +264,5 @@ function CardView(props) {
     </>
   )
 }
-
 
 export default CardView

@@ -740,9 +740,10 @@ function Client() {
                                         <Box className='clearfix'>
 
                                             <Box className='clearfix'>
-                                                <Typography variant='Body1' className='mb-2 d-block  bold'>Filter:</Typography>
+                                                <Typography variant='Body1' className='mb-2 d-block  bold'>Filter: {Object.keys(objFilter).length}/3</Typography>
 
-                                                <Box className='d-flex justify-content-between'>
+                                                {
+                                                Object.keys(objFilter).length<3&&<><Box className='d-flex justify-content-between'>
                                                     <Box className='row w-100 pe-3'>
                                                         <Box className='col-md-6'>
                                                             <Box className='mb-2'>
@@ -868,14 +869,6 @@ function Client() {
                                                                         setIsFirstColorSelected(false);
                                                                     }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[5] }}></button></>
                                                             }
-                                                            {/* {
-                                                            advSearchKeyValue.length === 1 && <><button onClick={() => setSelectedColor(colorArr[2])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[2] }}></button>
-                                                                <button onClick={() => setSelectedColor(colorArr[3])} type='button' className='btn-color' style={{ backgroundColor: colorArr[3] }}></button></>
-                                                        }
-                                                        {
-                                                            advSearchKeyValue.length === 2 && <><button onClick={() => setSelectedColor(colorArr[4])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[4] }}></button>
-                                                                <button onClick={() => setSelectedColor(colorArr[5])} type='button' className='btn-color' style={{ backgroundColor: colorArr[5] }}></button></>
-                                                        } */}
                                                         </Box>
                                                     </Box>
                                                 </Box>
@@ -888,6 +881,8 @@ function Client() {
                                                         </span> Add
                                                     </Button>
                                                 </Box>
+                                                </>
+                                                }
                                             </Box>
                                         </Box>
                                     </Box>}
