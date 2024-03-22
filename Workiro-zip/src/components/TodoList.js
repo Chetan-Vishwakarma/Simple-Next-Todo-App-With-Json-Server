@@ -267,26 +267,9 @@ function TodoList() {
                             let sDate = taskFilter[key][0];
                             let eDate = taskFilter[key][1];
                             return docDate >= sDate && docDate <= eDate;
-                            // let d = obj[key].split("/");
-                            // let df = `${d[2]}-${d[1]}-${d[0]}`
-                            // // console.log("For Filter Criteria Before",df);
-                            // let docDate = new Date(df);
-                            // // console.log("For Filter Criteria",docDate);
-                            // let d1 = taskFilter[key][0].split("/");
-                            // let df1 = `${d1[2]}-${d1[1]}-${d1[0]}`;
-                            // let fltD1 = new Date(df1);
-                            // let d2 = taskFilter[key][1].split("/");
-                            // let df2 = `${d2[2]}-${d2[1]}-${d2[0]}`;
-                            // let fltD2 = new Date(df2);
-
-                            // return docDate >= fltD1 && docDate <= fltD2;
-
-                            // console.log("For Filter Criteria",df1,"------------",df2);
-                            // console.log("For Filter Criteria",fltD1,"------------",fltD2);
                         } else {
                             return obj[key].toString().toLowerCase().includes(taskFilter[key][0].toString().toLowerCase());
                         }
-                        // return obj[key].toString().toLowerCase().includes(my_criteria[key][0].toString().toLowerCase());
                     }
                 }
             });
@@ -367,6 +350,11 @@ function TodoList() {
             case "Subject":
                 let sortSubject = [...actualData].sort((a, b) => b.Subject.localeCompare(a.Subject));
                 setAllTask(sortSubject);
+                // if(dataInGroup){
+                //     let sortSubjectInGroup = [...actualData].sort((a, b) => b.Subject.localeCompare(a.Subject));
+                //     let data = groupByProperty(sortSubjectInGroup,selectedGroupBy);
+                //     setDataInGroup(data);
+                // }
                 return;
             case "Client":
                 let fltData = [...actualData].filter(itm => itm.Client !== null);
