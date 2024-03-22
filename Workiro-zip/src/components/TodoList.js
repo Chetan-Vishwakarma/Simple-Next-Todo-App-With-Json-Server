@@ -24,6 +24,8 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import moment from 'moment';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
+import noData from "../../src/images/no-data.gif";
+
 import { data } from 'jquery';
 
 
@@ -50,7 +52,7 @@ function TodoList() {
 
     const [anchorEl, setAnchorEl] = React.useState(null);
 
-    const [loadMore, setLoadMore] = useState(50);
+    const [loadMore, setLoadMore] = useState(20);
 
     const [folders, setFolders] = useState([]);
     const [selectedFolder, setSelectedFolder] = useState("Folder");
@@ -111,7 +113,7 @@ function TodoList() {
                     if (data) {
                         let json = JSON.parse(data);
                         console.log("Json_CRM_GetOutlookTask", json.Table);
-                        let result = json.Table.filter((el)=>el.Source==="CRM" || el.Source==="Portal");
+                        let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
                         const formattedTasks = result.map((task) => {
                             let timestamp;
                             if (task.EndDateTime) {
@@ -140,20 +142,6 @@ function TodoList() {
 
                             return { ...task, CreationDate: date };
                         }).sort((a, b) => b.CreationDate - a.CreationDate);
-                        // console.log("hasCreationDate",hasCreationDate);
-
-                        // myTasks.map((task) => {
-                        //     console.log("creation date: ",task.CreationDate);
-                        //     let timestamp;
-                        //     if (task.CreationDate) {
-                        //         timestamp = parseInt(task.CreationDate.slice(6, -2));
-                        //     }
-
-                        //     const date = new Date(timestamp);
-
-                        //     return { ...task, CreationDate: date };
-                        // });
-
 
 
                         // setActualData([...myTasks]);
@@ -180,14 +168,14 @@ function TodoList() {
         console.log("Load more data2", e);
         if (window.innerHeight + e.target.documentElement.scrollTop + 1 >= e.target.documentElement.scrollHeight) {
             // Check if there's more data to load before updating loadMore
-           
+
             setLoadMore((prevLoadMore) => prevLoadMore + 50);
         }
     }
-    
-    useEffect(() => {        
+
+    useEffect(() => {
         window.addEventListener('scroll', eventHandler);
-    
+
         return () => {
             console.log("Removing scroll event listener");
             window.removeEventListener('scroll', eventHandler);
@@ -196,16 +184,16 @@ function TodoList() {
 
     useEffect(() => {
         Json_CRM_GetOutlookTask();
-      
+
     }, [isApi])
 
 
     function DownLoadAttachment(Path) {
-      let  OBJ = {};
+        let OBJ = {};
         OBJ.agrno = agrno;
         OBJ.Email = Email;
         OBJ.password = password;
-        OBJ.path = Path;       
+        OBJ.path = Path;
         Cls.CallNewService('GetBase64FromFilePath', function (status, Data) {
             if (status) {
                 var jsonObj = JSON.parse(Data);
@@ -229,7 +217,7 @@ function TodoList() {
 
     function FileType(fileName) {
         // for (var i = 0; i < fileName.length; i++) {
-       let Typest = fileName.lastIndexOf(".");
+        let Typest = fileName.lastIndexOf(".");
         var Type = fileName.slice(Typest + 1);
         var type = Type.toUpperCase();
         return type;
@@ -290,16 +278,11 @@ function TodoList() {
         });
 
         setAllTask([...fltData]);
-        console.log("For Tasks filter", fltData.length);
-        console.log("For Tasks filter", fltData);
-        // console.log("For Tasks filter", fltData[0]?.Description);
-        // console.log("For Tasks filter", fltData[fltData.length-1]?.Description);
-        // if(fltData.length===0){
-        //     setDataNotFoundBoolean(true);
-        //     return;
-        // }
-        // setDataNotFoundBoolean(false);
-        // setAdvFilteredResult(fltData);
+        if (Object.keys(dataInGroup).length > 0) {
+            let gData = groupByProperty(fltData, selectedGroupBy);
+            setDataInGroup(gData);
+        }
+
     }, [taskFilter]);
 
     function handleFilterDeletion(target) {
@@ -311,108 +294,91 @@ function TodoList() {
             );
         setTaskFilter(obj);
     }
-    const formatDatePickerDate = (dateString) => {
-        const dateObject = new Date(dateString);
-
-        const day = String(dateObject.getDate()).padStart(2, '0');
-        const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Adding 1 to adjust for zero-based index
-        const year = dateObject.getFullYear();
-
-        return `${day}/${month}/${year}`;
-    }
     const handleCallback = (start, end) => {
-        // let startDate = formatDatePickerDate(start._d);
-        // let endDate = formatDatePickerDate(end._d);
         setTaskFilter({ ...taskFilter, "EndDateTime": [start._d, end._d] });
-
-        // console.log("Start: ",start._d);
-        // console.log("End: ",end._d);
-        // console.log("Start: ",start._i);
-        // console.log("End: ",end._i);
-        // if(start._i==="All"&&end._i==="All"){
-        //     handleFilterDeletion('Item Date');
-        //     // let obj = Object.keys(filterCriteria).filter(objKey =>
-        //     //     objKey !== 'Item Date').reduce((newObj, key) =>
-        //     //     {
-        //     //         newObj[key] = filterCriteria[key];
-        //     //         return newObj;
-        //     //     }, {}
-        //     // );
-        //     // setFilterCriteria(obj);
-
-        // }else{
-        //     let startDate = formatDatePickerDate(start._d);
-        //     let endDate = formatDatePickerDate(end._d);
-        //     setFilterCriteria({...filterCriteria, "Item Date": [startDate, endDate]});
-        // }
         setState({ start, end });
     };
 
     const label =
         start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY');
 
+    const isGroupDataExist = (orderedData) => {
+        if (Object.keys(dataInGroup).length > 0) {
+            let data = groupByProperty(orderedData, selectedGroupBy);
+            setDataInGroup(data);
+        }
+    }
+
     const handleDescending = () => {
         switch (selectedSortBy) {
             case "EndDateTime":
-                let sotEndDate = [...actualData].sort((a, b) => b.EndDateTime - a.EndDateTime);
+                let sotEndDate = [...allTask].sort((a, b) => b.EndDateTime - a.EndDateTime);
                 setAllTask(sotEndDate);
+                isGroupDataExist(sotEndDate);
                 return;
             case "CreationDate":
-                let sortStartDate = [...actualData].sort((a, b) => b.CreationDate - a.CreationDate);
+                let sortStartDate = [...allTask].sort((a, b) => b.CreationDate - a.CreationDate);
                 setAllTask(sortStartDate);
+                isGroupDataExist(sortStartDate);
                 return;
             case "Subject":
-                let sortSubject = [...actualData].sort((a, b) => b.Subject.localeCompare(a.Subject));
+                let sortSubject = [...allTask].sort((a, b) => b.Subject.localeCompare(a.Subject));
                 setAllTask(sortSubject);
-                // if(dataInGroup){
-                //     let sortSubjectInGroup = [...actualData].sort((a, b) => b.Subject.localeCompare(a.Subject));
-                //     let data = groupByProperty(sortSubjectInGroup,selectedGroupBy);
-                //     setDataInGroup(data);
-                // }
+                isGroupDataExist(sortSubject);
                 return;
             case "Client":
-                let fltData = [...actualData].filter(itm => itm.Client !== null);
+                let fltData = [...allTask].filter(itm => itm.Client !== null);
                 let sortClient = [...fltData].sort((a, b) => b.Client.localeCompare(a.Client));
                 setAllTask(sortClient);
+                isGroupDataExist(sortClient);
                 return;
             case "Priority":
-                let sortPriority = [...actualData].sort((a, b) => b.Priority - a.Priority);
+                let sortPriority = [...allTask].sort((a, b) => b.Priority - a.Priority);
                 setAllTask(sortPriority);
+                isGroupDataExist(sortPriority);
                 return;
             case "Section":
-                let sortSection = [...actualData].sort((a, b) => b.Section.split(" ")[1] - a.Section.split(" ")[1]);
+                let sortSection = [...allTask].sort((a, b) => b.Section.split(" ")[1] - a.Section.split(" ")[1]);
                 setAllTask(sortSection);
+                isGroupDataExist(sortSection);
                 return;
             default:
                 return;
         }
     }
+
     const handleAscending = () => {
         switch (selectedSortBy) {
             case "EndDateTime":
-                let sotEndDate = [...actualData].sort((a, b) => a.EndDateTime - b.EndDateTime);
+                let sotEndDate = [...allTask].sort((a, b) => a.EndDateTime - b.EndDateTime);
                 setAllTask(sotEndDate);
+                isGroupDataExist(sotEndDate);
                 return;
             case "CreationDate":
-                let sortStartDate = [...actualData].sort((a, b) => a.CreationDate - b.CreationDate);
+                let sortStartDate = [...allTask].sort((a, b) => a.CreationDate - b.CreationDate);
                 setAllTask(sortStartDate);
+                isGroupDataExist(sortStartDate);
                 return;
             case "Subject":
-                let sortSubject = [...actualData].sort((a, b) => a.Subject.localeCompare(b.Subject));
+                let sortSubject = [...allTask].sort((a, b) => a.Subject.localeCompare(b.Subject));
                 setAllTask(sortSubject);
+                isGroupDataExist(sortSubject);
                 return;
             case "Client":
-                let fltData = [...actualData].filter(itm => itm.Client !== null);
+                let fltData = [...allTask].filter(itm => itm.Client !== null);
                 let sortClient = [...fltData].sort((a, b) => a.Client.localeCompare(b.Client));
                 setAllTask(sortClient);
+                isGroupDataExist(sortClient);
                 return;
             case "Priority":
-                let sortPriority = [...actualData].sort((a, b) => a.Priority - b.Priority);
+                let sortPriority = [...allTask].sort((a, b) => a.Priority - b.Priority);
                 setAllTask(sortPriority);
+                isGroupDataExist(sortPriority);
                 return;
             case "Section":
-                let sortSection = [...actualData].sort((a, b) => a.Section.split(" ")[1] - b.Section.split(" ")[1]);
+                let sortSection = [...allTask].sort((a, b) => a.Section.split(" ")[1] - b.Section.split(" ")[1]);
                 setAllTask(sortSection);
+                isGroupDataExist(sortSection);
                 return;
             default:
                 return;
@@ -433,12 +399,14 @@ function TodoList() {
             return acc;
         }, {});
     }
-    const handleGrouping=(val)=>{
+    const handleGrouping = (val) => {
         setSelectedGroupBy(val);
-        if(val!=="Group By"){
-            let groupedData = groupByProperty(allTask,val);
+        if (val !== "Group By") {
+            let groupedData = groupByProperty(allTask, val);
             // console.log("Grouped Data: ",groupedData);
             setDataInGroup(groupedData);
+        } else if (val === "Group By") {
+            setDataInGroup([]);
         }
     }
 
@@ -583,7 +551,7 @@ function TodoList() {
                             onChange={(e) => setSelectedSortBy(e.target.value)}
                             className='custom-dropdown'
                         >
-                            <MenuItem value="Sort By" onClick={()=>setAllTask([...actualData])}>Sort By</MenuItem>
+                            <MenuItem value="Sort By" onClick={() => setAllTask([...actualData])}>Sort By</MenuItem>
                             <MenuItem value="Client">Client Name</MenuItem>
                             <MenuItem value="EndDateTime">Due Date</MenuItem>
                             <MenuItem value="Priority">Priority</MenuItem>
@@ -600,7 +568,7 @@ function TodoList() {
                             id="demo-simple-select"
                             value={selectedGroupBy}
                             label="Sort By"
-                            onChange={(e)=>handleGrouping(e.target.value)}
+                            onChange={(e) => handleGrouping(e.target.value)}
                             className='custom-dropdown'
 
                         >
@@ -629,152 +597,151 @@ function TodoList() {
 
 
             <Box className='main-filter-box'>
-<Box className='row'>
+                <Box className='row'>
 
-                            {
+                    {
 
-Object.keys(dataInGroup).length>0?(<>
-    {Object.keys(dataInGroup).map((key)=>{
-        return <>
-          <h4>{key==1?"High":key==2?"Medium":key}</h4>
-          {dataInGroup[key].length>0&& dataInGroup[key].map((item,index)=>{
-            return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
-            <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
+                        Object.keys(dataInGroup).length > 0 ? (<>
+                            {Object.keys(dataInGroup).map((key) => {
+                                return <>
+                                    <h4>{key == 1 ? "High" : key == 2 ? "Medium" : key}</h4>
+                                    {dataInGroup[key].length > 0 && dataInGroup[key].map((item, index) => {
+                                        return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                                            <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
 
-                <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
-                    sx={{
-                        '&.Mui-checked': {
-                            color: "secondary",
-                        },
-                    }}
-                />
-
-                <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> {item.Source}</Typography>
-
-                <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
-
-                <Box className='d-flex align-items-center justify-content-between'>
-                    <Typography variant='subtitle1'><pan className='text-gray'>
-                        {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
-                        {/* <a href='#'>Patrick</a>, */}
-                        <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +1</a></Typography>
-                    <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
-                </Box>
-
-                <Box className='d-flex align-items-center justify-content-between'>
-                    <Typography variant='subtitle1'>{item.Client}</Typography>
-                    <Typography variant='subtitle1'>
-
-                        <Box>
-                            <Button
-                                id="basic-button"
-                                aria-controls={open ? 'basic-menu' : undefined}
-                                aria-haspopup="true"
-                                aria-expanded={open ? 'true' : undefined}
-                                onClick={handleClick}
-                                className='font-14'
-                            >
-                                {item.Status && item.Status}
-                            </Button>
-                            <Menu
-                                id="basic-menu"
-                                className='custom-dropdown'
-                                anchorEl={anchorEl}
-                                open={open}
-                                onClose={handleClose}
-                                MenuListProps={{
-                                    'aria-labelledby': 'basic-button',
-                                }}
-                            >
-                                <MenuItem onClick={handleClose}>High</MenuItem>
-                                <MenuItem onClick={handleClose}>Medium</MenuItem>
-                                <MenuItem onClick={handleClose}>Low</MenuItem>
-                            </Menu>
-                        </Box>
-
-                    </Typography>
-                </Box>
-
-                <Box className='mt-2'>
-                    <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
-                    <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
-                </Box>
-
-            </Box>
-        </Box>
-          })}
-        </>
-    })}
-</>):(allTask.length > 0 &&
-allTask.slice(0, loadMore).map((item, index) => {
-
-                            
-                            
-                            return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
-                                <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
-
-                                    <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
-                                        sx={{
-                                            '&.Mui-checked': {
-                                                color: "secondary",
-                                            },
-                                        }}
-                                    />
-
-                                    <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> {item.Source}</Typography>
-
-                                    <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
-
-                                    <Box className='d-flex align-items-center justify-content-between'>
-                                        <Typography variant='subtitle1'><pan className='text-gray'>
-                                            {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
-                                            {/* <a href='#'>Patrick</a>, */}
-                                            <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +1</a></Typography>
-                                        <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
-                                    </Box>
-
-                                    <Box className='d-flex align-items-center justify-content-between'>
-                                        <Typography variant='subtitle1'>{item.Client}</Typography>
-                                        <Typography variant='subtitle1'>
-
-                                            <Box>
-                                                <Button
-                                                    id="basic-button"
-                                                    aria-controls={open ? 'basic-menu' : undefined}
-                                                    aria-haspopup="true"
-                                                    aria-expanded={open ? 'true' : undefined}
-                                                    onClick={handleClick}
-                                                    className='font-14'
-                                                >
-                                                    {item.Status && item.Status}
-                                                </Button>
-                                                <Menu
-                                                    id="basic-menu"
-                                                    className='custom-dropdown'
-                                                    anchorEl={anchorEl}
-                                                    open={open}
-                                                    onClose={handleClose}
-                                                    MenuListProps={{
-                                                        'aria-labelledby': 'basic-button',
+                                                <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
+                                                    sx={{
+                                                        '&.Mui-checked': {
+                                                            color: "secondary",
+                                                        },
                                                     }}
-                                                >
-                                                    <MenuItem onClick={handleClose}>High</MenuItem>
-                                                    <MenuItem onClick={handleClose}>Medium</MenuItem>
-                                                    <MenuItem onClick={handleClose}>Low</MenuItem>
-                                                </Menu>
+                                                />
+
+                                                <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> {item.Source}</Typography>
+
+                                                <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
+
+                                                <Box className='d-flex align-items-center justify-content-between'>
+                                                    <Typography variant='subtitle1'><pan className='text-gray'>
+                                                        {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
+                                                        {/* <a href='#'>Patrick</a>, */}
+                                                        <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +1</a></Typography>
+                                                    <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
+                                                </Box>
+
+                                                <Box className='d-flex align-items-center justify-content-between'>
+                                                    <Typography variant='subtitle1'>{item.Client}</Typography>
+                                                    <Typography variant='subtitle1'>
+
+                                                        <Box>
+                                                            <Button
+                                                                id="basic-button"
+                                                                aria-controls={open ? 'basic-menu' : undefined}
+                                                                aria-haspopup="true"
+                                                                aria-expanded={open ? 'true' : undefined}
+                                                                onClick={handleClick}
+                                                                className='font-14'
+                                                            >
+                                                                {item.Status && item.Status}
+                                                            </Button>
+                                                            <Menu
+                                                                id="basic-menu"
+                                                                className='custom-dropdown'
+                                                                anchorEl={anchorEl}
+                                                                open={open}
+                                                                onClose={handleClose}
+                                                                MenuListProps={{
+                                                                    'aria-labelledby': 'basic-button',
+                                                                }}
+                                                            >
+                                                                <MenuItem onClick={handleClose}>High</MenuItem>
+                                                                <MenuItem onClick={handleClose}>Medium</MenuItem>
+                                                                <MenuItem onClick={handleClose}>Low</MenuItem>
+                                                            </Menu>
+                                                        </Box>
+
+                                                    </Typography>
+                                                </Box>
+
+                                                <Box className='mt-2'>
+                                                    <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
+                                                    <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
+                                                </Box>
+
                                             </Box>
+                                        </Box>
+                                    })}
+                                </>
+                            })}
+                        </>) : (allTask.length > 0 ?
+                            (allTask.slice(0, loadMore).map((item, index) => {
+                                return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                                    <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
 
-                                        </Typography>
+                                        <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
+                                            sx={{
+                                                '&.Mui-checked': {
+                                                    color: "secondary",
+                                                },
+                                            }}
+                                        />
+
+                                        <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> {item.Source}</Typography>
+
+                                        <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
+
+                                        <Box className='d-flex align-items-center justify-content-between'>
+                                            <Typography variant='subtitle1'><pan className='text-gray'>
+                                                {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
+                                                {/* <a href='#'>Patrick</a>, */}
+                                                <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +1</a></Typography>
+                                            <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
+                                        </Box>
+
+                                        <Box className='d-flex align-items-center justify-content-between'>
+                                            <Typography variant='subtitle1'>{item.Client}</Typography>
+                                            <Typography variant='subtitle1'>
+
+                                                <Box>
+                                                    <Button
+                                                        id="basic-button"
+                                                        aria-controls={open ? 'basic-menu' : undefined}
+                                                        aria-haspopup="true"
+                                                        aria-expanded={open ? 'true' : undefined}
+                                                        onClick={handleClick}
+                                                        className='font-14'
+                                                    >
+                                                        {item.Status && item.Status}
+                                                    </Button>
+                                                    <Menu
+                                                        id="basic-menu"
+                                                        className='custom-dropdown'
+                                                        anchorEl={anchorEl}
+                                                        open={open}
+                                                        onClose={handleClose}
+                                                        MenuListProps={{
+                                                            'aria-labelledby': 'basic-button',
+                                                        }}
+                                                    >
+                                                        <MenuItem onClick={handleClose}>High</MenuItem>
+                                                        <MenuItem onClick={handleClose}>Medium</MenuItem>
+                                                        <MenuItem onClick={handleClose}>Low</MenuItem>
+                                                    </Menu>
+                                                </Box>
+
+                                            </Typography>
+                                        </Box>
+
+                                        <Box className='mt-2'>
+                                            <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
+                                            <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
+                                        </Box>
+
                                     </Box>
-
-                                    <Box className='mt-2'>
-                                        <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
-                                        <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
-                                    </Box>
-
                                 </Box>
-                            </Box>
-                        }))
+                            })) : <Box className='text-center no-data-found'>
+                                <img src={noData} />
+                                <h4 className='font-18 text-gray'>Data Not Found</h4></Box>)
                     }
 
                     {/* <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>

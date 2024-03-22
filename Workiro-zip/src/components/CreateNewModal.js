@@ -3065,7 +3065,6 @@ export default function CreateNewModalTask({ ...props }) {
                                         MenuListProps={{
                                             "aria-labelledby": "basic-button",
                                         }}
-                                        className="sadik"
                                         className="search-list-main"
                                     >
 

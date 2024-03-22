@@ -4,10 +4,6 @@ import company from "../../images/building.svg";
 import user from "../../images/user.jpg";
 import user2 from "../../images/user-2.svg";
 import noData from "../../images/no-data.gif";
-import Button from "@mui/material/Button";
-import Fab from '@mui/material/Fab';
-import AddIcon from '@mui/icons-material/Add';
-import { styled } from '@mui/system';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 
@@ -32,128 +28,121 @@ function CardView(props) {
     <>
       {
         isDataNotFoundInBoth ? <Box className='text-center no-data-found'>
-          <img src={noData} />
-          <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : (onlyClients && (filteredClients.length > 0 ? filteredClients.map((item, i) => {
-            return <Box key={i} className='client-box-main'>
-              <Box className='client-box' onClick={() => handleClientNavigation(item.OriginatorNo)}>
+        <img src={noData} />
+        <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : (onlyClients && (filteredClients.length > 0 ? filteredClients.map((item, i) => {
+          return <Box key={i} className='client-box-main'>
+            <Box className='client-box' onClick={() => handleClientNavigation(item.OriginatorNo)}>
 
-                <Box className='client-box-icons d-flex relative'>
+              <Box className='client-box-icons d-flex relative'>
 
-                  <Box className='info-details'>
-                    <ApartmentIcon />
-                    <Box className='inner-info-details'>
+                <Box className='info-details'>
+                  <ApartmentIcon />
+                  <Box className='inner-info-details'>
+                    <ContentCopyIcon />
 
-                      <Tooltip title="Copy Details" className='my-1 copy-icon'>
-                        <IconButton>
-                          <ContentCopyIcon className='font-18' />
-                        </IconButton>
-                      </Tooltip>
-
-                      <ul className='p-0 mb-0'>
-                        <li>
-                          <ApartmentIcon />
-                          test32@gmail.com</li>
-                        <li>
-                          <ApartmentIcon />
-                          +1 324 714-4949
-                        </li>
-                        <li>
-                          <ApartmentIcon />
-                          Fourth Floor Abbots House
-                        </li>
-                      </ul>
-                    </Box>
+                    <ul className='p-0 mb-0'>
+                      <li>
+                        <LocalPhoneIcon />
+                        {(item["Contact Number"]&&item["Contact Number"]!=="")? item["Contact Number"]: "ContactNo Not Found"}
+                      </li>
+                      <li>
+                        <EmailIcon className='font-16' />
+                        {(item["E-Mail"]&&item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Found"}
+                      </li>
+                      <li>
+                        <LocationOnIcon />
+                        {(item["Address Line 1"]&&item["Address Line 1"]!=="")? item["Address Line 1"]: "Address Not Found"}
+                      </li>
+                    </ul>
                   </Box>
-
-                  <InfoIcon />
-                  {/* <PersonIcon /> */}
-
                 </Box>
 
-                <Box className='inner-client-box'>
-                  {/* <img src={pin} className='pin-img' /> */}
-                  <Box className='client-img'>
-                    <img src={company} />
-                  </Box>
-                  <Typography variant="h2">{item["Company Name"] && (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
-                  {/* <Typography variant='h4'>Admin</Typography> */}
-                  <Typography variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].substr(0, 22) + ".")}</Typography>
-                </Box>
-                <Box className='color-filter-box mt-3'>
-                  {Object.keys(objFilter).map((key) => {
-                    console.log("sdfkfdsksdfj", key);
-                    return <Typography variant='span' className='color-filter-row' style={{ color: objFilterColor[key], borderColor: objFilterColor[key] }}>
-                      {
-                        key === "SourceName" ? item["Source"] && item["Source"]
-                          : key === "Address 1" ? item["Address Line 1"] && item["Address Line 1"]
-                            : key === "Address 2" ? item["Address Line 2"] && item["Address Line 2"]
-                              : key === "Address 3" ? item["Address Line 3"] && item["Address Line 3"]
-                                : key === "ContactNo" ? item["Contact Number"] && item["Contact Number"]
-                                  : key === "StatusName" ? item["Status"] && item["Status"]
-                                    : key === "SourceName" ? item["Source"] && item["Source"]
-                                      : item[key]
-                      }</Typography>;
-                  })}
-                  {/* <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
-                                            <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
-                                            <Typography variant='span' className='color-filter-row' style={{ color: "#01018d", borderColor: "#01018d" }}>Blue</Typography> */}
-                </Box>
+                <InfoIcon />
+                {/* <PersonIcon /> */}
+
               </Box>
-            </Box>
-          }) : isDataNotFoundInClient ? <Box className='text-center no-data-found'>
-            <img src={noData} />
-            <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : clients.slice(0, loadMore).map((item, i) => {
-              return <Box key={i} className='client-box-main'>
-                <Box className='client-box sadik' onClick={() => handleClientNavigation(item.OriginatorNo)}>
-                  {/* <img src={pin} className='pin-img' /> */}
 
-                  <Box className='client-box-icons d-flex'>
-                    {/* <PersonIcon className="me-2" /> */}
-                    <Tooltip title="Client" className='my-1'>
+              <Box className='inner-client-box'>
+                {/* <img src={pin} className='pin-img' /> */}
+                <Box className='client-img'>
+                  <img src={company} />
+                </Box>
+                <Typography variant="h2">{item["Company Name"] && (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
+                {/* <Typography variant='h4'>Admin</Typography> */}
+                <Typography variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].substr(0, 22) + ".")}</Typography>
+              </Box>
+              {Object.keys(objFilter).length>0&&<Box className='color-filter-box mt-3'>
+                {Object.keys(objFilter).map((key) => {
+                  console.log("sdfkfdsksdfj",key);
+                  return <Typography variant='span' className='color-filter-row' style={{ color: objFilterColor[key], borderColor: objFilterColor[key] }}>
+                    {
+                      key === "SourceName" ? item["Source"] &&  item["Source"]
+                      : key==="Address 1" ? item["Address Line 1"] && item["Address Line 1"]
+                      : key==="Address 2" ? item["Address Line 2"] && item["Address Line 2"]
+                      : key==="Address 3" ? item["Address Line 3"] && item["Address Line 3"]
+                      : key==="ContactNo" ? item["Contact Number"] && item["Contact Number"]
+                      : key==="StatusName" ? item["Status"] && item["Status"]
+                      : key==="SourceName" ? item["Source"] && item["Source"]
+                      : item[key]
+                    }</Typography>;
+                })}
+              </Box>}
+            </Box>
+          </Box>
+        }) : isDataNotFoundInClient ? <Box className='text-center no-data-found'>
+          <img src={noData} />
+          <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : clients.slice(0,loadMore).map((item, i) => {
+          return <Box key={i} className='client-box-main'>
+            <Box className='client-box sadik' onClick={() => handleClientNavigation(item.OriginatorNo)}>
+              {/* <img src={pin} className='pin-img' /> */}
+
+              <Box className='client-box-icons d-flex'>
+                {/* <PersonIcon className="me-2" /> */}
+                <Tooltip title="Client" className='my-1'>
+                  <IconButton>
+                    <ApartmentIcon />
+                  </IconButton>
+                </Tooltip>
+                <Box className='info-details'>
+                  <Tooltip title="" className='my-1'>
+                    <IconButton>
+                      <InfoIcon />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Box className='inner-info-details'>
+                    <Tooltip title="Copy Details" className='my-1 copy-icon'>
                       <IconButton>
-                        <ApartmentIcon />
+                        <ContentCopyIcon className='font-18' />
                       </IconButton>
                     </Tooltip>
-                    <Box className='info-details'>
-                      <Tooltip title="" className='my-1'>
-                        <IconButton>
-                          <InfoIcon />
-                        </IconButton>
-                      </Tooltip>
-
-                      <Box className='inner-info-details'>
-                        <Tooltip title="Copy Details" className='my-1 copy-icon'>
-                          <IconButton>
-                            <ContentCopyIcon className='font-18' />
-                          </IconButton>
-                        </Tooltip>
-                        <ul className='p-0 mb-0'>
-                          <li>
-                            <LocalPhoneIcon />
-                            {(item["Contact Number"] && item["Contact Number"] !== "") ? item["Contact Number"] : "ContactNo Not Found"}
-                          </li>
-                          <li>
-                            <EmailIcon className='font-16' />
-                            {(item["E-Mail"] && item["E-Mail"] !== "") ? item["E-Mail"] : "Email Not Found"}
-                          </li>
-                          <li>
-                            <LocationOnIcon />
-                            {(item["Address Line 1"] && item["Address Line 1"] !== "") ? item["Address Line 1"] : "Address Not Found"}
-                          </li>
-                        </ul>
-                      </Box>
-                    </Box>
+                    <ul className='p-0 mb-0'>
+                      <li>
+                        <LocalPhoneIcon />
+                        {(item["Contact Number"]&&item["Contact Number"]!=="")? item["Contact Number"]: "ContactNo Not Found"}
+                      </li>
+                      <li>
+                        <EmailIcon className='font-16' />
+                        {(item["E-Mail"]&&item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Found"}
+                      </li>
+                      <li>
+                        <LocationOnIcon />
+                        {(item["Address Line 1"]&&item["Address Line 1"]!=="")? item["Address Line 1"]: "Address Not Found"}
+                      </li>
+                    </ul>
                   </Box>
-
-                  <Box className='client-img'>
-                    <img src={company} />
-                  </Box>
-                  <Typography variant="h2">{item["Company Name"] && (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
-                  {/* <Typography variant='h4'>Admin</Typography> */}
-                  <Typography variant='p' className='mb-0'>{item["CompanyNo"] !== "" && item["CompanyNo"] !== null ? item["CompanyNo"] : "CH No. Not Found"}</Typography>
                 </Box>
               </Box>
-            })))
+
+              <Box className='client-img'>
+                <img src={company} />
+              </Box>
+              <Typography variant="h2">{item["Company Name"] && (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
+              {/* <Typography variant='h4'>Admin</Typography> */}
+              <Typography variant='p' className='mb-0'>{item["CompanyNo"]!==""&&item["CompanyNo"]!==null ? item["CompanyNo"] : "CH No. Not Found"}</Typography>
+            </Box>
+          </Box>
+        })))
       }
 
       {
@@ -184,15 +173,15 @@ function CardView(props) {
                     <ul className='p-0 mb-0'>
                       <li>
                         <LocalPhoneIcon />
-                        +1 324 714-4949
+                        {(item["Mobile"] && item["Mobile"]!=="")? item["Mobile"]: "Mobile No. Not Found"}
                       </li>
                       <li>
                         <EmailIcon className='font-16' />
-                        test32@gmail.com</li>
-
+                        {(item["E-Mail"] && item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Found"}
+                      </li>
                       <li>
                         <LocationOnIcon />
-                        Fourth Floor Abbots House
+                        {(item["Address 1"] && item["Address 1"]!=="")? item["Address 1"]: "Address Not Found"}
                       </li>
                     </ul>
                   </Box>
@@ -207,74 +196,73 @@ function CardView(props) {
                 </Box>
                 <Typography variant="h2">{item["First Name"] && item["First Name"]} {item["Last Name"] && item["Last Name"]}</Typography>
                 <Typography variant='h4'>{item["Company Name"] && item["Company Name"].substr(0.15) + '.'}</Typography>
-                <Typography variant='p' className='mb-0'>{item["E-Mail"] && item["E-Mail"].substr(0, 22) + "."}</Typography>
+                {/* <Typography variant='p' className='mb-0'>{item["E-Mail"] && item["E-Mail"].substr(0, 22) + "."}</Typography> */}
               </Box>
 
-              <Box className='color-filter-box mt-3'>
+              {Object.keys(objFilter).length>0&&<Box className='color-filter-box mt-3'>
                 {Object.keys(objFilter).map((key) => {
                   return <Typography variant='span' className='color-filter-row' style={{ color: objFilterColor[key], borderColor: objFilterColor[key] }}>{item[key]}</Typography>;
                 })}
-              </Box>
+              </Box>}
             </Box>
           </Box>
         }) : isDataNotFoundInContact ? <Box className='text-center no-data-found'>
-          <img src={noData} />
-          <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : contacts.slice(0, loadMore).map((item, i) => {
-            return <Box key={i} className='client-box-main'>
-              <Box className='client-box sadik' onClick={() => handleContactNavigattion(item.OriginatorNo, item.ContactNo)}>
+        <img src={noData} />
+        <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : contacts.slice(0, loadMore).map((item, i) => {
+          return <Box key={i} className='client-box-main'>
+            <Box className='client-box sadik' onClick={() => handleContactNavigattion(item.OriginatorNo, item.ContactNo)}>
 
-                <Box className='client-box-icons d-flex'>
-                  {/* <PersonIcon className="me-2" /> */}
-                  <Tooltip title="Contacts" className='my-1'>
+              <Box className='client-box-icons d-flex'>
+                {/* <PersonIcon className="me-2" /> */}
+                <Tooltip title="Contacts" className='my-1'>
+                  <IconButton>
+                    <PersonIcon />
+                  </IconButton>
+                </Tooltip>
+                <Box className='info-details'>
+                  <Tooltip title="" className='my-1'>
                     <IconButton>
-                      <PersonIcon />
+                      <InfoIcon />
                     </IconButton>
                   </Tooltip>
-                  <Box className='info-details'>
-                    <Tooltip title="" className='my-1'>
+
+                  <Box className='inner-info-details'>
+                    <Tooltip title="Copy Details" className='my-1 copy-icon'>
                       <IconButton>
-                        <InfoIcon />
+                        <ContentCopyIcon className='font-18' />
                       </IconButton>
                     </Tooltip>
-
-                    <Box className='inner-info-details'>
-                      <Tooltip title="Copy Details" className='my-1 copy-icon'>
-                        <IconButton>
-                          <ContentCopyIcon className='font-18' />
-                        </IconButton>
-                      </Tooltip>
-                      <ul className='p-0 mb-0'>
-                        <li>
-                          <LocalPhoneIcon />
-                          +1 324 714-4949
-                        </li>
-                        <li>
-                          <EmailIcon className='font-16' />
-                          test32@gmail.com</li>
-
-                        <li>
-                          <LocationOnIcon />
-                          Fourth Floor Abbots House
-                        </li>
-                      </ul>
-                    </Box>
+                    <ul className='p-0 mb-0'>
+                      <li>
+                        <LocalPhoneIcon />
+                        {(item["Mobile"] && item["Mobile"]!=="")? item["Mobile"]: "Mobile No. Not Found"}
+                      </li>
+                      <li>
+                        <EmailIcon className='font-16' />
+                        {(item["E-Mail"] && item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Found"}
+                      </li>
+                      <li>
+                        <LocationOnIcon />
+                        {(item["Address 1"] && item["Address 1"]!=="")? item["Address 1"]: "Address Not Found"}
+                      </li>
+                    </ul>
                   </Box>
                 </Box>
-
-                {/* <img src={pin} className='pin-img' /> */}
-                <Box className='client-img'>
-                  <img src={user2} />
-                </Box>
-                <Typography variant="h2">{item["First Name"] && item["First Name"]} {item["Last Name"] && item["Last Name"]}</Typography>
-                <Typography variant='h4'>{item["Company Name"] && item["Company Name"].substr(0.15) + '.'}</Typography>
-                {/* <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].substr(0, 22) + ".")}</Typography> */}
               </Box>
+
+              {/* <img src={pin} className='pin-img' /> */}
+              <Box className='client-img'>
+                <img src={user2} />
+              </Box>
+              <Typography variant="h2">{item["First Name"] && item["First Name"]} {item["Last Name"] && item["Last Name"]}</Typography>
+              <Typography variant='h4'>{item["Company Name"] && item["Company Name"].substr(0.15) + '.'}</Typography>
+              {/* <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].substr(0, 22) + ".")}</Typography> */}
             </Box>
-          })))
+          </Box>
+        })))
       }
     </>
   )
 }
-
 
 export default CardView
