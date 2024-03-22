@@ -1636,14 +1636,14 @@ export default function CreateNewModalTask({ ...props }) {
             accid: agrno,
             email: Email,
             password: password,
-            uploadID:localStorage.getItem("GUID"),
+            uploadID: localStorage.getItem("GUID"),
             TaskId: tid,
         }
         var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
         let cls = new CommanCLS(urlLetter, agrno, Email, password);
-        cls.UploadPortalTaskRelation_Json(obj,function(sts,data){
-            if(sts){
-                console.log("UploadPortalTaskRelation_Json",data)
+        cls.UploadPortalTaskRelation_Json(obj, function (sts, data) {
+            if (sts) {
+                console.log("UploadPortalTaskRelation_Json", data)
                 CreatePortalMessage();
             }
         })
@@ -1907,7 +1907,7 @@ export default function CreateNewModalTask({ ...props }) {
 
     function ConvertToPdf_Json(d) {
         setAnchorElDoc(null);
-       // console.log("ConvertToPdf_Json", selectedFiles)
+        // console.log("ConvertToPdf_Json", selectedFiles)
         try {
             let o = {
                 accid: agrno,
@@ -1934,7 +1934,7 @@ export default function CreateNewModalTask({ ...props }) {
                         setSelectedFiles(res)
                         toast.success("Converted File !")
                     }
-                    else{
+                    else {
                         toast.error("Not Converted !")
                     }
                 }
@@ -1966,8 +1966,8 @@ export default function CreateNewModalTask({ ...props }) {
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="responsive-dialog-title"
-                className="custom-modal"
-                maxWidth="xl" // Set maxWidth to control the width
+                className="custom-modal custom-modal-1200"
+                // maxWidth="xl" // Set maxWidth to control the width
                 fullWidth={true} // Ensure the dialog takes up the full width
             >
                 <DialogContent>
@@ -2033,7 +2033,7 @@ export default function CreateNewModalTask({ ...props }) {
                             <Box className="col-lg-8 border-end">
                                 <Box className="clearfix">
                                     <Box>
-                                        <Box className="d-flex align-items-center">
+                                        <Box className="align-items-center">
                                             {/* <span class="material-symbols-outlined">
                                                 edit_square
                                             </span> */}
@@ -2149,7 +2149,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                     </Box>
 
                                                     <Box className='mb-2'>
-                                                        <FormControlLabel control={<Checkbox checked={isCheckedForApproval} disabled={isDisabledForApproval}  onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
+                                                        <FormControlLabel control={<Checkbox checked={isCheckedForApproval} disabled={isDisabledForApproval} onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
                                                         <FormControlLabel control={<Checkbox checked={isCheckedWithOutmgs} onChange={handleCheckboxChangeisCheckedWithOutmgs} />} label="Send Without Message" />
 
                                                         <Button
@@ -2213,14 +2213,11 @@ export default function CreateNewModalTask({ ...props }) {
                                         {!isVisibleByTypeCRM && (<>
                                             <Box className="mt-3 mb-3">
                                                 <textarea
-                                                    className="form-control textarea resize-none"
+                                                    className="form-control textarea textarea-text resize-none"
                                                     placeholder="Description"
                                                     value={txtdescription} // Bind the value to the state
                                                     onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
                                                 ></textarea>
-
-
-
                                             </Box>
                                         </>)}
 
@@ -2547,9 +2544,6 @@ export default function CreateNewModalTask({ ...props }) {
                                                                 <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
                                                                     Sign
                                                                 </Button>
-
-
-
                                                             </>)}
 
                                                             <Box className="ps-2">
@@ -2560,6 +2554,8 @@ export default function CreateNewModalTask({ ...props }) {
                                                                     aria-haspopup="true"
                                                                     aria-expanded={openDoc ? 'true' : undefined}
                                                                     onClick={(event) => handleClickDoc(event, index)} // Pass index to handleClickDoc
+                                                                    className="min-width-auto"
+
                                                                 >
                                                                     <span className="material-symbols-outlined">
                                                                         more_vert
@@ -2662,7 +2658,7 @@ export default function CreateNewModalTask({ ...props }) {
                                             }}
                                             className="search-list-main"
                                         >
-                                            <Box className='px-3' >
+                                            <Box className=''>
                                                 <TextField
                                                     label="Search"
                                                     variant="outlined"
@@ -2670,6 +2666,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                     onChange={handleSearchInputChangeFolder}
                                                     onClick={(e) => e.stopPropagation()} // Prevent event propagation
                                                     sx={{ width: "100%" }}
+                                                    size="small"
                                                 />
                                             </Box>
 

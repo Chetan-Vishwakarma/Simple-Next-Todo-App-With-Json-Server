@@ -99,6 +99,10 @@ select:focus,
   resize: none;
   border-radius: 5px;
 }
+.textarea-text {
+  padding: 0;
+  border: 0;
+}
 
 h1,
 h2,
@@ -130,7 +134,7 @@ input,
   width: 100%;
   box-shadow: none;
   outline: none;
-  padding: 0 5px;
+  /* padding: 0 5px; */
   font-size: 16px !important;
 }
 
@@ -598,6 +602,21 @@ button {
 hr {
   border-top: 2px solid #CCCCCC;
 }
+.swal2-container .swal2-popup.swal2-modal .swal2-icon.swal2-warning {
+  color: #dd3333;
+  border-color: #dd3333;
+  font-size: 12px;
+}
+.swal2-container .swal2-popup.swal2-modal .swal2-default-outline.swal2-confirm {
+  background-color: #4780ff !important;
+}
+.swal2-container .swal2-popup.swal2-modal {
+  background: #fff;
+  padding: 30px;
+}
+.swal2-container .swal2-popup.swal2-modal .swal2-cancel {
+  background-color: #d42027 !important;
+}
 
 .custom-modal .MuiDialog-container .MuiDialog-paperWidthSm {
   width: 100%;
@@ -605,7 +624,10 @@ hr {
   border-radius: 10px;
   /* padding: 10px 20px 10px; */
 }
-
+.custom-modal-1200 .MuiDialog-container .MuiDialog-paperWidthSm {
+  width: 100%;
+  max-width: 1000px;
+}
 .full-modal .MuiDialog-container .MuiDialog-paperWidthSm {
   width: 100%;
   max-width: 70%;
