@@ -199,11 +199,11 @@ function CardView(props) {
                 {/* <Typography variant='p' className='mb-0'>{item["E-Mail"] && item["E-Mail"].substr(0, 22) + "."}</Typography> */}
               </Box>
 
-              <Box className='color-filter-box mt-3'>
+              {Object.keys(objFilter).length>0&&<Box className='color-filter-box mt-3'>
                 {Object.keys(objFilter).map((key) => {
                   return <Typography variant='span' className='color-filter-row' style={{ color: objFilterColor[key], borderColor: objFilterColor[key] }}>{item[key]}</Typography>;
                 })}
-              </Box>
+              </Box>}
             </Box>
           </Box>
         }) : isDataNotFoundInContact ? <Box className='text-center no-data-found'>
