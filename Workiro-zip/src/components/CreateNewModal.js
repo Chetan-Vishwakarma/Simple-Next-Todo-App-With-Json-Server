@@ -358,11 +358,11 @@ export default function CreateNewModalTask({ ...props }) {
 
     const userAdd = Boolean(anchorel);
 
-    function Json_GetForwardUserList() {
+    function Json_GetForwardUserList(fid) {
         setAddUser([])
         try {
             let o = {};
-            o.ProjectId = txtFolderId;
+            o.ProjectId = fid;
             o.SectionId = "-1";
             cls.Json_GetForwardUserList(o, function (sts, data) {
                 if (sts) {
@@ -715,7 +715,7 @@ export default function CreateNewModalTask({ ...props }) {
         setExpireDate(dayjs(getCurrentDate()));
 
         Json_GetFolders();
-        Json_GetForwardUserList();
+        Json_GetForwardUserList(txtFolder);
         Json_GetFolderData();
         Json_GetSections(txtFolderId);
         //console.log(nextDate, currentDate)
@@ -1603,7 +1603,7 @@ export default function CreateNewModalTask({ ...props }) {
                 "ElectronicFile": false,
                 "PaperFile": false,
                 "Notes": "",
-                "TaskSource": "CRM"
+                "TaskSource": txtTaskType
             }
             console.log("final save data obj", ooo);
             cls.Json_CRM_Task_Save(ooo, function (sts, data) {
@@ -1612,7 +1612,7 @@ export default function CreateNewModalTask({ ...props }) {
                     console.log("Json_CRM_Task_Save ", js);
                     if (js.Status === "success") {
                         setMessageId(js.Message);
-                        UploadPortalTaskRelation_Json(js.Message);
+                        CreatePortalMessage(js.Message)
                     }
                     else {
                         toast.error("Task Not Created Please Try Again");
@@ -1631,25 +1631,9 @@ export default function CreateNewModalTask({ ...props }) {
         }
     }
 
-    function UploadPortalTaskRelation_Json(tid) {
-        let obj = {
-            accid: agrno,
-            email: Email,
-            password: password,
-            uploadID:localStorage.getItem("GUID"),
-            TaskId: tid,
-        }
-        var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
-        let cls = new CommanCLS(urlLetter, agrno, Email, password);
-        cls.UploadPortalTaskRelation_Json(obj,function(sts,data){
-            if(sts){
-                console.log("UploadPortalTaskRelation_Json",data)
-                CreatePortalMessage();
-            }
-        })
-    }
+   
 
-    async function CreatePortalMessage() {
+    async function CreatePortalMessage(taskid) {
 
         try {
             if (selectedUSer.ID) {
@@ -1688,7 +1672,8 @@ export default function CreateNewModalTask({ ...props }) {
                     "docuBoxEmails": "",
                     "daysToDelete": 0,
                     "approvalResponse": "",
-                    "uploadID": localStorage.getItem("GUID")
+                    "uploadID": localStorage.getItem("GUID"),
+                    "PubTaskid":taskid
 
 
                 }
@@ -2695,6 +2680,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                                     settxtClient("Select Reference");
                                                                     settxtSection("Select Section");
                                                                     Json_GetSections(item.FolderID);
+                                                                    Json_GetForwardUserList(item.FolderID)
                                                                 }}
                                                                 className="search-list"
                                                                 ref={folderListRef}

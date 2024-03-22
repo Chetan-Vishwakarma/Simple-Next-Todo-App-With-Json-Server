@@ -11,7 +11,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import BallotIcon from '@mui/icons-material/Ballot';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SendIcon from '@mui/icons-material/Send';
 import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
@@ -40,9 +40,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 
 import DatePicker from 'react-datetime';
-
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 import Fade from '@mui/material/Fade';
 import GetClientList from "./GetClientList";
@@ -50,6 +51,7 @@ import {
 
     TextField,
 } from "@mui/material";
+import AssigneeUsers from "./AssigneeUser";
 
 
 const Demo = styled('div')(({ theme }) => ({
@@ -64,19 +66,23 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
 
-    const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
+
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
     /////////////////////////////////////////Task Activity
+    const [folderList, setFolderList] = useState([]);
+    const [txtFolder, settxtFolder] = useState(selectedTask.Folder);
+    const [txtFolderId, setTxtFolderId] = useState(selectedTask.FolderID);
 
-    const [dense, setDense] = React.useState(false);
     const [secondary, setSecondary] = React.useState(false);
+    const [getCRMSaved, setGetCRMSaved] = React.useState([]);
 
     const [txtSection, settxtSection] = React.useState(selectedTask.Section);
     const [txtClient, setTxtClient] = React.useState(selectedTask.Client);
-    const [txtClientId, setTxtClientId] = React.useState(null);
+    const [txtClientId, setTxtClientId] = React.useState(selectedTask.Client);
 
     const [txtSectionId, settxtSectionId] = React.useState(null);
+
 
     const [anchorClsEl, setAnchorClsEl] = useState(null);
 
@@ -89,8 +95,9 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
     const [addUser, setAddUser] = useState([]);
     const [ownerID, setOwnerID] = React.useState("");
-    const [userList, setUserList] = React.useState([]);
-    const [filterText, setFilterText] = React.useState("");
+
+    const [forwardUser, setForwardUser] = React.useState({});
+
 
     const [currentDate, setCurrentDate] = useState(""); // Initialize with the current date in "dd/mm/yyyy" format
     const [nextDate, setNextDate] = useState("");
@@ -105,7 +112,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [attachmentPath, setAttachmentPath] = useState([]);
 
-    const [attOpen, setAttOpen] = React.useState(false);
+
     const [txtdescription, setTxtDescriptin] = React.useState("");
 
     const [clientList, setClientList] = useState([]);
@@ -156,6 +163,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         settxtSection(e.Sec)
         settxtSectionId(e.SecID)
         setAnchorSectionEl(null);
+        Json_UpdateTaskField("TypeOfTaskID", e.SecID, "Section Updated!")
     };
 
 
@@ -173,7 +181,10 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         setAnchorClsEl(null);
         setTxtClient(e.Client);
         setTxtClientId(e.ClientID);
-        
+        if (e.ClientID) {
+            Json_UpdateTaskField("AssociatedWithID", e.ClientID, "Reference updated!")
+        }
+
 
     };
 
@@ -187,10 +198,14 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         let obj = {};
         obj.TaskID = taskid;
         try {
+            const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+            let Cls = new CommanCLS(baseUrl, agrno, Email, password);
+
             Cls.Json_Get_CRM_Task_ActivityByTaskId(obj, (sts, data) => {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
+                        console.log("Json_Get_CRM_Task_ActivityByTaskId", json);
                         const formattedActivity = json.Table.map((activity) => {
                             let ActivityDate;
                             if (activity.ActivityDate) {
@@ -229,53 +244,10 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
 
 
-    async function Json_GetForwardUserList() {
-        try {
-            let o = {};
-            o.ProjectId = folderId;
-            o.SectionId = "-1";
-            await Cls.Json_GetForwardUserList(o, function (sts, data) {
-                if (sts) {
-                    let js = JSON.parse(data);
-                    let dt = js.Table;
-                    if (dt.length > 0) {
-                        let result = dt.filter((el) => {
-                            return el.CGroup !== "Yes";
-                        });
-
-                        if (result.length > 0) {
-                            result.map((el) => {
-                                if (el.ID === parseFloat(localStorage.getItem("UserId"))) {
-                                    setOwnerID(el.ID);
-                                    setGetUser(el);
-                                    setAddUser([el]);
-                                    console.log("Json_GetForwardUserList11333222", el);
-
-                                }
-                            });
-                        }
-                        console.log("Json_GetForwardUserList11333", result);
-                        setUserList(result);
-                    }
-                }
-            });
-        } catch (error) {
-            console.log("error", error);
-        }
-    }
 
 
-    // Filter the userList based on filterText
-    const filteredUserList = userList.filter((item) => {
-        // Check if item and its properties are defined before accessing them
-        //console.log("filterText", filterText);
-        if (item && item.ForwardTo) {
-            // You can customize the filtering logic here based on your requirements
-            return item.ForwardTo.toLowerCase().includes(filterText.toLowerCase());
-        } else {
-            return false; // Return false if any required property is undefined
-        }
-    });
+
+
 
     // Event handler to handle file selection
     const handleFileSelect = (event) => {
@@ -295,8 +267,9 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                     lastModifiedDate: dateAndTime(file.lastModifiedDate),
                 };
                 filesData.push(fileData);
+
                 UploadAttachment(fileData)
-                // console.log("Attachment list", filesData);
+                //  console.log("Attachment list", filesData);
                 // Check if this is the last file
                 if (index === selectedFilesArray.length - 1) {
                     // Add new files to the uploadedFiles array
@@ -323,8 +296,13 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                     let res = JSON.parse(data);
                     if (res.Status === "Success") {
                         let path = window.atob(res.Message);
-                        let index = path.lastIndexOf("\\");
-                        let fileName = path.slice(index + 1);
+                        let fileName="";
+                        if(path){
+                            let index = path.lastIndexOf("\\");
+                             fileName = path.slice(index + 1);
+                        }
+                       
+
                         let o = { Path: path, FileName: fileName }
 
                         setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
@@ -349,7 +327,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     }
 
     const [attachmentFile, setAttachmentFile] = useState([]);
-    const [assignUser, setAssignUser] = useState([]);
+
 
     async function Json_Get_CRM_SavedTask_ByTaskId(taskid) {
         let obj = {};
@@ -359,20 +337,9 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 let json = JSON.parse(data);
                 console.log("Json_Get_CRM_SavedTask_ByTaskId", json);
                 let table2 = json.T2;
+                // setGetCRMSaved(table2);
                 if (table2.length > 0) {
-                    let spt = table2[0].AssignedToID.split(",");
-                    let pushUser = [];
-                    for (let i of spt) {
-                        if (i) {
-                            for (let j of userList) {
-                                if (parseInt(i) === j.ID) {
-                                    pushUser.push(j);
-                                }
-                            }
-                        }
-                    }
-                    //console.log("Json_Get_CRM_SavedTask_ByTaskId22", pushUser);
-                    setAddUser(pushUser);
+                    setTxtDescriptin(table2[0].Details)
                 }
 
                 let table6 = json.T6;
@@ -390,26 +357,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         });
     }
 
-    function getFilePath(dt) {
-        const filePath = dt.DestinationPath;
-        // Convert Windows file path to URL path
-        const urlPath = filePath
-            .replace(/\\/g, "/")
-            .replace(
-                "D:/Plesk/Vhosts/docusoftpractice.com/httpdocs/",
-                "https://docusoftpractice.com/"
-            );
-        console.log("file path", urlPath);
-        const fileNameWithExtension = dt.DestinationPath.match(/[^\\]+$/)[0];
-        let o = {
-            AttachId: dt.AttachId,
-            DestinationPath: urlPath,
-            fileName: fileNameWithExtension,
-            data: selectedTask
-        };
 
-        return o;
-    }
 
     function DateFormet(timestamp) {
         const date = new Date(timestamp);
@@ -427,28 +375,17 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     }
 
 
-    const Json_GetTaskAttachmentList = () => {
-        let o = {
-            TaskId: selectedTask.ID,
-            StageId: 0,
-            SubStageId: 0
-        }
-        Cls.Json_GetTaskAttachmentList(o, function (sts, data) {
-            if (sts && data) {
-                console.log("Json_GetTaskAttachmentList", data)
-            }
-        })
-    }
 
 
 
-    function Json_GetSections(fid) {
+    function Json_GetSections(secid) {
         try {
             let o = {};
-            o.ProjectId = fid;
+            o.ProjectId = secid;
             Cls.Json_GetSections(o, function (sts, data) {
                 if (sts) {
                     let js = JSON.parse(data);
+
 
                     let sectionList = js.Table;
                     if (sectionList.length > 0) {
@@ -464,11 +401,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     }
 
 
-    function Json_GetFolderData() {
+    function Json_GetFolderData(pid) {
+
 
         try {
             let o = {};
-            o.ProjectId = selectedTask.FolderID;
+            o.ProjectId = pid;
             o.SectionId = "-1";//selectedTask.SectionId;
             o.ClientId = "";
             Cls.Json_GetFolderData(o, function (sts, data) {
@@ -490,8 +428,74 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         }
     }
 
+
+
+    function Json_GetFolders() {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password
+        }
+
+        try {
+            Cls.Json_GetFolders(obj, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        let tbl = js.Table;
+                        console.log("get folder list", tbl);
+                        setFolderList(tbl);
+                        let res = tbl.filter((f) => f.FolderID === parseInt(localStorage.getItem("ProjectId")));
+                        if (res.length > 0) {
+                            settxtFolder(res[0].Folder);
+                        }
+
+                    }
+                }
+            });
+        } catch (error) {
+            console.log({
+                status: false,
+                message: "Folder is Blank Try again",
+                error: error,
+            });
+        }
+    }
+
+    function Json_GetForwardUserList(fid) {
+        // setAddUser([])
+        try {
+            let o = {};
+            o.ProjectId = fid;
+            o.SectionId = "-1";
+            Cls.Json_GetForwardUserList(o, function (sts, data) {
+                if (sts) {
+                    let js = JSON.parse(data);
+                    let dt = js.Table;
+                    if (dt.length > 0) {
+                        let result = dt.filter((el) => {
+                            return el.CGroup !== "Yes";
+                        });
+                        if (result.length > 0) {
+                            let res = result.filter((fuser) => fuser.ID === parseInt(localStorage.getItem("UserId")));
+                            if (res.length > 0) {
+                                setForwardUser(res[0]);
+                            }
+                            console.log("forwardUserList", res)
+                        }
+
+                    }
+                }
+            });
+        } catch (error) {
+            console.log("error", error);
+        }
+    }
+
     useEffect(() => {
-        
+        Json_GetForwardUserList(selectedTask.FolderID);
+        setSelectedFiles([]);
+        Json_GetFolders();
         settxtSection(selectedTask.Section);
         setTxtClient(selectedTask.Client);
         setTxtClient(selectedTask.Client)
@@ -504,8 +508,8 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         setNextDate(DateFormet(selectedTask.EndDateTime));
         setRemiderDate(dayjs(Cls.getCurrentDate()));
 
-        Json_GetFolderData();
-        Json_GetForwardUserList();
+        Json_GetFolderData(selectedTask.FolderID);
+
         setStatus(selectedTask.mstatus);
         // Json_GetTaskAttachmentList();
         setTSubject(selectedTask.Subject)
@@ -523,10 +527,14 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         // return ()=>{
         //     console.log("Modal is Closed");
         // }
+
+
         setTimeout(() => {
+
+
             // console.log("Hello 1s")
             Json_Get_CRM_Task_ActivityByTaskId(selectedTask.ID);
-        }, 5000);
+        }, 4000);
 
     }, [selectedTask]);
 
@@ -561,9 +569,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     //     setuserDropdownAnchorEl(event.currentTarget);
     // };
 
-    const handleUserClose = () => {
-        setuserDropdownAnchorEl(null);
-    };
+
     // end
 
     //const [anchorEl, setAnchorEl] = React.useState(null);
@@ -576,23 +582,8 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         setOpen(false);
     };
 
-    const handalClickAddUser = (e) => {
-        // Check if the object 'e' already exists in the array based on its 'id'
-        if (!addUser.some((user) => user.ID === e.ID)) {
-            // If it doesn't exist, add it to the 'addUser' array
-            setAddUser([...addUser, e]);
-        }
 
-        // setTimeout(() => {
-        //   console.log(addUser);
-        // }, 2000);
-    };
 
-    const handleRemoveUser = (id) => {
-        // Filter out the object with the specified ID
-        const updatedUsers = addUser.filter((user) => user.ID !== id);
-        setAddUser(updatedUsers);
-    };
 
     const [anchorEl1, setAnchorEl1] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(null);
@@ -615,12 +606,25 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         setSelectedIndexStatus(index); // Remember the index of the clicked menu
     };
 
+
     const handleCloseStatus = (e) => {
         console.log(e.target.innerText);
         setStatus(e.target.innerText);
         setanchorElStatus(null);
         setSelectedIndexStatus(null); // Reset the selected index after closing the menu
+        if (e.target.innerText) {
+            Json_UpdateTaskField("Status", e.target.innerText, returnMessageStatus(e.target.innerText))
+        }
+
     };
+
+    function returnMessageStatus(status) {
+        if (status === "Completed") {
+            return "Task Completed!";
+        } else {
+            return `Task status set to ${status}.`;
+        }
+    }
 
     const [anchorElProfile, setanchorElProfile] = useState(null);
     const [selectedIndexProfile, setSelectedIndexProfile] = useState(null);
@@ -630,9 +634,21 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         setSelectedIndexProfile(index); // Remember the index of the clicked menu
     };
 
-    const handleCloseProfile = () => {
-        setanchorElStatus(null);
-        setSelectedIndexProfile(null); // Reset the selected index after closing the menu
+    const handleCloseProfile = (e) => {
+        // console.log("folder data",e)
+        if (e.FolderID) {
+            Json_UpdateTaskField("FolderID", e.FolderID, "Folder updated. Please review Reference and Section");
+
+            setTxtFolderId(e.FolderID);
+            settxtFolder(e.Folder);
+
+            setanchorElStatus(null);
+            setSelectedIndexProfile(null); // Reset the selected index after closing the menu
+
+            Json_GetFolderData(e.FolderID);
+            Json_GetSections(e.FolderID);
+        }
+
     };
 
     function dateAndTime(dt) {
@@ -679,14 +695,19 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     // };
 
     const addActivitySave = () => {
-        Json_AddSupplierActivity();
+        if (notesMessage) {
+            Json_AddSupplierActivity(notesMessage, "usr");
+        }
+        if (selectedFiles.length > 0) {
+            Json_CRM_Task_Update();
+        }
     };
-    const Json_AddSupplierActivity = () => {
+    const Json_AddSupplierActivity = (mgs, sts) => {
         let obj = {};
         obj.OriginatorNo = selectedTask.ClientNo;
         obj.ActionReminder = "";
-        obj.Notes = notesMessage;
-        obj.Status = "sys"; //selectedTask.Status;
+        obj.Notes = mgs;
+        obj.Status = sts; //selectedTask.Status;
         obj.TaskId = selectedTask.ID;
         obj.TaskName = "";
         obj.ActivityLevelID = "";
@@ -695,7 +716,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         try {
             Cls.Json_AddSupplierActivity(obj, function (sts, data) {
                 if (sts && data) {
-                    console.log(data);
+                    // console.log(data);
                     Json_Get_CRM_Task_ActivityByTaskId(selectedTask.ID);
                     setNotesMessage("");
                 }
@@ -747,11 +768,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 ReminderSet: false,
                 ReminderDateTime: dayjs(remiderDate).format("YYYY/MM/DD"),
                 StartDateTime: dayjs(currentDate).format("YYYY/MM/DD"),
-                OwnerID: selectedTask.OwnerID,
-                AssociateWithID: selectedTask.ClientNo,
-                FolderId: selectedTask.FolderID,
+                OwnerID: ownerID ? ownerID : selectedTask.OwnerID,
+                AssociateWithID: txtClientId ? txtClientId : selectedTask.ClientNo,
+                FolderId: txtFolderId ? txtFolderId : selectedTask.FolderID,
                 Subject: tSubject,
-                TypeofTaskID: selectedTask.SectionId,
+                TypeofTaskID: txtSectionId,
                 EndDateTime: dayjs(nextDate).format("YYYY/MM/DD"),
                 Status: status,
                 Priority: selectedTask.Priority,
@@ -781,6 +802,21 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                             setAttachmentPath([]);
                             Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
                         }, 2000);
+                        setIsVisible(false); // Toggle visibility
+
+                        const attString = attachmentPath.map((item) => {
+                            let fileName="";
+                            if(item.FileName){
+                                let Typest = item.FileName.lastIndexOf("\\");
+                                 fileName = item.FileName.slice(Typest + 1);
+                            }
+                            
+                            return fileName;
+                        });
+
+
+                        let mgs = `Upload File ${attString}`;
+                        Json_AddSupplierActivity(mgs, "sys")
 
                     }
                     else {
@@ -794,17 +830,33 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         }
     }
 
+    function Json_UpdateTaskField(FieldName, FieldValue, mgsd) {
+        let o = {
+            agrno: agrno,
+            strEmail: Email,
+            password: password,
+            TaskId: selectedTask.ID,
+            FieldName: FieldName,
+            FieldValue: FieldValue
+        }
+        let baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+        let Cls = new CommanCLS(baseUrl, agrno, Email, password);
+        Cls.Json_UpdateTaskField(o, function (sts, data) {
+            if (sts && data) {
+                if (data === "Success") {
+                    toast.success(mgsd)
+                }
+                console.log("Json_UpdateTaskField", data)
+            }
+        })
+    }
+
 
 
     // sadik js start
 
 
-    // dropdown add
-    const [userDropdownanchorEl, setuserDropdownAnchorEl] = React.useState(null);
-    const UserDropdownopen = Boolean(userDropdownanchorEl);
-    const handleUserClick = (event) => {
-        setuserDropdownAnchorEl(event.currentTarget);
-    };
+
     // const handleUserClose = () => {
     //     setuserDropdownAnchorEl(null);
     // };
@@ -843,8 +895,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 if (js.Status === "Success") {
                     // var dencodedData = window.atob(Path);
                     // var fileName = dencodedData;
-                    var Typest = objdata.FileName.lastIndexOf("\\");
-                    let fileName = objdata.FileName.slice(Typest + 1);
+                    let fileName=txtClientId;
+                    if(objdata.FileName){
+                        var Typest = objdata.FileName.lastIndexOf("\\");
+                     fileName = objdata.FileName.slice(Typest + 1);
+                    }
+                    
                     // console.log('FileName', fileName);
                     // console.log("jsonObj.Status", js.Message);
                     var a = document.createElement("a"); //Create <a>
@@ -871,8 +927,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 confirmButtonText: "Yes, delete it!"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    var Typest = objdata.FileName.lastIndexOf("\\");
-                    let fileName = objdata.FileName.slice(Typest + 1);
+
+                    let fileName=null;
+                    if(objdata.FileName){
+                        var Typest = objdata.FileName.lastIndexOf("\\");
+                         fileName = objdata.FileName.slice(Typest + 1);
+                    }
                     let fname = fileName;
                     let o = {
                         agrno: agrno,
@@ -918,6 +978,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     const filtereClient = clientList.filter((item) =>
         item.Client.toLowerCase().includes(searchClient1Query.toLowerCase())
     );
+
+    const handleDelete = (e) => {
+        console.info('You clicked the delete icon.');
+        let res = selectedFiles.filter((file) => file.FileName !== e.FileName);
+        setSelectedFiles(res)
+    };
 
     return (
         <React.Fragment>
@@ -981,6 +1047,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 onClose={handleClose}
                                 MenuListProps={{
                                     'aria-labelledby': 'basic-button-status',
+                                    
                                 }}
                             >
                                 <MenuItem onClick={handleClose}>Profile</MenuItem>
@@ -1013,10 +1080,52 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                         } // Pass index to handleClick
                                         className="min-width-auto px-0 text-danger"
                                     >
-                                        <ListItemIcon className="min-width-auto text-danger me-2">
-                                            <PublishedWithChangesIcon fontSize="medium" />
-                                        </ListItemIcon>
-                                        {status}
+
+                                        {status === "Not Started" && (
+                                            <>
+                                                <ListItemIcon className="min-width-auto  me-2 text-secondary">
+                                                    <PublishedWithChangesIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                <span className="text-secondary">{status}</span>
+                                            </>
+
+                                        )}
+                                        {status === "In Progress" && (<>
+                                            <ListItemIcon className="min-width-auto  me-2 text-primary">
+                                                <PublishedWithChangesIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            <span className="text-primary">{status}</span>
+                                        </>
+
+                                        )}
+                                        {status === "On Hold" && (<>
+                                            <ListItemIcon className="min-width-auto  me-2 text-primary">
+                                                <PublishedWithChangesIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            <span className="text-primary">{status ? status : selectedTask.mstatus}</span>
+                                        </>
+
+                                        )}
+                                        {status === "Completed" && (<>
+
+                                            <ListItemIcon className="min-width-auto me-2 text-success">
+                                                <PublishedWithChangesIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            <span className="text-success">{status}</span>
+                                        </>
+
+                                        )}
+
+                                        {status === "" && (<>
+
+                                            <ListItemIcon className="min-width-auto me-2">
+                                                <PublishedWithChangesIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            <span className="text-success">{selectedTask.mstatus}</span>
+                                        </>
+
+                                        )}
+
                                     </Button>
                                     <Menu
                                         id={`fade-menu-${selectedTask.ID}`} // Use unique IDs for each menu
@@ -1032,42 +1141,42 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     >
 
                                         {/*  */}
-                                        <MenuItem onClick={handleCloseStatus}>
+                                        <MenuItem onClick={handleCloseStatus} className="text-secondary">
                                             <ListItemIcon>
-                                                <DoNotDisturbAltIcon fontSize="medium" />
+                                                <DoNotDisturbAltIcon fontSize="medium" className="text-secondary" />
                                             </ListItemIcon>
                                             Not Started
                                         </MenuItem>
-                                        <MenuItem onClick={handleCloseStatus}>
+                                        <MenuItem onClick={handleCloseStatus} className="text-primary">
                                             <ListItemIcon>
-                                                <PublishedWithChangesIcon fontSize="medium" />
+                                                <PublishedWithChangesIcon fontSize="medium" className="text-primary" />
                                             </ListItemIcon>
                                             In Progress
                                         </MenuItem>
 
-                                        <MenuItem onClick={handleCloseStatus}>
+                                        <MenuItem onClick={handleCloseStatus} className="text-primary">
                                             <ListItemIcon>
-                                                <HourglassBottomIcon fontSize="medium" />
+                                                <HourglassBottomIcon fontSize="medium" className="text-primary" />
                                             </ListItemIcon>
-                                            Waiting on someone else
+                                            On Hold
                                         </MenuItem>
 
-                                        <MenuItem onClick={handleCloseStatus}>
+                                        {/* <MenuItem onClick={handleCloseStatus} className="text-warning">
                                             <ListItemIcon>
-                                                <ErrorOutlineIcon fontSize="medium" />
+                                                <ErrorOutlineIcon fontSize="medium" className="text-warning" />
                                             </ListItemIcon>
                                             Deferred</MenuItem>
 
-                                        <MenuItem onClick={handleCloseStatus}>
+                                        <MenuItem onClick={handleCloseStatus} className="text-success">
                                             <ListItemIcon>
-                                                <CheckCircleOutlineIcon fontSize="medium" />
+                                                <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
                                             </ListItemIcon>
-                                            Done</MenuItem>
+                                            Done</MenuItem> */}
 
-                                        <MenuItem onClick={handleCloseStatus}><ListItemIcon>
-                                            <CheckCircleOutlineIcon fontSize="medium" />
+                                        <MenuItem onClick={handleCloseStatus} className="text-success"><ListItemIcon>
+                                            <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
                                         </ListItemIcon>
-                                            Complete
+                                            Completed
                                         </MenuItem>
                                         {/*  */}
 
@@ -1103,18 +1212,19 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                         } // Open menu if selectedIndex matches
                                         onClose={handleCloseProfile}
                                     >
-                                        <MenuItem onClick={handleCloseProfile}>
-                                            <ListItemIcon>
-                                                <DoNotDisturbAltIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Profile
-                                        </MenuItem>
-                                        <MenuItem onClick={handleCloseProfile}>
-                                            <ListItemIcon>
-                                                <PublishedWithChangesIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            My account
-                                        </MenuItem>
+                                        {folderList ? folderList.map((item) => {
+                                            return (<>
+                                                <MenuItem onClick={() => handleCloseProfile(item)}>
+                                                    <ListItemIcon>
+                                                        <DoNotDisturbAltIcon fontSize="medium" />
+                                                    </ListItemIcon>
+
+                                                    {item.Folder}
+                                                </MenuItem>
+                                            </>)
+                                        }) : ""}
+
+
                                     </Menu>
                                 </div>
 
@@ -1137,6 +1247,17 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 onClick={handalClickEditeSubject}
                                 value={tSubject}
                             />
+
+                            <Box className="mt-2 mb-3">
+                                <textarea
+                                    className="form-control textarea textarea-ony-read resize-none"
+                                    placeholder="Description"
+                                    value={txtdescription} // Bind the value to the state
+                                    onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
+                                    onClick={handalClickEditeSubject}
+                                ></textarea>
+                            </Box>
+
                             {isVisible && ( // Show the box if isVisible is true
                                 <Box className='mb-3 mt-2'>
                                     <Stack spacing={2} direction="row">
@@ -1147,11 +1268,9 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                             )}
                         </Box>
 
-
-
                         <Box className="d-flex flex-wrap justify-content-between">
                             <Box className="d-flex flex-wrap align-items-center">
-                                Client:- 
+                                Client:-
                                 <Button
                                     id="fade-button"
                                     aria-controls={openClient ? 'fade-menu' : undefined}
@@ -1159,7 +1278,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     aria-expanded={openClient ? 'true' : undefined}
                                     onClick={handleClickClick}
                                 >
-                                    {txtClient?txtClient:selectedTask.Client}
+                                    {txtClient ? txtClient : selectedTask.Client}
                                 </Button>
                                 <Menu
                                     id="fade-menu11"
@@ -1170,22 +1289,21 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     open={openClient}
                                     onClose={handleCloseClient}
                                     TransitionComponent={Fade}
+                                    className="menu-height"
                                 >
 
                                     <TextField
                                         label="Search"
                                         variant="outlined"
-                                       // value={searchClient1Query}
-                                       // onChange={handleSearchInputChangeClient}
+                                        // value={searchClient1Query}
+                                        // onChange={handleSearchInputChangeClient}
                                         sx={{ width: "100%" }}
+                                        size="small"
                                     />
 
-{filtereClient ? filtereClient.map((item, index) => {
+                                    {filtereClient ? filtereClient.map((item, index) => {
                                         return <MenuItem key={index} onClick={() => handleCloseClient(item)}>{item.Client}</MenuItem>
                                     }) : ""}
-
-                                   
-
 
                                 </Menu>
 
@@ -1198,7 +1316,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     aria-expanded={openSection ? 'true' : undefined}
                                     onClick={handleClickSection}
                                 >
-                                    {txtSection?txtSection:selectedTask.Section}
+                                    {txtSection ? txtSection : selectedTask.Section}
                                 </Button>
                                 <Menu
                                     id="fade-menu"
@@ -1209,6 +1327,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     open={openSection}
                                     onClose={handleCloseSection}
                                     TransitionComponent={Fade}
+                                    className="menu-height"
                                 >
 
                                     <TextField
@@ -1217,6 +1336,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                         value={searchSectionQuery}
                                         onChange={handleSearchInputChangeSection}
                                         sx={{ width: "100%" }}
+                                        size="small"
                                     />
 
                                     {filtereSectionList ? filtereSectionList.map((item, index) => {
@@ -1241,160 +1361,9 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                         </Box>
                     </Box> */}
 
-                            <div className="mb-2">
-                                <Button
-                                    id="basic-button5"
-                                    aria-controls={UserDropdownopen ? "basic-menu5" : undefined}
-                                    aria-haspopup="true"
-                                    aria-expanded={UserDropdownopen ? "true" : undefined}
-                                    onClick={handleUserClick}
-                                    className="p-0 w-auto d-inline-block"
-                                >
-                                    <Box className="d-flex align-items-center">
-                                        {addUser
-                                            ? addUser.map((item) => {
-                                                const words = item.ForwardTo.split(" ");
-                                                // Extract the first letter of each word and concatenate them
-                                                let result = "";
-                                                for (let i = 0; i < words.length && i < 2; i++) {
-                                                    result += words[i].charAt(0);
-                                                }
+                            <AssigneeUsers selectedTask={selectedTask} setAddUser={setAddUser} addUser={addUser} setOwnerID={setOwnerID} ownerID={ownerID} Json_UpdateTaskField={Json_UpdateTaskField} ></AssigneeUsers>
 
-                                                if (item.ID === parseInt(localStorage.getItem("UserId"))) {
-                                                    return (
-                                                        <>
-                                                            <Box
-                                                                className="user-img-list ms-2 bg-red"
-                                                                title={item.ForwardTo}
-                                                                key={item.ID}
-                                                            >
-                                                                <p>{result}</p>
-                                                            </Box>
-                                                        </>
-                                                    );
-                                                } else {
-                                                    return (
-                                                        <>
-                                                            <Box
-                                                                className="user-img-list ms-2"
-                                                                title={item.ForwardTo}
-                                                                key={item.ID}
-                                                            >
-                                                                <p>{result}</p>
-                                                            </Box>
-                                                        </>
-                                                    );
-                                                }
-                                            })
-                                            : null}
 
-                                        <Box className="d-flex ms-3">
-                                            <span class="material-symbols-outlined">person_add</span>
-                                        </Box>
-                                    </Box>
-                                </Button>
-                                <Menu
-                                    id="basic-menu5"
-                                    anchorEl={userDropdownanchorEl}
-                                    open={UserDropdownopen}
-                                    onClose={handleUserClose}
-                                    MenuListProps={{
-                                        "aria-labelledby": "basic-button5",
-                                    }}
-                                    className="user-list-dropdown"
-                                >
-                                    <Box className="mb-1 mt-3 px-3">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Type a name or email address"
-                                        />
-                                    </Box>
-
-                                    <Box className="inner-user-list-dropdown">
-                                        <p className="sembold">Assigned</p>
-
-                                        <Box className="box-user-list-dropdown">
-                                            {addUser
-                                                ? addUser.map((item, ind) => {
-                                                    if (item.ID === parseInt(localStorage.getItem("UserId"))) {
-                                                        return (
-                                                            <React.Fragment key={ind}>
-                                                                <button type="button" id={item.ID}>
-                                                                    <Box className="user-img-list me-2">
-                                                                        <img src={user} alt="User" />
-                                                                    </Box>
-                                                                    <p>{item.ForwardTo}</p>
-                                                                </button>
-                                                            </React.Fragment>
-                                                        );
-                                                    } else {
-                                                        return (
-                                                            <React.Fragment key={ind}>
-                                                                <button type="button" id={item.ID}>
-                                                                    <Box className="user-img-list me-2">
-                                                                        <img src={user} alt="User" />
-                                                                    </Box>
-                                                                    <p>{item.ForwardTo}</p>
-                                                                    <span
-                                                                        className="close"
-                                                                        onClick={() => handleRemoveUser(item.ID)}
-                                                                        role="button" // Adding role="button" to indicate this element is clickable
-                                                                        tabIndex="0" // Adding tabIndex to make the element focusable
-                                                                    >
-                                                                        <span className="material-symbols-outlined">
-                                                                            close
-                                                                        </span>
-                                                                    </span>
-                                                                </button>
-                                                            </React.Fragment>
-                                                        );
-                                                    }
-                                                })
-                                                : null}
-                                        </Box>
-                                    </Box>
-
-                                    <Box
-                                        className="inner-user-list-dropdown"
-                                        style={{ maxHeight: "200px", overflowY: "auto" }}
-                                    >
-                                        <p className="sembold">My Team</p>
-
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Search..."
-                                            value={filterText}
-                                            onChange={(e) => setFilterText(e.target.value)}
-                                        />
-
-                                        <Box className="box-user-list-dropdown">
-                                            {
-
-                                                filteredUserList.map((item, ind) => (
-                                                    <React.Fragment key={ind}>
-                                                        <button
-                                                            type="button"
-                                                            id={item.ID}
-                                                            onClick={() => handalClickAddUser(item)}
-                                                        >
-                                                            <Box className="user-img-list me-2">
-                                                                <img src={user} alt="User" />
-                                                            </Box>
-                                                            <p>{item.ForwardTo}</p>
-                                                            {/* <a href="" className="close">
-                                    <span className="material-symbols-outlined">
-                                      close
-                                    </span>
-                                  </a> */}
-                                                        </button>
-                                                    </React.Fragment>
-                                                ))}
-                                        </Box>
-                                    </Box>
-                                </Menu>
-                            </div>
                             {/* dropdown end */}
                         </Box>
                         {/*  */}
@@ -1407,14 +1376,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
 
                         </Box>
-                        <Box className="d-flex">
-                            <Box className="mb-2 border-bottom me-3 width-150">
+                        <Box className="d-flex mt-3">
+                            <Box className="mb-2 me-3">
                                 <label className="font-14 text-black">Start Date</label>
-                                <LocalizationProvider
-                                    className="pe-0 sadik"
-                                    dateAdapter={AdapterDayjs}
-                                >
-                                    <DatePicker className=" w-100"
+                                <Box className='custom-datepicker'>
+                                    <CalendarMonthIcon />
+                                    <DatePicker
                                         showIcon
                                         dateFormat="DD/MM/YYYY"
                                         value={currentDate}
@@ -1425,48 +1392,45 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                         icon="fa fa-calendar"
 
                                     />
-
-
-                                </LocalizationProvider>
+                                </Box>
                             </Box>
 
-                            <Box className="border-bottom mb-2 width-150" sx={{ float: "right" }}>
+                            <Box className="mb-2" sx={{ float: "right" }}>
                                 <Box className="mb-2 ">
                                     <label className="font-14 semibold text-black">
                                         Due By
                                     </label>
-                                    <LocalizationProvider
-                                        className="pe-0 sadik"
-                                        dateAdapter={AdapterDayjs}
-                                    >
-
-                                        <DatePicker className=" w-100"
+                                    <Box className='custom-datepicker'>
+                                        <CalendarMonthIcon />
+                                        <DatePicker
                                             showIcon
                                             dateFormat="DD/MM/YYYY"
                                             value={nextDate}
-                                            onChange={(e) => setNextDate(e)} // Handle date changes
+                                            onChange={(e) => {
+                                                setNextDate(e);
+                                                let enddatetime = dayjs(remiderDate).format("YYYY/MM/DD");
+                                                if (enddatetime) {
+                                                    Json_UpdateTaskField("EndDateTime", enddatetime, "Due date updated!")
+                                                }
+
+                                            }} // Handle date changes
                                             timeFormat={false}
                                             isValidDate={disablePastDt}
                                             closeOnSelect={true}
                                             icon="fa fa-calendar"
-
                                         />
-
-                                    </LocalizationProvider>
+                                    </Box>
                                 </Box>
                             </Box>
                         </Box>
-                        <Box className="mt-2 mb-3">
-                            <textarea
-                                className="form-control textarea resize-none"
-                                placeholder="Description"
-                                value={txtdescription} // Bind the value to the state
-                                onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
-                            ></textarea>
-                        </Box>
+
 
                         <Box className="d-flex mb-3">
-                            <Button variant="text" className="btn-blue-2 me-2">
+                            <Button variant="text" onClick={() => {
+                                Json_UpdateTaskField("Status", "Completed", returnMessageStatus("Completed"));
+                                setStatus("Completed")
+                                /////sunil
+                            }} className="btn-blue-2 me-2">
                                 Mark complete
                             </Button>
                             <Button variant="text" className="btn-blue-2">
@@ -1474,11 +1438,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                             </Button>
                         </Box>
 
-                        <Box className="white-box pb-0 mb-0">
+                        <Box className="pb-0 mb-0">
                             <Box className="main-chatbox">
                                 {crmTaskAcivity
                                     ? crmTaskAcivity.map((item, index) => {
-                                        if (item.username === "Admin") {
+                                        // console.log("forwardUser22",forwardUser.ForwardTo)
+                                        if (item.status === "sys") {
                                             return (
                                                 <>
                                                     <Box
@@ -1502,7 +1467,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                                 </>
                                             );
                                         }
-                                        else if (item.username === getUser.ForwardTo) {
+                                        else if (item.username === forwardUser.ForwardTo) {
                                             return (
                                                 <>
                                                     <Box
@@ -1643,7 +1608,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
                             </Box>
 
-                            <Box className="text-center py-3 file-uploads">
+                            {/* <Box className="text-center py-3 file-uploads">
                                 <input
                                     type="file"
                                     id={`file-upload ${selectedTask.ID}`}
@@ -1670,27 +1635,45 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                         </Box>
                                     </Box>
                                 </label>
-                            </Box>
+                            </Box> */}
 
-                            <Box className="d-flex align-items-center main-file-upload">
+                            <Box className="d-flex align-items-end main-file-upload  pt-3">
                                 <Box className="w-100">
-                                    <Stack direction="row" className='py-3' spacing={1}>
+                                    <Stack direction="row" className='pb-3' spacing={1}>
+                                        {selectedFiles ? selectedFiles.map((item, index) => {
 
-                                        <Chip label="fileName123.Doc" variant="outlined" onDelete={""} />
-                                        <Chip label="fileName123.PDF" variant="outlined" onDelete={""} />
+                                            return (<Chip key={index} label={item.FileName} variant="outlined" onDelete={() => handleDelete(item)} />);
+                                        }) : ""}
+
+
                                     </Stack>
 
-                                    <textarea
-                                        className="textarea"
-                                        placeholder="Write message"
-                                        value={notesMessage}
-                                        onChange={handleChangeNotes}
-                                    ></textarea>
+                                    <Box className='position-relative'>
+                                        <Box className='upload-chat-file'>
+                                            <input
+                                                type="file"
+                                                id={`file-upload ${selectedTask.ID}`}
+                                                multiple
+                                                onChange={handleFileSelect}
+                                                className="file-input"
+                                            />
+                                            <label for={`file-upload ${selectedTask.ID}`} className="pointer"><AttachFileIcon /></label>
+
+                                        </Box>
+
+                                        <textarea
+                                            className="textarea"
+                                            placeholder="Write message"
+                                            value={notesMessage}
+                                            onChange={handleChangeNotes}
+                                        ></textarea>
+                                    </Box>
+
                                 </Box>
 
                                 <Box className="d-flex d-flex align-items-center ms-3">
                                     <Button
-                                        className="btn-blue-2 ms-3"
+                                        className="btn-blue-2 ms-0 mb-2"
                                         size="small"
                                         onClick={addActivitySave}
                                         startIcon={<SendIcon />}
@@ -1759,9 +1742,13 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 <Demo>
                                     <List>
 
-                                        {attachmentFile ? attachmentFile.map((item, index) => {
-                                            let Typest = item.FileName.lastIndexOf("\\");
-                                            let fileName = item.FileName.slice(Typest + 1);
+                                        {attachmentFile.length > 0 ? attachmentFile.map((item, index) => {
+                                           let fileName="";
+                                          if (item.FileName) {
+                                                let Typest = item.FileName.lastIndexOf("\\");
+                                                 fileName = item.FileName.slice(Typest + 1);
+                                            }
+
                                             return (<>
                                                 <ListItem key={index}
                                                     secondaryAction={

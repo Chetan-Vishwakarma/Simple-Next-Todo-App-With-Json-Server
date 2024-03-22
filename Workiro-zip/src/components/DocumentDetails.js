@@ -14,6 +14,19 @@ import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import DocumentsVewModal from "../client/utils/DocumentsVewModal";
 import Activity from "../client/utils/Activity";
+import DataGrid, {
+    Column,
+    Grouping,
+    GroupPanel,
+    Pager,
+    Paging,
+    SearchPanel,
+    DataGridTypes,
+    Selection,
+    Scrolling,
+    RemoteOperations,
+    Sorting
+} from 'devextreme-react/data-grid';
 
 
 // sadik code start
@@ -42,15 +55,14 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 // sadik code end
 
-
-function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFilteredResult}) {
+function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFilteredResult, dataNotFoundBoolean, selectedGroup }) {
 
     // sadik js start
-
+    console.log("Selected Document", documents)
     const [openPDFView, setOpenPDFView] = React.useState(false);
     const [selectedDocument, setSelectedDocument] = React.useState(null);
     const handleClickOpenPDFView = (data) => {
-        console.log("Selected Document",data)
+
         setSelectedDocument(data)
         setOpenPDFView(true);
     };
@@ -91,7 +103,7 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState(null);
     const DocumentList = Boolean(anchorElDocumentList);
     const handleClickDocumentList = (event) => {
-        console.log(event.currentTarget);
+        // console.log(event.currentTarget);
         event.stopPropagation();
         setAnchorElDocumentList(event.currentTarget);
     };
@@ -107,6 +119,7 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
     };
     const handleCloseDocumentDetailsList = () => {
         setOpenDocumentDetailsList(false);
+        setAnchorElDocumentList(null);
     };
 
     // accordian
@@ -117,6 +130,12 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
     };
 
     // end
+    const customSortingMethod = (a, b) => {
+        console.log("dffdsf",a,b);
+        const dateA = new Date(a);
+        const dateB = new Date(b);
+        return dateA - dateB;
+      };
 
 
     return (
@@ -137,7 +156,115 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                 </Box> */}
 
 
-                {advFilteredResult.length>0 ? (advFilteredResult.map((item) => {
+                <DataGrid
+                    dataSource={dataNotFoundBoolean ? [] : advFilteredResult.length > 0 ? advFilteredResult : documents}
+                    keyExpr="Guid"
+                    allowColumnReordering={true}
+                    rowAlternationEnabled={true}
+                    showBorders={true}
+                    width="100%"
+                    wordWrapEnabled={true}
+                >
+
+                    <Grouping autoExpandAll={false} />
+                    <GroupPanel visible={true} />
+
+                    <Sorting mode="single" />
+
+                    <Scrolling mode="virtual" />
+                    <Selection mode="multiple" />
+                    {selectedGroup === "Type" && <Column dataField="Type" groupIndex={0} dataType="Type" width={75} />}
+                    {selectedGroup === "Comments" && <Column dataField="Comments" groupIndex={0} dataType="Comments" width={75} visible={false} />}
+                    {selectedGroup === "Description" && <Column dataField="Description" groupIndex={0} dataType="Description" width={75} visible={false} />}
+                    {selectedGroup === "CommentBy" && <Column dataField="CommentBy" groupIndex={0} dataType="CommentBy" width={75} visible={false} />}
+                    <Column
+                        dataField="Description"
+                        caption="Description"
+
+                        // Set the groupIndex to 0 to enable grouping by this column
+                        dataType="string"  // Set the data type to "string" for proper grouping
+                        cellRender={(data) => {
+                            return <Box className="file-uploads">
+                                <label className="file-uploads-label file-uploads-document" onClick={() => handleClickOpenPDFView(data.data)}>
+                                    <Box className="d-flex align-items-center">
+
+                                        {/* <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" />  */}
+
+                                        <DescriptionIcon
+                                            sx={{
+                                                fontSize: 32,
+                                            }}
+                                            className='me-2 ms-0'
+                                        />
+                                        <Box className="upload-content pe-3">
+                                            <Typography variant="h4" >
+                                                {data.data.Description ? data.data.Description : "Demo"}
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span> | Date <span className='sembold'>{data.data["Item Date"] ? data.data["Item Date"] : ""}</span>
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    <Box>
+                                        <Button
+                                            id="basic-button"
+                                            aria-controls={DocumentList ? 'basic-menu' : undefined}
+                                            aria-haspopup="true"
+                                            aria-expanded={DocumentList ? 'true' : undefined}
+                                            onClick={handleClickDocumentList}
+                                            className='min-width-auto'
+                                        >
+                                            <MoreVertIcon />
+                                        </Button>
+                                        <Menu
+                                            id="basic-menu"
+                                            anchorEl={anchorElDocumentList}
+                                            open={DocumentList}
+                                            onClose={handleCloseDocument}
+                                            MenuListProps={{
+                                                'aria-labelledby': 'basic-button',
+                                            }}
+                                            className='custom-dropdown'
+                                        >
+                                            <MenuItem onClick={() => {
+                                                handleCloseDocument()
+                                                handleClickOpenDocumentDetailsList()
+                                            }}>
+                                                <ListItemIcon>
+                                                    <ArticleIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Document Details</MenuItem>
+
+                                            <MenuItem onClick={handleCloseDocument}>
+                                                <ListItemIcon>
+                                                    <CloudUploadIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Upload New Version</MenuItem>
+                                            <MenuItem onClick={handleCloseDocument}>
+                                                <ListItemIcon>
+                                                    <DriveFileRenameOutlineIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Rename Document</MenuItem>
+                                            <MenuItem onClick={handleCloseDocument}>
+                                                <ListItemIcon>
+                                                    <TravelExploreIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Open in Browser</MenuItem>
+                                            <MenuItem onClick={handleCloseDocument}>
+                                                <ListItemIcon>
+                                                    <CloudDownloadIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Download</MenuItem>
+                                        </Menu>
+                                    </Box>
+                                </label>
+                            </Box>
+                        }}
+                    />
+                </DataGrid>
+
+
+                {/* {!isGroupBy&&advFilteredResult.length>0 ? (advFilteredResult.map((item) => {
                     return <>
                         <Box className="file-uploads">
                             <label className="file-uploads-label file-uploads-document" onClick={() => handleClickOpenPDFView(item)}>
@@ -210,11 +337,11 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                                                 <CloudDownloadIcon fontSize="medium" />
                                             </ListItemIcon>
                                             Download</MenuItem>
-                                    </Menu> */}
+                                    </Menu> }
                                 </Box>
                             </label>
                         </Box>
-                        {/* file upload end */}
+                        {/* file upload end }
                     </>
                 })):isGroupBy?(
                     <TreeView
@@ -312,7 +439,7 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                         <TreeItem nodeId="4" label="CLient Group C" />
                     </TreeItem> */}
 
-                    {/* <TreeItem nodeId="5" label="Documents">
+                {/* <TreeItem nodeId="5" label="Documents">
                         <TreeItem nodeId="6" label="CLient Group">
 
                             {Array(4).fill("").map(() => {
@@ -397,7 +524,7 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                             })}
 
                         </TreeItem>
-                    </TreeItem> */}
+                    </TreeItem> }
                 </TreeView> 
                 ):(documents.length>0 && documents.map((item) => {
                     return <>
@@ -476,9 +603,15 @@ function DocumentDetails({groupByFilterResult, isGroupBy, documents, advFiltered
                                 </Box>
                             </label>
                         </Box>
-                        {/* file upload end */}
+                        {/* file upload end }
                     </>
-                }))}
+                }))} */}
+
+
+
+
+
+
                 {/* loop end */}
 
 

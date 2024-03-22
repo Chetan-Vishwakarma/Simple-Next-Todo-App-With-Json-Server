@@ -55,7 +55,7 @@ function TodoList() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_CRM_GetOutlookTask", json);
+                        console.log("Json_CRM_GetOutlookTask", json.Table);
                         let result = json.Table.filter((el)=>el.Source==="CRM" || el.Source==="Portal");
                         const formattedTasks = result.map((task) => {
                             let timestamp;
@@ -82,14 +82,26 @@ function TodoList() {
 
 
     const eventHandler = (e) => {
+        console.log("Load more data2", e);
         if (window.innerHeight + e.target.documentElement.scrollTop + 1 >= e.target.documentElement.scrollHeight) {
-            setLoadMore((preValue) => preValue + 50);
+            // Check if there's more data to load before updating loadMore
+           
+            setLoadMore((prevLoadMore) => prevLoadMore + 50);
         }
     }
+    
+    useEffect(() => {        
+        window.addEventListener('scroll', eventHandler);
+    
+        return () => {
+            console.log("Removing scroll event listener");
+            window.removeEventListener('scroll', eventHandler);
+        };
+    }, []);
 
     useEffect(() => {
         Json_CRM_GetOutlookTask();
-        window.addEventListener('scroll', eventHandler)
+      
     }, [isApi])
 
 
@@ -187,7 +199,7 @@ function TodoList() {
                 <Box className='row'>
                     {
                         allTask.length > 0 &&
-                        allTask.slice(0, loadMore).map((item, index) => {
+                        allTask.map((item, index) => {
                             return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                 <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
 
