@@ -333,10 +333,6 @@
   background-color: #4780FF;
   color: #fff;
 }
-.full-height-modal {
-  height: 80vh;
-  overflow-y: auto;
-}
 
 /*  Larger Screen Styling */
 @media (min-width: 564px) {

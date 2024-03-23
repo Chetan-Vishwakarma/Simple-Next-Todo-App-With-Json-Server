@@ -173,12 +173,12 @@ function NewTodoList() {
                     </Box>
                 </Box> */}
 
-                <Box className='mb-3'>
+                {/* <Box className='mb-3'>
                     <Button variant="text" className='btn-blue-2 mb-2 ms-2'>Task Due Soon</Button>
                     <Button variant="text" className='btn-blue-2 mb-2 ms-2'>Recently Updated</Button>
                     <Button variant="text" className='btn-blue-2 mb-2 ms-2'>Pinned Task</Button>
                     <Button variant="text" className='btn-blue-2 mb-2 ms-2'>Recently Access Documents</Button>
-                </Box>
+                </Box> */}
             </Box>
 
 
