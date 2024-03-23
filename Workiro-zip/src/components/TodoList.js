@@ -9,6 +9,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ScheduleIcon from '@mui/icons-material/Schedule';
+import BallotIcon from '@mui/icons-material/Ballot';
 
 import user from "../images/user.jpg";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -77,7 +78,7 @@ function TodoList() {
     const [selectedGroupBy, setSelectedGroupBy] = useState("Group By");
 
     const [dataInGroup, setDataInGroup] = useState([]);
-    const [isLoading,setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
     // for date datepicker
     const [state, setState] = useState({
@@ -161,7 +162,7 @@ function TodoList() {
                         // setActualData([...myTasks]);
                         setActualData([...hasCreationDate]);
                         setAllTask([...hasCreationDate]);
-                        setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
+                        setTaskFilter({ ...taskFilter, "EndDateTime": [start._d, end._d] });  // for initialization of filter
                         setIsLoading(false);
                         Json_GetFolders();
                         // console.log("modified tasks: ",myTasks);
@@ -626,7 +627,7 @@ function TodoList() {
 
                 <Box className='main-filter-box'>
                     {/* <Box className='row'> */}
-                    {isLoading?<Box className="custom-loader"><CustomLoader/></Box>:(<Box className='row'>
+                    {isLoading ? <Box className="custom-loader"><CustomLoader /></Box> : (<Box className='row'>
 
                         {/* statick box */}
                         <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex' onClick={handleClickOpenPortal}>
@@ -1064,6 +1065,15 @@ function TodoList() {
                                     </Box>
                                 </Box>
 
+                            </Box>
+
+                            <hr />
+
+                            <Box className="d-flex flex-wrap">
+                                <label className='text-decoration-none d-flex'
+                                    onClick={handleClickOpen}
+                                ><BallotIcon className='me-1' /> Documents</label>
+                                {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
                             </Box>
 
                         </Box>

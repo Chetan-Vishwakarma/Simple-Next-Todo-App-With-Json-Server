@@ -1375,8 +1375,6 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 onClick={handleClickOpen}
                             ><BallotIcon className='me-1' /> {attachmentFile.length} Documents</label>
                             {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
-
-
                         </Box>
                         <Box className="d-flex mt-3">
                             <Box className="mb-2 me-3">
