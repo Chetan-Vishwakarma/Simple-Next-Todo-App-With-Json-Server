@@ -3,6 +3,7 @@ import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogC
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import user from "../images/user.jpg";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import ScheduleIcon from '@mui/icons-material/Schedule';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommanCLS from '../services/CommanService';
 import TaskDetailModal from './TaskDetailModal';
@@ -58,7 +59,7 @@ function TodoList() {
     const [selectedGroupBy, setSelectedGroupBy] = useState("Group By");
 
     const [dataInGroup, setDataInGroup] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading,setIsLoading] = useState(true);
 
     // for date datepicker
     const [state, setState] = useState({
@@ -142,7 +143,7 @@ function TodoList() {
                         // setActualData([...myTasks]);
                         setActualData([...hasCreationDate]);
                         setAllTask([...hasCreationDate]);
-                        setTaskFilter({ ...taskFilter, "EndDateTime": [start._d, end._d] });  // for initialization of filter
+                        setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
                         setIsLoading(false);
                         Json_GetFolders();
                         // console.log("modified tasks: ",myTasks);
@@ -499,7 +500,7 @@ function TodoList() {
                             >
                                 <MenuItem value="Source">Type</MenuItem>
                                 <MenuItem value="CRM">CRM</MenuItem>
-                                <MenuItem value="Process">Process</MenuItem>
+                                <MenuItem value="Portal">Portal</MenuItem>
                             </Select>
                         </FormControl>
 
@@ -629,74 +630,7 @@ function TodoList() {
 
                 <Box className='main-filter-box'>
                     {/* <Box className='row'> */}
-                    {isLoading ? <Box className="custom-loader"><CustomLoader /></Box> : (<Box className='row'>
-
-                        {/* statick box */}
-                        <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex' onClick={handleClickOpenPortal}>
-                            <Box className='todo-list-box white-box relative w-100'>
-
-                                <Radio className='text-red check-todo' checked
-                                    sx={{
-                                        '&.Mui-checked': {
-                                            color: "secondary",
-                                        },
-                                    }}
-                                />
-
-                                <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> Signature Tast</Typography>
-
-                                <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography>
-
-                                <Box className='d-flex align-items-center justify-content-between'>
-                                    <Typography variant='subtitle1'><pan className='text-gray'>
-                                        You <ArrowForwardIosIcon className='font-14' /> </pan>
-                                        <a href='#'>Patrick</a>,
-                                        <a href='#'>Patrick</a> <a href='#'> +5</a></Typography>
-                                    <Typography variant='subtitle1 sembold'>01/05/23</Typography>
-                                </Box>
-
-                                <Box className='d-flex align-items-center justify-content-between'>
-                                    <Typography variant='subtitle1'>Docusoft india pvt ltd</Typography>
-                                    <Typography variant='subtitle1'>
-
-                                        <Box>
-                                            <Button
-                                                id="basic-button"
-                                                aria-controls={open ? 'basic-menu' : undefined}
-                                                aria-haspopup="true"
-                                                aria-expanded={open ? 'true' : undefined}
-                                                onClick={handleClick}
-                                            >
-                                                priority
-                                            </Button>
-                                            <Menu
-                                                id="basic-menu"
-                                                className='custom-dropdown'
-                                                anchorEl={anchorEl}
-                                                open={open}
-                                                onClose={handleClose}
-                                                MenuListProps={{
-                                                    'aria-labelledby': 'basic-button',
-                                                }}
-                                            >
-                                                <MenuItem onClick={handleClose}>High</MenuItem>
-                                                <MenuItem onClick={handleClose}>Medium</MenuItem>
-                                                <MenuItem onClick={handleClose}>Low</MenuItem>
-                                            </Menu>
-                                        </Box>
-
-                                    </Typography>
-                                </Box>
-
-                                <Box className='mt-2'>
-                                    <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
-                                    <Button variant="text" className='btn-blue-2'>Defer</Button>
-                                </Box>
-
-                            </Box>
-                        </Box>
-                        {/* col end */}
-
+                    {isLoading?<Box className="custom-loader"><CustomLoader/></Box>:(<Box className='row'>
 
                         {
 
@@ -843,136 +777,71 @@ function TodoList() {
                                     <h4 className='font-18 text-gray'>Data Not Found</h4></Box>)
                         }
 
+                        {/* statick box */}
+                        <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex' onClick={handleClickOpenPortal}>
+                            <Box className='todo-list-box white-box relative w-100'>
 
+                                <Radio className='text-red check-todo' checked
+                                    sx={{
+                                        '&.Mui-checked': {
+                                            color: "secondary",
+                                        },
+                                    }}
+                                />
 
+                                <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> Signature Tast</Typography>
 
-                        {/* <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
-                    <Box className='todo-list-box white-box relative w-100'>
+                                <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography>
 
-                        <Checkbox className='text-blue check-todo'
-                            {...label}
-                            icon={<RadioButtonUncheckedIcon />}
-                            checkedIcon={<CheckCircleIcon />}
-                        />
-
-                        <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> Signature Tast</Typography>
-
-                        <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography>
-
-                        <Box className='d-flex align-items-center justify-content-between'>
-                            <Typography variant='subtitle1'><pan className='text-gray'>
-                                You <ArrowForwardIosIcon className='font-14' /> </pan>
-                                {/* <a href='#'>Patrick</a>, 
-                                <a href='#'>Patrick</a> <a href='#'> +6</a></Typography>
-                            <Typography variant='subtitle1 sembold'>01/05/23</Typography>
-                        </Box>
-
-                        <Box className='d-flex align-items-center justify-content-between'>
-                            <Typography variant='subtitle1'>Docusoft india pvt ltd</Typography>
-                            <Typography variant='subtitle1'>
-
-                                <Box>
-                                    <Button
-                                        id="basic-button"
-                                        aria-controls={open ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={open ? 'true' : undefined}
-                                        onClick={handleClick}
-                                    >
-                                        priority
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        className='custom-dropdown'
-                                        anchorEl={anchorEl}
-                                        open={open}
-                                        onClose={handleClose}
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                    >
-                                        <MenuItem onClick={handleClose}>High</MenuItem>
-                                        <MenuItem onClick={handleClose}>Medium</MenuItem>
-                                        <MenuItem onClick={handleClose}>Low</MenuItem>
-                                    </Menu>
+                                <Box className='d-flex align-items-center justify-content-between'>
+                                    <Typography variant='subtitle1'><pan className='text-gray'>
+                                        You <ArrowForwardIosIcon className='font-14' /> </pan>
+                                        <a href='#'>Patrick</a>,
+                                        <a href='#'>Patrick</a> <a href='#'> +5</a></Typography>
+                                    <Typography variant='subtitle1 sembold'>01/05/23</Typography>
                                 </Box>
 
-                            </Typography>
-                        </Box>
+                                <Box className='d-flex align-items-center justify-content-between'>
+                                    <Typography variant='subtitle1'>Docusoft india pvt ltd</Typography>
+                                    <Typography variant='subtitle1'>
 
-                        <Box className='mt-2'>
-                            <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
-                            <Button variant="text" className='btn-blue-2'>Defer</Button>
-                        </Box>
+                                        <Box>
+                                            <Button
+                                                id="basic-button"
+                                                aria-controls={open ? 'basic-menu' : undefined}
+                                                aria-haspopup="true"
+                                                aria-expanded={open ? 'true' : undefined}
+                                                onClick={handleClick}
+                                            >
+                                                priority
+                                            </Button>
+                                            <Menu
+                                                id="basic-menu"
+                                                className='custom-dropdown'
+                                                anchorEl={anchorEl}
+                                                open={open}
+                                                onClose={handleClose}
+                                                MenuListProps={{
+                                                    'aria-labelledby': 'basic-button',
+                                                }}
+                                            >
+                                                <MenuItem onClick={handleClose}>High</MenuItem>
+                                                <MenuItem onClick={handleClose}>Medium</MenuItem>
+                                                <MenuItem onClick={handleClose}>Low</MenuItem>
+                                            </Menu>
+                                        </Box>
 
-                    </Box>
-                </Box> */}
-                        {/* col end */}
-
-
-                        {/* <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
-                    <Box className='todo-list-box white-box relative w-100'>
-
-                        <Checkbox className='text-blue check-todo'
-                            {...label}
-                            icon={<RadioButtonUncheckedIcon />}
-                            checkedIcon={<CheckCircleIcon />}
-                        />
-
-                        <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> Signature Tast</Typography>
-
-                        <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography>
-
-                        <Box className='d-flex align-items-center justify-content-between'>
-                            <Typography variant='subtitle1'><pan className='text-gray'>
-                                You <ArrowForwardIosIcon className='font-14' /> </pan>
-                                {/* <a href='#'>Patrick</a>,
-                                <a href='#'>Patrick</a> <a href='#'> +2</a></Typography>
-                            <Typography variant='subtitle1 sembold'>01/05/23</Typography>
-                        </Box>
-
-                        <Box className='d-flex align-items-center justify-content-between'>
-                            <Typography variant='subtitle1'>Docusoft india pvt ltd</Typography>
-                            <Typography variant='subtitle1'>
-
-                                <Box>
-                                    <Button
-                                        id="basic-button"
-                                        aria-controls={open ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={open ? 'true' : undefined}
-                                        onClick={handleClick}
-                                    >
-                                        priority
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        className='custom-dropdown'
-                                        anchorEl={anchorEl}
-                                        open={open}
-                                        onClose={handleClose}
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                    >
-                                        <MenuItem onClick={handleClose}>High</MenuItem>
-                                        <MenuItem onClick={handleClose}>Medium</MenuItem>
-                                        <MenuItem onClick={handleClose}>Low</MenuItem>
-                                    </Menu>
+                                    </Typography>
                                 </Box>
 
-                            </Typography>
-                        </Box>
+                                <Box className='mt-2'>
+                                    <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
+                                    <Button variant="text" className='btn-blue-2'>Defer</Button>
+                                </Box>
 
-                        <Box className='mt-2'>
-                            <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
-                            <Button variant="text" className='btn-blue-2'>Defer</Button>
+                            </Box>
                         </Box>
-
-                    </Box>
-                </Box> */}
                         {/* col end */}
-
                     </Box>)}
                 </Box>
             </Box>
@@ -984,7 +853,7 @@ function TodoList() {
                 onClose={handleClosePortal}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
-                className='custom-modal custom-modal-1200'
+                className='custom-modal'
                 sx={{
                     // maxWidth: 640,
                     margin: '0 auto'

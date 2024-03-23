@@ -61,8 +61,9 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
     console.log("Selected Document", documents)
     const [openPDFView, setOpenPDFView] = React.useState(false);
     const [selectedDocument, setSelectedDocument] = React.useState(null);
-    const handleClickOpenPDFView = (data) => {
-
+    const handleClickOpenPDFView = (event, data) => {
+        event.preventDefault();
+        event.stopPropagation();
         setSelectedDocument(data)
         setOpenPDFView(true);
     };
@@ -100,15 +101,20 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
     };
 
     // details dropdown
-    const [anchorElDocumentList, setAnchorElDocumentList] = React.useState(null);
-    const DocumentList = Boolean(anchorElDocumentList);
-    const handleClickDocumentList = (event) => {
-        // console.log(event.currentTarget);
+    const [anchorElDocumentList, setAnchorElDocumentList] = React.useState({});
+    const DocumentList = (index) => Boolean(anchorElDocumentList[index]);
+    const handleClickDocumentList = (event, rowData) => {
+        event.preventDefault();
         event.stopPropagation();
-        setAnchorElDocumentList(event.currentTarget);
+        const newAnchorElDocumentList = { ...anchorElDocumentList };
+        newAnchorElDocumentList[rowData.key] = event.currentTarget;
+        setAnchorElDocumentList(newAnchorElDocumentList);
     };
-    const handleCloseDocument = () => {
-        setAnchorElDocumentList(null);
+    
+    const handleCloseDocument = (rowData) => {
+        const newAnchorElDocumentList = { ...anchorElDocumentList };
+        delete newAnchorElDocumentList[rowData.key];
+        setAnchorElDocumentList(newAnchorElDocumentList);
     };
 
 
@@ -131,11 +137,11 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
 
     // end
     const customSortingMethod = (a, b) => {
-        console.log("dffdsf",a,b);
+        console.log("dffdsf", a, b);
         const dateA = new Date(a);
         const dateB = new Date(b);
         return dateA - dateB;
-      };
+    };
 
 
     return (
@@ -185,7 +191,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                         dataType="string"  // Set the data type to "string" for proper grouping
                         cellRender={(data) => {
                             return <Box className="file-uploads">
-                                <label className="file-uploads-label file-uploads-document" onClick={() => handleClickOpenPDFView(data.data)}>
+                                <label className="file-uploads-label file-uploads-document" onClick={(event) => handleClickOpenPDFView(event, data.data)}>
                                     <Box className="d-flex align-items-center">
 
                                         {/* <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" />  */}
@@ -207,22 +213,22 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                                     </Box>
                                     <Box>
                                         <Button
-                                            id="basic-button"
-                                            aria-controls={DocumentList ? 'basic-menu' : undefined}
+                                            id={`basic-button-${data.key}`}
+                                            aria-controls={anchorElDocumentList[data.key] ? `basic-menu-${data.key}` : undefined}
                                             aria-haspopup="true"
-                                            aria-expanded={DocumentList ? 'true' : undefined}
-                                            onClick={handleClickDocumentList}
+                                            aria-expanded={Boolean(anchorElDocumentList[data.key])}
+                                            onClick={(event)=>handleClickDocumentList(event, data)}
                                             className='min-width-auto'
                                         >
                                             <MoreVertIcon />
                                         </Button>
                                         <Menu
-                                            id="basic-menu"
-                                            anchorEl={anchorElDocumentList}
-                                            open={DocumentList}
-                                            onClose={handleCloseDocument}
+                                            id={`basic-menu-${data.key}`}
+                                            anchorEl={anchorElDocumentList[data.key]}
+                                            open={Boolean(anchorElDocumentList[data.key])}
+                                            onClose={()=>handleCloseDocument(data)}
                                             MenuListProps={{
-                                                'aria-labelledby': 'basic-button',
+                                                'aria-labelledby': `basic-button-${data.key}`,
                                             }}
                                             className='custom-dropdown'
                                         >
