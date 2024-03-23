@@ -27,6 +27,7 @@ import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import noData from "../../src/images/no-data.gif";
 
 import { data } from 'jquery';
+import CustomLoader from './CustomLoader';
 
 
 function TodoList() {
@@ -64,6 +65,7 @@ function TodoList() {
     const [selectedGroupBy, setSelectedGroupBy] = useState("Group By");
 
     const [dataInGroup, setDataInGroup] = useState([]);
+    const [isLoading,setIsLoading] = useState(true);
 
     // for date datepicker
     const [state, setState] = useState({
@@ -113,23 +115,18 @@ function TodoList() {
                     if (data) {
                         let json = JSON.parse(data);
                         console.log("Json_CRM_GetOutlookTask", json.Table);
+
                         let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
+
                         const formattedTasks = result.map((task) => {
                             let timestamp;
                             if (task.EndDateTime) {
                                 timestamp = parseInt(task.EndDateTime.slice(6, -2));
                             }
-
                             const date = new Date(timestamp);
-                            // let dateForm = startFormattingDate(date);
-
                             return { ...task, EndDateTime: date };
                         });
 
-                        // setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
-
-                        // let tasks = formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime);
-                        // let myTasks = tasks.filter((item)=>item.AssignedToID.split(",").includes(userId));
                         let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
 
                         let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
@@ -137,22 +134,17 @@ function TodoList() {
                             if (task.CreationDate) {
                                 timestamp = parseInt(task.CreationDate.slice(6, -2));
                             }
-
                             const date = new Date(timestamp);
-
                             return { ...task, CreationDate: date };
                         }).sort((a, b) => b.CreationDate - a.CreationDate);
-
 
                         // setActualData([...myTasks]);
                         setActualData([...hasCreationDate]);
                         setAllTask([...hasCreationDate]);
+                        setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
+                        setIsLoading(false);
                         Json_GetFolders();
-                        // console.log("modified tasks: ",myTasks);
 
-                        // console.log("modified tasks",formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
-                        // setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
-                        // setAllTask(json.Table);
                     }
                 }
             });
@@ -165,10 +157,8 @@ function TodoList() {
 
 
     const eventHandler = (e) => {
-        console.log("Load more data2", e);
+        // console.log("Load more data2", e);
         if (window.innerHeight + e.target.documentElement.scrollTop + 1 >= e.target.documentElement.scrollHeight) {
-            // Check if there's more data to load before updating loadMore
-
             setLoadMore((prevLoadMore) => prevLoadMore + 50);
         }
     }
@@ -177,7 +167,7 @@ function TodoList() {
         window.addEventListener('scroll', eventHandler);
 
         return () => {
-            console.log("Removing scroll event listener");
+            // console.log("Removing scroll event listener");
             window.removeEventListener('scroll', eventHandler);
         };
     }, []);
@@ -597,10 +587,9 @@ function TodoList() {
 
 
             <Box className='main-filter-box'>
-                <Box className='row'>
+                {isLoading?<Box className="custom-loader"><CustomLoader/></Box>:<Box className='row'>
 
                     {
-
                         Object.keys(dataInGroup).length > 0 ? (<>
                             {Object.keys(dataInGroup).map((key) => {
                                 return <>
@@ -935,7 +924,7 @@ function TodoList() {
                 </Box> */}
                     {/* col end */}
 
-                </Box>
+                </Box>}
             </Box>
         </Box>
     )
