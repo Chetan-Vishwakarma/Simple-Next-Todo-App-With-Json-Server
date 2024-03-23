@@ -623,6 +623,73 @@ function TodoList() {
                 <Box className='main-filter-box'>
                     <Box className='row'>
 
+                        {/* statick box */}
+                        <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex' onClick={handleClickOpenPortal}>
+                            <Box className='todo-list-box white-box relative w-100'>
+
+                                <Radio className='text-red check-todo' checked
+                                    sx={{
+                                        '&.Mui-checked': {
+                                            color: "secondary",
+                                        },
+                                    }}
+                                />
+
+                                <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> Signature Tast</Typography>
+
+                                <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography>
+
+                                <Box className='d-flex align-items-center justify-content-between'>
+                                    <Typography variant='subtitle1'><pan className='text-gray'>
+                                        You <ArrowForwardIosIcon className='font-14' /> </pan>
+                                        <a href='#'>Patrick</a>,
+                                        <a href='#'>Patrick</a> <a href='#'> +5</a></Typography>
+                                    <Typography variant='subtitle1 sembold'>01/05/23</Typography>
+                                </Box>
+
+                                <Box className='d-flex align-items-center justify-content-between'>
+                                    <Typography variant='subtitle1'>Docusoft india pvt ltd</Typography>
+                                    <Typography variant='subtitle1'>
+
+                                        <Box>
+                                            <Button
+                                                id="basic-button"
+                                                aria-controls={open ? 'basic-menu' : undefined}
+                                                aria-haspopup="true"
+                                                aria-expanded={open ? 'true' : undefined}
+                                                onClick={handleClick}
+                                            >
+                                                priority
+                                            </Button>
+                                            <Menu
+                                                id="basic-menu"
+                                                className='custom-dropdown'
+                                                anchorEl={anchorEl}
+                                                open={open}
+                                                onClose={handleClose}
+                                                MenuListProps={{
+                                                    'aria-labelledby': 'basic-button',
+                                                }}
+                                            >
+                                                <MenuItem onClick={handleClose}>High</MenuItem>
+                                                <MenuItem onClick={handleClose}>Medium</MenuItem>
+                                                <MenuItem onClick={handleClose}>Low</MenuItem>
+                                            </Menu>
+                                        </Box>
+
+                                    </Typography>
+                                </Box>
+
+                                <Box className='mt-2'>
+                                    <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
+                                    <Button variant="text" className='btn-blue-2'>Defer</Button>
+                                </Box>
+
+                            </Box>
+                        </Box>
+                        {/* col end */}
+
+
                         {
 
                             Object.keys(dataInGroup).length > 0 ? (<>
@@ -768,71 +835,7 @@ function TodoList() {
                                     <h4 className='font-18 text-gray'>Data Not Found</h4></Box>)
                         }
 
-                        {/* statick box */}
-                        <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex' onClick={handleClickOpenPortal}>
-                            <Box className='todo-list-box white-box relative w-100'>
 
-                                <Radio className='text-red check-todo' checked
-                                    sx={{
-                                        '&.Mui-checked': {
-                                            color: "secondary",
-                                        },
-                                    }}
-                                />
-
-                                <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> Signature Tast</Typography>
-
-                                <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography>
-
-                                <Box className='d-flex align-items-center justify-content-between'>
-                                    <Typography variant='subtitle1'><pan className='text-gray'>
-                                        You <ArrowForwardIosIcon className='font-14' /> </pan>
-                                        <a href='#'>Patrick</a>,
-                                        <a href='#'>Patrick</a> <a href='#'> +5</a></Typography>
-                                    <Typography variant='subtitle1 sembold'>01/05/23</Typography>
-                                </Box>
-
-                                <Box className='d-flex align-items-center justify-content-between'>
-                                    <Typography variant='subtitle1'>Docusoft india pvt ltd</Typography>
-                                    <Typography variant='subtitle1'>
-
-                                        <Box>
-                                            <Button
-                                                id="basic-button"
-                                                aria-controls={open ? 'basic-menu' : undefined}
-                                                aria-haspopup="true"
-                                                aria-expanded={open ? 'true' : undefined}
-                                                onClick={handleClick}
-                                            >
-                                                priority
-                                            </Button>
-                                            <Menu
-                                                id="basic-menu"
-                                                className='custom-dropdown'
-                                                anchorEl={anchorEl}
-                                                open={open}
-                                                onClose={handleClose}
-                                                MenuListProps={{
-                                                    'aria-labelledby': 'basic-button',
-                                                }}
-                                            >
-                                                <MenuItem onClick={handleClose}>High</MenuItem>
-                                                <MenuItem onClick={handleClose}>Medium</MenuItem>
-                                                <MenuItem onClick={handleClose}>Low</MenuItem>
-                                            </Menu>
-                                        </Box>
-
-                                    </Typography>
-                                </Box>
-
-                                <Box className='mt-2'>
-                                    <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
-                                    <Button variant="text" className='btn-blue-2'>Defer</Button>
-                                </Box>
-
-                            </Box>
-                        </Box>
-                        {/* col end */}
 
 
                         {/* <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
@@ -973,7 +976,7 @@ function TodoList() {
                 onClose={handleClosePortal}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
-                className='custom-modal'
+                className='custom-modal custom-modal-1200'
                 sx={{
                     // maxWidth: 640,
                     margin: '0 auto'
@@ -999,7 +1002,7 @@ function TodoList() {
                         </Box>
                         <hr />
 
-                        <Box>
+                        <Box className='mb-3'>
                             <Box className='d-flex align-items-center mb-2'>
                                 <Checkbox
                                     {...label}
@@ -1034,11 +1037,16 @@ function TodoList() {
                                     <Box className='ps-3'>
                                         <h5 className='font-14 text-black mb-1'>Message approved </h5>
                                         <p className='font-12 text-gray sembold mb-2'>10/11/24 09:50PM</p>
-                                        <Button className='btn-blue-2' size="small" startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
+                                        {/* <Button className='btn-blue-2' size="small" startIcon={<ScheduleIcon />}>Certificate of Approval</Button> */}
+
+                                        <Button className='btn-blue-2 btn btn-warning' size="small" sx={{
+                                            background: '#ffc107 !important'
+                                        }} startIcon={<NewReleasesIcon />}>Pending Approval</Button>
+
                                     </Box>
                                 </Box>
 
-                                <Box className='d-fle'>
+                                <Box className='d-flex'>
                                     {/* <MarkunreadIcon /> */}
                                     <DraftsIcon />
                                     <Box className='ps-3'>
