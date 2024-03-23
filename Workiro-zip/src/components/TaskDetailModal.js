@@ -45,6 +45,14 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
+import Checkbox from '@mui/material/Checkbox';
+
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+
+
 import Fade from '@mui/material/Fade';
 import GetClientList from "./GetClientList";
 import {
@@ -52,25 +60,39 @@ import {
     TextField,
 } from "@mui/material";
 import AssigneeUsers from "./AssigneeUser";
+import dxTileView from "devextreme/ui/tile_view";
+import { HtmlEditor } from "devextreme-react";
+import HtmlEditorDX from "./HtmlEditor";
+import { json } from "react-router-dom";
+import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
 }));
 
+const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+
+
 
 function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) {
     console.log("TaskDetailModal2222", selectedTask);
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+    const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
 
 
+
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
+    let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
 
     /////////////////////////////////////////Task Activity
+    const [templateDataMarkup, setTemplateDataMarkup] = useState(null);
+    const [editorContentValue, setEditorContentValue] = useState(null);
     const [folderList, setFolderList] = useState([]);
+
     const [txtFolder, settxtFolder] = useState(selectedTask.Folder);
     const [txtFolderId, setTxtFolderId] = useState(selectedTask.FolderID);
 
@@ -296,12 +318,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                     let res = JSON.parse(data);
                     if (res.Status === "Success") {
                         let path = window.atob(res.Message);
-                        let fileName="";
-                        if(path){
+                        let fileName = "";
+                        if (path) {
                             let index = path.lastIndexOf("\\");
-                             fileName = path.slice(index + 1);
+                            fileName = path.slice(index + 1);
                         }
-                       
+
 
                         let o = { Path: path, FileName: fileName }
 
@@ -352,12 +374,30 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                     // setTimeout(() => {
                     //     console.log("attachmentFile", attachmentFile);
                     // }, 3000);
+
+                    for (let item of table6) {
+                        let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };
+                        setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+                    }
+
+
+
+
+
                 }
             }
         });
     }
 
+    function GetFileNamebyPath(path) {
 
+        let fileName = "";
+        if (path) {
+            let index = path.lastIndexOf("\\");
+            fileName = path.slice(index + 1);
+        }
+        return fileName;
+    }
 
     function DateFormet(timestamp) {
         const date = new Date(timestamp);
@@ -366,17 +406,35 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     }
 
     function startFormattingDate(dt) {
-        console.log("kjdhdsjhsdf",dt)
+        console.log("kjdhdsjhsdf", dt)
         if (dt) {
             // let fullDate = new Date(parseInt(dt.substr(6)));
             let fullDate = new Date(dt);
             console.log("date formet111", fullDate);
             return fullDate;
         }
+        else {
+            return "";
+        }
+
+
+
 
     }
 
+    function DateFormate(dateString) {
+        // Example date string
 
+        // Extract the timestamp from the string using regular expressions
+        const timestamp = parseInt(dateString.match(/\d+/)[0]);
+
+        // Convert the timestamp to a Date object
+        const date = new Date(timestamp);
+
+        // Format the date as you desire
+        const formattedDate = date.toLocaleString(); // Adjust the format as needed
+        return formattedDate;
+    }
 
 
 
@@ -493,8 +551,155 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
             console.log("error", error);
         }
     }
+    /////////////////////Call Portal Methods  
+    const [portalEmail, setPortalEmail] = useState([]);
+    const [anchorElMgs, setAnchorElMgs] = React.useState(null);
+    const [messageEmail, setMessageEmail] = React.useState("Select Message");
+    const [portalEmailOpbject, setPortalEmailOpbject] = React.useState({});
+    const [filterAttachments, setFilterAttachments] = React.useState([]);
+    const [allPortalAttachments, setAllPortalAttachments] = React.useState([]);
+
+    const [OpenPortalAttachmnet, setOpenPortalAttachmnet] = React.useState(false);
+    const handleClickOpenPortalAtt = () => {
+        setOpenPortalAttachmnet(true);
+    };
+    const handleClosePortalAtt = () => {
+        setOpenPortalAttachmnet(false);
+    };
+
+
+    const openMgsMail = Boolean(anchorElMgs);
+    const handleClickMgsMail = (event) => {
+        setAnchorElMgs(event.currentTarget);
+    };
+
+    const GetMessageHtml_Json = (mgsId) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageId: mgsId,
+        };
+
+        ClsPortal.GetMessageHtml_Json(o, function (sts, data) {
+            if (sts) {
+                console.log("GetMessageHtml_Json", data);
+                setTemplateDataMarkup(data)
+            }
+        })
+    }
+
+    const GetCertificate_Json = (mgsId) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageId: mgsId,
+        };
+
+        ClsPortal.GetCertificate_Json(o, function (sts, data) {
+            if (sts) {
+                console.log("GetCertificate_Json", data);
+                // setTemplateDataMarkup(data)
+            }
+        })
+    }
+
+    const GetDocumentStatus_Json = (m) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageId: m.PortalDocId,
+            messageEmailAddress: m.emailid,
+            docName: m.PortalName,
+        };
+
+        ClsPortal.GetDocumentStatus_Json(o, function (sts, data) {
+            if (sts) {
+                console.log("GetDocumentStatus_Json", data);
+                // setTemplateDataMarkup(data)
+            }
+        })
+    }
+
+    const handleCloseMgs = (e) => {
+        setAnchorElMgs(null);
+
+        GetMessageHtml_Json(e.PortalDocId);
+        GetCertificate_Json(e.PortalDocId);
+        GetDocumentStatus_Json(e);
+        setMessageEmail(e.emailid);
+        setPortalEmailOpbject(e);
+        handleClickOpenPortalAtt(true);
+        let res = allPortalAttachments.length > 0 ? allPortalAttachments.filter((p) => p.emailid === e.emailid) : null;
+        console.log("GetMessageHtml_Json11", res);
+        setFilterAttachments(res);
+    };
+
+
+    const GetMessageDocuments_Json = (mgsId) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageId: mgsId,
+        };
+
+        ClsPortal.GetMessageDocuments_Json(o, function (sts, data) {
+            if (sts) {
+                console.log("GetMessageDocuments_Json", data);
+            }
+        })
+    }
+
+
+    const GetMessageAttachments_Json = (mgsId) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageId: mgsId,
+        };
+
+        ClsPortal.GetMessageAttachments_Json(o, function (sts, data) {
+            if (sts) {
+                let arrayOfObjects = JSON.parse(data);
+                setAllPortalAttachments(arrayOfObjects);
+                // Convert array of objects to Set to get unique objects based on specified properties
+                const uniqueObjectsSet = new Set(arrayOfObjects.map(obj => generateUniqueKey(obj)));
+
+                // Convert Set back to array of objects
+                const uniqueObjectsArray = Array.from(uniqueObjectsSet).map(key => {
+                    const [PortalDocId, emailid] = key.split('|');
+                    return arrayOfObjects.find(obj => obj.PortalDocId === PortalDocId && obj.emailid === emailid);
+                });
+
+
+                if (data) {
+                    setPortalEmail(uniqueObjectsArray)
+                }
+            }
+        });
+    }
+
+
+    // Function to generate a unique key based on specified properties
+    function generateUniqueKey(obj) {
+        return obj.PortalDocId + '|' + obj.emailid;
+    }
+
+    /////////////////////End Call Portal Methods  
+
 
     useEffect(() => {
+        //PortMethods
+        if (selectedTask.PubMessageId) {
+            GetMessageDocuments_Json(selectedTask.PubMessageId)
+            GetMessageAttachments_Json(selectedTask.PubMessageId)
+        }
+        //End PortMethods
+
         Json_GetForwardUserList(selectedTask.FolderID);
         setSelectedFiles([]);
         Json_GetFolders();
@@ -582,6 +787,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     const handleClose = () => {
         // setAnchorEl(null);
         setOpen(false);
+
     };
 
 
@@ -638,14 +844,16 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
     const handleCloseProfile = (e) => {
         // console.log("folder data",e)
+        setanchorElStatus(null);
+        setSelectedIndexProfile(null); // Reset the selected index after closing the menu
+
+
         if (e.FolderID) {
             Json_UpdateTaskField("FolderID", e.FolderID, "Folder updated. Please review Reference and Section");
 
             setTxtFolderId(e.FolderID);
             settxtFolder(e.Folder);
 
-            setanchorElStatus(null);
-            setSelectedIndexProfile(null); // Reset the selected index after closing the menu
 
             Json_GetFolderData(e.FolderID);
             Json_GetSections(e.FolderID);
@@ -807,12 +1015,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                         setIsVisible(false); // Toggle visibility
 
                         const attString = attachmentPath.map((item) => {
-                            let fileName="";
-                            if(item.FileName){
+                            let fileName = "";
+                            if (item.FileName) {
                                 let Typest = item.FileName.lastIndexOf("\\");
-                                 fileName = item.FileName.slice(Typest + 1);
+                                fileName = item.FileName.slice(Typest + 1);
                             }
-                            
+
                             return fileName;
                         });
 
@@ -847,6 +1055,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
             if (sts && data) {
                 if (data === "Success") {
                     toast.success(mgsd)
+                    Json_AddSupplierActivity(mgsd + " by " + forwardUser.ForwardTo, "sys");
                 }
                 console.log("Json_UpdateTaskField", data)
             }
@@ -897,12 +1106,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 if (js.Status === "Success") {
                     // var dencodedData = window.atob(Path);
                     // var fileName = dencodedData;
-                    let fileName=txtClientId;
-                    if(objdata.FileName){
+                    let fileName = txtClientId;
+                    if (objdata.FileName) {
                         var Typest = objdata.FileName.lastIndexOf("\\");
-                     fileName = objdata.FileName.slice(Typest + 1);
+                        fileName = objdata.FileName.slice(Typest + 1);
                     }
-                    
+
                     // console.log('FileName', fileName);
                     // console.log("jsonObj.Status", js.Message);
                     var a = document.createElement("a"); //Create <a>
@@ -930,10 +1139,10 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
             }).then((result) => {
                 if (result.isConfirmed) {
 
-                    let fileName=null;
-                    if(objdata.FileName){
+                    let fileName = null;
+                    if (objdata.FileName) {
                         var Typest = objdata.FileName.lastIndexOf("\\");
-                         fileName = objdata.FileName.slice(Typest + 1);
+                        fileName = objdata.FileName.slice(Typest + 1);
                     }
                     let fname = fileName;
                     let o = {
@@ -986,6 +1195,23 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         let res = selectedFiles.filter((file) => file.FileName !== e.FileName);
         setSelectedFiles(res)
     };
+
+
+    const [checked, setChecked] = useState(false);
+
+    const handleChangeStatus = (event) => {
+        setChecked(event.target.checked);
+        if (event.target.checked) {
+            Json_UpdateTaskField("Status", "Completed", returnMessageStatus("Completed"));
+            setStatus("Completed")
+        }
+        else {
+            setStatus(selectedTask.mstatus)
+        }
+
+    };
+
+
 
     return (
         <React.Fragment>
@@ -1062,9 +1288,10 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     variant="subtitle1"
                                     className="font-16 sembold mb-0"
                                 >
-                                    Select Type
+                                    {selectedTask.Source}
                                 </Typography>
                             </Box>
+
 
                             <Box className="d-flex">
                                 <Box>
@@ -1241,24 +1468,88 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                         <hr />
 
                         <Box className='mb-2'>
-                            <input
-                                ariant="h4"
-                                className="input-text-title"
-                                type="text"
-                                onChange={handalChangeSetSubject}
-                                onClick={handalClickEditeSubject}
-                                value={tSubject}
-                            />
+
+
+
+
+                            {/* <FormControlLabel
+                                control={<Checkbox checked={checked} onChange={handleChangeStatus} />}
+                            /> */}
+
+                            <Box className='d-flex'>
+                                <Checkbox
+                                    {...label}
+                                    icon={<PanoramaFishEyeIcon />}
+                                    onChange={handleChangeStatus}
+                                    checkedIcon={<CheckCircleIcon />}
+                                />
+                                <input
+                                    ariant="h4"
+                                    className="input-text-title"
+                                    type="text"
+                                    onChange={handalChangeSetSubject}
+                                    onClick={handalClickEditeSubject}
+                                    value={tSubject}
+                                />
+                            </Box>
+
 
                             <Box className="mt-2 mb-3">
-                                <textarea
-                                    className="form-control textarea textarea-ony-read resize-none"
-                                    placeholder="Description"
-                                    value={txtdescription} // Bind the value to the state
-                                    onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
-                                    onClick={handalClickEditeSubject}
-                                ></textarea>
+                                {selectedTask.Source === "CRM" && (<>
+                                    <textarea
+                                        className="form-control textarea textarea-ony-read resize-none"
+                                        placeholder="Description"
+                                        value={txtdescription} // Bind the value to the state
+                                        onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
+                                        onClick={handalClickEditeSubject}
+                                    ></textarea>
+                                </>)}
+
                             </Box>
+                            <Box className='text-editor-box-name'>
+                                {selectedTask.Source === "Portal" && (<>
+                                    <HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
+
+
+
+                                    <div>
+                                        <Button
+                                            id="basic-button"
+                                            aria-controls={openMgsMail ? 'basic-menu' : undefined}
+                                            aria-haspopup="true"
+                                            aria-expanded={openMgsMail ? 'true' : undefined}
+                                            onClick={handleClickMgsMail}
+                                        >
+                                            {messageEmail ? messageEmail : "Select Message"}
+                                        </Button>
+                                        <Menu
+                                            id="basic-menu"
+                                            anchorEl={anchorElMgs}
+                                            open={openMgsMail}
+                                            onClose={handleCloseMgs}
+                                            MenuListProps={{
+                                                'aria-labelledby': 'basic-button',
+                                            }}
+                                        >
+                                            {portalEmail ? portalEmail.map((item, index) => {
+                                                return <MenuItem key={index} onClick={() => handleCloseMgs(item)}>{item.emailid}</MenuItem>
+                                            }) : ""}
+
+
+                                        </Menu>
+                                    </div>
+
+                                </>
+                                )}
+
+                            </Box>
+
+
+
+
+
+
+
 
                             {isVisible && ( // Show the box if isVisible is true
                                 <Box className='mb-3 mt-2'>
@@ -1425,18 +1716,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                         </Box>
 
 
-                        <Box className="d-flex mb-3">
-                            <Button variant="text" onClick={() => {
-                                Json_UpdateTaskField("Status", "Completed", returnMessageStatus("Completed"));
-                                setStatus("Completed")
-                                /////sunil
-                            }} className="btn-blue-2 me-2">
-                                Mark complete
-                            </Button>
-                            <Button variant="text" className="btn-blue-2">
-                                Defer
-                            </Button>
-                        </Box>
+
 
                         <Box className="pb-0 mb-0">
                             <Box className="main-chatbox">
@@ -1447,11 +1727,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                             return (
                                                 <>
                                                     <Box
-                                                        className="text-center py-3 file-uploaded"
+                                                        className="text-center py-2 file-uploaded"
                                                         style={{
-                                                            backgroundColor: "rgb(148 221 255)",
+                                                            backgroundColor: "#e5e5e5",
                                                             marginBottom: "10px",
-                                                            "border-radius": "8px",
+                                                            "border-radius": "3px",
                                                         }}
                                                     >
                                                         <Typography
@@ -1743,10 +2023,10 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     <List>
 
                                         {attachmentFile.length > 0 ? attachmentFile.map((item, index) => {
-                                           let fileName="";
-                                          if (item.FileName) {
+                                            let fileName = "";
+                                            if (item.FileName) {
                                                 let Typest = item.FileName.lastIndexOf("\\");
-                                                 fileName = item.FileName.slice(Typest + 1);
+                                                fileName = item.FileName.slice(Typest + 1);
                                             }
 
                                             return (<>
@@ -1786,6 +2066,103 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 </DialogContent>
             </Dialog>
 
+
+            <Dialog
+                open={OpenPortalAttachmnet}
+                onClose={handleClosePortalAtt}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal'
+                sx={{
+                    maxWidth: 1000,
+                    width: '100%',
+                    margin: '0 auto'
+                }}
+            >
+                {/* <DialogTitle id="alert-dialog-title">
+                        {"Use Google's location service?"}
+                    </DialogTitle> */}
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+
+                        <Box className="d-flex align-items-center justify-content-between">
+                            <Box className="dropdown-box">
+                                <Typography variant="h4" className='font-18 bold mb-2 text-black'>
+                                    Attachments
+                                </Typography>
+                                {/* <Box className="btn-Select">
+                                    <Button className='btn-white'>Action</Button>
+                                    <Button className='btn-white'>Ser</Button>
+                                    <Button className='btn-white'>Custom</Button>
+
+                                    <hr />
+
+                                    <Button className='btn-blue-2' size="small">Apply Now</Button>
+                                </Box> */}
+                            </Box>
+
+                            {/*  */}
+                            <Button onClick={handleClosePortalAtt} autoFocus sx={{ minWidth: 30 }}>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+                        </Box>
+                        <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
+                            <Box sx={{ flexGrow: 1 }}>
+                                <Grid container spacing={2}>
+                                    <Grid xs={6}>
+                                        <Demo>
+                                            <List>
+
+
+                                                {filterAttachments.length > 0 ? filterAttachments.map((item, index) => {
+
+
+                                                    return (<>
+                                                        <ListItem key={index}
+                                                            secondaryAction={
+                                                                <IconButton edge="end" aria-label="delete">
+                                                                    <DeleteIcon onClick={() => DeleteTasksAttachment(item)} />
+                                                                    <DownloadForOfflineIcon onClick={() => handleDownloadDoc(item)} />
+                                                                </IconButton>
+                                                            }
+                                                        >
+                                                            <ListItemAvatar>
+                                                                <Avatar>
+                                                                    <FolderIcon />
+                                                                </Avatar>
+                                                            </ListItemAvatar>
+                                                            <ListItemText
+                                                                primary={item.PortalName}
+                                                                secondary={item.DDate ? DateFormate(item.DDate) : null}
+                                                            />
+                                                        </ListItem>
+                                                    </>)
+                                                }) : ""}
+
+
+                                            </List>
+                                        </Demo>
+                                    </Grid>
+                                    <Grid xs={6}>
+                                        {/* <iframe src={viewAttachments}></iframe> */}
+                                    </Grid>
+
+                                </Grid>
+                            </Box>
+
+
+                        </Box>
+
+
+                        {/* <DocumentDetails></DocumentDetails> */}
+
+
+
+                    </DialogContentText>
+                </DialogContent>
+            </Dialog>
 
 
 
