@@ -643,7 +643,10 @@ hr {
 span.tox-statusbar__branding {
   display: none;
 }
-
+.textarea-ony-read {
+  border: 0px;
+  padding: 0;
+}
 /* timeline status */
 .activity-timeline {
   margin-top: 20px;

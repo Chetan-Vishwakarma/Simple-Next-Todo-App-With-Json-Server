@@ -1482,6 +1482,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     icon={<PanoramaFishEyeIcon />}
                                     onChange={handleChangeStatus}
                                     checkedIcon={<CheckCircleIcon />}
+                                    className="ps-0"
                                 />
                                 <input
                                     ariant="h4"
@@ -1497,7 +1498,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                             <Box className="mt-2 mb-3">
                                 {selectedTask.Source === "CRM" && (<>
                                     <textarea
-                                        className="form-control textarea textarea-ony-read resize-none"
+                                        className="form-control textarea-ony-read resize-none"
                                         placeholder="Description"
                                         value={txtdescription} // Bind the value to the state
                                         onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
