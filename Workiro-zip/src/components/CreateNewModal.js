@@ -3272,9 +3272,6 @@ export default function CreateNewModalTask({ ...props }) {
 
                             </div>
 
-
-
-
                             <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
                                 <span className="material-symbols-outlined text-black">
                                     cancel

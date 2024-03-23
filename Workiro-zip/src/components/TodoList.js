@@ -1,47 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import ScheduleIcon from '@mui/icons-material/Schedule';
-import BallotIcon from '@mui/icons-material/Ballot';
-
+import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, TextField, Autocomplete, ToggleButton, ToggleButtonGroup, FormControl, Select, } from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import user from "../images/user.jpg";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommanCLS from '../services/CommanService';
-
-import { Checkbox, Radio } from '@mui/material';
 import TaskDetailModal from './TaskDetailModal';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import DownloadIcon from '@mui/icons-material/Download';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import moment from 'moment';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import noData from "../../src/images/no-data.gif";
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import NewReleasesIcon from '@mui/icons-material/NewReleases';
-// import BookmarkIcon from '@mui/icons-material/Bookmark';
-import VerifiedIcon from '@mui/icons-material/Verified';
-import MarkunreadIcon from '@mui/icons-material/Markunread';
-import DraftsIcon from '@mui/icons-material/Drafts';
+
 import CustomLoader from './CustomLoader';
-
-
-import { data } from 'jquery';
-
+// import { data } from 'jquery';
+import MergeIcon from '@mui/icons-material/Merge';
+import AttachEmailIcon from '@mui/icons-material/AttachEmail';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
+import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
+import PortalDetails from './PortalDetails';
 
 function TodoList() {
 
@@ -51,10 +35,6 @@ function TodoList() {
 
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
     const [userId, setUserId] = useState(localStorage.getItem("UserId"));
-
-
-
-
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 
     let Cls = new CommanCLS(baseUrlPractice, agrno, Email, password);
@@ -428,13 +408,35 @@ function TodoList() {
     }
 
 
-    // 
+    // new portal modal
     const [openPortal, setOpenPortal] = React.useState(false);
     const handleClickOpenPortal = () => {
         setOpenPortal(true);
     };
     const handleClosePortal = () => {
         setOpenPortal(false);
+    };
+    // end
+
+
+    const [anchorEl3, setAnchorEl3] = React.useState(null);
+    const open3 = Boolean(anchorEl3);
+    const handleClick3 = (event) => {
+        setAnchorEl3(event.currentTarget);
+    };
+    const handleClose3 = () => {
+        setAnchorEl3(null);
+    };
+
+
+    // dropdow 4
+    const [anchorEl4, setAnchorEl4] = React.useState(null);
+    const open4 = Boolean(anchorEl4);
+    const handleClick4 = (event) => {
+        setAnchorEl4(event.currentTarget);
+    };
+    const handleClose4 = () => {
+        setAnchorEl4(null);
     };
 
 
@@ -991,96 +993,130 @@ function TodoList() {
 
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-
                         <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="dropdown-box">
+                            <Box className="align-items-center d-flex">
+                                <Checkbox
+                                    {...label}
+                                    icon={<PanoramaFishEyeIcon />}
+                                    // onChange={handleChangeStatus}
+                                    checkedIcon={<CheckCircleIcon />}
+                                    className="ps-0"
+                                />
                                 <Typography variant="h4" className='font-18 bold text-black mb-0'>
                                     Portal Task
                                 </Typography>
                             </Box>
 
                             {/*  */}
-                            <Button >
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
+
+                            <Box className='d-flex'>
+
+
+                                <Box className='pe-2'>
+                                    <Button
+                                        id="basic-button"
+                                        aria-controls={open4 ? 'basic-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={open4 ? 'true' : undefined}
+                                        onClick={handleClick4}
+                                        className="min-width-auto px-0 text-danger"
+                                    >
+
+                                        <ListItemIcon className="min-width-auto  me-2 text-secondary">
+                                            <PublishedWithChangesIcon fontSize="medium" />
+                                        </ListItemIcon>
+                                        <span className="text-secondary">Profile</span>
+
+                                    </Button>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorEl4}
+                                        open={open4}
+                                        onClose={handleClose4}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+                                    >
+                                        <MenuItem onClick={handleClose4} className="text-secondary">
+                                            <ListItemIcon>
+                                                <DoNotDisturbAltIcon fontSize="medium" className="text-secondary" />
+                                            </ListItemIcon>
+                                            Not Started
+                                        </MenuItem>
+                                        <MenuItem onClick={handleClose4} className="text-primary">
+                                            <ListItemIcon>
+                                                <PublishedWithChangesIcon fontSize="medium" className="text-primary" />
+                                            </ListItemIcon>
+                                            In Progress
+                                        </MenuItem>
+
+                                        <MenuItem onClick={handleClose4} className="text-primary">
+                                            <ListItemIcon>
+                                                <HourglassBottomIcon fontSize="medium" className="text-primary" />
+                                            </ListItemIcon>
+                                            On Hold
+                                        </MenuItem>
+
+                                        <MenuItem onClick={handleClose4} className="text-success"><ListItemIcon>
+                                            <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
+                                        </ListItemIcon>
+                                            Completed
+                                        </MenuItem>
+                                    </Menu>
+                                </Box>
+
+                                <Box className='clearfix'>
+                                    <Button
+                                        id="basic-button"
+                                        aria-controls={open3 ? 'basic-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={open3 ? 'true' : undefined}
+                                        onClick={handleClick3}
+                                        className="min-width-auto px-0 text-gray"
+                                    >
+                                        <MoreVertIcon />
+                                    </Button>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorEl3}
+                                        open={open3}
+                                        onClose={handleClose3}
+                                        className='custom-dropdown'
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+                                    >
+                                        <MenuItem onClick={handleClose3} className='ps-2'>
+                                            <ListItemIcon>
+                                                <ContentCopyIcon fontSize="medium" />
+                                            </ListItemIcon> Copy Link</MenuItem>
+
+                                        <MenuItem onClick={handleClose3} className='ps-2'>
+                                            <ListItemIcon>
+                                                <MergeIcon fontSize="medium" />
+                                            </ListItemIcon> Merge</MenuItem>
+
+                                        <MenuItem onClick={handleClose3} className='ps-2'>
+                                            <ListItemIcon>
+                                                <AttachEmailIcon fontSize="medium" />
+                                            </ListItemIcon> Retract Message (s)</MenuItem>
+
+                                        <MenuItem onClick={handleClose3} className='ps-2'>
+                                            <ListItemIcon>
+                                                <DeleteIcon fontSize="medium" />
+                                            </ListItemIcon> Delete Message (s)</MenuItem>
+                                    </Menu>
+                                </Box>
+
+                                <Button onClick={handleClosePortal} className='p-0'>
+                                    <span className="material-symbols-outlined text-black">
+                                        cancel
+                                    </span>
+                                </Button>
+                            </Box>
                         </Box>
                         <hr />
-
-                        <Box className='mb-3'>
-                            <Box className='d-flex align-items-center mb-2'>
-                                <Checkbox
-                                    {...label}
-                                    icon={<NewReleasesIcon />}
-                                    checkedIcon={<VerifiedIcon />}
-                                />
-                                <h5 className='mb-0 text-black'>Subject line from the Portal Message</h5>
-                            </Box>
-                            <Box className='font-14 well mb-3'>
-                                <p className='mb-0'>
-                                    After conducting thorough research on your company's impressive track record and innovative approach, I believe there could be significant synergies between our organizations. Both of our companies share a commitment to excellence and a drive for innovation, making me optimistic about the potential for a mutually beneficial partnership.
-                                    I would like to propose a meeting at your earliest convenience to discuss how we can leverage each other's strengths to drive growth and success.
-                                </p>
-                            </Box>
-
-                            <Box className='d-flex flex-wrap align-items-center justify-content-between'>
-                                <Box className='d-flex'>
-                                    <MarkunreadIcon className='text-blue' />
-                                    {/* <DraftsIcon /> */}
-                                    <Box className='ps-3'>
-                                        <h5 className='font-14 text-black mb-1'>Last Viewed On</h5>
-                                        <p className='font-12 text-gray sembold mb-2'>10/11/24 09:50PM</p>
-                                        <Button className='btn-blue-2' size="small" startIcon={<ScheduleIcon />}>View History</Button>
-                                    </Box>
-                                </Box>
-
-                                <Box className='d-flex'>
-                                    <VerifiedIcon className='text-green' />
-                                    {/* <NewReleasesIcon className='text-warning' /> */}
-
-                                    {/* <DraftsIcon /> */}
-                                    <Box className='ps-3'>
-                                        <h5 className='font-14 text-black mb-1'>Message approved </h5>
-                                        <p className='font-12 text-gray sembold mb-2'>10/11/24 09:50PM</p>
-                                        {/* <Button className='btn-blue-2' size="small" startIcon={<ScheduleIcon />}>Certificate of Approval</Button> */}
-
-                                        <Button className='btn-blue-2 btn btn-warning' size="small" sx={{
-                                            background: '#ffc107 !important'
-                                        }} startIcon={<NewReleasesIcon />}>Pending Approval</Button>
-
-                                    </Box>
-                                </Box>
-
-                                <Box className='d-flex'>
-                                    {/* <MarkunreadIcon /> */}
-                                    <DraftsIcon />
-                                    <Box className='ps-3'>
-                                        <h5 className='font-14 text-black mb-1'>Start Date</h5>
-                                        <p className='font-12 text-gray sembold'>10/11/24</p>
-                                    </Box>
-                                    <Box className='ps-3'>
-                                        <h5 className='font-14 text-black mb-1'>End Date</h5>
-                                        <p className='font-12 text-gray sembold mb-0'>10/11/24</p>
-                                    </Box>
-                                </Box>
-
-                            </Box>
-
-                            <hr />
-
-                            <Box className="d-flex flex-wrap">
-                                <label className='text-decoration-none d-flex'
-                                    onClick={handleClickOpen}
-                                ><BallotIcon className='me-1' /> Documents</label>
-                                {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
-                            </Box>
-
-                        </Box>
-
-
-
-
+                        <PortalDetails></PortalDetails>
 
                     </DialogContentText>
                 </DialogContent>

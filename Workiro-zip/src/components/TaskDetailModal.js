@@ -1292,7 +1292,6 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 </Typography>
                             </Box>
 
-
                             <Box className="d-flex">
                                 <Box>
                                     <Button
@@ -1390,6 +1389,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                             On Hold
                                         </MenuItem>
 
+                                        <MenuItem onClick={handleCloseStatus} className="text-success"><ListItemIcon>
+                                            <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
+                                        </ListItemIcon>
+                                            Completed
+                                        </MenuItem>
+
                                         {/* <MenuItem onClick={handleCloseStatus} className="text-warning">
                                             <ListItemIcon>
                                                 <ErrorOutlineIcon fontSize="medium" className="text-warning" />
@@ -1402,17 +1407,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                             </ListItemIcon>
                                             Done</MenuItem> */}
 
-                                        <MenuItem onClick={handleCloseStatus} className="text-success"><ListItemIcon>
-                                            <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
-                                        </ListItemIcon>
-                                            Completed
-                                        </MenuItem>
                                         {/*  */}
 
                                     </Menu>
                                 </Box>
 
-                                <div>
+                                <div className="ps-2">
                                     <Button
                                         id={`fade-button-${selectedTask.ID}`} // Use unique IDs for each button
                                         aria-controls={
@@ -1493,7 +1493,6 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     value={tSubject}
                                 />
                             </Box>
-
 
                             <Box className="mt-2 mb-3">
                                 {selectedTask.Source === "CRM" && (<>
