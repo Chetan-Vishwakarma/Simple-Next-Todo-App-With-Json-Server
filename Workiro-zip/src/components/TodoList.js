@@ -496,7 +496,7 @@ function TodoList() {
                             >
                                 <MenuItem value="Source">Type</MenuItem>
                                 <MenuItem value="CRM">CRM</MenuItem>
-                                <MenuItem value="Process">Process</MenuItem>
+                                <MenuItem value="Portal">Portal</MenuItem>
                             </Select>
                         </FormControl>
 

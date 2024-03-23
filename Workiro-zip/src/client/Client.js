@@ -387,14 +387,6 @@ function Client() {
         );
         // console.log("obj",obj);
 
-        let objForColor = Object.keys(objFilterColor).filter(objKey =>
-            objKey !== target).reduce((newObj, key) => {
-                newObj[key] = objFilterColor[key];
-                return newObj;
-            }, {}
-        );
-
-
         if (selectedChoice === "Clients") {
             let fltData = handleSearchBy(clients, obj);
             // setFilteredClients(fltData);
@@ -751,8 +743,7 @@ function Client() {
                                             <Box className='clearfix'>
                                                 <Typography variant='Body1' className='mb-2 d-block  bold'>Filter: {Object.keys(objFilter).length}/3</Typography>
 
-                                                {
-                                                Object.keys(objFilter).length<3&&<><Box className='d-flex justify-content-between'>
+                                                <Box className='d-flex justify-content-between'>
                                                     <Box className='row w-100 pe-3'>
                                                         <Box className='col-md-6'>
                                                             <Box className='mb-2'>
@@ -884,14 +875,12 @@ function Client() {
 
 
                                                 <Box className='mt-2'>
-                                                    <Button onClick={handleAdvanceFilterAgain} variant="contained" size='small' color="success">
+                                                    <Button onClick={handleAdvanceFilterAgain} disabled={Object.keys(objFilter).length<3?false:true} variant="contained" size='small' color="success">
                                                         <span class="material-symbols-outlined">
                                                             add
                                                         </span> Add
                                                     </Button>
                                                 </Box>
-                                                </>
-                                                }
                                             </Box>
                                         </Box>
                                     </Box>}
