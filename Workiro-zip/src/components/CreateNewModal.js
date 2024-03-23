@@ -2014,7 +2014,7 @@ export default function CreateNewModalTask({ ...props }) {
 
                         <hr />
 
-                        <Box className="row">
+                        <Box className="row full-height-modal">
                             <Box className="col-lg-8 border-end">
                                 <Box className="clearfix">
                                     <Box>
@@ -2037,7 +2037,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                 className="p-0"
                                             /> */}
 
-                                            <Box className>
+                                            <Box>
                                                 <input
                                                     placeholder="Subject..."
                                                     className="input-text"
@@ -2255,13 +2255,9 @@ export default function CreateNewModalTask({ ...props }) {
                                                                         >
                                                                             <p>{result}</p>
                                                                         </Box>
-
-
                                                                     </>
                                                                 );
                                                             }
-
-
                                                         })
                                                         : null}
 

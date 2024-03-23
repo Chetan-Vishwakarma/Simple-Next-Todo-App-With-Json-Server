@@ -251,6 +251,7 @@ function CardView(props) {
               </Box>
 
               {/* <img src={pin} className='pin-img' /> */}
+              
               <Box className='client-img'>
                 <img src={user2} />
               </Box>
