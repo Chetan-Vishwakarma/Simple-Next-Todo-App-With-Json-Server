@@ -87,7 +87,7 @@ function TodoList() {
 
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
+        // setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
         setAnchorEl(null);

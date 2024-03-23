@@ -366,8 +366,10 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     }
 
     function startFormattingDate(dt) {
+        console.log("kjdhdsjhsdf",dt)
         if (dt) {
-            let fullDate = new Date(parseInt(dt.substr(6)));
+            // let fullDate = new Date(parseInt(dt.substr(6)));
+            let fullDate = new Date(dt);
             console.log("date formet111", fullDate);
             return fullDate;
         }
