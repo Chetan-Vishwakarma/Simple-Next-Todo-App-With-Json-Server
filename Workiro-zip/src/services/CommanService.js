@@ -7,7 +7,75 @@ export default class CommanCLS extends AllService {
     constructor(APIUrl,agrno, Email, password) {
         super(APIUrl,agrno, Email, password);
     }
-    
+    ////////////////////////////////////////Portal Methods
+    GetDocumentStatus_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("GetDocumentStatus_Json",obj,false);
+        super.CallNewService("GetDocumentStatus_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+    GetCertificate_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("GetCertificate_Json",obj,false);
+        super.CallNewService("GetCertificate_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+    GetMessageHtml_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("GetMessageHtml_Json",obj,false);
+        super.CallNewService("GetMessageHtml_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+    GetMessageAttachments_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("GetMessageAttachments_Json",obj,false);
+        super.CallNewService("GetMessageAttachments_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+    GetMessageDocuments_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("GetMessageDocuments_Json",obj,false);
+        super.CallNewService("GetMessageDocuments_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+     GetDocumentStatus_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("GetDocumentStatus_Json",obj,false);
+        super.CallNewService("GetDocumentStatus_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+    ////////////////////////////////////////End Portal Methods
+   
     UploadPortalTaskRelation_Json(obj,callBack){   
         super.CreateNewServiceParamObject("UploadPortalTaskRelation_Json",obj,false);
         super.CallNewService("UploadPortalTaskRelation_Json",function(status,Data){
