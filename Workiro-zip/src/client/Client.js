@@ -384,8 +384,16 @@ function Client() {
                 newObj[key] = objFilter[key];
                 return newObj;
             }, {}
-            );
+        );
         // console.log("obj",obj);
+
+        let objForColor = Object.keys(objFilterColor).filter(objKey =>
+            objKey !== target).reduce((newObj, key) => {
+                newObj[key] = objFilterColor[key];
+                return newObj;
+            }, {}
+        );
+
 
         if (selectedChoice === "Clients") {
             let fltData = handleSearchBy(clients, obj);

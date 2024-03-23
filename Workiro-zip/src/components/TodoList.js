@@ -930,11 +930,6 @@ function TodoList() {
                             </Box>
 
                         </Box>
-
-
-
-
-
                     </DialogContentText>
                 </DialogContent>
 
