@@ -36,6 +36,7 @@ import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import MarkunreadIcon from '@mui/icons-material/Markunread';
 import DraftsIcon from '@mui/icons-material/Drafts';
+import CustomLoader from './CustomLoader';
 
 
 import { data } from 'jquery';
@@ -76,6 +77,7 @@ function TodoList() {
     const [selectedGroupBy, setSelectedGroupBy] = useState("Group By");
 
     const [dataInGroup, setDataInGroup] = useState([]);
+    const [isLoading,setIsLoading] = useState(true);
 
     // for date datepicker
     const [state, setState] = useState({
@@ -159,6 +161,8 @@ function TodoList() {
                         // setActualData([...myTasks]);
                         setActualData([...hasCreationDate]);
                         setAllTask([...hasCreationDate]);
+                        setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
+                        setIsLoading(false);
                         Json_GetFolders();
                         // console.log("modified tasks: ",myTasks);
 
@@ -621,7 +625,8 @@ function TodoList() {
 
 
                 <Box className='main-filter-box'>
-                    <Box className='row'>
+                    {/* <Box className='row'> */}
+                    {isLoading?<Box className="custom-loader"><CustomLoader/></Box>:(<Box className='row'>
 
                         {/* statick box */}
                         <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex' onClick={handleClickOpenPortal}>
@@ -965,7 +970,7 @@ function TodoList() {
                 </Box> */}
                         {/* col end */}
 
-                    </Box>
+                    </Box>)}
                 </Box>
             </Box>
 
