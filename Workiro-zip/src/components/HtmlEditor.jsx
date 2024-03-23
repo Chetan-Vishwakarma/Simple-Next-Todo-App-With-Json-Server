@@ -41,7 +41,7 @@ const HtmlEditorDX =({templateDataMarkup,setTemplateDataMarkup,setEditorContentV
 
 return(<>
 <Editor
-        apiKey='z7wm4fosbuk1u5u0oe99feavc9jozc8o57mqpx30uwgeo8zo'
+        apiKey='foebdh6s9f6mgpr7an0cfkxfggpd92q0e3jqurzedcarlcsn'
         onInit={(evt, editor) => editorRef.current = editor}
         initialValue={templateDataMarkup}
         init={{
