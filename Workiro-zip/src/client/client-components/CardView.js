@@ -33,33 +33,42 @@ function CardView(props) {
           return <Box key={i} className='client-box-main'>
             <Box className='client-box' onClick={() => handleClientNavigation(item.OriginatorNo)}>
 
-              <Box className='client-box-icons d-flex relative'>
-
+              <Box className='client-box-icons d-flex'>
+                {/* <PersonIcon className="me-2" /> */}
+                <Tooltip title="Client" className='my-1'>
+                  <IconButton>
+                    <ApartmentIcon />
+                  </IconButton>
+                </Tooltip>
                 <Box className='info-details'>
-                  <ApartmentIcon />
-                  <Box className='inner-info-details'>
-                    <ContentCopyIcon />
+                  <Tooltip title="" className='my-1'>
+                    <IconButton>
+                      <InfoIcon />
+                    </IconButton>
+                  </Tooltip>
 
+                  <Box className='inner-info-details'>
+                    <Tooltip title="Copy Details" className='my-1 copy-icon'>
+                      <IconButton>
+                        <ContentCopyIcon className='font-18' />
+                      </IconButton>
+                    </Tooltip>
                     <ul className='p-0 mb-0'>
                       <li>
                         <LocalPhoneIcon />
-                        {(item["Contact Number"]&&item["Contact Number"]!=="")? item["Contact Number"]: "ContactNo Not Found"}
+                        {(item["Contact Number"]&&item["Contact Number"]!=="")? item["Contact Number"]: "ContactNo Not Available"}
                       </li>
                       <li>
                         <EmailIcon className='font-16' />
-                        {(item["E-Mail"]&&item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Found"}
+                        {(item["E-Mail"]&&item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Available"}
                       </li>
                       <li>
                         <LocationOnIcon />
-                        {(item["Address Line 1"]&&item["Address Line 1"]!=="")? item["Address Line 1"]: "Address Not Found"}
+                        {(item["Address Line 1"]&&item["Address Line 1"]!=="")? item["Address Line 1"]: "Address Not Available"}
                       </li>
                     </ul>
                   </Box>
                 </Box>
-
-                <InfoIcon />
-                {/* <PersonIcon /> */}
-
               </Box>
 
               <Box className='inner-client-box'>
@@ -119,15 +128,15 @@ function CardView(props) {
                     <ul className='p-0 mb-0'>
                       <li>
                         <LocalPhoneIcon />
-                        {(item["Contact Number"]&&item["Contact Number"]!=="")? item["Contact Number"]: "ContactNo Not Found"}
+                        {(item["Contact Number"]&&item["Contact Number"]!=="")? item["Contact Number"]: "ContactNo Not Available"}
                       </li>
                       <li>
                         <EmailIcon className='font-16' />
-                        {(item["E-Mail"]&&item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Found"}
+                        {(item["E-Mail"]&&item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Available"}
                       </li>
                       <li>
                         <LocationOnIcon />
-                        {(item["Address Line 1"]&&item["Address Line 1"]!=="")? item["Address Line 1"]: "Address Not Found"}
+                        {(item["Address Line 1"]&&item["Address Line 1"]!=="")? item["Address Line 1"]: "Address Not Available"}
                       </li>
                     </ul>
                   </Box>
@@ -139,7 +148,7 @@ function CardView(props) {
               </Box>
               <Typography variant="h2">{item["Company Name"] && (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
               {/* <Typography variant='h4'>Admin</Typography> */}
-              <Typography variant='p' className='mb-0'>{item["CompanyNo"]!==""&&item["CompanyNo"]!==null ? item["CompanyNo"] : "CH No. Not Found"}</Typography>
+              <Typography variant='p' className='mb-0'>{item["CompanyNo"]!==""&&item["CompanyNo"]!==null ? item["CompanyNo"] : "CH No. Not Available"}</Typography>
             </Box>
           </Box>
         })))
@@ -173,15 +182,15 @@ function CardView(props) {
                     <ul className='p-0 mb-0'>
                       <li>
                         <LocalPhoneIcon />
-                        {(item["Mobile"] && item["Mobile"]!=="")? item["Mobile"]: "Mobile No. Not Found"}
+                        {(item["Mobile"] && item["Mobile"]!=="")? item["Mobile"]: "Mobile No. Not Available"}
                       </li>
                       <li>
                         <EmailIcon className='font-16' />
-                        {(item["E-Mail"] && item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Found"}
+                        {(item["E-Mail"] && item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Available"}
                       </li>
                       <li>
                         <LocationOnIcon />
-                        {(item["Address 1"] && item["Address 1"]!=="")? item["Address 1"]: "Address Not Found"}
+                        {(item["Address 1"] && item["Address 1"]!=="")? item["Address 1"]: "Address Not Available"}
                       </li>
                     </ul>
                   </Box>
@@ -235,15 +244,15 @@ function CardView(props) {
                     <ul className='p-0 mb-0'>
                       <li>
                         <LocalPhoneIcon />
-                        {(item["Mobile"] && item["Mobile"]!=="")? item["Mobile"]: "Mobile No. Not Found"}
+                        {(item["Mobile"] && item["Mobile"]!=="")? item["Mobile"]: "Mobile No. Not Available"}
                       </li>
                       <li>
                         <EmailIcon className='font-16' />
-                        {(item["E-Mail"] && item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Found"}
+                        {(item["E-Mail"] && item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Available"}
                       </li>
                       <li>
                         <LocationOnIcon />
-                        {(item["Address 1"] && item["Address 1"]!=="")? item["Address 1"]: "Address Not Found"}
+                        {(item["Address 1"] && item["Address 1"]!=="")? item["Address 1"]: "Address Not Available"}
                       </li>
                     </ul>
                   </Box>
