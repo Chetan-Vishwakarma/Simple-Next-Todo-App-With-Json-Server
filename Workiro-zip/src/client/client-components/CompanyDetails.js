@@ -4,6 +4,7 @@ import PinDropIcon from '@mui/icons-material/PinDrop';
 import PhoneIcon from '@mui/icons-material/Phone';
 
 function CompanyDetails({companyDetails}) {
+    console.log("flljsdfsd",companyDetails[0]?.ManagerName);
     return (
         <Box className="col-xl-6 col-lg-6 col-md-12 main-company-details">
             <Typography variant="body1" className='mb-4 bold' gutterBottom>
@@ -16,20 +17,20 @@ function CompanyDetails({companyDetails}) {
                         <Box class="flex-shrink-0">
                             <PinDropIcon />
                         </Box>
-                        <Box class="flex-grow-1 ms-2">
+                        {companyDetails[0]?.Address && <Box class="flex-grow-1 ms-2">
                             <Typography variant="h6" gutterBottom>
                                 Address
                             </Typography>
                             <Typography variant="body1" gutterBottom>
                                 {companyDetails[0]?.Address}
                             </Typography>
-                        </Box>
+                        </Box>}
                     </Box>
                 </Box>
 
                 <Box className="col-lg-8 col-md-6 col-sm-12">
                     <Box className="row">
-                        <Box className="col-xxl-4 col-lg-6 col-md-6">
+                        {companyDetails[0]?.StatusName && <Box className="col-xxl-4 col-lg-6 col-md-6">
                             <Box class="company-details-box">
                                 <Typography variant="h6" gutterBottom>
                                     Status
@@ -38,9 +39,9 @@ function CompanyDetails({companyDetails}) {
                                     {companyDetails[0]?.StatusName}
                                 </Typography>
                             </Box>
-                        </Box>
+                        </Box>}
 
-                        <Box className="col-xxl-4 col-lg-6 col-md-6">
+                        {companyDetails[0]?.SourceName && <Box className="col-xxl-4 col-lg-6 col-md-6">
                             <Box class="company-details-box">
                                 <Typography variant="h6" gutterBottom>
                                     Source
@@ -49,9 +50,9 @@ function CompanyDetails({companyDetails}) {
                                     {companyDetails[0]?.SourceName}
                                 </Typography>
                             </Box>
-                        </Box>
+                        </Box>}
 
-                        <Box className="col-xxl-4 col-lg-6 col-md-6">
+                        {companyDetails[0]?.ManagerName && <Box className="col-xxl-4 col-lg-6 col-md-6">
                             <Box class="company-details-box">
                                 <Typography variant="h6" gutterBottom>
                                     Manager
@@ -60,9 +61,9 @@ function CompanyDetails({companyDetails}) {
                                     {companyDetails[0]?.ManagerName}
                                 </Typography>
                             </Box>
-                        </Box>
+                        </Box>}
 
-                        <Box className="col-xxl-4 col-lg-12">
+                        {companyDetails[0]?.Email && <Box className="col-xxl-4 col-lg-12">
                             <Box class="company-details-box">
                                 <Typography variant="h6" gutterBottom>
                                     Email
@@ -71,9 +72,9 @@ function CompanyDetails({companyDetails}) {
                                     {companyDetails[0]?.Email}
                                 </Typography>
                             </Box>
-                        </Box>
+                        </Box>}
 
-                        <Box className="col-xxl-8 col-lg-12">
+                        {companyDetails[0]?.BussName && <Box className="col-xxl-8 col-lg-12">
                             <Box class="company-details-box">
                                 <Typography variant="h6" gutterBottom>
                                     Business
@@ -82,7 +83,7 @@ function CompanyDetails({companyDetails}) {
                                     {companyDetails[0]?.BussName}
                                 </Typography>
                             </Box>
-                        </Box>
+                        </Box>}
                     </Box>
                 </Box>
 
@@ -91,6 +92,9 @@ function CompanyDetails({companyDetails}) {
                         <PhoneIcon />
                     </Box>
                     <Box class="flex-grow-1 ms-2">
+                    <Typography variant="h6" gutterBottom>
+                                    Tel
+                                </Typography>
                         <Typography variant="body1" gutterBottom>
                             {companyDetails[0]?.TelNo}
                         </Typography>

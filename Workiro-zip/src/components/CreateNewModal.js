@@ -2646,6 +2646,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                 <TextField
                                                     label="Search"
                                                     variant="outlined"
+                                                    autoFocus
                                                     value={searchFolderQuery}
                                                     onChange={handleSearchInputChangeFolder}
                                                     onClick={(e) => e.stopPropagation()} // Prevent event propagation
@@ -2750,6 +2751,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                 <TextField
                                                     label="Search"
                                                     variant="outlined"
+                                                    autoFocus
                                                     value={searchQuery}
                                                     onChange={handleSearchInputChange}
                                                     sx={{ width: "100%" }}
@@ -2845,6 +2847,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                 <TextField
                                                     label="Search"
                                                     variant="outlined"
+                                                    autoFocus
                                                     value={searchSectionQuery}
                                                     onChange={handleSearchInputChangeSection}
                                                     sx={{ width: "100%" }}
