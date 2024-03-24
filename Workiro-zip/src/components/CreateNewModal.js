@@ -715,7 +715,7 @@ export default function CreateNewModalTask({ ...props }) {
         setExpireDate(dayjs(getCurrentDate()));
 
         Json_GetFolders();
-        Json_GetForwardUserList(txtFolder);
+        Json_GetForwardUserList(txtFolderId);
         Json_GetFolderData();
         Json_GetSections(txtFolderId);
         //console.log(nextDate, currentDate)

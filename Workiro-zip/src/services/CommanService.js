@@ -8,6 +8,17 @@ export default class CommanCLS extends AllService {
         super(APIUrl,agrno, Email, password);
     }
     ////////////////////////////////////////Portal Methods
+    GetAttachment_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("GetAttachment_Json",obj,false);
+        super.CallNewService("GetAttachment_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
     GetDocumentStatus_Json(obj,callBack){   
         super.CreateNewServiceParamObject("GetDocumentStatus_Json",obj,false);
         super.CallNewService("GetDocumentStatus_Json",function(status,Data){
