@@ -1631,7 +1631,7 @@ export default function CreateNewModalTask({ ...props }) {
         }
     }
 
-   
+
 
     async function CreatePortalMessage(taskid) {
 
@@ -1673,7 +1673,7 @@ export default function CreateNewModalTask({ ...props }) {
                     "daysToDelete": 0,
                     "approvalResponse": "",
                     "uploadID": localStorage.getItem("GUID"),
-                    "PubTaskid":taskid
+                    "PubTaskid": taskid
 
 
                 }
@@ -1933,17 +1933,54 @@ export default function CreateNewModalTask({ ...props }) {
         }
     }
 
-
+    // dropdown
+    const [anchorEl4, setAnchorEl4] = React.useState(null);
+    const open4 = Boolean(anchorEl4);
+    const handleClick4 = (event) => {
+        setAnchorEl4(event.currentTarget);
+    };
+    const handleClose4 = () => {
+        setAnchorEl4(null);
+    };
 
     return (
         <React.Fragment>
-            <Button
+            {/* <Button
                 className="btn-blue btn-round btn-block"
                 onClick={handleClickOpen}
             >
                 <span className="material-symbols-outlined">edit_square</span>{" "}
-                <span className="ps-2 create-text">Create New</span>
-            </Button>
+                <span className="ps-2 create-text">Create New  </span>
+            </Button> */}
+
+
+            <div>
+                <Button
+                    id="basic-button"
+                    aria-controls={open4 ? 'basic-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open4 ? 'true' : undefined}
+                    onClick={handleClick4}
+                    className="btn-blue btn-round btn-block"
+                >
+                    Create New
+                </Button>
+                <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl4}
+                    open={open4}
+                    onClose={handleClose4}
+                    MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                    }}
+                    className="custom-dropdown"
+                >
+                    <MenuItem onClick={handleClickOpen}>CRM Task</MenuItem>
+                    <MenuItem onClick={handleClickOpen}>Portal Task</MenuItem>
+                    <MenuItem onClick={handleClose4}>Reference</MenuItem>
+                    <MenuItem onClick={handleClose4}>Note</MenuItem>
+                </Menu>
+            </div>
 
 
             <Dialog
