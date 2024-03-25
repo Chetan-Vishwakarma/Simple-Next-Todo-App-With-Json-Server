@@ -1975,8 +1975,8 @@ export default function CreateNewModalTask({ ...props }) {
                     }}
                     className="custom-dropdown"
                 >
-                    <MenuItem onClick={handleClose4}>CRM Task</MenuItem>
-                    <MenuItem onClick={handleClose4}>Portal Task</MenuItem>
+                    <MenuItem onClick={handleClickOpen}>CRM Task</MenuItem>
+                    <MenuItem onClick={handleClickOpen}>Portal Task</MenuItem>
                     <MenuItem onClick={handleClose4}>Reference</MenuItem>
                     <MenuItem onClick={handleClose4}>Note</MenuItem>
                 </Menu>
