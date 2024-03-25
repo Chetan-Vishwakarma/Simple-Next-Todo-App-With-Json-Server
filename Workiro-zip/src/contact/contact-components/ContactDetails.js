@@ -465,7 +465,6 @@ function ContactDetails() {
 
                                                 <Box className='card-box d-flex mt-2'>
                                                     <FmdGoodIcon className='me-2 text-primary' />
-
                                                     <Box className=''>
                                                         <p className='font-16 bold mb-1 text-primary'>Address</p>
                                                         <p className='mb-0 font-14 text-gray'>testing/address</p>
@@ -474,13 +473,11 @@ function ContactDetails() {
 
                                                 <Box className='card-box d-flex mt-2'>
                                                     <LocalPhoneIcon className='me-2 text-primary' />
-
                                                     <Box className=''>
                                                         <p className='font-16 bold mb-1 text-primary'>Phone</p>
                                                         <p className='mb-0 font-14 text-gray'>0000000000, 000000000</p>
                                                     </Box>
                                                 </Box>
-
                                             </Box>
                                     }
 

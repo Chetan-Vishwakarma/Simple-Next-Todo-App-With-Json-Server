@@ -8,6 +8,39 @@ export default class CommanCLS extends AllService {
         super(APIUrl,agrno, Email, password);
     }
     ////////////////////////////////////////Portal Methods
+    ApprovalStatusChanged_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("ApprovalStatusChanged_Json",obj,false);
+        super.CallNewService("ApprovalStatusChanged_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+    GetSignedAttachment_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("GetSignedAttachment_Json",obj,false);
+        super.CallNewService("GetSignedAttachment_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+    GetMessageViewHistory_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("GetMessageViewHistory_Json",obj,false);
+        super.CallNewService("GetMessageViewHistory_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
     GetAttachment_Json(obj,callBack){   
         super.CreateNewServiceParamObject("GetAttachment_Json",obj,false);
         super.CallNewService("GetAttachment_Json",function(status,Data){

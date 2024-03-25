@@ -16,6 +16,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 
 const CommonFilters = [
@@ -98,10 +99,26 @@ function Client() {
     const [selectedPropertyValue, setSelectedPropertyValue] = useState("");
     const colorArr = ["#e26124", "#20aedb", "#075adb", "#be1de8", "#00983b", "#ed32b3"];
 
+
+    // new functionality for colors start
+    const [exclusionArr, setExclusionArr] = useState([]);
+    const filteredColors = colorArr.filter(color => !exclusionArr.includes(color));
+    // const [actualColors, setActualColors] = useState(filteredColors);
+    const getRandomColors = (arr, num) => {
+        const result = [];
+        for (let i = 0; i < num; i++) {
+            const randomIndex = Math.floor(Math.random() * arr.length);
+            result.push(arr[randomIndex]);
+            arr.splice(randomIndex, 1); // Remove the selected color from the array to prevent duplicates
+        }
+        return result;
+    }
+    const TwoColors = getRandomColors(filteredColors, 2);
+    const [actualColors, setActualColors] = useState(TwoColors);
+    // new functionality for colors start
+
+
     const [isFirstColorSelected, setIsFirstColorSelected] = useState(true);
-    const [firstAdvFilterResult, setFirstAdvFilterResult] = useState([]);
-    const [secondAdvFilterResult, setSecondAdvFilterResult] = useState([]);
-    const [thirdAdvFilterResult, setThirdAdvFilterResult] = useState([]);
     // advance filter states ends
     // search box states start
     const [isSearch, setIsSearch] = useState(false);
@@ -115,7 +132,7 @@ function Client() {
     const [objFilterClient, setObjFilterClient] = useState({});
     const [objFilterColor, setObjFilterColor] = useState({});
 
-    const [selectedColor, setSelectedColor] = useState(colorArr[0]);
+    const [selectedColor, setSelectedColor] = useState(actualColors[0]);
 
     const [selectedPropertyForClient, setSelectedPropertyForClient] = useState("");
     const [isDataNotFoundInClient, setIsDataNotFoundInClient] = useState(false);
@@ -304,14 +321,26 @@ function Client() {
         });
     }
     let handleAdvanceFilterAgain = () => {
+
+
+        let test = [...exclusionArr, selectedColor];
+        setExclusionArr([...exclusionArr, selectedColor]);
+        const filteredColors = colorArr.filter(color => !test.includes(color));
+        const TwoColors = getRandomColors(filteredColors, 2);
+        setActualColors(TwoColors);
+        setSelectedColor(TwoColors[0]);
+
+
         if (selectedProperty !== "" && selectedPropertyValue !== "") {
             if (selectedChoice === "Clients") {
+
                 let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
                 setObjFilter(obj);
                 // let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
+                // let obj2 = { ...objFilterColor, [selectedProperty]: [selectedColor] };
                 let obj2 = { ...objFilterColor, [selectedProperty]: [selectedColor] };
                 setObjFilterColor(obj2);
-                setSelectedColor(Object.keys(obj).length === 1 ? colorArr[2] : Object.keys(obj).length === 2 ? colorArr[4] : colorArr[5]);
+                // setSelectedColor(Object.keys(obj).length === 1 ? colorArr[2] : Object.keys(obj).length === 2 ? colorArr[4] : colorArr[5]);
                 setIsFirstColorSelected(true);
                 let fltData = handleSearchBy(clients, obj);
                 setFilteredClients(fltData);
@@ -328,7 +357,7 @@ function Client() {
                 // let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
                 let obj2 = { ...objFilterColor, [selectedProperty]: [selectedColor] };
                 setObjFilterColor(obj2);
-                setSelectedColor(Object.keys(obj).length === 1 ? colorArr[2] : Object.keys(obj).length === 2 ? colorArr[4] : colorArr[5]);
+                // setSelectedColor(Object.keys(obj).length === 1 ? colorArr[2] : Object.keys(obj).length === 2 ? colorArr[4] : colorArr[5]);
                 setIsFirstColorSelected(true);
                 let fltData = handleSearchBy(contacts, obj);
                 setFilteredContacts(fltData);
@@ -345,7 +374,7 @@ function Client() {
                 // let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
                 let obj2 = { ...objFilterColor, [selectedProperty]: [selectedColor] };
                 setObjFilterColor(obj2);
-                setSelectedColor(Object.keys(obj).length === 1 ? colorArr[2] : Object.keys(obj).length === 2 ? colorArr[4] : colorArr[5]);
+                // setSelectedColor(Object.keys(obj).length === 1 ? colorArr[2] : Object.keys(obj).length === 2 ? colorArr[4] : colorArr[5]);
                 setIsFirstColorSelected(true);
 
                 // if (onlyClients) {
@@ -376,7 +405,7 @@ function Client() {
         }
     }
 
-    let handleFilterDeletion = (target) => {
+    let handleFilterDeletion = (target, colorForRemove) => {
         // console.log("target", target);
         let obj = Object.keys(objFilter).filter(objKey =>
             objKey !== target).reduce((newObj, key) => {
@@ -385,6 +414,16 @@ function Client() {
             }, {}
             );
         // console.log("obj",obj);
+
+        // for new color changing functionality start
+        let fltColor = exclusionArr.filter(icol => icol !== colorForRemove);
+        setExclusionArr(fltColor);
+        const filteredColors = colorArr.filter(color => !fltColor.includes(color));
+        const TwoColors = getRandomColors(filteredColors, 2);
+        setActualColors(TwoColors);
+        setSelectedColor(TwoColors[0]);
+        // for new color changing functionality end
+
 
         if (selectedChoice === "Clients") {
             let fltData = handleSearchBy(clients, obj);
@@ -472,7 +511,8 @@ function Client() {
         }
         setObjFilter({});
         setObjFilterClient({});
-        setSelectedColor(colorArr[0]);
+        setSelectedColor(actualColors[0]);
+        setExclusionArr([]);
     }
 
 
@@ -568,7 +608,7 @@ function Client() {
         let fltRepeatData = [];
         data.map((itm) => {
             if (itm[value] && itm[value] !== "" && itm[value] !== null && itm[value] !== undefined && itm[value] !== "null" && itm[value] !== "undefined") {
-                return itm[value];
+                return String(itm[value]);
             }
         }).filter((flt) => {
             if (flt && flt !== "undefined" && flt !== undefined) {
@@ -740,7 +780,7 @@ function Client() {
                                         <Box className='clearfix'>
 
                                             <Box className='clearfix'>
-                                                <Typography variant='Body1' className='mb-2 d-block  bold'>Filter:</Typography>
+                                                <Typography variant='Body1' className='mb-2 d-block  bold'>Filter: {Object.keys(objFilter).length}/3</Typography>
 
                                                 <Box className='d-flex justify-content-between'>
                                                     <Box className='row w-100 pe-3'>
@@ -839,6 +879,12 @@ function Client() {
 
                                                         <Box className="color-box">
                                                             {
+                                                                actualColors.map((itmColor, i) => <button onClick={(e) => {
+                                                                    setSelectedColor(itmColor);
+                                                                    setIsFirstColorSelected(i == 0 ? true : false);
+                                                                }} type='button' className={i == 0 ? (isFirstColorSelected ? 'btn-color selected' : 'btn-color') : (isFirstColorSelected ? 'btn-color' : 'btn-color selected')} style={{ backgroundColor: itmColor }}></button>)
+                                                            }
+                                                            {/* {
                                                                 Object.keys(objFilter).length === 0 && <><button onClick={(e) => {
                                                                     setSelectedColor(colorArr[0]);
                                                                     setIsFirstColorSelected(true);
@@ -867,22 +913,14 @@ function Client() {
                                                                         setSelectedColor(colorArr[5]);
                                                                         setIsFirstColorSelected(false);
                                                                     }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[5] }}></button></>
-                                                            }
-                                                            {/* {
-                                                            advSearchKeyValue.length === 1 && <><button onClick={() => setSelectedColor(colorArr[2])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[2] }}></button>
-                                                                <button onClick={() => setSelectedColor(colorArr[3])} type='button' className='btn-color' style={{ backgroundColor: colorArr[3] }}></button></>
-                                                        }
-                                                        {
-                                                            advSearchKeyValue.length === 2 && <><button onClick={() => setSelectedColor(colorArr[4])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[4] }}></button>
-                                                                <button onClick={() => setSelectedColor(colorArr[5])} type='button' className='btn-color' style={{ backgroundColor: colorArr[5] }}></button></>
-                                                        } */}
+                                                            } */}
                                                         </Box>
                                                     </Box>
                                                 </Box>
 
 
                                                 <Box className='mt-2'>
-                                                    <Button onClick={handleAdvanceFilterAgain} variant="contained" size='small' color="success">
+                                                    <Button onClick={handleAdvanceFilterAgain} disabled={Object.keys(objFilter).length < 3 ? false : true} variant="contained" size='small' color="success">
                                                         <span class="material-symbols-outlined">
                                                             add
                                                         </span> Add
@@ -945,13 +983,14 @@ function Client() {
                             </div>} */}
                     </Box>
 
-
                     <Box className="">
                         {Object.keys(objFilter).map((item) => {
-                            return <Button sx={{ backgroundColor: objFilterColor[item][0] }} className='btn-white text-white'><span className='text-white'>{item}: {objFilter[item][0]}</span>
-                                <span onClick={() => handleFilterDeletion(item)} className="material-symbols-outlined font-16 text-white">
+                            return <Button sx={{ backgroundColor: objFilterColor[item][0] }} className='btn-arrow'><span className='text-white me-1'>{item}: {objFilter[item][0]}</span>
+                                <span onClick={() => handleFilterDeletion(item, objFilterColor[item][0])} className="material-symbols-outlined font-16 text-white close">
                                     close
-                                </span></Button>
+                                </span>
+                                <PlayArrowIcon className='arrow-icon' sx={{ color: objFilterColor[item][0] }} />
+                            </Button>
                         })}
 
                         {Object.keys(objFilter).length > 0 && <span className='pointer text-danger ms-2' onClick={handleClearAll}>
@@ -963,10 +1002,7 @@ function Client() {
                             </Fab> */}
                     </Box>
 
-
-                    
-                        {isGridView && <Box className='mt-3'><ClientGrid selectedChoice={selectedChoice} data={selectedChoice === "All" || selectedChoice === "Contacts" ? contacts : clients} handleContactNavigattion={handleContactNavigattion} handleClientNavigation={handleClientNavigation} /></Box>}
-                    
+                    {isGridView && <Box className='mt-3'><ClientGrid selectedChoice={selectedChoice} data={selectedChoice === "All" || selectedChoice === "Contacts" ? contacts : clients} handleContactNavigattion={handleContactNavigattion} handleClientNavigation={handleClientNavigation} /></Box>}
 
                     <Box className='row'>
                         {isCardView && <CardView

@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { Box } from '@mui/material';
 const CopyLinkButton = ({ copyLink }) => {
   const handleClick = async () => {
     try {
@@ -17,7 +18,10 @@ const CopyLinkButton = ({ copyLink }) => {
 
   return (
     <>
-      <button onClick={handleClick}>Copy Link</button>
+     <Box className='ps-1'>
+     <button className='btn-blue-2' size="small" onClick={handleClick}>Copy Link</button>
+     </Box>
+     
       <ToastContainer />
     </>
   );

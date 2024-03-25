@@ -66,11 +66,15 @@ import HtmlEditorDX from "./HtmlEditor";
 import { json } from "react-router-dom";
 import CopyLinkButton from "./CopyLinkButton";
 import PortalMessage from "./PortalMessage";
+import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
 }));
+
+const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+
 
 
 function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) {
@@ -403,23 +407,16 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     }
 
     function startFormattingDate(dt) {
-        // console.log("date formet111", dt);
+        //console.log("kjdhdsjhsdf", dt)
         if (dt) {
-            if (typeof (dt) === "string" && dt.includes("/Date")) {
-                let fullDate = new Date(parseInt(dt.substr(6)));
-                return fullDate;
-            }
-            else {
-                return dt;
-
-            }
+            // let fullDate = new Date(parseInt(dt.substr(6)));
+            let fullDate = new Date(dt);
+            //console.log("date formet111", fullDate);
+            return fullDate;
         }
         else {
             return "";
         }
-
-
-
 
     }
 
@@ -1139,7 +1136,6 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 </Typography>
                             </Box>
 
-
                             <Box className="d-flex">
                                 <Box>
                                     <Button
@@ -1237,6 +1233,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                             On Hold
                                         </MenuItem>
 
+                                        <MenuItem onClick={handleCloseStatus} className="text-success"><ListItemIcon>
+                                            <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
+                                        </ListItemIcon>
+                                            Completed
+                                        </MenuItem>
+
                                         {/* <MenuItem onClick={handleCloseStatus} className="text-warning">
                                             <ListItemIcon>
                                                 <ErrorOutlineIcon fontSize="medium" className="text-warning" />
@@ -1249,17 +1251,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                             </ListItemIcon>
                                             Done</MenuItem> */}
 
-                                        <MenuItem onClick={handleCloseStatus} className="text-success"><ListItemIcon>
-                                            <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
-                                        </ListItemIcon>
-                                            Completed
-                                        </MenuItem>
                                         {/*  */}
 
                                     </Menu>
                                 </Box>
 
-                                <div>
+                                <div className="ps-2">
                                     <Button
                                         id={`fade-button-${selectedTask.ID}`} // Use unique IDs for each button
                                         aria-controls={
@@ -1315,18 +1312,32 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                         <hr />
 
                         <Box className='mb-2'>
-                            <FormControlLabel
-                                control={<Checkbox checked={checked} onChange={handleChangeStatus} />}
 
-                            />
-                            <input
-                                ariant="h4"
-                                className="input-text-title"
-                                type="text"
-                                onChange={handalChangeSetSubject}
-                                onClick={handalClickEditeSubject}
-                                value={tSubject}
-                            />
+
+
+
+                            {/* <FormControlLabel
+                                control={<Checkbox checked={checked} onChange={handleChangeStatus} />}
+                            /> */}
+
+                            <Box className='d-flex'>
+                                <Checkbox
+                                    {...label}
+                                    icon={<PanoramaFishEyeIcon />}
+                                    onChange={handleChangeStatus}
+                                    checkedIcon={<CheckCircleIcon />}
+                                    className="ps-0"
+                                />
+                                <input
+                                    ariant="h4"
+                                    className="input-text-title"
+                                    type="text"
+                                    onChange={handalChangeSetSubject}
+                                    onClick={handalClickEditeSubject}
+                                    value={tSubject}
+                                />
+                            </Box>
+
                             <Box className="mt-2 mb-3">
                             {selectedTask.Source === "CRM" && (<>
                                 <textarea
@@ -1463,9 +1474,6 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 onClick={handleClickOpen}
                             ><BallotIcon className='me-1' /> {attachmentFile.length} Documents</label>
                             {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
-
-
-
                         </Box>
                         <Box className="d-flex mt-3">
                             <Box className="mb-2 me-3">
@@ -1527,11 +1535,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                             return (
                                                 <>
                                                     <Box
-                                                        className="text-center py-3 file-uploaded"
+                                                        className="text-center py-2 file-uploaded"
                                                         style={{
-                                                            backgroundColor: "rgb(148 221 255)",
+                                                            backgroundColor: "#e5e5e5",
                                                             marginBottom: "10px",
-                                                            "border-radius": "8px",
+                                                            "border-radius": "3px",
                                                         }}
                                                     >
                                                         <Typography
