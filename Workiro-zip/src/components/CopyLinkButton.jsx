@@ -3,6 +3,9 @@ import React from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Box } from '@mui/material';
+import { Button } from 'devextreme-react';
+import CopyAllIcon from '@mui/icons-material/CopyAll';
+
 const CopyLinkButton = ({ copyLink }) => {
   const handleClick = async () => {
     try {
@@ -18,10 +21,9 @@ const CopyLinkButton = ({ copyLink }) => {
 
   return (
     <>
-     <Box className='ps-1'>
-     <button className='btn-blue-2' size="small" onClick={handleClick}>Copy Link</button>
-     </Box>
-     
+    
+        <Button className='btn-blue-2 btn-padding-same ms-2' size="small" onClick={handleClick}><CopyAllIcon /> Copy Link</Button>
+
       <ToastContainer />
     </>
   );

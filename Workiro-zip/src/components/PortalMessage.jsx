@@ -7,11 +7,8 @@ import CopyLinkButton from "./CopyLinkButton";
 
 import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
-
 import { styled } from '@mui/material/styles';
-
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
-
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import MarkunreadIcon from '@mui/icons-material/Markunread';
@@ -21,6 +18,15 @@ import BallotIcon from '@mui/icons-material/Ballot';
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import NotificationImportantIcon from '@mui/icons-material/NotificationImportant';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import DownloadIcon from '@mui/icons-material/Download';
+import docuicon from "../images/docu-icon.svg";
+
+
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
 }));
@@ -466,36 +472,39 @@ const PortalMessage = ({ selectedTask }) => {
 
 
     return (<React.Fragment>
-{selectedTask.Source==="Portal" &&(<>
-    <div>
-            <Button
-                id="basic-button"
-                aria-controls={openMgsMail ? 'basic-menu' : undefined}
-                aria-haspopup="true"
-                aria-expanded={openMgsMail ? 'true' : undefined}
-                onClick={handleClickMgsMail}
-            >
-                {messageEmail ? messageEmail : "Select Message"}
-            </Button>
-            <Menu
-                id="basic-menu"
-                anchorEl={anchorElMgs}
-                open={openMgsMail}
-                onClose={handleCloseMgs}
-                MenuListProps={{
-                    'aria-labelledby': 'basic-button',
-                }}
-            >
-                {portalEmail ? portalEmail.map((item, index) => {
-                    return <MenuItem key={index} onClick={() => handleCloseMgs(item)}>{item.emailid}</MenuItem>
-                }) : ""}
+        {selectedTask.Source === "Portal" && (<>
+            <Box className='d-flex align-items-center  mb-3'>
+                <p className="mb-0 font-14 text-black me-3">This message was sent to 4 recipients. Viewing as <a href="#">Patrick</a>. </p>
+                <Box>
+                    <Button
+                        id="basic-button"
+                        aria-controls={openMgsMail ? 'basic-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={openMgsMail ? 'true' : undefined}
+                        onClick={handleClickMgsMail}
+                        className="btn-blue-2"
+                        startIcon={<KeyboardArrowDownIcon />}
+                    >
+                        {messageEmail ? messageEmail : "Select Message"}
+                    </Button>
+                    <Menu
+                        id="basic-menu"
+                        anchorEl={anchorElMgs}
+                        open={openMgsMail}
+                        onClose={handleCloseMgs}
+                        MenuListProps={{
+                            'aria-labelledby': 'basic-button',
+                        }}
+                    >
+                        {portalEmail ? portalEmail.map((item, index) => {
+                            return <MenuItem key={index} onClick={() => handleCloseMgs(item)}>{item.emailid}</MenuItem>
+                        }) : ""}
+                    </Menu>
+                </Box>
+            </Box>
 
-
-            </Menu>
-        </div>
-
-        <Box className='mb-3'>
-            {/* <Box className='d-flex align-items-center mb-2'>
+            <Box className='mb-3'>
+                {/* <Box className='d-flex align-items-center mb-2'>
                 <Checkbox
                     {...label}
                     icon={<NewReleasesIcon />}
@@ -503,64 +512,72 @@ const PortalMessage = ({ selectedTask }) => {
                 />
                 <h5 className='mb-0 text-black'>{selectedTask.Subject}</h5>
             </Box> */}
-            <Box className='font-14 well mb-3'>
-                <p className='mb-0'>
-                    <HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
-                </p>
-            </Box>
-
-            <Box className='d-flex flex-wrap align-items-center justify-content-between'>
-                <Box className='d-flex'>
-                    <MarkunreadIcon className='text-blue' />
-                    {/* <DraftsIcon /> */}
-                    <Box className='ps-3'>
-                        <h5 className='font-14 text-black mb-1'>Last Viewed On</h5>
-                        <p className='font-12 text-gray sembold mb-2'>10/11/24 09:50PM</p>
-                        <Button className='btn-blue-2' size="small" startIcon={<ScheduleIcon />} onClick={handleClickOpen}>View History</Button>
-                    </Box>
+                <Box className='mb-3'>
+                    {/* <p className='mb-0'>
+                        <HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
+                    </p> */}
+                    <textarea
+                        templateDataMarkup={templateDataMarkup}
+                        setTemplateDataMarkup={setTemplateDataMarkup}
+                        setEditorContentValue={setEditorContentValue}
+                        className="form-control textarea"
+                    ></textarea>
                 </Box>
 
-                <Box className='d-flex'>
-                    <VerifiedIcon className='text-green' />
-                    {/* <NewReleasesIcon className='text-warning' /> */}
+                <Box className='d-flex flex-wrap align-items-center justify-content-between'>
+                    <Box className='d-flex'>
+                        <MarkunreadIcon className='text-blue' />
+                        {/* <DraftsIcon /> */}
+                        <Box className='ps-3'>
+                            <h5 className='font-14 text-black mb-1'>Last Viewed On</h5>
+                            <p className='font-12 text-gray sembold mb-2'>10/11/24 09:50PM</p>
+                            <Button className='btn-blue-2' size="small" startIcon={<ScheduleIcon />} onClick={handleClickOpen}>View History</Button>
+                        </Box>
+                    </Box>
 
-                    {/* <DraftsIcon /> */}
-                    <Box className='ps-3'>
-                        <h5 className='font-14 text-black mb-1'>Message approved </h5>
-                        <p className='font-12 text-gray sembold mb-2'>10/11/24 09:50PM</p>
-                        <Button className='btn-blue-2' size="small" onClick={handleClickOpenCertificate} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
-                        {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>}
-                        {/* <Button className='btn-blue-2 btn btn-warning' size="small" sx={{
+                    <Box className='d-flex'>
+                        <VerifiedIcon className='text-green' />
+                        {/* <NewReleasesIcon className='text-warning' /> */}
+
+                        {/* <DraftsIcon /> */}
+                        <Box className='ps-3'>
+                            <h5 className='font-14 text-black mb-1'>Message approved </h5>
+                            <p className='font-12 text-gray sembold mb-2'>10/11/24 09:50PM</p>
+                            <Button className='btn-blue-2' size="small" onClick={handleClickOpenCertificate} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
+
+                            {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
+
+                            {/* <Button className='btn-blue-2 btn btn-warning' size="small" sx={{
                                             background: '#ffc107 !important'
                                         }} startIcon={<NewReleasesIcon />}>Pending Approval</Button> */}
+                        </Box>
                     </Box>
+
+                    <Box className=''>
+                        {/* <MarkunreadIcon /> */}
+                        {/* <DraftsIcon /> */}
+                        <Box className='ps-3'>
+                            <h5 className='font-14 text-black mb-1'>Start Date</h5>
+                            <p className='font-12 text-gray sembold'>{startDate}</p>
+                        </Box>
+                        <Box className='ps-3'>
+                            <h5 className='font-14 text-black mb-1'>End Date</h5>
+                            <p className='font-12 text-gray sembold mb-0'>{endDate}</p>
+                        </Box>
+                    </Box>
+
                 </Box>
 
-                <Box className='d-flex'>
-                    {/* <MarkunreadIcon /> */}
-                    <DraftsIcon />
-                    <Box className='ps-3'>
-                        <h5 className='font-14 text-black mb-1'>Start Date</h5>
-                        <p className='font-12 text-gray sembold'>{startDate}</p>
-                    </Box>
-                    <Box className='ps-3'>
-                        <h5 className='font-14 text-black mb-1'>End Date</h5>
-                        <p className='font-12 text-gray sembold mb-0'>{endDate}</p>
-                    </Box>
+                <hr />
+
+                <Box className="d-flex flex-wrap">
+                    <label className='text-decoration-none d-flex pointer' onClick={handleClickDocumentSent}><BallotIcon className='me-1' /> Portal Documents</label>
+                    {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
                 </Box>
 
             </Box>
+        </>)}
 
-            <hr />
-
-            <Box className="d-flex flex-wrap">
-                <label className='text-decoration-none d-flex pointer' onClick={handleClickDocumentSent}><BallotIcon className='me-1' /> Portal Documents</label>
-                {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
-            </Box>
-
-        </Box>
-</>)}
-       
 
 
 
@@ -668,6 +685,7 @@ const PortalMessage = ({ selectedTask }) => {
                         <Box class="activity-timeline">
                             <iframe src={certificateData} title="PDF Document" width="100%" height="500px" />
                         </Box>
+
                     </Box>
                 </DialogContentText>
             </DialogContent>
@@ -687,7 +705,7 @@ const PortalMessage = ({ selectedTask }) => {
             onClose={DocumentHandleClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
-            className='custom-modal custom-modal-1200'
+            className='custom-modal full-modal'
         >
             <DialogContent>
                 <DialogContentText>
@@ -699,7 +717,7 @@ const PortalMessage = ({ selectedTask }) => {
                             </Typography>
                         </Box>
                         <Box className='d-flex'>
-                            <Button onClick={DocumentHandleClose} className='p-0'>
+                            <Button onClick={DocumentHandleClose} className='p-0 min-width-auto'>
                                 <span className="material-symbols-outlined text-black">
                                     cancel
                                 </span>
@@ -715,6 +733,13 @@ const PortalMessage = ({ selectedTask }) => {
 
                                 <Box key={index} className='col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 d-flex'>
                                     <Box className='todo-list-box white-box relative w-100'>
+
+                                        <Box className='download-btn-box'>
+                                            <Button size="small" className="min-width-auto me-1">
+                                                <img src={docuicon} width='18' />
+                                            </Button>
+                                            <Button size="small" className="min-width-auto"><DownloadIcon /></Button>
+                                        </Box>
 
                                         {/* <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography> */}
 
@@ -734,41 +759,40 @@ const PortalMessage = ({ selectedTask }) => {
 
                                         <hr />
 
-                                        <Box className='d-flex approval-main'>
+                                        <Box className='d-flex flex-wrap approval-main'>
                                             <Box className='approval-box'>
-                                                <Typography variant='subtitle1' className='text-center me-2'>
+                                                <VerifiedIcon className="me-2" />
+                                                <Typography variant='subtitle1' className='text-center'>
                                                     Sent For Approval
-                                                    <VerifiedIcon />
                                                 </Typography>
                                             </Box>
 
                                             <Box className='approval-box'>
-                                                <Typography variant='subtitle1' className='text-center me-2'>
-                                                    Sent For Approval
-                                                    <VerifiedIcon />
-                                                </Typography>
+                                                <Box className='d-flex'>
+                                                    <NotificationImportantIcon className="me-2" />
+                                                    <Typography variant='subtitle1' className='text-center'>
+                                                        Pending Approval
+                                                    </Typography>
+                                                </Box>
+
+                                                {/* <Button className='btn-blue-2 btn-padding-same ms-2' size="small"><NotificationsActiveIcon /> Send Reminder</Button> */}
+
                                             </Box>
 
                                             <Box className='approval-box'>
-                                                <Typography variant='subtitle1' className='text-center me-2'>
-                                                    Sent For Approval
-                                                    <VerifiedIcon />
+                                                <VisibilityOffIcon className="me-2" />
+                                                <Typography variant='subtitle1' className='text-center'>
+                                                    Not Yet Viewed
                                                 </Typography>
+
                                             </Box>
 
-                                            <Box className='approval-box'   onDoubleClick={() => handleClickViewDocument(item)}>
-                                                <Typography variant='subtitle1' className='text-center me-2'>
-                                                Launch
-                                                    <VerifiedIcon />
+                                            <Box className='approval-box' onDoubleClick={() => handleClickViewDocument(item)}>
+                                                <VerifiedUserIcon className="me-2" />
+                                                <Typography variant='subtitle1' className='text-center'>
+                                                    View  Certificate  of approval
                                                 </Typography>
-                                            </Box>
 
-                                            <Box className='approval-box'>
-                                                <Typography variant='subtitle1' className='text-center me-2'>
-                                                    Download
-                                                    <DownloadForOfflineIcon onClick={() => handleDownloadPortalAtt(item)} />
-
-                                                </Typography>
                                             </Box>
 
                                         </Box>
@@ -779,8 +803,6 @@ const PortalMessage = ({ selectedTask }) => {
                             </>
                         }) : ""}
                     </Box>
-
-
 
                 </DialogContentText>
             </DialogContent>

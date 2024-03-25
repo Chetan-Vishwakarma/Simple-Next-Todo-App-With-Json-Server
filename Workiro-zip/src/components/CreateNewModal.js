@@ -3406,14 +3406,10 @@ export default function CreateNewModalTask({ ...props }) {
 
                         <hr />
 
-                    
-
                     </DialogContentText>
                 </DialogContent>
                 
             </Dialog>
-
-
 
         </React.Fragment>
     );
