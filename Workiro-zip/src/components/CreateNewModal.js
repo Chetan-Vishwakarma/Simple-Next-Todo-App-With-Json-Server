@@ -1710,13 +1710,7 @@ export default function CreateNewModalTask({ ...props }) {
                 error: error,
             });
         }
-
-
-
-
-
     }
-
 
     const [isCheckedForApproval, setIsCheckedForApproval] = useState(false);
     const [isDisabledForApproval, setIsDisabledForApproval] = useState(false);
@@ -1739,9 +1733,6 @@ export default function CreateNewModalTask({ ...props }) {
         setuserDropdownAnchorElRight(event.currentTarget);
         //setDropdownPosition({ x: event.clientX, y: event.clientY });
     };
-
-
-
 
     const firsorScandCtr = (item) => {
         if (item) {
@@ -1943,6 +1934,18 @@ export default function CreateNewModalTask({ ...props }) {
         setAnchorEl4(null);
     };
 
+
+
+    // Referance modal
+    const [Referance, setReferance] = React.useState(false);
+
+    const handleClickReferance = () => {
+        setReferance(true);
+    };
+    const DocumentHandleClose = () => {
+        setReferance(false);
+    };
+
     return (
         <React.Fragment>
             {/* <Button
@@ -1977,7 +1980,7 @@ export default function CreateNewModalTask({ ...props }) {
                 >
                     <MenuItem onClick={handleClickOpen}>CRM Task</MenuItem>
                     <MenuItem onClick={handleClickOpen}>Portal Task</MenuItem>
-                    <MenuItem onClick={handleClose4}>Reference</MenuItem>
+                    <MenuItem onClick={handleClickReferance}>Reference</MenuItem>
                     <MenuItem onClick={handleClose4}>Note</MenuItem>
                 </Menu>
             </div>
@@ -1989,8 +1992,6 @@ export default function CreateNewModalTask({ ...props }) {
                 onClose={handleClose}
                 aria-labelledby="responsive-dialog-title"
                 className="custom-modal custom-modal-1200"
-                // maxWidth="xl" // Set maxWidth to control the width
-                fullWidth={true} // Ensure the dialog takes up the full width
             >
                 <DialogContent>
                     <DialogContentText>
@@ -2530,7 +2531,6 @@ export default function CreateNewModalTask({ ...props }) {
                                                 <MenuItem>Upload File(s)</MenuItem>
                                             </label>
                                             <MenuItem onClick={handleDocumentClickOpen}>Select From DMS</MenuItem>
-
 
                                         </Menu>
 
@@ -3370,6 +3370,51 @@ export default function CreateNewModalTask({ ...props }) {
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
+            {/* end */}
+
+
+             {/* create new modal */}
+             <Dialog
+                open={Referance}
+                onClose={DocumentHandleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className="custom-modal full-modal"
+            >
+                
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        
+                        
+                    <Box className="d-flex align-items-center justify-content-between">
+
+                            <div>
+                                <Button
+                                    id="basic-button"
+                                >
+                                    Document List
+                                </Button>
+
+                            </div>
+
+                            <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+                        </Box>
+
+                        <hr />
+
+
+
+                    </DialogContentText>
+                </DialogContent>
+                
+            </Dialog>
+
+
+
         </React.Fragment>
     );
 }

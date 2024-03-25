@@ -38,7 +38,6 @@ import TodoList from './TodoList';
 import CommanCLS from '../services/CommanService';
 import Logout from './Logout';
 import NewTodoList from './NewTodoList';
-import AddClient from '../client/client-components/CreateClient';
 
 const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
 
@@ -195,7 +194,7 @@ export default function SidebarNav() {
   });
   }
 
-  const [tabs,setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active:false }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active:false }, { tabLink: "/dashboard/Addclient", tabName: 'Add Client', active:false },{ tabLink: "/dashboard/TodoList", tabName: 'Todo List', active:false },  { tabLink: "/dashboard/Connections", tabName: 'Connections', active:false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active:false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active:false }]);
+  const [tabs,setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active:false }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active:false } ,{ tabLink: "/dashboard/TodoList", tabName: 'Todo List', active:false },  { tabLink: "/dashboard/Connections", tabName: 'Connections', active:false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active:false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active:false }]);
 
   React.useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
@@ -482,7 +481,6 @@ export default function SidebarNav() {
             <Route path="/clientDetails" element={<ClientDetails />} />
             <Route path="/ContactDetails" element={<ContactDetails />} />
             <Route path="/MyTask" element={<TodoList />} />
-            <Route path="/Addclient" element={<AddClient />} />
             <Route path="/TodoList" element={<NewTodoList />} />
             <Route path="/SmartViews" element={<></>} />
             <Route path="/LogOut" element={<Logout/>} />
