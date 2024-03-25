@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import CommanCL from "../services/CommanService";
 import HtmlEditorDX from "./HtmlEditor";
-import {Checkbox, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, Typography, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, Link, Chip, Stack, ListItemIcon, Radio, useMediaQuery, useTheme, Accordion, AccordionSummary, AccordionDetails, } from '@mui/material';
+import { Checkbox, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, Typography, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, Link, Chip, Stack, ListItemIcon, Radio, useMediaQuery, useTheme, Accordion, AccordionSummary, AccordionDetails, } from '@mui/material';
 import { Avatar, Grid, IconButton, List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
 import CopyLinkButton from "./CopyLinkButton";
 
@@ -168,14 +168,14 @@ const PortalMessage = ({ selectedTask }) => {
             ApprovalStatusChanged_Json(e);
             //handleClickOpenPortalAtt(true);
             let res = allPortalAttachments.length > 0 ? allPortalAttachments.filter((p) => p.emailid === e.emailid) : null;
-          
+
             if (res && res.length > 0) {
                 setFilterAttachments(res);
 
             }
 
             setCopyLink(`https://www.sharedocuments.co.uk/login.aspx?Code=${agrno}&message=${e.PortalDocId}`);
-              
+
 
         }
 
@@ -195,9 +195,9 @@ const PortalMessage = ({ selectedTask }) => {
 
         ClsPortal.GetMessageViewHistory_Json(o, function (sts, data) {
             if (sts) {
-                if(data){
-                    let js =JSON.parse(data);
-                  
+                if (data) {
+                    let js = JSON.parse(data);
+
                     let res = js.map((el) => {
                         el.ViewDateTime = DateFormate(el.ViewDateTime);
                         return el;
@@ -205,14 +205,14 @@ const PortalMessage = ({ selectedTask }) => {
                     console.log("GetMessageViewHistory_Json", res);
                     setMessageViewHistory(res);
                 }
-               
+
             }
         })
     }
 
     const GetSignedAttachment_Json = (m) => {
         try {
-            if(m.ItemID){
+            if (m.ItemID) {
                 let o = {
                     accid: agrno,
                     email: Email,
@@ -220,21 +220,21 @@ const PortalMessage = ({ selectedTask }) => {
                     messageId: m.PortalDocId,
                     itemid: m.ItemID,
                 };
-        
+
                 ClsPortal.GetSignedAttachment_Json(o, function (sts, data) {
                     if (sts) {
-                        if(data){
+                        if (data) {
                             const dataURI = "data:application/pdf;base64," + data;
 
                             console.log("GetSignedAttachment_Json", data);
                             setCertificateData(dataURI)
-                           
+
                         }
-                       
+
                     }
-                }) 
+                })
             }
-           
+
         } catch (error) {
             console.log({
                 status: false,
@@ -242,7 +242,7 @@ const PortalMessage = ({ selectedTask }) => {
                 error: error,
             });
         }
-        
+
     }
     const ApprovalStatusChanged_Json = (m) => {
         try {
@@ -250,19 +250,19 @@ const PortalMessage = ({ selectedTask }) => {
                 accid: agrno,
                 email: Email,
                 password: password,
-                messageID: m.PortalDocId,                   
+                messageID: m.PortalDocId,
             };
-    
+
             ClsPortal.ApprovalStatusChanged_Json(o, function (sts, data) {
                 if (sts) {
-                    if(data){    
-                        let js = JSON.parse(data);                        
-                       console.log("ApprovalStatusChanged_Json",js);
+                    if (data) {
+                        let js = JSON.parse(data);
+                        console.log("ApprovalStatusChanged_Json", js);
                     }
-                   
+
                 }
-            }) 
-           
+            })
+
         } catch (error) {
             console.log({
                 status: false,
@@ -270,20 +270,20 @@ const PortalMessage = ({ selectedTask }) => {
                 error: error,
             });
         }
-        
-    }
-function DateFormate(dt){
-    if(dt && dt.includes("/Date")){
-        let fullDate = new Date(parseInt(dt.substr(6)));
-        return fullDate
-    }
-    else{
-        return dt;
-    }
 
-   
+    }
+    function DateFormate(dt) {
+        if (dt && dt.includes("/Date")) {
+            let fullDate = new Date(parseInt(dt.substr(6)));
+            return fullDate
+        }
+        else {
+            return dt;
+        }
 
-}
+
+
+    }
 
     const GetMessageDocuments_Json = (mgsId) => {
         let o = {
@@ -313,10 +313,10 @@ function DateFormate(dt){
             if (sts) {
                 let arrayOfObjects = JSON.parse(data);
                 console.log("GetMessageAttachments_Json", arrayOfObjects);
-                
+
                 setAllPortalAttachments(arrayOfObjects);
                 // Convert array of objects to Set to get unique objects based on specified properties
-                if(arrayOfObjects.length>0){
+                if (arrayOfObjects.length > 0) {
                     const uniqueObjectsSet = new Set(arrayOfObjects.map(obj => generateUniqueKey(obj)));
 
                     // Convert Set back to array of objects
@@ -324,13 +324,13 @@ function DateFormate(dt){
                         const [PortalDocId, emailid] = key.split('|');
                         return arrayOfObjects.find(obj => obj.PortalDocId === PortalDocId && obj.emailid === emailid);
                     });
-    
-    
+
+
                     if (data) {
                         setPortalEmail(uniqueObjectsArray)
                     }
                 }
-               
+
             }
         });
     }
@@ -411,13 +411,13 @@ function DateFormate(dt){
 
     /////////////////////End Call Portal Methods 
     function startFormattingDate(dt) {
-       // console.log("kjdhdsjhsdf", dt)
+        // console.log("kjdhdsjhsdf", dt)
         if (dt) {
             // let fullDate = new Date(parseInt(dt.substr(6)));
             let fullDate = new Date(dt);
             //console.log("date formet111", fullDate);
-           
-            return  dayjs(fullDate).format("DD/MM/YYYY") ;
+
+            return dayjs(fullDate).format("DD/MM/YYYY");
         }
         else {
             return "";
@@ -430,7 +430,7 @@ function DateFormate(dt){
         setPortalEmail([]);
         //PortMethods
         if (selectedTask.PubMessageId) {
-          
+
             GetMessageAttachments_Json(selectedTask.PubMessageId);
             setStartDate(startFormattingDate(selectedTask.CreationDate));
             setEndDate(startFormattingDate(selectedTask.EndDateTime));
@@ -465,325 +465,327 @@ function DateFormate(dt){
     };
 
 
-    return ( <React.Fragment>
- 
-<div>
-                    <Button
-                        id="basic-button"
-                        aria-controls={openMgsMail ? 'basic-menu' : undefined}
-                        aria-haspopup="true"
-                        aria-expanded={openMgsMail ? 'true' : undefined}
-                        onClick={handleClickMgsMail}
-                    >
-                        {messageEmail ? messageEmail : "Select Message"}
-                    </Button>
-                    <Menu
-                        id="basic-menu"
-                        anchorEl={anchorElMgs}
-                        open={openMgsMail}
-                        onClose={handleCloseMgs}
-                        MenuListProps={{
-                            'aria-labelledby': 'basic-button',
-                        }}
-                    >
-                        {portalEmail ? portalEmail.map((item, index) => {
-                            return <MenuItem key={index} onClick={() => handleCloseMgs(item)}>{item.emailid}</MenuItem>
-                        }) : ""}
+    return (<React.Fragment>
+{selectedTask.Source==="Portal" &&(<>
+    <div>
+            <Button
+                id="basic-button"
+                aria-controls={openMgsMail ? 'basic-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={openMgsMail ? 'true' : undefined}
+                onClick={handleClickMgsMail}
+            >
+                {messageEmail ? messageEmail : "Select Message"}
+            </Button>
+            <Menu
+                id="basic-menu"
+                anchorEl={anchorElMgs}
+                open={openMgsMail}
+                onClose={handleCloseMgs}
+                MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                }}
+            >
+                {portalEmail ? portalEmail.map((item, index) => {
+                    return <MenuItem key={index} onClick={() => handleCloseMgs(item)}>{item.emailid}</MenuItem>
+                }) : ""}
 
 
-                    </Menu>
-                </div>
+            </Menu>
+        </div>
 
-<Box className='mb-3'>
-                <Box className='d-flex align-items-center mb-2'>
-                    <Checkbox
-                        {...label}
-                        icon={<NewReleasesIcon />}
-                        checkedIcon={<VerifiedIcon />}
-                    />
-                    <h5 className='mb-0 text-black'>{selectedTask.Subject}</h5>
-                </Box>
-                <Box className='font-14 well mb-3'>
-                    <p className='mb-0'>
-                   <HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
-                      </p>
-                </Box>
+        <Box className='mb-3'>
+            {/* <Box className='d-flex align-items-center mb-2'>
+                <Checkbox
+                    {...label}
+                    icon={<NewReleasesIcon />}
+                    checkedIcon={<VerifiedIcon />}
+                />
+                <h5 className='mb-0 text-black'>{selectedTask.Subject}</h5>
+            </Box> */}
+            <Box className='font-14 well mb-3'>
+                <p className='mb-0'>
+                    <HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
+                </p>
+            </Box>
 
-                <Box className='d-flex flex-wrap align-items-center justify-content-between'>
-                    <Box className='d-flex'>
-                        <MarkunreadIcon className='text-blue' />
-                        {/* <DraftsIcon /> */}
-                        <Box className='ps-3'>
-                            <h5 className='font-14 text-black mb-1'>Last Viewed On</h5>
-                            <p className='font-12 text-gray sembold mb-2'>10/11/24 09:50PM</p>
-                            <Button className='btn-blue-2' size="small" startIcon={<ScheduleIcon />} onClick={handleClickOpen}>View History</Button>
-                        </Box>
+            <Box className='d-flex flex-wrap align-items-center justify-content-between'>
+                <Box className='d-flex'>
+                    <MarkunreadIcon className='text-blue' />
+                    {/* <DraftsIcon /> */}
+                    <Box className='ps-3'>
+                        <h5 className='font-14 text-black mb-1'>Last Viewed On</h5>
+                        <p className='font-12 text-gray sembold mb-2'>10/11/24 09:50PM</p>
+                        <Button className='btn-blue-2' size="small" startIcon={<ScheduleIcon />} onClick={handleClickOpen}>View History</Button>
                     </Box>
+                </Box>
 
-                    <Box className='d-flex'>
-                        <VerifiedIcon className='text-green' />
-                        {/* <NewReleasesIcon className='text-warning' /> */}
+                <Box className='d-flex'>
+                    <VerifiedIcon className='text-green' />
+                    {/* <NewReleasesIcon className='text-warning' /> */}
 
-                        {/* <DraftsIcon /> */}
-                        <Box className='ps-3'>
-                            <h5 className='font-14 text-black mb-1'>Message approved </h5>
-                            <p className='font-12 text-gray sembold mb-2'>10/11/24 09:50PM</p>
-                            <Button className='btn-blue-2' size="small" onClick={handleClickOpenCertificate} startIcon={<ScheduleIcon  />}>Certificate of Approval</Button>
-{<CopyLinkButton copyLink={copyLink}></CopyLinkButton>}
-                            {/* <Button className='btn-blue-2 btn btn-warning' size="small" sx={{
+                    {/* <DraftsIcon /> */}
+                    <Box className='ps-3'>
+                        <h5 className='font-14 text-black mb-1'>Message approved </h5>
+                        <p className='font-12 text-gray sembold mb-2'>10/11/24 09:50PM</p>
+                        <Button className='btn-blue-2' size="small" onClick={handleClickOpenCertificate} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
+                        {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>}
+                        {/* <Button className='btn-blue-2 btn btn-warning' size="small" sx={{
                                             background: '#ffc107 !important'
                                         }} startIcon={<NewReleasesIcon />}>Pending Approval</Button> */}
-                        </Box>
                     </Box>
-
-                    <Box className='d-flex'>
-                        {/* <MarkunreadIcon /> */}
-                        <DraftsIcon />
-                        <Box className='ps-3'>
-                            <h5 className='font-14 text-black mb-1'>Start Date</h5>
-                            <p className='font-12 text-gray sembold'>{startDate}</p>
-                        </Box>
-                        <Box className='ps-3'>
-                            <h5 className='font-14 text-black mb-1'>End Date</h5>
-                            <p className='font-12 text-gray sembold mb-0'>{endDate}</p>
-                        </Box>
-                    </Box>
-
                 </Box>
 
-                <hr />
-
-                <Box className="d-flex flex-wrap">
-                    <label className='text-decoration-none d-flex pointer' onClick={handleClickDocumentSent}><BallotIcon className='me-1' /> Portal Documents</label>
-                    {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
+                <Box className='d-flex'>
+                    {/* <MarkunreadIcon /> */}
+                    <DraftsIcon />
+                    <Box className='ps-3'>
+                        <h5 className='font-14 text-black mb-1'>Start Date</h5>
+                        <p className='font-12 text-gray sembold'>{startDate}</p>
+                    </Box>
+                    <Box className='ps-3'>
+                        <h5 className='font-14 text-black mb-1'>End Date</h5>
+                        <p className='font-12 text-gray sembold mb-0'>{endDate}</p>
+                    </Box>
                 </Box>
 
             </Box>
 
+            <hr />
 
-      
+            <Box className="d-flex flex-wrap">
+                <label className='text-decoration-none d-flex pointer' onClick={handleClickDocumentSent}><BallotIcon className='me-1' /> Portal Documents</label>
+                {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
+            </Box>
 
- {/* history modal start */}
- <Dialog
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                className='custom-modal'
-            >
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="align-items-center d-flex">
-                                <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                                    View History
-                                </Typography>
-                            </Box>
+        </Box>
+</>)}
+       
 
-                            {/*  */}
 
-                            <Box className='d-flex'>
-                                <Button onClick={handleClose} className='p-0'>
-                                    <span className="material-symbols-outlined text-black">
-                                        cancel
-                                    </span>
-                                </Button>
-                            </Box>
+
+
+        {/* history modal start */}
+        <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            className='custom-modal'
+        >
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    <Box className="d-flex align-items-center justify-content-between">
+                        <Box className="align-items-center d-flex">
+                            <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                                View History
+                            </Typography>
                         </Box>
 
-                        <hr />
+                        {/*  */}
 
-                        <Box class="ml-auto mr-auto">
-                            <Box class="activity-timeline">
-                                <ul class="timeline-ul">
-
-                                    {messageViewHistory.length>0?messageViewHistory.map((item, index) => {
-                                        return <>
-
-                                            <li key={index}>
-                                                <Box class="datetime">
-                                                    <span>{item.ViewDateTime} </span>                                                   
-                                                </Box>
-                                                <Box class="line-dotted">
-                                                    <Box class="line-time"></Box>
-                                                    <Box class="circle-time"></Box>
-                                                    <Box class="circle-border"></Box>
-                                                </Box>
-                                                <Box class="timeline-details">
-                                                    <Box class="icon-time-status"></Box>
-                                                    <Box class="content-time">
-                                                        <h5>Viewed by {item.UserID}</h5>
-                                                        <p>from {item.IPAddress}</p>
-                                                    </Box>
-                                                </Box>
-                                            </li>
-                                        </>
-                                    }):""}
-                                </ul>
-                            </Box>
+                        <Box className='d-flex'>
+                            <Button onClick={handleClose} className='p-0'>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
                         </Box>
-                    </DialogContentText>
-                </DialogContent>
-                {/* <DialogActions>
+                    </Box>
+
+                    <hr />
+
+                    <Box class="ml-auto mr-auto">
+                        <Box class="activity-timeline">
+                            <ul class="timeline-ul">
+
+                                {messageViewHistory.length > 0 ? messageViewHistory.map((item, index) => {
+                                    return <>
+
+                                        <li key={index}>
+                                            <Box class="datetime">
+                                                <span>{item.ViewDateTime} </span>
+                                            </Box>
+                                            <Box class="line-dotted">
+                                                <Box class="line-time"></Box>
+                                                <Box class="circle-time"></Box>
+                                                <Box class="circle-border"></Box>
+                                            </Box>
+                                            <Box class="timeline-details">
+                                                <Box class="icon-time-status"></Box>
+                                                <Box class="content-time">
+                                                    <h5>Viewed by {item.UserID}</h5>
+                                                    <p>from {item.IPAddress}</p>
+                                                </Box>
+                                            </Box>
+                                        </li>
+                                    </>
+                                }) : ""}
+                            </ul>
+                        </Box>
+                    </Box>
+                </DialogContentText>
+            </DialogContent>
+            {/* <DialogActions>
                     <Button onClick={handleClose}>Disagree</Button>
                     <Button onClick={handleClose} autoFocus>
                         Agree
                     </Button>
                 </DialogActions> */}
-            </Dialog>
+        </Dialog>
 
 
-            <Dialog
-                open={openCertificate}
-                onClose={handleCloseCertificate}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                className='custom-modal'
-            >
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="align-items-center d-flex">
-                                <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                                   Certificate
-                                </Typography>
-                            </Box>
-
-                            {/*  */}
-
-                            <Box className='d-flex'>
-                                <Button onClick={handleCloseCertificate} className='p-0'>
-                                    <span className="material-symbols-outlined text-black">
-                                        cancel
-                                    </span>
-                                </Button>
-                            </Box>
+        <Dialog
+            open={openCertificate}
+            onClose={handleCloseCertificate}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            className='custom-modal'
+        >
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    <Box className="d-flex align-items-center justify-content-between">
+                        <Box className="align-items-center d-flex">
+                            <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                                Certificate
+                            </Typography>
                         </Box>
 
-                        <hr />
+                        {/*  */}
 
-                        <Box class="ml-auto mr-auto">
-                            <Box class="activity-timeline">
+                        <Box className='d-flex'>
+                            <Button onClick={handleCloseCertificate} className='p-0'>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+                        </Box>
+                    </Box>
+
+                    <hr />
+
+                    <Box class="ml-auto mr-auto">
+                        <Box class="activity-timeline">
                             <iframe src={certificateData} title="PDF Document" width="100%" height="500px" />
-                            </Box>
                         </Box>
-                    </DialogContentText>
-                </DialogContent>
-                {/* <DialogActions>
+                    </Box>
+                </DialogContentText>
+            </DialogContent>
+            {/* <DialogActions>
                     <Button onClick={handleClose}>Disagree</Button>
                     <Button onClick={handleClose} autoFocus>
                         Agree
                     </Button>
                 </DialogActions> */}
-            </Dialog>
+        </Dialog>
 
-            {/* history modal end */}
-            {/* document send modal start */}
+        {/* history modal end */}
+        {/* document send modal start */}
 
-            <Dialog
-                open={DocumentSent}
-                onClose={DocumentHandleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                className='custom-modal custom-modal-1200'
-            >
-                <DialogContent>
-                    <DialogContentText>
+        <Dialog
+            open={DocumentSent}
+            onClose={DocumentHandleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            className='custom-modal custom-modal-1200'
+        >
+            <DialogContent>
+                <DialogContentText>
 
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="align-items-center d-flex">
-                                <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                                  Attachments
-                                </Typography>
-                            </Box>
-                            <Box className='d-flex'>
-                                <Button onClick={DocumentHandleClose} className='p-0'>
-                                    <span className="material-symbols-outlined text-black">
-                                        cancel
-                                    </span>
-                                </Button>
-                            </Box>
+                    <Box className="d-flex align-items-center justify-content-between">
+                        <Box className="align-items-center d-flex">
+                            <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                                Attachments
+                            </Typography>
                         </Box>
+                        <Box className='d-flex'>
+                            <Button onClick={DocumentHandleClose} className='p-0'>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+                        </Box>
+                    </Box>
 
-                        <hr />
-                        <Box className='row'>
+                    <hr />
+                    <Box className='row'>
 
-                            {filterAttachments.length>0?filterAttachments.map((item,index) => {
-                                return <>
+                        {filterAttachments.length > 0 ? filterAttachments.map((item, index) => {
+                            return <>
 
-                                    <Box key={index} className='col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 d-flex'>
-                                        <Box className='todo-list-box white-box relative w-100'>
+                                <Box key={index} className='col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 d-flex'>
+                                    <Box className='todo-list-box white-box relative w-100'>
 
-                                            {/* <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography> */}
+                                        {/* <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography> */}
 
-                                            <Box className='d-flex align-items-center justify-content-between'>
-                                                <Typography variant='subtitle1 mb-2 d-block'><strong>Name: </strong> {item.PortalName} </Typography>
+                                        <Box className='d-flex align-items-center justify-content-between'>
+                                            <Typography variant='subtitle1 mb-2 d-block'><strong>Name: </strong> {item.PortalName} </Typography>
+                                        </Box>
+
+                                        <Typography variant='subtitle1 mb-2 d-block'><strong>Document Number: </strong> {item.ItemID} </Typography>
+
+                                        <Typography variant='subtitle1 mb-2 d-block'><strong> Published On: </strong> {item.DDate ? DateFormate(item.DDate) : null} </Typography>
+
+                                        <Box className='d-flex align-items-center justify-content-between'>
+                                            <Typography variant='subtitle1'><pan className='text-gray'>
+                                                Recipient Email  </pan>
+                                                <a href='#'>{item.emailid}</a></Typography>
+                                        </Box>
+
+                                        <hr />
+
+                                        <Box className='d-flex approval-main'>
+                                            <Box className='approval-box'>
+                                                <Typography variant='subtitle1' className='text-center me-2'>
+                                                    Sent For Approval
+                                                    <VerifiedIcon />
+                                                </Typography>
                                             </Box>
 
-                                            <Typography variant='subtitle1 mb-2 d-block'><strong>Document Number: </strong> {item.ItemID} </Typography>
-
-                                            <Typography variant='subtitle1 mb-2 d-block'><strong> Published On: </strong> {item.DDate ? DateFormate(item.DDate) : null} </Typography>
-
-                                            <Box className='d-flex align-items-center justify-content-between'>
-                                                <Typography variant='subtitle1'><pan className='text-gray'>
-                                                    Recipient Email  </pan>
-                                                    <a href='#'>{item.emailid}</a></Typography>
+                                            <Box className='approval-box'>
+                                                <Typography variant='subtitle1' className='text-center me-2'>
+                                                    Sent For Approval
+                                                    <VerifiedIcon />
+                                                </Typography>
                                             </Box>
 
-                                            <hr />
+                                            <Box className='approval-box'>
+                                                <Typography variant='subtitle1' className='text-center me-2'>
+                                                    Sent For Approval
+                                                    <VerifiedIcon />
+                                                </Typography>
+                                            </Box>
 
-                                            <Box className='d-flex approval-main'>
-                                                <Box className='approval-box'>
-                                                    <Typography variant='subtitle1' className='text-center me-2'>
-                                                        Sent For Approval
-                                                        <VerifiedIcon />
-                                                    </Typography>
-                                                </Box>
+                                            <Box className='approval-box'   onDoubleClick={() => handleClickViewDocument(item)}>
+                                                <Typography variant='subtitle1' className='text-center me-2'>
+                                                Launch
+                                                    <VerifiedIcon />
+                                                </Typography>
+                                            </Box>
 
-                                                <Box className='approval-box'>
-                                                    <Typography variant='subtitle1' className='text-center me-2'>
-                                                        Sent For Approval
-                                                        <VerifiedIcon />
-                                                    </Typography>
-                                                </Box>
-
-                                                <Box className='approval-box'>
-                                                    <Typography variant='subtitle1' className='text-center me-2'>
-                                                        Sent For Approval
-                                                        <VerifiedIcon />
-                                                    </Typography>
-                                                </Box>
-
-                                                <Box className='approval-box'>
-                                                    <Typography variant='subtitle1' className='text-center me-2'>
-                                                        Sent For Approval
-                                                        <VerifiedIcon />
-                                                    </Typography>
-                                                </Box>
-
-                                                <Box className='approval-box'>
-                                                    <Typography variant='subtitle1' className='text-center me-2'>
-                                                        Download
+                                            <Box className='approval-box'>
+                                                <Typography variant='subtitle1' className='text-center me-2'>
+                                                    Download
                                                     <DownloadForOfflineIcon onClick={() => handleDownloadPortalAtt(item)} />
-                                                       
-                                                    </Typography>
-                                                </Box>
 
+                                                </Typography>
                                             </Box>
 
                                         </Box>
-                                        {/* col end */}
+
                                     </Box>
-                                </>
-                            }):""}
-                        </Box>
+                                    {/* col end */}
+                                </Box>
+                            </>
+                        }) : ""}
+                    </Box>
 
 
 
-                    </DialogContentText>
-                </DialogContent>
-            </Dialog >
-            {/* document sent modal end */}
+                </DialogContentText>
+            </DialogContent>
+        </Dialog >
+        {/* document sent modal end */}
 
 
         <Dialog
@@ -883,8 +885,8 @@ function DateFormate(dt){
                 </DialogContentText>
             </DialogContent>
         </Dialog>
-    </React.Fragment>       
+    </React.Fragment>
 
-   )
+    )
 }
 export default PortalMessage;
