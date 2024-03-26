@@ -113,7 +113,9 @@ h5,
 h6,
 p,
 input,
-button {
+button,
+span,
+body {
   font-family: "Poppins", sans-serif !important;
 }
 
@@ -1721,9 +1723,8 @@ span.tox-statusbar__branding {
 }
 
 .select-border .custom-dropdown .MuiSelect-select {
-  padding: 4px 30px 4px 0 !important;
-  /* background: #fff; */
-  /* color: #000000; */
+  /* padding: 4px 30px 4px 0 !important; */
+  padding: 4px 0px 4px 0 !important;
   font-size: 14px;
   /* padding: 0px; */
   font-weight: 600;
@@ -1777,7 +1778,7 @@ span.tox-statusbar__branding {
 }
 
 .client-details-scroll {
-  max-height: calc(100vh - 488px);
+  max-height: calc(100vh - 388px);
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -1844,6 +1845,28 @@ span.tox-statusbar__branding {
   right: 15px;
   top: 20px;
 }
+
+.table-view-files .dx-bordered-bottom-view {
+  border: 0;
+  padding: 0;
+}
+
+.table-view-files .dx-datagrid-table,
+.table-view-files .dx-datagrid-table tr td {
+  border: 0px !important;
+  padding: 0;
+}
+
+.table-view-files .dx-datagrid-table tr td {
+  background: #fff;
+}
+
+.table-view-files .dx-datagrid-borders .dx-datagrid-headers .dx-datagrid-table tr td {
+  background: #6177fa;
+  padding: 8px 0;
+  color: #fff;
+}
+
 
 @media only screen and (max-width: 1366px) {
   .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root {
@@ -1999,6 +2022,50 @@ span.tox-statusbar__branding {
   pointer-events: none;
 }
 
+.address-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.address-list li {
+  font-size: 13px;
+  display: flex;
+  padding: 5px 0;
+  /* border-bottom: 1px solid #f1f1f1;
+  color: #838383; */
+}
+
+.address-list li .add-heading {
+  width: 120px;
+  min-width: 120px;
+  font-weight: 900;
+  color: #4780FF;
+  display: flex;
+}
+
+.address-list li .add-heading svg {
+  margin-right: 5px;
+}
+
+.address-list li .add-details .country {
+  width: 23px;
+  height: 23px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 90px;
+}
+
+.address-list li .add-details .country img {
+  width: 23px;
+  height: 23px;
+}
+
+.address-list li .add-heading p {
+  font-weight: 500;
+}
 
 @media only screen and (max-width: 1199px) {
   .client-box-main {

@@ -448,7 +448,7 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
 
                 <DialogContentText id="alert-dialog-description">
 
-                    <Box sx={{ width: '100%', typography: 'body1' }} className="mt-4 pt-1">
+                    <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
 
 
                         <TabContext value={value}>

@@ -35,7 +35,7 @@ import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import moment from 'moment';
-
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -165,20 +165,20 @@ export default function DocumentList({ clientId }) {
         end: moment(),
     });
     const { start, end } = state;
-    
-    const formatDatePickerDate = (dateString) =>{
+
+    const formatDatePickerDate = (dateString) => {
         const dateObject = new Date(dateString);
 
         const day = String(dateObject.getDate()).padStart(2, '0');
         const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Adding 1 to adjust for zero-based index
         const year = dateObject.getFullYear();
-        
+
         return `${day}/${month}/${year}`;
     }
 
     // for filter criteria
-    const [filterCriteria,setFilterCriteria] = useState({
-        "Item Date": [formatDatePickerDate(start._d),formatDatePickerDate(end._d)]
+    const [filterCriteria, setFilterCriteria] = useState({
+        "Item Date": [formatDatePickerDate(start._d), formatDatePickerDate(end._d)]
     });
     // setTimeout(()=>{
     //     setFilterCriteria({...filterCriteria,"Item Date": [formatDatePickerDate(start._d),formatDatePickerDate(end._d)]});
@@ -357,8 +357,8 @@ export default function DocumentList({ clientId }) {
     function getListboxProps(params) { }
 
     const handleSearchByProperty = (flitData) => {
-        console.log(searchByPropertyKey,"--------",searchByPropertyInput);
-        setFilterCriteria({...filterCriteria,[searchByPropertyKey]:[searchByPropertyInput]});
+        console.log(searchByPropertyKey, "--------", searchByPropertyInput);
+        setFilterCriteria({ ...filterCriteria, [searchByPropertyKey]: [searchByPropertyInput] });
         // if (flitData && searchByPropertyKey === "" && searchByPropertyInput === "") {
         //     if (flitData.length === 0) {
         //         setAdvFilteredResult([]);
@@ -458,7 +458,7 @@ export default function DocumentList({ clientId }) {
     function handleSearchBySuggestionList(val) {
         if (val !== "") {
             setSearchByPropertyKey(val);
-            if(advFilteredResult.length>0){
+            if (advFilteredResult.length > 0) {
                 let filteredData = advFilteredResult.filter((itm) => {
                     if (itm[val] !== "" && itm[val] !== null && itm[val] !== undefined) {
                         return itm[val];
@@ -470,7 +470,7 @@ export default function DocumentList({ clientId }) {
                     setSuggestionList(fltData);
                     setSearchByPropertyInput("");
                 }
-            }else{
+            } else {
                 let filteredData = documents.filter((itm) => {
                     if (itm[val] !== "" && itm[val] !== null && itm[val] !== undefined) {
                         return itm[val];
@@ -487,23 +487,22 @@ export default function DocumentList({ clientId }) {
         }
     }
 
-    function handleFilterDeletion(target){
+    function handleFilterDeletion(target) {
         let obj = Object.keys(filterCriteria).filter(objKey =>
-            objKey !== target).reduce((newObj, key) =>
-            {
+            objKey !== target).reduce((newObj, key) => {
                 newObj[key] = filterCriteria[key];
                 return newObj;
             }, {}
-        );
+            );
         setFilterCriteria(obj);
     }
-    
+
     const handleCallback = (start, end) => {
         // console.log("Start: ",start._d);
         // console.log("End: ",end._d);
         // console.log("Start: ",start._i);
         // console.log("End: ",end._i);
-        if(start._i==="All"&&end._i==="All"){
+        if (start._i === "All" && end._i === "All") {
             handleFilterDeletion('Item Date');
             // let obj = Object.keys(filterCriteria).filter(objKey =>
             //     objKey !== 'Item Date').reduce((newObj, key) =>
@@ -514,23 +513,23 @@ export default function DocumentList({ clientId }) {
             // );
             // setFilterCriteria(obj);
 
-        }else{
+        } else {
             let startDate = formatDatePickerDate(start._d);
             let endDate = formatDatePickerDate(end._d);
-            setFilterCriteria({...filterCriteria, "Item Date": [startDate, endDate]});
+            setFilterCriteria({ ...filterCriteria, "Item Date": [startDate, endDate] });
         }
         setState({ start, end });
     };
-    
+
     const label =
         start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY');
 
-    function handleDocumentsFilter(docs){
-        let fltData =  docs.filter(function (obj) {
+    function handleDocumentsFilter(docs) {
+        let fltData = docs.filter(function (obj) {
             return Object.keys(filterCriteria).every(function (key) {
                 if (filterCriteria[key][0].length > 0) {
                     if (obj[key] && obj[key] !== undefined && obj[key] !== "") {
-                        if(key === "Item Date"){
+                        if (key === "Item Date") {
                             let d = obj[key].split("/");
                             let df = `${d[2]}-${d[1]}-${d[0]}`
                             // console.log("For Filter Criteria Before",df);
@@ -547,8 +546,8 @@ export default function DocumentList({ clientId }) {
 
                             // console.log("For Filter Criteria",df1,"------------",df2);
                             // console.log("For Filter Criteria",fltD1,"------------",fltD2);
-                        }else{
-                            return obj[key].toString().toLowerCase().includes(filterCriteria[key][0].toString().toLowerCase()); 
+                        } else {
+                            return obj[key].toString().toLowerCase().includes(filterCriteria[key][0].toString().toLowerCase());
                         }
                         // return obj[key].toString().toLowerCase().includes(my_criteria[key][0].toString().toLowerCase());
                     }
@@ -558,33 +557,33 @@ export default function DocumentList({ clientId }) {
 
         console.log("For Filter Criteria", fltData.length);
         console.log("For Filter Criteria", fltData[0]?.Description);
-        console.log("For Filter Criteria", fltData[fltData.length-1]?.Description);
-        if(fltData.length===0){
+        console.log("For Filter Criteria", fltData[fltData.length - 1]?.Description);
+        if (fltData.length === 0) {
             setDataNotFoundBoolean(true);
             return;
         }
         setDataNotFoundBoolean(false);
         setAdvFilteredResult(fltData);
     }
-    useEffect(()=>{
+    useEffect(() => {
         handleDocumentsFilter(documents);
-    },[filterCriteria]);
+    }, [filterCriteria]);
 
-    console.log("FilterCriteria; ",filterCriteria);
+    console.log("FilterCriteria; ", filterCriteria);
     console.log("start", start._i);
-    console.log("end",end._i);
+    console.log("end", end._i);
     return (
         <>
             <Box className='d-flex flex-wrap align-items-center justify-content-between'>
-                <Box className='d-flex flex-wrap align-items-center mb-4'>
+                <Box className='d-flex flex-wrap align-items-center mb-2'>
                     {/* sadik */}
-                    <Box sx={{ m: 1, width: 240 }}>
+                    <Box sx={{ m: 1 }}>
                         <DateRangePicker
                             initialSettings={{
                                 startDate: start.toDate(),
                                 endDate: end.toDate(),
                                 ranges: {
-                                    'All':[
+                                    'All': [
                                         moment({ year: 1990, month: 0, day: 1 }).toDate(),
                                         moment().toDate()
                                     ],
@@ -613,7 +612,14 @@ export default function DocumentList({ clientId }) {
                             }}
                             onCallback={handleCallback}
                         >
-                            <div
+
+                            <div className='pointer me-2 d-flex align-items-center' id="reportrange">
+                                <i className="fa fa-calendar"></i>
+                                <CalendarMonthIcon className='me-2 text-red' />
+                                <span className='font-13'>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
+                            </div>
+
+                            {/* <div
                                 id="reportrange"
                                 className="col-4"
                                 style={{
@@ -624,9 +630,10 @@ export default function DocumentList({ clientId }) {
                                     width: '100%',
                                 }}
                             >
+
                                 <i className="fa fa-calendar"></i>&nbsp;
-                                <span>{label==="Invalid date - Invalid date"?"All":label}</span> <i className="fa fa-caret-down"></i>
-                            </div>
+                                <span>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
+                            </div> */}
                         </DateRangePicker>
                     </Box>
                     {/* {isRangeFilter ? (
@@ -690,9 +697,9 @@ export default function DocumentList({ clientId }) {
                             value={selectedSection}
                             onChange={(e) => {
                                 setSelectedSection(e.target.value);
-                                if(e.target.value!==''){
-                                    setFilterCriteria({...filterCriteria,Section:[e.target.value]})
-                                }else{
+                                if (e.target.value !== '') {
+                                    setFilterCriteria({ ...filterCriteria, Section: [e.target.value] })
+                                } else {
                                     handleFilterDeletion('Section');
                                     // let obj = Object.keys(filterCriteria).filter(objKey =>
                                     //     objKey !== 'Section').reduce((newObj, key) =>
@@ -726,9 +733,9 @@ export default function DocumentList({ clientId }) {
                             value={selectedFolder}
                             onChange={(e) => {
                                 setSelectedFolder(e.target.value);
-                                if(e.target.value!==''){
-                                    setFilterCriteria({...filterCriteria,Folder:[e.target.value]});
-                                }else{
+                                if (e.target.value !== '') {
+                                    setFilterCriteria({ ...filterCriteria, Folder: [e.target.value] });
+                                } else {
                                     handleFilterDeletion('Folder');
                                     // let obj = Object.keys(filterCriteria).filter(objKey =>
                                     //     objKey !== 'Folder').reduce((newObj, key) =>
@@ -758,6 +765,60 @@ export default function DocumentList({ clientId }) {
                         </Select>
                     </FormControl>
 
+                    <Box className='d-flex'>
+                        <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
+                            <Select
+                                value={selectedGroup}
+                                displayEmpty
+                                inputProps={{ 'aria-label': 'Without label' }}
+                                className='custom-dropdown'
+                                onChange={(e) => setSelectedGroup(e.target.value)}
+                            >
+                                <MenuItem value="">
+                                    Group By
+                                </MenuItem>
+                                <MenuItem value="Description">
+                                    Description
+                                </MenuItem>
+                                <MenuItem value={"CommentBy"}>Comment By</MenuItem>
+                                <MenuItem value={"Type"}>Type</MenuItem>
+                                <MenuItem value={"Comments"}>Comments</MenuItem>
+                                {/* <MenuItem value={20}>Comment</MenuItem> */}
+                            </Select>
+                        </FormControl>
+
+                        <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
+                            <Select
+                                value={sortByProperty}
+                                onChange={(e) => setSortByProperty(e.target.value)}
+                                displayEmpty
+                                inputProps={{ 'aria-label': 'Without label' }}
+                                className='custom-dropdown'
+                            >
+                                <MenuItem value="">
+                                    Sort By
+                                </MenuItem>
+                                <MenuItem value="None" onClick={() => setAdvFilteredResult([])}>None</MenuItem>
+                                <MenuItem value={"Date"}>By Date</MenuItem>
+                                <MenuItem value={"Description"}>By Description</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        {sortByProperty !== "" && sortByProperty !== "None" && <Checkbox
+                            {...label}
+                            icon={<UpgradeIcon />}
+                            checkedIcon={<VerticalAlignBottomIcon />}
+                            className='p-0'
+                            onChange={(e) => {
+                                if (e.target.checked) {
+                                    handleAscendingSort();
+                                } else {
+                                    handleDescendingSort();
+                                }
+                            }}
+                        />}
+                    </Box>
+
                     {/* <FormControl sx={{ m: 1, width: '110px' }} size="small" className='select-border'>
                                 <Select
                                     value={select}
@@ -782,7 +843,7 @@ export default function DocumentList({ clientId }) {
 
                 </Box>
 
-                <div className='text-end mb-3'>
+                <div className='text-end mb-2'>
                     <ToggleButtonGroup
                         value={alignment}
                         exclusive
@@ -807,7 +868,7 @@ export default function DocumentList({ clientId }) {
                 <DataGrid
                     id="dataGrid"
                     style={{ width: "100%" }}
-                    dataSource={dataNotFoundBoolean? []: advFilteredResult.length > 0 ? advFilteredResult : documents}
+                    dataSource={dataNotFoundBoolean ? [] : advFilteredResult.length > 0 ? advFilteredResult : documents}
                     columnAutoWidth={true}
                     showBorders={true}>
                     <Column dataField="Description" dataType="string" caption="Discount" />
@@ -844,7 +905,6 @@ export default function DocumentList({ clientId }) {
                         {isAdvFilter === false && <Layout className=''>
                             <AutocompleteWrapper className='mb-2'>
                                 <AutocompleteRoot
-                                    className=''
                                     sx={{
                                         borderColor: '#D5D5D5',
                                         color: 'success.main',
@@ -879,9 +939,9 @@ export default function DocumentList({ clientId }) {
                                             label="Select Property"
                                             onChange={(e) => handleSearchBySuggestionList(e.target.value)}
                                         >
-                                            {testDocumentsKey.length > 0 && testDocumentsKey.filter((option)=>{
-                                                                return !Object.keys(filterCriteria).includes(option.key)
-                                                            }).map((itm) => {
+                                            {testDocumentsKey.length > 0 && testDocumentsKey.filter((option) => {
+                                                return !Object.keys(filterCriteria).includes(option.key)
+                                            }).map((itm) => {
                                                 return <MenuItem value={itm.key}>{itm.value}</MenuItem>
                                             })}
                                             {/* <MenuItem value={10}>Ten</MenuItem>
@@ -921,76 +981,19 @@ export default function DocumentList({ clientId }) {
                             <Stack direction="row" spacing={1}>
                                 {/* <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
                                         <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} /> */}
-                                
-                                {Object.keys(filterCriteria).length > 0 && Object.keys(filterCriteria).map((key)=>{
-                                    if(!["Item Date","Folder","Section"].includes(key)){
+                                {Object.keys(filterCriteria).length > 0 && Object.keys(filterCriteria).map((key) => {
+                                    if (!["Item Date", "Folder", "Section"].includes(key)) {
                                         return <Chip label={`${key}: ${filterCriteria[key][0]}`} variant="outlined" onDelete={() => {
                                             handleFilterDeletion(key);
                                         }} />
                                     }
-                                } 
+                                }
                                 )}
-
                             </Stack>
-                        </Box>
-
-
-                        <Box className='d-flex'>
-                            <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
-                                <Select
-                                    value={selectedGroup}
-                                    displayEmpty
-                                    inputProps={{ 'aria-label': 'Without label' }}
-                                    className='custom-dropdown'
-                                    onChange={(e) => setSelectedGroup(e.target.value)}
-                                >
-                                    <MenuItem value="">
-                                        Group By
-                                    </MenuItem>
-                                    <MenuItem value="Description">
-                                        Description
-                                    </MenuItem>
-                                    <MenuItem value={"CommentBy"}>Comment By</MenuItem>
-                                    <MenuItem value={"Type"}>Type</MenuItem>
-                                    <MenuItem value={"Comments"}>Comments</MenuItem>
-                                    {/* <MenuItem value={20}>Comment</MenuItem> */}
-                                </Select>
-                            </FormControl>
-
-                            <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
-                                <Select
-                                    value={sortByProperty}
-                                    onChange={(e) => setSortByProperty(e.target.value)}
-                                    displayEmpty
-                                    inputProps={{ 'aria-label': 'Without label' }}
-                                    className='custom-dropdown'
-                                >
-                                    <MenuItem value="">
-                                        Sort By
-                                    </MenuItem>
-                                    <MenuItem value="None" onClick={() => setAdvFilteredResult([])}>None</MenuItem>
-                                    <MenuItem value={"Date"}>By Date</MenuItem>
-                                    <MenuItem value={"Description"}>By Description</MenuItem>
-                                </Select>
-                            </FormControl>
-
-                            {sortByProperty !== "" && sortByProperty !== "None" && <Checkbox
-                                {...label}
-                                icon={<UpgradeIcon />}
-                                checkedIcon={<VerticalAlignBottomIcon />}
-                                className='p-0'
-                                onChange={(e) => {
-                                    if (e.target.checked) {
-                                        handleAscendingSort();
-                                    } else {
-                                        handleDescendingSort();
-                                    }
-                                }}
-                            />}
                         </Box>
                     </Box>
 
-                    <Box className='mt-4 client-details-scroll'>
+                    <Box className='client-details-scroll'>
                         {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
                         {toggleScreen.singleCardView && <DocumentDetails groupByFilterResult={groupByFilterResult} isGroupBy={isGroupBy} documents={documents} advFilteredResult={advFilteredResult} dataNotFoundBoolean={dataNotFoundBoolean} selectedGroup={selectedGroup}></DocumentDetails>}
                         {toggleScreen.multipleCardView &&
