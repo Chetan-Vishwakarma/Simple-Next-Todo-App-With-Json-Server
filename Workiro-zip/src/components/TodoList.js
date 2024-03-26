@@ -12,7 +12,6 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import moment from 'moment';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
-import noData from "../../src/images/no-data.gif";
 
 import CustomLoader from './CustomLoader';
 // import { data } from 'jquery';
@@ -27,6 +26,7 @@ import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import PortalDetails from './PortalDetails';
+import DataNotFound from './DataNotFound';
 
 function TodoList() {
 
@@ -772,9 +772,7 @@ function TodoList() {
 
                                         </Box>
                                     </Box>
-                                })) : <Box className='text-center no-data-found'>
-                                    <img src={noData} />
-                                    <h4 className='font-18 text-gray'>Data Not Found</h4></Box>)
+                                })) : (<DataNotFound/>))
                         }
 
                         {/* statick box */}
