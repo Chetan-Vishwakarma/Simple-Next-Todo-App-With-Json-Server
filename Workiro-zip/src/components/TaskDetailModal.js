@@ -64,7 +64,12 @@ import dxTileView from "devextreme/ui/tile_view";
 import { HtmlEditor } from "devextreme-react";
 import HtmlEditorDX from "./HtmlEditor";
 import { json } from "react-router-dom";
+import CopyLinkButton from "./CopyLinkButton";
+import PortalMessage from "./PortalMessage";
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
+import MergeIcon from '@mui/icons-material/Merge';
+import AttachEmailIcon from '@mui/icons-material/AttachEmail';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 
 const Demo = styled('div')(({ theme }) => ({
@@ -89,8 +94,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
 
     /////////////////////////////////////////Task Activity
-    const [templateDataMarkup, setTemplateDataMarkup] = useState(null);
-    const [editorContentValue, setEditorContentValue] = useState(null);
+
     const [folderList, setFolderList] = useState([]);
 
     const [txtFolder, settxtFolder] = useState(selectedTask.Folder);
@@ -261,16 +265,6 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         }
     };
 
-
-
-
-
-
-
-
-
-
-
     // Event handler to handle file selection
     const handleFileSelect = (event) => {
         const files = event.target.files;
@@ -406,35 +400,19 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     }
 
     function startFormattingDate(dt) {
-        console.log("kjdhdsjhsdf", dt)
+        //console.log("kjdhdsjhsdf", dt)
         if (dt) {
             // let fullDate = new Date(parseInt(dt.substr(6)));
             let fullDate = new Date(dt);
-            console.log("date formet111", fullDate);
+            //console.log("date formet111", fullDate);
             return fullDate;
         }
         else {
             return "";
         }
 
-
-
-
     }
 
-    function DateFormate(dateString) {
-        // Example date string
-
-        // Extract the timestamp from the string using regular expressions
-        const timestamp = parseInt(dateString.match(/\d+/)[0]);
-
-        // Convert the timestamp to a Date object
-        const date = new Date(timestamp);
-
-        // Format the date as you desire
-        const formattedDate = date.toLocaleString(); // Adjust the format as needed
-        return formattedDate;
-    }
 
 
 
@@ -551,153 +529,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
             console.log("error", error);
         }
     }
-    /////////////////////Call Portal Methods  
-    const [portalEmail, setPortalEmail] = useState([]);
-    const [anchorElMgs, setAnchorElMgs] = React.useState(null);
-    const [messageEmail, setMessageEmail] = React.useState("Select Message");
-    const [portalEmailOpbject, setPortalEmailOpbject] = React.useState({});
-    const [filterAttachments, setFilterAttachments] = React.useState([]);
-    const [allPortalAttachments, setAllPortalAttachments] = React.useState([]);
 
-    const [OpenPortalAttachmnet, setOpenPortalAttachmnet] = React.useState(false);
-    const handleClickOpenPortalAtt = () => {
-        setOpenPortalAttachmnet(true);
-    };
-    const handleClosePortalAtt = () => {
-        setOpenPortalAttachmnet(false);
-    };
-
-
-    const openMgsMail = Boolean(anchorElMgs);
-    const handleClickMgsMail = (event) => {
-        setAnchorElMgs(event.currentTarget);
-    };
-
-    const GetMessageHtml_Json = (mgsId) => {
-        let o = {
-            accid: agrno,
-            email: Email,
-            password: password,
-            messageId: mgsId,
-        };
-
-        ClsPortal.GetMessageHtml_Json(o, function (sts, data) {
-            if (sts) {
-                console.log("GetMessageHtml_Json", data);
-                setTemplateDataMarkup(data)
-            }
-        })
-    }
-
-    const GetCertificate_Json = (mgsId) => {
-        let o = {
-            accid: agrno,
-            email: Email,
-            password: password,
-            messageId: mgsId,
-        };
-
-        ClsPortal.GetCertificate_Json(o, function (sts, data) {
-            if (sts) {
-                console.log("GetCertificate_Json", data);
-                // setTemplateDataMarkup(data)
-            }
-        })
-    }
-
-    const GetDocumentStatus_Json = (m) => {
-        let o = {
-            accid: agrno,
-            email: Email,
-            password: password,
-            messageId: m.PortalDocId,
-            messageEmailAddress: m.emailid,
-            docName: m.PortalName,
-        };
-
-        ClsPortal.GetDocumentStatus_Json(o, function (sts, data) {
-            if (sts) {
-                console.log("GetDocumentStatus_Json", data);
-                // setTemplateDataMarkup(data)
-            }
-        })
-    }
-
-    const handleCloseMgs = (e) => {
-        setAnchorElMgs(null);
-
-        GetMessageHtml_Json(e.PortalDocId);
-        GetCertificate_Json(e.PortalDocId);
-        GetDocumentStatus_Json(e);
-        setMessageEmail(e.emailid);
-        setPortalEmailOpbject(e);
-        handleClickOpenPortalAtt(true);
-        let res = allPortalAttachments.length > 0 ? allPortalAttachments.filter((p) => p.emailid === e.emailid) : null;
-        console.log("GetMessageHtml_Json11", res);
-        setFilterAttachments(res);
-    };
-
-
-    const GetMessageDocuments_Json = (mgsId) => {
-        let o = {
-            accid: agrno,
-            email: Email,
-            password: password,
-            messageId: mgsId,
-        };
-
-        ClsPortal.GetMessageDocuments_Json(o, function (sts, data) {
-            if (sts) {
-                console.log("GetMessageDocuments_Json", data);
-            }
-        })
-    }
-
-
-    const GetMessageAttachments_Json = (mgsId) => {
-        let o = {
-            accid: agrno,
-            email: Email,
-            password: password,
-            messageId: mgsId,
-        };
-
-        ClsPortal.GetMessageAttachments_Json(o, function (sts, data) {
-            if (sts) {
-                let arrayOfObjects = JSON.parse(data);
-                setAllPortalAttachments(arrayOfObjects);
-                // Convert array of objects to Set to get unique objects based on specified properties
-                const uniqueObjectsSet = new Set(arrayOfObjects.map(obj => generateUniqueKey(obj)));
-
-                // Convert Set back to array of objects
-                const uniqueObjectsArray = Array.from(uniqueObjectsSet).map(key => {
-                    const [PortalDocId, emailid] = key.split('|');
-                    return arrayOfObjects.find(obj => obj.PortalDocId === PortalDocId && obj.emailid === emailid);
-                });
-
-
-                if (data) {
-                    setPortalEmail(uniqueObjectsArray)
-                }
-            }
-        });
-    }
-
-
-    // Function to generate a unique key based on specified properties
-    function generateUniqueKey(obj) {
-        return obj.PortalDocId + '|' + obj.emailid;
-    }
-
-    /////////////////////End Call Portal Methods  
 
 
     useEffect(() => {
-        //PortMethods
-        if (selectedTask.PubMessageId) {
-            GetMessageDocuments_Json(selectedTask.PubMessageId)
-            GetMessageAttachments_Json(selectedTask.PubMessageId)
-        }
+
         //End PortMethods
 
         Json_GetForwardUserList(selectedTask.FolderID);
@@ -741,7 +577,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
             // console.log("Hello 1s")
             Json_Get_CRM_Task_ActivityByTaskId(selectedTask.ID);
-        }, 4000);
+        }, 2500);
 
     }, [selectedTask]);
 
@@ -994,12 +830,13 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 ElectronicFile: false,
                 PaperFile: false,
             };
+
             console.log("final save data obj", obj);
             Cls.Json_CRM_Task_Update(obj, function (sts, data) {
                 if (sts) {
                     let js = JSON.parse(data);
                     if (js.Status === "success") {
-
+                        setSelectedFiles([]);
                         setMessageId(js.Message);
                         // setLoading(false);
                         setIsApi(!isApi);
@@ -1240,7 +1077,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     >
                                         <CheckCircleIcon />
                                     </Button>
-                                    <Menu
+                                    {/* <Menu
                                         id="fade-menu"
                                         MenuListProps={{
                                             "aria-labelledby": "fade-button5",
@@ -1254,7 +1091,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                             My account
                                         </MenuItem>
                                         <MenuItem onClick={handleCloseDropdown}>Logout</MenuItem>
-                                    </Menu>
+                                    </Menu> */}
                                 </Box>
 
                                 {/* <div>
@@ -1453,7 +1290,26 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                             </>)
                                         }) : ""}
 
+                                        {/* only for portal */}
+                                        <MenuItem className='ps-2'>
+                                            <ListItemIcon>
+                                                <ContentCopyIcon fontSize="medium" />
+                                            </ListItemIcon> Copy Link</MenuItem>
 
+                                        <MenuItem className='ps-2'>
+                                            <ListItemIcon>
+                                                <MergeIcon fontSize="medium" />
+                                            </ListItemIcon> Merge</MenuItem>
+
+                                        <MenuItem className='ps-2'>
+                                            <ListItemIcon>
+                                                <AttachEmailIcon fontSize="medium" />
+                                            </ListItemIcon> Retract Message (s)</MenuItem>
+
+                                        <MenuItem className='ps-2'>
+                                            <ListItemIcon>
+                                                <DeleteIcon fontSize="medium" />
+                                            </ListItemIcon> Delete Message (s)</MenuItem>
                                     </Menu>
                                 </div>
 
@@ -1497,7 +1353,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                             <Box className="mt-2 mb-3">
                                 {selectedTask.Source === "CRM" && (<>
                                     <textarea
-                                        className="form-control textarea-ony-read resize-none"
+                                        className="form-control textarea textarea-ony-read resize-none"
                                         placeholder="Description"
                                         value={txtdescription} // Bind the value to the state
                                         onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
@@ -1505,48 +1361,12 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     ></textarea>
                                 </>)}
 
-                            </Box>
-                            <Box className='text-editor-box-name'>
-                                {selectedTask.Source === "Portal" && (<>
-                                    <HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
 
-
-
-                                    <div>
-                                        <Button
-                                            id="basic-button"
-                                            aria-controls={openMgsMail ? 'basic-menu' : undefined}
-                                            aria-haspopup="true"
-                                            aria-expanded={openMgsMail ? 'true' : undefined}
-                                            onClick={handleClickMgsMail}
-                                        >
-                                            {messageEmail ? messageEmail : "Select Message"}
-                                        </Button>
-                                        <Menu
-                                            id="basic-menu"
-                                            anchorEl={anchorElMgs}
-                                            open={openMgsMail}
-                                            onClose={handleCloseMgs}
-                                            MenuListProps={{
-                                                'aria-labelledby': 'basic-button',
-                                            }}
-                                        >
-                                            {portalEmail ? portalEmail.map((item, index) => {
-                                                return <MenuItem key={index} onClick={() => handleCloseMgs(item)}>{item.emailid}</MenuItem>
-                                            }) : ""}
-
-
-                                        </Menu>
-                                    </div>
-
-                                </>
-                                )}
+                                {
+                                    <PortalMessage selectedTask={selectedTask}></PortalMessage>
+                                }
 
                             </Box>
-
-
-
-
 
 
 
@@ -2067,102 +1887,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
             </Dialog>
 
 
-            <Dialog
-                open={OpenPortalAttachmnet}
-                onClose={handleClosePortalAtt}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                className='custom-modal'
-                sx={{
-                    maxWidth: 1000,
-                    width: '100%',
-                    margin: '0 auto'
-                }}
-            >
-                {/* <DialogTitle id="alert-dialog-title">
-                        {"Use Google's location service?"}
-                    </DialogTitle> */}
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
 
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="dropdown-box">
-                                <Typography variant="h4" className='font-18 bold mb-2 text-black'>
-                                    Attachments
-                                </Typography>
-                                {/* <Box className="btn-Select">
-                                    <Button className='btn-white'>Action</Button>
-                                    <Button className='btn-white'>Ser</Button>
-                                    <Button className='btn-white'>Custom</Button>
-
-                                    <hr />
-
-                                    <Button className='btn-blue-2' size="small">Apply Now</Button>
-                                </Box> */}
-                            </Box>
-
-                            {/*  */}
-                            <Button onClick={handleClosePortalAtt} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-                        <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
-                            <Box sx={{ flexGrow: 1 }}>
-                                <Grid container spacing={2}>
-                                    <Grid xs={6}>
-                                        <Demo>
-                                            <List>
-
-
-                                                {filterAttachments.length > 0 ? filterAttachments.map((item, index) => {
-
-
-                                                    return (<>
-                                                        <ListItem key={index}
-                                                            secondaryAction={
-                                                                <IconButton edge="end" aria-label="delete">
-                                                                    <DeleteIcon onClick={() => DeleteTasksAttachment(item)} />
-                                                                    <DownloadForOfflineIcon onClick={() => handleDownloadDoc(item)} />
-                                                                </IconButton>
-                                                            }
-                                                        >
-                                                            <ListItemAvatar>
-                                                                <Avatar>
-                                                                    <FolderIcon />
-                                                                </Avatar>
-                                                            </ListItemAvatar>
-                                                            <ListItemText
-                                                                primary={item.PortalName}
-                                                                secondary={item.DDate ? DateFormate(item.DDate) : null}
-                                                            />
-                                                        </ListItem>
-                                                    </>)
-                                                }) : ""}
-
-
-                                            </List>
-                                        </Demo>
-                                    </Grid>
-                                    <Grid xs={6}>
-                                        {/* <iframe src={viewAttachments}></iframe> */}
-                                    </Grid>
-
-                                </Grid>
-                            </Box>
-
-
-                        </Box>
-
-
-                        {/* <DocumentDetails></DocumentDetails> */}
-
-
-
-                    </DialogContentText>
-                </DialogContent>
-            </Dialog>
 
 
 
