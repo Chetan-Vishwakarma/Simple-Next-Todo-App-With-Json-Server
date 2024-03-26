@@ -64,20 +64,9 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
     const handleClickOpenPDFView = (event, data) => {
         event.preventDefault();
         event.stopPropagation();
-        setSelectedDocument(data)
+        setSelectedDocument(data);
         setOpenPDFView(true);
     };
-
-    // dropdown add
-    const [userDropdownanchorEl, setuserDropdownAnchorEl] = React.useState(null);
-    const UserDropdownopen = Boolean(userDropdownanchorEl);
-    const handleUserClick = (event) => {
-        setuserDropdownAnchorEl(event.currentTarget);
-    };
-    // const handleUserClose = () => {
-    //     setuserDropdownAnchorEl(null);
-    // };
-    // end
 
 
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -104,14 +93,14 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState({});
     const DocumentList = (index) => Boolean(anchorElDocumentList[index]);
     const handleClickDocumentList = (event, rowData) => {
-        event.preventDefault();
         event.stopPropagation();
         const newAnchorElDocumentList = { ...anchorElDocumentList };
         newAnchorElDocumentList[rowData.key] = event.currentTarget;
         setAnchorElDocumentList(newAnchorElDocumentList);
     };
     
-    const handleCloseDocument = (rowData) => {
+    const handleCloseDocument = (event,rowData) => {
+        event.stopPropagation();
         const newAnchorElDocumentList = { ...anchorElDocumentList };
         delete newAnchorElDocumentList[rowData.key];
         setAnchorElDocumentList(newAnchorElDocumentList);
@@ -120,12 +109,13 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
 
     // Document details List
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
-    const handleClickOpenDocumentDetailsList = () => {
+    const handleClickOpenDocumentDetailsList = (event) => {
+        event.stopPropagation();
         setOpenDocumentDetailsList(true);
     };
-    const handleCloseDocumentDetailsList = () => {
+    const handleCloseDocumentDetailsList = (event) => {
+        event.stopPropagation();
         setOpenDocumentDetailsList(false);
-        setAnchorElDocumentList(null);
     };
 
     // accordian
@@ -151,7 +141,6 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
             <Box>
 
                 <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
-
                 {/* <Box className='d-flex mb-3 mt-2'>
                     {/* <FormControlLabel control={<Checkbox />} className="p-0 m-0 ms-2 ps-1" size="small"/> 
 
@@ -226,37 +215,45 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                                             id={`basic-menu-${data.key}`}
                                             anchorEl={anchorElDocumentList[data.key]}
                                             open={Boolean(anchorElDocumentList[data.key])}
-                                            onClose={()=>handleCloseDocument(data)}
+                                            onClose={(event)=>handleCloseDocument(event,data)}
                                             MenuListProps={{
                                                 'aria-labelledby': `basic-button-${data.key}`,
                                             }}
                                             className='custom-dropdown'
                                         >
-                                            <MenuItem onClick={() => {
-                                                handleCloseDocument()
-                                                handleClickOpenDocumentDetailsList()
+                                            <MenuItem onClick={(event) => {
+                                                handleCloseDocument(event,data)
+                                                handleClickOpenDocumentDetailsList(event)
                                             }}>
                                                 <ListItemIcon>
                                                     <ArticleIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Document Details</MenuItem>
 
-                                            <MenuItem onClick={handleCloseDocument}>
+                                            <MenuItem
+                                             onClick={(event)=>handleCloseDocument(event,data)}
+                                             >
                                                 <ListItemIcon>
                                                     <CloudUploadIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Upload New Version</MenuItem>
-                                            <MenuItem onClick={handleCloseDocument}>
+                                            <MenuItem 
+                                            onClick={(event)=>handleCloseDocument(event,data)}
+                                            >
                                                 <ListItemIcon>
                                                     <DriveFileRenameOutlineIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Rename Document</MenuItem>
-                                            <MenuItem onClick={handleCloseDocument}>
+                                            <MenuItem 
+                                            onClick={(event)=>handleCloseDocument(event,data)}
+                                            >
                                                 <ListItemIcon>
                                                     <TravelExploreIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Open in Browser</MenuItem>
-                                            <MenuItem onClick={handleCloseDocument}>
+                                            <MenuItem 
+                                            onClick={(event)=>handleCloseDocument(event,data)}
+                                            >
                                                 <ListItemIcon>
                                                     <CloudDownloadIcon fontSize="medium" />
                                                 </ListItemIcon>
@@ -857,7 +854,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
             {/* document modal list details */}
             <Dialog
                 open={openDocumentDetailsList}
-                onClose={handleCloseDocumentDetailsList}
+                onClose={(event)=>handleCloseDocumentDetailsList(event)}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 className='custom-modal'
@@ -877,7 +874,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                             </Box>
 
                             {/*  */}
-                            <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
+                            <Button onClick={(event)=>handleCloseDocumentDetailsList(event)} autoFocus sx={{ minWidth: 30 }}>
                                 <span className="material-symbols-outlined text-black">
                                     cancel
                                 </span>

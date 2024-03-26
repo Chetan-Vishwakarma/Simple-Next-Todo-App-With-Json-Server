@@ -897,11 +897,11 @@ export default UploadDocument
 
 // Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
 // Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-const Folder = [
-    { label: 'Client' },
-    { label: 'Cases' },
-    { label: 'Customer' },
-    { label: 'Share Allotments' },
-    { label: 'M Customer' },
-    { label: 'Process Folder' }
-];
+// const Folder = [
+//     { label: 'Client' },
+//     { label: 'Cases' },
+//     { label: 'Customer' },
+//     { label: 'Share Allotments' },
+//     { label: 'M Customer' },
+//     { label: 'Process Folder' }
+// ];

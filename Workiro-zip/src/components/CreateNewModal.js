@@ -1648,7 +1648,7 @@ export default function CreateNewModalTask({ ...props }) {
         }
     }
 
-   
+
 
     async function CreatePortalMessage(taskid) {
 
@@ -1690,7 +1690,7 @@ export default function CreateNewModalTask({ ...props }) {
                     "daysToDelete": 0,
                     "approvalResponse": "",
                     "uploadID": localStorage.getItem("GUID"),
-                    "PubTaskid":taskid
+                    "PubTaskid": taskid
 
 
                 }
@@ -1727,13 +1727,7 @@ export default function CreateNewModalTask({ ...props }) {
                 error: error,
             });
         }
-
-
-
-
-
     }
-
 
     const [isCheckedForApproval, setIsCheckedForApproval] = useState(false);
     const [isDisabledForApproval, setIsDisabledForApproval] = useState(false);
@@ -1756,9 +1750,6 @@ export default function CreateNewModalTask({ ...props }) {
         setuserDropdownAnchorElRight(event.currentTarget);
         //setDropdownPosition({ x: event.clientX, y: event.clientY });
     };
-
-
-
 
     const firsorScandCtr = (item) => {
         if (item) {
@@ -1950,17 +1941,66 @@ export default function CreateNewModalTask({ ...props }) {
         }
     }
 
+    // dropdown
+    const [anchorEl4, setAnchorEl4] = React.useState(null);
+    const open4 = Boolean(anchorEl4);
+    const handleClick4 = (event) => {
+        setAnchorEl4(event.currentTarget);
+    };
+    const handleClose4 = () => {
+        setAnchorEl4(null);
+    };
 
+
+
+    // Referance modal
+    const [Referance, setReferance] = React.useState(false);
+
+    const handleClickReferance = () => {
+        setReferance(true);
+    };
+    const DocumentHandleClose = () => {
+        setReferance(false);
+    };
 
     return (
         <React.Fragment>
-            <Button
+            {/* <Button
                 className="btn-blue btn-round btn-block"
                 onClick={handleClickOpen}
             >
                 <span className="material-symbols-outlined">edit_square</span>{" "}
-                <span className="ps-2 create-text">Create New</span>
-            </Button>
+                <span className="ps-2 create-text">Create New  </span>
+            </Button> */}
+
+
+            <div>
+                <Button
+                    id="basic-button"
+                    aria-controls={open4 ? 'basic-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open4 ? 'true' : undefined}
+                    onClick={handleClick4}
+                    className="btn-blue btn-round btn-block"
+                >
+                    Create New
+                </Button>
+                <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl4}
+                    open={open4}
+                    onClose={handleClose4}
+                    MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                    }}
+                    className="custom-dropdown"
+                >
+                    <MenuItem onClick={handleClickOpen}>CRM Task</MenuItem>
+                    <MenuItem onClick={handleClickOpen}>Portal Task</MenuItem>
+                    <MenuItem onClick={handleClickReferance}>Reference</MenuItem>
+                    <MenuItem onClick={handleClose4}>Note</MenuItem>
+                </Menu>
+            </div>
 
 
             <Dialog
@@ -1969,8 +2009,6 @@ export default function CreateNewModalTask({ ...props }) {
                 onClose={handleClose}
                 aria-labelledby="responsive-dialog-title"
                 className="custom-modal custom-modal-1200"
-                // maxWidth="xl" // Set maxWidth to control the width
-                fullWidth={true} // Ensure the dialog takes up the full width
             >
                 <DialogContent>
                     <DialogContentText>
@@ -2511,7 +2549,6 @@ export default function CreateNewModalTask({ ...props }) {
                                             </label>
                                             <MenuItem onClick={handleDocumentClickOpen}>Select From DMS</MenuItem>
 
-
                                         </Menu>
 
                                     </label>
@@ -2663,6 +2700,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                 <TextField
                                                     label="Search"
                                                     variant="outlined"
+                                                    autoFocus
                                                     value={searchFolderQuery}
                                                     onChange={handleSearchInputChangeFolder}
                                                     onClick={(e) => e.stopPropagation()} // Prevent event propagation
@@ -2767,6 +2805,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                 <TextField
                                                     label="Search"
                                                     variant="outlined"
+                                                    autoFocus
                                                     value={searchQuery}
                                                     onChange={handleSearchInputChange}
                                                     sx={{ width: "100%" }}
@@ -2862,6 +2901,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                 <TextField
                                                     label="Search"
                                                     variant="outlined"
+                                                    autoFocus
                                                     value={searchSectionQuery}
                                                     onChange={handleSearchInputChangeSection}
                                                     sx={{ width: "100%" }}
@@ -3347,6 +3387,47 @@ export default function CreateNewModalTask({ ...props }) {
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
+            {/* end */}
+
+
+             {/* create new modal */}
+             <Dialog
+                open={Referance}
+                onClose={DocumentHandleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className="custom-modal full-modal"
+            >
+                
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        
+                        
+                    <Box className="d-flex align-items-center justify-content-between">
+
+                            <div>
+                                <Button
+                                    id="basic-button"
+                                >
+                                    Document List
+                                </Button>
+
+                            </div>
+
+                            <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+                        </Box>
+
+                        <hr />
+
+                    </DialogContentText>
+                </DialogContent>
+                
+            </Dialog>
+
         </React.Fragment>
     );
 }

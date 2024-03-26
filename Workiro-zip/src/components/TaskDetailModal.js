@@ -67,6 +67,9 @@ import { json } from "react-router-dom";
 import CopyLinkButton from "./CopyLinkButton";
 import PortalMessage from "./PortalMessage";
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
+import MergeIcon from '@mui/icons-material/Merge';
+import AttachEmailIcon from '@mui/icons-material/AttachEmail';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 
 const Demo = styled('div')(({ theme }) => ({
@@ -91,7 +94,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
 
     /////////////////////////////////////////Task Activity
-   
+
     const [folderList, setFolderList] = useState([]);
 
     const [txtFolder, settxtFolder] = useState(selectedTask.Folder);
@@ -262,16 +265,6 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         }
     };
 
-
-
-
-
-
-
-
-
-
-
     // Event handler to handle file selection
     const handleFileSelect = (event) => {
         const files = event.target.files;
@@ -420,7 +413,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
     }
 
-   
+
 
 
     function Json_GetSections(secid) {
@@ -536,11 +529,11 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
             console.log("error", error);
         }
     }
-     
+
 
 
     useEffect(() => {
-        
+
         //End PortMethods
 
         Json_GetForwardUserList(selectedTask.FolderID);
@@ -837,7 +830,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 ElectronicFile: false,
                 PaperFile: false,
             };
-            
+
             console.log("final save data obj", obj);
             Cls.Json_CRM_Task_Update(obj, function (sts, data) {
                 if (sts) {
@@ -1084,7 +1077,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                     >
                                         <CheckCircleIcon />
                                     </Button>
-                                    <Menu
+                                    {/* <Menu
                                         id="fade-menu"
                                         MenuListProps={{
                                             "aria-labelledby": "fade-button5",
@@ -1098,7 +1091,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                             My account
                                         </MenuItem>
                                         <MenuItem onClick={handleCloseDropdown}>Logout</MenuItem>
-                                    </Menu>
+                                    </Menu> */}
                                 </Box>
 
                                 {/* <div>
@@ -1297,7 +1290,26 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                             </>)
                                         }) : ""}
 
+                                        {/* only for portal */}
+                                        <MenuItem className='ps-2'>
+                                            <ListItemIcon>
+                                                <ContentCopyIcon fontSize="medium" />
+                                            </ListItemIcon> Copy Link</MenuItem>
 
+                                        <MenuItem className='ps-2'>
+                                            <ListItemIcon>
+                                                <MergeIcon fontSize="medium" />
+                                            </ListItemIcon> Merge</MenuItem>
+
+                                        <MenuItem className='ps-2'>
+                                            <ListItemIcon>
+                                                <AttachEmailIcon fontSize="medium" />
+                                            </ListItemIcon> Retract Message (s)</MenuItem>
+
+                                        <MenuItem className='ps-2'>
+                                            <ListItemIcon>
+                                                <DeleteIcon fontSize="medium" />
+                                            </ListItemIcon> Delete Message (s)</MenuItem>
                                     </Menu>
                                 </div>
 
@@ -1339,24 +1351,24 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                             </Box>
 
                             <Box className="mt-2 mb-3">
-                            {selectedTask.Source === "CRM" && (<>
-                                <textarea
-                                    className="form-control textarea textarea-ony-read resize-none"
-                                    placeholder="Description"
-                                    value={txtdescription} // Bind the value to the state
-                                    onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
-                                    onClick={handalClickEditeSubject}
-                                ></textarea>
-                            </>)}
-                                
-                           
-                            {
- <PortalMessage selectedTask={selectedTask}></PortalMessage>
-                            }
+                                {selectedTask.Source === "CRM" && (<>
+                                    <textarea
+                                        className="form-control textarea textarea-ony-read resize-none"
+                                        placeholder="Description"
+                                        value={txtdescription} // Bind the value to the state
+                                        onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
+                                        onClick={handalClickEditeSubject}
+                                    ></textarea>
+                                </>)}
+
+
+                                {
+                                    <PortalMessage selectedTask={selectedTask}></PortalMessage>
+                                }
 
                             </Box>
-                           
-                          
+
+
 
 
                             {isVisible && ( // Show the box if isVisible is true
@@ -1875,7 +1887,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
             </Dialog>
 
 
-            
+
 
 
 

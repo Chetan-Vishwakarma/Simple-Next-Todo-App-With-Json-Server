@@ -34,8 +34,6 @@ function ClientDetails() {
 
     const [companyDetails, setCompanyDetails] = useState([]);
 
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
-
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
     const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
@@ -137,27 +135,6 @@ function ClientDetails() {
         }
     }
 
-    // const Json_GetClientsByFolder=()=>{
-    //     let obj = {
-    //         agrno: agrno,
-    //         Email: Email,
-    //         password: password,
-    //         ProjectId: folderId
-    //     };
-    //     try{
-    //         Cls.Json_GetClientsByFolder(obj, (sts, data) => {
-    //             if (sts) {
-    //                 if (data) {
-    //                     let json = JSON.parse(data);
-    //                     console.log("Json_GetClientsByFolder", json);
-    //                 }
-    //             }
-    //         });
-    //     }catch(err){
-    //         console.log("Error while calling Json_GetClientsByFolder",err);
-    //     }
-    // }
-
     const Json_GetClientCardDetails = () => {
         let obj = {
             Email: Email,
@@ -183,6 +160,7 @@ function ClientDetails() {
             console.log("Error while calling Json_GetClientCardDetails", err)
         }
     }
+    
     useEffect(() => {
         Json_GetClientCardDetails();
     }, []);

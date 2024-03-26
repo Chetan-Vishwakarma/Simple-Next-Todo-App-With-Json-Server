@@ -147,6 +147,11 @@ input,
   resize: none;
 }
 
+.btn-padding-same .dx-button-content {
+  padding: 0;
+  font-weight: 600;
+}
+
 .btn-blue {
   background: #4780FF !important;
   color: #fff !important;
@@ -643,10 +648,12 @@ hr {
 span.tox-statusbar__branding {
   display: none;
 }
+
 .textarea-ony-read {
   border: 0px;
   padding: 0;
 }
+
 /* timeline status */
 .activity-timeline {
   margin-top: 20px;
@@ -1490,7 +1497,7 @@ span.tox-statusbar__branding {
 
 .todo-list-box {
   border-radius: 20px;
-  border: 2px dashed #e1e1e1;
+  border: 1px dashed #e1e1e1;
   cursor: pointer;
   transition: .5s all ease;
   box-shadow: rgb(133 133 133 / 10%) 0px 10px 15px -3px, rgb(104 104 104 / 5%) 0px 4px 6px -2px;
@@ -1821,6 +1828,21 @@ span.tox-statusbar__branding {
   margin-top: 20px;
   background: #edf0ff;
   padding: 15px;
+}
+
+.approval-main .approval-box {
+  align-items: center;
+  display: flex;
+  margin-right: 15px;
+  border-right: 1px solid #f1f1f1;
+  padding-right: 15px;
+  margin-bottom: 10px;
+}
+
+.download-btn-box {
+  position: absolute;
+  right: 15px;
+  top: 20px;
 }
 
 @media only screen and (max-width: 1366px) {
@@ -2751,10 +2773,12 @@ span.tox-statusbar__branding {
   transition: transform .4s;
   font-size: 22px;
 }
+
 .full-height-modal {
   height: calc(100vh - 200px);
   overflow-y: auto;
 }
+
 .no-touch .cd-vertical-nav:hover .hover-icon {
   transform: translateX(0);
 }
