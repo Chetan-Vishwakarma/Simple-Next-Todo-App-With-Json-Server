@@ -202,7 +202,8 @@ function ClientDetails() {
                 </Box>
             </Box>
 
-            <UploadDocument setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument}></UploadDocument>
+            <UploadDocument setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument} localtion={location}
+            ></UploadDocument>
 
             <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
                 <TabContext value={value}>

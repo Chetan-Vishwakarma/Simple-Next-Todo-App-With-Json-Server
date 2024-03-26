@@ -34,7 +34,7 @@ const Demo = styled('div')(({ theme }) => ({
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
-const PortalMessage = ({ selectedTask }) => {
+const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
     console.log("selectedTask portal message", selectedTask)
 
     const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
@@ -53,6 +53,7 @@ const PortalMessage = ({ selectedTask }) => {
     const [messageEmail, setMessageEmail] = React.useState("Select Message");
     const [portalEmailOpbject, setPortalEmailOpbject] = React.useState({});
     const [filterAttachments, setFilterAttachments] = React.useState([]);
+    const [totalAttachment, setTotalAttachment] = React.useState([]);
     const [allPortalAttachments, setAllPortalAttachments] = React.useState([]);
 
     const [iframeViewDocument, setIframeViewDocument] = React.useState(null);
@@ -63,6 +64,8 @@ const PortalMessage = ({ selectedTask }) => {
 
     const [copyLink, setCopyLink] = React.useState("");
     const [certificateData, setCertificateData] = React.useState("");
+
+    const [documentStatus, setDocumentStatus] = React.useState("");
 
     const handleClickOpenPortalAtt = () => {
         setOpenPortalAttachmnet(true);
@@ -110,21 +113,40 @@ const PortalMessage = ({ selectedTask }) => {
     }
 
     const GetDocumentStatus_Json = (m) => {
-        let o = {
-            accid: agrno,
-            email: Email,
-            password: password,
-            messageId: m.PortalDocId,
-            messageEmailAddress: m.emailid,
-            docName: m.PortalName,
-        };
+        try {
+            let o = {
+                accid: agrno,
+                email: Email,
+                password: password,
+                messageId: m.PortalDocId,
+                messageEmailAddress: m.emailid,
+                docName: m.PortalName,
+            };
 
-        ClsPortal.GetDocumentStatus_Json(o, function (sts, data) {
-            if (sts) {
-                console.log("GetDocumentStatus_Json", data);
-                // setTemplateDataMarkup(data)
-            }
-        })
+            ClsPortal.GetDocumentStatus_Json(o, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        // console.log("GetDocumentStatus_Json", js);
+                        let res = js.filter((e) => e.Emailid === m.emailid);
+                        console.log("GetDocumentStatus_Json", res);
+                        if (res.length > 0) {
+                            setDocumentStatus(js[0])
+                        }
+
+                    }
+
+
+                }
+            })
+        } catch (error) {
+            console.log({
+                status: false,
+                message: "GetDocumentStatus_Json is Blank Try again",
+                error: error,
+            });
+        }
+
     }
 
     const GetAttachment_Json = (m) => {
@@ -139,7 +161,7 @@ const PortalMessage = ({ selectedTask }) => {
 
         ClsPortal.GetAttachment_Json(o, function (sts, data) {
             if (sts) {
-                console.log("GetAttachment_Json", data);
+                // console.log("GetAttachment_Json", data);
                 if (data) {
                     var a = document.createElement("a"); //Create <a>
                     a.href = "data:" + ClsPortal.FileType(m.PortalName) + ";base64," + data; //Image Base64 Goes here
@@ -177,6 +199,8 @@ const PortalMessage = ({ selectedTask }) => {
 
             if (res && res.length > 0) {
                 setFilterAttachments(res);
+                console.log("GetMessageHtml_Json11", res);
+                setTotalAttachment(res.length);
 
             }
 
@@ -470,6 +494,45 @@ const PortalMessage = ({ selectedTask }) => {
         setDocumentSent(false);
     };
 
+    const UploadToDocuSoft = (data) => {
+        ClsPortal.ConfirmMessage("Are you sure you want to upload to docusoft?", function (res) {
+            try {
+               // console.log("ConfirmMessage", res,data)
+                if (res) {
+                    GetDocumentBase64(data);
+                }
+            } catch (error) {
+                console.log({ Status: false, mgs: "Faild Please Try Again", Error: error });
+            }
+            
+        })
+    }
+
+
+    const GetDocumentBase64 = (m) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageId: m.PortalDocId,
+            attachid: m.Attachid,
+            extension: m.DocExtension,
+        };
+
+        ClsPortal.GetAttachment_Json(o, function (sts, data) {
+            if (sts) {
+                // console.log("GetAttachment_Json", data);
+                if (data) {
+                  let obj={
+                    Base64:data,
+                    Details:m
+                  }
+                  Json_RegisterItem(obj)
+                }
+                // setTemplateDataMarkup(data)
+            }
+        })
+    }
 
     return (<React.Fragment>
         {selectedTask.Source === "Portal" && (<>
@@ -571,7 +634,7 @@ const PortalMessage = ({ selectedTask }) => {
                 <hr />
 
                 <Box className="d-flex flex-wrap">
-                    <label className='text-decoration-none d-flex pointer' onClick={handleClickDocumentSent}><BallotIcon className='me-1' /> Portal Documents</label>
+                    <label className='text-decoration-none d-flex pointer' onClick={handleClickDocumentSent}><BallotIcon className='me-1' />{totalAttachment} Portal Documents</label>
                     {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
                 </Box>
 
@@ -735,10 +798,10 @@ const PortalMessage = ({ selectedTask }) => {
                                     <Box className='todo-list-box white-box relative w-100'>
 
                                         <Box className='download-btn-box'>
-                                            <Button size="small" className="min-width-auto me-1">
+                                            <Button onClick={()=>UploadToDocuSoft(item)} size="small" className="min-width-auto me-1">
                                                 <img src={docuicon} width='18' />
                                             </Button>
-                                            <Button size="small" className="min-width-auto"><DownloadIcon /></Button>
+                                            <Button size="small" className="min-width-auto" onClick={() => handleDownloadPortalAtt(item)} ><DownloadIcon /></Button>
                                         </Box>
 
                                         {/* <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography> */}
@@ -763,37 +826,44 @@ const PortalMessage = ({ selectedTask }) => {
                                             <Box className='approval-box'>
                                                 <VerifiedIcon className="me-2" />
                                                 <Typography variant='subtitle1' className='text-center'>
-                                                    Sent For Approval
+
+                                                    {documentStatus.ForApproval === "Yes" ? "Sent For Approval" : "Not Sent For Approval"}
                                                 </Typography>
                                             </Box>
 
-                                            <Box className='approval-box'>
-                                                <Box className='d-flex'>
-                                                    <NotificationImportantIcon className="me-2" />
-                                                    <Typography variant='subtitle1' className='text-center'>
-                                                        Pending Approval
-                                                    </Typography>
+                                            {documentStatus.ForApproval === "Yes" && (<>
+                                                <Box className='approval-box'>
+                                                    <Box className='d-flex'>
+                                                        <NotificationImportantIcon className="me-2" />
+                                                        <Typography variant='subtitle1' className='text-center'>
+                                                            {
+                                                                documentStatus.Approved === "Yes" ? "Pending Approval" : "Send Reminder"
+                                                            }
+                                                        </Typography>
+                                                    </Box>
+
+                                                    {/* <Button className='btn-blue-2 btn-padding-same ms-2' size="small"><NotificationsActiveIcon /> Send Reminder</Button> */}
+
                                                 </Box>
 
-                                                {/* <Button className='btn-blue-2 btn-padding-same ms-2' size="small"><NotificationsActiveIcon /> Send Reminder</Button> */}
+                                                <Box className='approval-box'>
+                                                    <VisibilityOffIcon className="me-2" />
+                                                    <Typography variant='subtitle1' className='text-center'>
+                                                        Not Yet Viewed
+                                                    </Typography>
 
-                                            </Box>
+                                                </Box>
+                                                {documentStatus.Approved === "Yes" && (<>
+                                                    <Box className='approval-box' onDoubleClick={() => handleClickViewDocument(item)}>
+                                                        <VerifiedUserIcon className="me-2" />
+                                                        <Typography variant='subtitle1' className='text-center'>
+                                                            View  Certificate  of approval
+                                                        </Typography>
 
-                                            <Box className='approval-box'>
-                                                <VisibilityOffIcon className="me-2" />
-                                                <Typography variant='subtitle1' className='text-center'>
-                                                    Not Yet Viewed
-                                                </Typography>
+                                                    </Box>
+                                                </>)}
 
-                                            </Box>
-
-                                            <Box className='approval-box' onDoubleClick={() => handleClickViewDocument(item)}>
-                                                <VerifiedUserIcon className="me-2" />
-                                                <Typography variant='subtitle1' className='text-center'>
-                                                    View  Certificate  of approval
-                                                </Typography>
-
-                                            </Box>
+                                            </>)}
 
                                         </Box>
 
