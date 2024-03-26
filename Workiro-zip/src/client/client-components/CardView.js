@@ -15,6 +15,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import EmailIcon from '@mui/icons-material/Email';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import DataNotFound from '../../components/DataNotFound';
 
 function CardView(props) {
   const {
@@ -98,9 +99,7 @@ function CardView(props) {
               </Box>}
             </Box>
           </Box>
-        }) : isDataNotFoundInClient ? <Box className='text-center no-data-found'>
-          <img src={noData} />
-          <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : clients.slice(0,loadMore).map((item, i) => {
+        }) : isDataNotFoundInClient ? <DataNotFound/> : clients.slice(0,loadMore).map((item, i) => {
           return <Box key={i} className='client-box-main'>
             <Box className='client-box sadik' onClick={() => handleClientNavigation(item.OriginatorNo)}>
               {/* <img src={pin} className='pin-img' /> */}
@@ -215,9 +214,7 @@ function CardView(props) {
               </Box>}
             </Box>
           </Box>
-        }) : isDataNotFoundInContact ? <Box className='text-center no-data-found'>
-        <img src={noData} />
-        <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : contacts.slice(0, loadMore).map((item, i) => {
+        }) : isDataNotFoundInContact ? <DataNotFound/> : contacts.slice(0, loadMore).map((item, i) => {
           return <Box key={i} className='client-box-main'>
             <Box className='client-box sadik' onClick={() => handleContactNavigattion(item.OriginatorNo, item.ContactNo)}>
 

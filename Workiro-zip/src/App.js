@@ -7,6 +7,7 @@ import ContactDetails from './contact/contact-components/ContactDetails'
 import TodoList from './components/TodoList'
 import NewTodoList from './components/NewTodoList'
 import Logout from './components/Logout'
+import SearchResult from './components/SearchResult'
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="MyTask" element={<TodoList />} />
             <Route path="TodoList" element={<NewTodoList />} />
             <Route path="SmartViews" element={<></>} />
+            <Route path="SearchResult" element={<SearchResult /> } />
             <Route path="Logout" element={<Logout/>} />
             
           </Route>
