@@ -1049,6 +1049,57 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     };
 
 
+    const Json_RegisterItem=(data)=>{
+        console.log("selectedTask",selectedTask);
+        let o = {
+              deptId: "0",
+              sectionId: txtSectionId?txtSectionId:selectedTask.SectionId,
+              folderId: txtFolderId?txtFolderId:selectedTask.FolderID,
+              categoryId: "0",
+              subSectionId: "0",
+              retForMonth: "-1",
+              deptName: "",
+              folderName: txtFolder,
+              originatorId: txtClientId?txtClientId:selectedTask.ClientNo,
+              senderId: txtClientId?txtClientId:selectedTask.ClientNo,
+              sectionName: txtSection?txtSection:selectedTask.Section,
+              extDescription: "",//$("#DU_Comment").val(),
+              docDirection:"",// docDirection,
+              description: tSubject?tSubject:selectedTask.Subject,//$("#DU_DescriptionText").val(),      
+              stickyNote: "",//$("#DU_DescriptionText").val(),
+             // fileName: att ? att.replace(/'/g, "") : $("#DU_DescriptionText").val().substring(0, 25) + ".eml", //$("#DU_DescriptionText").val().substring(0, 25) + ".eml",
+              fileName: data.Details.PortalName, //$("#DU_DescriptionText").val().substring(0, 25) + ".eml",
+              forActionList: "",
+              forInformationList: "",
+              forGroupList: "",
+              uDFList: "",//UDF_array.join(","),
+              sUDFList: "",
+
+              clientname: txtClient,
+
+              receiveDate: dayjs(currentDate).format("YYYY/MM/DD"),//receiveDate,
+
+              actionByDate: "",//actionByDate,
+              actionDate: "",//actionDate,
+              docViewedDate:"", //docViewedDate,
+
+              strb64:data.Base64,
+              strtxt64: "",
+              EmailMessageId:"",
+              priority: "",
+            };
+            console.log("Json_RegisterItem",o)
+            Cls.Json_RegisterItem(o,function(sts,data){
+                if(sts){
+                    let js = JSON.parse(data);
+                    if(js.Status){
+                        toast.success("DocuSofted "+js.ItemId)
+                    }
+                    console.log("Json_RegisterItem",js)
+                }
+            })
+    } 
+
 
     return (
         <React.Fragment>
@@ -1363,7 +1414,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
 
                                 {
-                                    <PortalMessage selectedTask={selectedTask}></PortalMessage>
+                                    <PortalMessage selectedTask={selectedTask} Json_RegisterItem={Json_RegisterItem}></PortalMessage>
                                 }
 
                             </Box>

@@ -27,7 +27,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 import CreateNewModalTask from '../../components/CreateNewModal';
 
+import $ from 'jquery';
+
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+
 
 
 function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
@@ -160,6 +163,8 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
     }
 
     useEffect(() => {
+        $(':root').css('--main-bg-color', '#d42027');
+        document.documentElement.style.setProperty('--main-bg-color', '#d42027');
         setGetAttachment([]);
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
