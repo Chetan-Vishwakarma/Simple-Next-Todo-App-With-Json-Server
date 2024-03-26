@@ -25,6 +25,7 @@ import HtmlEditorDX from '../../components/HtmlEditor';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
+import CreateNewModalTask from '../../components/CreateNewModal';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -376,7 +377,9 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
 
     }
 
-
+const createTask=()=>{
+console.log("Create New Task")
+}
 
 
     return (
@@ -401,7 +404,8 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
                     {/*  */}
 
                     <Box className="d-flex align-items-center justify-content-between flex-wrap">
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Create Task</Button>
+                        
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTask} >Create Task</Button>
                         <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
                         {/* <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button> */}
 

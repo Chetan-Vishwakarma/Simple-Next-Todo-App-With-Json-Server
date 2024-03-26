@@ -103,7 +103,8 @@ export default function CreateNewModalTask({ ...props }) {
         openModal
     } = props;
 
-    console.log("documentDate txtSectionId1", createNewFileObj, txtFolderData, txtClientData, txtSectionData)
+    console.log("documentDate txtSectionId1", documentDate,
+    receivedDate,createNewFileObj)
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -522,12 +523,12 @@ export default function CreateNewModalTask({ ...props }) {
             currentDate = new Date(receivedDate);
         }
 
-        const nextDate = new Date(currentDate);
-        nextDate.setDate(currentDate.getDate() + 1); // Increment the day by 1 to get the next day's date
+      
+        currentDate.setDate(currentDate.getDate() + 1); // Increment the day by 1 to get the next day's date
 
-        const day = nextDate.getDate().toString().padStart(2, '0'); // Get the day and pad with 0 if needed
-        const month = (nextDate.getMonth() + 1).toString().padStart(2, '0'); // Get the month (Note: January is 0)
-        const year = nextDate.getFullYear(); // Get the full year
+        const day = currentDate.getDate().toString().padStart(2, '0'); // Get the day and pad with 0 if needed
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Get the month (Note: January is 0)
+        const year = currentDate.getFullYear(); // Get the full year
 
         // Construct the date string in "yyyy/mm/dd" format
         const formattedDate = `${year}-${month}-${day}`;
@@ -555,7 +556,7 @@ export default function CreateNewModalTask({ ...props }) {
 
         const handleClickOutside = (event) => {
             // Check if the menu is open and the click is outside the menu and not in the search box
-            if (folderAnchorEl && folderListRef.current && !folderListRef.current.contains(event.target) && !event.target.closest('.px-3')) {
+            if (folderAnchorEl && folderListRef.current && !folderListRef.current.contains(event.target) && !event.target.closest('.px-1')) {
                 // Clicked outside the menu list, so close the menu
                 handleMenuClose();
             }
@@ -583,7 +584,7 @@ export default function CreateNewModalTask({ ...props }) {
     useEffect(() => {
         const handleClickOutside = (event) => {
             // Check if the menu is open and the click is outside the menu and not in the search box
-            if (clientAnchorEl && clientListRef.current && !clientListRef.current.contains(event.target) && !event.target.closest('.px-3')) {
+            if (clientAnchorEl && clientListRef.current && !clientListRef.current.contains(event.target) && !event.target.closest('.px-1')) {
                 // Clicked outside the menu list, so close the menu
                 handleMenuCloseClient();
             }
@@ -612,7 +613,7 @@ export default function CreateNewModalTask({ ...props }) {
     useEffect(() => {
         const handleClickOutside = (event) => {
             // Check if the menu is open and the click is outside the menu and not in the search box
-            if (sectionAnchorEl && sectionListRef.current && !sectionListRef.current.contains(event.target) && !event.target.closest('.px-3')) {
+            if (sectionAnchorEl && sectionListRef.current && !sectionListRef.current.contains(event.target) && !event.target.closest('.px-1')) {
                 // Clicked outside the menu list, so close the menu
                 handleMenuCloseSection();
             }
@@ -1023,7 +1024,8 @@ export default function CreateNewModalTask({ ...props }) {
         const isaddUser = addUser.map(obj => obj.ID).join(',');
         const attString = attachmentPath.map(obj => obj.Path).join('|');
 
-
+        console.log("nextDate1",currentDate)
+        console.log("nextDate",nextDate)
 
         let ooo = {
 
@@ -1070,12 +1072,13 @@ export default function CreateNewModalTask({ ...props }) {
                 console.log("save task rerurn value", js);
 
                 if (js.Status === "success") {
-
+                    toast.success("Created Task !");
                     setMessageId(js.Message);
+                    console.log("selectedDocumentFile",selectedDocumentFile)
                     if (selectedDocumentFile.length > 0) {
                         Json_CRM_TaskDMSAttachmentInsert(js.Message);
                     }
-                    toast.success("Created Task !");
+                   
 
                     //setLoading(false);
                     // Inside your function or event handler where you want to show the success message
@@ -1328,14 +1331,24 @@ export default function CreateNewModalTask({ ...props }) {
     const [selectedEmail, setSelectedEmail] = useState([]);
 
     const handleAutocompleteChange = (event, newValue) => {
-        setSelectedEmail(newValue ? newValue : null);
-        console.log("handleAutocompleteChange", newValue);
+        if (newValue.length === 0) {
+            setSelectedEmail(newValue ? newValue : null);
+        } else {
+           toast.error("No data found please change a reference")
+        }
+
+       
+        //console.log("handleAutocompleteChange", newValue,event);
     };
 
     const [selectedEmailCC, setSelectedEmailCC] = useState(null);
     const handleAutocompleteChangeOnCC = (event, newValue) => {
-        setSelectedEmailCC(newValue ? newValue : null);
-        console.log("handleAutocompleteChange CC", newValue);
+       
+        if (newValue.length === 0) {
+            setSelectedEmailCC(newValue ? newValue : null);
+        } else {
+           toast.error("No data found please change a reference")
+        }
     };
 
     //const filteredOptions = portalUser ? portalUser.filter(option => option["E-Mail"] !== selectedEmail) : [];
@@ -1567,6 +1580,9 @@ export default function CreateNewModalTask({ ...props }) {
 
 
     function CreatePortalTask() {
+        console.log("nextDate1",currentDate)
+        console.log("nextDate",nextDate)
+        
         try {
             const isaddUser = addUser.map(obj => obj.ID).join(',');
             let ooo = {
@@ -1613,6 +1629,7 @@ export default function CreateNewModalTask({ ...props }) {
                     if (js.Status === "success") {
                         setMessageId(js.Message);
                         CreatePortalMessage(js.Message)
+                        toast.success("Created Task");
                     }
                     else {
                         toast.error("Task Not Created Please Try Again");
@@ -2501,7 +2518,7 @@ export default function CreateNewModalTask({ ...props }) {
                                 </Box>
 
                                 <Box className="file-uploads file-upload-height">
-                                    {selectedFiles
+                                    {selectedFiles.length>0
                                         ? selectedFiles.map((file, index) => {
                                             // console.log("Uploadin", file);
 
@@ -2514,10 +2531,10 @@ export default function CreateNewModalTask({ ...props }) {
                                                             </span>
                                                             <Box className="upload-content pe-3">
                                                                 <Typography variant="h4">
-                                                                    {file.FileName}
+                                                                    {file?file.FileName:""}
                                                                 </Typography>
                                                                 <Typography variant="body1">
-                                                                    {kbToMb(file.FileSize)} MB
+                                                                    {file?kbToMb(file.FileSize):""} MB
                                                                 </Typography>
                                                             </Box>
                                                         </Box>
