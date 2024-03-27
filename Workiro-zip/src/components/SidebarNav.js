@@ -251,7 +251,7 @@ export default function SidebarNav() {
               }
             });
             setTasksSubjects(fltDouble);
-            setFilteredTaskSubjects(fltDouble);
+            // setFilteredTaskSubjects(fltDouble);
             setMyTotalTasks(myTasks);
           }
         }
@@ -306,6 +306,11 @@ export default function SidebarNav() {
   }, []);
 
   const handleGlobalSearch = (val) => {
+    if(val===""){
+      setIsSearch(false);
+    }else{
+      setIsSearch(true);
+    }
     setForDocuments(val);
     let fltTaskSubjects = taskSubjects.filter(itm => itm.toLowerCase().includes(val.toLowerCase()));
     setFilteredTaskSubjects(fltTaskSubjects);
@@ -344,13 +349,13 @@ export default function SidebarNav() {
                           color: 'success.main',
                         }}
                         className={isSearch ? 'Mui-focused' : ''}>
-                        <span className="material-symbols-outlined search-icon">search</span>
+                        <span className="material-symbols-outlined search-icon"></span>
 
                         <form onSubmit={(e) => {
                           e.preventDefault();
                           navigate("/dashboard/SearchResult?str="+forDocuments);
                         }} >
-                          <Input onClick={(e) => setIsSearch(true)} onChange={(e) => handleGlobalSearch(e.target.value)} onBlur={() => setIsSearch(false)} placeholder='Search' className='ps-0' />
+                          <Input onChange={(e) => handleGlobalSearch(e.target.value)} onBlur={() => setIsSearch(false)} placeholder='Search' className='ps-0' />
                         </form>
                       </AutocompleteRoot>
                       {isSearch && <Listbox sx={{ zIndex: 1 }}>
