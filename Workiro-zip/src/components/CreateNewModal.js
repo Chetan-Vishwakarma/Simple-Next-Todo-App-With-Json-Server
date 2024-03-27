@@ -33,7 +33,6 @@ import DvrIcon from '@mui/icons-material/Dvr';
 import LanguageIcon from '@mui/icons-material/Language';
 import 'react-datetime/css/react-datetime.css';
 import { v4 as uuidv4 } from 'uuid';
-
 import Swal from 'sweetalert2';
 import {
     List,
@@ -78,9 +77,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { renderTimeViewClock } from "@mui/x-date-pickers";
 import moment from "moment";
 import { Toast } from "devextreme-react";
-
-
-
+import Reference from "../client/client-components/Reference";
 // 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -3406,7 +3403,7 @@ export default function CreateNewModalTask({ ...props }) {
 
                         <hr />
 
-                    
+                <Reference /> 
 
                     </DialogContentText>
                 </DialogContent>
