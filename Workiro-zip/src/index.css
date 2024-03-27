@@ -583,7 +583,7 @@ button {
 }
 
 .text-green {
-  color: #2ba336 !important;
+  color: #5d8719 !important;
 }
 
 .min-width-auto {
@@ -1042,7 +1042,7 @@ span.tox-statusbar__branding {
 .main-search-box {
   background: #fff;
   padding: 30px;
-  border: 2px dashed #e6e6e6;
+  border: 1px dashed #e6e6e6;
   border-radius: 6px;
   position: sticky;
   top: 63px;
@@ -1481,9 +1481,9 @@ span.tox-statusbar__branding {
   background: #ebf6fe;
 }
 
-/* .text-yellow {
-  color: #ff9400d6 !important;
-} */
+.text-yellow {
+  color: #f58e00 !important;
+}
 .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root {
   font-size: 14px;
   padding-top: 4px;
@@ -1865,7 +1865,9 @@ span.tox-statusbar__branding {
   padding: 8px 0;
   color: #fff;
 }
-
+.rotate-180 {
+  transform: rotate(180deg);
+}
 
 @media only screen and (max-width: 1366px) {
   .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root {
@@ -2047,6 +2049,10 @@ span.tox-statusbar__branding {
   margin-right: 5px;
 }
 
+.address-list li  .add-heading-client {
+  min-width: auto;
+}
+
 .address-list li .add-details .country {
   width: 23px;
   height: 23px;
@@ -2064,6 +2070,14 @@ span.tox-statusbar__branding {
 
 .address-list li .add-heading p {
   font-weight: 500;
+}
+
+.address-list li .add-heading-client {
+  max-width: 300px;
+  width: 100%;
+  vertical-align: middle;
+  display: flex;
+  align-items: center;
 }
 
 @media only screen and (max-width: 1199px) {

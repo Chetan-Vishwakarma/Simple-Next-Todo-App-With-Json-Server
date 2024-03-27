@@ -21,7 +21,6 @@ import user from "../images/user.jpg";
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import DocumentDetails from "./DocumentDetails";
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import ArticleIcon from '@mui/icons-material/Article';
@@ -47,19 +46,16 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
-
+import EditIcon from '@mui/icons-material/Edit';
+import EjectIcon from '@mui/icons-material/Eject';
 import Checkbox from '@mui/material/Checkbox';
-
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-
-
 import Fade from '@mui/material/Fade';
 import GetClientList from "./GetClientList";
 import {
-
     TextField,
 } from "@mui/material";
 import AssigneeUsers from "./AssigneeUser";
@@ -74,7 +70,7 @@ import MergeIcon from '@mui/icons-material/Merge';
 import AttachEmailIcon from '@mui/icons-material/AttachEmail';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DocumentList from "../client/client-components/DocumentList";
-
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -1130,6 +1126,17 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     };
 
 
+    // CRM & Portal Dropdown
+    const [anchorEl4, setAnchorEl4] = React.useState(null);
+    const open4 = Boolean(anchorEl4);
+    const handleClick4 = (event) => {
+        setAnchorEl4(event.currentTarget);
+    };
+    const handleClose4 = () => {
+        setAnchorEl4(null);
+    };
+
+
     return (
         <React.Fragment>
 
@@ -1146,33 +1153,52 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                     <DialogContentText>
                         <Box className="d-flex align-items-center justify-content-between">
                             <Box className="d-flex align-items-center">
-                                <Box>
+
+
+                                <div>
                                     <Button
-                                        id="fade-button5"
-                                        aria-controls={openDropdown ? "fade-menu" : undefined}
+                                        id="basic-button"
+                                        aria-controls={open4 ? 'basic-menu' : undefined}
                                         aria-haspopup="true"
-                                        aria-expanded={openDropdown ? "true" : undefined}
-                                        onClick={handleClickDroppdown}
+                                        aria-expanded={open4 ? 'true' : undefined}
+                                        onClick={handleClick4}
                                         className="min-width-auto"
                                     >
                                         <CheckCircleIcon />
                                     </Button>
-                                    {/* <Menu
-                                        id="fade-menu"
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorEl4}
+                                        open={open4}
+                                        onClose={handleClose4}
                                         MenuListProps={{
-                                            "aria-labelledby": "fade-button5",
+                                            'aria-labelledby': 'basic-button',
                                         }}
-                                        anchorElSelect={anchorElSelect}
-                                        open={openDropdown}
-                                        onClose={handleCloseDropdown}
+                                        className="custom-dropdown"
                                     >
-                                        <MenuItem onClick={handleCloseDropdown}>Profile</MenuItem>
-                                        <MenuItem onClick={handleCloseDropdown}>
-                                            My account
+                                        <MenuItem onClick={handleClose4} className="text-yellow pe-4">
+                                            <EjectIcon>
+                                                <PanoramaFishEyeIcon className="text-yellow" fontSize="medium" />
+                                            </EjectIcon>
+                                            High
                                         </MenuItem>
-                                        <MenuItem onClick={handleCloseDropdown}>Logout</MenuItem>
-                                    </Menu> */}
-                                </Box>
+
+                                        <MenuItem onClick={handleClose4} className="text-success pe-4">
+                                            <ListItemIcon>
+                                                <RadioButtonUncheckedIcon fontSize="medium" className="text-success" />
+                                            </ListItemIcon>
+                                            Medium
+                                        </MenuItem>
+
+                                        <MenuItem onClick={handleClose4} className="text-red pe-4">
+                                            <ListItemIcon>
+                                                <EjectIcon fontSize="medium" className="text-red rotate-180" />
+                                            </ListItemIcon>
+                                            Low
+                                        </MenuItem>
+
+                                    </Menu>
+                                </div>
 
                                 {/* <div>
                             <Button
@@ -1691,12 +1717,15 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                                                             } // Open menu if selectedIndex matches
                                                                             onClose={handleClose2}
                                                                         >
-                                                                            <MenuItem onClick={handleClose2}>
-                                                                                Edit
-                                                                            </MenuItem>
-                                                                            <MenuItem onClick={handleClose2}>
-                                                                                Delete
-                                                                            </MenuItem>
+                                                                            <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                                <ListItemIcon>
+                                                                                    <EditIcon fontSize="medium" />
+                                                                                </ListItemIcon> Edit</MenuItem>
+
+                                                                            <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                                <ListItemIcon>
+                                                                                    <DeleteIcon fontSize="medium" />
+                                                                                </ListItemIcon> Delete Message</MenuItem>
                                                                         </Menu>
                                                                     </Box>
                                                                 </Box>

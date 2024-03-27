@@ -23,6 +23,7 @@ import DocumentList from './DocumentList';
 import UploadDocument from './UploadDocument';
 import ClientAddress from './ClientAddress';
 import Contact from './Contact';
+import CompaniesHouse from './CompaniesHouse';
 
 
 
@@ -251,7 +252,9 @@ function ClientDetails() {
                     {/* <TabPanel value="5">
                         <DocumentList/>
                     </TabPanel> */}
-                    <TabPanel value="6">Item Three</TabPanel>
+                    <TabPanel value="6" className='p-0'>
+                        <CompaniesHouse></CompaniesHouse>
+                    </TabPanel>
                     <TabPanel value="7">Item Three</TabPanel>
                 </TabContext>
             </Box>
