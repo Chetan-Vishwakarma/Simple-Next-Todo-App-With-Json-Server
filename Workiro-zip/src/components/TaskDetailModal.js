@@ -24,7 +24,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import DocumentDetails from "./DocumentDetails";
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
-
+import ArticleIcon from '@mui/icons-material/Article';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -38,12 +38,15 @@ import Grid from '@mui/material/Grid';
 import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
-
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import DatePicker from 'react-datetime';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 
 import Checkbox from '@mui/material/Checkbox';
 
@@ -70,6 +73,7 @@ import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import MergeIcon from '@mui/icons-material/Merge';
 import AttachEmailIcon from '@mui/icons-material/AttachEmail';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import DocumentList from "../client/client-components/DocumentList";
 
 
 const Demo = styled('div')(({ theme }) => ({
@@ -929,8 +933,9 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     const handleCloseDocumentList = () => {
         setOpenDocumentList(false);
     };
-
     // important sadik
+
+
 
     const handleDownloadDoc = (objdata) => {
         console.log(objdata)
@@ -1049,56 +1054,80 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     };
 
 
-    const Json_RegisterItem=(data)=>{
-        console.log("selectedTask",selectedTask);
+    const Json_RegisterItem = (data) => {
+        console.log("selectedTask", selectedTask);
         let o = {
-              deptId: "0",
-              sectionId: txtSectionId?txtSectionId:selectedTask.SectionId,
-              folderId: txtFolderId?txtFolderId:selectedTask.FolderID,
-              categoryId: "0",
-              subSectionId: "0",
-              retForMonth: "-1",
-              deptName: "",
-              folderName: txtFolder,
-              originatorId: txtClientId?txtClientId:selectedTask.ClientNo,
-              senderId: txtClientId?txtClientId:selectedTask.ClientNo,
-              sectionName: txtSection?txtSection:selectedTask.Section,
-              extDescription: "",//$("#DU_Comment").val(),
-              docDirection:"",// docDirection,
-              description: tSubject?tSubject:selectedTask.Subject,//$("#DU_DescriptionText").val(),      
-              stickyNote: "",//$("#DU_DescriptionText").val(),
-             // fileName: att ? att.replace(/'/g, "") : $("#DU_DescriptionText").val().substring(0, 25) + ".eml", //$("#DU_DescriptionText").val().substring(0, 25) + ".eml",
-              fileName: data.Details.PortalName, //$("#DU_DescriptionText").val().substring(0, 25) + ".eml",
-              forActionList: "",
-              forInformationList: "",
-              forGroupList: "",
-              uDFList: "",//UDF_array.join(","),
-              sUDFList: "",
+            deptId: "0",
+            sectionId: txtSectionId ? txtSectionId : selectedTask.SectionId,
+            folderId: txtFolderId ? txtFolderId : selectedTask.FolderID,
+            categoryId: "0",
+            subSectionId: "0",
+            retForMonth: "-1",
+            deptName: "",
+            folderName: txtFolder,
+            originatorId: txtClientId ? txtClientId : selectedTask.ClientNo,
+            senderId: txtClientId ? txtClientId : selectedTask.ClientNo,
+            sectionName: txtSection ? txtSection : selectedTask.Section,
+            extDescription: "",//$("#DU_Comment").val(),
+            docDirection: "",// docDirection,
+            description: tSubject ? tSubject : selectedTask.Subject,//$("#DU_DescriptionText").val(),      
+            stickyNote: "",//$("#DU_DescriptionText").val(),
+            // fileName: att ? att.replace(/'/g, "") : $("#DU_DescriptionText").val().substring(0, 25) + ".eml", //$("#DU_DescriptionText").val().substring(0, 25) + ".eml",
+            fileName: data.Details.PortalName, //$("#DU_DescriptionText").val().substring(0, 25) + ".eml",
+            forActionList: "",
+            forInformationList: "",
+            forGroupList: "",
+            uDFList: "",//UDF_array.join(","),
+            sUDFList: "",
 
-              clientname: txtClient,
+            clientname: txtClient,
 
-              receiveDate: dayjs(currentDate).format("YYYY/MM/DD"),//receiveDate,
+            receiveDate: dayjs(currentDate).format("YYYY/MM/DD"),//receiveDate,
 
-              actionByDate: "",//actionByDate,
-              actionDate: "",//actionDate,
-              docViewedDate:"", //docViewedDate,
+            actionByDate: "",//actionByDate,
+            actionDate: "",//actionDate,
+            docViewedDate: "", //docViewedDate,
 
-              strb64:data.Base64,
-              strtxt64: "",
-              EmailMessageId:"",
-              priority: "",
-            };
-            console.log("Json_RegisterItem",o)
-            Cls.Json_RegisterItem(o,function(sts,data){
-                if(sts){
-                    let js = JSON.parse(data);
-                    if(js.Status){
-                        toast.success("DocuSofted "+js.ItemId)
-                    }
-                    console.log("Json_RegisterItem",js)
+            strb64: data.Base64,
+            strtxt64: "",
+            EmailMessageId: "",
+            priority: "",
+        };
+        console.log("Json_RegisterItem", o)
+        Cls.Json_RegisterItem(o, function (sts, data) {
+            if (sts) {
+                let js = JSON.parse(data);
+                if (js.Status) {
+                    toast.success("DocuSofted " + js.ItemId)
                 }
-            })
-    } 
+                console.log("Json_RegisterItem", js)
+            }
+        })
+    }
+
+
+    // details dropdown
+    const [anchorElDocumentList, setAnchorElDocumentList] = React.useState(null);
+    const DocumentList = Boolean(anchorElDocumentList);
+    const handleClickDocumentList = (event) => {
+        console.log(event.currentTarget);
+        event.stopPropagation();
+        setAnchorElDocumentList(event.currentTarget);
+    };
+    const handleCloseDocument = () => {
+        setAnchorElDocumentList(null);
+    };
+
+
+
+    // Document details List
+    const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
+    const handleClickOpenDocumentDetailsList = () => {
+        setOpenDocumentDetailsList(true);
+    };
+    const handleCloseDocumentDetailsList = () => {
+        setOpenDocumentDetailsList(false);
+    };
 
 
     return (
@@ -1552,7 +1581,6 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                         isValidDate={disablePastDt}
                                         closeOnSelect={true}
                                         icon="fa fa-calendar"
-
                                     />
                                 </Box>
                             </Box>
@@ -1585,9 +1613,6 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 </Box>
                             </Box>
                         </Box>
-
-
-
 
                         <Box className="pb-0 mb-0">
                             <Box className="main-chatbox">
@@ -1890,7 +1915,90 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                         <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
                             <Grid item xs={12} md={6}>
 
-                                <Demo>
+                                <Box className="search-box">
+                                    {Array(6).fill("").map(() => {
+                                        return <>
+                                            <Box className="file-uploads">
+                                                <label className="file-uploads-label file-uploads-document">
+                                                    <Box className="d-flex align-items-center">
+
+                                                        <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
+
+                                                        <DescriptionIcon
+                                                            sx={{
+                                                                fontSize: 32,
+                                                            }}
+                                                            className='me-2 ms-0'
+                                                        />
+                                                        <Box className="upload-content pe-3">
+                                                            <Typography variant="h4" >
+                                                                lorem ipsome dolor site amet
+                                                            </Typography>
+                                                            <Typography variant="body1">
+                                                                Size:  <span className='sembold'>0.00 KB</span> | Date <span className='sembold'>09/03/2024</span>
+                                                            </Typography>
+                                                        </Box>
+                                                    </Box>
+                                                    <Box>
+                                                        <Button
+                                                            id="basic-button"
+                                                            aria-controls={DocumentList ? 'basic-menu' : undefined}
+                                                            aria-haspopup="true"
+                                                            aria-expanded={DocumentList ? 'true' : undefined}
+                                                            onClick={handleClickDocumentList}
+                                                            className='min-width-auto'
+                                                        >
+                                                            <MoreVertIcon />
+                                                        </Button>
+                                                        <Menu
+                                                            id="basic-menu"
+                                                            anchorEl={anchorElDocumentList}
+                                                            open={DocumentList}
+                                                            onClose={handleCloseDocument}
+                                                            MenuListProps={{
+                                                                'aria-labelledby': 'basic-button',
+                                                            }}
+                                                            className='custom-dropdown'
+                                                        >
+                                                            <MenuItem onClick={() => {
+                                                                handleCloseDocument()
+                                                                handleClickOpenDocumentDetailsList()
+                                                            }}>
+                                                                <ListItemIcon>
+                                                                    <ArticleIcon fontSize="medium" />
+                                                                </ListItemIcon>
+                                                                Document Details</MenuItem>
+
+                                                            <MenuItem onClick={handleCloseDocument}>
+                                                                <ListItemIcon>
+                                                                    <CloudUploadIcon fontSize="medium" />
+                                                                </ListItemIcon>
+                                                                Upload New Version</MenuItem>
+                                                            <MenuItem onClick={handleCloseDocument}>
+                                                                <ListItemIcon>
+                                                                    <DriveFileRenameOutlineIcon fontSize="medium" />
+                                                                </ListItemIcon>
+                                                                Rename Document</MenuItem>
+                                                            <MenuItem onClick={handleCloseDocument}>
+                                                                <ListItemIcon>
+                                                                    <TravelExploreIcon fontSize="medium" />
+                                                                </ListItemIcon>
+                                                                Open in Browser</MenuItem>
+                                                            <MenuItem onClick={handleCloseDocument}>
+                                                                <ListItemIcon>
+                                                                    <CloudDownloadIcon fontSize="medium" />
+                                                                </ListItemIcon>
+                                                                Download</MenuItem>
+                                                        </Menu>
+                                                    </Box>
+                                                </label>
+                                            </Box>
+                                            {/* file upload end */}
+                                        </>
+                                    })}
+                                </Box>
+
+                                {/* <Demo>
                                     <List>
 
                                         {attachmentFile.length > 0 ? attachmentFile.map((item, index) => {
@@ -1924,7 +2032,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
 
                                     </List>
-                                </Demo>
+                                </Demo> */}
                             </Grid>
                         </Box>
 

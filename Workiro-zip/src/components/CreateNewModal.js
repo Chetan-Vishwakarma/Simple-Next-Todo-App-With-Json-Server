@@ -104,7 +104,7 @@ export default function CreateNewModalTask({ ...props }) {
     } = props;
 
     console.log("documentDate txtSectionId1", documentDate,
-    receivedDate,createNewFileObj)
+        receivedDate, createNewFileObj)
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -523,7 +523,7 @@ export default function CreateNewModalTask({ ...props }) {
             currentDate = new Date(receivedDate);
         }
 
-      
+
         currentDate.setDate(currentDate.getDate() + 1); // Increment the day by 1 to get the next day's date
 
         const day = currentDate.getDate().toString().padStart(2, '0'); // Get the day and pad with 0 if needed
@@ -1024,8 +1024,8 @@ export default function CreateNewModalTask({ ...props }) {
         const isaddUser = addUser.map(obj => obj.ID).join(',');
         const attString = attachmentPath.map(obj => obj.Path).join('|');
 
-        console.log("nextDate1",currentDate)
-        console.log("nextDate",nextDate)
+        console.log("nextDate1", currentDate)
+        console.log("nextDate", nextDate)
 
         let ooo = {
 
@@ -1074,11 +1074,11 @@ export default function CreateNewModalTask({ ...props }) {
                 if (js.Status === "success") {
                     toast.success("Created Task !");
                     setMessageId(js.Message);
-                    console.log("selectedDocumentFile",selectedDocumentFile)
+                    console.log("selectedDocumentFile", selectedDocumentFile)
                     if (selectedDocumentFile.length > 0) {
                         Json_CRM_TaskDMSAttachmentInsert(js.Message);
                     }
-                   
+
 
                     //setLoading(false);
                     // Inside your function or event handler where you want to show the success message
@@ -1334,20 +1334,20 @@ export default function CreateNewModalTask({ ...props }) {
         if (newValue.length === 0) {
             setSelectedEmail(newValue ? newValue : null);
         } else {
-           toast.error("No data found please change a reference")
+            toast.error("No data found please change a reference")
         }
 
-       
+
         //console.log("handleAutocompleteChange", newValue,event);
     };
 
     const [selectedEmailCC, setSelectedEmailCC] = useState(null);
     const handleAutocompleteChangeOnCC = (event, newValue) => {
-       
+
         if (newValue.length === 0) {
             setSelectedEmailCC(newValue ? newValue : null);
         } else {
-           toast.error("No data found please change a reference")
+            toast.error("No data found please change a reference")
         }
     };
 
@@ -1580,9 +1580,9 @@ export default function CreateNewModalTask({ ...props }) {
 
 
     function CreatePortalTask() {
-        console.log("nextDate1",currentDate)
-        console.log("nextDate",nextDate)
-        
+        console.log("nextDate1", currentDate)
+        console.log("nextDate", nextDate)
+
         try {
             const isaddUser = addUser.map(obj => obj.ID).join(',');
             let ooo = {
@@ -2555,7 +2555,7 @@ export default function CreateNewModalTask({ ...props }) {
                                 </Box>
 
                                 <Box className="file-uploads file-upload-height">
-                                    {selectedFiles.length>0
+                                    {selectedFiles.length > 0
                                         ? selectedFiles.map((file, index) => {
                                             // console.log("Uploadin", file);
 
@@ -2568,10 +2568,10 @@ export default function CreateNewModalTask({ ...props }) {
                                                             </span>
                                                             <Box className="upload-content pe-3">
                                                                 <Typography variant="h4">
-                                                                    {file?file.FileName:""}
+                                                                    {file ? file.FileName : ""}
                                                                 </Typography>
                                                                 <Typography variant="body1">
-                                                                    {file?kbToMb(file.FileSize):""} MB
+                                                                    {file ? kbToMb(file.FileSize) : ""} MB
                                                                 </Typography>
                                                             </Box>
                                                         </Box>
@@ -3390,44 +3390,36 @@ export default function CreateNewModalTask({ ...props }) {
             {/* end */}
 
 
-             {/* create new modal */}
-             <Dialog
+            {/* create new modal */}
+            <Dialog
                 open={Referance}
                 onClose={DocumentHandleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 className="custom-modal full-modal"
             >
-                
+
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        
-                        
-                    <Box className="d-flex align-items-center justify-content-between">
 
+                        <Box className="d-flex align-items-center justify-content-between">
                             <div>
                                 <Button
                                     id="basic-button"
                                 >
                                     Document List
                                 </Button>
-
                             </div>
-
                             <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
                                 <span className="material-symbols-outlined text-black">
                                     cancel
                                 </span>
                             </Button>
                         </Box>
-
                         <hr />
-
                     </DialogContentText>
                 </DialogContent>
-                
             </Dialog>
-
         </React.Fragment>
     );
 }

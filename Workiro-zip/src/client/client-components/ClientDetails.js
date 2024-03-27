@@ -22,6 +22,7 @@ import { useLocation } from 'react-router-dom';
 import DocumentList from './DocumentList';
 import UploadDocument from './UploadDocument';
 import ClientAddress from './ClientAddress';
+import Contact from './Contact';
 
 
 
@@ -161,7 +162,7 @@ function ClientDetails() {
             console.log("Error while calling Json_GetClientCardDetails", err)
         }
     }
-    
+
     useEffect(() => {
         Json_GetClientCardDetails();
     }, []);
@@ -197,7 +198,7 @@ function ClientDetails() {
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<GroupAddIcon />}>Add Client</Button>
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<DeleteIcon />}>Notes</Button>
                     <Button className='btn-blue-2 mb-1' size="small" startIcon={<EmailIcon />}
-                    onClick={handleClickOpenUploadDocument}
+                        onClick={handleClickOpenUploadDocument}
                     >Add Document</Button>
                 </Box>
             </Box>
@@ -234,12 +235,14 @@ function ClientDetails() {
                     </TabPanel>
 
                     <TabPanel value="2" className='p-0'>
-                        
                         <ClientAddress></ClientAddress>
-
                     </TabPanel>
-                    <TabPanel value="3">Item Three</TabPanel>
-                    <TabPanel value="4">Item Three</TabPanel>
+                    <TabPanel value="3">
+                        <Contact></Contact>
+                    </TabPanel>
+                    <TabPanel value="4">
+                        <Contact></Contact>
+                    </TabPanel>
 
                     <TabPanel value="5" className='p-0'>
                         <DocumentList clientId={originatorNo} ></DocumentList>

@@ -742,7 +742,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                         <Box className="d-flex align-items-center justify-content-between">
                             <Box className="dropdown-box">
                                 <Typography variant="h4" className='font-18 bold mb-2 text-black'>
-                                    Document List
+                                    Document List 
                                 </Typography>
                                 {/* <Box className="btn-Select">
                                     <Button className='btn-white'>Action</Button>
