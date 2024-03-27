@@ -150,7 +150,6 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
 
                 </Box> */}
 
-
                 <DataGrid
                     dataSource={dataNotFoundBoolean ? [] : advFilteredResult.length > 0 ? advFilteredResult : documents}
                     keyExpr="Guid"
@@ -159,13 +158,11 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                     showBorders={true}
                     width="100%"
                     wordWrapEnabled={true}
+                    className="table-view-files"
                 >
-
                     <Grouping autoExpandAll={false} />
                     <GroupPanel visible={true} />
-
                     <Sorting mode="single" />
-
                     <Scrolling mode="virtual" />
                     <Selection mode="multiple" />
                     {selectedGroup === "Type" && <Column dataField="Type" groupIndex={0} dataType="Type" width={75} />}
@@ -745,7 +742,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                         <Box className="d-flex align-items-center justify-content-between">
                             <Box className="dropdown-box">
                                 <Typography variant="h4" className='font-18 bold mb-2 text-black'>
-                                    Document List
+                                    Document List 
                                 </Typography>
                                 {/* <Box className="btn-Select">
                                     <Button className='btn-white'>Action</Button>

@@ -199,7 +199,8 @@ function NewTodoList() {
 
             <Box className='pe-5'>
 
-                <Typography variant='subtitle1' className='font-18 bold mb-2'>Task Due Soon</Typography>
+                <Typography variant='subtitle1' className='font-20 bold mb-0'>Welcome Patirck</Typography>
+                <Typography variant='subtitle1' className='font-16 bold mb-2'>The following tasks are due soon:</Typography>
 
                 <Box className='row'>
                     {/* {
@@ -353,8 +354,11 @@ function NewTodoList() {
                 {/* row end */}
                 <hr />
 
+                {/* <Typography variant='subtitle1' className='font-20 bold mb-0'>Welcome Patirck</Typography>
+                <Typography variant='subtitle1' className='font-16 bold mb-2'>The following tasks are due soon:</Typography> */}
 
-                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>Recently Updated</Typography>
+
+                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>The following tasks were recently updated: </Typography>
 
                 <Box className='row'>
                     {Array(9).fill("").map(() => {
@@ -444,14 +448,12 @@ function NewTodoList() {
                     })}
                 </Box>
 
-                <Box className='py-4 text-center'>
-                    <Button variant="outlined">View More</Button>
-                </Box>
+                
 
                 {/* row end */}
                 <hr />
 
-                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>Pinned Task</Typography>
+                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>You pinned the following tasks:</Typography>
 
                 <Box className='row'>
                     {Array(9).fill("").map(() => {
@@ -541,7 +543,7 @@ function NewTodoList() {
 
                 {/* row end */}
                 <hr />
-                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>Recently Access Documents</Typography>
+                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>You accessed the following documents recently:</Typography>
 
                 {/* <DocumentDetails></DocumentDetails> */}
 

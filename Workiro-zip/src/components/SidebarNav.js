@@ -1,4 +1,4 @@
-import React,{useState,useEffect, useReducer} from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -38,8 +38,11 @@ import TodoList from './TodoList';
 import CommanCLS from '../services/CommanService';
 import Logout from './Logout';
 import NewTodoList from './NewTodoList';
+import FormatListNumberedRtlIcon from '@mui/icons-material/FormatListNumberedRtl';
+import DescriptionIcon from '@mui/icons-material/Description';
+import SearchResult from './SearchResult';
 
-const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
+let options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
 
 const drawerWidth = 220;
 
@@ -116,15 +119,18 @@ export default function SidebarNav() {
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
   const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
+  const [userId, setUserId] = useState(localStorage.getItem("UserId"));
 
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
-    let Cls = new CommanCLS(baseUrl, agrno, Email, password);
+  const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+  let Cls = new CommanCLS(baseUrl, agrno, Email, password);
+  let practiceCls = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
   const navigate = useNavigate();
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
   const [userName, setUserName] = React.useState("");
-  const [userEmail,setUserEmail] = useState("");
+  const [userEmail, setUserEmail] = useState("");
 
   const handleDrawerOpen = () => {
     setOpen(false);
@@ -137,6 +143,15 @@ export default function SidebarNav() {
 
   const [value, setValue] = React.useState(options[0]);
   const [inputValue, setInputValue] = React.useState('');
+
+  const [documentsDescription, setDocumentsDescription] = useState([]);
+  const [myDocuments,setMyDocuments] = useState([]);
+  const [isSearch, setIsSearch] = useState(false);
+  const [forDocuments, setForDocuments] = useState("");
+
+  const [myTotalTasks,setMyTotalTasks] = useState([]);
+  const [taskSubjects, setTasksSubjects] = useState([]);
+  const [filteredTaskSubjects, setFilteredTaskSubjects] = useState([]);
 
   const {
     getRootProps,
@@ -171,49 +186,138 @@ export default function SidebarNav() {
     navigate("/");
   }
 
-  const Json_Get_CRM_UserByProjectId=()=>{
+  const Json_AdvanceSearchDoc = () => {
+    if (forDocuments !== "") {
+      let obj = {
+        ClientId: "",
+        Description: forDocuments,
+        Email: Email,
+        IsUDF: "F",
+        ItemFDate: "01/01/1900",
+        ItemTDate: "01/01/1900",
+        ItemrecFDate: "01/01/1900",
+        ItemrecTDate: "01/01/1900",
+        ProjectId: folderId,
+        agrno: agrno,
+        password: password,
+        sectionId: "-1",
+        udflist: [],
+        udfvalueList: []
+      };
+      try {
+        Cls.Json_AdvanceSearchDoc(obj, (sts, data) => {
+          if (sts) {
+            if (data) {
+              let json = JSON.parse(data);
+              console.log("Json_AdvanceSearchDoc", json.Table6);
+              if (json.Table6) {
+                let fltDouble = [];
+                let allDescriptions = json.Table6.map((itm) => itm.Description).filter(item => {
+                  if (!fltDouble.includes(item)) {
+                    fltDouble.push(item);
+                  }
+                });
+                console.log("Json_AdvanceSearchDoc", allDescriptions);
+                // options = fltDouble;
+                setDocumentsDescription(fltDouble);
+                setMyDocuments(json.Table6);
+              }
+            }
+          }
+        });
+      } catch (err) {
+        console.log("Error while calling Json_AdvanceSearchDoc", err);
+      }
+    }
+  }
+
+  const Json_CRM_GetOutlookTask = () => {
+    let obj = {
+      agrno: agrno,
+      Email: Email,
+      password: password
+    };
+    try {
+      Cls.Json_CRM_GetOutlookTask(obj, (sts, data) => {
+        if (sts) {
+          if (data) {
+            console.log("Json_CRM_GetOutlookTask", JSON.parse(data));
+            let tasks = JSON.parse(data).Table;
+            let myTasks = tasks.filter((item) => item.AssignedToID.split(",").includes(userId) && (item.Source === "CRM" || item.Source === "Portal"));
+            let fltDouble = [];
+            [...myTasks].map(itm => itm.Subject).filter(subject => {
+              if (!fltDouble.includes(subject)) {
+                fltDouble.push(subject);
+              }
+            });
+            setTasksSubjects(fltDouble);
+            setFilteredTaskSubjects(fltDouble);
+            setMyTotalTasks(myTasks);
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_CRM_GetOutlookTask", err);
+    }
+  }
+
+  const Json_Get_CRM_UserByProjectId = () => {
     let obj = {
       agrno: agrno,
       Email: Email,
       password: password,
       ProjectId: folderId
-  };
+    };
     Cls.Json_Get_CRM_UserByProjectId(obj, (sts, data) => {
       if (sts) {
-          if (data) {
-              let json = JSON.parse(data);
-              console.log("Json_Get_CRM_UserByProjectId", json.Table);
-              json.Table.map((item)=>{
-                if(item.loggedInUser==="True"){
-                  setUserName(item.DisplayName);
-                  setUserEmail(item.Name);
-                }
-              });
-          }
+        if (data) {
+          let json = JSON.parse(data);
+          console.log("Json_Get_CRM_UserByProjectId", json.Table);
+          json.Table.map((item) => {
+            if (item.loggedInUser === "True") {
+              setUserName(item.DisplayName);
+              setUserEmail(item.Name);
+              Json_CRM_GetOutlookTask();
+            }
+          });
+        }
       }
-  });
+    });
   }
 
-  const [tabs,setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active:false }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active:false } ,{ tabLink: "/dashboard/TodoList", tabName: 'Todo List', active:false },  { tabLink: "/dashboard/Connections", tabName: 'Connections', active:false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active:false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active:false }]);
+  const [tabs, setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active: false }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false }, { tabLink: "/dashboard/SearchResult", tabName: 'Search Result', active: false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active: false }]);
 
   React.useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setFolderId(localStorage.getItem("FolderId"));
     setPassword(localStorage.getItem("Password"));
     setEmail(localStorage.getItem("Email"));
+    setUserId(localStorage.getItem("UserId"));
     Json_Get_CRM_UserByProjectId();
     // console.log("location Object",location.pathname.split("/").pop());
-    tabs.length>0&&tabs.map(itm=>{
-      if(itm.tabLink.split("/").pop() === location.pathname.split("/").pop()){
-        itm.active=true;
-      }else{
-        itm.active=false;
+    tabs.length > 0 && tabs.map(itm => {
+      if (itm.tabLink.split("/").pop() === location.pathname.split("/").pop()) {
+        itm.active = true;
+      } else {
+        itm.active = false;
       }
     })
-    
+
   }, []);
-  
-  
+
+  const handleGlobalSearch = (val) => {
+    setForDocuments(val);
+    let fltTaskSubjects = taskSubjects.filter(itm => itm.toLowerCase().includes(val.toLowerCase()));
+    setFilteredTaskSubjects(fltTaskSubjects);
+  }
+
+  useEffect(() => {
+    const data = setTimeout(() => {
+      Json_AdvanceSearchDoc();
+    }, 1000);
+    return () => clearTimeout(data);
+  }, [forDocuments]);
+
   return (
     <>
       <Box className='d-block d-md-flex'>
@@ -239,19 +343,36 @@ export default function SidebarNav() {
                           borderColor: '#D5D5D5',
                           color: 'success.main',
                         }}
-                        {...getRootProps()}
-                        className={focused ? 'Mui-focused' : ''}>
+                        className={isSearch ? 'Mui-focused' : ''}>
                         <span className="material-symbols-outlined search-icon">search</span>
 
-                        <Input {...getInputProps()} placeholder='Search' className='ps-0' />
+                        <form onSubmit={(e) => {
+                          e.preventDefault();
+                          navigate("/dashboard/SearchResult?str="+forDocuments);
+                        }} >
+                          <Input onClick={(e) => setIsSearch(true)} onChange={(e) => handleGlobalSearch(e.target.value)} onBlur={() => setIsSearch(false)} placeholder='Search' className='ps-0' />
+                        </form>
                       </AutocompleteRoot>
-                      {groupedOptions.length > 0 && (
+                      {isSearch && <Listbox sx={{ zIndex: 1 }}>
+                        {documentsDescription.length > 0 && documentsDescription.slice(0, 20).map((itm, i) => {
+                          return <Option key={i} onClick={() => { }}>
+                            <DescriptionIcon className='me-1' />
+                            {itm}</Option>
+                        })}
+
+                        {filteredTaskSubjects.length > 0 && filteredTaskSubjects.slice(0.20).map((itm, i) => {
+                          return <Option key={i} onClick={() => { }}>
+                            <FormatListNumberedRtlIcon className='me-1' />
+                            {itm}</Option>
+                        })}
+                      </Listbox>}
+                      {/* {groupedOptions.length > 0 && (
                         <Listbox {...getListboxProps()}>
                           {groupedOptions.map((option, index) => (
                             <Option {...getOptionProps({ option, index })}>{option}</Option>
                           ))}
                         </Listbox>
-                      )}
+                      )} */}
                     </AutocompleteWrapper>
                   </Layout>
                 </Box>
@@ -365,7 +486,7 @@ export default function SidebarNav() {
                       </Box>
                     </Button>
 
-                    
+
                     <Menu
                       id="basic-menu2"
                       className='custom-dropdown'
@@ -432,7 +553,7 @@ export default function SidebarNav() {
           <List className='side-navi'>
 
             {tabs.map((text, index, arr) => (
-              <ListItem className={text.active? 'active': ''} key={index} disablePadding sx={{ display: 'block' }}>
+              <ListItem className={text.active ? 'active' : ''} key={index} disablePadding sx={{ display: 'block' }}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -441,10 +562,10 @@ export default function SidebarNav() {
                   }}
                   onClick={() => {
                     navigate(text.tabLink);
-                    let test = tabs.map((item)=>{
-                      if(item.tabName===text.tabName){
+                    let test = tabs.map((item) => {
+                      if (item.tabName === text.tabName) {
                         item.active = true;
-                      }else{
+                      } else {
                         item.active = false;
                       }
                       return item;
@@ -453,7 +574,7 @@ export default function SidebarNav() {
                     // setTabs(tabs.map(()))
                   }}
                 >
-                  
+
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
@@ -483,7 +604,8 @@ export default function SidebarNav() {
             <Route path="/MyTask" element={<TodoList />} />
             <Route path="/TodoList" element={<NewTodoList />} />
             <Route path="/SmartViews" element={<></>} />
-            <Route path="/LogOut" element={<Logout/>} />
+            <Route path="/SearchResult" element={<SearchResult myTotalTasks={myTotalTasks}  myDocuments={myDocuments}/> } />
+            <Route path="/LogOut" element={<Logout />} />
           </Routes>
         </Box>
       </Box>

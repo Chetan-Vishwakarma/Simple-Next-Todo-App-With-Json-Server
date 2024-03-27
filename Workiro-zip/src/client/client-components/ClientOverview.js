@@ -149,6 +149,22 @@ function ClientOverview({ Cls, locationState }) {
                 <Box className="col-xl-4 col-lg-6 col-md-6 main-dashboard-box">
                     <Box className="dashboard-box d-flex align-items-center">
                         <div class="flex-shrink-0">
+                            <StayCurrentPortraitIcon />
+                        </div>
+                        <div class="flex-grow-1 ms-2">
+                            <Typography variant="h6" gutterBottom>
+                                Total Contacts
+                            </Typography>
+                            <Typography variant="body1" gutterBottom>
+                                {totalContacts}
+                            </Typography>
+                        </div>
+                    </Box>
+                </Box>
+
+                <Box className="col-xl-4 col-lg-6 col-md-6 main-dashboard-box">
+                    <Box className="dashboard-box d-flex align-items-center">
+                        <div class="flex-shrink-0">
                             <SignalCellularAltIcon />
                         </div>
                         <div class="flex-grow-1 ms-2">
@@ -178,21 +194,7 @@ function ClientOverview({ Cls, locationState }) {
                     </Box>
                 </Box>
 
-                <Box className="col-xl-4 col-lg-6 col-md-6 main-dashboard-box">
-                    <Box className="dashboard-box d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <StayCurrentPortraitIcon />
-                        </div>
-                        <div class="flex-grow-1 ms-2">
-                            <Typography variant="h6" gutterBottom>
-                                Total Contacts
-                            </Typography>
-                            <Typography variant="body1" gutterBottom>
-                                {totalContacts}
-                            </Typography>
-                        </div>
-                    </Box>
-                </Box>
+                
 
                 <Box className="col-xl-4 col-lg-6 col-md-6 main-dashboard-box">
                     <Box className="dashboard-box d-flex align-items-center">

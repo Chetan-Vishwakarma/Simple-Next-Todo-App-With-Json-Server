@@ -873,5 +873,17 @@ export default class CommanCLS extends AllService {
         })
     }
 
+     Json_AdvanceSearchDoc(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_AdvanceSearchDoc",obj,true);
+        super.CallNewService("Json_AdvanceSearchDoc",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
 
 }

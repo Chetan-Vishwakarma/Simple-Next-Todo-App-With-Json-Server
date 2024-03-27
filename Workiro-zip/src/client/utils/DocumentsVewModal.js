@@ -402,7 +402,7 @@ console.log("Create New Task")
                 <Box className="d-flex align-items-center justify-content-between">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                            Document List
+                            Document List 
                         </Typography>
                     </Box>
 
@@ -457,7 +457,7 @@ console.log("Create New Task")
 
                 <DialogContentText id="alert-dialog-description">
 
-                    <Box sx={{ width: '100%', typography: 'body1' }} className="mt-4 pt-1">
+                    <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
 
 
                         <TabContext value={value}>

@@ -21,6 +21,8 @@ import { useLocation } from 'react-router-dom';
 // import DocumentList from './Document';
 import DocumentList from './DocumentList';
 import UploadDocument from './UploadDocument';
+import ClientAddress from './ClientAddress';
+import Contact from './Contact';
 
 
 
@@ -160,7 +162,7 @@ function ClientDetails() {
             console.log("Error while calling Json_GetClientCardDetails", err)
         }
     }
-    
+
     useEffect(() => {
         Json_GetClientCardDetails();
     }, []);
@@ -196,7 +198,7 @@ function ClientDetails() {
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<GroupAddIcon />}>Add Client</Button>
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<DeleteIcon />}>Notes</Button>
                     <Button className='btn-blue-2 mb-1' size="small" startIcon={<EmailIcon />}
-                    onClick={handleClickOpenUploadDocument}
+                        onClick={handleClickOpenUploadDocument}
                     >Add Document</Button>
                 </Box>
             </Box>
@@ -204,9 +206,9 @@ function ClientDetails() {
             <UploadDocument setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument} localtion={location}
             ></UploadDocument>
 
-            <Box sx={{ width: '100%', typography: 'body1' }} className="mt-4 pt-1">
+            <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
                 <TabContext value={value}>
-                    <Box>
+                    <Box className='mb-1'>
                         <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
                             <Tab label="General" value="1" />
                             <Tab label="Address" value="2" />
@@ -231,9 +233,16 @@ function ClientDetails() {
                             <UdfCard data={clientDetails} />
                         </Box>
                     </TabPanel>
-                    <TabPanel value="2">Item Two</TabPanel>
-                    <TabPanel value="3">Item Three</TabPanel>
-                    <TabPanel value="4">Item Three</TabPanel>
+
+                    <TabPanel value="2" className='p-0'>
+                        <ClientAddress></ClientAddress>
+                    </TabPanel>
+                    <TabPanel value="3">
+                        <Contact></Contact>
+                    </TabPanel>
+                    <TabPanel value="4">
+                        <Contact></Contact>
+                    </TabPanel>
 
                     <TabPanel value="5" className='p-0'>
                         <DocumentList clientId={originatorNo} ></DocumentList>
