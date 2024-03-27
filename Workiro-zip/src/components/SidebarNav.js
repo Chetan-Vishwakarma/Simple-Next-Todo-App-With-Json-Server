@@ -285,7 +285,7 @@ export default function SidebarNav() {
     });
   }
 
-  const [tabs, setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active: false }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false }, { tabLink: "/dashboard/SearchResult", tabName: 'Search Result', active: false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active: false }]);
+  const [tabs, setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active: false }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false }, { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active: false }]);
 
   React.useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
@@ -349,11 +349,19 @@ export default function SidebarNav() {
                           color: 'success.main',
                         }}
                         className={isSearch ? 'Mui-focused' : ''}>
-                        <span className="material-symbols-outlined search-icon"></span>
+                        <span className="material-symbols-outlined search-icon">search</span>
 
                         <form onSubmit={(e) => {
                           e.preventDefault();
                           navigate("/dashboard/SearchResult?str="+forDocuments);
+                          setIsSearch(false);
+                          tabs.map(itm=>{
+                            if(itm.tabName==="Search Result"){
+                              itm.active=true;
+                            }else{
+                              itm.active=false;
+                            }
+                          });
                         }} >
                           <Input onChange={(e) => handleGlobalSearch(e.target.value)} onBlur={() => setIsSearch(false)} placeholder='Search' className='ps-0' />
                         </form>
