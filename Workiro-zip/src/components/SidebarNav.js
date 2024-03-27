@@ -332,7 +332,7 @@ export default function SidebarNav() {
 
   return (
     <>
-      <Box className='d-block d-md-flex'>
+      <Box className='d-block d-md-flex' onClick={()=>setIsSearch(false)}>
         <CssBaseline />
         <AppBar className='header' position="fixed" open={open} color='inherit'>
           <Toolbar>
@@ -380,7 +380,8 @@ export default function SidebarNav() {
                       </AutocompleteRoot>
                       {isSearch && <Listbox sx={{ zIndex: 1 }}>
                         {documentsDescription.length > 0 && documentsDescription.slice(0, 20).map((itm, i) => {
-                          return <Option key={i} onClick={() => {
+                          return <Option key={i} onClick={(e) => {
+                            e.stopPropagation();
                             setIsSearch(false);
                             navigate("/dashboard/SearchResult?str=" + itm);
                             setSearchInputForGlobalSearch(itm);
@@ -390,7 +391,8 @@ export default function SidebarNav() {
                         })}
 
                         {filteredTaskSubjects.length > 0 && filteredTaskSubjects.slice(0.20).map((itm, i) => {
-                          return <Option key={i} onClick={() => {
+                          return <Option key={i} onClick={(e) => {
+                            e.stopPropagation();
                             setIsSearch(false);
                             navigate("/dashboard/SearchResult?str=" + itm);
                             setSearchInputForGlobalSearch(itm);
