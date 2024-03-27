@@ -145,11 +145,11 @@ export default function SidebarNav() {
   const [inputValue, setInputValue] = React.useState('');
 
   const [documentsDescription, setDocumentsDescription] = useState([]);
-  const [myDocuments,setMyDocuments] = useState([]);
+  const [myDocuments, setMyDocuments] = useState([]);
   const [isSearch, setIsSearch] = useState(false);
   const [forDocuments, setForDocuments] = useState("");
 
-  const [myTotalTasks,setMyTotalTasks] = useState([]);
+  const [myTotalTasks, setMyTotalTasks] = useState([]);
   const [taskSubjects, setTasksSubjects] = useState([]);
   const [filteredTaskSubjects, setFilteredTaskSubjects] = useState([]);
 
@@ -287,6 +287,8 @@ export default function SidebarNav() {
 
   const [tabs, setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active: false }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false }, { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active: false }]);
 
+  const [searchInputForGlobalSearch,setSearchInputForGlobalSearch] = useState("");
+
   React.useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setFolderId(localStorage.getItem("FolderId"));
@@ -306,9 +308,10 @@ export default function SidebarNav() {
   }, []);
 
   const handleGlobalSearch = (val) => {
-    if(val===""){
+    setSearchInputForGlobalSearch(val);
+    if (val === "") {
       setIsSearch(false);
-    }else{
+    } else {
       setIsSearch(true);
     }
     setForDocuments(val);
@@ -322,6 +325,10 @@ export default function SidebarNav() {
     }, 1000);
     return () => clearTimeout(data);
   }, [forDocuments]);
+
+  function handleAbc() {
+    alert("called");
+  }
 
   return (
     <>
@@ -353,28 +360,41 @@ export default function SidebarNav() {
 
                         <form onSubmit={(e) => {
                           e.preventDefault();
-                          navigate("/dashboard/SearchResult?str="+forDocuments);
+                          navigate("/dashboard/SearchResult?str=" + forDocuments);
                           setIsSearch(false);
-                          tabs.map(itm=>{
-                            if(itm.tabName==="Search Result"){
-                              itm.active=true;
-                            }else{
-                              itm.active=false;
+                          tabs.map(itm => {
+                            if (itm.tabName === "Search Result") {
+                              itm.active = true;
+                            } else {
+                              itm.active = false;
                             }
                           });
                         }} >
-                          <Input onChange={(e) => handleGlobalSearch(e.target.value)} onBlur={() => setIsSearch(false)} placeholder='Search' className='ps-0' />
+                          <Input
+                            onChange={(e) => handleGlobalSearch(e.target.value)}
+                            // onBlur={() => setIsSearch(false)}
+                            value={searchInputForGlobalSearch}
+                            placeholder='Search'
+                            className='ps-0' />
                         </form>
                       </AutocompleteRoot>
                       {isSearch && <Listbox sx={{ zIndex: 1 }}>
                         {documentsDescription.length > 0 && documentsDescription.slice(0, 20).map((itm, i) => {
-                          return <Option key={i} onClick={() => { }}>
+                          return <Option key={i} onClick={() => {
+                            setIsSearch(false);
+                            navigate("/dashboard/SearchResult?str=" + itm);
+                            setSearchInputForGlobalSearch(itm);
+                          }}>
                             <DescriptionIcon className='me-1' />
                             {itm}</Option>
                         })}
 
                         {filteredTaskSubjects.length > 0 && filteredTaskSubjects.slice(0.20).map((itm, i) => {
-                          return <Option key={i} onClick={() => { }}>
+                          return <Option key={i} onClick={() => {
+                            setIsSearch(false);
+                            navigate("/dashboard/SearchResult?str=" + itm);
+                            setSearchInputForGlobalSearch(itm);
+                          }}>
                             <FormatListNumberedRtlIcon className='me-1' />
                             {itm}</Option>
                         })}
@@ -617,7 +637,7 @@ export default function SidebarNav() {
             <Route path="/MyTask" element={<TodoList />} />
             <Route path="/TodoList" element={<NewTodoList />} />
             <Route path="/SmartViews" element={<></>} />
-            <Route path="/SearchResult" element={<SearchResult myTotalTasks={myTotalTasks}  myDocuments={myDocuments}/> } />
+            <Route path="/SearchResult" element={<SearchResult myTotalTasks={myTotalTasks} myDocuments={myDocuments} />} />
             <Route path="/LogOut" element={<Logout />} />
           </Routes>
         </Box>

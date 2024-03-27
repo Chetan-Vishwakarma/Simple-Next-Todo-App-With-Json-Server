@@ -707,7 +707,11 @@ function Client() {
                                             className={isSearch ? 'Mui-focused' : ''}>
                                             <span className="material-symbols-outlined search-icon">search</span>
 
-                                            <Input onClick={(e) => handleDialogsOpen(e, "Search")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
+                                            <Input 
+                                                onClick={(e) => handleDialogsOpen(e, "Search")} 
+                                                onChange={(e) => handleSearch(e.target.value)} 
+                                                placeholder='Search' 
+                                                className='ps-0' />
                                         </AutocompleteRoot>
 
                                         {isSearch && <Listbox sx={{ zIndex: 1 }}>
