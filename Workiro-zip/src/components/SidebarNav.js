@@ -326,10 +326,6 @@ export default function SidebarNav() {
     return () => clearTimeout(data);
   }, [forDocuments]);
 
-  function handleAbc() {
-    alert("called");
-  }
-
   return (
     <>
       <Box className='d-block d-md-flex' onClick={()=>setIsSearch(false)}>
