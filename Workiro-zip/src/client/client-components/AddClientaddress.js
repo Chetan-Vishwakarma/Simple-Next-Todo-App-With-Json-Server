@@ -4,7 +4,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
 import { FormControl } from "@mui/material";
 import Box from "@mui/material/Box";
-export default function AddClientaddress({ userDetail, setUserDetail }) {
+ const AddClientaddress =  React.memo(({ userDetail, setUserDetail })=>{
   const [mainCountry, setMainCountry] = useState(
     countries.find((country) => country.label === "United Kingdom")?.label
   );
@@ -432,7 +432,8 @@ export default function AddClientaddress({ userDetail, setUserDetail }) {
       </Box>
     </div>
   );
-}
+});
+export default AddClientaddress;
 var countries = [
   { code: "AD", label: "Andorra", phone: "376" },
   {

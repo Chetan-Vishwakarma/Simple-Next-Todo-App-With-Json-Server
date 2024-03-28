@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import { FormControl } from "@mui/material";
 import { FormControlLabel, Switch } from "@mui/material";
 import CommanCLS from '../../services/CommanService';
-export default function AddClientmaincontact({userDetail, setUserDetail}) {
+const AddClientmaincontact =  React.memo(({userDetail, setUserDetail})=>{
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -401,7 +401,8 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
     </Grid>
   </Grid></div>
   )
-}
+});
+export default AddClientmaincontact;
 var countries = [
     { code: "AD", label: "Andorra", phone: "376" },
     {

@@ -7,7 +7,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-function UDFClientcard({ data,setDataFromChild }) {
+const  UDFClientcard =  React.memo(({ data, setDataFromChild })=> {
   console.log(data?.Table, "sdfsd", data.Table3);
   const [selectManager, setselectManagers] = useState([]);
   const [selectedDatetest, setSelectedDatetest] = useState([]);
@@ -36,12 +36,29 @@ function UDFClientcard({ data,setDataFromChild }) {
       }
     });
   };
+  // const handleInputChange = (e) => {
+  //   e.preventDefault();
+  //   const { id, value } = e.target;
+  //    id.split('-');
+  //   console.log(e,"handleInputChang111111e");
+  //   const data = id + ":" + value;
+  //   console.log(data, "datahandlechange");
+  //   setSelectedDatetest((prevData) => ({
+  //     ...prevData,
+  //     [id]: value,
+  //   }));
+  //     setDataFromChild(selectedDatetest);
+  //   // setInputValue(value);
+  //   // Perform any action with the changed value
+  //   console.log("selectedDatetest", selectedDatetest);
+  // };
   const handleInputChange = (e) => {
     e.preventDefault();
     const { id, value } = e.target;
-     id.split('-');
-    console.log(e,"handleInputChang111111e");
-    const data = id + ":" + value;
+    let spt = id.split('-');
+
+    console.log(spt[0], "handleInputChang111111e1",e.target.value);
+    const data = spt[0] + ":" + value;
     console.log(data, "datahandlechange");
     setSelectedDatetest((prevData) => ({
       ...prevData,
@@ -53,17 +70,32 @@ function UDFClientcard({ data,setDataFromChild }) {
     console.log("selectedDatetest", selectedDatetest);
   };
 
-
   const handleInputOnDateChage= (e,vl) => { 
     
+
+    // console.log(spt[0], "handleInputChang111111e");
     let date =  dayjs(e).format("YYYY/MM/DD");
     console.log(date,vl,"handleInputChang111111e");  
     setSelectedDatetest((prevData) => ({
       ...prevData,
       [vl]: date,
     }));
-      setDataFromChild(selectedDatetest);  
+      // setDataFromChild(selectedDatetest);  
       console.log("selectedDatetestsonam",selectedDatetest);
+  };
+  const handleInputOnSelect= (e,vl) => { 
+    
+    const { id } = e.target;
+    let spt = id.split('-');
+    console.log(id,"handleInputOnSelect",vl);  
+    const data = spt[0] + ":" + vl;
+    console.log(data, "11handleInputOnSelect");
+    setSelectedDatetest((prevData) => ({
+      ...prevData,
+      [spt[0]]: vl,
+    }));
+    //   // setDataFromChild(selectedDatetest);  
+    //   console.log("selectedDatetestsonam",selectedDatetest);
   };
   useEffect(() => {
     Json_GetForwardUserList();
@@ -71,7 +103,7 @@ function UDFClientcard({ data,setDataFromChild }) {
   useEffect(() => {
     setDataFromChild(selectedDatetest);
   }, [selectedDatetest]);
-
+  console.log("selectedDatetestsonamoutside",selectedDatetest);
   const renderDynamicInput = (data) => {
     console.log(selectManager, "selectManagerselectManager");
     let renderedContent;
@@ -220,7 +252,8 @@ function UDFClientcard({ data,setDataFromChild }) {
                             data.TextControlValue +
                             "_UDF"
                           }
-                           onChange={(e)=>handleInputOnDateChage(e,`${data.UserDefFieldID}_${ data.UserDefFieldTypeID}_${data.TextControlValue}}`)}
+                           onChange={(e)=>handleInputOnDateChage(e,`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}_UDF`
+                          )}
                         />
                       
                     </DemoContainer>
@@ -369,16 +402,19 @@ function UDFClientcard({ data,setDataFromChild }) {
       case 2:
         if (data.Options && typeof data.Options === "string") {
           const optionsArray = data.Options.split("@;");
-          console.log("optionsArray", `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`);
+          console.log(data,"optionsArray", `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`);
           if (optionsArray.length > 0) {
             renderedContent = (
               <Grid item xs={6} md={6} className="mb-3">
                 <Autocomplete
+
                  id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
                   options={optionsArray} // Pass optionsArray as options
                  name={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
                   clearOnEscape
-                  onChange={handleInputChange}
+                  // value={data.UdfValue}
+                  onChange={(event, value) => handleInputOnSelect(event, value)}
+
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -398,7 +434,7 @@ function UDFClientcard({ data,setDataFromChild }) {
                 // options={optionsArray} // Pass optionsArray as options
                 id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
                 clearOnEscape
-                onChange={handleInputChange}
+                onChange={(event, value) => handleInputOnSelect(event, value)}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -470,7 +506,7 @@ function UDFClientcard({ data,setDataFromChild }) {
               <Autocomplete
                 options={selectManager} // Pass optionsArray as options
                 id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
-                onChange={handleInputChange}
+                onChange={(event, value) => handleInputOnSelect(event, value)}
                 clearOnEscape
                 renderInput={(params) => (
                   <TextField
@@ -489,7 +525,7 @@ function UDFClientcard({ data,setDataFromChild }) {
               <Autocomplete
                 options={selectManager.map((option) => option.ForwardTo)} // Pass optionsArray as options
                 id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
-                onChange={handleInputChange}
+                onChange={(event, value) => handleInputOnSelect(event, value)}
                 clearOnEscape
                 renderInput={(params) => (
                   <TextField
@@ -535,6 +571,6 @@ function UDFClientcard({ data,setDataFromChild }) {
         })}
     </>
   );
-}
+});
 
 export default UDFClientcard;
