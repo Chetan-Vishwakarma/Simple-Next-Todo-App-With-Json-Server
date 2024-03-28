@@ -14,7 +14,7 @@ import {
 let folderData;
 let billingcontry;
 let ragistercountry;
-export default function AddClientdetails({userDetail, setUserDetail}) {
+export default function AddClientdetails({userDetail, setUserDetail,setSelectedFolderID}) {
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -27,7 +27,7 @@ export default function AddClientdetails({userDetail, setUserDetail}) {
       const [mangers, setMangers] = useState([]); // State to hold folders data
       const [status, setStatus] = useState([]); // State to hold folders data
       const [configdata, setConfigdata] = useState(""); // State to hold folders data
-      const [selectedFolderID, setSelectedFolderID] = useState(null);
+     
     const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
 
     //let Util = new Utils();
@@ -62,14 +62,95 @@ export default function AddClientdetails({userDetail, setUserDetail}) {
           event.preventDefault();
           if (value) {
             // Update the selectedFolderID state with the FolderID of the selected option
-            folderData = value.FolderID;
-            setSelectedFolderID(value.FolderID);
-            console.log(value.FolderID, "FolderID", selectedFolderID);
+            let data = { ...userDetail };  
+            data = { ...data, ["FolderId"]:  value.FolderID };
+            console.log(data, "dataOnchange");
+            setUserDetail(data);
+            //folderData = value.FolderID;
+           // setSelectedFolderID(value.FolderID);
+            console.log(value.FolderID, "FolderID");
           } else {
             // If no option is selected, clear the selectedFolderID state
             setSelectedFolderID(null);
           }
         };
+        const onChangebussines = (
+          event,
+          value
+        ) => {
+          event.preventDefault();
+          if (value) {
+            // Update the selectedFolderID state with the FolderID of the selected option
+            // bussinessData = value.BussId;
+            // setSelectedBussId(value.BussId);
+            let data = { ...userDetail };  
+            data = { ...data, ["BussId"]:  value.BussId };
+            console.log(data, "dataOnchange");
+            setUserDetail(data);
+            console.log(value.BussId, "BussId",);
+          } else {
+            // If no option is selected, clear the selectedFolderID state
+            // setSelectedBussId(null);
+          }
+        };
+        const onChangestatuss = (
+          event,
+          value
+        ) => {
+          event.preventDefault();
+          if (value) {
+            // Update the selectedFolderID state with the FolderID of the selected option
+            // statusData = value.StatusId;
+            // setSelectedStatusId(value.StatusId);
+            // console.log(value.StatusId, "StatusId", selectedStatusId);
+            let data = { ...userDetail };  
+            data = { ...data, ["StatusId"]:  value.StatusId };
+            console.log(data, "dataOnchange");
+            setUserDetail(data);
+          } else {
+            // If no option is selected, clear the selectedFolderID state
+            // setSelectedStatusId(null);
+          }
+        };
+        const onChangesource = (
+          event,
+          value
+        ) => {
+          event.preventDefault();
+          if (value) {
+            // Update the selectedFolderID state with the FolderID of the selected option
+            // sourceData = value.SourceId;
+            // setSelectedSourceId(value.SourceId);
+            // console.log(value.SourceId, "SourceId", selectedSourceId);
+            let data = { ...userDetail };  
+            data = { ...data, ["SourceId"]:  value.SourceId };
+            console.log(data, "dataOnchange");
+            setUserDetail(data);
+          } else {
+            // If no option is selected, clear the selectedFolderID state
+            // setSelectedSourceId(null);
+          }
+        };
+        const onChangeuser = (
+          event,
+          value
+        ) => {
+          event.preventDefault();
+          if (value) {
+            // Update the selectedFolderID state with the FolderID of the selected option
+            // managerData = value.UserId;
+            // setSelectedUserId(value.UserId);
+            // console.log(value.UserId, "UserId", selectedUserId);
+            let data = { ...userDetail };  
+            data = { ...data, ["UserId"]:  value.UserId };
+            console.log(data, "dataOnchange");
+            setUserDetail(data);
+          } else {
+            // If no option is selected, clear the selectedFolderID state
+            // setSelectedUserId(null);
+          }
+        };
+       
     const onChange = (e) => {
         e.preventDefault();
         let data = { ...userDetail };
@@ -211,7 +292,7 @@ export default function AddClientdetails({userDetail, setUserDetail}) {
                   {...bussinesslist}
                   id="clear-on-escape-bussiness"
                   clearOnEscape
-                  // onChange={onChangebussines}
+                  onChange={onChangebussines}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -231,7 +312,7 @@ export default function AddClientdetails({userDetail, setUserDetail}) {
                   {...statuslistdata}
                   id="clear-on-escape-status"
                   clearOnEscape
-                  // onChange={onChangestatuss}
+                  onChange={onChangestatuss}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -251,7 +332,7 @@ export default function AddClientdetails({userDetail, setUserDetail}) {
                   {...sourcelist}
                   id="clear-on-escape-source"
                   clearOnEscape
-                  // onChange={onChangesource}
+                  onChange={onChangesource}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -277,7 +358,7 @@ export default function AddClientdetails({userDetail, setUserDetail}) {
                   // id={`clear-on-escape-manager`}
                   key={`uniques-manager`}
                   // value={defaultUser || null}
-                  // onChange={onChangeuser}
+                  onChange={onChangeuser}
                   clearOnEscape
                   renderInput={(params) => (
                     <TextField

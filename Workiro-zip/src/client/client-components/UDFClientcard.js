@@ -7,7 +7,7 @@ import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-function UDFClientcard({ data }) {
+function UDFClientcard({ data,setDataFromChild }) {
   console.log(data?.Table, "sdfsd", data.Table3);
   const [selectManager, setselectManagers] = useState([]);
   const [selectedDatetest, setSelectedDatetest] = useState([]);
@@ -59,14 +59,16 @@ function UDFClientcard({ data }) {
   const handleInputChange = (e) => {
     e.preventDefault();
     const { id, value } = e.target;
-    console.log(id, value, "handleInputChange");
+    let spt = id.split('-');
+
+    console.log(spt[0], "handleInputChang111111e");
     const data = id + ":" + value;
     console.log(data, "datahandlechange");
     setSelectedDatetest((prevData) => ({
       ...prevData,
       [id]: value,
     }));
-    //   setDataFromChild(selectedDatetest);
+      setDataFromChild(selectedDatetest);
     // setInputValue(value);
     // Perform any action with the changed value
     console.log("selectedDatetest", selectedDatetest);
@@ -75,6 +77,10 @@ function UDFClientcard({ data }) {
   useEffect(() => {
     Json_GetForwardUserList();
   }, []);
+  useEffect(() => {
+    setDataFromChild(selectedDatetest);
+  }, [selectedDatetest]);
+
   const renderDynamicInput = (data) => {
     console.log(selectManager, "selectManagerselectManager");
     let renderedContent;
@@ -97,7 +103,7 @@ function UDFClientcard({ data }) {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  value={data.UdfValue}
+                  // value={data.UdfValue}
                   onChange={handleInputChange}
                 />
               </Grid>;
@@ -139,7 +145,7 @@ function UDFClientcard({ data }) {
                       data.TextControlValue +
                       "_UDF"
                     }
-                    value={data.UdfValue}
+                    // value={data.UdfValue}
                     onChange={handleInputChange}
                   />
                 </Grid>
@@ -175,10 +181,11 @@ function UDFClientcard({ data }) {
                   <DatePicker
                     showIcon
                     dateFormat="DD/MM/YYYY"
-                    // value={currentDate}
+                    value={currentDate}
                     // onChange={(e) => setCurrentDate(e)} // Handle date changes
                     timeFormat={false}
                     // isValidDate={disablePastDt}
+                    onChange={handleInputChange}
                     closeOnSelect={true}
                     icon="fa fa-calendar"
                   />
@@ -196,9 +203,21 @@ function UDFClientcard({ data }) {
                         "DateRangePicker",
                       ]}
                     >
-                      <DemoItem>
-                        <DatePicker />
-                      </DemoItem>
+                     
+                        <DatePicker 
+                          // dateFormat="DD/MM/YYYY"
+                          // value={currentDate}
+                          id={
+                            data.UserDefFieldID +
+                            "_" +
+                            data.UserDefFieldTypeID +
+                            "_" +
+                            data.TextControlValue +
+                            "_UDF"
+                          }
+                          onChange={handleInputChange}
+                        />
+                      
                     </DemoContainer>
                   </LocalizationProvider>
                 </Grid>
@@ -222,7 +241,7 @@ function UDFClientcard({ data }) {
                       data.TextControlValue +
                       "_UDF"
                     }
-                    value={data.UdfValue}
+                    // value={data.UdfValue}
                     onChange={handleInputChange}
                   />
                 </Grid>
@@ -250,51 +269,51 @@ function UDFClientcard({ data }) {
               );
             }
             break;
-          case "Date":
-            if (data && data.UdfValue) {
-              renderedContent = (
-                <Grid item xs={6} md={6} className="mb-3">
-                  <TextField
-                    fullWidth
-                    label={data.Name}
-                    variant="outlined"
-                    name="regLine1"
-                    id={
-                      data.UserDefFieldID +
-                      "_" +
-                      data.UserDefFieldTypeID +
-                      "_" +
-                      data.TextControlValue +
-                      "_UDF"
-                    }
-                    value={data.UdfValue}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
-              );
-            } else {
-              renderedContent = (
-                <Grid item xs={6} md={6} className="mb-3">
-                  <TextField
-                    fullWidth
-                    label={data.Name}
-                    variant="outlined"
-                    name="regLine1"
-                    id={
-                      data.UserDefFieldID +
-                      "_" +
-                      data.UserDefFieldTypeID +
-                      "_" +
-                      data.TextControlValue +
-                      "_UDF"
-                    }
-                    //   value={data.UdfValue}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
-              );
-            }
-            break;
+          // case "Date":
+          //   if (data && data.UdfValue) {
+          //     renderedContent = (
+          //       <Grid item xs={6} md={6} className="mb-3">
+          //         <TextField
+          //           fullWidth
+          //           label={data.Name}
+          //           variant="outlined"
+          //           name="regLine1"
+          //           id={
+          //             data.UserDefFieldID +
+          //             "_" +
+          //             data.UserDefFieldTypeID +
+          //             "_" +
+          //             data.TextControlValue +
+          //             "_UDF"
+          //           }
+          //           // value={data.UdfValue}
+          //           onChange={handleInputChange}
+          //         />
+          //       </Grid>
+          //     );
+          //   } else {
+          //     renderedContent = (
+          //       <Grid item xs={6} md={6} className="mb-3">
+          //         <TextField
+          //           fullWidth
+          //           label={data.Name}
+          //           variant="outlined"
+          //           name="regLine1"
+          //           id={
+          //             data.UserDefFieldID +
+          //             "_" +
+          //             data.UserDefFieldTypeID +
+          //             "_" +
+          //             data.TextControlValue +
+          //             "_UDF"
+          //           }
+          //           //   value={data.UdfValue}
+          //           onChange={handleInputChange}
+          //         />
+          //       </Grid>
+          //     );
+          //   }
+          //   break;
           case "Decimal":
             if (data && data.UdfValue) {
               renderedContent = (
@@ -312,7 +331,7 @@ function UDFClientcard({ data }) {
                       data.TextControlValue +
                       "_UDF"
                     }
-                    value={data.UdfValue}
+                    // value={data.UdfValue}
                     onChange={handleInputChange}
                   />
                 </Grid>
@@ -357,7 +376,7 @@ function UDFClientcard({ data }) {
                       data.TextControlValue +
                       "_UDF"
                     }
-                    value={data.UdfValue}
+                    // value={data.UdfValue}
                     onChange={handleInputChange}
                   />
                 </Grid>
@@ -390,20 +409,21 @@ function UDFClientcard({ data }) {
       case 2:
         if (data.Options && typeof data.Options === "string") {
           const optionsArray = data.Options.split("@;");
-          console.log("optionsArray", optionsArray);
+          console.log("optionsArray", `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`);
           if (optionsArray.length > 0) {
             renderedContent = (
               <Grid item xs={6} md={6} className="mb-3">
                 <Autocomplete
+                 id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
                   options={optionsArray} // Pass optionsArray as options
-                  id={data.UserDefFieldTypeID}
+                 name={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
                   clearOnEscape
+                  onChange={handleInputChange}
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       variant="outlined"
-                      name="Selectclient"
-                      id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
+                      name={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
                       label={data.Name}
                     />
                   )}
@@ -411,7 +431,27 @@ function UDFClientcard({ data }) {
               </Grid>
             );
           }
-        }
+        } else {
+          renderedContent = (
+            <Grid item xs={6} md={6} className="mb-3">
+              <Autocomplete
+                // options={optionsArray} // Pass optionsArray as options
+                id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
+                clearOnEscape
+                onChange={handleInputChange}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    name="Selectclient"
+                    id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
+                    label={data.Name}
+                  />
+                )}
+              />
+            </Grid>
+          );
+      }
         break;
       case 10:
         // case "Boolean":
@@ -469,7 +509,8 @@ function UDFClientcard({ data }) {
             <Grid item xs={6} md={6} className="mb-3">
               <Autocomplete
                 options={selectManager} // Pass optionsArray as options
-                id={data.UserDefFieldTypeID}
+                id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
+                onChange={handleInputChange}
                 clearOnEscape
                 renderInput={(params) => (
                   <TextField
@@ -487,7 +528,8 @@ function UDFClientcard({ data }) {
             <Grid item xs={6} md={6} className="mb-3">
               <Autocomplete
                 options={selectManager.map((option) => option.ForwardTo)} // Pass optionsArray as options
-                id={data.UserDefFieldTypeID}
+                id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
+                onChange={handleInputChange}
                 clearOnEscape
                 renderInput={(params) => (
                   <TextField

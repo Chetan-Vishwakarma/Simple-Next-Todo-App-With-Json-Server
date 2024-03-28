@@ -23,10 +23,14 @@ function Reference() {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
+  const [intUserid, setIntUserid] = useState(localStorage.getItem("UserId"));
   const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
   const [selected, setSelected] = React.useState(false);
   const [value, setValue] = React.useState("1");
   const [clientDetails, setClientDetails] = useState({});
+  const [selectedFolderID, setSelectedFolderID] = useState(null);
+  const [dataFromChild, setDataFromChild] = useState([]);
+
   const [userDetail, setUserDetail] = useState({
     CHnumber: "",
     Clientname: "",
@@ -63,7 +67,30 @@ function Reference() {
     Source: "",
     Manager: "",
     Email: "",
+    folderId:localStorage.getItem("FolderId"),
+    BussId:-1,
+    UserId:-1,
+    SourceId:-1,
+    StatusId:-1,
+    Title:"",
+    FirstName:"",
+    LastName:"",
+    ReferenceName:"",
+    MainContact:false,
+    Inactive:false,
+    GreetingName:"",
+    EmailName:"",
+    MainUserId:-1,
+    MainLine1Name:"",
+    MainLine2Name:"",
+    MainLine3Name:"",
+    MainTownName:"",
+    MainPostcodeName:"",
+    Maincontactcountry:"",
+    MainTelephoneName:"",
+    MainMobileName:""
   });
+  console.log("userDetailuserDetail",userDetail);
   const [originatorNo, setoriginatorNo] = useState("");
   const [companyDetails, setCompanyDetails] = useState([]);
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -192,12 +219,219 @@ function Reference() {
       console.log("Error while calling Json_GetClientCardDetails", err);
     }
   };
+  // const Json_SetClientAddress = (objdata) => {
+  //   CallApi(objdata, "Json_SetClientAddress", function (res) {
+  //     if (res) {
+  //       console.log(res, "Json_SetClientAddress");
+  //     } else {
+  //     }
+  //   });
+  // };
+  // const mainAddress = () => {
+  //   let obj = {
+  //     agrno: agrno,
+  //     Email: Email,
+  //     password: password,
+  //     OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
+  //     AddressId: 1,
+  //     AddressType: "Main Address",
+  //     Add1: userDetail.Line1 ? userDetail.Line1 : "",
+  //     Add2: userDetail.Line2 ? userDetail.Line2 : "",
+  //     Add3: userDetail.Line3 ? userDetail.Line3 : "",
+  //     Town: userDetail.Town ? userDetail.Town : "",
+  //     County: userDetail.MCounty ? userDetail.MCounty : "",
+  //     Postcode: userDetail.Postcode ? userDetail.Postcode : "",
+  //     Country: mainCountry,
+  //   };
+  //   console.log(obj, "mainaddress");
+  //   Json_SetClientAddress(obj);
+  // };
 
+  // const billingAddress = () => {
+  //   let obj = {
+  //     agrno: agrno,
+  //     Email: Email,
+  //     password: password,
+  //     OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
+  //     AddressId: 2,
+  //     AddressType: "Billing Address",
+  //     Add1: userDetail.BilLine1 ? userDetail.BilLine1 : "",
+  //     Add2: userDetail.BilLine2 ? userDetail.BilLine2 : "",
+  //     Add3: userDetail.BilLine3 ? userDetail.BilLine3 : "",
+  //     Town: userDetail.BilTown ? userDetail.BilTown : "",
+  //     County: userDetail.BilCountry ? userDetail.BilCountry : "",
+  //     Postcode: userDetail.BilPostcode ? userDetail.BilPostcode : "",
+  //     Country: billingsCountry,
+  //   };
+  //   console.log(obj, "mainaddress11");
+  //   Json_SetClientAddress(obj);
+  // };
+  // const ragisterAddress = () => {
+  //   let obj = {
+  //     agrno: agrno,
+  //     Email: Email,
+  //     password: password,
+  //     OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
+  //     AddressId: 1,
+  //     AddressType: "Registered Address",
+  //     Add1: userDetail.regLine1 ? userDetail.regLine1 : "",
+  //     Add2: userDetail.regLine2 ? userDetail.regLine2 : "",
+  //     Add3: userDetail.regLine3 ? userDetail.regLine3 : "",
+  //     Town: userDetail.regTown ? userDetail.regTown : "",
+  //     County: userDetail.regCountry ? userDetail.regCountry : "",
+  //     Postcode: userDetail.regPostcode ? userDetail.regPostcode : "",
+  //     Country: ragistersCountry,
+  //   };
+  //   console.log(obj, "mainaddress22");
+
+  //   Json_SetClientAddress(obj);
+  // };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    // let agrno = localStorage.getItem("agrno");
+    // let email = localStorage.getItem("email");
+    // let password = localStorage.getItem("pass");
+    // let projectId = localStorage.getItem("projectid");
+    function todayDate() {
+      var today = new Date().toJSON().slice(0, 10);
+      return today;
+    }
+    let clientdata = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      ProjectIdList: userDetail.folderId ? userDetail.folderId : -1,
+      OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
+      OriginatorName: userDetail.Clientname ? userDetail.Clientname : "",
+      Address: userDetail.fullAddress ? userDetail.fullAddress : "",
+      TelNo: userDetail.Telephone ? userDetail.Telephone : "",
+      AlteTelNo: userDetail.Mobile ? userDetail.Mobile : "",
+      Faxno: "",
+      ContactName:"",
+      UDF1: "",
+      UDF2: "",
+      UDF3: "",
+      StickyNote: "",
+      ContactEmail: userDetail.Email ? userDetail.Email : "",
+      MParameter: "",
+      CDate: todayDate(),
+      BussId: userDetail.BussId ? userDetail.BussId : -1,
+      SourceId: userDetail.SourceId ? userDetail.SourceId : -1,
+      StatusId: userDetail.StatusId ? userDetail.StatusId : -1,
+      Description: "",
+      OrgPassword: "",
+      ManagerId: userDetail.UserId ? userDetail.UserId : parseInt(intUserid),
+      OrgActive: "Yes",
+    };
+    Json_InsertContact();
+    console.log(clientdata,"clientdata");
+    // CallApi(clientdata, "Json_AddClient", function (res) {
+    //   if (res) {
+    //     let str = JSON.parse(JSON.stringify(res));
+    //     let json = JSON.parse(str.d);
+    //     console.log(json, "Json_AddClient");
+    //     if (json.Status == "Success") {
+    //       mainAddress();
+    //       billingAddress();
+    //       ragisterAddress();
+    //       createDefaultTeam();
+    //     } else {
+    //       setAlertContent("Reference ID Already Exist");
+    //       setAlert(true);
+    //       setTimeout(() => {
+    //         setAlert(false);
+    //       }, 3000); // Hide after 5 seconds
+    //     }
+    //   } else {
+    //     // Handle error if needed
+    //   }
+    // });
+  };
+  const Json_InsertContact = () => {
+    let clientdata = {
+      agrno: agrno,
+      strEmail: Email,
+      password: password,
+      FirstName: userDetail.FirstName ? userDetail.FirstName : "",
+      LastName: userDetail.LastName ? userDetail.LastName : "",
+      Add1: userDetail.MainLine1Name ? userDetail.MainLine1Name : "",
+      Add2: userDetail.MainLine2Name ? userDetail.MainLine2Name : "",
+      Add3: userDetail.MainLine3Name ? userDetail.MainLine3Name : "",
+      Town: userDetail.MainTownName ? userDetail.MainTownName : "",
+      PostCode: userDetail.MainPostcodeName ? userDetail.MainPostcodeName : "",
+      Country: userDetail.Maincontactcountry ? userDetail.Maincontactcountry : "",
+      ManagerName: "",
+      Role: "",
+      Tel: userDetail.MainTelephoneName ? userDetail.MainTelephoneName : "",
+      Mobile: userDetail.MainMobileName ? userDetail.MainMobileName : "",
+      greeting: userDetail.GreetingName ? userDetail.GreetingName : "",
+      email: userDetail.EmailName ? userDetail.EmailName : "",
+      note: "",
+      CActive: "Yes",
+      AssignedManager: userDetail.UserId ? userDetail.UserId : "",
+      maincontact: userDetail.MainContact ? userDetail.MainContact : false,
+      CCode: userDetail.Clientid ? userDetail.Clientid : "",
+      Salutation: userDetail.Title ? userDetail.Title : "",
+      accid: agrno
+  }
+    console.log(clientdata,"Json_InsertContact");
+    // CallApi(clientdata, "Json_InsertContact", function (res) {
+    //   if (res) {
+    //     let str = JSON.parse(JSON.stringify(res));
+    //     let json = JSON.parse(str.d);
+    //     console.log(json, "Json_AddClient");
+    //     if (json.Status == "Success") {
+    //       mainAddress();
+    //       billingAddress();
+    //       ragisterAddress();
+    //       createDefaultTeam();
+    //     } else {
+    //       setAlertContent("Reference ID Already Exist");
+    //       setAlert(true);
+    //       setTimeout(() => {
+    //         setAlert(false);
+    //       }, 3000); // Hide after 5 seconds
+    //     }
+    //   } else {
+    //     // Handle error if needed
+    //   }
+    // });
+  };
+  const saveUDF = () => {
+    const result = Object.entries(dataFromChild)
+    .map(([key, value]) => `${key}: ${value}`)
+    .join(', ');
+  
+  console.log(result,"resultresult");
+    let requestBody = {
+        agrno: agrno,
+        Email: Email,
+        password: password,
+        OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
+        ProjectId:  userDetail.folderId ? userDetail.folderId : -1,
+        ClientUDFString:result,
+        ContactUDFString:""	,
+        ContactNo:""
+    }
+    
+    // CallApi(requestBody, "Json_CRMSaveUDFValues", function (res: any) {
+    //     if (res) {
+    //       console.log(res, "response11");
+    //    //    let str = JSON.parse(JSON.stringify(res));
+    //    //    let json = JSON.parse(str.d);
+         
+    //     } else {
+    //       // Handle error if needed
+    //     }
+    //   });
+  }
   useEffect(() => {
+   
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
     setEmail(localStorage.getItem("Email"));
     setFolderId(localStorage.getItem("FolderId"));
+    setIntUserid(localStorage.getItem("UserId"));
     Json_GetClientCardDetails();
   }, []);
 
@@ -291,6 +525,7 @@ function Reference() {
                   <AddClientdetails
                     userDetail={userDetail}
                     setUserDetail={setUserDetail}
+                    setSelectedFolderID={setSelectedFolderID}
                   ></AddClientdetails>
                 }
               </Box>
@@ -318,7 +553,21 @@ function Reference() {
             <Box></Box>
 
             <Box className="main-accordian">
-              <UDFClientcard data={clientDetails} />
+              <UDFClientcard data={clientDetails} setDataFromChild={setDataFromChild}/>
+              <div style={{marginBottom:"20px"}}>
+                <Button
+                  style={{ marginTop: "20px" }}
+                  variant="contained"
+                  onClick={handleSubmit}
+                  disabled={
+                    !userDetail.Clientname ||
+                    !userDetail.Clientid 
+                    // !folderData
+                  }
+                >
+                  Add Client
+                </Button>{" "}
+              </div>
             </Box>
           </TabPanel>
           <TabPanel value="2">Item Two</TabPanel>
