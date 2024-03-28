@@ -36,6 +36,8 @@ import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import moment from 'moment';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import { useLocation } from 'react-router-dom';
+import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -128,7 +130,9 @@ const MenuProps = {
     },
 };
 
-export default function DocumentList({ clientId, globalSearchDocs }) {
+export default function DocumentList({ clientId }) {
+    const location = useLocation();
+    const {globalSearchDocs} = location.state;
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -298,6 +302,7 @@ export default function DocumentList({ clientId, globalSearchDocs }) {
                                 // console.log("desc", desc);
                                 setgroupedOptions(desc);
                             }else{
+                                console.log("dsfkjhdkjfh",globalSearchDocs);
                                 let docKeys = Object.keys(globalSearchDocs[0]);
                                 // console.log("documentKeys",docKeys);
                                 setDocumentKeys(docKeys);
@@ -546,11 +551,9 @@ export default function DocumentList({ clientId, globalSearchDocs }) {
         handleDocumentsFilter(documents);
     }, [filterCriteria]);
 
-    console.log("FilterCriteria; ", filterCriteria);
-    console.log("start", start._i);
-    console.log("end", end._i);
     return (
         <>
+            {globalSearchDocs.length>0 && <CustomBreadCrumbs tabs={[{tabLink:"/dashboard/SearchResult?str=",tabName:"Search Result"},{tabLink:"/dashboard/DocumentList",tabName:"Documents List"}]}/>}
             <Box className='d-flex flex-wrap align-items-center justify-content-between'>
                 <Box className='d-flex flex-wrap align-items-center mb-2'>
                     {/* sadik */}
@@ -612,61 +615,7 @@ export default function DocumentList({ clientId, globalSearchDocs }) {
                             </div> */}
                         </DateRangePicker>
                     </Box>
-                    {/* {isRangeFilter ? (
-                            <>
-                                <Box className='d-flex me-2'>
-
-                                    <input value={fromDate} onChange={(e) => setFormDate(e.target.value)} id="standard-basic" variant="standard" type="date" className='form-control me-2' />
-                                    <input disabled={fromDate === "" ? true : false} min={fromDate} value={toDate} onChange={(e) => setToDate(e.target.value)} id="standard-basic" variant="standard" type="date" className='form-control me-2' />
-
-                                    {
-                                        formatDate !== "" && toDate !== "" ? <Button className='btn-blue-2 min-width-auto' onClick={()=>{}}>Submit</Button>
-                                            : <CloseIcon onClick={() => {
-                                                setIsRangeFilter(false);
-                                                setSelectedLastFilter("");
-                                            }}
-                                                className='pointer mt-1 pt-1' />
-                                    }
-
-                                    {formatDate !== "" && toDate !== "" && <CloseIcon onClick={() => {
-                                        setIsRangeFilter(false)
-                                        setSelectedLastFilter("");
-                                    }}
-                                        className='pointer mt-1 pt-1 ms-1' />
-                                    }
-
-                                </Box>
-                            </>
-                        ) :
-                            (<Box className='clearfix'>
-                                <FormControl sx={{ m: 1, width: '120px', maxHeight: '200px', overflow: 'auto' }} size="small" className='select-border'>
-                                    <Select
-                                        value={selectedLastFilter}
-                                        onChange={(e) => {}}
-                                        displayEmpty
-                                        inputProps={{ 'aria-label': 'Without label' }}
-                                        className='custom-dropdown'
-                                        MenuProps={MenuProps}
-                                    >
-                                        <MenuItem value={"All"}>All</MenuItem>
-                                        <MenuItem value={"LastDay"}>Last Day</MenuItem>
-                                        <MenuItem value={"LastWeek"}>Last Week</MenuItem>
-                                        <MenuItem value={"LastMonth"}>Last Month</MenuItem>
-                                        <MenuItem value={"LastThreeMonth"}>Last 3 Month</MenuItem>
-                                        <MenuItem value={"LastSixMonth"}>Last 6 Month</MenuItem>
-                                        <MenuItem value={"Last12Month"}>Last 12 Month</MenuItem>
-                                        <MenuItem value={"Last18Month"}>Last 18 Month</MenuItem>
-                                        <MenuItem value={"Last24Months"}>Last 24 Months</MenuItem>
-                                        <MenuItem value={"Last30Months"}>Last 30 Months</MenuItem>
-                                        <MenuItem value={"Last36Months"}>Last 36 Months</MenuItem>
-                                        <MenuItem value={"Last42Months"}>Last 42 Months</MenuItem>
-                                        <MenuItem value={"Last48Months"}>Last 48 Months</MenuItem>
-                                        <MenuItem value={"Last54Months"}>Last 54 Months</MenuItem>
-                                        <MenuItem value={"Last60Months"}>Last 60 Months</MenuItem>
-                                        <MenuItem value={""} onClick={() => setIsRangeFilter(true)}>Full Range</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>)} */}
+                    
 
                     <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
                         <Select

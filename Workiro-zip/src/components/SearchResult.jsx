@@ -5,6 +5,7 @@ import Grid from '@mui/material/Grid';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import SearchIcon from '@mui/icons-material/Search';
+import DocumentList from '../client/client-components/DocumentList';
 
 function SearchResult({ myTotalTasks, myDocuments }) {
     const navigate = useNavigate();
@@ -34,17 +35,18 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         // console.log("fkjhdkjs",fltDocuments);
     }, [target]);
 
-    const handleDocumentNavigation = () => {
-        navigate("/dashboard/clientDetails?val=5", {
-            state: {
-                agrno: "",
-                Email: "",
-                password: "",
-                folderId: "",
-                originatorNo: "",
-                globalSearchDocs: filteredDocuments
-            }
-        });
+    const handleDocumentNavigation=()=>{
+        navigate("/dashboard/DocumentList",{state:{globalSearchDocs:filteredDocuments}});
+        // navigate("/dashboard/clientDetails?val=5",{
+        //     state:{
+        //         agrno: "",
+        //         Email: "",
+        //         password: "",
+        //         folderId: "",
+        //         originatorNo: "",
+        //         globalSearchDocs:filteredDocuments
+        //     }
+        // });
     }
     return (
         <>
@@ -102,7 +104,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
                 {filteredTasks.length > 9 && <Box className='text-center'><Button variant="text" className='btn-blue-2 mt-4 mb-4' size='small'>View More</Button></Box>}
             </Box>
-
 
 
             <Box className='clearfix'>

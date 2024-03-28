@@ -2018,7 +2018,7 @@ export default function CreateNewModalTask({ ...props }) {
                     className="btn-blue btn-round btn-block"
                 >
                     <span className="material-symbols-outlined">edit_square</span>{" "}
-                <span className="ps-2 create-text">Create New  </span>
+                <span className="ps-2 create-text">Add New  </span>
                     
                 </Button>
                 <Menu
@@ -2035,6 +2035,7 @@ export default function CreateNewModalTask({ ...props }) {
                     <MenuItem onClick={handleClickOpen}>Portal Task</MenuItem>
                     <MenuItem onClick={handleClickReferance}>Reference</MenuItem>
                     <MenuItem onClick={handleClose4}>Note</MenuItem>
+                    <MenuItem onClick={handleClose4}>Document</MenuItem>
                 </Menu>
             </div>
 
