@@ -884,6 +884,39 @@ export default class CommanCLS extends AllService {
             }
         })
      }
+     Json_InsertContact(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_InsertContact",obj,true);
+        super.CallNewService("Json_InsertContact",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
 
-
+     Json_AddClient(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_AddClient",obj,true);
+        super.CallNewService("Json_AddClient",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+     
+     Json_SetClientAddress(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_SetClientAddress",obj,true);
+        super.CallNewService("Json_SetClientAddress",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
 }

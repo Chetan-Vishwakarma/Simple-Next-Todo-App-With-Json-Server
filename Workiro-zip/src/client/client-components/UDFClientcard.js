@@ -2,24 +2,15 @@ import { Box, Grid, TextField, Autocomplete, Switch } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import CommanCLS from "../../services/CommanService";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 function UDFClientcard({ data,setDataFromChild }) {
   console.log(data?.Table, "sdfsd", data.Table3);
   const [selectManager, setselectManagers] = useState([]);
   const [selectedDatetest, setSelectedDatetest] = useState([]);
-  const [currentDate, setCurrentDate] = useState("");
-  function getCurrentDate() {
-    const currentDate = new Date();
-    const day = currentDate.getDate().toString().padStart(2, "0");
-    const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
-    const year = currentDate.getFullYear();
-    const formattedDate = `${year}-${month}-${day}`;
-    return formattedDate;
-  }
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   let Cls = new CommanCLS(
     baseUrl,
@@ -45,23 +36,11 @@ function UDFClientcard({ data,setDataFromChild }) {
       }
     });
   };
-  const formatDate = (dateString) => {
-    console.log(dateString, "formatdatedateString");
-    try {
-      let date = getCurrentDate();
-      console.log(dateString, "currentdate", date);
-      return date;
-    } catch (error) {
-      console.error("Error formatting date:", error);
-      return "Invalid Date";
-    }
-  };
   const handleInputChange = (e) => {
     e.preventDefault();
     const { id, value } = e.target;
-    let spt = id.split('-');
-
-    console.log(spt[0], "handleInputChang111111e");
+     id.split('-');
+    console.log(e,"handleInputChang111111e");
     const data = id + ":" + value;
     console.log(data, "datahandlechange");
     setSelectedDatetest((prevData) => ({
@@ -74,6 +53,18 @@ function UDFClientcard({ data,setDataFromChild }) {
     console.log("selectedDatetest", selectedDatetest);
   };
 
+
+  const handleInputOnDateChage= (e,vl) => { 
+    
+    let date =  dayjs(e).format("YYYY/MM/DD");
+    console.log(date,vl,"handleInputChang111111e");  
+    setSelectedDatetest((prevData) => ({
+      ...prevData,
+      [vl]: date,
+    }));
+      setDataFromChild(selectedDatetest);  
+      console.log("selectedDatetestsonam",selectedDatetest);
+  };
   useEffect(() => {
     Json_GetForwardUserList();
   }, []);
@@ -177,19 +168,33 @@ function UDFClientcard({ data,setDataFromChild }) {
             if (data && data.UdfValue) {
               renderedContent = (
                 <Grid item xs={6} md={6} className="mb-3">
-                  <CalendarMonthIcon />
-                  <DatePicker
-                    showIcon
-                    dateFormat="DD/MM/YYYY"
-                    value={currentDate}
-                    // onChange={(e) => setCurrentDate(e)} // Handle date changes
-                    timeFormat={false}
-                    // isValidDate={disablePastDt}
-                    onChange={handleInputChange}
-                    closeOnSelect={true}
-                    icon="fa fa-calendar"
-                  />
-                </Grid>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DemoContainer
+                    components={[
+                      "DatePicker",
+                      "TimePicker",
+                      "DateTimePicker",
+                      "DateRangePicker",
+                    ]}
+                  >
+                   
+                      <DatePicker 
+                        // dateFormat="DD/MM/YYYY"
+                        // value={currentDate}
+                        id={
+                          data.UserDefFieldID +
+                          "_" +
+                          data.UserDefFieldTypeID +
+                          "_" +
+                          data.TextControlValue +
+                          "_UDF"
+                        }
+                       onChange={handleInputChange}
+                      />
+                    
+                  </DemoContainer>
+                </LocalizationProvider>
+              </Grid>
               );
             } else {
               renderedContent = (
@@ -215,7 +220,7 @@ function UDFClientcard({ data,setDataFromChild }) {
                             data.TextControlValue +
                             "_UDF"
                           }
-                          onChange={handleInputChange}
+                           onChange={(e)=>handleInputOnDateChage(e,`${data.UserDefFieldID}_${ data.UserDefFieldTypeID}_${data.TextControlValue}}`)}
                         />
                       
                     </DemoContainer>
@@ -269,51 +274,6 @@ function UDFClientcard({ data,setDataFromChild }) {
               );
             }
             break;
-          // case "Date":
-          //   if (data && data.UdfValue) {
-          //     renderedContent = (
-          //       <Grid item xs={6} md={6} className="mb-3">
-          //         <TextField
-          //           fullWidth
-          //           label={data.Name}
-          //           variant="outlined"
-          //           name="regLine1"
-          //           id={
-          //             data.UserDefFieldID +
-          //             "_" +
-          //             data.UserDefFieldTypeID +
-          //             "_" +
-          //             data.TextControlValue +
-          //             "_UDF"
-          //           }
-          //           // value={data.UdfValue}
-          //           onChange={handleInputChange}
-          //         />
-          //       </Grid>
-          //     );
-          //   } else {
-          //     renderedContent = (
-          //       <Grid item xs={6} md={6} className="mb-3">
-          //         <TextField
-          //           fullWidth
-          //           label={data.Name}
-          //           variant="outlined"
-          //           name="regLine1"
-          //           id={
-          //             data.UserDefFieldID +
-          //             "_" +
-          //             data.UserDefFieldTypeID +
-          //             "_" +
-          //             data.TextControlValue +
-          //             "_UDF"
-          //           }
-          //           //   value={data.UdfValue}
-          //           onChange={handleInputChange}
-          //         />
-          //       </Grid>
-          //     );
-          //   }
-          //   break;
           case "Decimal":
             if (data && data.UdfValue) {
               renderedContent = (
