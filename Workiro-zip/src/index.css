@@ -2039,6 +2039,11 @@ span.tox-statusbar__branding {
   color: #d42027;
   pointer-events: none;
 }
+.custom-datepicker-bordered {
+  border-bottom: 2px solid;
+  padding: 4px 0px 4px 0 !important;
+  font-weight: 600;
+}
 .rdtPicker tr td, .rdtPicker tr th {
   background: #fff;
   color: #000;

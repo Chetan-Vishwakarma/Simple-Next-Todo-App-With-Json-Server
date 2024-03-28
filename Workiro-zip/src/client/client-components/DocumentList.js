@@ -613,12 +613,11 @@ export default function DocumentList({ clientId }) {
                             onCallback={handleCallback}
                         >
 
-                            <div className='pointer me-2 d-flex align-items-center' id="reportrange">
+                            <div className='pointer d-flex align-items-center custom-datepicker-bordered' id="reportrange">
                                 <i className="fa fa-calendar"></i>
                                 <CalendarMonthIcon className='me-2 text-red' />
-                                <span className='font-13'>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
+                                <span className='font-14'>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
                             </div>
-
                             {/* <div
                                 id="reportrange"
                                 className="col-4"
