@@ -6,7 +6,8 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import DatePicker from 'react-datetime';
+// import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 function UDFClientcard({ data,setDataFromChild }) {
   console.log(data?.Table, "sdfsd", data.Table3);
   const [selectManager, setselectManagers] = useState([]);
@@ -80,7 +81,11 @@ function UDFClientcard({ data,setDataFromChild }) {
   useEffect(() => {
     setDataFromChild(selectedDatetest);
   }, [selectedDatetest]);
+  const disablePastDt = (date) => {
+    const today = new Date();
+    return date.isSameOrAfter(today, 'day'); // Disable past dates
 
+};
   const renderDynamicInput = (data) => {
     console.log(selectManager, "selectManagerselectManager");
     let renderedContent;
@@ -194,32 +199,28 @@ function UDFClientcard({ data,setDataFromChild }) {
             } else {
               renderedContent = (
                 <Grid item xs={6} md={6} className="mb-3">
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer
-                      components={[
-                        "DatePicker",
-                        "TimePicker",
-                        "DateTimePicker",
-                        "DateRangePicker",
-                      ]}
-                    >
-                     
-                        <DatePicker 
-                          // dateFormat="DD/MM/YYYY"
-                          // value={currentDate}
-                          id={
-                            data.UserDefFieldID +
-                            "_" +
-                            data.UserDefFieldTypeID +
-                            "_" +
-                            data.TextControlValue +
-                            "_UDF"
-                          }
-                          onChange={handleInputChange}
-                        />
-                      
-                    </DemoContainer>
-                  </LocalizationProvider>
+                   <LocalizationProvider
+                                                className="pe-0 custom-datepicker"
+                                                dateAdapter={AdapterDayjs}
+                                            >
+                                                <CalendarMonthIcon />
+                                                <DatePicker
+                                                    showIcon
+                                                    dateFormat="DD/MM/YYYY"
+                                                    value={currentDate}
+                                                    onChange={(e) => setCurrentDate(e)} // Handle date changes
+                                                    timeFormat={false}
+                                                    isValidDate={disablePastDt}
+                                                    closeOnSelect={true}
+                                                    icon="fa fa-calendar"
+                                                />
+
+                                                {/* <DatePicker className="datepicker w-100"
+                                                defaultValue={currentDate}// Set the default value using the value prop
+                                                onChange={(e) => setCurrentDate(e)} // Update the default date when the user changes it                      
+                                                inputFormat="DD/MM/YYYY" // Set the input format to "dd/mm/yyyy"
+                                            /> */}
+                                            </LocalizationProvider>
                 </Grid>
               );
             }

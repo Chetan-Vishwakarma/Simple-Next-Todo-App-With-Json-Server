@@ -23,11 +23,12 @@ import CreateNewModalTask from '../../components/CreateNewModal';
 import { red } from '@mui/material/colors';
 import moment from 'moment';
 import { ToastContainer, toast } from 'react-toastify';
-
-function UploadDocument({ openUploadDocument, setOpenUploadDocument,localtion }) {
+import { useLocation, useSearchParams } from 'react-router-dom';
+let originatorNo;
+function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 //console.log("location state",localtion.state)
-
-const { originatorNo } = localtion.state;
+const localtion = useLocation();
+try{const { originatorNo } = localtion.state;}catch(e){}
 console.log("location state1",originatorNo)
     const handleCloseDocumentUpload = () => {
         setOpenUploadDocument(false);
