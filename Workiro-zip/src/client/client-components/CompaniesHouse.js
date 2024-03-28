@@ -1,19 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { styled } from '@mui/material/styles';
-import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import LocationCityIcon from '@mui/icons-material/LocationCity';
-import MapIcon from '@mui/icons-material/Map';
-import MarkAsUnreadIcon from '@mui/icons-material/MarkAsUnread';
-import country from "../../images/uk.png";
-import PublicIcon from '@mui/icons-material/Public';
-import List from '@mui/material/List';
+// import MuiAccordion from '@mui/material/Accordion';
+// import MuiAccordionSummary from '@mui/material/AccordionSummary';
+import { Accordion, AccordionDetails, AccordionSummary, Box } from '@mui/material'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ListItem from '@mui/material/ListItem';
-import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 function CompaniesHouse() {
     return (
@@ -21,7 +15,7 @@ function CompaniesHouse() {
             {/* <Typography variant="h2" className='font-20 bold mb-2'>
                 Companies House
             </Typography> */}
-            <Box className='white-box h-100'>
+            <Box className='white-box mb-5'>
                 <Typography variant="h2" className='font-16 bold mb-2'>
                     Companies House
                 </Typography>
@@ -35,7 +29,7 @@ function CompaniesHouse() {
                         <ul className='address-list'>
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <KeyboardDoubleArrowRightIcon />
+                                    <CheckCircleIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Company number
                                     </Typography>
@@ -49,7 +43,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <KeyboardDoubleArrowRightIcon />
+                                    <CheckCircleIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Company name
                                     </Typography>
@@ -63,7 +57,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <KeyboardDoubleArrowRightIcon />
+                                    <CheckCircleIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Type
                                     </Typography>
@@ -77,7 +71,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <KeyboardDoubleArrowRightIcon />
+                                    <CheckCircleIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Status
                                     </Typography>
@@ -91,7 +85,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <KeyboardDoubleArrowRightIcon />
+                                    <CheckCircleIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Registered Office
                                     </Typography>
@@ -105,7 +99,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <KeyboardDoubleArrowRightIcon />
+                                    <CheckCircleIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Postcode
                                     </Typography>
@@ -119,7 +113,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <KeyboardDoubleArrowRightIcon />
+                                    <CheckCircleIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Confirmation statement next due
                                     </Typography>
@@ -133,7 +127,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <KeyboardDoubleArrowRightIcon />
+                                    <CheckCircleIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Date of creation
                                     </Typography>
@@ -152,7 +146,7 @@ function CompaniesHouse() {
                         <ul className='address-list'>
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <KeyboardDoubleArrowRightIcon />
+                                    <CheckCircleIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Can File
                                     </Typography>
@@ -166,7 +160,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <KeyboardDoubleArrowRightIcon />
+                                    <CheckCircleIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Has insolvency history
                                     </Typography>
@@ -180,7 +174,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <KeyboardDoubleArrowRightIcon />
+                                    <CheckCircleIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Accounts next made up to
                                     </Typography>
@@ -194,7 +188,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <KeyboardDoubleArrowRightIcon />
+                                    <CheckCircleIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Accounts next due
                                     </Typography>
@@ -209,7 +203,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <KeyboardDoubleArrowRightIcon />
+                                    <CheckCircleIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Confirmation statement next made up to
                                     </Typography>
@@ -223,7 +217,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <KeyboardDoubleArrowRightIcon />
+                                    <CheckCircleIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Next Statement Date
                                     </Typography>
@@ -238,7 +232,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <KeyboardDoubleArrowRightIcon />
+                                    <CheckCircleIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Due By
                                     </Typography>
@@ -246,14 +240,13 @@ function CompaniesHouse() {
                                 <Box className='add-details d-flex align-items-center'>
                                     <Typography variant="body2" className='font-13 sembold'>
                                         03/02/2025
-
                                     </Typography>
                                 </Box>
                             </ListItem>
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <KeyboardDoubleArrowRightIcon />
+                                    <CheckCircleIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Last Statement Date
                                     </Typography>
@@ -268,6 +261,94 @@ function CompaniesHouse() {
                     </Grid>
                 </Grid>
             </Box>
+            {/*  */}
+
+            <Box className='mb-4'>
+                <Typography variant="h2" className='font-16 bold mb-2'>
+                    Officers
+                </Typography>
+                <hr />
+                <Box className='main-accordian'>
+                    {Array(9).fill("").map(() => {
+                        return <>
+                            <Accordion className='accordian-box' defaultExpanded>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                    aria-controls="panel1-content"
+                                    id="panel1-header"
+                                >
+                                    kevin nigel salter
+                                </AccordionSummary>
+                                <AccordionDetails>
+
+                                    <Box className='table-responsive' sx={{ maxHeight: 'initial !important' }}>
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Contact Type</th>
+                                                    <td>DIRECTOR</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>FirstName</th>
+                                                    <td>Kevin Nigel</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Last Name</th>
+                                                    <td>Salter</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Date Of Birth</th>
+                                                    <td>02/01/2012</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Nationality</th>
+                                                    <td>British</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Country of Residence</th>
+                                                    <td>United Kingdom
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Country</th>
+                                                    <td>United Kingdom
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Company Address</th>
+                                                    <td>Bear Street,,Barnstaple,EX32 7DD,United Kingdom</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Appointed on</th>
+                                                    <td>02/01/2012</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Resigned on</th>
+                                                    <td>02/01/2012</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Occupation</th>
+                                                    <td>Chartered Accountant</td>
+                                                </tr>
+                                            </tbody>
+
+                                        </table>
+                                    </Box>
+                                </AccordionDetails>
+                            </Accordion></>
+                    })}
+
+                </Box>
+
+            </Box>
+
+            <Box className=''>
+                <Typography variant="h2" className='font-16 bold mb-2'>
+                    History
+                </Typography>
+                <hr />
+            </Box>
+
         </Box>
     )
 }

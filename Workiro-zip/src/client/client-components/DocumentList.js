@@ -900,8 +900,8 @@ export default function DocumentList({ clientId }) {
                 alignItems="center"
 
             >
-                <Grid item xs={12} sm={10} md={toggleScreen.multipleCardView ? 12 : 6} lg={toggleScreen.multipleCardView ? 12 : 6} className='white-box'>
-                    <Box className={toggleScreen.multipleCardView ? 'd-flex m-auto justify-content-start w-100 align-items-end' : 'd-flex m-auto w-100 align-items-end'}>
+                <Grid item xs={12} sm={10} md={toggleScreen.multipleCardView ? 12 : 6} lg={toggleScreen.multipleCardView ? 12 : 7} className='white-box'>
+                    <Box className={toggleScreen.multipleCardView ? 'd-flex m-auto justify-content-start w-100 align-items-end' : 'd-flex m-auto w-100 align-items-en'}>
                         {isAdvFilter === false && <Layout className=''>
                             <AutocompleteWrapper className='mb-2'>
                                 <AutocompleteRoot
@@ -929,9 +929,9 @@ export default function DocumentList({ clientId }) {
                         </Layout>}
                         {isAdvFilter && <><Box className={toggleScreen.multipleCardView ? 'row pe-3 d-non' : 'row w-100 pe-3 d-non'}>
                             <Box className='col-md-6'>
-                                <Box className='mb-2'>
+                                <Box className='custom-dropdown-2'>
                                     <FormControl fullWidth size='small'>
-                                        <InputLabel id="demo-simple-select-label">Select Property</InputLabel>
+                                        <InputLabel id="demo-simple-select-label" className='font-14'>Select Property</InputLabel>
                                         <Select
                                             labelId="demo-simple-select-label"
                                             id="demo-simple-select"
@@ -958,7 +958,7 @@ export default function DocumentList({ clientId }) {
                                         id="combo-box-demo"
                                         options={suggestionList}
                                         defaultValue={""}
-                                        sx={{ width: 300 }}
+                                        // sx={{ width: 300 }}
                                         size='small'
                                         value={searchByPropertyInput}
                                         onChange={(event, newValue) => {

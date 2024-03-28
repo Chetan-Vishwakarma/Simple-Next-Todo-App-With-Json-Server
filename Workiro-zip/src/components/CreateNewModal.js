@@ -34,6 +34,7 @@ import LanguageIcon from '@mui/icons-material/Language';
 import 'react-datetime/css/react-datetime.css';
 import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import {
     List,
     ListItem,
@@ -43,6 +44,9 @@ import {
     Divider,
     TextField,
 } from "@mui/material";
+import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+
 
 import dayjs from 'dayjs';
 ////////////////////////////////////////////////////////////////Dxdata Grid
@@ -71,6 +75,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import Fade from '@mui/material/Fade';
 import HtmlEditorDX from "./HtmlEditor";
+import { styled } from '@mui/material/styles';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -78,6 +83,19 @@ import { renderTimeViewClock } from "@mui/x-date-pickers";
 import moment from "moment";
 import { Toast } from "devextreme-react";
 import Reference from "../client/client-components/Reference";
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+
+const BootstrapTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+    [`& .${tooltipClasses.arrow}`]: {
+        color: theme.palette.common.black,
+    },
+    [`& .${tooltipClasses.tooltip}`]: {
+        backgroundColor: theme.palette.common.black,
+    },
+}));
+
 // 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -1279,12 +1297,12 @@ export default function CreateNewModalTask({ ...props }) {
     ////////////////// Priority
     let priorityarr = [{ id: 1, "name": "High" }, { id: 2, "name": "Normal" }, { id: 3, "name": "Low" }];
     let statusarr = [
-        { id: 1, "name": "Not Started" },
-        { id: 2, "name": "In Progress" },
-        { id: 3, "name": "Waiting on someone else" },
-        { id: 4, "name": "Deferred" },
-        { id: 5, "name": "Done" },
-        { id: 6, "name": "Completed" },
+        { id: 1, "name": "Not Started"},
+        { id: 2, "name": "In Progress"},
+        { id: 3, "name": "On Hold" },
+        { id: 4, "name": "Completed" },
+        // { id: 5, "name": "Done" },
+        // { id: 6, "name": "Completed" },
     ];
     //////////////////End Priority
 
@@ -1993,7 +2011,6 @@ export default function CreateNewModalTask({ ...props }) {
                 <span className="ps-2 create-text">Create New  </span>
             </Button> */}
 
-
             <div>
                 <Button
                     id="basic-button"
@@ -2003,7 +2020,9 @@ export default function CreateNewModalTask({ ...props }) {
                     onClick={handleClick4}
                     className="btn-blue btn-round btn-block"
                 >
-                    Create New
+                    <span className="material-symbols-outlined">edit_square</span>{" "}
+                <span className="ps-2 create-text">Create New  </span>
+                    
                 </Button>
                 <Menu
                     id="basic-menu"
@@ -2041,7 +2060,7 @@ export default function CreateNewModalTask({ ...props }) {
                                     aria-haspopup="true"
                                     aria-expanded={TastkType ? 'true' : undefined}
                                     onClick={handleClickTastkType}
-                                    className="btn-select"
+                                    className="btn-select min-width-auto"
                                 >
                                     {txtTaskType}
                                 </Button>
@@ -2055,9 +2074,18 @@ export default function CreateNewModalTask({ ...props }) {
                                     }}
                                     className="custom-dropdown"
                                 >
+                                    <MenuItem onClick={handleCloseTastkType}>
+                                        <ListItemIcon>
+                                            <DvrIcon className="font-20" />
+                                        </ListItemIcon>
+                                        CRM</MenuItem>
 
-                                    <MenuItem onClick={handleCloseTastkType} className="font-14"><DvrIcon className='me-2' /> CRM</MenuItem>
-                                    <MenuItem onClick={handleCloseTastkType} className="font-14"><LanguageIcon className='me-2' />Portal</MenuItem>
+                                    <MenuItem onClick={handleCloseTastkType}>
+                                        <ListItemIcon>
+                                            <LanguageIcon className="font-20" />
+                                        </ListItemIcon>
+                                        Portal
+                                    </MenuItem>
                                 </Menu>
                             </Box>
 
@@ -2686,27 +2714,42 @@ export default function CreateNewModalTask({ ...props }) {
                             <Box className="col-lg-4">
                                 <Box className="border-bottom mb-2">
                                     <label className="font-14 sembold">Index</label>
-
                                     <Box className="select-dropdown">
-                                        <Button
-                                            id="basic-button-folder22"
-                                            style={getButtonColorfolder()}
-                                            aria-controls={
-                                                boolFolder && selectedFolderMenu === "folder"
-                                                    ? "basic-menu"
-                                                    : undefined
-                                            }
-                                            aria-haspopup="true"
-                                            aria-expanded={
-                                                boolFolder && selectedFolderMenu === "folder"
-                                                    ? "true"
-                                                    : undefined
-                                            }
-                                            onClick={(event) => handleClick3(event, "folder")}
+                                        <BootstrapTooltip title="Folder" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
                                         >
-                                            {txtFolder}
-                                            <KeyboardArrowDownIcon />
-                                        </Button>
+                                            <Button
+                                                id="basic-button-folder22"
+                                                style={getButtonColorfolder()}
+                                                aria-controls={
+                                                    boolFolder && selectedFolderMenu === "folder"
+                                                        ? "basic-menu"
+                                                        : undefined
+                                                }
+                                                aria-haspopup="true"
+                                                aria-expanded={
+                                                    boolFolder && selectedFolderMenu === "folder"
+                                                        ? "true"
+                                                        : undefined
+                                                }
+                                                onClick={(event) => handleClick3(event, "folder")}
+                                            >
+                                                {txtFolder}
+                                                <KeyboardArrowDownIcon />
+                                            </Button>
+                                        </BootstrapTooltip>
                                         <Menu
                                             id="basic-menu"
                                             anchorEl={folderAnchorEl}
@@ -2718,7 +2761,7 @@ export default function CreateNewModalTask({ ...props }) {
                                         >
                                             <Box className='px-1'>
                                                 <TextField
-                                                    label="Search"
+                                                    label="Folder"
                                                     variant="outlined"
                                                     autoFocus
                                                     value={searchFolderQuery}
@@ -2792,25 +2835,41 @@ export default function CreateNewModalTask({ ...props }) {
                                     </Box>
 
                                     <Box className="select-dropdown">
-                                        <Button
-                                            id="basic-button-client"
-                                            style={txtColor}
-                                            aria-controls={
-                                                boolClient && selectedClientMenu === "client"
-                                                    ? "basic-menu"
-                                                    : undefined
-                                            }
-                                            aria-haspopup="true"
-                                            aria-expanded={
-                                                boolClient && selectedClientMenu === "client"
-                                                    ? "true"
-                                                    : undefined
-                                            }
-                                            onClick={(event) => handleClick3(event, "client")}
+                                        <BootstrapTooltip title="Client" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
                                         >
-                                            {txtClient}
-                                            <KeyboardArrowDownIcon />
-                                        </Button>
+                                            <Button
+                                                id="basic-button-client"
+                                                style={txtColor}
+                                                aria-controls={
+                                                    boolClient && selectedClientMenu === "client"
+                                                        ? "basic-menu"
+                                                        : undefined
+                                                }
+                                                aria-haspopup="true"
+                                                aria-expanded={
+                                                    boolClient && selectedClientMenu === "client"
+                                                        ? "true"
+                                                        : undefined
+                                                }
+                                                onClick={(event) => handleClick3(event, "client")}
+                                            >
+                                                {txtClient}
+                                                <KeyboardArrowDownIcon />
+                                            </Button>
+                                        </BootstrapTooltip>
                                         <Menu
                                             id="basic-menu"
                                             anchorEl={clientAnchorEl}
@@ -2823,7 +2882,7 @@ export default function CreateNewModalTask({ ...props }) {
                                         >
                                             <Box className='px-1' >
                                                 <TextField
-                                                    label="Search"
+                                                    label="Client"
                                                     variant="outlined"
                                                     autoFocus
                                                     value={searchQuery}
@@ -2890,24 +2949,40 @@ export default function CreateNewModalTask({ ...props }) {
                                     </Box>
 
                                     <Box className="select-dropdown">
-                                        <Button
-                                            id="basic-button-section"
-                                            aria-controls={
-                                                boolSection && selectedSectionMenu === "section"
-                                                    ? "basic-menu"
-                                                    : undefined
-                                            }
-                                            aria-haspopup="true"
-                                            aria-expanded={
-                                                boolSection && selectedSectionMenu === "section"
-                                                    ? "true"
-                                                    : undefined
-                                            }
-                                            onClick={(event) => handleClick3(event, "section")}
+                                        <BootstrapTooltip title="Sction" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
                                         >
-                                            {txtSection}
-                                            <KeyboardArrowDownIcon />
-                                        </Button>
+                                            <Button
+                                                id="basic-button-section"
+                                                aria-controls={
+                                                    boolSection && selectedSectionMenu === "section"
+                                                        ? "basic-menu"
+                                                        : undefined
+                                                }
+                                                aria-haspopup="true"
+                                                aria-expanded={
+                                                    boolSection && selectedSectionMenu === "section"
+                                                        ? "true"
+                                                        : undefined
+                                                }
+                                                onClick={(event) => handleClick3(event, "section")}
+                                            >
+                                                {txtSection}
+                                                <KeyboardArrowDownIcon />
+                                            </Button>
+                                        </BootstrapTooltip>
                                         <Menu
                                             id="basic-menu"
                                             anchorEl={sectionAnchorEl}
@@ -2919,7 +2994,7 @@ export default function CreateNewModalTask({ ...props }) {
                                         >
                                             <Box className='px-1'>
                                                 <TextField
-                                                    label="Search"
+                                                    label="Sction"
                                                     variant="outlined"
                                                     autoFocus
                                                     value={searchSectionQuery}
@@ -2984,36 +3059,35 @@ export default function CreateNewModalTask({ ...props }) {
                                     </Box>
                                 </Box>
 
-                                <Box className="border-bottom mb-2">
+                                <Box className="mb-3">
                                     <Box className="mb-2 ">
-                                        <label className="font-14 semibold">Due By</label>
+                                        <label className="font-14 semibold mb-1">Due By </label>
 
+                                        <Box className='custom-datepicker'>
+                                            <LocalizationProvider
+                                                className="pe-0 custom-datepicker"
+                                                dateAdapter={AdapterDayjs}
+                                            >
+                                                <CalendarMonthIcon />
+                                                <DatePicker
+                                                    showIcon
+                                                    dateFormat="DD/MM/YYYY"
+                                                    value={currentDate}
+                                                    onChange={(e) => setCurrentDate(e)} // Handle date changes
+                                                    timeFormat={false}
+                                                    isValidDate={disablePastDt}
+                                                    closeOnSelect={true}
+                                                    icon="fa fa-calendar"
+                                                />
 
-
-                                        <LocalizationProvider
-                                            className="pe-0"
-                                            dateAdapter={AdapterDayjs}
-                                        >
-
-                                            <DatePicker className=" w-100"
-                                                showIcon
-                                                dateFormat="DD/MM/YYYY"
-                                                value={currentDate}
-                                                onChange={(e) => setCurrentDate(e)} // Handle date changes
-                                                timeFormat={false}
-                                                isValidDate={disablePastDt}
-                                                closeOnSelect={true}
-                                                icon="fa fa-calendar"
-
-                                            />
-
-
-                                            {/* <DatePicker className="datepicker w-100"
+                                                {/* <DatePicker className="datepicker w-100"
                                                 defaultValue={currentDate}// Set the default value using the value prop
                                                 onChange={(e) => setCurrentDate(e)} // Update the default date when the user changes it                      
                                                 inputFormat="DD/MM/YYYY" // Set the input format to "dd/mm/yyyy"
                                             /> */}
-                                        </LocalizationProvider>
+                                            </LocalizationProvider>
+                                        </Box>
+
                                     </Box>
                                 </Box>
 
@@ -3027,62 +3101,63 @@ export default function CreateNewModalTask({ ...props }) {
                                     
                                 </Box> */}
 
-                                <Box className="mb-2 border-bottom">
-                                    <label className="font-14">Start Date</label>
-                                    <LocalizationProvider
-                                        className="pe-0"
-                                        dateAdapter={AdapterDayjs}
-                                    >
-
-                                        <DatePicker className=" w-100"
-                                            showIcon
-                                            dateFormat="DD/MM/YYYY"
-                                            value={nextDate}
-                                            onChange={(e) => setNextDate(e)} // Handle date changes
-                                            timeFormat={false}
-                                            isValidDate={disablePastDt}
-                                            closeOnSelect={true}
-                                            icon="fa fa-calendar"
-
-                                        />
-
-
-                                    </LocalizationProvider>
+                                <Box className="mb-3">
+                                    <label className="font-14 mb-1">Start Date</label>
+                                    <Box className='custom-datepicker'>
+                                        <LocalizationProvider
+                                            className="pe-0"
+                                            dateAdapter={AdapterDayjs}
+                                        >
+                                            <CalendarMonthIcon />
+                                            <DatePicker className=" w-100"
+                                                showIcon
+                                                dateFormat="DD/MM/YYYY"
+                                                value={nextDate}
+                                                onChange={(e) => setNextDate(e)} // Handle date changes
+                                                timeFormat={false}
+                                                isValidDate={disablePastDt}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
+                                            />
+                                        </LocalizationProvider>
+                                    </Box>
                                 </Box>
 
-                                <Box className="mb-2 border-bottom">
+                                <Box className="mb-2">
                                     <label className="font-14 d-block" sx={{ with: "30%" }}>
                                         Remind me
                                         <Checkbox onChange={handleRemindMe} {...label} size="small" />
                                     </label>
 
-
-
                                     {isRemindMe && (<>
-                                        <label className="font-14 d-block">Reminder Date</label>
-                                        <LocalizationProvider
-                                            className="pe-0"
-                                            dateAdapter={AdapterDayjs}
-                                            timeFormat={false}
-                                            isValidDate={disablePastDtTwoDate}
-                                        >
+                                        <label className="font-14 d-block mb-1">Reminder Date</label>
 
-                                            <DatePicker className=" w-100"
-                                                showIcon
-                                                dateFormat="DD/MM/YYYY"
-                                                value={remiderDate}
-                                                onChange={(e) => setRemiderDate(e)} // Handle date changes
-
+                                        <Box className='custom-datepicker'>
+                                            <CalendarMonthIcon />
+                                            <LocalizationProvider
+                                                className="pe-0"
+                                                dateAdapter={AdapterDayjs}
                                                 timeFormat={false}
                                                 isValidDate={disablePastDtTwoDate}
-                                                closeOnSelect={true}
+                                            >
 
-                                                icon="fa fa-calendar"
+                                                <DatePicker className=" w-100"
+                                                    showIcon
+                                                    dateFormat="DD/MM/YYYY"
+                                                    value={remiderDate}
+                                                    onChange={(e) => setRemiderDate(e)} // Handle date changes
 
-                                            />
+                                                    timeFormat={false}
+                                                    isValidDate={disablePastDtTwoDate}
+                                                    closeOnSelect={true}
+                                                    placeholder='Reminder Date'
 
+                                                    icon="fa fa-calendar"
 
-                                        </LocalizationProvider>
+                                                />
+                                            </LocalizationProvider>
+                                        </Box>
+
                                     </>)}
 
 
@@ -3113,17 +3188,32 @@ export default function CreateNewModalTask({ ...props }) {
                                 </Box>
 
                                 <Box className="select-dropdown">
-
-                                    <Button
-                                        id="basic-button-section"
-                                        aria-controls={openpriority ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={openpriority ? 'true' : undefined}
-                                        onClick={handleClickpriority}
+                                    <BootstrapTooltip title="Select Priority" arrow
+                                        placement="bottom-start"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
                                     >
-                                        {txtPrioriy}
-                                        <KeyboardArrowDownIcon />
-                                    </Button>
+                                        <Button
+                                            id="basic-button-section"
+                                            aria-controls={openpriority ? 'basic-menu' : undefined}
+                                            aria-haspopup="true"
+                                            aria-expanded={openpriority ? 'true' : undefined}
+                                            onClick={handleClickpriority}
+                                        >
+                                            {txtPrioriy}
+                                            <KeyboardArrowDownIcon />
+                                        </Button>
+                                    </BootstrapTooltip>
                                     <Menu
                                         id="basic-menu"
                                         anchorEl={anchorElpriority}
@@ -3141,7 +3231,14 @@ export default function CreateNewModalTask({ ...props }) {
                                                         setTxtPriority(item.name); // Assuming item.Client holds the value you want
                                                         setTxtPriorityId(item.id)
                                                         setAnchorElPrior(null);
-                                                    }}>{item.name}</MenuItem>
+                                                    }}
+                                                        className='ps-2'
+                                                    >
+                                                        <ListItemIcon>
+                                                            <PanoramaFishEyeIcon fontSize="medium" />
+                                                        </ListItemIcon>
+
+                                                        {item.name}</MenuItem>
                                                     {/* <Divider variant="inset" component="li" /> */}
                                                 </React.Fragment>
                                             ))
@@ -3152,16 +3249,32 @@ export default function CreateNewModalTask({ ...props }) {
                                 </Box>
 
                                 <Box className="select-dropdown">
-                                    <Button
-                                        id="basic-button-section"
-                                        aria-controls={openstatus ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={openstatus ? 'true' : undefined}
-                                        onClick={handleClickstatus}
+                                    <BootstrapTooltip title="Select Status" arrow
+                                        placement="bottom-start"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
                                     >
-                                        {txtStatus}
-                                        <KeyboardArrowDownIcon />
-                                    </Button>
+                                        <Button
+                                            id="basic-button-section"
+                                            aria-controls={openstatus ? 'basic-menu' : undefined}
+                                            aria-haspopup="true"
+                                            aria-expanded={openstatus ? 'true' : undefined}
+                                            onClick={handleClickstatus}
+                                        >
+                                            {txtStatus}
+                                            <KeyboardArrowDownIcon />
+                                        </Button>
+                                    </BootstrapTooltip>
                                     <Menu
                                         id="basic-menu"
                                         anchorEl={anchorElstatus}
@@ -3170,6 +3283,7 @@ export default function CreateNewModalTask({ ...props }) {
                                         MenuListProps={{
                                             'aria-labelledby': 'basic-button',
                                         }}
+                                        className="custom-dropdown"
                                     >
                                         {statusarr
                                             ? statusarr.map((item, index) => (
@@ -3178,7 +3292,13 @@ export default function CreateNewModalTask({ ...props }) {
                                                         //console.log("client select", item.name);
                                                         setTxtStatus(item.name); // Assuming item.Client holds the value you want
                                                         setAnchorElstatus(null);
-                                                    }}>{item.name}</MenuItem>
+                                                    }}>
+
+                                                        <ListItemIcon>
+                                                            <RadioButtonUncheckedIcon fontSize="medium" className="text-success" />
+                                                        </ListItemIcon>
+
+                                                        {item.name}</MenuItem>
 
                                                 </React.Fragment>
                                             ))
@@ -3358,6 +3478,6 @@ export default function CreateNewModalTask({ ...props }) {
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
-        </React.Fragment>
+        </React.Fragment >
     );
 }

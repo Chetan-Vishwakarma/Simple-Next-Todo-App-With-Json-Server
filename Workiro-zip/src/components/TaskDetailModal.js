@@ -1624,7 +1624,7 @@ const rows = [
                         </Box>
                         <Box className="d-flex mt-3">
                             <Box className="mb-2 me-3">
-                                <label className="font-14 text-black">Start Date</label>
+                                <label className="font-14 text-black mb-1">Start Date</label>
                                 <Box className='custom-datepicker'>
                                     <CalendarMonthIcon />
                                     <DatePicker
@@ -1642,7 +1642,7 @@ const rows = [
 
                             <Box className="mb-2" sx={{ float: "right" }}>
                                 <Box className="mb-2 ">
-                                    <label className="font-14 semibold text-black">
+                                    <label className="font-14 semibold text-black mb-1">
                                         Due By
                                     </label>
                                     <Box className='custom-datepicker'>
