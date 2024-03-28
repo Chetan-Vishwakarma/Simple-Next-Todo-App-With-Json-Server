@@ -88,7 +88,10 @@ function Reference() {
     MainPostcodeName:"",
     Maincontactcountry:"",
     MainTelephoneName:"",
-    MainMobileName:""
+    MainMobileName:"",
+    mainCountry:"",
+    billingsCountry:"",
+    ragistersCountry:""
   });
   console.log("userDetailuserDetail",userDetail);
   const [originatorNo, setoriginatorNo] = useState("");
@@ -219,79 +222,76 @@ function Reference() {
       console.log("Error while calling Json_GetClientCardDetails", err);
     }
   };
-  // const Json_SetClientAddress = (objdata) => {
-  //   CallApi(objdata, "Json_SetClientAddress", function (res) {
-  //     if (res) {
-  //       console.log(res, "Json_SetClientAddress");
-  //     } else {
-  //     }
-  //   });
-  // };
-  // const mainAddress = () => {
-  //   let obj = {
-  //     agrno: agrno,
-  //     Email: Email,
-  //     password: password,
-  //     OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
-  //     AddressId: 1,
-  //     AddressType: "Main Address",
-  //     Add1: userDetail.Line1 ? userDetail.Line1 : "",
-  //     Add2: userDetail.Line2 ? userDetail.Line2 : "",
-  //     Add3: userDetail.Line3 ? userDetail.Line3 : "",
-  //     Town: userDetail.Town ? userDetail.Town : "",
-  //     County: userDetail.MCounty ? userDetail.MCounty : "",
-  //     Postcode: userDetail.Postcode ? userDetail.Postcode : "",
-  //     Country: mainCountry,
-  //   };
-  //   console.log(obj, "mainaddress");
-  //   Json_SetClientAddress(obj);
-  // };
+  const Json_SetClientAddress = (objdata) => {
+    Cls.Json_SetClientAddress(objdata, (sts, data) => {
+      if (sts) {
+        if (data== "Success") {
+          console.log("Json_SetClientAddress", data);
+        }
+      }
+    });
+  };
+  const mainAddress = () => {
+    let obj = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
+      AddressId: 1,
+      AddressType: "Main Address",
+      Add1: userDetail.Line1 ? userDetail.Line1 : "",
+      Add2: userDetail.Line2 ? userDetail.Line2 : "",
+      Add3: userDetail.Line3 ? userDetail.Line3 : "",
+      Town: userDetail.Town ? userDetail.Town : "",
+      County: userDetail.MCounty ? userDetail.MCounty : "",
+      Postcode: userDetail.Postcode ? userDetail.Postcode : "",
+      Country: userDetail.mainCountry,
+    };
+    console.log(obj, "mainaddress");
+    Json_SetClientAddress(obj);
+  };
 
-  // const billingAddress = () => {
-  //   let obj = {
-  //     agrno: agrno,
-  //     Email: Email,
-  //     password: password,
-  //     OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
-  //     AddressId: 2,
-  //     AddressType: "Billing Address",
-  //     Add1: userDetail.BilLine1 ? userDetail.BilLine1 : "",
-  //     Add2: userDetail.BilLine2 ? userDetail.BilLine2 : "",
-  //     Add3: userDetail.BilLine3 ? userDetail.BilLine3 : "",
-  //     Town: userDetail.BilTown ? userDetail.BilTown : "",
-  //     County: userDetail.BilCountry ? userDetail.BilCountry : "",
-  //     Postcode: userDetail.BilPostcode ? userDetail.BilPostcode : "",
-  //     Country: billingsCountry,
-  //   };
-  //   console.log(obj, "mainaddress11");
-  //   Json_SetClientAddress(obj);
-  // };
-  // const ragisterAddress = () => {
-  //   let obj = {
-  //     agrno: agrno,
-  //     Email: Email,
-  //     password: password,
-  //     OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
-  //     AddressId: 1,
-  //     AddressType: "Registered Address",
-  //     Add1: userDetail.regLine1 ? userDetail.regLine1 : "",
-  //     Add2: userDetail.regLine2 ? userDetail.regLine2 : "",
-  //     Add3: userDetail.regLine3 ? userDetail.regLine3 : "",
-  //     Town: userDetail.regTown ? userDetail.regTown : "",
-  //     County: userDetail.regCountry ? userDetail.regCountry : "",
-  //     Postcode: userDetail.regPostcode ? userDetail.regPostcode : "",
-  //     Country: ragistersCountry,
-  //   };
-  //   console.log(obj, "mainaddress22");
+  const billingAddress = () => {
+    let obj = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
+      AddressId: 2,
+      AddressType: "Billing Address",
+      Add1: userDetail.BilLine1 ? userDetail.BilLine1 : "",
+      Add2: userDetail.BilLine2 ? userDetail.BilLine2 : "",
+      Add3: userDetail.BilLine3 ? userDetail.BilLine3 : "",
+      Town: userDetail.BilTown ? userDetail.BilTown : "",
+      County: userDetail.BilCountry ? userDetail.BilCountry : "",
+      Postcode: userDetail.BilPostcode ? userDetail.BilPostcode : "",
+      Country: userDetail.billingsCountry,
+    };
+    console.log(obj, "mainaddress11");
+    Json_SetClientAddress(obj);
+  };
+  const ragisterAddress = () => {
+    let obj = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
+      AddressId: 1,
+      AddressType: "Registered Address",
+      Add1: userDetail.regLine1 ? userDetail.regLine1 : "",
+      Add2: userDetail.regLine2 ? userDetail.regLine2 : "",
+      Add3: userDetail.regLine3 ? userDetail.regLine3 : "",
+      Town: userDetail.regTown ? userDetail.regTown : "",
+      County: userDetail.regCountry ? userDetail.regCountry : "",
+      Postcode: userDetail.regPostcode ? userDetail.regPostcode : "",
+      Country: userDetail.ragistersCountry,
+    };
+    console.log(obj, "mainaddress22");
 
-  //   Json_SetClientAddress(obj);
-  // };
+    Json_SetClientAddress(obj);
+  };
   const handleSubmit = (event) => {
     event.preventDefault();
-    // let agrno = localStorage.getItem("agrno");
-    // let email = localStorage.getItem("email");
-    // let password = localStorage.getItem("pass");
-    // let projectId = localStorage.getItem("projectid");
     function todayDate() {
       var today = new Date().toJSON().slice(0, 10);
       return today;
@@ -325,30 +325,21 @@ function Reference() {
     };
     Json_InsertContact();
     console.log(clientdata,"clientdata");
-    // CallApi(clientdata, "Json_AddClient", function (res) {
-    //   if (res) {
-    //     let str = JSON.parse(JSON.stringify(res));
-    //     let json = JSON.parse(str.d);
-    //     console.log(json, "Json_AddClient");
-    //     if (json.Status == "Success") {
-    //       mainAddress();
-    //       billingAddress();
-    //       ragisterAddress();
-    //       createDefaultTeam();
-    //     } else {
-    //       setAlertContent("Reference ID Already Exist");
-    //       setAlert(true);
-    //       setTimeout(() => {
-    //         setAlert(false);
-    //       }, 3000); // Hide after 5 seconds
-    //     }
-    //   } else {
-    //     // Handle error if needed
-    //   }
-    // });
+    Cls.Json_AddClient(clientdata, (sts, data) => {
+      if (sts) {
+        if (data== "Success") {
+          console.log("Response", data);
+          Json_InsertContact();
+          saveUDF();
+          mainAddress();
+          billingAddress();
+          ragisterAddress();
+        }
+      }
+    });
   };
   const Json_InsertContact = () => {
-    let clientdata = {
+    let InsertContact = {
       agrno: agrno,
       strEmail: Email,
       password: password,
@@ -374,28 +365,19 @@ function Reference() {
       Salutation: userDetail.Title ? userDetail.Title : "",
       accid: agrno
   }
-    console.log(clientdata,"Json_InsertContact");
-    // CallApi(clientdata, "Json_InsertContact", function (res) {
-    //   if (res) {
-    //     let str = JSON.parse(JSON.stringify(res));
-    //     let json = JSON.parse(str.d);
-    //     console.log(json, "Json_AddClient");
-    //     if (json.Status == "Success") {
-    //       mainAddress();
-    //       billingAddress();
-    //       ragisterAddress();
-    //       createDefaultTeam();
-    //     } else {
-    //       setAlertContent("Reference ID Already Exist");
-    //       setAlert(true);
-    //       setTimeout(() => {
-    //         setAlert(false);
-    //       }, 3000); // Hide after 5 seconds
-    //     }
-    //   } else {
-    //     // Handle error if needed
-    //   }
-    // });
+    console.log(InsertContact,"Json_InsertContact");
+    Cls.Json_InsertContact(InsertContact, (sts, data) => {
+      if (sts) {
+        if (data== "Success") {
+          console.log("Response", data);
+          // var urladd = "add_contact_update.html?Edata=" + oring + ":" + localStorage.getItem("DefaultFolderID") + "&CNO=" + ContactNo;
+
+          // setTimeout(function () {
+          //  location.href = urladd;
+          // }, 2000); // 2000 milliseconds = 2 seconds
+        }
+      }
+    });
   };
   const saveUDF = () => {
     const result = Object.entries(dataFromChild)
@@ -413,17 +395,13 @@ function Reference() {
         ContactUDFString:""	,
         ContactNo:""
     }
-    
-    // CallApi(requestBody, "Json_CRMSaveUDFValues", function (res: any) {
-    //     if (res) {
-    //       console.log(res, "response11");
-    //    //    let str = JSON.parse(JSON.stringify(res));
-    //    //    let json = JSON.parse(str.d);
-         
-    //     } else {
-    //       // Handle error if needed
-    //     }
-    //   });
+    Cls.Json_CRMSaveUDFValues(requestBody, (sts, data) => {
+      if (sts) {
+        if (data) {
+          console.log("Json_CRMSaveUDFValues", data);
+        }
+      }
+    });
   }
   useEffect(() => {
    
