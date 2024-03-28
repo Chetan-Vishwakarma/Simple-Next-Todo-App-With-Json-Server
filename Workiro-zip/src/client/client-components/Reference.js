@@ -415,86 +415,7 @@ function Reference() {
 
   return (
     <Box className="container-fluid p-0">
-      <Box className="d-flex align-items-center justify-content-between flex-wrap">
-        <Box className="d-flex flex-wrap align-items-center">
-          <Typography variant="h2" className="title me-3 mb-2" gutterBottom>
-            {/* {clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName} */}
-          </Typography>
-
-          <ToggleButton
-            value="check"
-            selected={selected}
-            // onChange={() => {
-            //     //setSelected(!selected);
-            //     if (selected) {
-            //         Json_RemoveToFavourite();
-            //     } else {
-            //         Json_AddToFavourite();
-            //     }
-
-            // }}
-            className="mb-2 btn-favorite"
-          >
-            <FavoriteIcon />
-          </ToggleButton>
-        </Box>
-
-        <Box className="d-flex flex-wrap">
-          <Button
-            className="btn-blue-2 me-2 mb-1"
-            size="small"
-            startIcon={<BorderColorIcon />}
-          >
-            Edit Client
-          </Button>
-          <Button
-            className="btn-blue-2 me-2 mb-1"
-            size="small"
-            startIcon={<GroupAddIcon />}
-          >
-            Add Client
-          </Button>
-          <Button
-            className="btn-blue-2 me-2 mb-1"
-            size="small"
-            startIcon={<DeleteIcon />}
-          >
-            Notes
-          </Button>
-          <Button
-            className="btn-blue-2 mb-1"
-            size="small"
-            startIcon={<EmailIcon />}
-            onClick={handleClickOpenUploadDocument}
-          >
-            Add Document
-          </Button>
-        </Box>
-      </Box>
-
-      <UploadDocument
-        setOpenUploadDocument={setOpenUploadDocument}
-        openUploadDocument={openUploadDocument}
-      ></UploadDocument>
-
       <Box sx={{ width: "100%", typography: "body1" }} className="mt-4 pt-1">
-        <TabContext value={value}>
-          <Box>
-            <TabList
-              onChange={handleChange}
-              aria-label="lab API tabs example"
-              className="custom-tabs"
-            >
-              <Tab label="General" value="1" />
-              <Tab label="Address" value="2" />
-              <Tab label="Contact" value="3" />
-              <Tab label="Tasks" value="4" />
-              <Tab label="Documents" value="5" />
-              <Tab label="Companies House" value="6" />
-              <Tab label="Requested Document" value="7" />
-            </TabList>
-          </Box>
-          <TabPanel value="1" className="p-0">
             <Box className="general-tab white-box">
               <Box className="row mb-3">
                 <h5>Client Details</h5>
@@ -547,17 +468,6 @@ function Reference() {
                 </Button>{" "}
               </div>
             </Box>
-          </TabPanel>
-          <TabPanel value="2">Item Two</TabPanel>
-          <TabPanel value="3">Item Three</TabPanel>
-          <TabPanel value="4">Item Three</TabPanel>
-
-          <TabPanel value="5" className="p-0">
-            <DocumentList clientId={originatorNo}></DocumentList>
-          </TabPanel>
-          <TabPanel value="6">Item Three</TabPanel>
-          <TabPanel value="7">Item Three</TabPanel>
-        </TabContext>
       </Box>
     </Box>
   );
