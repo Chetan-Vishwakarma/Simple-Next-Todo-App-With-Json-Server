@@ -288,7 +288,7 @@ export default function SidebarNav() {
 
   const [tabs, setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active: false }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false }, { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active: false }]);
 
-  const [searchInputForGlobalSearch,setSearchInputForGlobalSearch] = useState("");
+  const [searchInputForGlobalSearch, setSearchInputForGlobalSearch] = useState("");
 
   React.useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
@@ -323,13 +323,14 @@ export default function SidebarNav() {
   useEffect(() => {
     const data = setTimeout(() => {
       Json_AdvanceSearchDoc();
-    }, 1000);
+
+    }, 500);
     return () => clearTimeout(data);
   }, [forDocuments]);
 
   return (
     <>
-      <Box className='d-block d-md-flex' onClick={()=>setIsSearch(false)}>
+      <Box className='d-block d-md-flex' onClick={() => setIsSearch(false)}>
         <CssBaseline />
         <AppBar className='header' position="fixed" open={open} color='inherit'>
           <Toolbar>
@@ -376,23 +377,6 @@ export default function SidebarNav() {
                         </form>
                       </AutocompleteRoot>
                       {isSearch && <Listbox sx={{ zIndex: 1 }}>
-                        {documentsDescription.length > 0 && documentsDescription.slice(0, 20).map((itm, i) => {
-                          return <Option key={i} onClick={(e) => {
-                            e.stopPropagation();
-                            setIsSearch(false);
-                            navigate("/dashboard/SearchResult?str=" + itm);
-                            setSearchInputForGlobalSearch(itm);
-                            tabs.map(itm => {
-                              if (itm.tabName === "Search Result") {
-                                itm.active = true;
-                              } else {
-                                itm.active = false;
-                              }
-                            });
-                          }}>
-                            <DescriptionIcon className='me-1' />
-                            {itm}</Option>
-                        })}
 
                         {filteredTaskSubjects.length > 0 && filteredTaskSubjects.slice(0.20).map((itm, i) => {
                           return <Option key={i} onClick={(e) => {
@@ -411,6 +395,25 @@ export default function SidebarNav() {
                             <FormatListNumberedRtlIcon className='me-1' />
                             {itm}</Option>
                         })}
+
+                        {documentsDescription.length > 0 && documentsDescription.slice(0, 20).map((itm, i) => {
+                          return <Option key={i} onClick={(e) => {
+                            e.stopPropagation();
+                            setIsSearch(false);
+                            navigate("/dashboard/SearchResult?str=" + itm);
+                            setSearchInputForGlobalSearch(itm);
+                            tabs.map(itm => {
+                              if (itm.tabName === "Search Result") {
+                                itm.active = true;
+                              } else {
+                                itm.active = false;
+                              }
+                            });
+                          }}>
+                            <DescriptionIcon className='me-1' />
+                            {itm}</Option>
+                        })}
+
                       </Listbox>}
                       {/* {groupedOptions.length > 0 && (
                         <Listbox {...getListboxProps()}>
@@ -651,7 +654,7 @@ export default function SidebarNav() {
             <Route path="/TodoList" element={<NewTodoList />} />
             <Route path="/SmartViews" element={<></>} />
             <Route path="/SearchResult" element={<SearchResult myTotalTasks={myTotalTasks} myDocuments={myDocuments} />} />
-            <Route path="/DocumentList" element={<DocumentList clientId=""/> } />
+            <Route path="/DocumentList" element={<DocumentList clientId="" />} />
             <Route path="/LogOut" element={<Logout />} />
           </Routes>
         </Box>
