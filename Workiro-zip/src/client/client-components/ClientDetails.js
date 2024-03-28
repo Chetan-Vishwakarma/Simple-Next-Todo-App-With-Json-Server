@@ -17,22 +17,27 @@ import ClientOverview from './ClientOverview';
 //import Utils from "../../services/Utils";
 import CommanCLS from '../../services/CommanService';
 import UdfCard from './UdfCard';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 // import DocumentList from './Document';
 import DocumentList from './DocumentList';
 import UploadDocument from './UploadDocument';
 import ClientAddress from './ClientAddress';
 import Contact from './Contact';
 import CompaniesHouse from './CompaniesHouse';
+import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
 
 
 
 function ClientDetails() {
 
     const location = useLocation();
-    const { agrno, Email, password, folderId, originatorNo } = location.state;
+
+    const [searchParams,setSearchParams] = useSearchParams();
+    const tabValue = searchParams.get("val");
+
+    const { agrno, Email, password, folderId, originatorNo, globalSearchDocs } = location.state;
     const [selected, setSelected] = React.useState(false);
-    const [value, setValue] = React.useState('1');
+    const [value, setValue] = React.useState(tabValue?tabValue:'1');
     const [clientDetails, setClientDetails] = useState({});
 
     const [companyDetails, setCompanyDetails] = useState([]);
@@ -170,7 +175,10 @@ function ClientDetails() {
 
     return (
         <Box className="container-fluid p-0">
-            <Box className="d-flex align-items-center justify-content-between flex-wrap">
+
+            <CustomBreadCrumbs tabs={[{tabLink:"/dashboard/Connections",tabName:"Connections"},{tabLink:"/dashboard/clientDetails",tabName:"Client Details"}]}/>
+
+            {globalSearchDocs.length===0&&<Box className="d-flex align-items-center justify-content-between flex-wrap">
                 <Box className='d-flex flex-wrap align-items-center'>
                     <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
                         {clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}
@@ -202,7 +210,7 @@ function ClientDetails() {
                         onClick={handleClickOpenUploadDocument}
                     >Add Document</Button>
                 </Box>
-            </Box>
+            </Box>}
 
             <UploadDocument setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument} localtion={location}
             ></UploadDocument>
@@ -246,7 +254,7 @@ function ClientDetails() {
                     </TabPanel>
 
                     <TabPanel value="5" className='p-0'>
-                        <DocumentList clientId={originatorNo} ></DocumentList>
+                        <DocumentList clientId={originatorNo} globalSearchDocs={globalSearchDocs} ></DocumentList>
                     </TabPanel>
 
                     {/* <TabPanel value="5">

@@ -17,6 +17,7 @@ import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import CustomBreadCrumbs from '../components/CustomBreadCrumbs';
 
 
 const CommonFilters = [
@@ -596,7 +597,8 @@ function Client() {
                 Email: Email,
                 password: password,
                 folderId: folderId,
-                originatorNo: clientId
+                originatorNo: clientId,
+                globalSearchDocs:[]
             }
         })
     }
@@ -671,7 +673,7 @@ function Client() {
     return (
         <Box className='container-fluid p-0' onClick={handleClick}>
 
-
+            <CustomBreadCrumbs tabs={[{tabLink:"/dashboard/Connections",tabName:"Connections"}]}/>
 
 
             {/* <div role="presentation" className='mb-2 mb-3 '>
