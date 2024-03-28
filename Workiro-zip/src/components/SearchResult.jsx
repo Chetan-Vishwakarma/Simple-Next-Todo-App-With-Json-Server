@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import DocumentList from '../client/client-components/DocumentList';
 
 function SearchResult({ myTotalTasks, myDocuments }) {
     const navigate = useNavigate();
@@ -30,16 +31,17 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     }, [target]);
 
     const handleDocumentNavigation=()=>{
-        navigate("/dashboard/clientDetails?val=5",{
-            state:{
-                agrno: "",
-                Email: "",
-                password: "",
-                folderId: "",
-                originatorNo: "",
-                globalSearchDocs:filteredDocuments
-            }
-        });
+        navigate("/dashboard/DocumentList",{state:{globalSearchDocs:filteredDocuments}});
+        // navigate("/dashboard/clientDetails?val=5",{
+        //     state:{
+        //         agrno: "",
+        //         Email: "",
+        //         password: "",
+        //         folderId: "",
+        //         originatorNo: "",
+        //         globalSearchDocs:filteredDocuments
+        //     }
+        // });
     }
     return (
         <>
@@ -56,6 +58,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
             })}
             {filteredDocuments.length>10 && <button onClick={handleDocumentNavigation}>View More</button>}
 
+            {/* <DocumentList clientId={""} globalSearchDocs={filteredDocuments}/> */}
         </>
     )
 }

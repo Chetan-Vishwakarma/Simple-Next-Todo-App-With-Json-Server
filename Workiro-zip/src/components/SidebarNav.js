@@ -41,6 +41,7 @@ import NewTodoList from './NewTodoList';
 import FormatListNumberedRtlIcon from '@mui/icons-material/FormatListNumberedRtl';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SearchResult from './SearchResult';
+import DocumentList from '../client/client-components/DocumentList';
 
 let options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
 
@@ -650,6 +651,7 @@ export default function SidebarNav() {
             <Route path="/TodoList" element={<NewTodoList />} />
             <Route path="/SmartViews" element={<></>} />
             <Route path="/SearchResult" element={<SearchResult myTotalTasks={myTotalTasks} myDocuments={myDocuments} />} />
+            <Route path="/DocumentList" element={<DocumentList clientId=""/> } />
             <Route path="/LogOut" element={<Logout />} />
           </Routes>
         </Box>
