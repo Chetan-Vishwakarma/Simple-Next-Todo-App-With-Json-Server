@@ -58,6 +58,7 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
         options: mangers,
         getOptionLabel: (option) => option.UserName || "",
       };
+      
     const onChange = (e) => {
         e.preventDefault();
         let data = { ...userDetail };
@@ -66,6 +67,73 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
         data = { ...data, [name]: val };
         console.log(data, "dataOnchange", e);
         setUserDetail(data);
+      };
+      const onChangecheckbox = (e) => {
+        e.preventDefault();
+        let data = { ...userDetail };
+        let name = e.target.name;
+        let val = e.target.checked;
+        data = { ...data, [name]: val };
+        console.log(data, "dataOnchange", e);
+        setUserDetail(data);
+      };
+      const onChangeUser = (
+        event,
+        value
+      ) => {
+        event.preventDefault();
+        if (value) {
+          // Update the selectedFolderID state with the FolderID of the selected option
+          // managerData = value.UserId;
+          // setSelectedUserId(value.UserId);
+          // console.log(value.UserId, "UserId", selectedUserId);
+          let data = { ...userDetail };  
+          data = { ...data, ["MainUserId"]:  value.UserId };
+          console.log(data, "dataOnchange");
+          setUserDetail(data);
+        } else {
+          // If no option is selected, clear the selectedFolderID state
+          // setSelectedUserId(null);
+        }
+      };
+     
+      const onChangetitle = (
+        event,
+        value
+      ) => {
+        event.preventDefault();
+        if (value) {
+          // Update the selectedFolderID state with the FolderID of the selected option
+          // managerData = value.UserId;
+          // setSelectedUserId(value.UserId);
+          // console.log(value.UserId, "UserId", selectedUserId);
+          let data = { ...userDetail };  
+          data = { ...data, ["Title"]:  value.label };
+          console.log(data, "onChangetitle");
+          setUserDetail(data);
+        } else {
+          // If no option is selected, clear the selectedFolderID state
+          // setSelectedUserId(null);
+        }
+      };
+      const onChangecountry = (
+        event,
+        value
+      ) => {
+        event.preventDefault();
+        if (value) {
+          // Update the selectedFolderID state with the FolderID of the selected option
+          // managerData = value.UserId;
+          // setSelectedUserId(value.UserId);
+          // console.log(value.UserId, "UserId", selectedUserId);
+          let data = { ...userDetail };  
+          data = { ...data, ["Maincontactcountry"]:  value.label };
+          console.log(data, "onChangetitle");
+          setUserDetail(data);
+        } else {
+          // If no option is selected, clear the selectedFolderID state
+          // setSelectedUserId(null);
+        }
       };
       useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
@@ -80,6 +148,7 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
       <FormControl fullWidth variant="outlined">
         <Autocomplete
           // {...userlistdata}
+          options={titleData}
           // options={mangers.map((manager: UserList) => ({
           //   id: manager.UserId,
           //   label: manager.UserName
@@ -88,7 +157,7 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
           // id={`clear-on-escape-manager`}
           key={`uniques-manager`}
           // value={defaultUser || null}
-          // onChange={onChangeuser}
+          onChange={onChangetitle}
           clearOnEscape
           renderInput={(params) => (
             <TextField
@@ -111,7 +180,7 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
         variant="outlined"
         label="First Name"
         name="FirstName"
-        // value={userDetail.Clientname}
+        value={userDetail.FirstName}
         onChange={onChange}
       />
     </Grid>
@@ -123,7 +192,7 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
         label="Last Name"
         variant="outlined"
         name="LastName"
-        // value={userDetail.Clientname}
+        value={userDetail.LastName}
         onChange={onChange}
       />
     </Grid>
@@ -136,7 +205,7 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
         label="Reference Name"
         variant="outlined"
         name="ReferenceName"
-        // value={userDetail.Clientname}
+        value={userDetail.ReferenceName}
         onChange={onChange}
       />
     </Grid>
@@ -146,10 +215,10 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
         control={
           <Switch
             // defaultChecked
-            // onChange={(e) =>
-            //   handleChangeTabs(e, i, item1)
-            // }
+           
             name="MainContact"
+            onChange={onChangecheckbox}
+            value={userDetail.MainContact}
           />
         }
         label="Main Contact"
@@ -165,6 +234,8 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
             //   handleChangeTabs(e, i, item1)
             // }
             name="Inactive"
+            onChange={onChangecheckbox}
+            value={userDetail.Inactive}
           />
         }
         label="In Active"
@@ -178,7 +249,7 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
         label="Greeting"
         variant="outlined"
         name="GreetingName"
-        // value={userDetail.Clientname}
+        value={userDetail.GreetingName}
         onChange={onChange}
       />
     </Grid>
@@ -190,7 +261,7 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
         label="Email"
         variant="outlined"
         name="EmailName"
-        // value={userDetail.Clientname}
+        value={userDetail.EmailName}
         onChange={onChange}
       />
     </Grid>
@@ -213,7 +284,7 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
               {...params}
               key={`Managermain`}
               name="Manager"
-              // onChange={onChange}
+              onChange={onChangeUser}
               label="Manager"
               variant="outlined"
             />
@@ -229,8 +300,8 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
         id="Line1id"
         label="Line1"
         variant="outlined"
-        name="Line1Name"
-        // value={userDetail.Clientname}
+        name="MainLine1Name"
+        value={userDetail.MainLine1Name}
         onChange={onChange}
       />
     </Grid>
@@ -241,8 +312,8 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
         id="Line2id"
         label="Line2"
         variant="outlined"
-        name="Line2Name"
-        // value={userDetail.Clientname}
+        name="MainLine2Name"
+        value={userDetail.MainLine2Name}
         onChange={onChange}
       />
     </Grid>
@@ -253,8 +324,8 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
         id="Line3id"
         label="Line3"
         variant="outlined"
-        name="Line3Name"
-        // value={userDetail.Clientname}
+        name="MainLine3Name"
+        value={userDetail.MainLine3Name}
         onChange={onChange}
       />
     </Grid>
@@ -265,8 +336,8 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
         id="Townid"
         label="Town"
         variant="outlined"
-        name="TownName"
-        // value={userDetail.Clientname}
+        name="MainTownName"
+        value={userDetail.MainTownName}
         onChange={onChange}
       />
     </Grid>
@@ -277,8 +348,8 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
         id="Postcodeid"
         label="Postcode"
         variant="outlined"
-        name="PostcodeName"
-        // value={userDetail.Clientname}
+        name="MainPostcodeName"
+        value={userDetail.MainPostcodeName}
         onChange={onChange}
       />
     </Grid>
@@ -295,7 +366,7 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
               {...params}
               key={`Countrymain`}
               name="Country"
-              // onChange={onChange}
+              onChange={onChangecountry}
               label="Country"
               variant="outlined"
             />
@@ -311,8 +382,8 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
         id="Telephoneid"
         label="Telephone"
         variant="outlined"
-        name="TelephoneName"
-        // value={userDetail.Clientname}
+        name="MainTelephoneName"
+        value={userDetail.MainTelephoneName}
         onChange={onChange}
       />
     </Grid>
@@ -323,8 +394,8 @@ export default function AddClientmaincontact({userDetail, setUserDetail}) {
         id="Mobileid"
         label="Mobile No"
         variant="outlined"
-        name="MobileName"
-        // value={userDetail.Clientname}
+        name="MainMobileName"
+        value={userDetail.MainMobileName}
         onChange={onChange}
       />
     </Grid>
@@ -755,3 +826,13 @@ var countries = [
     { code: "ZM", label: "Zambia", phone: "260" },
     { code: "ZW", label: "Zimbabwe", phone: "263" },
   ];
+  const titleData = [
+    { label: 'Mr', year: 1994 },
+    { label: 'Mrs', year: 1972 },
+    { label: 'Miss', year: 1974 },
+    { label: 'Ms', year: 2008 },
+    { label: 'Dr', year: 1957 },
+    { label: 'Hr', year: 1957 },
+    { label: 'N/A', year: 1957 }
+  ];
+  

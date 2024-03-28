@@ -436,6 +436,19 @@ export default function AddClientaddress({userDetail, setUserDetail}) {
                         </FormControl>
                       </Grid>
                     </Grid>
+                    <h5 className="mb-3">Full Address</h5>
+                    <Grid container spacing={3}>
+                      <Grid item xs={6} md={6}>
+                      <TextField
+                  aria-label="minimum height"
+                  name="fullAddress"
+                  value={userDetail.fullAddress}
+                  onChange={onChange}
+                  className="textarea"
+                  // placeholder="Full Address"
+                />
+                      </Grid>
+                      </Grid>
                   </Box>
      </div>
   )
