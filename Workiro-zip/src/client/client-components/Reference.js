@@ -19,6 +19,38 @@ import UploadDocument from "./UploadDocument";
 import AddClientdetails from "./AddClientdetails";
 import AddClientaddress from "./AddClientaddress";
 import AddClientmaincontact from "./AddClientmaincontact";
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import StepContent from '@mui/material/StepContent';
+import Paper from '@mui/material/Paper';
+
+
+// Stepper form
+const steps = [
+  {
+    label: 'Select campaign settings',
+    description: `For each ad campaign that you create, you can control how much
+              you're willing to spend on clicks and conversions, which networks
+              and geographical locations you want your ads to show on, and more.`,
+  },
+  {
+    label: 'Create an ad group',
+    description:
+      'An ad group contains one or more ads which target a shared set of keywords.',
+  },
+  {
+    label: 'Create an ad',
+    description: `Try out different ad text to see what brings in the most customers,
+              and learn how to enhance your ads using features like ad extensions.
+              If you run into any problems with your ads, find out how to tell if
+              they're running and how to resolve approval issues.`,
+  },
+];
+
+
+
+
 function Reference() {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -30,6 +62,8 @@ function Reference() {
   const [clientDetails, setClientDetails] = useState({});
   const [selectedFolderID, setSelectedFolderID] = useState(null);
   const [dataFromChild, setDataFromChild] = useState([]);
+  const [activeStep, setActiveStep] = React.useState(0);
+
 
   const [userDetail, setUserDetail] = useState({
     CHnumber: "",
@@ -67,33 +101,33 @@ function Reference() {
     Source: "",
     Manager: "",
     Email: "",
-    folderId:localStorage.getItem("FolderId"),
-    BussId:-1,
-    UserId:-1,
-    SourceId:-1,
-    StatusId:-1,
-    Title:"",
-    FirstName:"",
-    LastName:"",
-    ReferenceName:"",
-    MainContact:false,
-    Inactive:false,
-    GreetingName:"",
-    EmailName:"",
-    MainUserId:-1,
-    MainLine1Name:"",
-    MainLine2Name:"",
-    MainLine3Name:"",
-    MainTownName:"",
-    MainPostcodeName:"",
-    Maincontactcountry:"",
-    MainTelephoneName:"",
-    MainMobileName:"",
-    mainCountry:"",
-    billingsCountry:"",
-    ragistersCountry:""
+    folderId: localStorage.getItem("FolderId"),
+    BussId: -1,
+    UserId: -1,
+    SourceId: -1,
+    StatusId: -1,
+    Title: "",
+    FirstName: "",
+    LastName: "",
+    ReferenceName: "",
+    MainContact: false,
+    Inactive: false,
+    GreetingName: "",
+    EmailName: "",
+    MainUserId: -1,
+    MainLine1Name: "",
+    MainLine2Name: "",
+    MainLine3Name: "",
+    MainTownName: "",
+    MainPostcodeName: "",
+    Maincontactcountry: "",
+    MainTelephoneName: "",
+    MainMobileName: "",
+    mainCountry: "",
+    billingsCountry: "",
+    ragistersCountry: ""
   });
-  console.log("userDetailuserDetail",userDetail);
+  console.log("userDetailuserDetail", userDetail);
   const [originatorNo, setoriginatorNo] = useState("");
   const [companyDetails, setCompanyDetails] = useState([]);
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -114,7 +148,7 @@ function Reference() {
   const handleClickOpenUploadDocument = () => {
     setOpenUploadDocument(true);
   };
-  
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -225,7 +259,7 @@ function Reference() {
   const Json_SetClientAddress = (objdata) => {
     Cls.Json_SetClientAddress(objdata, (sts, data) => {
       if (sts) {
-        if (data== "Success") {
+        if (data == "Success") {
           console.log("Json_SetClientAddress", data);
         }
       }
@@ -307,7 +341,7 @@ function Reference() {
       TelNo: userDetail.Telephone ? userDetail.Telephone : "",
       AlteTelNo: userDetail.Mobile ? userDetail.Mobile : "",
       Faxno: "",
-      ContactName:"",
+      ContactName: "",
       UDF1: "",
       UDF2: "",
       UDF3: "",
@@ -324,10 +358,10 @@ function Reference() {
       OrgActive: "Yes",
     };
     Json_InsertContact();
-    console.log(clientdata,"clientdata");
+    console.log(clientdata, "clientdata");
     Cls.Json_AddClient(clientdata, (sts, data) => {
       if (sts) {
-        if (data== "Success") {
+        if (data == "Success") {
           console.log("Response", data);
           Json_InsertContact();
           saveUDF();
@@ -364,11 +398,11 @@ function Reference() {
       CCode: userDetail.Clientid ? userDetail.Clientid : "",
       Salutation: userDetail.Title ? userDetail.Title : "",
       accid: agrno
-  }
-    console.log(InsertContact,"Json_InsertContact");
+    }
+    console.log(InsertContact, "Json_InsertContact");
     Cls.Json_InsertContact(InsertContact, (sts, data) => {
       if (sts) {
-        if (data== "Success") {
+        if (data == "Success") {
           console.log("Response", data);
           // var urladd = "add_contact_update.html?Edata=" + oring + ":" + localStorage.getItem("DefaultFolderID") + "&CNO=" + ContactNo;
 
@@ -381,19 +415,19 @@ function Reference() {
   };
   const saveUDF = () => {
     const result = Object.entries(dataFromChild)
-    .map(([key, value]) => `${key}: ${value}`)
-    .join(', ');
-  
-  console.log(result,"resultresult");
+      .map(([key, value]) => `${key}: ${value}`)
+      .join(', ');
+
+    console.log(result, "resultresult");
     let requestBody = {
-        agrno: agrno,
-        Email: Email,
-        password: password,
-        OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
-        ProjectId:  userDetail.folderId ? userDetail.folderId : -1,
-        ClientUDFString:result,
-        ContactUDFString:""	,
-        ContactNo:""
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
+      ProjectId: userDetail.folderId ? userDetail.folderId : -1,
+      ClientUDFString: result,
+      ContactUDFString: "",
+      ContactNo: ""
     }
     Cls.Json_CRMSaveUDFValues(requestBody, (sts, data) => {
       if (sts) {
@@ -404,7 +438,7 @@ function Reference() {
     });
   }
   useEffect(() => {
-   
+
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
     setEmail(localStorage.getItem("Email"));
@@ -413,61 +447,125 @@ function Reference() {
     Json_GetClientCardDetails();
   }, []);
 
+
+  // stepper 
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+  const handleReset = () => {
+    setActiveStep(0);
+  };
+
   return (
     <Box className="container-fluid p-0">
       <Box sx={{ width: "100%", typography: "body1" }} className="mt-4 pt-1">
-            <Box className="general-tab white-box">
-              <Box className="row mb-3">
-                <h5>Client Details</h5>
 
-                {
-                  <AddClientdetails
-                    userDetail={userDetail}
-                    setUserDetail={setUserDetail}
-                    setSelectedFolderID={setSelectedFolderID}
-                  ></AddClientdetails>
-                }
-              </Box>
-              <Box className="row mb-3">
-                <h5>Main Contact</h5>
-                {
-                  <AddClientmaincontact
-                    userDetail={userDetail}
-                    setUserDetail={setUserDetail}
-                  ></AddClientmaincontact>
-                }
-              
-              </Box>
-              <Box className="row ">
-                <Box>
-                  {
-                    <AddClientaddress
-                      userDetail={userDetail}
-                      setUserDetail={setUserDetail}
-                    ></AddClientaddress>
-                  }
-                </Box>
-              </Box>
-            </Box>
-            <Box></Box>
 
-            <Box className="main-accordian">
-              <UDFClientcard data={clientDetails} setDataFromChild={setDataFromChild}/>
-              <div style={{marginBottom:"20px"}}>
-                <Button
-                  style={{ marginTop: "20px" }}
-                  variant="contained"
-                  onClick={handleSubmit}
-                  disabled={
-                    !userDetail.Clientname ||
-                    !userDetail.Clientid 
-                    // !folderData
+        <Box sx={{ maxWidth: '100%' }}>
+          <Stepper activeStep={activeStep} orientation="vertical">
+            {steps.map((step, index) => (
+              <Step key={step.label}>
+                <StepLabel
+                  optional={
+                    index === 2 ? (
+                      <Typography variant="caption">Last step</Typography>
+                    ) : null
                   }
                 >
-                  Add Client
-                </Button>{" "}
-              </div>
+                  {step.label}
+                </StepLabel>
+                <StepContent>
+                  <Typography>{step.description}</Typography>
+                  <Box sx={{ mb: 2 }}>
+                    <div>
+                      <Button
+                        variant="contained"
+                        onClick={handleNext}
+                        sx={{ mt: 1, mr: 1 }}
+                      >
+                        {index === steps.length - 1 ? 'Finish' : 'Continue'}
+                      </Button>
+                      <Button
+                        disabled={index === 0}
+                        onClick={handleBack}
+                        sx={{ mt: 1, mr: 1 }}
+                      >
+                        Back
+                      </Button>
+                    </div>
+                  </Box>
+                </StepContent>
+              </Step>
+            ))}
+          </Stepper>
+          {activeStep === steps.length && (
+            <Paper square elevation={0} sx={{ p: 3 }}>
+              <Typography>All steps completed - you&apos;re finished</Typography>
+              <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
+                Reset
+              </Button>
+            </Paper>
+          )}
+        </Box>
+        {/* Stepper end  */}
+
+
+
+        <Box className="">
+          <Box className="row mb-3">
+            <h5>Client Details</h5>
+
+            {
+              <AddClientdetails
+                userDetail={userDetail}
+                setUserDetail={setUserDetail}
+                setSelectedFolderID={setSelectedFolderID}
+              ></AddClientdetails>
+            }
+          </Box>
+          <Box className="row mb-3">
+            <h5>Main Contact</h5>
+            {
+              <AddClientmaincontact
+                userDetail={userDetail}
+                setUserDetail={setUserDetail}
+              ></AddClientmaincontact>
+            }
+
+          </Box>
+          <Box className="row ">
+            <Box>
+              {
+                <AddClientaddress
+                  userDetail={userDetail}
+                  setUserDetail={setUserDetail}
+                ></AddClientaddress>
+              }
             </Box>
+          </Box>
+        </Box>
+
+
+        <Box className="main-accordian">
+          <UDFClientcard data={clientDetails} setDataFromChild={setDataFromChild} />
+          <div style={{ marginBottom: "20px" }}>
+            <Button
+              style={{ marginTop: "20px" }}
+              variant="contained"
+              onClick={handleSubmit}
+              disabled={
+                !userDetail.Clientname ||
+                !userDetail.Clientid
+                // !folderData
+              }
+            >
+              Add Client
+            </Button>{" "}
+          </div>
+        </Box>
       </Box>
     </Box>
   );
