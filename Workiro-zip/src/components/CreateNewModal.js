@@ -220,9 +220,6 @@ export default function CreateNewModalTask({ ...props }) {
 
     const [txtPriorityId, setTxtPriorityId] = useState(2);
 
-
-
-
     const [prioriyAnchorEl, setPrioriyAnchorEl] = React.useState(null);
     const [selectedPrioriyMenu, setSelectedPrioriyMenu] = useState(null);
     const boolPriority = Boolean(prioriyAnchorEl);
