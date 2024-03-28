@@ -57,6 +57,7 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Autocomplete from '@mui/material/Autocomplete';
 import TestPDF from '../TestPDF';
+import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
 
 
 
@@ -67,8 +68,6 @@ function ContactDetails() {
     const location = useLocation();
 
     const { agrno, Email, password, folderId, originatorNo, contactNo } = location.state;
-
-    const [selected, setSelected] = React.useState(false);
 
     const [value, setValue] = React.useState('1');
 
@@ -235,6 +234,9 @@ function ContactDetails() {
 
     return (
         <Box className="container-fluid p-0">
+            
+            <CustomBreadCrumbs tabs={[{tabLink:"/dashboard/Connections",tabName:"Connections"},{tabLink:"/dashboard/ContactDetails",tabName:"Contact Details"}]}/>
+
             <Box className="d-flex align-items-center justify-content-between flex-wrap">
                 <Box className='d-flex flex-wrap align-items-center'>
                     <Typography variant="h2" className='title me-3 mb-2' gutterBottom>

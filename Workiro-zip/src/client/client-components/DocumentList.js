@@ -128,7 +128,7 @@ const MenuProps = {
     },
 };
 
-export default function DocumentList({ clientId }) {
+export default function DocumentList({ clientId, globalSearchDocs }) {
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -284,17 +284,28 @@ export default function DocumentList({ clientId }) {
                         // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                         let docs = json.Table6;
                         if (docs?.length > 0) {
-                            let docKeys = Object.keys(docs[0]);
-                            // console.log("documentKeys",docKeys);
-                            setDocumentKeys(docKeys);
+                            if (globalSearchDocs.length === 0) {
+                                let docKeys = Object.keys(docs[0]);
+                                // console.log("documentKeys",docKeys);
+                                setDocumentKeys(docKeys);
 
-                            docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
-                            //docs.map((itm)=>console.log("check in map",itm["Item Date"]));
-                            setDocuments(docs);
-                            handleDocumentsFilter(docs);
-                            let desc = docs.filter((item) => item.Description !== "");
-                            // console.log("desc", desc);
-                            setgroupedOptions(desc);
+                                docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
+                                //docs.map((itm)=>console.log("check in map",itm["Item Date"]));
+                                setDocuments(docs);
+                                // console.log("fdlljsddjkl",docs);
+                                handleDocumentsFilter(docs);
+                                let desc = docs.filter((item) => item.Description !== "");
+                                // console.log("desc", desc);
+                                setgroupedOptions(desc);
+                            }else{
+                                let docKeys = Object.keys(globalSearchDocs[0]);
+                                // console.log("documentKeys",docKeys);
+                                setDocumentKeys(docKeys);
+                                setDocuments(globalSearchDocs);
+                                handleDocumentsFilter(globalSearchDocs);
+                                let desc = globalSearchDocs.filter((item) => item.Description !== "");
+                                setgroupedOptions(desc);
+                            }
                             Json_GetFolderData();
                         }
                     }
@@ -331,57 +342,22 @@ export default function DocumentList({ clientId }) {
         return `${paddedDay}/${paddedMonth}/${year}`;
     }
 
-    function getLastDay() {
-        const currentDate = new Date();
-        currentDate.setDate(currentDate.getDate() - 1);
-        const day = currentDate.getDate();
-        const month = currentDate.getMonth() + 1; // Adding 1 because January is represented as 0
-        const year = currentDate.getFullYear();
-
-        return day < 10 && month < 10 ? `0${day}/0${month}/${year}` : day < 10 && month >= 10 ? `0${day}/${month}/${year}` : day >= 10 && month < 10 ? `${day}/0${month}/${year}` : `${day}/${month}/${year}`;
-    }
-
-    function getLastWeek() {
-        const currentDate = new Date();
-        const sevenDaysAgoDate = new Date(currentDate);
-        sevenDaysAgoDate.setDate(currentDate.getDate() - 7);
-
-        const day = sevenDaysAgoDate.getDate();
-        const month = sevenDaysAgoDate.getMonth() + 1; // Adding 1 because January is represented as 0
-        const year = sevenDaysAgoDate.getFullYear();
-
-        return day < 10 && month < 10 ? `0${day}/0${month}/${year}` : day < 10 && month >= 10 ? `0${day}/${month}/${year}` : day >= 10 && month < 10 ? `${day}/0${month}/${year}` : `${day}/${month}/${year}`;
-    }
-
     function getRootProps(params) { }
     function getListboxProps(params) { }
 
     const handleSearchByProperty = (flitData) => {
-        console.log(searchByPropertyKey, "--------", searchByPropertyInput);
+        // console.log(searchByPropertyKey, "--------", searchByPropertyInput);
         setFilterCriteria({ ...filterCriteria, [searchByPropertyKey]: [searchByPropertyInput] });
-        // if (flitData && searchByPropertyKey === "" && searchByPropertyInput === "") {
-        //     if (flitData.length === 0) {
-        //         setAdvFilteredResult([]);
-        //     }
-        //     setBulkSearch(flitData);
-        // } else {
-        //     let arr = [];
-        //     if (searchByPropertyKey !== "" && searchByPropertyInput !== "") {
-        //         // arr = [...bulkSearch, { key: searchByPropertyKey, value: searchByPropertyInput }];
-        //     } else {
-        //         // arr = [...bulkSearch];
-        //     }
-        //     // console.log("arr",arr)
-        //     setBulkSearch(arr);
-        // }
 
         setSearchByPropertyInput("");
         setSearchByPropertyKey("");
     }
+
     function parseDate(dateStr) {
         const [day, month, year] = dateStr.split('/');
         return new Date(year, month - 1, day); // month - 1 because month is 0-indexed in Date objects
     }
+
     function handleAscendingSort() {
         if (sortByProperty === "Date") {
             if (isGroupBy) {
@@ -415,6 +391,7 @@ export default function DocumentList({ clientId }) {
 
         }
     }
+
     function handleDescendingSort() {
         if (sortByProperty === "Date") {
             if (isGroupBy) {

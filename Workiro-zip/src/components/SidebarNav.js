@@ -326,10 +326,6 @@ export default function SidebarNav() {
     return () => clearTimeout(data);
   }, [forDocuments]);
 
-  function handleAbc() {
-    alert("called");
-  }
-
   return (
     <>
       <Box className='d-block d-md-flex' onClick={()=>setIsSearch(false)}>
@@ -385,6 +381,13 @@ export default function SidebarNav() {
                             setIsSearch(false);
                             navigate("/dashboard/SearchResult?str=" + itm);
                             setSearchInputForGlobalSearch(itm);
+                            tabs.map(itm => {
+                              if (itm.tabName === "Search Result") {
+                                itm.active = true;
+                              } else {
+                                itm.active = false;
+                              }
+                            });
                           }}>
                             <DescriptionIcon className='me-1' />
                             {itm}</Option>
@@ -396,6 +399,13 @@ export default function SidebarNav() {
                             setIsSearch(false);
                             navigate("/dashboard/SearchResult?str=" + itm);
                             setSearchInputForGlobalSearch(itm);
+                            tabs.map(itm => {
+                              if (itm.tabName === "Search Result") {
+                                itm.active = true;
+                              } else {
+                                itm.active = false;
+                              }
+                            });
                           }}>
                             <FormatListNumberedRtlIcon className='me-1' />
                             {itm}</Option>
