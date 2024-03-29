@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, TextField, Autocomplete, ToggleButton, ToggleButtonGroup, FormControl, Select, } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import user from "../images/user.jpg";
@@ -171,14 +171,27 @@ function TodoList() {
         }
     }
 
-    useEffect(() => {
-        window.addEventListener('scroll', eventHandler);
+    const loaderRef = useRef(null);
 
-        return () => {
-            console.log("Removing scroll event listener");
-            window.removeEventListener('scroll', eventHandler);
+    useEffect(() => {
+        const handleScroll = () => {
+          if (
+            window.innerHeight + document.documentElement.scrollTop >=
+            document.documentElement.scrollHeight - 200
+          ) {
+            // Load more items when user scrolls near the bottom
+            setLoadMore(prevLoadMore => prevLoadMore + 5);
+          }
         };
-    }, []);
+    
+        window.addEventListener('scroll', handleScroll);
+    
+        return () => {
+          window.removeEventListener('scroll', handleScroll);
+        };
+      }, []);
+
+   
 
     useEffect(() => {
         Json_CRM_GetOutlookTask();

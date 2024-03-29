@@ -23,6 +23,7 @@ import DocumentList from './DocumentList';
 import UploadDocument from './UploadDocument';
 import ClientAddress from './ClientAddress';
 import Contact from './Contact';
+import TaskList from './TaskList';
 
 
 
@@ -241,7 +242,7 @@ function ClientDetails() {
                         <Contact></Contact>
                     </TabPanel>
                     <TabPanel value="4">
-                        <Contact></Contact>
+                        <TaskList></TaskList>
                     </TabPanel>
 
                     <TabPanel value="5" className='p-0'>

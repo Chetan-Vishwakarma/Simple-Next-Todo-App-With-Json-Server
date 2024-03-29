@@ -923,7 +923,7 @@ function Client() {
                                                     <Button onClick={handleAdvanceFilterAgain} disabled={Object.keys(objFilter).length < 3 ? false : true} variant="contained" size='small' color="success">
                                                         <span class="material-symbols-outlined">
                                                             add
-                                                        </span> Add
+                                                        </span>
                                                     </Button>
                                                 </Box>
                                             </Box>

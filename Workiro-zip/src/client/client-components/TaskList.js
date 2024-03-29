@@ -77,7 +77,7 @@ const orderHeaderFilter = (data) => {
 };
 
 
-function Contact() {
+function TaskList() {
 
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -92,7 +92,8 @@ function Contact() {
   const [showHeaderFilter, setShowHeaderFilter] = useState(true);
   const [currentFilter, setCurrentFilter] = useState(applyFilterTypes[0].key);
 
-  const [allContactList, setAllContactList] = useState([]);
+  
+  const [outlookTaskList, setOutlookTaskList] = useState([]);
 
   const dataGridRef = useRef(null);
 
@@ -113,43 +114,40 @@ function Contact() {
   // const onCurrentFilterChanged = useCallback((e) => {
   //     setCurrentFilter(e.value);
   // }, []);
-  const Json_GetContactListByFolder = () => {
+  
+
+  const Json_CRM_GetOutlookTask = () => {    
     try {
-      let obj = { intFolderId: folderId };
-      cls.Json_GetContactListByFolder(obj, (sts, data) => {
-        if (sts && data) {
-          if (data) {
-            let js = JSON.parse(data);
-            console.log("Json_GetContactListByFolder", js?.Table);
-            if (js && js?.Table.length > 0) {
-              let res = js.Table.map((el)=>{
-             el["Date Of Birth"]=cls.DateFormateDate(el["Date Of Birth"]);
-                return el;
-              })
-              setAllContactList(res)
+        cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
+            if (sts) {
+                if (data) {
+                    let json = JSON.parse(data);                    
+                    console.log("Json_CRM_GetOutlookTask", json?.Table);  
+                    if(json?.Table.length>0){
+                      setOutlookTaskList(json.Table)
+                    }
+                                     
+                }
             }
-
-          }
-
-        }
-      })
-    } catch (error) {
-      console.log({ "Message": "Data Not Found NetWork Error", Error: error })
+        });
+    } catch (err) {
+        console.log("Error while calling Json_CRM_GetOutlookTask", err);
     }
-  }
+}
+
   useEffect(() => {
-    Json_GetContactListByFolder();
+    Json_CRM_GetOutlookTask();
 
   }, [])
 
-
+  
   return (
     <div>
       <DataGrid
         id="gridContainer"
         ref={dataGridRef}
-        dataSource={allContactList}
-        keyExpr="E-Mail"
+        dataSource={outlookTaskList}
+        keyExpr="ID"
         showBorders={true}>
           <FilterRow visible={true} />
                 <FilterPanel visible={true} />
@@ -169,67 +167,54 @@ function Contact() {
 
        
         <Column
-          dataField="OriginatorNo"         
-          caption="OriginatorNo">
+          dataField="ID"         
+          caption="Client ID">
           {/* <HeaderFilter groupInterval={10000} /> */}
         </Column>       
         <Column
-          dataField="First Name"
+          dataField="Client"
           // alignment="right"
-          caption="First Name"
+          caption="Client Name"
           // format="M/d/yyyy, HH:mm"
          />
          <Column
-          dataField="Last Name"
+          dataField="Section"
           // alignment="right"
-        caption="Last Name"
+        caption="Section"
           // format="M/d/yyyy, HH:mm"
          />
 
        <Column
-          dataField="Main Contact"
+          dataField="Forwarded By"
           // alignment="right"
-        caption="Main Contact"
+        caption="Forwarded By"
           // format="M/d/yyyy, HH:mm"
          />
        
 
-        <Column dataField="ManagerName" />
-        <Column dataField="Folder" />
-        <Column dataField="Note" />
+        <Column 
+        dataField="Start"
+        dataType="date"
+           format="M/d/yyyy"        
+        />
+        <Column dataField="EndDateTime"
+        dataType="date"
+        format="M/d/yyyy"
+        />
+        <Column dataField="Subject" />
         <Column
-          dataField="Date Of Birth"
-          // alignment="right"
-          dataType="date"
-        caption="Date Of Birth"
-           format="M/d/yyyy, HH:mm"
+          dataField="mstatus"         
          />
+        <Column
+          dataField="Source"         
+         />
+       
       </DataGrid>
 
     </div>
   )
 }
 
-export default Contact
+export default TaskList
 
 
-const orders = [{
-  ID: 1,
-  OrderNumber: 35703,
-  OrderDate: '2017/04/10',
-  DeliveryDate: '2017/04/13 9:00',
-  SaleAmount: 11800,
-  Terms: '15 Days',
-  CustomerStoreCity: 'Los Angeles, CA',
-  Employee: 'Harv Mudd',
-}, {
-  ID: 4,
-  OrderNumber: 35711,
-  OrderDate: '2017/01/12',
-  DeliveryDate: '2017/01/13 9:00',
-  SaleAmount: 16050,
-  Terms: '15 Days',
-  CustomerStoreCity: 'San Jose, CA',
-  Employee: 'Jim Packard',
-},
-];

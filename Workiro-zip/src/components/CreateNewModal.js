@@ -277,7 +277,7 @@ export default function CreateNewModalTask({ ...props }) {
 
 
     const [anchorElstatus, setAnchorElstatus] = React.useState(null);
-    const openstatus= Boolean(anchorElstatus);
+    const openstatus = Boolean(anchorElstatus);
     const handleClickstatus = (event) => {
         setAnchorElstatus(event.currentTarget);
     };
@@ -3124,7 +3124,7 @@ export default function CreateNewModalTask({ ...props }) {
                                         aria-expanded={openpriority ? 'true' : undefined}
                                         onClick={handleClickpriority}
                                     >
-                                       {txtPrioriy}
+                                        {txtPrioriy}
                                         <KeyboardArrowDownIcon />
                                     </Button>
                                     <Menu
@@ -3135,35 +3135,34 @@ export default function CreateNewModalTask({ ...props }) {
                                         MenuListProps={{
                                             'aria-labelledby': 'basic-button',
                                         }}
-                                    >                                        
-                                         {priorityarr
-                                                ? priorityarr.map((item, index) => (
-                                                    <React.Fragment key={index}>
-                                                       <MenuItem  onClick={(e) => {
-                                                                console.log("client select", item.name);
-                                                                setTxtPriority(item.name); // Assuming item.Client holds the value you want
-                                                                setTxtPriorityId(item.id)
-                                                               setAnchorElPrior(null);
-                                                            }}>{item.name}</MenuItem>                                                        
-                                                        {/* <Divider variant="inset" component="li" /> */}
-                                                    </React.Fragment>
-                                                ))
-                                                : null}
+                                    >
+                                        {priorityarr
+                                            ? priorityarr.map((item, index) => (
+                                                <React.Fragment key={index}>
+                                                    <MenuItem onClick={(e) => {
+                                                        console.log("client select", item.name);
+                                                        setTxtPriority(item.name); // Assuming item.Client holds the value you want
+                                                        setTxtPriorityId(item.id)
+                                                        setAnchorElPrior(null);
+                                                    }}>{item.name}</MenuItem>
+                                                    {/* <Divider variant="inset" component="li" /> */}
+                                                </React.Fragment>
+                                            ))
+                                            : null}
                                     </Menu>
 
-                                    
+
                                 </Box>
 
                                 <Box className="select-dropdown">
-
-                                <Button
+                                    <Button
                                         id="basic-button-section"
                                         aria-controls={openstatus ? 'basic-menu' : undefined}
                                         aria-haspopup="true"
                                         aria-expanded={openstatus ? 'true' : undefined}
                                         onClick={handleClickstatus}
                                     >
-                                       {txtStatus}
+                                        {txtStatus}
                                         <KeyboardArrowDownIcon />
                                     </Button>
                                     <Menu
@@ -3174,97 +3173,22 @@ export default function CreateNewModalTask({ ...props }) {
                                         MenuListProps={{
                                             'aria-labelledby': 'basic-button',
                                         }}
-                                    >                                        
-                                          {statusarr
-                                                ? statusarr.map((item, index) => (
-                                                    <React.Fragment key={index}>
-                                                       <MenuItem  onClick={(e) => {
-                                                                //console.log("client select", item.name);
-                                                                setTxtStatus(item.name); // Assuming item.Client holds the value you want
-                                                                setAnchorElstatus(null);
-                                                            }}>{item.name}</MenuItem>
-                                                      
-                                                    </React.Fragment>
-                                                ))
-                                                : null}
+                                    >
+                                        {statusarr
+                                            ? statusarr.map((item, index) => (
+                                                <React.Fragment key={index}>
+                                                    <MenuItem onClick={(e) => {
+                                                        //console.log("client select", item.name);
+                                                        setTxtStatus(item.name); // Assuming item.Client holds the value you want
+                                                        setAnchorElstatus(null);
+                                                    }}>{item.name}</MenuItem>
+
+                                                </React.Fragment>
+                                            ))
+                                            : null}
                                     </Menu>
 
-                                    <Button
-                                        id="basic-button-section"
-                                        aria-controls={
-                                            boolStatus && selectedStatusMenu === "status"
-                                                ? "basic-menu"
-                                                : undefined
-                                        }
-                                        aria-haspopup="true"
-                                        aria-expanded={
-                                            boolStatus && selectedStatusMenu === "status" ? "true" : undefined
-                                        }
-                                        onClick={(event) => handleClick3(event, "status")}
-                                    >
-                                        {txtStatus}
-                                        <KeyboardArrowDownIcon />
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={statusAnchorEl}
-                                        open={Boolean(statusAnchorEl)}
-                                        MenuListProps={{
-                                            "aria-labelledby": "basic-button",
-                                        }}
-                                        className="search-list-main"
-                                    >
-                                        <List
-                                            sx={{
-                                                width: "100%",
-                                                maxWidth: 600,
-                                                bgcolor: "background.paper",
-                                                height: '200px'
-                                            }}
-                                        >
-                                            {statusarr
-                                                ? statusarr.map((item, index) => (
-                                                    <React.Fragment key={index}>
-                                                        <ListItem
-                                                            alignItems="flex-start"
-                                                            onClick={(e) => {
-                                                                //console.log("client select", item.name);
-                                                                setTxtStatus(item.name); // Assuming item.Client holds the value you want
 
-                                                                setStatusAnchorEl(null);
-                                                            }}
-                                                            className="search-list"
-                                                        >
-                                                            {/* <ListItemAvatar>
-                                                                <Avatar
-                                                                    alt="Remy Sharp"
-                                                                    src="/static/images/avatar/1.jpg"
-                                                                />
-                                                            </ListItemAvatar> */}
-                                                            <ListItemText
-                                                                primary={item.name}
-                                                                className='m-0'
-                                                                secondary={
-                                                                    <React.Fragment>
-                                                                        <Typography
-                                                                            sx={{ display: "inline" }}
-                                                                            component="span"
-                                                                            variant="body2"
-                                                                            color="text.primary"
-                                                                        >
-                                                                            {/* {item.id} */}
-                                                                        </Typography>
-                                                                        {/* {item.CLMandatory} */}
-                                                                    </React.Fragment>
-                                                                }
-                                                            />
-                                                        </ListItem>
-                                                        {/* <Divider variant="inset" component="li" /> */}
-                                                    </React.Fragment>
-                                                ))
-                                                : null}
-                                        </List>
-                                    </Menu>
                                 </Box>
                             </Box>
                             {/* col end */}
@@ -3417,32 +3341,24 @@ export default function CreateNewModalTask({ ...props }) {
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
 
-
                         <Box className="d-flex align-items-center justify-content-between">
-
                             <div>
                                 <Button
                                     id="basic-button"
                                 >
                                     Document List
                                 </Button>
-
                             </div>
-
                             <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
                                 <span className="material-symbols-outlined text-black">
                                     cancel
                                 </span>
                             </Button>
                         </Box>
-
                         <hr />
-
                     </DialogContentText>
                 </DialogContent>
-
             </Dialog>
-
         </React.Fragment>
     );
 }
