@@ -164,6 +164,9 @@ export default function DocumentList({ clientId }) {
     const [selectedGroup, setSelectedGroup] = React.useState("");
     const [suggestionList, setSuggestionList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    
+    const [clientList,setClientList] = useState([]);
+    const [selectedClient,setSelectedClient] = useState("");
 
     // for date datepicker
     const [state, setState] = useState({
@@ -284,6 +287,15 @@ export default function DocumentList({ clientId }) {
             obj.sectionId = "-1";
             if (globalSearchDocs.length > 0) {
                 console.log("dsfkjhdkjfh", globalSearchDocs);
+
+                let fltDouble = [];
+                globalSearchDocs.map(itm=>itm.Client).filter(item=>{
+                    if(!fltDouble.includes(item)){
+                        fltDouble.push(item);
+                    }
+                });
+                setClientList(fltDouble);
+
                 setTimeout(()=>{
                 let docKeys = Object.keys(globalSearchDocs[0]);
                 // console.log("documentKeys",docKeys);
@@ -571,7 +583,15 @@ export default function DocumentList({ clientId }) {
         handleDocumentsFilter(documents);
     }, [filterCriteria]);
 
-
+    const handleFilterOnClientSelection=(e)=>{
+        let val = e.target.value;
+        setSelectedClient(val);
+        if(val!==""){
+            setFilterCriteria({...filterCriteria,Client:val});
+        }else{
+            handleFilterDeletion("Client");
+        }
+    }
 
     return (
         <>
@@ -768,22 +788,20 @@ export default function DocumentList({ clientId }) {
                             />}
                         </Box>
 
-                        {/* <FormControl sx={{ m: 1, width: '110px' }} size="small" className='select-border'>
+                        {globalSearchDocs.length>0 && <FormControl sx={{ m: 1, width: '110px' }} size="small" className='select-border'>
                                 <Select
-                                    value={select}
-                                    onChange={handleChange2}
+                                    value={selectedClient}
+                                    onChange={handleFilterOnClientSelection}
                                     displayEmpty
                                     inputProps={{ 'aria-label': 'Without label' }}
                                     className='custom-dropdown'
                                 >
                                     <MenuItem value="">
-                                        Select View
+                                        Select Reference
                                     </MenuItem>
-                                    <MenuItem value={10}>Select View</MenuItem>
-                                    <MenuItem value={20}>Select View</MenuItem>
-                                    <MenuItem value={30}>Select View</MenuItem>
+                                    {clientList.length>0 && clientList.map(itm=><MenuItem value={itm}>{itm}</MenuItem>)}
                                 </Select>
-                            </FormControl> */}
+                            </FormControl>}
 
 
                         {/* <Button className='btn-blue-2 mb-1 ms-1' onClick={() => handleDocumentsFilter("LastMonth")}>Save View</Button> */}
@@ -931,7 +949,7 @@ export default function DocumentList({ clientId }) {
                                     {/* <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
                                         <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} /> */}
                                     {Object.keys(filterCriteria).length > 0 && Object.keys(filterCriteria).map((key) => {
-                                        if (!["Item Date", "Folder", "Section"].includes(key)) {
+                                        if (!["Item Date", "Folder", "Section", "Client"].includes(key)) {
                                             return <Chip label={`${key}: ${filterCriteria[key][0]}`} variant="outlined" onDelete={() => {
                                                 handleFilterDeletion(key);
                                             }} />
