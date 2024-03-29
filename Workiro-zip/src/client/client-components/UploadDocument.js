@@ -23,11 +23,12 @@ import CreateNewModalTask from '../../components/CreateNewModal';
 import { red } from '@mui/material/colors';
 import moment from 'moment';
 import { ToastContainer, toast } from 'react-toastify';
-
-function UploadDocument({ openUploadDocument, setOpenUploadDocument,localtion }) {
+import { useLocation, useSearchParams } from 'react-router-dom';
+let originatorNo;
+function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 //console.log("location state",localtion.state)
-
-const { originatorNo } = localtion.state;
+const localtion = useLocation();
+try{const { originatorNo } = localtion.state;}catch(e){}
 console.log("location state1",originatorNo)
     const handleCloseDocumentUpload = () => {
         setOpenUploadDocument(false);
@@ -600,7 +601,7 @@ if(udfIdWithValue){
                         <Box className="d-flex align-items-center justify-content-between">
                             <Box className="dropdown-box">
                                 <Typography variant="h4" className='font-18 bold text-black'>
-                                    ({fileLangth}) Upload Document
+                                     Upload Document <span className='bold text-blue'>({fileLangth})</span>
                                 </Typography>
                             </Box>
 

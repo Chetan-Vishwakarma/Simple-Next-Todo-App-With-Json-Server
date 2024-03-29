@@ -8,6 +8,9 @@ import TodoList from './components/TodoList'
 import NewTodoList from './components/NewTodoList'
 import Logout from './components/Logout'
 import SearchResult from './components/SearchResult'
+import DocumentList from './client/client-components/DocumentList';
+import AddContacts from './components/AddContacts';
+
 
 function App() {
   return (
@@ -23,6 +26,8 @@ function App() {
             <Route path="TodoList" element={<NewTodoList />} />
             <Route path="SmartViews" element={<></>} />
             <Route path="SearchResult" element={<SearchResult /> } />
+            <Route path="DocumentList" element={<DocumentList clientId=""/> } />
+            <Route path="AddContacts" element={<AddContacts />} />
             <Route path="Logout" element={<Logout/>} />
             
           </Route>

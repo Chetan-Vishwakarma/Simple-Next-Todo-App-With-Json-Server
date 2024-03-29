@@ -238,21 +238,26 @@
                 border-radius: 50%;
                 background-color: rgb(253, 253, 253);
                 box-shadow: 0 0 100px 0 rgba(4, 46, 56, 0.14);
-                width: 248px;
-                height: 248px;
+                width: 170px;
+                height: 170px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 position: relative;
                 margin: 40px auto 80px;
 
+                img {
+                    width: 34px;
+                    margin-bottom: 10px;
+                }
+
                 @media (max-width: 576px) {
-                    width: 155px;
-                    height: 155px;
+                    width: 115px;
+                    height: 115px;
                 }
 
                 h4 {
-                    font-size: 26px;
+                    font-size: 18px;
                     font-weight: 400;
                     margin-bottom: 0;
                     color: #1d2746;
