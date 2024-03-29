@@ -283,6 +283,7 @@ export default function AddClientdetails({ userDetail, setUserDetail }) {
           <TextField
             fullWidth
             id="standard-basic"
+            type="number"
             label="Mobile"
             variant="outlined"
             name="Mobile"
@@ -294,6 +295,7 @@ export default function AddClientdetails({ userDetail, setUserDetail }) {
           <TextField
             fullWidth
             id="standard-basic"
+            type="number"
             label="Telephone"
             variant="outlined"
             name="Telephone"

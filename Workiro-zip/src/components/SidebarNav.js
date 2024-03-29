@@ -37,6 +37,10 @@ import ContactDetails from '../contact/contact-components/ContactDetails';
 import TodoList from './TodoList';
 import CommanCLS from '../services/CommanService';
 import Logout from './Logout';
+import AddContacts from './AddContacts';
+
+
+
 import NewTodoList from './NewTodoList';
 import FormatListNumberedRtlIcon from '@mui/icons-material/FormatListNumberedRtl';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -286,7 +290,11 @@ export default function SidebarNav() {
     });
   }
 
-  const [tabs, setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active: false }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false }, { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active: false }]);
+  const [tabs, setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active: false }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false }, { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false },
+  
+  { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false },
+  
+  { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active: false }]);
 
   const [searchInputForGlobalSearch, setSearchInputForGlobalSearch] = useState("");
 
@@ -652,6 +660,7 @@ export default function SidebarNav() {
             <Route path="/ContactDetails" element={<ContactDetails />} />
             <Route path="/MyTask" element={<TodoList />} />
             <Route path="/TodoList" element={<NewTodoList />} />
+            <Route path="/AddContacts" element={<AddContacts />} />
             <Route path="/SmartViews" element={<></>} />
             <Route path="/SearchResult" element={<SearchResult myTotalTasks={myTotalTasks} myDocuments={myDocuments} />} />
             <Route path="/DocumentList" element={<DocumentList clientId="" />} />

@@ -155,6 +155,7 @@ export default function AddClientaddress({ userDetail, setUserDetail }) {
                     <TextField
                       fullWidth
                       id="standard-basic"
+                      type="number"
                       label="Postcode"
                       variant="outlined"
                       name="Postcode"
@@ -277,6 +278,7 @@ export default function AddClientaddress({ userDetail, setUserDetail }) {
                     <TextField
                       fullWidth
                       id="standard-basic"
+                      type="number"
                       label="Postcode"
                       variant="outlined"
                       name="BilPostcode"
@@ -398,6 +400,7 @@ export default function AddClientaddress({ userDetail, setUserDetail }) {
                     <TextField
                       fullWidth
                       id="standard-basic"
+                      type="number"
                       label="Postcode"
                       variant="outlined"
                       name="regPostcode"
