@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, TextField, Autocomplete, ToggleButton, ToggleButtonGroup, FormControl, Select, } from '@mui/material';
+import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, TextField, Autocomplete, ToggleButton, ToggleButtonGroup, FormControl, Select, InputLabel, } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import user from "../images/user.jpg";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -27,9 +27,10 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import PortalDetails from './PortalDetails';
 import DataNotFound from './DataNotFound';
+import { styled } from '@mui/system';
+import { useLocation } from 'react-router-dom';
 
 function TodoList() {
-
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -59,7 +60,9 @@ function TodoList() {
     const [selectedGroupBy, setSelectedGroupBy] = useState("Group By");
 
     const [dataInGroup, setDataInGroup] = useState([]);
-    const [isLoading,setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+
+    const [suggestionList,setSuggestionList] = useState([]);
 
     // for date datepicker
     const [state, setState] = useState({
@@ -117,15 +120,10 @@ function TodoList() {
                             }
 
                             const date = new Date(timestamp);
-                            // let dateForm = startFormattingDate(date);
 
                             return { ...task, EndDateTime: date };
                         });
 
-                        // setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
-
-                        // let tasks = formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime);
-                        // let myTasks = tasks.filter((item)=>item.AssignedToID.split(",").includes(userId));
                         let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
 
                         let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
@@ -139,18 +137,11 @@ function TodoList() {
                             return { ...task, CreationDate: date };
                         }).sort((a, b) => b.CreationDate - a.CreationDate);
 
-
-                        // setActualData([...myTasks]);
                         setActualData([...hasCreationDate]);
                         setAllTask([...hasCreationDate]);
-                        setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
+                        // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
                         setIsLoading(false);
                         Json_GetFolders();
-                        // console.log("modified tasks: ",myTasks);
-
-                        // console.log("modified tasks",formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
-                        // setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
-                        // setAllTask(json.Table);
                     }
                 }
             });
@@ -175,27 +166,26 @@ function TodoList() {
 
     useEffect(() => {
         const handleScroll = () => {
-          if (
-            window.innerHeight + document.documentElement.scrollTop >=
-            document.documentElement.scrollHeight - 200
-          ) {
-            // Load more items when user scrolls near the bottom
-            setLoadMore(prevLoadMore => prevLoadMore + 5);
-          }
+            if (
+                window.innerHeight + document.documentElement.scrollTop >=
+                document.documentElement.scrollHeight - 200
+            ) {
+                // Load more items when user scrolls near the bottom
+                setLoadMore(prevLoadMore => prevLoadMore + 5);
+            }
         };
-    
-        window.addEventListener('scroll', handleScroll);
-    
-        return () => {
-          window.removeEventListener('scroll', handleScroll);
-        };
-      }, []);
 
-   
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+
 
     useEffect(() => {
         Json_CRM_GetOutlookTask();
-
     }, [isApi])
 
 
@@ -397,9 +387,9 @@ function TodoList() {
     }
     const handleSortBy = (check) => {
         if (check) {
-            handleDescending();
-        } else {
             handleAscending();
+        } else {
+            handleDescending();
         }
     }
     function groupByProperty(data, property) {
@@ -461,14 +451,44 @@ function TodoList() {
 
                 <Box className='d-flex main-search-box mb-3 align-items-center justify-content-between'>
                     <Box className='d-flex align-items-center'>
-                        <Autocomplete
-                            disablePortal
-                            id="combo-box-demo"
-                            options={allTask.map((itm) => ({ value: itm.Subject, label: itm.Subject }))}
-                            sx={{ width: 230 }}
-                            size='small'
-                            renderInput={(params) => <TextField sx={{ fontSize: 14 }} {...params} label="Subject" className='font-14' />}
-                        />
+
+                        <Layout>
+                            <AutocompleteWrapper>
+                                <AutocompleteRoot
+                                    sx={{
+                                        borderColor: '#D5D5D5',
+                                        color: 'success.main',
+                                    }}
+                                    // className={isSearch ? 'Mui-focused' : ''}
+                                    >
+                                    <span className="material-symbols-outlined search-icon">search</span>
+
+                                    <Input
+                                        // onClick={(e) => handleDialogsOpen(e, "Search")}
+                                        onChange={(e) => {
+                                            if(e.target.value==="") {
+                                                setSuggestionList([]);
+                                                handleFilterDeletion("Subject");
+                                                return;
+                                            }
+                                            let fltData = allTask.filter(itm=>itm.Subject.toLowerCase().includes(e.target.value.toLowerCase()));
+                                            setSuggestionList(fltData);
+                                            setTaskFilter({...taskFilter,Subject:[e.target.value]});
+                                        }}
+                                        placeholder='Search'
+                                        className='ps-0' />
+                                </AutocompleteRoot>
+
+                                {suggestionList.length>0&& <Listbox sx={{ zIndex: 1 }}>
+                                    {suggestionList.map((itm,i)=>{
+                                        return <Option key={i}>
+                                        {/* <ApartmentIcon className='me-1' /> */}
+                                        {itm.Subject}</Option>
+                                    })}
+                                </Listbox>}
+                            </AutocompleteWrapper>
+                        </Layout>
+
 
                         <FormControl size="small" className='select-border ms-3'>
                             {/* <InputLabel id="demo-simple-select-label">Folder</InputLabel> */}
@@ -482,14 +502,19 @@ function TodoList() {
                                     if (e.target.value === "Folder") {
                                         handleFilterDeletion("Folder");
                                         return;
+                                    } else if (e.target.value === "") {
+                                        handleFilterDeletion("Folder");
+                                        setSelectedFolder("Folder");
+                                        return;
                                     } else {
                                         setTaskFilter({ ...taskFilter, Folder: [e.target.value] })
                                     }
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value="Folder">Folders</MenuItem>
-                                {folders.length > 0 && folders.map(fld => <MenuItem value={fld.Folder}>{fld.Folder}</MenuItem>)}
+                                <MenuItem value="Folder" style={{ display: "none" }}>Folders</MenuItem>
+                                <MenuItem value="">None</MenuItem>
+                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder}>{fld.Folder}</MenuItem>)}
                             </Select>
                         </FormControl>
 
@@ -505,13 +530,18 @@ function TodoList() {
                                     if (e.target.value === "Source") {
                                         handleFilterDeletion("Source");
                                         return;
+                                    } else if (e.target.value === "") {
+                                        handleFilterDeletion("Source");
+                                        setSelectedType("Source");
+                                        return;
                                     } else {
                                         setTaskFilter({ ...taskFilter, Source: [e.target.value] });
                                     }
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value="Source">Type</MenuItem>
+                                <MenuItem value="Source" style={{ display: "none" }}>Type</MenuItem>
+                                <MenuItem value="">None</MenuItem>
                                 <MenuItem value="CRM">CRM</MenuItem>
                                 <MenuItem value="Portal">Portal</MenuItem>
                             </Select>
@@ -529,13 +559,19 @@ function TodoList() {
                                     if (e.target.value === "Status") {
                                         handleFilterDeletion("Status");
                                         return;
+                                    } else if (e.target.value === "") {
+                                        handleFilterDeletion("Status");
+                                        setSelectedStatus("Status");
+                                        return;
                                     } else {
                                         setTaskFilter({ ...taskFilter, Status: [e.target.value] });
                                     }
                                 }}
                                 className='custom-dropdown'
                             >
-                                {["Status", "Done", "Not Started", "In Progress", "Waiting on someone else", "Deferred", "Deleted", "Completed"].map(itm => <MenuItem value={itm}>{itm}</MenuItem>)}
+                                <MenuItem value={"Status"} style={{ display: "none" }}>Status</MenuItem>
+                                <MenuItem value={""} >None</MenuItem>
+                                {["Done", "Not Started", "In Progress", "Waiting on someone else", "Deferred", "Deleted", "Completed"].map((itm, i) => <MenuItem key={i} value={itm}>{itm}</MenuItem>)}
                             </Select>
                         </FormControl>
                     </Box>
@@ -578,7 +614,7 @@ function TodoList() {
                             >
                                 <div className='pointer me-2 d-flex align-items-center' id="reportrange"
                                 >
-                                    
+
                                     <i className="fa fa-calendar"></i>
                                     <CalendarMonthIcon className='me-2 text-red' />
 
@@ -594,16 +630,22 @@ function TodoList() {
                                 id="demo-simple-select"
                                 value={selectedSortBy}
                                 label="Group By"
-                                onChange={(e) => setSelectedSortBy(e.target.value)}
+                                onChange={(e) => {
+                                    if (e.target.value === "") {
+                                        setSelectedSortBy("Sort By");
+                                        return;
+                                    }
+                                    setSelectedSortBy(e.target.value)
+                                }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value="Sort By" onClick={() => setAllTask([...actualData])}>Sort By</MenuItem>
+                                <MenuItem value="Sort By" style={{ display: "none" }}>Sort By</MenuItem>
+                                <MenuItem value="" onClick={() => setAllTask([...actualData])}>None</MenuItem>
                                 <MenuItem value="Client">Client Name</MenuItem>
                                 <MenuItem value="EndDateTime">Due Date</MenuItem>
                                 <MenuItem value="Priority">Priority</MenuItem>
                                 <MenuItem value="Section">Section</MenuItem>
                                 <MenuItem value="CreationDate">Start Date</MenuItem>
-                                <MenuItem value="Subject">Subject</MenuItem>
                             </Select>
                         </FormControl>
                         {selectedSortBy !== "Sort By" && <Checkbox onClick={(e) => handleSortBy(e.target.checked)} className='p-0' {...label} icon={<UpgradeIcon />} checkedIcon={<VerticalAlignBottomIcon />} />}
@@ -614,11 +656,19 @@ function TodoList() {
                                 id="demo-simple-select"
                                 value={selectedGroupBy}
                                 label="Sort By"
-                                onChange={(e) => handleGrouping(e.target.value)}
+                                onChange={(e) => {
+                                    if (e.target.value === "") {
+                                        setSelectedGroupBy("Group By");
+                                        setDataInGroup([]);
+                                        return;
+                                    }
+                                    handleGrouping(e.target.value)
+                                }}
                                 className='custom-dropdown'
 
                             >
-                                <MenuItem value="Group By">Group By</MenuItem>
+                                <MenuItem value="Group By" style={{ display: "none" }}>Group By</MenuItem>
+                                <MenuItem value="">None</MenuItem>
                                 <MenuItem value="Client">Client Name</MenuItem>
                                 <MenuItem value="EndDateTime">Due Date</MenuItem>
                                 <MenuItem value="Priority">Priority</MenuItem>
@@ -644,7 +694,7 @@ function TodoList() {
 
                 <Box className='main-filter-box'>
                     {/* <Box className='row'> */}
-                    {isLoading?<Box className="custom-loader"><CustomLoader/></Box>:(<Box className='row'>
+                    {isLoading ? <Box className="custom-loader"><CustomLoader /></Box> : (<Box className='row'>
 
                         {
 
@@ -786,7 +836,7 @@ function TodoList() {
 
                                         </Box>
                                     </Box>
-                                })) : (<DataNotFound/>))
+                                })) : (<DataNotFound />))
                         }
 
                         {/* statick box */}
@@ -1006,6 +1056,148 @@ function TodoList() {
         </>
     )
 }
+
+const blue = {
+    100: '#DAECFF',
+    200: '#99CCF3',
+    400: '#3399FF',
+    500: '#007FFF',
+    600: '#0072E5',
+    700: '#0059B2',
+    900: '#003A75',
+};
+
+const grey = {
+    50: '#F3F6F9',
+    100: '#E5EAF2',
+    200: '#DAE2ED',
+    300: '#C7D0DD',
+    400: '#B0B8C4',
+    500: '#9DA8B7',
+    600: '#6B7A90',
+    700: '#434D5B',
+    800: '#303740',
+    900: '#1C2025',
+};
+
+const Layout = styled('div')`
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 4px;
+`;
+
+const AutocompleteWrapper = styled('div')`
+  position: relative;
+`;
+
+const AutocompleteRoot = styled('div')(
+    ({ theme }) => `
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 400;
+  border-radius: 8px;
+  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[500]};
+  background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+  border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+  box-shadow: 0px 2px 4px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.5)' : 'rgba(0,0,0, 0.05)'
+        };
+  display: flex;
+  gap: 5px;
+  padding-right: 5px;
+  overflow: hidden;
+  width: 320px;
+
+  &.Mui-focused {
+    border-color: ${blue[400]};
+    box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[700] : blue[200]};
+  }
+
+  &:hover {
+    border-color: ${blue[400]};
+  }
+
+  &:focus-visible {
+    outline: 0;
+  }
+`,
+);
+
+const Input = styled('input')(
+    ({ theme }) => `
+  font-size: 0.875rem;
+  font-family: inherit;
+  font-weight: 400;
+  line-height: 1.5;
+  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+  background: inherit;
+  border: none;
+  border-radius: inherit;
+  padding: 8px 12px;
+  outline: 0;
+  flex: 1 0 auto;
+`,
+);
+
+const Listbox = styled('ul')(
+    ({ theme }) => `
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 0.875rem;
+  box-sizing: border-box;
+  padding: 6px;
+  margin: 12px 0;
+  max-width: 320px;
+  border-radius: 12px;
+  overflow: auto;
+  outline: 0px;
+  max-height: 300px;
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+  border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+  box-shadow: 0px 4px 6px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.50)' : 'rgba(0,0,0, 0.05)'
+        };
+  `,
+);
+
+const Option = styled('li')(
+    ({ theme }) => `
+  list-style: none;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: default;
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &[aria-selected=true] {
+    background-color: ${theme.palette.mode === 'dark' ? blue[900] : blue[100]};
+    color: ${theme.palette.mode === 'dark' ? blue[100] : blue[900]};
+  }
+
+  &.base--focused,
+  &.base--focusVisible {
+    background-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[100]};
+    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+  }
+
+  &.base--focusVisible {
+    box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[500] : blue[200]};
+  }
+
+  &[aria-selected=true].base--focused,
+  &[aria-selected=true].base--focusVisible {
+    background-color: ${theme.palette.mode === 'dark' ? blue[900] : blue[100]};
+    color: ${theme.palette.mode === 'dark' ? blue[100] : blue[900]};
+  }
+  `,
+);
 
 export default TodoList
 
