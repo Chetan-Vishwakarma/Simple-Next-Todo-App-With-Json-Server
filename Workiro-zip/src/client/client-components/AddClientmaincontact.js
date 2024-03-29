@@ -345,6 +345,7 @@ const AddClientmaincontact =  React.memo(({userDetail, setUserDetail})=>{
       <TextField
         fullWidth
         key={`Postcodekey`}
+        type="number"
         id="Postcodeid"
         label="Postcode"
         variant="outlined"
@@ -379,6 +380,7 @@ const AddClientmaincontact =  React.memo(({userDetail, setUserDetail})=>{
       <TextField
         fullWidth
         key={`Telephonekey`}
+        type="number"
         id="Telephoneid"
         label="Telephone"
         variant="outlined"
@@ -391,6 +393,7 @@ const AddClientmaincontact =  React.memo(({userDetail, setUserDetail})=>{
       <TextField
         fullWidth
         key={`Mobilekey`}
+        type="number"
         id="Mobileid"
         label="Mobile No"
         variant="outlined"

@@ -287,6 +287,7 @@ const  AddClientdetails =  React.memo(({ userDetail, setUserDetail })=> {
           <TextField
             fullWidth
             id="standard-basic"
+            type="number"
             label="Mobile"
             variant="outlined"
             name="Mobile"
@@ -298,6 +299,7 @@ const  AddClientdetails =  React.memo(({ userDetail, setUserDetail })=> {
           <TextField
             fullWidth
             id="standard-basic"
+            type="number"
             label="Telephone"
             variant="outlined"
             name="Telephone"

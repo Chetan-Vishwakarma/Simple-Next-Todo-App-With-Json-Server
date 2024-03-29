@@ -507,7 +507,7 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
         data?.Table.map((item, i) => {
           return (
             <Box sx={{ width: "100%", typography: "body1" }} className='mt-4 pt-2'>
-              <h5 className="mb-0 sembold font-16 text-black">{item.TagName}</h5>
+              <h5 className="mb-2 boold  text-black">{item.TagName}</h5>
 
               <Grid className='mt-0 date-padding-0' container spacing={2}>
                 {data?.Table3.map((udf, i) => {
