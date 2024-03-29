@@ -27,6 +27,7 @@ import DataGrid, {
     RemoteOperations,
     Sorting
 } from 'devextreme-react/data-grid';
+import DataNotFound from "./DataNotFound";
 
 
 // sadik code start
@@ -150,7 +151,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
 
                 </Box> */}
 
-                <DataGrid
+                {dataNotFoundBoolean?<DataNotFound/>:<DataGrid
                     dataSource={dataNotFoundBoolean ? [] : advFilteredResult.length > 0 ? advFilteredResult : documents}
                     keyExpr="Guid"
                     allowColumnReordering={true}
@@ -261,7 +262,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                             </Box>
                         }}
                     />
-                </DataGrid>
+                </DataGrid>}
 
 
                 {/* {!isGroupBy&&advFilteredResult.length>0 ? (advFilteredResult.map((item) => {
