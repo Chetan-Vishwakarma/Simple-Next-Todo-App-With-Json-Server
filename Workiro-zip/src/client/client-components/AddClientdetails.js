@@ -164,6 +164,8 @@ const  AddClientdetails =  React.memo(({ userDetail, setUserDetail })=> {
         </Grid>
 
         <Grid item xs={6} md={6}>
+        <Grid container spacing={3}>
+        <Grid item xs={10} md={10}>
           <TextField
             fullWidth
             id="standard-basic-id"
@@ -173,6 +175,19 @@ const  AddClientdetails =  React.memo(({ userDetail, setUserDetail })=> {
             value={userDetail.Clientid}
             onChange={onChange}
           />
+          </Grid>
+          <Grid item xs={2} md={2}>
+          <TextField
+            fullWidth
+            id="standard-basic-id"
+            label="Client ID"
+            variant="outlined"
+            name="Clientid"
+            value={userDetail.Clientid}
+            onChange={onChange}
+          />
+          </Grid>
+          </Grid>
         </Grid>
 
         <Grid item xs={6} md={6}>

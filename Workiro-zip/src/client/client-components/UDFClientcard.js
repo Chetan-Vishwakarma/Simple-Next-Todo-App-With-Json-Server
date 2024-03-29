@@ -6,8 +6,9 @@ import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { Unstable_NumberInput as NumberInput } from '@mui/base/Unstable_NumberInput';
 import dayjs from "dayjs";
-const  UDFClientcard =  React.memo(({ data, setDataFromChild })=> {
+const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
   console.log(data?.Table, "sdfsd", data.Table3);
   const [selectManager, setselectManagers] = useState([]);
   const [selectedDatetest, setSelectedDatetest] = useState([]);
@@ -36,66 +37,39 @@ const  UDFClientcard =  React.memo(({ data, setDataFromChild })=> {
       }
     });
   };
-  // const handleInputChange = (e) => {
-  //   e.preventDefault();
-  //   const { id, value } = e.target;
-  //    id.split('-');
-  //   console.log(e,"handleInputChang111111e");
-  //   const data = id + ":" + value;
-  //   console.log(data, "datahandlechange");
-  //   setSelectedDatetest((prevData) => ({
-  //     ...prevData,
-  //     [id]: value,
-  //   }));
-  //     setDataFromChild(selectedDatetest);
-  //   // setInputValue(value);
-  //   // Perform any action with the changed value
-  //   console.log("selectedDatetest", selectedDatetest);
-  // };
   const handleInputChange = (e) => {
     e.preventDefault();
     const { id, value } = e.target;
-    let spt = id.split('-');
+    let spt = id.split("-");
 
-    console.log(spt[0], "handleInputChang111111e1",e.target.value);
+    console.log(spt[0], "handleInputChang111111e1", e.target.value);
     const data = spt[0] + ":" + value;
     console.log(data, "datahandlechange");
     setSelectedDatetest((prevData) => ({
       ...prevData,
       [id]: value,
     }));
-      setDataFromChild(selectedDatetest);
-    // setInputValue(value);
-    // Perform any action with the changed value
-    console.log("selectedDatetest", selectedDatetest);
+    setDataFromChild(selectedDatetest);
   };
 
-  const handleInputOnDateChage= (e,vl) => { 
-    
-
-    // console.log(spt[0], "handleInputChang111111e");
-    let date =  dayjs(e).format("YYYY/MM/DD");
-    console.log(date,vl,"handleInputChang111111e");  
+  const handleInputOnDateChage = (e, vl) => {
+    let date = dayjs(e).format("YYYY/MM/DD");
+    console.log(date, vl, "handleInputChang111111e");
     setSelectedDatetest((prevData) => ({
       ...prevData,
       [vl]: date,
     }));
-      // setDataFromChild(selectedDatetest);  
-      console.log("selectedDatetestsonam",selectedDatetest);
   };
-  const handleInputOnSelect= (e,vl) => { 
-    
+  const handleInputOnSelect = (e, vl) => {
     const { id } = e.target;
-    let spt = id.split('-');
-    console.log(id,"handleInputOnSelect",vl);  
+    let spt = id.split("-");
+    console.log(id, "handleInputOnSelect", vl);
     const data = spt[0] + ":" + vl;
     console.log(data, "11handleInputOnSelect");
     setSelectedDatetest((prevData) => ({
       ...prevData,
       [spt[0]]: vl,
     }));
-    //   // setDataFromChild(selectedDatetest);  
-    //   console.log("selectedDatetestsonam",selectedDatetest);
   };
   useEffect(() => {
     Json_GetForwardUserList();
@@ -103,15 +77,16 @@ const  UDFClientcard =  React.memo(({ data, setDataFromChild })=> {
   useEffect(() => {
     setDataFromChild(selectedDatetest);
   }, [selectedDatetest]);
-  console.log("selectedDatetestsonamoutside",selectedDatetest);
+  console.log("selectedDatetestsonamoutside", selectedDatetest);
   const renderDynamicInput = (data) => {
-    console.log(selectManager, "selectManagerselectManager");
+    console.log(selectManager, "selectManagerselectManager",data);
     let renderedContent;
     switch (data?.UserDefFieldTypeID) {
       case 1:
         switch (data?.TextControlValue) {
           case "Integer":
             if (data && data.UdfValue) {
+              renderedContent = (
               <Grid item xs={6} md={6} className="mb-3">
                 <TextField
                   fullWidth
@@ -129,8 +104,10 @@ const  UDFClientcard =  React.memo(({ data, setDataFromChild })=> {
                   // value={data.UdfValue}
                   onChange={handleInputChange}
                 />
-              </Grid>;
+              </Grid>
+              )
             } else {
+              renderedContent = (
               <Grid item xs={6} md={6} className="mb-3">
                 <TextField
                   fullWidth
@@ -148,7 +125,8 @@ const  UDFClientcard =  React.memo(({ data, setDataFromChild })=> {
                   //   value={data.UdfValue}
                   onChange={handleInputChange}
                 />
-              </Grid>;
+              </Grid>
+              )
             }
             break;
           case "String":
@@ -171,6 +149,7 @@ const  UDFClientcard =  React.memo(({ data, setDataFromChild })=> {
                     // value={data.UdfValue}
                     onChange={handleInputChange}
                   />
+                  
                 </Grid>
               );
             } else {
@@ -200,17 +179,16 @@ const  UDFClientcard =  React.memo(({ data, setDataFromChild })=> {
             if (data && data.UdfValue) {
               renderedContent = (
                 <Grid item xs={6} md={6} className="mb-3">
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer
-                    components={[
-                      "DatePicker",
-                      "TimePicker",
-                      "DateTimePicker",
-                      "DateRangePicker",
-                    ]}
-                  >
-                   
-                      <DatePicker 
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer
+                      components={[
+                        "DatePicker",
+                        "TimePicker",
+                        "DateTimePicker",
+                        "DateRangePicker",
+                      ]}
+                    >
+                      <DatePicker
                         // dateFormat="DD/MM/YYYY"
                         // value={currentDate}
                         id={
@@ -221,12 +199,11 @@ const  UDFClientcard =  React.memo(({ data, setDataFromChild })=> {
                           data.TextControlValue +
                           "_UDF"
                         }
-                       onChange={handleInputChange}
+                        onChange={handleInputChange}
                       />
-                    
-                  </DemoContainer>
-                </LocalizationProvider>
-              </Grid>
+                    </DemoContainer>
+                  </LocalizationProvider>
+                </Grid>
               );
             } else {
               renderedContent = (
@@ -240,22 +217,24 @@ const  UDFClientcard =  React.memo(({ data, setDataFromChild })=> {
                         "DateRangePicker",
                       ]}
                     >
-                     
-                        <DatePicker 
-                          // dateFormat="DD/MM/YYYY"
-                          // value={currentDate}
-                          id={
-                            data.UserDefFieldID +
-                            "_" +
-                            data.UserDefFieldTypeID +
-                            "_" +
-                            data.TextControlValue +
-                            "_UDF"
-                          }
-                           onChange={(e)=>handleInputOnDateChage(e,`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}_UDF`
-                          )}
-                        />
-                      
+                      <DatePicker
+                        // dateFormat="DD/MM/YYYY"
+                        // value={currentDate}
+                        id={
+                          data.UserDefFieldID +
+                          "_" +
+                          data.UserDefFieldTypeID +
+                          "_" +
+                          data.TextControlValue +
+                          "_UDF"
+                        }
+                        onChange={(e) =>
+                          handleInputOnDateChage(
+                            e,
+                            `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}_UDF`
+                          )
+                        }
+                      />
                     </DemoContainer>
                   </LocalizationProvider>
                 </Grid>
@@ -402,19 +381,21 @@ const  UDFClientcard =  React.memo(({ data, setDataFromChild })=> {
       case 2:
         if (data.Options && typeof data.Options === "string") {
           const optionsArray = data.Options.split("@;");
-          console.log(data,"optionsArray", `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`);
+          console.log(
+            data,
+            "optionsArray",
+            `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`
+          );
           if (optionsArray.length > 0) {
             renderedContent = (
               <Grid item xs={6} md={6} className="mb-3">
                 <Autocomplete
-
-                 id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
+                  id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
                   options={optionsArray} // Pass optionsArray as options
-                 name={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
+                  name={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
                   clearOnEscape
                   // value={data.UdfValue}
                   onChange={(event, value) => handleInputOnSelect(event, value)}
-
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -447,7 +428,7 @@ const  UDFClientcard =  React.memo(({ data, setDataFromChild })=> {
               />
             </Grid>
           );
-      }
+        }
         break;
       case 10:
         // case "Boolean":
@@ -475,7 +456,6 @@ const  UDFClientcard =  React.memo(({ data, setDataFromChild })=> {
           );
         } else {
           renderedContent = (
-           
             <Grid item xs={6} md={6} className="mb-3">
               <FormControlLabel
                 required
