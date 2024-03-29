@@ -16,6 +16,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import DataNotFound from '../../components/DataNotFound';
+import { ToastContainer, toast } from 'react-toastify';
 
 function CardView(props) {
   const {
@@ -25,6 +26,31 @@ function CardView(props) {
     setSelectedColor, colorArr, handleAdvanceFilterAgain, handleFilterRemove, onlyClients, filteredClients, clients,
     onlyContacts, filteredContacts, contacts, selectedFolder, selectedChoice, basedOnClientContactAndAll, objFilter, isDataNotFoundInClient, isDataNotFoundInContact, isDataNotFoundInBoth, objFilterColor, loadMore
   } = props;
+
+  const handleCopyToClipboard = (text) => {
+    console.log('Copied to clipboard:', text);
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            console.log('Copied to clipboard:', text);
+            // Optionally, you can show a toast or alert to indicate successful copying
+        })
+        .catch((error) => {
+            console.error('Error copying to clipboard:', error);
+        });
+};
+
+const handleCopyDetailsToClipboard = (details) => {
+  navigator.clipboard.writeText(details)
+      .then(() => {
+          console.log('Copied details to clipboard:', details);
+          toast.success("Copied");
+          // Optionally, you can show a toast or alert to indicate successful copying
+      })
+      .catch((error) => {
+          console.error('Error copying details to clipboard:', error);
+      });
+};
+
   return (
     <>
       {
@@ -32,7 +58,7 @@ function CardView(props) {
         <img src={noData} />
         <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : (onlyClients && (filteredClients.length > 0 ? filteredClients.map((item, i) => {
           return <Box key={i} className='client-box-main'>
-            <Box className='client-box' onClick={() => handleClientNavigation(item.OriginatorNo)}>
+            <Box className='client-box' onDoubleClick={() => handleClientNavigation(item.OriginatorNo)}>
 
               <Box className='client-box-icons d-flex'>
                 {/* <PersonIcon className="me-2" /> */}
@@ -49,26 +75,36 @@ function CardView(props) {
                   </Tooltip>
 
                   <Box className='inner-info-details'>
-                    <Tooltip title="Copy Details" className='my-1 copy-icon'>
-                      <IconButton>
-                        <ContentCopyIcon className='font-18' />
-                      </IconButton>
+                    <Tooltip title="Copy Contact Number" className='my-1 copy-icon'>
+                        <IconButton onClick={() => handleCopyToClipboard(item["Contact Number"])}>
+                            <LocalPhoneIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Copy Email" className='my-1 copy-icon'>
+                        <IconButton onClick={() => handleCopyToClipboard(item["E-Mail"])}>
+                            <EmailIcon className='font-16' />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Copy Address" className='my-1 copy-icon'>
+                        <IconButton onClick={() => handleCopyToClipboard(item["Address Line 1"])}>
+                            <LocationOnIcon />
+                        </IconButton>
                     </Tooltip>
                     <ul className='p-0 mb-0'>
-                      <li>
-                        <LocalPhoneIcon />
-                        {(item["Contact Number"]&&item["Contact Number"]!=="")? item["Contact Number"]: "ContactNo Not Available"}
-                      </li>
-                      <li>
-                        <EmailIcon className='font-16' />
-                        {(item["E-Mail"]&&item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Available"}
-                      </li>
-                      <li>
-                        <LocationOnIcon />
-                        {(item["Address Line 1"]&&item["Address Line 1"]!=="")? item["Address Line 1"]: "Address Not Available"}
-                      </li>
+                        <li>
+                            <LocalPhoneIcon />
+                            {(item["Contact Number"] && item["Contact Number"] !== "") ? item["Contact Number"] : "ContactNo Not Available"}
+                        </li>
+                        <li>
+                            <EmailIcon className='font-16' />
+                            {(item["E-Mail"] && item["E-Mail"] !== "") ? item["E-Mail"] : "Email Not Available"}
+                        </li>
+                        <li>
+                            <LocationOnIcon />
+                            {(item["Address Line 1"] && item["Address Line 1"] !== "") ? item["Address Line 1"] : "Address Not Available"}
+                        </li>
                     </ul>
-                  </Box>
+                </Box>
                 </Box>
               </Box>
 
@@ -101,7 +137,7 @@ function CardView(props) {
           </Box>
         }) : isDataNotFoundInClient ? <DataNotFound/> : clients.slice(0,loadMore).map((item, i) => {
           return <Box key={i} className='client-box-main'>
-            <Box className='client-box sadik' onClick={() => handleClientNavigation(item.OriginatorNo)}>
+            <Box className='client-box sadik' onDoubleClick={() => handleClientNavigation(item.OriginatorNo)}>
               {/* <img src={pin} className='pin-img' /> */}
 
               <Box className='client-box-icons d-flex'>
@@ -119,26 +155,31 @@ function CardView(props) {
                   </Tooltip>
 
                   <Box className='inner-info-details'>
-                    <Tooltip title="Copy Details" className='my-1 copy-icon'>
-                      <IconButton>
-                        <ContentCopyIcon className='font-18' />
-                      </IconButton>
-                    </Tooltip>
-                    <ul className='p-0 mb-0'>
-                      <li>
-                        <LocalPhoneIcon />
-                        {(item["Contact Number"]&&item["Contact Number"]!=="")? item["Contact Number"]: "ContactNo Not Available"}
-                      </li>
-                      <li>
-                        <EmailIcon className='font-16' />
-                        {(item["E-Mail"]&&item["E-Mail"]!=="")? item["E-Mail"]: "Email Not Available"}
-                      </li>
-                      <li>
-                        <LocationOnIcon />
-                        {(item["Address Line 1"]&&item["Address Line 1"]!=="")? item["Address Line 1"]: "Address Not Available"}
-                      </li>
-                    </ul>
-                  </Box>
+           
+            <ul className='p-0 mb-0'>
+                <li>
+                    <LocalPhoneIcon />
+                    {(item["Contact Number"] && item["Contact Number"] !== "") ? item["Contact Number"] : "ContactNo Not Available"}
+                    <IconButton onClick={() => handleCopyDetailsToClipboard(item["Contact Number"])}>
+                    <ContentCopyIcon className='font-18' />
+                </IconButton>
+                </li>
+                <li>
+                    <EmailIcon className='font-16' />
+                    {(item["E-Mail"] && item["E-Mail"] !== "") ? item["E-Mail"] : "Email Not Available"}
+                    <IconButton onClick={() => handleCopyDetailsToClipboard(item["E-Mail"])}>
+                    <ContentCopyIcon className='font-18' />
+                </IconButton>
+                </li>
+                <li>
+                    <LocationOnIcon />
+                    {(item["Address Line 1"] && item["Address Line 1"] !== "") ? item["Address Line 1"] : "Address Not Available"}
+                    <IconButton onClick={() => handleCopyDetailsToClipboard(item["Address Line 1"])}>
+                    <ContentCopyIcon className='font-18' />
+                </IconButton>
+                </li>
+            </ul>
+        </Box>
                 </Box>
               </Box>
 
@@ -268,6 +309,7 @@ function CardView(props) {
           </Box>
         })))
       }
+      <ToastContainer></ToastContainer>
     </>
   )
 }
