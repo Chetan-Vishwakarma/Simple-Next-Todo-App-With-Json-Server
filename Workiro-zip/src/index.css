@@ -1881,6 +1881,10 @@ span.tox-statusbar__branding {
 .rotate-180 {
   transform: rotate(180deg);
 }
+.date-padding-0 .MuiStack-root {
+  padding-top: 0px;
+}
+
 
 @media only screen and (max-width: 1366px) {
   .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root {

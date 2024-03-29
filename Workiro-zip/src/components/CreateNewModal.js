@@ -270,7 +270,7 @@ export default function CreateNewModalTask({ ...props }) {
 
 
     const [anchorElstatus, setAnchorElstatus] = React.useState(null);
-    const openstatus= Boolean(anchorElstatus);
+    const openstatus = Boolean(anchorElstatus);
     const handleClickstatus = (event) => {
         setAnchorElstatus(event.currentTarget);
     };
@@ -1999,7 +1999,7 @@ export default function CreateNewModalTask({ ...props }) {
                     className="btn-blue btn-round btn-block"
                 >
                     <span className="material-symbols-outlined">edit_square</span>{" "}
-                <span className="ps-2 create-text">Create New  </span>
+                <span className="ps-2 create-text">Add New  </span>
                     
                 </Button>
                 <Menu
@@ -2016,6 +2016,7 @@ export default function CreateNewModalTask({ ...props }) {
                     <MenuItem onClick={handleClickOpen}>Portal Task</MenuItem>
                     <MenuItem onClick={handleClickReferance}>Reference</MenuItem>
                     <MenuItem onClick={handleClose4}>Note</MenuItem>
+                    <MenuItem onClick={handleClose4}>Document</MenuItem>
                 </Menu>
             </div>
 
@@ -3223,7 +3224,7 @@ export default function CreateNewModalTask({ ...props }) {
                                             : null}
                                     </Menu>
 
-                                    
+
                                 </Box>
 
                                 <Box className="select-dropdown">
@@ -3283,82 +3284,7 @@ export default function CreateNewModalTask({ ...props }) {
                                             : null}
                                     </Menu>
 
-                                    <Button
-                                        id="basic-button-section"
-                                        aria-controls={
-                                            boolStatus && selectedStatusMenu === "status"
-                                                ? "basic-menu"
-                                                : undefined
-                                        }
-                                        aria-haspopup="true"
-                                        aria-expanded={
-                                            boolStatus && selectedStatusMenu === "status" ? "true" : undefined
-                                        }
-                                        onClick={(event) => handleClick3(event, "status")}
-                                    >
-                                        {txtStatus}
-                                        <KeyboardArrowDownIcon />
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={statusAnchorEl}
-                                        open={Boolean(statusAnchorEl)}
-                                        MenuListProps={{
-                                            "aria-labelledby": "basic-button",
-                                        }}
-                                        className="search-list-main"
-                                    >
-                                        <List
-                                            sx={{
-                                                width: "100%",
-                                                maxWidth: 600,
-                                                bgcolor: "background.paper",
-                                                height: '200px'
-                                            }}
-                                        >
-                                            {statusarr
-                                                ? statusarr.map((item, index) => (
-                                                    <React.Fragment key={index}>
-                                                        <ListItem
-                                                            alignItems="flex-start"
-                                                            onClick={(e) => {
-                                                                //console.log("client select", item.name);
-                                                                setTxtStatus(item.name); // Assuming item.Client holds the value you want
 
-                                                                setStatusAnchorEl(null);
-                                                            }}
-                                                            className="search-list"
-                                                        >
-                                                            {/* <ListItemAvatar>
-                                                                <Avatar
-                                                                    alt="Remy Sharp"
-                                                                    src="/static/images/avatar/1.jpg"
-                                                                />
-                                                            </ListItemAvatar> */}
-                                                            <ListItemText
-                                                                primary={item.name}
-                                                                className='m-0'
-                                                                secondary={
-                                                                    <React.Fragment>
-                                                                        <Typography
-                                                                            sx={{ display: "inline" }}
-                                                                            component="span"
-                                                                            variant="body2"
-                                                                            color="text.primary"
-                                                                        >
-                                                                            {/* {item.id} */}
-                                                                        </Typography>
-                                                                        {/* {item.CLMandatory} */}
-                                                                    </React.Fragment>
-                                                                }
-                                                            />
-                                                        </ListItem>
-                                                        {/* <Divider variant="inset" component="li" /> */}
-                                                    </React.Fragment>
-                                                ))
-                                                : null}
-                                        </List>
-                                    </Menu>
                                 </Box>
                             </Box>
                             {/* col end */}
@@ -3517,16 +3443,13 @@ export default function CreateNewModalTask({ ...props }) {
                                 >
                                     Document List
                                 </Button>
-
                             </div>
-
                             <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
                                 <span className="material-symbols-outlined text-black">
                                     cancel
                                 </span>
                             </Button>
                         </Box>
-
                         <hr />
 
                         <Reference />

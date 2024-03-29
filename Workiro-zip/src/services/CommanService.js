@@ -9,7 +9,19 @@ export default class CommanCLS extends AllService {
     constructor(APIUrl, agrno, Email, password) {
         super(APIUrl, agrno, Email, password);
     }
-
+///////////////////all contact
+Json_GetContactListByFolder(obj,callBack) {
+    super.CreateNewServiceParamObject("Json_GetContactListByFolder",obj,true);
+    super.CallNewService("Json_GetContactListByFolder", function (status, Data) {
+        if (status) {
+            return callBack(true, Data);
+        }
+        else {
+            return callBack(false, []);
+        }
+    })
+}
+///////////////////end all contact
      ConfirmMessage(txt,callBack) {
         Swal.fire({
             // title: "Are you sure you want to delete this item?",
@@ -33,6 +45,29 @@ export default class CommanCLS extends AllService {
    
 
     ////////////////////////////////////////Portal Methods
+   
+    Json_getRecentDocumentList(callBack) {
+        super.CreateNewServiceParamObject("Json_getRecentDocumentList");
+        super.CallNewService("Json_getRecentDocumentList", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+    Json_getRecentTaskList(callBack) {
+        super.CreateNewServiceParamObject("Json_getRecentTaskList");
+        super.CallNewService("Json_getRecentTaskList", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
     Json_RegisterItem(obj, callBack) {
         super.CreateNewServiceParamObject("Json_RegisterItem", obj, true);
         super.CallNewService("Json_RegisterItem", function (status, Data) {
@@ -291,6 +326,32 @@ export default class CommanCLS extends AllService {
 
     };
 
+
+    DateFormateDate(jsonDate) {
+        // alert(jsonDate);
+        if (jsonDate != null && jsonDate !== "") {
+            var fullDate = new Date(parseInt(jsonDate.substr(6)));
+
+            var twoDigitMonth = (fullDate.getMonth() + 1) + "";
+
+            if (twoDigitMonth.length === 1) twoDigitMonth = "0" + twoDigitMonth;
+
+            var twoDigitDate = fullDate.getDate() + "";
+
+            if (twoDigitDate.length === 1)
+
+                twoDigitDate = "0" + twoDigitDate;
+           
+
+            var currentDate = twoDigitDate + "/" + twoDigitMonth + "/" + fullDate.getFullYear() ;
+            return currentDate;
+        }
+        else {
+            return "";
+        }
+
+    };
+
     Json_DeleteAttachment(obj, callBack) {
         super.CreateNewServiceParamObject("Json_DeleteAttachment", obj, true);
         super.CallNewService("Json_DeleteAttachment", function (status, Data) {
@@ -374,17 +435,7 @@ export default class CommanCLS extends AllService {
         })
     }
 
-    Json_RegisterItem(obj, callBack) {
-        super.CreateNewServiceParamObject("Json_RegisterItem", obj, true);
-        super.CallNewService("Json_RegisterItem", function (status, Data) {
-            if (status) {
-                return callBack(true, Data);
-            }
-            else {
-                return callBack(false, []);
-            }
-        })
-    }
+    
     Json_GetCategory(obj, callBack) {
         super.CreateNewServiceParamObject("Json_GetCategory", obj, true);
         super.CallNewService("Json_GetCategory", function (status, Data) {
@@ -547,17 +598,7 @@ export default class CommanCLS extends AllService {
         })
     }
 
-    Json_GetClientCardDetails(obj, callBack) {
-        super.CreateNewServiceParamObject("Json_GetClientCardDetails", obj, false);
-        super.CallNewService("Json_GetClientCardDetails", function (status, Data) {
-            if (status) {
-                return callBack(true, Data);
-            }
-            else {
-                return callBack(false, []);
-            }
-        })
-    }
+    
 
     Json_GetFolders(obj, callBack) {
         super.CreateNewServiceParamObject("Json_GetFolders", obj, false);
@@ -618,6 +659,19 @@ export default class CommanCLS extends AllService {
             }
         })
     }
+
+    Json_CRM_GetOutlookTask_ForTask(callBack) {
+        super.CreateNewServiceParamObject("Json_CRM_GetOutlookTask");
+        super.CallNewService("Json_CRM_GetOutlookTask", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
+
 
     Json_GetItemBase64DataById(obj, callBack) {
         super.CreateNewServiceParamObject("Json_GetItemBase64DataById", obj, true);

@@ -1,3 +1,4 @@
+/* eslint-disable default-case */
 import { Box, Grid, TextField, Autocomplete, Switch } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import CommanCLS from "../../services/CommanService";
@@ -86,8 +87,47 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
         switch (data?.TextControlValue) {
           case "Integer":
             if (data && data.UdfValue) {
+              <TextField
+                fullWidth
+                label={data.Name}
+                variant="outlined"
+                name="regLine1"
+                id={
+                  data.UserDefFieldID +
+                  "_" +
+                  data.UserDefFieldTypeID +
+                  "_" +
+                  data.TextControlValue +
+                  "_UDF"
+                }
+                // value={data.UdfValue}
+                onChange={handleInputChange}
+              />
+
+            } else {
+
+              <TextField
+                fullWidth
+                label={data.Name}
+                variant="outlined"
+                name="regLine1"
+                id={
+                  data.UserDefFieldID +
+                  "_" +
+                  data.UserDefFieldTypeID +
+                  "_" +
+                  data.TextControlValue +
+                  "_UDF"
+                }
+                //   value={data.UdfValue}
+                onChange={handleInputChange}
+              />;
+            }
+            break;
+          case "String":
+            if (data && data.UdfValue) {
               renderedContent = (
-              <Grid item xs={6} md={6} className="mb-3">
+
                 <TextField
                   fullWidth
                   label={data.Name}
@@ -104,11 +144,10 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
                   // value={data.UdfValue}
                   onChange={handleInputChange}
                 />
-              </Grid>
-              )
+              );
             } else {
               renderedContent = (
-              <Grid item xs={6} md={6} className="mb-3">
+
                 <TextField
                   fullWidth
                   label={data.Name}
@@ -125,254 +164,198 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
                   //   value={data.UdfValue}
                   onChange={handleInputChange}
                 />
-              </Grid>
-              )
-            }
-            break;
-          case "String":
-            if (data && data.UdfValue) {
-              renderedContent = (
-                <Grid item xs={6} md={6} className="mb-3">
-                  <TextField
-                    fullWidth
-                    label={data.Name}
-                    variant="outlined"
-                    name="regLine1"
-                    id={
-                      data.UserDefFieldID +
-                      "_" +
-                      data.UserDefFieldTypeID +
-                      "_" +
-                      data.TextControlValue +
-                      "_UDF"
-                    }
-                    // value={data.UdfValue}
-                    onChange={handleInputChange}
-                  />
-                  
-                </Grid>
-              );
-            } else {
-              renderedContent = (
-                <Grid item xs={6} md={6} className="mb-3">
-                  <TextField
-                    fullWidth
-                    label={data.Name}
-                    variant="outlined"
-                    name="regLine1"
-                    id={
-                      data.UserDefFieldID +
-                      "_" +
-                      data.UserDefFieldTypeID +
-                      "_" +
-                      data.TextControlValue +
-                      "_UDF"
-                    }
-                    //   value={data.UdfValue}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
               );
             }
             break;
           case "Date":
             if (data && data.UdfValue) {
               renderedContent = (
-                <Grid item xs={6} md={6} className="mb-3">
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer
-                      components={[
-                        "DatePicker",
-                        "TimePicker",
-                        "DateTimePicker",
-                        "DateRangePicker",
-                      ]}
-                    >
-                      <DatePicker
-                        // dateFormat="DD/MM/YYYY"
-                        // value={currentDate}
-                        id={
-                          data.UserDefFieldID +
-                          "_" +
-                          data.UserDefFieldTypeID +
-                          "_" +
-                          data.TextControlValue +
-                          "_UDF"
-                        }
-                        onChange={handleInputChange}
-                      />
-                    </DemoContainer>
-                  </LocalizationProvider>
-                </Grid>
+
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DemoContainer
+                    components={[
+                      "DatePicker",
+                      "TimePicker",
+                      "DateTimePicker",
+                      "DateRangePicker",
+                    ]}
+                  >
+
+                    <DatePicker
+                      // dateFormat="DD/MM/YYYY"
+                      // value={currentDate}
+                      id={
+                        data.UserDefFieldID +
+                        "_" +
+                        data.UserDefFieldTypeID +
+                        "_" +
+                        data.TextControlValue +
+                        "_UDF"
+                      }
+                      onChange={handleInputChange}
+                    />
+
+                  </DemoContainer>
+                </LocalizationProvider>
               );
             } else {
               renderedContent = (
-                <Grid item xs={6} md={6} className="mb-3">
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DemoContainer
-                      components={[
-                        "DatePicker",
-                        "TimePicker",
-                        "DateTimePicker",
-                        "DateRangePicker",
-                      ]}
-                    >
-                      <DatePicker
-                        // dateFormat="DD/MM/YYYY"
-                        // value={currentDate}
-                        id={
-                          data.UserDefFieldID +
-                          "_" +
-                          data.UserDefFieldTypeID +
-                          "_" +
-                          data.TextControlValue +
-                          "_UDF"
-                        }
-                        onChange={(e) =>
-                          handleInputOnDateChage(
-                            e,
-                            `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}_UDF`
-                          )
-                        }
-                      />
-                    </DemoContainer>
-                  </LocalizationProvider>
-                </Grid>
+
+                <LocalizationProvider dateAdapter={AdapterDayjs} className=''>
+                  <DemoContainer
+                    components={[
+                      "DatePicker",
+                      "TimePicker",
+                      "DateTimePicker",
+                      "DateRangePicker",
+                    ]}
+                    className=''
+                  > 
+                    <DatePicker
+                      // dateFormat="DD/MM/YYYY"
+                      // value={currentDate}
+                      id={
+                        data.UserDefFieldID +
+                        "_" +
+                        data.UserDefFieldTypeID +
+                        "_" +
+                        data.TextControlValue +
+                        "_UDF"
+                      }
+                      onChange={(e) => handleInputOnDateChage(e, `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}}`)}
+                    />
+
+                  </DemoContainer>
+                </LocalizationProvider>
               );
             }
             break;
           case "Memo":
             if (data && data.UdfValue) {
               renderedContent = (
-                <Grid item xs={6} md={6} className="mb-3">
-                  <TextField
-                    fullWidth
-                    label={data.Name}
-                    variant="outlined"
-                    name="regLine1"
-                    id={
-                      data.UserDefFieldID +
-                      "_" +
-                      data.UserDefFieldTypeID +
-                      "_" +
-                      data.TextControlValue +
-                      "_UDF"
-                    }
-                    // value={data.UdfValue}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
+
+                <TextField
+                  fullWidth
+                  label={data.Name}
+                  variant="outlined"
+                  name="regLine1"
+                  id={
+                    data.UserDefFieldID +
+                    "_" +
+                    data.UserDefFieldTypeID +
+                    "_" +
+                    data.TextControlValue +
+                    "_UDF"
+                  }
+                  // value={data.UdfValue}
+                  onChange={handleInputChange}
+                />
               );
             } else {
               renderedContent = (
-                <Grid item xs={6} md={6} className="mb-3">
-                  <TextField
-                    fullWidth
-                    label={data.Name}
-                    variant="outlined"
-                    name="regLine1"
-                    id={
-                      data.UserDefFieldID +
-                      "_" +
-                      data.UserDefFieldTypeID +
-                      "_" +
-                      data.TextControlValue +
-                      "_UDF"
-                    }
-                    //   value={data.UdfValue}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
+
+                <TextField
+                  fullWidth
+                  label={data.Name}
+                  variant="outlined"
+                  name="regLine1"
+                  id={
+                    data.UserDefFieldID +
+                    "_" +
+                    data.UserDefFieldTypeID +
+                    "_" +
+                    data.TextControlValue +
+                    "_UDF"
+                  }
+                  //   value={data.UdfValue}
+                  onChange={handleInputChange}
+                />
               );
             }
             break;
           case "Decimal":
             if (data && data.UdfValue) {
               renderedContent = (
-                <Grid item xs={6} md={6} className="mb-3">
-                  <TextField
-                    fullWidth
-                    label={data.Name}
-                    variant="outlined"
-                    name="regLine1"
-                    id={
-                      data.UserDefFieldID +
-                      "_" +
-                      data.UserDefFieldTypeID +
-                      "_" +
-                      data.TextControlValue +
-                      "_UDF"
-                    }
-                    // value={data.UdfValue}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
+
+                <TextField
+                  fullWidth
+                  label={data.Name}
+                  variant="outlined"
+                  name="regLine1"
+                  id={
+                    data.UserDefFieldID +
+                    "_" +
+                    data.UserDefFieldTypeID +
+                    "_" +
+                    data.TextControlValue +
+                    "_UDF"
+                  }
+                  // value={data.UdfValue}
+                  onChange={handleInputChange}
+                />
               );
             } else {
               renderedContent = (
-                <Grid item xs={6} md={6} className="mb-3">
-                  <TextField
-                    fullWidth
-                    label={data.Name}
-                    variant="outlined"
-                    name="regLine1"
-                    id={
-                      data.UserDefFieldID +
-                      "_" +
-                      data.UserDefFieldTypeID +
-                      "_" +
-                      data.TextControlValue +
-                      "_UDF"
-                    }
-                    //   value={data.UdfValue}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
+
+                <TextField
+                  fullWidth
+                  label={data.Name}
+                  variant="outlined"
+                  name="regLine1"
+                  id={
+                    data.UserDefFieldID +
+                    "_" +
+                    data.UserDefFieldTypeID +
+                    "_" +
+                    data.TextControlValue +
+                    "_UDF"
+                  }
+                  //   value={data.UdfValue}
+                  onChange={handleInputChange}
+                />
               );
             }
             break;
           case "Currency":
             if (data && data.UdfValue) {
               renderedContent = (
-                <Grid item xs={6} md={6} className="mb-3">
-                  <TextField
-                    fullWidth
-                    label={data.Name}
-                    variant="outlined"
-                    name="regLine1"
-                    id={
-                      data.UserDefFieldID +
-                      "_" +
-                      data.UserDefFieldTypeID +
-                      "_" +
-                      data.TextControlValue +
-                      "_UDF"
-                    }
-                    // value={data.UdfValue}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
+
+                <TextField
+                  fullWidth
+                  label={data.Name}
+                  variant="outlined"
+                  name="regLine1"
+                  id={
+                    data.UserDefFieldID +
+                    "_" +
+                    data.UserDefFieldTypeID +
+                    "_" +
+                    data.TextControlValue +
+                    "_UDF"
+                  }
+                  // value={data.UdfValue}
+                  onChange={handleInputChange}
+                />
               );
             } else {
               renderedContent = (
-                <Grid item xs={6} md={6} className="mb-3">
-                  <TextField
-                    fullWidth
-                    label={data.Name}
-                    variant="outlined"
-                    name="regLine1"
-                    id={
-                      data.UserDefFieldID +
-                      "_" +
-                      data.UserDefFieldTypeID +
-                      "_" +
-                      data.TextControlValue +
-                      "_UDF"
-                    }
-                    //   value={data.UdfValue}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
+
+                <TextField
+                  fullWidth
+                  label={data.Name}
+                  variant="outlined"
+                  name="regLine1"
+                  id={
+                    data.UserDefFieldID +
+                    "_" +
+                    data.UserDefFieldTypeID +
+                    "_" +
+                    data.TextControlValue +
+                    "_UDF"
+                  }
+                  //   value={data.UdfValue}
+                  onChange={handleInputChange}
+                />
               );
             }
             break;
@@ -388,45 +371,41 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
           );
           if (optionsArray.length > 0) {
             renderedContent = (
-              <Grid item xs={6} md={6} className="mb-3">
-                <Autocomplete
-                  id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
-                  options={optionsArray} // Pass optionsArray as options
-                  name={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
-                  clearOnEscape
-                  // value={data.UdfValue}
-                  onChange={(event, value) => handleInputOnSelect(event, value)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      variant="outlined"
-                      name={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
-                      label={data.Name}
-                    />
-                  )}
-                />
-              </Grid>
-            );
-          }
-        } else {
-          renderedContent = (
-            <Grid item xs={6} md={6} className="mb-3">
               <Autocomplete
-                // options={optionsArray} // Pass optionsArray as options
                 id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
+                options={optionsArray} // Pass optionsArray as options
+                name={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
                 clearOnEscape
                 onChange={(event, value) => handleInputOnSelect(event, value)}
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     variant="outlined"
-                    name="Selectclient"
-                    id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
+                    name={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
                     label={data.Name}
                   />
                 )}
               />
-            </Grid>
+            );
+          }
+        } else {
+          renderedContent = (
+
+            <Autocomplete
+              // options={optionsArray} // Pass optionsArray as options
+              id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
+              clearOnEscape
+              onChange={handleInputChange}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  name="Selectclient"
+                  id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
+                  label={data.Name}
+                />
+              )}
+            />
           );
         }
         break;
@@ -434,47 +413,45 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
         // case "Boolean":
         if (data && data.UdfValue === "Boolean") {
           renderedContent = (
-            <Grid item xs={6} md={6} className="mb-3">
-              <FormControlLabel
-                required
-                control={
-                  <Switch
-                    id={
-                      data.UserDefFieldID +
-                      "_" +
-                      data.UserDefFieldTypeID +
-                      "_" +
-                      data.TextControlValue +
-                      "_UDF"
-                    }
-                    onChange={handleInputChange}
-                  />
-                }
-                label={data.Name}
-              />
-            </Grid>
+            <FormControlLabel
+              required
+              control={
+                <Switch
+                  id={
+                    data.UserDefFieldID +
+                    "_" +
+                    data.UserDefFieldTypeID +
+                    "_" +
+                    data.TextControlValue +
+                    "_UDF"
+                  }
+                  onChange={handleInputChange}
+                />
+              }
+              label={data.Name}
+            />
           );
         } else {
           renderedContent = (
-            <Grid item xs={6} md={6} className="mb-3">
-              <FormControlLabel
-                required
-                control={
-                  <Switch
-                    id={
-                      data.UserDefFieldID +
-                      "_" +
-                      data.UserDefFieldTypeID +
-                      "_" +
-                      data.TextControlValue +
-                      "_UDF"
-                    }
-                    onChange={handleInputChange}
-                  />
-                }
-                label={data.Name}
-              />
-            </Grid>
+
+
+            <FormControlLabel
+              required
+              control={
+                <Switch
+                  id={
+                    data.UserDefFieldID +
+                    "_" +
+                    data.UserDefFieldTypeID +
+                    "_" +
+                    data.TextControlValue +
+                    "_UDF"
+                  }
+                  onChange={handleInputChange}
+                />
+              }
+              label={data.Name}
+            />
           );
         }
         break;
@@ -482,7 +459,7 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
         // case "ComboBox":
         if (data && data.UdfValue) {
           renderedContent = (
-            <Grid item xs={6} md={6} className="mb-3">
+           
               <Autocomplete
                 options={selectManager} // Pass optionsArray as options
                 id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
@@ -497,11 +474,11 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
                   />
                 )}
               />
-            </Grid>
+           
           );
         } else {
           renderedContent = (
-            <Grid item xs={6} md={6} className="mb-3">
+        
               <Autocomplete
                 options={selectManager.map((option) => option.ForwardTo)} // Pass optionsArray as options
                 id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
@@ -517,7 +494,7 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
                   />
                 )}
               />
-            </Grid>
+          
           );
         }
         break;
@@ -529,23 +506,22 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
       {Object.keys(data).length > 0 &&
         data?.Table.map((item, i) => {
           return (
-            <Box className="row ">
-              <Box>
-                <Box sx={{ width: "100%", typography: "body1" }}>
-                  <h5 className="mb-3">{item.TagName}</h5>
-                  {data?.Table3.map((udf, i) => {
-                    if (item.TagId === udf.Tag) {
-                      return (
-                        <>
-                          <Grid item xs={6} md={6}>
-                            {renderDynamicInput(udf)}
-                          </Grid>
-                        </>
-                      );
-                    }
-                  })}
-                </Box>
-              </Box>
+            <Box sx={{ width: "100%", typography: "body1" }} className='mt-4 pt-2'>
+              <h5 className="mb-0 sembold font-16 text-black">{item.TagName}</h5>
+
+              <Grid className='mt-0 date-padding-0' container spacing={2}>
+                {data?.Table3.map((udf, i) => {
+                  if (item.TagId === udf.Tag) {
+                    return (
+                      <>
+                        <Grid item xs={6} md={4}>
+                          {renderDynamicInput(udf)}
+                        </Grid>
+                      </>
+                    );
+                  }
+                })}
+              </Grid>
             </Box>
           );
         })}

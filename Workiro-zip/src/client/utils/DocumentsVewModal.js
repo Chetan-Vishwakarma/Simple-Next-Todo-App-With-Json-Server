@@ -456,10 +456,7 @@ console.log("Create New Task")
                 <hr />
 
                 <DialogContentText id="alert-dialog-description">
-
                     <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
-
-
                         <TabContext value={value}>
                             <Box>
                                 <Tabs onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
@@ -473,7 +470,6 @@ console.log("Create New Task")
                             </Box>
                             <TabPanel value="1" className='p-0'>
                                 <Box className='white-box'>
-
                                     <Box className='text-end mb-3'>
                                         <DownloadForOfflineIcon className='text-red pointer font-32' />
                                     </Box>
@@ -485,12 +481,10 @@ console.log("Create New Task")
                                         allowFullScreen // Allow fullscreen mode
                                         title="Embedded Content" // Set the title for accessibility
                                     />
-
                                 </Box>
                             </TabPanel>
                             
                             <TabPanel value="2">
-
                                 <Box className='row'>
                                     {Array(12).fill("").map(() => {
                                         return <>

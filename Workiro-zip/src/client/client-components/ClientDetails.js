@@ -25,7 +25,7 @@ import ClientAddress from './ClientAddress';
 import Contact from './Contact';
 import CompaniesHouse from './CompaniesHouse';
 import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
-
+import TaskList from './TaskList';
 
 
 function ClientDetails() {
@@ -250,7 +250,7 @@ function ClientDetails() {
                         <Contact></Contact>
                     </TabPanel>
                     <TabPanel value="4">
-                        <Contact></Contact>
+                        <TaskList></TaskList>
                     </TabPanel>
 
                     <TabPanel value="5" className='p-0'>

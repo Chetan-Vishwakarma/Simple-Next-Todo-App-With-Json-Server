@@ -8,6 +8,14 @@ import AddClientaddress from "./AddClientaddress";
 import AddClientmaincontact from "./AddClientmaincontact";
 import { ToastContainer, toast } from 'react-toastify';
 import { memo } from 'react';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import StepContent from '@mui/material/StepContent';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+// import Paper from '@mui/material';
+
 function Reference() {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -19,6 +27,8 @@ function Reference() {
   const [clientDetails, setClientDetails] = useState({});
   const [selectedFolderID, setSelectedFolderID] = useState(null);
   const [dataFromChild, setDataFromChild] = useState([]);
+  const [activeStep, setActiveStep] = React.useState(0);
+
   const [userDetail, setUserDetail] = useState({
     CHnumber: "",
     Clientname: "",
@@ -55,33 +65,33 @@ function Reference() {
     Source: "",
     Manager: "",
     Email: "",
-    folderId:localStorage.getItem("FolderId"),
-    BussId:-1,
-    UserId:-1,
-    SourceId:-1,
-    StatusId:-1,
-    Title:"",
-    FirstName:"",
-    LastName:"",
-    ReferenceName:"",
-    MainContact:false,
-    Inactive:false,
-    GreetingName:"",
-    EmailName:"",
-    MainUserId:-1,
-    MainLine1Name:"",
-    MainLine2Name:"",
-    MainLine3Name:"",
-    MainTownName:"",
-    MainPostcodeName:"",
-    Maincontactcountry:"",
-    MainTelephoneName:"",
-    MainMobileName:"",
-    mainCountry:"",
-    billingsCountry:"",
-    ragistersCountry:""
+    folderId: localStorage.getItem("FolderId"),
+    BussId: -1,
+    UserId: -1,
+    SourceId: -1,
+    StatusId: -1,
+    Title: "",
+    FirstName: "",
+    LastName: "",
+    ReferenceName: "",
+    MainContact: false,
+    Inactive: false,
+    GreetingName: "",
+    EmailName: "",
+    MainUserId: -1,
+    MainLine1Name: "",
+    MainLine2Name: "",
+    MainLine3Name: "",
+    MainTownName: "",
+    MainPostcodeName: "",
+    Maincontactcountry: "",
+    MainTelephoneName: "",
+    MainMobileName: "",
+    mainCountry: "",
+    billingsCountry: "",
+    ragistersCountry: ""
   });
-  console.log("userDetailuserDetail",userDetail);
+  console.log("userDetailuserDetail", userDetail);
   const [originatorNo, setoriginatorNo] = useState("");
   const [companyDetails, setCompanyDetails] = useState([]);
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -197,7 +207,7 @@ function Reference() {
       TelNo: userDetail.Telephone ? userDetail.Telephone : "",
       AlteTelNo: userDetail.Mobile ? userDetail.Mobile : "",
       Faxno: "",
-      ContactName:"",
+      ContactName: "",
       UDF1: "",
       UDF2: "",
       UDF3: "",
@@ -259,11 +269,11 @@ function Reference() {
       CCode: userDetail.Clientid ? userDetail.Clientid : "",
       Salutation: userDetail.Title ? userDetail.Title : "",
       accid: agrno
-  }
-    console.log(InsertContact,"Json_InsertContact");
+    }
+    console.log(InsertContact, "Json_InsertContact");
     Cls.Json_InsertContact(InsertContact, (sts, data) => {
       if (sts) {
-        if (data== "Success") {
+        if (data == "Success") {
           console.log("Response", data);
           
         }
@@ -272,10 +282,10 @@ function Reference() {
   };
   const saveUDF = () => {
     const result = Object.entries(dataFromChild)
-    .map(([key, value]) => `${key}: ${value}`)
-    .join(', ');
-  
-  console.log(result,"resultresult");
+      .map(([key, value]) => `${key}: ${value}`)
+      .join(', ');
+
+    console.log(result, "resultresult");
     let requestBody = {
         agrno: agrno,
         Email: Email,
@@ -297,7 +307,7 @@ function Reference() {
    } catch (e) {}
   }
   useEffect(() => {
-   
+
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
     setEmail(localStorage.getItem("Email"));
@@ -306,62 +316,157 @@ function Reference() {
     Json_GetClientCardDetails();
   }, []);
 
+  // stepper 
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+  const handleReset = () => {
+    setActiveStep(0);
+  };
+
+  // Stepper form
+  const steps = [
+    {
+      label: 'Client Details',
+      description: <Box className="clearfix">
+        {
+          <AddClientdetails
+            userDetail={userDetail}
+            //  
+
+            setUserDetail={setUserDetail}
+            // 
+
+            setSelectedFolderID={setSelectedFolderID}
+          // 
+
+          ></AddClientdetails>
+        }
+      </Box>,
+    },
+    // {
+    //   label: 'Main Contact',
+    //   description:
+    //     <Box className="clearfix">
+    //       {
+    //         <AddClientmaincontact
+    //           userDetail={userDetail}
+    //           // 
+
+
+    //           setUserDetail={setUserDetail}
+    //         // 
+
+    //         ></AddClientmaincontact>
+    //       }
+    //     </Box>,
+    // },
+
+    {
+      label: 'Address',
+      description:
+        <Box className="clearfix">
+          {
+            <AddClientaddress
+              userDetail={userDetail}
+              // 
+
+              setUserDetail={setUserDetail}
+            // 
+
+            ></AddClientaddress>
+          }
+        </Box>,
+    },
+
+    {
+      label: 'Details',
+      description:
+        <Box className="clearfix">
+          <UDFClientcard
+            data={clientDetails}
+            setDataFromChild={setDataFromChild}
+          />
+        </Box>,
+    },
+  ];
+
   return (
     <Box className="container-fluid p-0">
       <Box sx={{ width: "100%", typography: "body1" }} className="mt-4 pt-1">
-            <Box className="general-tab white-box">
-              <Box className="row mb-3">
-                <h5>Client Details</h5>
-
-                {
-                  <AddClientdetails
-                    userDetail={userDetail}
-                    setUserDetail={setUserDetail}
-                    setSelectedFolderID={setSelectedFolderID}
-                  ></AddClientdetails>
-                }
-              </Box>
-              <Box className="row mb-3">
-                <h5>Main Contact</h5>
-                {
-                  <AddClientmaincontact
-                    userDetail={userDetail}
-                    setUserDetail={setUserDetail}
-                  ></AddClientmaincontact>
-                }
-              
-              </Box>
-              <Box className="row ">
-                <Box>
-                  {
-                    <AddClientaddress
-                      userDetail={userDetail}
-                      setUserDetail={setUserDetail}
-                    ></AddClientaddress>
-                  }
-                </Box>
-              </Box>
-            </Box>
-            <Box></Box>
-
-            <Box className="main-accordian">
-              <UDFClientcard data={clientDetails} setDataFromChild={setDataFromChild}/>
-              <div style={{marginBottom:"20px"}}>
-                <Button
-                  style={{ marginTop: "20px" }}
-                  variant="contained"
-                  onClick={handleSubmit}
-                  disabled={
-                    !userDetail.Clientname ||
-                    !userDetail.Clientid 
-                    // !folderData
+        <Box sx={{ maxWidth: '100%' }}>
+          <Stepper activeStep={activeStep} orientation="vertical">
+            {steps.map((step, index) => (
+              <Step key={step.label}>
+                <StepLabel
+                  optional={
+                    index === 2 ? (
+                      <Typography variant="caption"></Typography>
+                    ) : null
                   }
                 >
-                  Add Client
-                </Button>{" "}
-                <ToastContainer></ToastContainer>
-              </div>
-            </Box>
+                  {step.label}
+                </StepLabel>
+                <StepContent>
+                  <Typography>{step.description}</Typography>
+                  <Box sx={{ mb: 2 }}>
+                    <div className="mt-3">
+                      <Button
+                        variant="contained"
+                        onClick={handleNext}
+                        sx={{ mt: 1, mr: 1 }}
+                        className="btn-blue"
+                      >
+                        {index === steps.length - 1 ? 'Finish' : 'Continue'}
+                      </Button>
+                      <Button
+                        disabled={index === 0}
+                        onClick={handleBack}
+                        sx={{ mt: 1, mr: 1 }}
+                      >
+                        Back
+                      </Button>
+                    </div>
+                  </Box>
+                </StepContent>
+              </Step>
+            ))}
+          </Stepper>
+          {activeStep === steps.length && (
+            <Paper square elevation={0} sx={{ p: 3 }}>
+              <Typography>All steps completed - you&apos;re finished</Typography>
+              <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
+                Reset
+              </Button>
+            </Paper>
+          )}
+        </Box>
+        {/* Stepper end  */}
+
+
+
+        <Box className="main-accordian">
+
+          {/* <UDFClientcard data={clientDetails} setDataFromChild={setDataFromChild} /> */}
+
+          <div style={{ marginBottom: "20px" }}>
+            <Button
+              style={{ marginTop: "20px" }}
+              variant="contained"
+              onClick={handleSubmit}
+              disabled={
+                !userDetail.Clientname ||
+                !userDetail.Clientid
+                // !folderData
+              }
+            >
+              Add Client
+            </Button>{" "}
+          </div>
+        </Box>
       </Box>
     </Box>
   );

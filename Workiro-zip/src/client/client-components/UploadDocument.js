@@ -601,7 +601,7 @@ if(udfIdWithValue){
                         <Box className="d-flex align-items-center justify-content-between">
                             <Box className="dropdown-box">
                                 <Typography variant="h4" className='font-18 bold text-black'>
-                                    ({fileLangth}) Upload Document
+                                     Upload Document <span className='bold text-blue'>({fileLangth})</span>
                                 </Typography>
                             </Box>
 
