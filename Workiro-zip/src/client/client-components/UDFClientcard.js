@@ -195,7 +195,7 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
             } else {
               renderedContent = (
 
-                <LocalizationProvider dateAdapter={AdapterDayjs} className='date-padding-0'>
+                <LocalizationProvider dateAdapter={AdapterDayjs} className=''>
                   <DemoContainer
                     components={[
                       "DatePicker",
@@ -217,7 +217,6 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
                         "_UDF"
                       }
                       onChange={(e) => handleInputOnDateChage(e, `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}}`)}
-                      className=''
                     />
 
                   </DemoContainer>
@@ -497,9 +496,9 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
         data?.Table.map((item, i) => {
           return (
             <Box sx={{ width: "100%", typography: "body1" }} className='mt-4 pt-2'>
-              <h5 className="mb-3">{item.TagName}</h5>
+              <h5 className="mb-0 sembold font-16 text-black">{item.TagName}</h5>
 
-              <Grid className='mt-0' container spacing={2}>
+              <Grid className='mt-0 date-padding-0' container spacing={2}>
                 {data?.Table3.map((udf, i) => {
                   if (item.TagId === udf.Tag) {
                     return (

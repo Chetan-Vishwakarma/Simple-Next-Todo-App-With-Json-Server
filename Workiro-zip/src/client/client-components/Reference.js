@@ -491,8 +491,8 @@ function Reference() {
       description:
         <Box className="clearfix">
           <UDFClientcard
-            data={clientDetails} 
-            setDataFromChild={setDataFromChild} 
+            data={clientDetails}
+            setDataFromChild={setDataFromChild}
           />
         </Box>,
     },
@@ -522,6 +522,7 @@ function Reference() {
                         variant="contained"
                         onClick={handleNext}
                         sx={{ mt: 1, mr: 1 }}
+                        className="btn-blue"
                       >
                         {index === steps.length - 1 ? 'Finish' : 'Continue'}
                       </Button>
@@ -552,7 +553,7 @@ function Reference() {
 
 
         <Box className="main-accordian">
-          
+
           {/* <UDFClientcard data={clientDetails} setDataFromChild={setDataFromChild} /> */}
 
           <div style={{ marginBottom: "20px" }}>
