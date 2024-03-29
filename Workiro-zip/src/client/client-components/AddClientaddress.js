@@ -4,6 +4,11 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
 import { FormControl } from "@mui/material";
 import Box from "@mui/material/Box";
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+
 export default function AddClientaddress({ userDetail, setUserDetail }) {
   const [mainCountry, setMainCountry] = useState(
     countries.find((country) => country.label === "United Kingdom")?.label
@@ -14,6 +19,9 @@ export default function AddClientaddress({ userDetail, setUserDetail }) {
   const [ragistersCountry, setRagistersCountry] = useState(
     countries.find((country) => country.label === "United Kingdom")?.label
   );
+  // tabs
+  const [value, setValue] = React.useState('1');
+
   const onChange = (e) => {
     e.preventDefault();
     let data = { ...userDetail };
@@ -58,377 +66,407 @@ export default function AddClientaddress({ userDetail, setUserDetail }) {
     } else {
     }
   };
+
+  // tabs
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+
   return (
     <div>
       <Box sx={{ width: "100%", typography: "body1" }}>
-        <h5 className="mb-3">Main Address</h5>
 
-        <Grid container spacing={3}>
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Line1"
-              variant="outlined"
-              name="Line1"
-              value={userDetail.Line1}
-              onChange={onChange}
-            />
-          </Grid>
 
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Line2"
-              variant="outlined"
-              name="Line2"
-              value={userDetail.Line2}
-              onChange={onChange}
-            />
-          </Grid>
+        <Box>
+          <TabContext value={value}>
+            <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs mb-2'>
+              <Tab label="Main Address" value="1" />
+              <Tab label="Billing Address" value="2" />
+              <Tab label="Ragistered Address" value="3" />
+              <Tab label="Full Address" value="4" />
+            </TabList>
 
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Line3"
-              variant="outlined"
-              name="Line3"
-              value={userDetail.Line3}
-              onChange={onChange}
-            />
-          </Grid>
-
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Town"
-              variant="outlined"
-              name="Town"
-              value={userDetail.Town}
-              onChange={onChange}
-            />
-          </Grid>
-
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Country"
-              variant="outlined"
-              name="MCounty"
-              value={userDetail.MCounty}
-              onChange={onChange}
-            />
-          </Grid>
-
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Postcode"
-              variant="outlined"
-              name="Postcode"
-              value={userDetail.Postcode}
-              onChange={onChange}
-            />
-          </Grid>
-
-          <Grid item xs={6} md={6}>
-            <FormControl fullWidth variant="outlined">
-              {/* <InputLabel id="demo-simple-select-standard-label">Age</InputLabel> */}
-
-              <Autocomplete
-                autoHighlight
-                options={countries}
-                id="clear-on-escape-c"
-                getOptionLabel={(option) => option.label}
-                onChange={onChange_mainCountry}
-                value={countries.find(
-                  (country) => country.label === mainCountry
-                )}
-                renderOption={(props, option) => (
-                  <Box
-                    component="li"
-                    sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                    {...props}
-                  >
-                    <img
-                      loading="lazy"
-                      width="20"
-                      srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-                      src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                      alt=""
+            <TabPanel value="1" className="p-0">
+              <Box className='well'>
+                {/* <h5 className="mb-3 font-16 text-black sembold">Main Address</h5> */}
+                <Grid container spacing={3}>
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="Line1"
+                      variant="outlined"
+                      name="Line1"
+                      value={userDetail.Line1}
+                      onChange={onChange}
                     />
-                    {option.label} ({option.code}) +{option.phone}
-                  </Box>
-                )}
-                clearOnEscape
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    name="mainAddress"
-                    value={userDetail.mainAddress}
-                    onChange={onChange}
-                    label="Country"
-                    variant="outlined"
-                  />
-                )}
-              />
-            </FormControl>
-          </Grid>
-        </Grid>
-        <h5 className="mb-3">Billing Address</h5>
-        <Grid container spacing={3}>
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Line1"
-              variant="outlined"
-              name="BilLine1"
-              value={userDetail.BilLine1}
-              onChange={onChange}
-            />
-          </Grid>
+                  </Grid>
 
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Line2"
-              variant="outlined"
-              name="BilLine2"
-              value={userDetail.BilLine2}
-              onChange={onChange}
-            />
-          </Grid>
-
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Line3"
-              variant="outlined"
-              name="BilLine3"
-              value={userDetail.BilLine3}
-              onChange={onChange}
-            />
-          </Grid>
-
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Town"
-              variant="outlined"
-              name="BilTown"
-              value={userDetail.BilTown}
-              onChange={onChange}
-            />
-          </Grid>
-
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="County"
-              variant="outlined"
-              name="BilCountry"
-              value={userDetail.BilCountry}
-              onChange={onChange}
-            />
-          </Grid>
-
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Postcode"
-              variant="outlined"
-              name="BilPostcode"
-              value={userDetail.BilPostcode}
-              onChange={onChange}
-            />
-          </Grid>
-
-          <Grid item xs={6} md={6}>
-            <FormControl fullWidth variant="outlined">
-              <Autocomplete
-                id="clear-on-escapegh"
-                autoHighlight
-                options={countries}
-                getOptionLabel={(option) => option.label}
-                onChange={onChange_bilingCountry}
-                value={countries.find(
-                  (country) => country.label === billingsCountry
-                )}
-                renderOption={(props, option) => (
-                  <Box
-                    component="li"
-                    sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                    {...props}
-                  >
-                    <img
-                      loading="lazy"
-                      width="20"
-                      srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-                      src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                      alt=""
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="Line2"
+                      variant="outlined"
+                      name="Line2"
+                      value={userDetail.Line2}
+                      onChange={onChange}
                     />
-                    {option.label} ({option.code}) +{option.phone}
-                  </Box>
-                )}
-                clearOnEscape
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    name="biliAddress"
-                    value={userDetail.biliAddress}
-                    onChange={onChange}
-                    label="Country"
-                    variant="outlined"
-                  />
-                )}
-              />
-            </FormControl>
-          </Grid>
-        </Grid>
+                  </Grid>
 
-        <h5 className="mb-3">Ragistered Address</h5>
-        <Grid container spacing={3}>
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Line1"
-              variant="outlined"
-              name="regLine1"
-              value={userDetail.regLine1}
-              onChange={onChange}
-            />
-          </Grid>
-
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Line2"
-              variant="outlined"
-              name="regLine2"
-              value={userDetail.regLine2}
-              onChange={onChange}
-            />
-          </Grid>
-
-          <Grid item xs={6} md={6}>
-            {" "}
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Line3"
-              variant="outlined"
-              name="regLine3"
-              value={userDetail.regLine3}
-              onChange={onChange}
-            />
-          </Grid>
-
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Town"
-              variant="outlined"
-              name="regTown"
-              value={userDetail.regTown}
-              onChange={onChange}
-            />
-          </Grid>
-
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="County"
-              variant="outlined"
-              name="regCountry"
-              value={userDetail.regCountry}
-              onChange={onChange}
-            />
-          </Grid>
-
-          <Grid item xs={6} md={6}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Postcode"
-              variant="outlined"
-              name="regPostcode"
-              value={userDetail.regPostcode}
-              onChange={onChange}
-            />
-          </Grid>
-
-          <Grid item xs={6} md={6}>
-            <FormControl fullWidth variant="outlined">
-              {/* <InputLabel id="demo-simple-select-standard-label">Age</InputLabel> */}
-
-              <Autocomplete
-                autoHighlight
-                options={countries}
-                id="clear-on-escapefhg"
-                getOptionLabel={(option) => option.label}
-                onChange={onChange_registerCountry}
-                value={countries.find(
-                  (country) => country.label === ragistersCountry
-                )}
-                renderOption={(props, option) => (
-                  <Box
-                    component="li"
-                    sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                    {...props}
-                  >
-                    <img
-                      loading="lazy"
-                      width="20"
-                      srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-                      src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                      alt=""
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="Line3"
+                      variant="outlined"
+                      name="Line3"
+                      value={userDetail.Line3}
+                      onChange={onChange}
                     />
-                    {option.label} ({option.code}) +{option.phone}
-                  </Box>
-                )}
-                clearOnEscape
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Country"
-                    name="regAddress"
-                    value={userDetail.regAddress}
-                    onChange={onChange}
-                    variant="outlined"
-                  />
-                )}
-              />
-            </FormControl>
-          </Grid>
-        </Grid>
-        <h5 className="mb-3">Full Address</h5>
-        <Grid container spacing={3}>
-          <Grid item xs={6} md={6}>
-            <TextField
-              aria-label="minimum height"
-              name="fullAddress"
-              value={userDetail.fullAddress}
-              onChange={onChange}
-              className="textarea"
-              // placeholder="Full Address"
-            />
-          </Grid>
-        </Grid>
+                  </Grid>
+
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="Town"
+                      variant="outlined"
+                      name="Town"
+                      value={userDetail.Town}
+                      onChange={onChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="Country"
+                      variant="outlined"
+                      name="MCounty"
+                      value={userDetail.MCounty}
+                      onChange={onChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="Postcode"
+                      variant="outlined"
+                      name="Postcode"
+                      value={userDetail.Postcode}
+                      onChange={onChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6} md={6}>
+                    <FormControl fullWidth variant="outlined">
+                      {/* <InputLabel id="demo-simple-select-standard-label">Age</InputLabel> */}
+
+                      <Autocomplete
+                        autoHighlight
+                        options={countries}
+                        id="clear-on-escape-c"
+                        getOptionLabel={(option) => option.label}
+                        onChange={onChange_mainCountry}
+                        value={countries.find(
+                          (country) => country.label === mainCountry
+                        )}
+                        renderOption={(props, option) => (
+                          <Box
+                            component="li"
+                            sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                            {...props}
+                          >
+                            <img
+                              loading="lazy"
+                              width="20"
+                              srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                              src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                              alt=""
+                            />
+                            {option.label} ({option.code}) +{option.phone}
+                          </Box>
+                        )}
+                        clearOnEscape
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            name="mainAddress"
+                            value={userDetail.mainAddress}
+                            onChange={onChange}
+                            label="Country"
+                            variant="outlined"
+                          />
+                        )}
+                      />
+                    </FormControl>
+                  </Grid>
+                </Grid>
+              </Box>
+            </TabPanel>
+
+            <TabPanel value="2" className="p-0">
+              <Box className='well'>
+                <Grid container spacing={3}>
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="Line1"
+                      variant="outlined"
+                      name="BilLine1"
+                      value={userDetail.BilLine1}
+                      onChange={onChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="Line2"
+                      variant="outlined"
+                      name="BilLine2"
+                      value={userDetail.BilLine2}
+                      onChange={onChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="Line3"
+                      variant="outlined"
+                      name="BilLine3"
+                      value={userDetail.BilLine3}
+                      onChange={onChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="Town"
+                      variant="outlined"
+                      name="BilTown"
+                      value={userDetail.BilTown}
+                      onChange={onChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="County"
+                      variant="outlined"
+                      name="BilCountry"
+                      value={userDetail.BilCountry}
+                      onChange={onChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="Postcode"
+                      variant="outlined"
+                      name="BilPostcode"
+                      value={userDetail.BilPostcode}
+                      onChange={onChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6} md={6}>
+                    <FormControl fullWidth variant="outlined">
+                      <Autocomplete
+                        id="clear-on-escapegh"
+                        autoHighlight
+                        options={countries}
+                        getOptionLabel={(option) => option.label}
+                        onChange={onChange_bilingCountry}
+                        value={countries.find(
+                          (country) => country.label === billingsCountry
+                        )}
+                        renderOption={(props, option) => (
+                          <Box
+                            component="li"
+                            sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                            {...props}
+                          >
+                            <img
+                              loading="lazy"
+                              width="20"
+                              srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                              src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                              alt=""
+                            />
+                            {option.label} ({option.code}) +{option.phone}
+                          </Box>
+                        )}
+                        clearOnEscape
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            name="biliAddress"
+                            value={userDetail.biliAddress}
+                            onChange={onChange}
+                            label="Country"
+                            variant="outlined"
+                          />
+                        )}
+                      />
+                    </FormControl>
+                  </Grid>
+                </Grid>
+              </Box>
+            </TabPanel>
+
+            <TabPanel value="3" className="p-0">
+              <Box className='well'>
+                <Grid container spacing={3}>
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="Line1"
+                      variant="outlined"
+                      name="regLine1"
+                      value={userDetail.regLine1}
+                      onChange={onChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="Line2"
+                      variant="outlined"
+                      name="regLine2"
+                      value={userDetail.regLine2}
+                      onChange={onChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6} md={6}>
+                    {" "}
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="Line3"
+                      variant="outlined"
+                      name="regLine3"
+                      value={userDetail.regLine3}
+                      onChange={onChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="Town"
+                      variant="outlined"
+                      name="regTown"
+                      value={userDetail.regTown}
+                      onChange={onChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="County"
+                      variant="outlined"
+                      name="regCountry"
+                      value={userDetail.regCountry}
+                      onChange={onChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6} md={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-basic"
+                      label="Postcode"
+                      variant="outlined"
+                      name="regPostcode"
+                      value={userDetail.regPostcode}
+                      onChange={onChange}
+                    />
+                  </Grid>
+
+                  <Grid item xs={6} md={6}>
+                    <FormControl fullWidth variant="outlined">
+                      {/* <InputLabel id="demo-simple-select-standard-label">Age</InputLabel> */}
+
+                      <Autocomplete
+                        autoHighlight
+                        options={countries}
+                        id="clear-on-escapefhg"
+                        getOptionLabel={(option) => option.label}
+                        onChange={onChange_registerCountry}
+                        value={countries.find(
+                          (country) => country.label === ragistersCountry
+                        )}
+                        renderOption={(props, option) => (
+                          <Box
+                            component="li"
+                            sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                            {...props}
+                          >
+                            <img
+                              loading="lazy"
+                              width="20"
+                              srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                              src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                              alt=""
+                            />
+                            {option.label} ({option.code}) +{option.phone}
+                          </Box>
+                        )}
+                        clearOnEscape
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label="Country"
+                            name="regAddress"
+                            value={userDetail.regAddress}
+                            onChange={onChange}
+                            variant="outlined"
+                          />
+                        )}
+                      />
+                    </FormControl>
+                  </Grid>
+                </Grid>
+              </Box>
+            </TabPanel>
+
+            <TabPanel value="4" className="p-0">
+              <Box className='mb-3'>
+                <textarea
+                  aria-label="minimum height"
+                  name="fullAddress"
+                  value={userDetail.fullAddress}
+                  onChange={onChange}
+                  className="form-control textarea"
+                  placeholder="Full Address"
+                />
+              </Box>
+            </TabPanel>
+          </TabContext>
+        </Box>
       </Box>
     </div>
   );

@@ -25,32 +25,6 @@ import StepLabel from '@mui/material/StepLabel';
 import StepContent from '@mui/material/StepContent';
 import Paper from '@mui/material/Paper';
 
-
-// Stepper form
-const steps = [
-  {
-    label: 'Select campaign settings',
-    description: `For each ad campaign that you create, you can control how much
-              you're willing to spend on clicks and conversions, which networks
-              and geographical locations you want your ads to show on, and more.`,
-  },
-  {
-    label: 'Create an ad group',
-    description:
-      'An ad group contains one or more ads which target a shared set of keywords.',
-  },
-  {
-    label: 'Create an ad',
-    description: `Try out different ad text to see what brings in the most customers,
-              and learn how to enhance your ads using features like ad extensions.
-              If you run into any problems with your ads, find out how to tell if
-              they're running and how to resolve approval issues.`,
-  },
-];
-
-
-
-
 function Reference() {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -63,7 +37,6 @@ function Reference() {
   const [selectedFolderID, setSelectedFolderID] = useState(null);
   const [dataFromChild, setDataFromChild] = useState([]);
   const [activeStep, setActiveStep] = React.useState(0);
-
 
   const [userDetail, setUserDetail] = useState({
     CHnumber: "",
@@ -447,7 +420,6 @@ function Reference() {
     Json_GetClientCardDetails();
   }, []);
 
-
   // stepper 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -459,11 +431,76 @@ function Reference() {
     setActiveStep(0);
   };
 
+  // Stepper form
+  const steps = [
+    {
+      label: 'Client Details',
+      description: <Box className="clearfix">
+        {
+          <AddClientdetails
+            userDetail={userDetail}
+            //  
+
+            setUserDetail={setUserDetail}
+            // 
+
+            setSelectedFolderID={setSelectedFolderID}
+          // 
+
+          ></AddClientdetails>
+        }
+      </Box>,
+    },
+    // {
+    //   label: 'Main Contact',
+    //   description:
+    //     <Box className="clearfix">
+    //       {
+    //         <AddClientmaincontact
+    //           userDetail={userDetail}
+    //           // 
+
+
+    //           setUserDetail={setUserDetail}
+    //         // 
+
+    //         ></AddClientmaincontact>
+    //       }
+    //     </Box>,
+    // },
+
+    {
+      label: 'Address',
+      description:
+        <Box className="clearfix">
+          {
+            <AddClientaddress
+              userDetail={userDetail}
+              // 
+
+              setUserDetail={setUserDetail}
+            // 
+
+            ></AddClientaddress>
+          }
+        </Box>,
+    },
+
+    {
+      label: 'Details',
+      description:
+        <Box className="clearfix">
+          <UDFClientcard
+            data={clientDetails} 
+            setDataFromChild={setDataFromChild} 
+          />
+        </Box>,
+    },
+  ];
+
   return (
     <Box className="container-fluid p-0">
       <Box sx={{ width: "100%", typography: "body1" }} className="mt-4 pt-1">
-
-
         <Box sx={{ maxWidth: '100%' }}>
           <Stepper activeStep={activeStep} orientation="vertical">
             {steps.map((step, index) => (
@@ -471,7 +508,7 @@ function Reference() {
                 <StepLabel
                   optional={
                     index === 2 ? (
-                      <Typography variant="caption">Last step</Typography>
+                      <Typography variant="caption"></Typography>
                     ) : null
                   }
                 >
@@ -480,7 +517,7 @@ function Reference() {
                 <StepContent>
                   <Typography>{step.description}</Typography>
                   <Box sx={{ mb: 2 }}>
-                    <div>
+                    <div className="mt-3">
                       <Button
                         variant="contained"
                         onClick={handleNext}
@@ -514,43 +551,10 @@ function Reference() {
 
 
 
-        <Box className="">
-          <Box className="row mb-3">
-            <h5>Client Details</h5>
-
-            {
-              <AddClientdetails
-                userDetail={userDetail}
-                setUserDetail={setUserDetail}
-                setSelectedFolderID={setSelectedFolderID}
-              ></AddClientdetails>
-            }
-          </Box>
-          <Box className="row mb-3">
-            <h5>Main Contact</h5>
-            {
-              <AddClientmaincontact
-                userDetail={userDetail}
-                setUserDetail={setUserDetail}
-              ></AddClientmaincontact>
-            }
-
-          </Box>
-          <Box className="row ">
-            <Box>
-              {
-                <AddClientaddress
-                  userDetail={userDetail}
-                  setUserDetail={setUserDetail}
-                ></AddClientaddress>
-              }
-            </Box>
-          </Box>
-        </Box>
-
-
         <Box className="main-accordian">
-          <UDFClientcard data={clientDetails} setDataFromChild={setDataFromChild} />
+          
+          {/* <UDFClientcard data={clientDetails} setDataFromChild={setDataFromChild} /> */}
+
           <div style={{ marginBottom: "20px" }}>
             <Button
               style={{ marginTop: "20px" }}
