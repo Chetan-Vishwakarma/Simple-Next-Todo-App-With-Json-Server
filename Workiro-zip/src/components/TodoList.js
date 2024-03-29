@@ -513,7 +513,7 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value="Folder" style={{ display: "none" }}>Folders</MenuItem>
-                                <MenuItem value="">None</MenuItem>
+                                <MenuItem value="">Clear Filter</MenuItem>
                                 {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder}>{fld.Folder}</MenuItem>)}
                             </Select>
                         </FormControl>
@@ -541,7 +541,7 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value="Source" style={{ display: "none" }}>Type</MenuItem>
-                                <MenuItem value="">None</MenuItem>
+                                <MenuItem value="">Clear Filter</MenuItem>
                                 <MenuItem value="CRM">CRM</MenuItem>
                                 <MenuItem value="Portal">Portal</MenuItem>
                             </Select>
@@ -570,7 +570,7 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value={"Status"} style={{ display: "none" }}>Status</MenuItem>
-                                <MenuItem value={""} >None</MenuItem>
+                                <MenuItem value={""} >Clear Filter</MenuItem>
                                 {["Done", "Not Started", "In Progress", "Waiting on someone else", "Deferred", "Deleted", "Completed"].map((itm, i) => <MenuItem key={i} value={itm}>{itm}</MenuItem>)}
                             </Select>
                         </FormControl>
@@ -640,7 +640,7 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value="Sort By" style={{ display: "none" }}>Sort By</MenuItem>
-                                <MenuItem value="" onClick={() => setAllTask([...actualData])}>None</MenuItem>
+                                <MenuItem value="" onClick={() => setAllTask([...actualData])}>Clear Sortby</MenuItem>
                                 <MenuItem value="Client">Client Name</MenuItem>
                                 <MenuItem value="EndDateTime">Due Date</MenuItem>
                                 <MenuItem value="Priority">Priority</MenuItem>
@@ -668,7 +668,7 @@ function TodoList() {
 
                             >
                                 <MenuItem value="Group By" style={{ display: "none" }}>Group By</MenuItem>
-                                <MenuItem value="">None</MenuItem>
+                                <MenuItem value="">Clear Groupby</MenuItem>
                                 <MenuItem value="Client">Client Name</MenuItem>
                                 <MenuItem value="EndDateTime">Due Date</MenuItem>
                                 <MenuItem value="Priority">Priority</MenuItem>
