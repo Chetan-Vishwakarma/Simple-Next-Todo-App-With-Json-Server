@@ -60,7 +60,9 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
 
     // sadik js start
     console.log("Selected Document", documents)
+    
     const [openPDFView, setOpenPDFView] = React.useState(false);
+
     const [selectedDocument, setSelectedDocument] = React.useState(null);
     const handleClickOpenPDFView = (event, data) => {
         event.preventDefault();

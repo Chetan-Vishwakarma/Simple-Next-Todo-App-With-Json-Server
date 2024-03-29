@@ -14,6 +14,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import moment from 'moment';
+import DocumentsVewModal from '../client/utils/DocumentsVewModal';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -275,14 +276,28 @@ function NewTodoList() {
         let o={ItemId:e["Registration No."]};
         ClsSms.Json_GetItemBase64DataById(o,function(sts,data){
             if(sts && data){
-                console.log("Json_GetItemBase64DataById",data)
+               // console.log("Json_GetItemBase64DataById",data)
                 let ankr = document.createElement("a");
                 ankr.href=`data:application/octet-stream;base64,${data}`;
                 ankr.download=e.Path;
                 ankr.click();
             }
         })
+    };
 
+    const [selectedDocument, setSelectedDocument] = React.useState(null);
+    const [openPDFView, setOpenPDFView] = React.useState(false);
+
+    const ViewerDocument = (e) => {
+        setAnchorElDocumentList(null);
+        console.log("document object",e);  
+        setSelectedDocument(e);
+        setOpenPDFView(true);   
+        
+    //    let url =`https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=1002909&filetype=txt&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=&PortalID=`;
+    // window.open(url);
+
+       
     };
 
 
@@ -309,6 +324,7 @@ function NewTodoList() {
 
     return (
         <Box className="container-fluid p-0">
+            <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
             <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
             <Box className='d-flex flex-wrap align-items-end justify-content-end'>
@@ -729,7 +745,7 @@ function NewTodoList() {
                                                 }}
                                                 className='me-2 ms-0'
                                             />
-                                            <Box className="upload-content pe-3">
+                                            <Box className="upload-content pe-3" onDoubleClick={(e)=>ViewerDocument(item)}>
                                                 <Typography variant="h4" >
                                                   {item.Description}
                                                 </Typography>
@@ -778,7 +794,7 @@ function NewTodoList() {
                                                         <DriveFileRenameOutlineIcon fontSize="medium" />
                                                     </ListItemIcon>
                                                     Rename Document</MenuItem>
-                                                <MenuItem onClick={handleCloseDocument}>
+                                                <MenuItem onClick={handleCloseDocument} >
                                                     <ListItemIcon>
                                                         <TravelExploreIcon fontSize="medium" />
                                                     </ListItemIcon>
