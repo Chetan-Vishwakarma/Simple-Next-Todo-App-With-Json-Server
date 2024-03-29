@@ -4,7 +4,8 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
 import { FormControl } from "@mui/material";
 import CommanCLS from "../../services/CommanService";
-export default function AddClientdetails({ userDetail, setUserDetail }) {
+import { memo } from 'react';
+const  AddClientdetails =  React.memo(({ userDetail, setUserDetail })=> {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -163,6 +164,7 @@ export default function AddClientdetails({ userDetail, setUserDetail }) {
         </Grid>
 
         <Grid item xs={6} md={6}>
+        
           <TextField
             fullWidth
             id="standard-basic-id"
@@ -172,6 +174,8 @@ export default function AddClientdetails({ userDetail, setUserDetail }) {
             value={userDetail.Clientid}
             onChange={onChange}
           />
+          
+          
         </Grid>
 
         <Grid item xs={6} md={6}>
@@ -317,4 +321,6 @@ export default function AddClientdetails({ userDetail, setUserDetail }) {
       </Grid>
     </div>
   );
-}
+});
+export default memo(AddClientdetails);
+

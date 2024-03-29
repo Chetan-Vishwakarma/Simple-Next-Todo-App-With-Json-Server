@@ -1,3 +1,4 @@
+/* eslint-disable default-case */
 import { Box, Grid, TextField, Autocomplete, Switch } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import CommanCLS from "../../services/CommanService";
@@ -6,8 +7,8 @@ import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { Unstable_NumberInput as NumberInput } from '@mui/base/Unstable_NumberInput';
 import dayjs from "dayjs";
-
 const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
   console.log(data?.Table, "sdfsd", data.Table3);
   const [selectManager, setselectManagers] = useState([]);
@@ -40,31 +41,36 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
   const handleInputChange = (e) => {
     e.preventDefault();
     const { id, value } = e.target;
-    id.split('-');
-    console.log(e, "handleInputChang111111e");
-    const data = id + ":" + value;
+    let spt = id.split("-");
+
+    console.log(spt[0], "handleInputChang111111e1", e.target.value);
+    const data = spt[0] + ":" + value;
     console.log(data, "datahandlechange");
     setSelectedDatetest((prevData) => ({
       ...prevData,
       [id]: value,
     }));
     setDataFromChild(selectedDatetest);
-    // setInputValue(value);
-    // Perform any action with the changed value
-    console.log("selectedDatetest", selectedDatetest);
   };
 
-
   const handleInputOnDateChage = (e, vl) => {
-
     let date = dayjs(e).format("YYYY/MM/DD");
     console.log(date, vl, "handleInputChang111111e");
     setSelectedDatetest((prevData) => ({
       ...prevData,
       [vl]: date,
     }));
-    setDataFromChild(selectedDatetest);
-    console.log("selectedDatetestsonam", selectedDatetest);
+  };
+  const handleInputOnSelect = (e, vl) => {
+    const { id } = e.target;
+    let spt = id.split("-");
+    console.log(id, "handleInputOnSelect", vl);
+    const data = spt[0] + ":" + vl;
+    console.log(data, "11handleInputOnSelect");
+    setSelectedDatetest((prevData) => ({
+      ...prevData,
+      [spt[0]]: vl,
+    }));
   };
   useEffect(() => {
     Json_GetForwardUserList();
@@ -72,9 +78,9 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
   useEffect(() => {
     setDataFromChild(selectedDatetest);
   }, [selectedDatetest]);
-
+  console.log("selectedDatetestsonamoutside", selectedDatetest);
   const renderDynamicInput = (data) => {
-    console.log(selectManager, "selectManagerselectManager");
+    console.log(selectManager, "selectManagerselectManager",data);
     let renderedContent;
     switch (data?.UserDefFieldTypeID) {
       case 1:
@@ -358,16 +364,19 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
       case 2:
         if (data.Options && typeof data.Options === "string") {
           const optionsArray = data.Options.split("@;");
-          console.log("optionsArray", `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`);
+          console.log(
+            data,
+            "optionsArray",
+            `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`
+          );
           if (optionsArray.length > 0) {
             renderedContent = (
-
               <Autocomplete
                 id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
                 options={optionsArray} // Pass optionsArray as options
                 name={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
                 clearOnEscape
-                onChange={handleInputChange}
+                onChange={(event, value) => handleInputOnSelect(event, value)}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -450,40 +459,42 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
         // case "ComboBox":
         if (data && data.UdfValue) {
           renderedContent = (
-
-            <Autocomplete
-              options={selectManager} // Pass optionsArray as options
-              id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
-              onChange={handleInputChange}
-              clearOnEscape
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="outlined"
-                  name="selectManager"
-                  label="Client List"
-                />
-              )}
-            />
+           
+              <Autocomplete
+                options={selectManager} // Pass optionsArray as options
+                id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
+                onChange={(event, value) => handleInputOnSelect(event, value)}
+                clearOnEscape
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    name="selectManager"
+                    label="Client List"
+                  />
+                )}
+              />
+           
           );
         } else {
           renderedContent = (
-
-            <Autocomplete
-              options={selectManager.map((option) => option.ForwardTo)} // Pass optionsArray as options
-              id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
-              onChange={handleInputChange}
-              clearOnEscape
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="outlined"
-                  name="Selectclient"
-                  id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
-                  label={data.Name}
-                />
-              )}
-            />
+        
+              <Autocomplete
+                options={selectManager.map((option) => option.ForwardTo)} // Pass optionsArray as options
+                id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
+                onChange={(event, value) => handleInputOnSelect(event, value)}
+                clearOnEscape
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    name="Selectclient"
+                    id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
+                    label={data.Name}
+                  />
+                )}
+              />
+          
           );
         }
         break;

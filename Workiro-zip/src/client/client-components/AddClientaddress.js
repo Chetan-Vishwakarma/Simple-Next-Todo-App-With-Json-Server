@@ -9,7 +9,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 
-export default function AddClientaddress({ userDetail, setUserDetail }) {
+const AddClientaddress =  React.memo(({ userDetail, setUserDetail })=>{
   const [mainCountry, setMainCountry] = useState(
     countries.find((country) => country.label === "United Kingdom")?.label
   );
@@ -473,7 +473,8 @@ export default function AddClientaddress({ userDetail, setUserDetail }) {
       </Box>
     </div>
   );
-}
+});
+export default AddClientaddress;
 var countries = [
   { code: "AD", label: "Andorra", phone: "376" },
   {

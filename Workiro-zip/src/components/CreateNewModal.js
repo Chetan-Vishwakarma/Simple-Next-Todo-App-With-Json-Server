@@ -6,19 +6,15 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import DatePicker from 'react-datetime';
 import user from "../images/user.jpg";
-import Logout from "@mui/icons-material/Logout";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
-import DeleteIcon from "@mui/icons-material/Delete";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Checkbox from "@mui/material/Checkbox";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -26,7 +22,6 @@ import Autocomplete from '@mui/material/Autocomplete';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import DescriptionIcon from '@mui/icons-material/Description';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import DvrIcon from '@mui/icons-material/Dvr';
@@ -38,10 +33,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import {
     List,
     ListItem,
-    ListItemAvatar,
-    Avatar,
     ListItemText,
-    Divider,
     TextField,
 } from "@mui/material";
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
@@ -49,25 +41,14 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
 
 import dayjs from 'dayjs';
-////////////////////////////////////////////////////////////////Dxdata Grid
-import ODataStore from 'devextreme/data/odata/store';
 import DataGrid, {
     Column,
-    DataGridTypes,
-    Grouping,
-    GroupPanel,
     FilterRow,
     Pager,
     Paging,
     SearchPanel,
 } from 'devextreme-react/data-grid';
 
-
-import BookmarkIcon from "@mui/icons-material/Bookmark";
-
-import RadioButtonUncheckedOutlinedIcon from "@mui/icons-material/RadioButtonUncheckedOutlined";
-
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 // import LoginDetails from "../services/Utils";
 import CommanCLS from "../services/CommanService";

@@ -1,29 +1,20 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ToggleButton from "@mui/material/ToggleButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import BorderColorIcon from "@mui/icons-material/BorderColor";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import EmailIcon from "@mui/icons-material/Email";
-import Tab from "@mui/material/Tab";
-import TabContext from "@mui/lab/TabContext";
-import TabList from "@mui/lab/TabList";
-import TabPanel from "@mui/lab/TabPanel";
 import CommanCLS from "../../services/CommanService";
 import UDFClientcard from "./UDFClientcard";
-import DocumentList from "./DocumentList";
-import UploadDocument from "./UploadDocument";
 import AddClientdetails from "./AddClientdetails";
 import AddClientaddress from "./AddClientaddress";
 import AddClientmaincontact from "./AddClientmaincontact";
+import { ToastContainer, toast } from 'react-toastify';
+import { memo } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import StepContent from '@mui/material/StepContent';
 import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+// import Paper from '@mui/material';
 
 function Reference() {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -107,103 +98,6 @@ function Reference() {
   const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
   let Cls = new CommanCLS(baseUrl, agrno, Email, password);
   let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
-  const [openUploadDocument, setOpenUploadDocument] = React.useState(false);
-  const onChange = (e) => {
-    e.preventDefault();
-    let data = { ...userDetail };
-    let name = e.target.name;
-    let val = e.target.value;
-    data = { ...data, [name]: val };
-    console.log(data, "dataOnchange", e);
-    setUserDetail(data);
-  };
-
-  const handleClickOpenUploadDocument = () => {
-    setOpenUploadDocument(true);
-  };
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  const Json_GetToFavourites = (currentUser) => {
-    let obj = {
-      agrno: agrno,
-      Email: Email,
-      password: password,
-    };
-    try {
-      Cls.Json_GetToFavourites(obj, (sts, data) => {
-        if (sts) {
-          if (data) {
-            let json = JSON.parse(data);
-            console.log("Json_GetToFavourites", json);
-            let favouriteUser = json.Table;
-            // if (favouriteUser.length > 0 && currentUser.length > 0) {
-            //     let ans = favouriteUser.some((item) => item.OriginatorNo === currentUser[0]?.OriginatorNo);
-            //     if (ans) {
-            //         setSelected(true);
-            //     } else {
-            //         setSelected(false);
-            //     }
-            // } else {
-            //     setSelected(false);
-            // }
-          }
-        }
-      });
-    } catch (err) {
-      console.log("Error while calling Json_GetToFavourites", err);
-    }
-  };
-
-  const Json_RemoveToFavourite = () => {
-    let obj = {
-      agrno: agrno,
-      Email: Email,
-      password: password,
-      OrgNo: originatorNo,
-      ProjectID: folderId,
-    };
-    try {
-      Cls.Json_RemoveToFavourite(obj, (sts, data) => {
-        if (sts) {
-          if (data) {
-            let json = JSON.parse(data);
-            console.log("Json_RemoveToFavourite", json);
-            setSelected(false);
-          }
-        }
-      });
-    } catch (err) {
-      console.log("Error while calling Json_RemoveToFavourite", err);
-    }
-  };
-
-  const Json_AddToFavourite = () => {
-    let obj = {
-      agrno: agrno,
-      Email: Email,
-      password: password,
-      ProjectID: folderId,
-      OrgNo: originatorNo,
-    };
-    try {
-      Cls.Json_AddToFavourite(obj, (sts, data) => {
-        if (sts) {
-          if (data) {
-            let json = JSON.parse(data);
-            console.log("Json_AddToFavourite", json);
-            let details = json.Table;
-            setSelected(true);
-          }
-        }
-      });
-    } catch (err) {
-      console.log("Error while calling Json_AddToFavourite", err);
-    }
-  };
-
   const Json_GetClientCardDetails = () => {
     let obj = {
       Email: Email,
@@ -220,8 +114,7 @@ function Reference() {
             console.log("Json_GetClientCardDetails", json);
             setClientDetails(json);
             setCompanyDetails(json.Table1);
-            //Json_GetClientsByFolder();
-            Json_GetToFavourites(json.Table1);
+           
           }
         }
       });
@@ -232,7 +125,7 @@ function Reference() {
   const Json_SetClientAddress = (objdata) => {
     Cls.Json_SetClientAddress(objdata, (sts, data) => {
       if (sts) {
-        if (data == "Success") {
+        if (data) {
           console.log("Json_SetClientAddress", data);
         }
       }
@@ -330,17 +223,22 @@ function Reference() {
       ManagerId: userDetail.UserId ? userDetail.UserId : parseInt(intUserid),
       OrgActive: "Yes",
     };
-    Json_InsertContact();
-    console.log(clientdata, "clientdata");
+    // Json_InsertContact();
+    console.log(clientdata,"clientdata");
     Cls.Json_AddClient(clientdata, (sts, data) => {
+      console.log(sts, data,"newclientdata");
+      let jsonparse = JSON.parse(data);
       if (sts) {
-        if (data == "Success") {
+        if (jsonparse.Status=="Success") {
           console.log("Response", data);
-          Json_InsertContact();
+          toast.success("Reference Added Successfully !"); 
+          // Json_InsertContact(); Main contact not need
           saveUDF();
           mainAddress();
           billingAddress();
           ragisterAddress();
+        } else {
+          toast.success("Reference ID Already Exists!"); 
         }
       }
     });
@@ -377,11 +275,7 @@ function Reference() {
       if (sts) {
         if (data == "Success") {
           console.log("Response", data);
-          // var urladd = "add_contact_update.html?Edata=" + oring + ":" + localStorage.getItem("DefaultFolderID") + "&CNO=" + ContactNo;
-
-          // setTimeout(function () {
-          //  location.href = urladd;
-          // }, 2000); // 2000 milliseconds = 2 seconds
+          
         }
       }
     });
@@ -393,15 +287,16 @@ function Reference() {
 
     console.log(result, "resultresult");
     let requestBody = {
-      agrno: agrno,
-      Email: Email,
-      password: password,
-      OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
-      ProjectId: userDetail.folderId ? userDetail.folderId : -1,
-      ClientUDFString: result,
-      ContactUDFString: "",
-      ContactNo: ""
+        agrno: agrno,
+        Email: Email,
+        password: password,
+        OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
+        ProjectId:  userDetail.folderId ? userDetail.folderId : -1,
+        ClientUDFString:result ? result : "",
+        ContactUDFString:""	,
+        ContactNo:""
     }
+   try{
     Cls.Json_CRMSaveUDFValues(requestBody, (sts, data) => {
       if (sts) {
         if (data) {
@@ -409,6 +304,7 @@ function Reference() {
         }
       }
     });
+   } catch (e) {}
   }
   useEffect(() => {
 
@@ -575,4 +471,4 @@ function Reference() {
     </Box>
   );
 }
-export default Reference;
+export default memo(Reference);
