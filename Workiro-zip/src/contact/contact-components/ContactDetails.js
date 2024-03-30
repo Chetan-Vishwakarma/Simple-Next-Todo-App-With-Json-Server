@@ -323,7 +323,7 @@ function ContactDetails() {
                                 <Box className="col-xl-4 col-lg-4 col-md-12 d-flex">
                                     {
                                         contactDetails.length > 0 ?
-                                            contactDetails.map((item) => {
+                                            contactDetails.slice(0,1).map((item) => {
                                                 return <Box className='white-box w-100'>
 
                                                     <Box className='d-flex align-items-center'>

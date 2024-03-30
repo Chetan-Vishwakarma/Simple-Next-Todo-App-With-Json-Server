@@ -49,6 +49,9 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         //     }
         // });
     }
+    const handleMyTaskNavigation = () => {
+        navigate("/dashboard/MyTask", { state: { globalSearchTask: filteredTasks } });
+    }
     function startFormattingDate(dt) {
         //const timestamp = parseInt(/\d+/.exec(dt));
         const date = new Date(dt);
