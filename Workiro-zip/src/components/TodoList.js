@@ -608,7 +608,7 @@ function TodoList() {
                             >
                                 <MenuItem value={"Status"} style={{ display: "none" }}>Status</MenuItem>
                                 <MenuItem value={""} >Clear Filter</MenuItem>
-                                {["Done", "Not Started", "In Progress", "Waiting on someone else", "Deferred", "Deleted", "Completed"].map((itm, i) => <MenuItem key={i} value={itm}>{itm}</MenuItem>)}
+                                {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm}>{itm}</MenuItem>)}
                             </Select>
                         </FormControl>
                     </Box>
