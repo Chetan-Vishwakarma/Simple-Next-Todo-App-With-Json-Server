@@ -133,7 +133,7 @@ const MenuProps = {
 
 export default function DocumentList({ clientId }) {
     const location = useLocation();
-    const { globalSearchDocs } = location.state;
+    const { globalSearchDocs, strGlobal } = location.state;
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -599,7 +599,7 @@ export default function DocumentList({ clientId }) {
 
     return (
         <>
-            {globalSearchDocs.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=", tabName: "Search Result" }, { tabLink: "/dashboard/DocumentList", tabName: "Documents List" }]} />}
+            {globalSearchDocs.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str="+strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/DocumentList", tabName: "Documents List" }]} />}
 
             {isLoading ? <CustomLoader /> : <>
                 <Box className='d-flex flex-wrap align-items-center justify-content-between'>

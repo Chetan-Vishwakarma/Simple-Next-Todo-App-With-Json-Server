@@ -29,11 +29,12 @@ import PortalDetails from './PortalDetails';
 import DataNotFound from './DataNotFound';
 import { styled } from '@mui/system';
 import { useLocation } from 'react-router-dom';
+import CustomBreadCrumbs from './CustomBreadCrumbs';
 
 function TodoList() {
     const location = useLocation();
     let dddd = location.state!==null? location.state: {globalSearchTask:[]};
-    const {globalSearchTask} = dddd;
+    const {globalSearchTask, strGlobal} = dddd;
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -484,6 +485,9 @@ function TodoList() {
     return (
         <>
             <Box className="container-fluid p-0">
+
+            {globalSearchTask.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str="+strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/MyTask", tabName: "My Task" }]} />}
+
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
                 <Box className='d-flex main-search-box mb-3 align-items-center justify-content-between'>

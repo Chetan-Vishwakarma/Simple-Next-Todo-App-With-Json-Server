@@ -37,11 +37,11 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     }, [target]);
 
     const handleDocumentNavigation = () => {
-        navigate("/dashboard/DocumentList", { state: { globalSearchDocs: filteredDocuments } });
+        navigate("/dashboard/DocumentList", { state: { globalSearchDocs: filteredDocuments, strGlobal: target } });
     }
-    
+
     const handleMyTaskNavigation = () => {
-        navigate("/dashboard/MyTask", { state: { globalSearchTask: filteredTasks } });
+        navigate("/dashboard/MyTask", { state: { globalSearchTask: filteredTasks, strGlobal: target } });
     }
     function startFormattingDate(dt) {
         //const timestamp = parseInt(/\d+/.exec(dt));
