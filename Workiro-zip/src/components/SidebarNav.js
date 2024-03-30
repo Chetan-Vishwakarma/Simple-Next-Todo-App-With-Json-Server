@@ -28,9 +28,7 @@ import Settings from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import CreateNewModal from './CreateNewModal';
 import Client from '../client/Client';
-
 import Badge from '@mui/material/Badge';
-
 import { useAutocomplete } from '@mui/base/useAutocomplete';
 import ClientDetails from '../client/client-components/ClientDetails';
 import ContactDetails from '../contact/contact-components/ContactDetails';
@@ -38,14 +36,20 @@ import TodoList from './TodoList';
 import CommanCLS from '../services/CommanService';
 import Logout from './Logout';
 import AddContacts from './AddContacts';
-
-
-
 import NewTodoList from './NewTodoList';
 import FormatListNumberedRtlIcon from '@mui/icons-material/FormatListNumberedRtl';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SearchResult from './SearchResult';
 import DocumentList from '../client/client-components/DocumentList';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import GroupIcon from '@mui/icons-material/Group';
+import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
+import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import LogoutIcon from '@mui/icons-material/Logout';
+
 
 let options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
 
@@ -641,6 +645,7 @@ export default function SidebarNav() {
                   >
                     {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                   </ListItemIcon>
+
                   <ListItemText primary={text.tabName} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
               </ListItem>
