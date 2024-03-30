@@ -869,11 +869,8 @@ if(udfIdWithValue){
                             </Button>
 
                             <Button variant="text" style={{ float: 'right' }} className="btn-blue-2" onClick={UploadDocumentCreattTask}>
-
                                 {buttonNameText}
-
                             </Button>
-
 
                         </>)}
 
@@ -895,14 +892,3 @@ if(udfIdWithValue){
 }
 
 export default UploadDocument
-
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-// const Folder = [
-//     { label: 'Client' },
-//     { label: 'Cases' },
-//     { label: 'Customer' },
-//     { label: 'Share Allotments' },
-//     { label: 'M Customer' },
-//     { label: 'Process Folder' }
-// ];

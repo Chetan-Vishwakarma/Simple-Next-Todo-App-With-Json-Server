@@ -130,7 +130,9 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                             {item.Description? item.Description: ""}
                                         </Typography>
                                         <Typography variant="body1">
-                                            Size:  <span className='sembold'>{item.FileSize? item.FileSize: ""}</span> | Date <span className='sembold'>{item["Item Date"]!=="NaN/NaN/NaN"?item["Item Date"]:"01/01/2000"}</span>
+                                            {/* Size:  <span className='sembold'>{item.FileSize? item.FileSize: ""}</span> |  */}
+                                            Date <span className='sembold'>{item["Item Date"]!=="NaN/NaN/NaN"?item["Item Date"]:"01/01/2000"}</span>
+                                            | Uploaded by <span className='sembold'>Patrick</span>
                                         </Typography>
                                     </Box>
                                 </Box>

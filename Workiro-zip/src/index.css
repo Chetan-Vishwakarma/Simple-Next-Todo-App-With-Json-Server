@@ -870,7 +870,7 @@ span.tox-statusbar__branding {
 .no-data-found {
   background: #fff;
   padding: 50px;
-  height: calc(100vh - 290px);
+  min-height: calc(100vh - 290px);
   margin-top: 10px;
   display: flex;
   flex-direction: column;
@@ -1883,6 +1883,9 @@ span.tox-statusbar__branding {
 }
 .date-padding-0 .MuiStack-root {
   padding-top: 0px;
+}
+.dx-datagrid-borders>.dx-datagrid-header-panel {
+  display: none;
 }
 
 @media only screen and (max-width: 1366px) {

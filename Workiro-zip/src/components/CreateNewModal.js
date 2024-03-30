@@ -30,6 +30,10 @@ import 'react-datetime/css/react-datetime.css';
 import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import GroupIcon from '@mui/icons-material/Group';
+import DescriptionIcon from '@mui/icons-material/Description';
+import SaveAsIcon from '@mui/icons-material/SaveAs';
+
 import {
     List,
     ListItem,
@@ -1275,8 +1279,8 @@ export default function CreateNewModalTask({ ...props }) {
     ////////////////// Priority
     let priorityarr = [{ id: 1, "name": "High" }, { id: 2, "name": "Normal" }, { id: 3, "name": "Low" }];
     let statusarr = [
-        { id: 1, "name": "Not Started"},
-        { id: 2, "name": "In Progress"},
+        { id: 1, "name": "Not Started" },
+        { id: 2, "name": "In Progress" },
         { id: 3, "name": "On Hold" },
         { id: 4, "name": "Completed" },
         // { id: 5, "name": "Done" },
@@ -1989,18 +1993,19 @@ export default function CreateNewModalTask({ ...props }) {
                 <span className="ps-2 create-text">Create New  </span>
             </Button> */}
 
-            <div>
+            <div className="select-border my-0 m-auto">
                 <Button
                     id="basic-button"
                     aria-controls={open4 ? 'basic-menu' : undefined}
                     aria-haspopup="true"
                     aria-expanded={open4 ? 'true' : undefined}
                     onClick={handleClick4}
-                    className="btn-blue btn-round btn-block"
+                    className="btn-outlin-2"
+                    variant="outlined"
                 >
-                    <span className="material-symbols-outlined">edit_square</span>{" "}
-                <span className="ps-2 create-text">Add New  </span>
-                    
+                    <span className="material-symbols-outlined font-18">edit_square</span>{" "}
+                    <span className="ps-2 font-13">Add New  </span>
+
                 </Button>
                 <Menu
                     id="basic-menu"
@@ -2012,14 +2017,41 @@ export default function CreateNewModalTask({ ...props }) {
                     }}
                     className="custom-dropdown"
                 >
-                    <MenuItem onClick={handleClickOpen}>CRM Task</MenuItem>
-                    <MenuItem onClick={handleClickOpen}>Portal Task</MenuItem>
-                    <MenuItem onClick={handleClickReferance}>Reference</MenuItem>
-                    <MenuItem onClick={handleClose4}>Note</MenuItem>
-                    <MenuItem onClick={handleClose4}>Document</MenuItem>
+                    <MenuItem onClick={handleClickOpen}>
+                        {/* <ListItemIcon>
+                            <EjectIcon fontSize="medium" className="text-red rotate-180" />
+                        </ListItemIcon> */}
+                        <ListItemIcon>
+                            <DvrIcon className="font-20" />
+                        </ListItemIcon> CRM Task
+                    </MenuItem>
+
+                    <MenuItem onClick={handleClickOpen}><ListItemIcon>
+                        <LanguageIcon className="font-20" />
+                    </ListItemIcon>
+                        Portal Task</MenuItem>
+
+                    <MenuItem onClick={handleClickReferance}>
+                        <ListItemIcon>
+                            <GroupIcon className="font-20" />
+                        </ListItemIcon> Reference
+                    </MenuItem>
+
+                    <MenuItem onClick={handleClose4}>
+                        <ListItemIcon>
+                            <SaveAsIcon className="font-20" />
+                        </ListItemIcon>
+                        Note
+                    </MenuItem>
+
+
+                    <MenuItem onClick={handleClose4}>
+                        <ListItemIcon>
+                            <DescriptionIcon className="font-20" />
+                        </ListItemIcon>
+                        Document</MenuItem>
                 </Menu>
             </div>
-
 
             <Dialog
                 fullScreen={fullScreen}

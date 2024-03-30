@@ -12,7 +12,6 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import moment from 'moment';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
-
 import CustomLoader from './CustomLoader';
 // import { data } from 'jquery';
 import MergeIcon from '@mui/icons-material/Merge';
@@ -29,6 +28,12 @@ import PortalDetails from './PortalDetails';
 import DataNotFound from './DataNotFound';
 import { styled } from '@mui/system';
 import { useLocation } from 'react-router-dom';
+import ClearIcon from '@mui/icons-material/Clear';
+import DvrIcon from '@mui/icons-material/Dvr';
+import LanguageIcon from '@mui/icons-material/Language';
+import WatchLaterIcon from '@mui/icons-material/WatchLater';
+
+
 
 function TodoList() {
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -62,7 +67,7 @@ function TodoList() {
     const [dataInGroup, setDataInGroup] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const [suggestionList,setSuggestionList] = useState([]);
+    const [suggestionList, setSuggestionList] = useState([]);
 
     // for date datepicker
     const [state, setState] = useState({
@@ -451,7 +456,6 @@ function TodoList() {
 
                 <Box className='d-flex main-search-box mb-3 align-items-center justify-content-between'>
                     <Box className='d-flex align-items-center'>
-
                         <Layout>
                             <AutocompleteWrapper>
                                 <AutocompleteRoot
@@ -459,31 +463,31 @@ function TodoList() {
                                         borderColor: '#D5D5D5',
                                         color: 'success.main',
                                     }}
-                                    // className={isSearch ? 'Mui-focused' : ''}
-                                    >
+                                // className={isSearch ? 'Mui-focused' : ''}
+                                >
                                     <span className="material-symbols-outlined search-icon">search</span>
 
                                     <Input
                                         // onClick={(e) => handleDialogsOpen(e, "Search")}
                                         onChange={(e) => {
-                                            if(e.target.value==="") {
+                                            if (e.target.value === "") {
                                                 setSuggestionList([]);
                                                 handleFilterDeletion("Subject");
                                                 return;
                                             }
-                                            let fltData = allTask.filter(itm=>itm.Subject.toLowerCase().includes(e.target.value.toLowerCase()));
+                                            let fltData = allTask.filter(itm => itm.Subject.toLowerCase().includes(e.target.value.toLowerCase()));
                                             setSuggestionList(fltData);
-                                            setTaskFilter({...taskFilter,Subject:[e.target.value]});
+                                            setTaskFilter({ ...taskFilter, Subject: [e.target.value] });
                                         }}
                                         placeholder='Search'
                                         className='ps-0' />
                                 </AutocompleteRoot>
 
-                                {suggestionList.length>0&& <Listbox sx={{ zIndex: 1 }}>
-                                    {suggestionList.map((itm,i)=>{
+                                {suggestionList.length > 0 && <Listbox sx={{ zIndex: 1 }}>
+                                    {suggestionList.map((itm, i) => {
                                         return <Option key={i}>
-                                        {/* <ApartmentIcon className='me-1' /> */}
-                                        {itm.Subject}</Option>
+                                            {/* <ApartmentIcon className='me-1' /> */}
+                                            {itm.Subject}</Option>
                                     })}
                                 </Listbox>}
                             </AutocompleteWrapper>
@@ -513,8 +517,8 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value="Folder" style={{ display: "none" }}>Folders</MenuItem>
-                                <MenuItem value="">Clear Filter</MenuItem>
-                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder}>{fld.Folder}</MenuItem>)}
+                                <MenuItem value="" className='text-danger ps-1'><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
+                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'><LanguageIcon className="font-20 me-2" /> {fld.Folder}</MenuItem>)}
                             </Select>
                         </FormControl>
 
@@ -541,9 +545,15 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value="Source" style={{ display: "none" }}>Type</MenuItem>
-                                <MenuItem value="">Clear Filter</MenuItem>
-                                <MenuItem value="CRM">CRM</MenuItem>
-                                <MenuItem value="Portal">Portal</MenuItem>
+                                <MenuItem value="" className='ps-1 text-danger' >
+                                    <ClearIcon className="font-20 me-2" />
+                                    Clear Filter</MenuItem>
+                                <MenuItem className='ps-1' value="CRM">
+                                    <DvrIcon className="font-20 me-2" />
+                                    CRM</MenuItem>
+                                <MenuItem className='ps-1' value="Portal">
+                                    <LanguageIcon className="font-20 me-2" />
+                                    Portal</MenuItem>
                             </Select>
                         </FormControl>
 
@@ -570,8 +580,12 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value={"Status"} style={{ display: "none" }}>Status</MenuItem>
-                                <MenuItem value={""} >Clear Filter</MenuItem>
-                                {["Done", "Not Started", "In Progress", "Waiting on someone else", "Deferred", "Deleted", "Completed"].map((itm, i) => <MenuItem key={i} value={itm}>{itm}</MenuItem>)}
+                                <MenuItem value={""} className='text-danger ps-1'>
+                                    <ClearIcon className="font-20 me-2" />
+                                    Clear Filter</MenuItem>
+                                {["Done", "Not Started", "In Progress", "Waiting on someone else", "Deferred", "Deleted", "Completed"].map((itm, i) => <MenuItem key={i} value={itm} className='ps-1'>
+                                    <WatchLaterIcon className="font-20 me-2" />
+                                    {itm}</MenuItem>)}
                             </Select>
                         </FormControl>
                     </Box>

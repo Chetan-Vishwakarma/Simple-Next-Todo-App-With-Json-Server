@@ -39,6 +39,8 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useLocation } from 'react-router-dom';
 import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
 import CustomLoader from '../../components/CustomLoader';
+import ClearIcon from '@mui/icons-material/Clear';
+
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -691,7 +693,7 @@ export default function DocumentList({ clientId }) {
                                 <MenuItem value="" style={{ display: "none" }}>
                                     Sections
                                 </MenuItem>
-                                <MenuItem value="Section">00. Clear Filter</MenuItem>
+                                <MenuItem value="Section" >00. Clear Filter</MenuItem>
                                 {sections.length > 0 && sections.map((itm) => {
                                     return <MenuItem value={itm.Sec}>{itm.Sec}</MenuItem>
                                 })}
@@ -730,9 +732,15 @@ export default function DocumentList({ clientId }) {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value="" style={{display:"none"}}>Folders</MenuItem>
-                                <MenuItem value="Folder">Clear Filters</MenuItem>
+
+                                <MenuItem value="Folder" className='text-danger ps-1'>
+                                    <ClearIcon className='font-18 me-1' />
+                                    Clear Filters</MenuItem>
+
                                 {folders.length > 0 && folders.map((itm) => {
-                                    return <MenuItem value={itm.Folder}>{itm.Folder}</MenuItem>
+                                    return <MenuItem value={itm.Folder} className='ps-1'>
+                                        <FormatAlignJustifyIcon className='font-18 me-1' />
+                                        {itm.Folder}</MenuItem>
                                 })}
                                 {/* <MenuItem value="">
                                         Select
@@ -758,7 +766,8 @@ export default function DocumentList({ clientId }) {
                                     }}
                                 >
                                     <MenuItem value="" style={{display:"none"}}>Group By</MenuItem>
-                                    <MenuItem value="Group By">Clear Groupby</MenuItem>
+                                    <MenuItem value="Group By">
+                                         Clear Group by</MenuItem>
                                     <MenuItem value="Description">Description</MenuItem>
                                     <MenuItem value={"CommentBy"}>Comment By</MenuItem>
                                     <MenuItem value={"Type"}>Type</MenuItem>
@@ -994,7 +1003,10 @@ export default function DocumentList({ clientId }) {
                                                                         {itm.Description ? itm.Description : "Demo"}
                                                                     </Typography>
                                                                     <Typography variant="body1">
-                                                                        Size: {itm["FileSize"] ? itm["FileSize"] : "0.00KB"} | Date {itm["Item.Date"] ? itm["Item.Date"] : ""}
+                                                                        {/* Size: {itm["FileSize"] ? itm["FileSize"] : "0.00KB"}  */}
+                                                                        Date {itm["Item.Date"] ? itm["Item.Date"] : ""} |
+                                                                        Uploaded by <span className='sembold'>Patrick</span>
+                                                                        
                                                                     </Typography>
                                                                 </Box>
                                                             </Box>
@@ -1020,7 +1032,9 @@ export default function DocumentList({ clientId }) {
                                                                     {itm.Description ? itm.Description : "Demo"}
                                                                 </Typography>
                                                                 <Typography variant="body1">
-                                                                    Size: {itm["FileSize"] ? itm["FileSize"] : ""} | Date {itm["Item.Date"] ? itm["Item.Date"] : ""}
+                                                                    {/* Size: {itm["FileSize"] ? itm["FileSize"] : ""} |  */}
+                                                                    Date {itm["Item.Date"] ? itm["Item.Date"] : ""} | 
+                                                                    Uploaded by <span className='sembold'>Patrick</span>
                                                                 </Typography>
                                                             </Box>
                                                         </Box>

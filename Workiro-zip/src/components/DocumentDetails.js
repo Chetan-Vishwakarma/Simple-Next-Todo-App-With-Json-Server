@@ -60,7 +60,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
 
     // sadik js start
     console.log("Selected Document", documents)
-    
+
     const [openPDFView, setOpenPDFView] = React.useState(false);
 
     const [selectedDocument, setSelectedDocument] = React.useState(null);
@@ -101,8 +101,8 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
         newAnchorElDocumentList[rowData.key] = event.currentTarget;
         setAnchorElDocumentList(newAnchorElDocumentList);
     };
-    
-    const handleCloseDocument = (event,rowData) => {
+
+    const handleCloseDocument = (event, rowData) => {
         event.stopPropagation();
         const newAnchorElDocumentList = { ...anchorElDocumentList };
         delete newAnchorElDocumentList[rowData.key];
@@ -153,7 +153,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
 
                 </Box> */}
 
-                {dataNotFoundBoolean?<DataNotFound/>:<DataGrid
+                {dataNotFoundBoolean ? <DataNotFound /> : <DataGrid
                     dataSource={dataNotFoundBoolean ? [] : advFilteredResult.length > 0 ? advFilteredResult : documents}
                     keyExpr="Guid"
                     allowColumnReordering={true}
@@ -196,7 +196,9 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                                                 {data.data.Description ? data.data.Description : "Demo"}
                                             </Typography>
                                             <Typography variant="body1">
-                                                Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span> | Date <span className='sembold'>{data.data["Item Date"] ? data.data["Item Date"] : ""}</span>
+                                                {/* Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span>  */}
+                                                Date <span className='sembold'>{data.data["Item Date"] ? data.data["Item Date"] : ""}</span> |
+                                                Uploaded by <span className='sembold'>Patrick</span>
                                             </Typography>
                                         </Box>
                                     </Box>
@@ -206,7 +208,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                                             aria-controls={anchorElDocumentList[data.key] ? `basic-menu-${data.key}` : undefined}
                                             aria-haspopup="true"
                                             aria-expanded={Boolean(anchorElDocumentList[data.key])}
-                                            onClick={(event)=>handleClickDocumentList(event, data)}
+                                            onClick={(event) => handleClickDocumentList(event, data)}
                                             className='min-width-auto'
                                         >
                                             <MoreVertIcon />
@@ -215,14 +217,14 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                                             id={`basic-menu-${data.key}`}
                                             anchorEl={anchorElDocumentList[data.key]}
                                             open={Boolean(anchorElDocumentList[data.key])}
-                                            onClose={(event)=>handleCloseDocument(event,data)}
+                                            onClose={(event) => handleCloseDocument(event, data)}
                                             MenuListProps={{
                                                 'aria-labelledby': `basic-button-${data.key}`,
                                             }}
                                             className='custom-dropdown'
                                         >
                                             <MenuItem onClick={(event) => {
-                                                handleCloseDocument(event,data)
+                                                handleCloseDocument(event, data)
                                                 handleClickOpenDocumentDetailsList(event)
                                             }}>
                                                 <ListItemIcon>
@@ -231,28 +233,28 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                                                 Document Details</MenuItem>
 
                                             <MenuItem
-                                             onClick={(event)=>handleCloseDocument(event,data)}
-                                             >
+                                                onClick={(event) => handleCloseDocument(event, data)}
+                                            >
                                                 <ListItemIcon>
                                                     <CloudUploadIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Upload New Version</MenuItem>
-                                            <MenuItem 
-                                            onClick={(event)=>handleCloseDocument(event,data)}
+                                            <MenuItem
+                                                onClick={(event) => handleCloseDocument(event, data)}
                                             >
                                                 <ListItemIcon>
                                                     <DriveFileRenameOutlineIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Rename Document</MenuItem>
-                                            <MenuItem 
-                                            onClick={(event)=>handleCloseDocument(event,data)}
+                                            <MenuItem
+                                                onClick={(event) => handleCloseDocument(event, data)}
                                             >
                                                 <ListItemIcon>
                                                     <TravelExploreIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Open in Browser</MenuItem>
-                                            <MenuItem 
-                                            onClick={(event)=>handleCloseDocument(event,data)}
+                                            <MenuItem
+                                                onClick={(event) => handleCloseDocument(event, data)}
                                             >
                                                 <ListItemIcon>
                                                     <CloudDownloadIcon fontSize="medium" />
@@ -745,7 +747,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                         <Box className="d-flex align-items-center justify-content-between">
                             <Box className="dropdown-box">
                                 <Typography variant="h4" className='font-18 bold mb-2 text-black'>
-                                    Document List 
+                                    Document List
                                 </Typography>
                                 {/* <Box className="btn-Select">
                                     <Button className='btn-white'>Action</Button>
@@ -854,7 +856,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
             {/* document modal list details */}
             <Dialog
                 open={openDocumentDetailsList}
-                onClose={(event)=>handleCloseDocumentDetailsList(event)}
+                onClose={(event) => handleCloseDocumentDetailsList(event)}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 className='custom-modal'
@@ -874,7 +876,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                             </Box>
 
                             {/*  */}
-                            <Button onClick={(event)=>handleCloseDocumentDetailsList(event)} autoFocus sx={{ minWidth: 30 }}>
+                            <Button onClick={(event) => handleCloseDocumentDetailsList(event)} autoFocus sx={{ minWidth: 30 }}>
                                 <span className="material-symbols-outlined text-black">
                                     cancel
                                 </span>

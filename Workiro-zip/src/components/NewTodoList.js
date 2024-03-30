@@ -47,7 +47,7 @@ function NewTodoList() {
     const [userName, setUserName] = React.useState(null);
     const [recentDocument, setRecentDocument] = React.useState([]);
 
-  
+
     const [loadMore, setLoadMore] = useState(9);
 
     const open = Boolean(anchorEl);
@@ -60,27 +60,27 @@ function NewTodoList() {
 
     const Json_Get_CRM_UserByProjectId = () => {
         let obj = {
-          agrno: agrno,
-          Email: Email,
-          password: password,
-          ProjectId: folderId
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ProjectId: folderId
         };
         ClsSms.Json_Get_CRM_UserByProjectId(obj, (sts, data) => {
-          if (sts) {
-            if (data) {
-              let json = JSON.parse(data);
-              console.log("Json_Get_CRM_UserByProjectId", json.Table);
-              json.Table.map((item) => {
-                if (item.loggedInUser === "True") {
-                  setUserName(item.DisplayName);                 
+            if (sts) {
+                if (data) {
+                    let json = JSON.parse(data);
+                    console.log("Json_Get_CRM_UserByProjectId", json.Table);
+                    json.Table.map((item) => {
+                        if (item.loggedInUser === "True") {
+                            setUserName(item.DisplayName);
+                        }
+                    });
                 }
-              });
             }
-          }
         });
-      }
+    }
 
-      const Json_CRM_GetOutlookTask = () => {
+    const Json_CRM_GetOutlookTask = () => {
         let obj = {
             agrno: agrno,
             Email: Email,
@@ -91,21 +91,21 @@ function NewTodoList() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        
+
                         const formattedTasks = json.Table.map((task) => {
                             let timestamp;
                             if (task.EndDateTime) {
                                 timestamp = parseInt(task.EndDateTime.slice(6, -2));
                             }
-    
+
                             const date = new Date(timestamp);
-    
+
                             return { ...task, EndDateTime: date };
                         });
-    
+
                         // Sorting by EndDateTime
-                        formattedTasks.sort((a, b) =>  b.EndDateTime-a.EndDateTime );
-    
+                        formattedTasks.sort((a, b) => b.EndDateTime - a.EndDateTime);
+
                         console.log("Json_CRM_GetOutlookTask", formattedTasks);
                         setAllTask(formattedTasks);
                     }
@@ -116,10 +116,10 @@ function NewTodoList() {
         }
     }
 
-     
-    
+
+
     const Json_getRecentTaskList = () => {
-        
+
         try {
             ClsPortal.Json_getRecentTaskList((sts, data) => {
                 if (sts) {
@@ -154,7 +154,7 @@ function NewTodoList() {
     const Json_ExplorerSearchDoc = () => {
         try {
             let obj = {};
-            obj.ProjectId =folderId;
+            obj.ProjectId = folderId;
             obj.ClientId = "";
             obj.sectionId = "-1";
             Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
@@ -162,13 +162,13 @@ function NewTodoList() {
                     //console.log("ExplorerSearchDoc", JSON.parse(data));
                     let json = JSON.parse(data);
                     if (json?.Table6?.length > 0) {
-                       
+
                         // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                         let docs = json.Table6;
-                      
+
                         if (docs?.length > 0) {
-                            console.log("ExplorerSearchDoc",docs);
-                            Json_getRecentDocumentList(docs)                           
+                            console.log("ExplorerSearchDoc", docs);
+                            Json_getRecentDocumentList(docs)
                         }
                     }
                 }
@@ -178,28 +178,28 @@ function NewTodoList() {
         }
     }
 
-    const Json_getRecentDocumentList = (exData=[]) => {
-        
+    const Json_getRecentDocumentList = (exData = []) => {
+
         try {
             ClsPortal.Json_getRecentDocumentList((sts, data) => {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
                         let tbl = json.Table;
-                      
+
                         const itemIdSet = new Set(tbl.map(item => item.ItemId));
                         console.log("Json_getRecentDocumentList", itemIdSet);
-                        
-                        if(exData.length>0){  
-                                const filteredArray2 = exData.filter(item => itemIdSet.has(item["Registration No."]));
-                                console.log("Json_getRecentDocumentList1", filteredArray2);                       
-                          if(filteredArray2.length>0){
-                            setRecentDocument(filteredArray2);
-                          }
-                               
+
+                        if (exData.length > 0) {
+                            const filteredArray2 = exData.filter(item => itemIdSet.has(item["Registration No."]));
+                            console.log("Json_getRecentDocumentList1", filteredArray2);
+                            if (filteredArray2.length > 0) {
+                                setRecentDocument(filteredArray2);
+                            }
+
                         }
 
-                       
+
                     }
                 }
             });
@@ -208,12 +208,12 @@ function NewTodoList() {
         }
     }
 
-   
+
 
     const handleLoadMore = () => {
         // Increase the number of items to display by, for example, 5 when the button is clicked
         setLoadMore(prevLoadMore => prevLoadMore + 9);
-      };
+    };
 
     useEffect(() => {
         Json_getRecentDocumentList();
@@ -221,8 +221,8 @@ function NewTodoList() {
         Json_Get_CRM_UserByProjectId();
         Json_CRM_GetOutlookTask();
         Json_getRecentTaskList();
-       
-      
+
+
     }, [isApi])
 
 
@@ -272,14 +272,14 @@ function NewTodoList() {
 
     const handleDowloadDocument = (e) => {
         setAnchorElDocumentList(null);
-        console.log("document object",e);
-        let o={ItemId:e["Registration No."]};
-        ClsSms.Json_GetItemBase64DataById(o,function(sts,data){
-            if(sts && data){
-               // console.log("Json_GetItemBase64DataById",data)
+        console.log("document object", e);
+        let o = { ItemId: e["Registration No."] };
+        ClsSms.Json_GetItemBase64DataById(o, function (sts, data) {
+            if (sts && data) {
+                // console.log("Json_GetItemBase64DataById",data)
                 let ankr = document.createElement("a");
-                ankr.href=`data:application/octet-stream;base64,${data}`;
-                ankr.download=e.Path;
+                ankr.href = `data:application/octet-stream;base64,${data}`;
+                ankr.download = e.Path;
                 ankr.click();
             }
         })
@@ -290,14 +290,14 @@ function NewTodoList() {
 
     const ViewerDocument = (e) => {
         setAnchorElDocumentList(null);
-        console.log("document object",e);  
+        console.log("document object", e);
         setSelectedDocument(e);
-        setOpenPDFView(true);   
-        
-    //    let url =`https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=1002909&filetype=txt&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=&PortalID=`;
-    // window.open(url);
+        setOpenPDFView(true);
 
-       
+        //    let url =`https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=1002909&filetype=txt&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=&PortalID=`;
+        // window.open(url);
+
+
     };
 
 
@@ -360,7 +360,7 @@ function NewTodoList() {
                 <nav class="cd-vertical-nav">
                     <ul>
                         <li><a href="#section1" class="active"><span class="label">Task Due <br />Soon</span>
-                        <EventNoteIcon className='hover-icon' />
+                            <EventNoteIcon className='hover-icon' />
                         </a></li>
                         <li><a href="#section2" class=""><span class="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
                         <li><a href="#section3" class=""><span class="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
@@ -445,14 +445,14 @@ function NewTodoList() {
                     } */}
 
 
-                     {allTask.length>0?allTask.slice(0, loadMore).map((item,index) => {
+                    {allTask.length > 0 ? allTask.slice(0, loadMore).map((item, index) => {
                         const arr = item.AssignedToID.split(",").map(Number);
 
                         const priority = item.Priority === 1 ? "High" :
-                        item.Priority === 2 ? "Normal" :
-                        item.Priority === 3 ? "Low" : "Normal";
+                            item.Priority === 2 ? "Normal" :
+                                item.Priority === 3 ? "Low" : "Normal";
 
-                        
+
 
                         return <>
 
@@ -475,8 +475,8 @@ function NewTodoList() {
 
                                     <Box className='d-flex align-items-center justify-content-between'>
                                         <Typography variant='subtitle1' ><pan className='text-gray'>
-                                        <a href='#'>{item.UserName}</a> <ArrowForwardIosIcon className='font-14' /> </pan>
-                                           
+                                            <a href='#'>{item.UserName}</a> <ArrowForwardIosIcon className='font-14' /> </pan>
+
                                             <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +{arr.length}</a></Typography>
                                         <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                     </Box>
@@ -525,7 +525,7 @@ function NewTodoList() {
                             {/* col end */}
 
                         </>
-                    }):""}
+                    }) : ""}
                 </Box>
 
                 <Box className='py-4 text-center'>
@@ -629,7 +629,7 @@ function NewTodoList() {
                     })}
                 </Box>
 
-                
+
 
                 {/* row end */}
                 <hr />
@@ -729,7 +729,7 @@ function NewTodoList() {
                 {/* <DocumentDetails></DocumentDetails> */}
 
                 <Box className='row'>
-                    {recentDocument.length>0?recentDocument.map((item, index) => {
+                    {recentDocument.length > 0 ? recentDocument.map((item, index) => {
                         return <>
 
                             <Box className='col-xxl-3 col-xl-4 col-md-6' key={index}>
@@ -745,12 +745,14 @@ function NewTodoList() {
                                                 }}
                                                 className='me-2 ms-0'
                                             />
-                                            <Box className="upload-content pe-3" onDoubleClick={(e)=>ViewerDocument(item)}>
+                                            <Box className="upload-content pe-3" onDoubleClick={(e) => ViewerDocument(item)}>
                                                 <Typography variant="h4" >
-                                                  {item.Description}
+                                                    {item.Description}
                                                 </Typography>
                                                 <Typography variant="body1">
-    Size:  <span className='sembold'>{item.FileSize}</span> |  <span className='sembold'>{moment(item["Item Date"]).format("DD/MM/YYYY")}</span>
+                                                    {/* Size:  <span className='sembold'>{item.FileSize}</span> |   */}
+                                                    <span className='sembold'>{moment(item["Item Date"]).format("DD/MM/YYYY")}</span>
+                                                    | Uploaded by <span className='sembold'>Patrick</span>
                                                 </Typography>
                                             </Box>
                                         </Box>
@@ -799,7 +801,7 @@ function NewTodoList() {
                                                         <TravelExploreIcon fontSize="medium" />
                                                     </ListItemIcon>
                                                     Open in Browser</MenuItem>
-                                                <MenuItem onClick={(e)=>handleDowloadDocument(item)}>
+                                                <MenuItem onClick={(e) => handleDowloadDocument(item)}>
                                                     <ListItemIcon>
                                                         <CloudDownloadIcon fontSize="medium" />
                                                     </ListItemIcon>
@@ -811,7 +813,7 @@ function NewTodoList() {
                             </Box>
 
                         </>
-                    }):""}
+                    }) : ""}
 
                 </Box>
 
