@@ -139,7 +139,7 @@ const MenuProps = {
 
 export default function DocumentList({ clientId }) {
     const location = useLocation();
-    const { globalSearchDocs } = location.state;
+    const { globalSearchDocs, strGlobal } = location.state;
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -592,16 +592,20 @@ export default function DocumentList({ clientId }) {
     const handleFilterOnClientSelection = (e) => {
         let val = e.target.value;
         setSelectedClient(val);
-        if (val !== "") {
-            setFilterCriteria({ ...filterCriteria, Client: val });
-        } else {
+        if(val === "Reference"){
+            setSelectedClient("");
+            handleFilterDeletion("Client");
+            return;
+        }else if(val!==""){
+            setFilterCriteria({...filterCriteria,Client:val});
+        }else{
             handleFilterDeletion("Client");
         }
     }
 
     return (
         <>
-            {globalSearchDocs.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=", tabName: "Search Result" }, { tabLink: "/dashboard/DocumentList", tabName: "Documents List" }]} />}
+            {globalSearchDocs.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str="+strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/DocumentList", tabName: "Documents List" }]} />}
 
             {isLoading ? <CustomLoader /> : <>
                 <Box className='d-flex flex-wrap align-items-center justify-content-between'>
@@ -792,15 +796,22 @@ export default function DocumentList({ clientId }) {
                             <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
                                 <Select
                                     value={sortByProperty}
-                                    onChange={(e) => setSortByProperty(e.target.value)}
+                                    onChange={(e) => {
+                                        if(e.target.value==="Sort By"){
+                                            setSortByProperty("")
+                                            return;
+                                        }
+                                        setSortByProperty(e.target.value)
+                                    }
+                                }
                                     displayEmpty
                                     inputProps={{ 'aria-label': 'Without label' }}
                                     className='custom-dropdown'
                                 >
-                                    <MenuItem value="">
+                                    <MenuItem value="" style={{display:"none"}}>
                                         <SwapVertIcon className='pe-1' /> Sort By
                                     </MenuItem>
-                                    <MenuItem value="None" onClick={() => setAdvFilteredResult([])}><WarningIcon className='pe-1' />  None</MenuItem>
+                                    <MenuItem value="None" onClick={() => setAdvFilteredResult([])}><WarningIcon className='pe-1' />  Clear Sortby</MenuItem>
                                     <MenuItem value={"Date"}>
                                         <CalendarMonthIcon className='pe-1' />
                                         By Date</MenuItem>
@@ -832,7 +843,7 @@ export default function DocumentList({ clientId }) {
                                 inputProps={{ 'aria-label': 'Without label' }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value="">
+                                <MenuItem value=""  style={{display:"none"}}>
                                     Select Reference
                                 </MenuItem>
                                 {clientList.length > 0 && clientList.map(itm => <MenuItem value={itm}>{itm}</MenuItem>)}

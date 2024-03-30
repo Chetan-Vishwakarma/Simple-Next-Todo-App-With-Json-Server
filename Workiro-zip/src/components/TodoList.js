@@ -32,10 +32,12 @@ import ClearIcon from '@mui/icons-material/Clear';
 import DvrIcon from '@mui/icons-material/Dvr';
 import LanguageIcon from '@mui/icons-material/Language';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
-
-
+import CustomBreadCrumbs from './CustomBreadCrumbs';
 
 function TodoList() {
+    const location = useLocation();
+    let dddd = location.state!==null? location.state: {globalSearchTask:[]};
+    const {globalSearchTask, strGlobal} = dddd;
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -106,6 +108,40 @@ function TodoList() {
         }
     }
     const Json_CRM_GetOutlookTask = () => {
+        if(globalSearchTask.length>0){
+            const formattedTasks = globalSearchTask.map((task) => {
+                let timestamp;
+                if (task.EndDateTime) {
+                    timestamp = parseInt(task.EndDateTime.slice(6, -2));
+                }
+
+                const date = new Date(timestamp);
+
+                return { ...task, EndDateTime: date };
+            });
+
+            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
+
+            let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
+                let timestamp;
+                if (task.CreationDate) {
+                    timestamp = parseInt(task.CreationDate.slice(6, -2));
+                }
+
+                const date = new Date(timestamp);
+
+                return { ...task, CreationDate: date };
+            }).sort((a, b) => b.CreationDate - a.CreationDate);
+
+            
+            setActualData([...hasCreationDate]);
+            setAllTask([...hasCreationDate]);
+            // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
+            Json_GetFolders();
+            setIsApi(true);
+            setIsLoading(false);
+            return;
+        }
         let obj = {
             agrno: agrno,
             Email: Email,
@@ -452,6 +488,9 @@ function TodoList() {
     return (
         <>
             <Box className="container-fluid p-0">
+
+            {globalSearchTask.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str="+strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/MyTask", tabName: "My Task" }]} />}
+
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
                 <Box className='d-flex main-search-box mb-3 align-items-center justify-content-between'>
@@ -580,12 +619,8 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value={"Status"} style={{ display: "none" }}>Status</MenuItem>
-                                <MenuItem value={""} className='text-danger ps-1'>
-                                    <ClearIcon className="font-20 me-2" />
-                                    Clear Filter</MenuItem>
-                                {["Done", "Not Started", "In Progress", "Waiting on someone else", "Deferred", "Deleted", "Completed"].map((itm, i) => <MenuItem key={i} value={itm} className='ps-1'>
-                                    <WatchLaterIcon className="font-20 me-2" />
-                                    {itm}</MenuItem>)}
+                                <MenuItem value={""} ><WatchLaterIcon className='text-danger ps-1' /> Clear Filter</MenuItem>
+                                {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm}>  <WatchLaterIcon className="font-20 me-2" />{itm}</MenuItem>)}
                             </Select>
                         </FormControl>
                     </Box>

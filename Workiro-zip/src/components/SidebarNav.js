@@ -335,8 +335,7 @@ export default function SidebarNav() {
   useEffect(() => {
     const data = setTimeout(() => {
       Json_AdvanceSearchDoc();
-
-    }, 500);
+    }, 200);
     return () => clearTimeout(data);
   }, [forDocuments]);
 
