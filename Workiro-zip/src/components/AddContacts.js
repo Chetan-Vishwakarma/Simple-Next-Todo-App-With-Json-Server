@@ -61,6 +61,7 @@ function AddContacts() {
     const [clientDetails, setClientDetails] = useState({});
     const [folders, setFolders] = useState([]);
     const [Importdata, setImportdata] = useState("");
+    const [clientNames, setclientNames] = useState("");
     const [ImportContact, setImportContact] = useState("");
     const [contactlistdata, setContactlistdata] = useState([]);
     const [bussiness, setBussiness] = useState([]); // State to hold folders data
@@ -205,9 +206,16 @@ function AddContacts() {
           ["mainCountry"]: "",
           ["billingsCountry"]: "",
           ["ragistersCountry"]: "",
-          ["ReferenceID"]:"" };
+          ["ReferenceID"]:clientNames };
           setContactDetails(data);
   };
+  const updateReferenceID = (client) => {
+    let data = { ...userContactDetails };  
+    data = { ...data, ReferenceID: client };
+    console.log(data, "Update ReferenceID");
+    setContactDetails(data);
+  };
+  
       const onChangebussines = (
         event,
         value
@@ -216,10 +224,8 @@ function AddContacts() {
         if (value) {
           clientData = value.ClientID;
           clientName = value.Client;
-          let data = { ...userContactDetails };  
-          data = { ...data, ["ReferenceID"]:  value.Client };
-          console.log(data, "onChangetitle");
-          setContactDetails(data);
+          setclientNames(clientName);
+          updateReferenceID(value.Client);
         } else {
         }
       };
@@ -301,17 +307,10 @@ function AddContacts() {
           ) => {
             event.preventDefault();
             if (value) {
-              // clientData = value.ClientID;
-              // clientName = value.Client;
-              // let data = { ...userContactDetails };  
-              // data = { ...data, ["ReferenceID"]:  value.Client };
-             
               let result = contactlistdata.filter((el) => el["EMailId"] === value.EMailId);
               console.log(value, "onChangetitle",result);
               setContact(result[0]);
-              
-              // setContactDetails(data);
-              // folders
+            
             } else {
             }
           };
@@ -434,6 +433,7 @@ function AddContacts() {
               </Box>
               <Box className="row mb-3">
               <ContactMainform 
+              clientNames={clientNames}
               contact={contact}
                userContactDetails={userContactDetails}
                setContactDetails={setContactDetails}
