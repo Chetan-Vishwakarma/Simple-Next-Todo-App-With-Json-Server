@@ -38,17 +38,8 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
     const handleDocumentNavigation = () => {
         navigate("/dashboard/DocumentList", { state: { globalSearchDocs: filteredDocuments } });
-        // navigate("/dashboard/clientDetails?val=5",{
-        //     state:{
-        //         agrno: "",
-        //         Email: "",
-        //         password: "",
-        //         folderId: "",
-        //         originatorNo: "",
-        //         globalSearchDocs:filteredDocuments
-        //     }
-        // });
     }
+    
     const handleMyTaskNavigation = () => {
         navigate("/dashboard/MyTask", { state: { globalSearchTask: filteredTasks } });
     }
@@ -113,7 +104,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                     }):<DataNotFound/>}
                 </Grid>
 
-                {filteredTasks.length > 9 && <Box className='text-center'><Button variant="text" className='btn-blue-2 mt-4 mb-4' size='small'>View More</Button></Box>}
+                {filteredTasks.length > 9 && <Box className='text-center'><Button onClick={handleMyTaskNavigation} variant="text" className='btn-blue-2 mt-4 mb-4' size='small'>View More</Button></Box>}
             </Box>
 
 

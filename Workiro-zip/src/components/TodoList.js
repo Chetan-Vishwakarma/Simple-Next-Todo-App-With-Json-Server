@@ -31,6 +31,9 @@ import { styled } from '@mui/system';
 import { useLocation } from 'react-router-dom';
 
 function TodoList() {
+    const location = useLocation();
+    let dddd = location.state!==null? location.state: {globalSearchTask:[]};
+    const {globalSearchTask} = dddd;
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -101,6 +104,40 @@ function TodoList() {
         }
     }
     const Json_CRM_GetOutlookTask = () => {
+        if(globalSearchTask.length>0){
+            const formattedTasks = globalSearchTask.map((task) => {
+                let timestamp;
+                if (task.EndDateTime) {
+                    timestamp = parseInt(task.EndDateTime.slice(6, -2));
+                }
+
+                const date = new Date(timestamp);
+
+                return { ...task, EndDateTime: date };
+            });
+
+            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
+
+            let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
+                let timestamp;
+                if (task.CreationDate) {
+                    timestamp = parseInt(task.CreationDate.slice(6, -2));
+                }
+
+                const date = new Date(timestamp);
+
+                return { ...task, CreationDate: date };
+            }).sort((a, b) => b.CreationDate - a.CreationDate);
+
+            
+            setActualData([...hasCreationDate]);
+            setAllTask([...hasCreationDate]);
+            // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
+            Json_GetFolders();
+            setIsApi(true);
+            setIsLoading(false);
+            return;
+        }
         let obj = {
             agrno: agrno,
             Email: Email,
