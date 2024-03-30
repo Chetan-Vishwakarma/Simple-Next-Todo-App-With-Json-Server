@@ -406,8 +406,17 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         if (dt) {
             // let fullDate = new Date(parseInt(dt.substr(6)));
             let fullDate = new Date(dt);
-            //console.log("date formet111", fullDate);
+           
+            // if(dt.includes("/Date")){
+            //     let fullDate = new Date(parseInt(dt.substr(6)));
+            //     console.log("date formet111", fullDate);
+            //     return fullDate;
+            // }
+            // else{
+            //     return fullDate;
+            // }
             return fullDate;
+            
         }
         else {
             return "";
@@ -1974,7 +1983,12 @@ const rows = [
                             <Grid item xs={12} md={6}>
 
                                 <Box className="search-box">
-                                    {Array(6).fill("").map(() => {
+                                {attachmentFile.length > 0 ? attachmentFile.map((item, index) => {
+                                    let fileName = "";
+                                    if (item.FileName) {
+                                        let Typest = item.FileName.lastIndexOf("\\");
+                                        fileName = item.FileName.slice(Typest + 1);
+                                    }
                                         return <>
                                             <Box className="file-uploads">
                                                 <label className="file-uploads-label file-uploads-document">
@@ -1990,7 +2004,7 @@ const rows = [
                                                         />
                                                         <Box className="upload-content pe-3">
                                                             <Typography variant="h4" >
-                                                                lorem ipsome dolor site amet
+                                                              {fileName}
                                                             </Typography>
                                                             <Typography variant="body1">
                                                                 Size:  <span className='sembold'>0.00 KB</span> | Date <span className='sembold'>09/03/2024</span>
@@ -2053,7 +2067,7 @@ const rows = [
                                             </Box>
                                             {/* file upload end */}
                                         </>
-                                    })}
+                                    }):""}
                                 </Box>
 
                                 {/* <Demo>

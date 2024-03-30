@@ -44,9 +44,15 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
     let ClsPortal = new CommanCL(baseUrlPortal, agrno, Email, password);
 
 
+    const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/"; // base url for api
+    //   let dt = new LoginDetails();
+
+    let clssms = new CommanCL(baseUrl, agrno, Email, password);
 
     /////////////////////Call Portal Methods  
     const [templateDataMarkup, setTemplateDataMarkup] = useState(null);
+    const [assigneeUser, setAssigneeUser] = useState([]);
+    const [asgUser, setAsgUser] = useState("");
     const [editorContentValue, setEditorContentValue] = useState(null);
     const [portalEmail, setPortalEmail] = useState([]);
     const [anchorElMgs, setAnchorElMgs] = React.useState(null);
@@ -232,6 +238,7 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
                         el.ViewDateTime = DateFormate(el.ViewDateTime);
                         return el;
                     });
+
                     console.log("GetMessageViewHistory_Json", res);
                     setMessageViewHistory(res);
                 }
@@ -455,6 +462,45 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
 
     }
 
+    function Json_GetForwardUserList(fid) {
+        
+        try {
+            let o = {};
+            o.ProjectId = fid;
+            o.SectionId = "-1";
+            clssms.Json_GetForwardUserList(o, function (sts, data) {
+                if (sts) {
+                    let js = JSON.parse(data);
+                    let dt = js.Table;
+                    if (dt.length > 0) {
+                        let result = dt.filter((el) => {
+                            return el.CGroup !== "Yes";
+                        });
+                        
+                        if (result.length > 0) {
+                            let assinee = selectedTask.AssignedToID.split(",");
+                            let filteredArray = result.filter(obj1 => {
+                                // Find corresponding object in array2 with the same 'id'
+                                let matchingObj = assinee.find(obj2 => obj2 ==obj1.ID);
+                                // If a matching object is found in array2, include it in the result
+                                return matchingObj !== undefined;
+                            });
+                            console.log("filteredArray",filteredArray);
+                            let user = result.filter((el)=>el.ID===parseInt(localStorage.getItem("UserId")));
+                           if(user.length>0){
+                             setAsgUser(user[0].ForwardTo);
+                           }
+                            setAssigneeUser(filteredArray)
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            console.log("error", error);
+        }
+    }
+
+    
     useEffect(() => {
         setAllPortalAttachments([]);
         setPortalEmail([]);
@@ -464,6 +510,8 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
             GetMessageAttachments_Json(selectedTask.PubMessageId);
             setStartDate(startFormattingDate(selectedTask.CreationDate));
             setEndDate(startFormattingDate(selectedTask.EndDateTime));
+           
+            Json_GetForwardUserList(selectedTask.FolderID)
         }
     }, [selectedTask]);
 
@@ -534,10 +582,50 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
         })
     }
 
+    const [anchorElAsg, setAnchorElAsg] = React.useState(null);
+    const openAsg = Boolean(anchorElAsg);
+    const handleClickAsg = (event,vl) => {
+        setAnchorElAsg(event.currentTarget);
+        
+    };
+    const handleCloseAsg = (vl) => {
+        setAnchorElAsg(null);
+        setAsgUser(vl.ForwardTo);
+    };
+
     return (<React.Fragment>
         {selectedTask.Source === "Portal" && (<>
             <Box className='d-flex align-items-center  mb-3'>
-                <p className="mb-0 font-14 text-black me-3">This message was sent to 4 recipients. Viewing as <a href="#">Patrick</a>. </p>
+                <p className="mb-0 font-14 text-black me-3">{`This message was sent to ${assigneeUser.length} recipients. Viewing as`}  
+                  <Button
+        id="basic-button"
+        aria-controls={openAsg ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={openAsg ? 'true' : undefined}
+        onClick={handleClickAsg}
+      >
+        {asgUser}
+      </Button>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorElAsg}
+        open={openAsg}
+        onClose={handleCloseAsg}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        {
+            assigneeUser.length>0?assigneeUser.map((item, index)=>
+            {
+return (<>
+<MenuItem key={index} onClick={()=>handleCloseAsg(item)}>{item.ForwardTo}</MenuItem>
+</>)
+            }):""
+        }
+        
+       
+      </Menu>  </p>
                 <Box>
                     <Button
                         id="basic-button"
@@ -592,8 +680,8 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
                         <MarkunreadIcon className='text-blue' />
                         {/* <DraftsIcon /> */}
                         <Box className='ps-3'>
-                            <h5 className='font-14 text-black mb-1'>Last Viewed On</h5>
-                            <p className='font-12 text-gray sembold mb-2'>10/11/24 09:50PM</p>
+                            <h5 className='font-14 text-black mb-1'>{messageViewHistory?.length>0?"Last Viewed On":"he message has not yet been viewed"} </h5>
+                            <p className='font-12 text-gray sembold mb-2'>{messageViewHistory?.length>0?messageViewHistory[messageViewHistory.length-1].ViewDateTime:""}</p>
                             <Button className='btn-blue-2' size="small" startIcon={<ScheduleIcon />} onClick={handleClickOpen}>View History</Button>
                         </Box>
                     </Box>

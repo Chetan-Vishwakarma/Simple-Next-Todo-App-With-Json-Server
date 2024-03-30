@@ -281,7 +281,7 @@ Json_GetContactListByFolder(obj,callBack) {
 
         // Construct the date string in "yyyy/mm/dd" format
         const formattedDate = `${year}/${month}/${day}`;
-
+console.log("formattedDate",formattedDate)
         return formattedDate;
     }
     GetCurrentDayDate() {

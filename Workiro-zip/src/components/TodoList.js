@@ -98,17 +98,13 @@ function TodoList() {
         }
     }
     const Json_CRM_GetOutlookTask = () => {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
-        };
+        
         try {
-            Cls.Json_CRM_GetOutlookTask(obj, (sts, data) => {
+            Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_CRM_GetOutlookTask", json.Table);
+                        console.log("Json_CRM_GetOutlookTask111", json);
                         let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
                         const formattedTasks = result.map((task) => {
                             let timestamp;
@@ -121,12 +117,14 @@ function TodoList() {
 
                             return { ...task, EndDateTime: date };
                         });
-
+                     
                         // setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
 
                         // let tasks = formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime);
                         // let myTasks = tasks.filter((item)=>item.AssignedToID.split(",").includes(userId));
                         let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
+
+                      
 
                         let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                             let timestamp;
@@ -138,8 +136,9 @@ function TodoList() {
 
                             return { ...task, CreationDate: date };
                         }).sort((a, b) => b.CreationDate - a.CreationDate);
+                        
 
-
+                       
                         // setActualData([...myTasks]);
                         setActualData([...hasCreationDate]);
                         setAllTask([...hasCreationDate]);
@@ -288,9 +287,13 @@ function TodoList() {
             });
         });
 
+        console.log("fltData2222",fltData)
+
         setAllTask([...fltData]);
         if (Object.keys(dataInGroup).length > 0) {
+
             let gData = groupByProperty(fltData, selectedGroupBy);
+
             setDataInGroup(gData);
         }
 
@@ -650,10 +653,13 @@ function TodoList() {
 
                             Object.keys(dataInGroup).length > 0 ? (<>
                                 {Object.keys(dataInGroup).map((key) => {
+
                                     return <>
                                         <h4>{key == 1 ? "High" : key == 2 ? "Medium" : key}</h4>
+
                                         {dataInGroup[key].length > 0 && dataInGroup[key].map((item, index) => {
-                                            return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                                         
+                                         return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                                 <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
 
                                                     <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked

@@ -84,6 +84,7 @@ import moment from "moment";
 import { Toast } from "devextreme-react";
 import Reference from "../client/client-components/Reference";
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { data } from "jquery";
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -103,7 +104,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-export default function CreateNewModalTask({ ...props }) {
+ function CreateNewModalTask({ ...props }) {
 
     let {
         documentDate,
@@ -251,7 +252,7 @@ export default function CreateNewModalTask({ ...props }) {
     };
 
     const handleClose = () => {
-        setOpen(false);
+        setOpen(false);       
     };
 
     // dropdown add
@@ -377,6 +378,13 @@ export default function CreateNewModalTask({ ...props }) {
     const disablePastDt = (date) => {
         const today = new Date();
         return date.isSameOrAfter(today, 'day'); // Disable past dates
+
+    };
+
+    const disableDueDate = (date) => {
+        const today = currentDate;
+        return date.isSameOrAfter(today, 'day'); // Disable past dates
+
 
     };
 
@@ -558,14 +566,11 @@ export default function CreateNewModalTask({ ...props }) {
 
 
         currentDate.setDate(currentDate.getDate() + 1); // Increment the day by 1 to get the next day's date
-
         const day = currentDate.getDate().toString().padStart(2, '0'); // Get the day and pad with 0 if needed
         const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Get the month (Note: January is 0)
         const year = currentDate.getFullYear(); // Get the full year
-
         // Construct the date string in "yyyy/mm/dd" format
         const formattedDate = `${year}-${month}-${day}`;
-
         return formattedDate;
     }
 
@@ -584,6 +589,8 @@ export default function CreateNewModalTask({ ...props }) {
     const handleMenuClose = () => {
         setFolderAnchorEl(null);
     };
+
+    
 
     useEffect(() => {
 
@@ -730,6 +737,24 @@ export default function CreateNewModalTask({ ...props }) {
         setUserFilter(res);
     }, [filterText])
 
+    const CurrentDateChange = (e) => {
+        setCurrentDate(e);
+       // setNextDate(formattedDate);
+    }
+    useEffect(() => {
+        const currentDate1 = new Date(currentDate);
+        const nextDate = new Date(currentDate1); // Copy the current date        
+        nextDate.setDate(currentDate1.getDate() + 1); // Increment the day by 1 to get the next day's date    
+        // Get the day, month, and year
+        const day = nextDate.getDate().toString().padStart(2, '0');
+        const month = (nextDate.getMonth() + 1).toString().padStart(2, '0');
+        const year = nextDate.getFullYear();    
+        // Construct the date string in "yyyy/mm/dd" format
+        const formattedDate = `${day}/${month}/${year}`;
+        console.log("formattedDate", formattedDate);    
+        setNextDate(formattedDate); // Set nextDate with formatted date
+    }, [currentDate]);
+
     useEffect(() => {
 
         let strGuid = uuidv4().replace(/-/g, '');
@@ -744,7 +769,7 @@ export default function CreateNewModalTask({ ...props }) {
 
         // setCurrentDate(dayjs(getCurrentDate()));
 
-        setNextDate(dayjs(getNextDate()));
+        //setNextDate(dayjs(getNextDate()));
         //setRemiderDate(dayjs(getCurrentDate()));
         setExpireDate(dayjs(getCurrentDate()));
 
@@ -1057,14 +1082,19 @@ export default function CreateNewModalTask({ ...props }) {
         const isaddUser = addUser.map(obj => obj.ID).join(',');
         const attString = attachmentPath.map(obj => obj.Path).join('|');
 
-        console.log("nextDate1", currentDate)
-        console.log("nextDate", nextDate)
-
+        //console.log("nextDate1", currentDate)
+       let nxtdd =dayjs(nextDate).format("YYYY/MM/DD");
+    if(nxtdd==="Invalid Date"){
+        let dd = nextDate.split("/");//30/03/2024
+        nxtdd= dd[2]+"/"+dd[1]+"/"+dd[0];
+    }
+       
+        //console.log("nextDate",dayjs(nxtdd).format("YYYY/MM/DD"))
         let ooo = {
 
             "ClientIsRecurrence": false,
             "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-            "ClientEnd": dayjs(nextDate).format("YYYY/MM/DD"),
+            "ClientEnd": dayjs(nxtdd).format("YYYY/MM/DD"),
             "ClientDayNumber": "1",
             "ClientMonth": "1",
             "ClientOccurrenceCount": "1",
@@ -1079,7 +1109,7 @@ export default function CreateNewModalTask({ ...props }) {
             "FolderId": txtFolderId.toString(),
             "Subject": textSubject,
             "TypeofTaskID": txtSectionId.toString(),
-            "EndDateTime": dayjs(nextDate).format("YYYY/MM/DD"),
+            "EndDateTime": dayjs(nxtdd).format("YYYY/MM/DD"),
             "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
             "Status": txtStatus,
             "Priority": txtPriorityId.toString(),
@@ -1294,8 +1324,8 @@ export default function CreateNewModalTask({ ...props }) {
     ////////////////// Priority
     let priorityarr = [{ id: 1, "name": "High" }, { id: 2, "name": "Normal" }, { id: 3, "name": "Low" }];
     let statusarr = [
-        { id: 1, "name": "Not Started"},
-        { id: 2, "name": "In Progress"},
+        { id: 1, "name": "Not Started" },
+        { id: 2, "name": "In Progress" },
         { id: 3, "name": "On Hold" },
         { id: 4, "name": "Completed" },
         // { id: 5, "name": "Done" },
@@ -1364,11 +1394,8 @@ export default function CreateNewModalTask({ ...props }) {
     const [selectedEmail, setSelectedEmail] = useState([]);
 
     const handleAutocompleteChange = (event, newValue) => {
-        if (newValue.length === 0) {
-            setSelectedEmail(newValue ? newValue : null);
-        } else {
-            toast.error("No data found please change a reference")
-        }
+        
+        setSelectedEmail(newValue ? newValue : null);
 
 
         //console.log("handleAutocompleteChange", newValue,event);
@@ -1377,11 +1404,7 @@ export default function CreateNewModalTask({ ...props }) {
     const [selectedEmailCC, setSelectedEmailCC] = useState(null);
     const handleAutocompleteChangeOnCC = (event, newValue) => {
 
-        if (newValue.length === 0) {
-            setSelectedEmailCC(newValue ? newValue : null);
-        } else {
-            toast.error("No data found please change a reference")
-        }
+        setSelectedEmailCC(newValue ? newValue : null);
     };
 
     //const filteredOptions = portalUser ? portalUser.filter(option => option["E-Mail"] !== selectedEmail) : [];
@@ -1615,15 +1638,22 @@ export default function CreateNewModalTask({ ...props }) {
 
 
     function CreatePortalTask() {
-        console.log("nextDate1", currentDate)
-        console.log("nextDate", nextDate)
+       // console.log("nextDate1", currentDate)
+        ////console.log("nextDate", nextDate)
+
+        let nxtdd =dayjs(nextDate).format("YYYY/MM/DD");
+        if(nxtdd==="Invalid Date"){
+            let dd = nextDate.split("/");//30/03/2024
+            nxtdd= dd[2]+"/"+dd[1]+"/"+dd[0];
+        }
+        
 
         try {
             const isaddUser = addUser.map(obj => obj.ID).join(',');
             let ooo = {
                 "ClientIsRecurrence": false,
                 "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-                "ClientEnd": dayjs(nextDate).format("YYYY/MM/DD"),
+                "ClientEnd": dayjs(nxtdd).format("YYYY/MM/DD"),
                 "ClientDayNumber": "1",
                 "ClientMonth": "1",
                 "ClientOccurrenceCount": "1",
@@ -1638,7 +1668,7 @@ export default function CreateNewModalTask({ ...props }) {
                 "FolderId": txtFolderId.toString(),
                 "Subject": textSubject,
                 "TypeofTaskID": txtSectionId.toString(),
-                "EndDateTime": dayjs(nextDate).format("YYYY/MM/DD"),
+                "EndDateTime": dayjs(nxtdd).format("YYYY/MM/DD"),
                 "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
                 "Status": txtStatus,
                 "Priority": txtPriorityId.toString(),
@@ -1664,7 +1694,7 @@ export default function CreateNewModalTask({ ...props }) {
                     if (js.Status === "success") {
                         setMessageId(js.Message);
                         CreatePortalMessage(js.Message)
-                        toast.success("Created Task");
+                        //toast.success("Created Task");
                     }
                     else {
                         toast.error("Task Not Created Please Try Again");
@@ -1740,6 +1770,8 @@ export default function CreateNewModalTask({ ...props }) {
                         if (data === "") {
                             toast.success("Task Created");
                         }
+                        setOpen(false);
+                       
                         // let js = JSON.parse(data);
 
                         // if (js.Status == "success") {
@@ -2018,8 +2050,8 @@ export default function CreateNewModalTask({ ...props }) {
                     className="btn-blue btn-round btn-block"
                 >
                     <span className="material-symbols-outlined">edit_square</span>{" "}
-                <span className="ps-2 create-text">Add New  </span>
-                    
+                    <span className="ps-2 create-text">Add New  </span>
+
                 </Button>
                 <Menu
                     id="basic-menu"
@@ -3059,8 +3091,7 @@ export default function CreateNewModalTask({ ...props }) {
 
                                 <Box className="mb-3">
                                     <Box className="mb-2 ">
-                                        <label className="font-14 semibold mb-1">Due By </label>
-
+                                        <label className="font-14 mb-1">Start Date</label>
                                         <Box className='custom-datepicker'>
                                             <LocalizationProvider
                                                 className="pe-0 custom-datepicker"
@@ -3071,7 +3102,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                     showIcon
                                                     dateFormat="DD/MM/YYYY"
                                                     value={currentDate}
-                                                    onChange={(e) => setCurrentDate(e)} // Handle date changes
+                                                    onChange={(e) => CurrentDateChange(e)} // Handle date changes
                                                     timeFormat={false}
                                                     isValidDate={disablePastDt}
                                                     closeOnSelect={true}
@@ -3100,8 +3131,10 @@ export default function CreateNewModalTask({ ...props }) {
                                 </Box> */}
 
                                 <Box className="mb-3">
-                                    <label className="font-14 mb-1">Start Date</label>
+                                    <label className="font-14 semibold mb-1">Due By </label>
+
                                     <Box className='custom-datepicker'>
+
                                         <LocalizationProvider
                                             className="pe-0"
                                             dateAdapter={AdapterDayjs}
@@ -3113,12 +3146,16 @@ export default function CreateNewModalTask({ ...props }) {
                                                 value={nextDate}
                                                 onChange={(e) => setNextDate(e)} // Handle date changes
                                                 timeFormat={false}
-                                                isValidDate={disablePastDt}
+                                                isValidDate={disableDueDate}
                                                 closeOnSelect={true}
                                                 icon="fa fa-calendar"
                                             />
                                         </LocalizationProvider>
+
+
                                     </Box>
+
+
                                 </Box>
 
                                 <Box className="mb-2">
@@ -3479,3 +3516,5 @@ export default function CreateNewModalTask({ ...props }) {
         </React.Fragment >
     );
 }
+
+export default CreateNewModalTask;

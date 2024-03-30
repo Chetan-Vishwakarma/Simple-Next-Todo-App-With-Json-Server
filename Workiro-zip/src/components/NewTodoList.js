@@ -15,6 +15,7 @@ import PushPinIcon from '@mui/icons-material/PushPin';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import moment from 'moment';
 import DocumentsVewModal from '../client/utils/DocumentsVewModal';
+import { toast } from 'react-toastify';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -81,13 +82,9 @@ function NewTodoList() {
       }
 
       const Json_CRM_GetOutlookTask = () => {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
-        };
+       
         try {
-            Cls.Json_CRM_GetOutlookTask(obj, (sts, data) => {
+            Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
@@ -250,12 +247,70 @@ function NewTodoList() {
     // modal
     const [openModal, setOpen] = React.useState(false);
 
-    const handleClickOpen = (task = selectedTask) => {
+    const handleClickOpen = (task = selectedTask) => { 
         setSelectedTask(task);
-
         setOpen(true);
     };
 
+    const MarkComplete=(e)=>{
+        console.log("MarkComplete",e)
+        Cls.ConfirmMessage("Are you sure you want to complete task",function(res){
+            if(res){
+                Json_UpdateTaskField("Status", "Completed",e);
+            }
+        })
+    }
+
+    function returnMessageStatus(status) {
+        if (status === "Completed") {
+            return "Task Completed!";
+        } else {
+            return `Task status set to ${status}.`;
+        }
+    }
+    function Json_UpdateTaskField(FieldName, FieldValue,e) {
+        let o = {
+            agrno: agrno,
+            strEmail: Email,
+            password: password,
+            TaskId: e.ID,
+            FieldName: FieldName,
+            FieldValue: FieldValue
+        }      
+        
+        ClsSms.Json_UpdateTaskField(o, function (sts, data) {
+            if (sts && data) {
+                if (data === "Success") {
+                    toast.success("Completed")
+                    Json_AddSupplierActivity(e);
+                }
+                console.log("Json_UpdateTaskField", data)
+            }
+        })
+    }
+
+    const Json_AddSupplierActivity = (e) => {
+        let obj = {};
+        obj.OriginatorNo = e.ClientNo;
+        obj.ActionReminder = "";
+        obj.Notes = "Completed by "+ e["Forwarded By"];
+        obj.Status = "sys"; //selectedTask.Status;
+        obj.TaskId = e.ID;
+        obj.TaskName = "";
+        obj.ActivityLevelID = "";
+        obj.ItemId = "";
+
+        try {
+            ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
+                if (sts && data) {
+                    console.log({ status: true, messages: "Success",res:data }); 
+                    Json_CRM_GetOutlookTask()                  
+                }
+            });
+        } catch (error) {
+            console.log({ status: false, messages: "Faild Please Try again" });
+        }
+    };
 
     // details dropdown
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState(null);
@@ -292,13 +347,13 @@ function NewTodoList() {
         setAnchorElDocumentList(null);
         console.log("document object",e);  
         setSelectedDocument(e);
-        setOpenPDFView(true);   
-        
+        setOpenPDFView(true); 
     //    let url =`https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=1002909&filetype=txt&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=&PortalID=`;
     // window.open(url);
-
        
     };
+
+   
 
 
     // Document details List
@@ -458,14 +513,14 @@ function NewTodoList() {
 
                             <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                 <Box className='todo-list-box white-box relative w-100'
-                                    onClick={() => handleClickOpen()}>
+                                    onDoubleClick={() => handleClickOpen(item)}>
 
-                                    <Radio className='text-red check-todo'
+                                    <Radio className='check-todo'
                                         checked
                                         sx={{
                                             '&.Mui-checked': {
-                                                color: "secondary",
-                                            },
+                                                color: item.Priority === 1 ? "red" : item.Priority === 2?"secondary":item.Priority === 3?"green":"primary"
+                                            }
                                         }}
                                     />
 
@@ -493,8 +548,11 @@ function NewTodoList() {
                                                     aria-expanded={open ? 'true' : undefined}
                                                     onClick={handleClick}
                                                     className='font-14'
+                                                    sx={{
+                                                        color: item.mstatus === "Completed" ? "green" : "primary"
+                                                    }}
                                                 >
-                                                    {priority}
+                                                    {item.mstatus}
                                                 </Button>
                                                 <Menu
                                                     id="basic-menu"
@@ -516,7 +574,7 @@ function NewTodoList() {
                                     </Box>
 
                                     <Box className='mt-2'>
-                                        <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
+                                        <Button variant="text" className='btn-blue-2 me-2' onClick={()=>MarkComplete(item)}>Mark Complete</Button>
                                         <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
                                     </Box>
 
