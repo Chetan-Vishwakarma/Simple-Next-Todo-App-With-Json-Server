@@ -40,7 +40,11 @@ import { useLocation } from 'react-router-dom';
 import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
 import CustomLoader from '../../components/CustomLoader';
 import ClearIcon from '@mui/icons-material/Clear';
-
+import SubjectIcon from '@mui/icons-material/Subject';
+import InsertCommentIcon from '@mui/icons-material/InsertComment';
+import ChecklistIcon from '@mui/icons-material/Checklist';
+import SwapVertIcon from '@mui/icons-material/SwapVert';
+import WarningIcon from '@mui/icons-material/Warning';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -166,9 +170,9 @@ export default function DocumentList({ clientId }) {
     const [selectedGroup, setSelectedGroup] = React.useState("");
     const [suggestionList, setSuggestionList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    
-    const [clientList,setClientList] = useState([]);
-    const [selectedClient,setSelectedClient] = useState("");
+
+    const [clientList, setClientList] = useState([]);
+    const [selectedClient, setSelectedClient] = useState("");
 
     // for date datepicker
     const [state, setState] = useState({
@@ -291,24 +295,24 @@ export default function DocumentList({ clientId }) {
                 console.log("dsfkjhdkjfh", globalSearchDocs);
 
                 let fltDouble = [];
-                globalSearchDocs.map(itm=>itm.Client).filter(item=>{
-                    if(!fltDouble.includes(item)){
+                globalSearchDocs.map(itm => itm.Client).filter(item => {
+                    if (!fltDouble.includes(item)) {
                         fltDouble.push(item);
                     }
                 });
                 setClientList(fltDouble);
 
-                setTimeout(()=>{
-                let docKeys = Object.keys(globalSearchDocs[0]);
-                // console.log("documentKeys",docKeys);
-                setDocumentKeys(docKeys);
-                setDocuments(globalSearchDocs);
-                handleDocumentsFilter(globalSearchDocs);
-                let desc = globalSearchDocs.filter((item) => item.Description !== "");
-                setgroupedOptions(desc);
-                setIsLoading(false);
-                },1000);
-                
+                setTimeout(() => {
+                    let docKeys = Object.keys(globalSearchDocs[0]);
+                    // console.log("documentKeys",docKeys);
+                    setDocumentKeys(docKeys);
+                    setDocuments(globalSearchDocs);
+                    handleDocumentsFilter(globalSearchDocs);
+                    let desc = globalSearchDocs.filter((item) => item.Description !== "");
+                    setgroupedOptions(desc);
+                    setIsLoading(false);
+                }, 1000);
+
                 // return;
             } else {
                 Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
@@ -585,12 +589,12 @@ export default function DocumentList({ clientId }) {
         handleDocumentsFilter(documents);
     }, [filterCriteria]);
 
-    const handleFilterOnClientSelection=(e)=>{
+    const handleFilterOnClientSelection = (e) => {
         let val = e.target.value;
         setSelectedClient(val);
-        if(val!==""){
-            setFilterCriteria({...filterCriteria,Client:val});
-        }else{
+        if (val !== "") {
+            setFilterCriteria({ ...filterCriteria, Client: val });
+        } else {
             handleFilterDeletion("Client");
         }
     }
@@ -668,11 +672,11 @@ export default function DocumentList({ clientId }) {
                                 value={selectedSection}
                                 onChange={(e) => {
                                     setSelectedSection(e.target.value);
-                                    if(e.target.value==="Section"){
+                                    if (e.target.value === "Section") {
                                         handleFilterDeletion('Section');
                                         setSelectedSection("");
                                         return;
-                                    }else if (e.target.value !== '') {
+                                    } else if (e.target.value !== '') {
                                         setFilterCriteria({ ...filterCriteria, Section: [e.target.value] })
                                     } else {
                                         handleFilterDeletion('Section');
@@ -709,11 +713,11 @@ export default function DocumentList({ clientId }) {
                                 value={selectedFolder}
                                 onChange={(e) => {
                                     setSelectedFolder(e.target.value);
-                                    if(e.target.value==="Folder"){
+                                    if (e.target.value === "Folder") {
                                         handleFilterDeletion("Folder");
                                         setSelectedFolder("");
                                         return;
-                                    }else if (e.target.value !== '') {
+                                    } else if (e.target.value !== '') {
                                         setFilterCriteria({ ...filterCriteria, Folder: [e.target.value] });
                                     } else {
                                         handleFilterDeletion('Folder');
@@ -731,7 +735,7 @@ export default function DocumentList({ clientId }) {
                                 inputProps={{ 'aria-label': 'Without label' }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value="" style={{display:"none"}}>Folders</MenuItem>
+                                <MenuItem value="" style={{ display: "none" }}>Folders</MenuItem>
 
                                 <MenuItem value="Folder" className='text-danger ps-1'>
                                     <ClearIcon className='font-18 me-1' />
@@ -758,20 +762,29 @@ export default function DocumentList({ clientId }) {
                                     inputProps={{ 'aria-label': 'Without label' }}
                                     className='custom-dropdown'
                                     onChange={(e) => {
-                                        if(e.target.value==="Group By"){
+                                        if (e.target.value === "Group By") {
                                             setSelectedGroup("");
                                             return;
                                         }
                                         setSelectedGroup(e.target.value);
                                     }}
                                 >
-                                    <MenuItem value="" style={{display:"none"}}>Group By</MenuItem>
-                                    <MenuItem value="Group By">
-                                         Clear Group by</MenuItem>
-                                    <MenuItem value="Description">Description</MenuItem>
-                                    <MenuItem value={"CommentBy"}>Comment By</MenuItem>
-                                    <MenuItem value={"Type"}>Type</MenuItem>
-                                    <MenuItem value={"Comments"}>Comments</MenuItem>
+                                    <MenuItem value="" style={{ display: "none" }}> Group By</MenuItem>
+                                    <MenuItem className='ps-1 text-red' value="Group By">
+                                        <CloseIcon className='font-18 me-1' />
+                                        Clear Group by</MenuItem>
+                                    <MenuItem className='ps-1' value="Description">
+                                        <DescriptionIcon className='font-18 me-1' />
+                                        Description</MenuItem>
+                                    <MenuItem className='ps-1' value={"CommentBy"}>
+                                        <InsertCommentIcon className='font-18 me-1' />
+                                        Comment By</MenuItem>
+                                    <MenuItem className='ps-1' value={"Type"}>
+                                        <ChecklistIcon className='font-18 me-1' />
+                                        Type</MenuItem>
+                                    {/* <MenuItem className='ps-1' value={"Comments"}>
+                                    <CloseIcon className='font-18 me-1' />
+                                        Comments</MenuItem> */}
                                     {/* <MenuItem value={20}>Comment</MenuItem> */}
                                 </Select>
                             </FormControl>
@@ -785,11 +798,14 @@ export default function DocumentList({ clientId }) {
                                     className='custom-dropdown'
                                 >
                                     <MenuItem value="">
-                                        Sort By
+                                        <SwapVertIcon className='pe-1' /> Sort By
                                     </MenuItem>
-                                    <MenuItem value="None" onClick={() => setAdvFilteredResult([])}>None</MenuItem>
-                                    <MenuItem value={"Date"}>By Date</MenuItem>
-                                    <MenuItem value={"Description"}>By Description</MenuItem>
+                                    <MenuItem value="None" onClick={() => setAdvFilteredResult([])}><WarningIcon className='pe-1' />  None</MenuItem>
+                                    <MenuItem value={"Date"}>
+                                        <CalendarMonthIcon className='pe-1' />
+                                        By Date</MenuItem>
+                                    <MenuItem value={"Description"}><DescriptionIcon className='pe-1' />
+                                        By Description</MenuItem>
                                 </Select>
                             </FormControl>
 
@@ -808,20 +824,20 @@ export default function DocumentList({ clientId }) {
                             />}
                         </Box>
 
-                        {globalSearchDocs.length>0 && <FormControl sx={{ m: 1, width: '110px' }} size="small" className='select-border'>
-                                <Select
-                                    value={selectedClient}
-                                    onChange={handleFilterOnClientSelection}
-                                    displayEmpty
-                                    inputProps={{ 'aria-label': 'Without label' }}
-                                    className='custom-dropdown'
-                                >
-                                    <MenuItem value="">
-                                        Select Reference
-                                    </MenuItem>
-                                    {clientList.length>0 && clientList.map(itm=><MenuItem value={itm}>{itm}</MenuItem>)}
-                                </Select>
-                            </FormControl>}
+                        {globalSearchDocs.length > 0 && <FormControl sx={{ m: 1, width: '110px' }} size="small" className='select-border'>
+                            <Select
+                                value={selectedClient}
+                                onChange={handleFilterOnClientSelection}
+                                displayEmpty
+                                inputProps={{ 'aria-label': 'Without label' }}
+                                className='custom-dropdown'
+                            >
+                                <MenuItem value="">
+                                    Select Reference
+                                </MenuItem>
+                                {clientList.length > 0 && clientList.map(itm => <MenuItem value={itm}>{itm}</MenuItem>)}
+                            </Select>
+                        </FormControl>}
 
 
                         {/* <Button className='btn-blue-2 mb-1 ms-1' onClick={() => handleDocumentsFilter("LastMonth")}>Save View</Button> */}
@@ -1006,7 +1022,7 @@ export default function DocumentList({ clientId }) {
                                                                         {/* Size: {itm["FileSize"] ? itm["FileSize"] : "0.00KB"}  */}
                                                                         Date {itm["Item.Date"] ? itm["Item.Date"] : ""} |
                                                                         Uploaded by <span className='sembold'>Patrick</span>
-                                                                        
+
                                                                     </Typography>
                                                                 </Box>
                                                             </Box>
@@ -1033,7 +1049,7 @@ export default function DocumentList({ clientId }) {
                                                                 </Typography>
                                                                 <Typography variant="body1">
                                                                     {/* Size: {itm["FileSize"] ? itm["FileSize"] : ""} |  */}
-                                                                    Date {itm["Item.Date"] ? itm["Item.Date"] : ""} | 
+                                                                    Date {itm["Item.Date"] ? itm["Item.Date"] : ""} |
                                                                     Uploaded by <span className='sembold'>Patrick</span>
                                                                 </Typography>
                                                             </Box>
