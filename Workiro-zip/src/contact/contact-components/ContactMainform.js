@@ -169,7 +169,7 @@ const ContactMainform = React.memo(
         ["ReferenceID"]: "",
       };
       setContactDetails(data);
-    }, []);
+    }, [contact]);
     return (
       <div>
         {" "}
