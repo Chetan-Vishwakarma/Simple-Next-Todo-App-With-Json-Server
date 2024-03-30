@@ -12,6 +12,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const target = searchParams.get("str");
+    const folder = searchParams.get("folder");
     const [filteredTasks, setFilteredTasks] = useState([]);
     const [filteredDocuments, setFilteredDocuments] = useState([]);
 
@@ -25,6 +26,17 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         return `${paddedDay}/${paddedMonth}/${year}`;
     }
 
+    // useEffect(() => {
+    //     let fltTasks = myTotalTasks.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
+    //     setFilteredTasks(fltTasks);
+    //     let fltDocuments = myDocuments.filter(itm => itm.Description.toLowerCase().includes(target.toLowerCase()));
+    //     fltDocuments.map(itm => {
+    //         itm["Item Date"] = formatDate(itm["Item Date"])
+    //     })
+    //     setFilteredDocuments(fltDocuments);
+    //     // console.log("fkjhdkjs",fltDocuments);
+    // }, []);
+
     useEffect(() => {
         let fltTasks = myTotalTasks.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
         setFilteredTasks(fltTasks);
@@ -34,7 +46,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         })
         setFilteredDocuments(fltDocuments);
         // console.log("fkjhdkjs",fltDocuments);
-    }, [target]);
+    }, [target,folder]);
 
     const handleDocumentNavigation = () => {
         navigate("/dashboard/DocumentList", { state: { globalSearchDocs: filteredDocuments, strGlobal: target } });

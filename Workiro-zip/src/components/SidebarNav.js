@@ -19,7 +19,7 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, MenuItem } from '@mui/material';
+import { FormControl, Menu, MenuItem, Select } from '@mui/material';
 import logo from "../images/logo.png";
 import user from "../images/user.jpg";
 import Button from '@mui/material/Button';
@@ -161,6 +161,8 @@ export default function SidebarNav() {
   const [myTotalTasks, setMyTotalTasks] = useState([]);
   const [taskSubjects, setTasksSubjects] = useState([]);
   const [filteredTaskSubjects, setFilteredTaskSubjects] = useState([]);
+  const [folders,setFolders] = useState([]);
+  const [selectedFolder,setSelectedFolder] = useState(folderId);
 
   const {
     getRootProps,
@@ -195,7 +197,7 @@ export default function SidebarNav() {
     navigate("/");
   }
 
-  const Json_AdvanceSearchDoc = () => {
+  const Json_AdvanceSearchDoc = (f_id=folderId) => {
     if (forDocuments !== "") {
       let obj = {
         ClientId: "",
@@ -206,7 +208,7 @@ export default function SidebarNav() {
         ItemTDate: "01/01/1900",
         ItemrecFDate: "01/01/1900",
         ItemrecTDate: "01/01/1900",
-        ProjectId: folderId,
+        ProjectId: f_id,
         agrno: agrno,
         password: password,
         sectionId: "-1",
@@ -240,6 +242,28 @@ export default function SidebarNav() {
     }
   }
 
+  function Json_GetFolders() {
+    let obj = {
+        agrno: agrno,
+        Email: Email,
+        password: password
+    }
+    try {
+        Cls.Json_GetFolders(obj, function (sts, data) {
+            if (sts) {
+                if (data) {
+                    let js = JSON.parse(data);
+                    let tbl = js.Table;
+                    // console.log("Json_GetFolders", tbl);
+                    setFolders(tbl);
+                }
+            }
+        });
+    } catch (err) {
+        console.log("Error while calling Json_GetFolders", err);
+    }
+}
+
   const Json_CRM_GetOutlookTask = () => {
     let obj = {
       agrno: agrno,
@@ -262,6 +286,7 @@ export default function SidebarNav() {
             setTasksSubjects(fltDouble);
             // setFilteredTaskSubjects(fltDouble);
             setMyTotalTasks(myTasks);
+            Json_GetFolders();
           }
         }
       });
@@ -334,8 +359,8 @@ export default function SidebarNav() {
 
   useEffect(() => {
     const data = setTimeout(() => {
-      Json_AdvanceSearchDoc();
-    }, 200);
+      Json_AdvanceSearchDoc(selectedFolder);
+    }, 1000);
     return () => clearTimeout(data);
   }, [forDocuments]);
 
@@ -369,7 +394,7 @@ export default function SidebarNav() {
 
                         <form onSubmit={(e) => {
                           e.preventDefault();
-                          navigate("/dashboard/SearchResult?str=" + forDocuments);
+                          navigate(`/dashboard/SearchResult?str=${forDocuments}&folder=${selectedFolder}`);
                           setIsSearch(false);
                           tabs.map(itm => {
                             if (itm.tabName === "Search Result") {
@@ -386,14 +411,18 @@ export default function SidebarNav() {
                             placeholder='Search'
                             className='ps-0' />
                         </form>
+                        
                       </AutocompleteRoot>
+
+                      
+
                       {isSearch && <Listbox sx={{ zIndex: 1 }}>
 
                         {filteredTaskSubjects.length > 0 && filteredTaskSubjects.slice(0.20).map((itm, i) => {
                           return <Option key={i} onClick={(e) => {
                             e.stopPropagation();
                             setIsSearch(false);
-                            navigate("/dashboard/SearchResult?str=" + itm);
+                            navigate(`/dashboard/SearchResult?str=${itm}&folder=${selectedFolder}`);
                             setSearchInputForGlobalSearch(itm);
                             tabs.map(itm => {
                               if (itm.tabName === "Search Result") {
@@ -411,7 +440,7 @@ export default function SidebarNav() {
                           return <Option key={i} onClick={(e) => {
                             e.stopPropagation();
                             setIsSearch(false);
-                            navigate("/dashboard/SearchResult?str=" + itm);
+                            navigate(`/dashboard/SearchResult?str=${itm}&folder=${selectedFolder}`);
                             setSearchInputForGlobalSearch(itm);
                             tabs.map(itm => {
                               if (itm.tabName === "Search Result") {
@@ -426,19 +455,29 @@ export default function SidebarNav() {
                         })}
 
                       </Listbox>}
-                      {/* {groupedOptions.length > 0 && (
-                        <Listbox {...getListboxProps()}>
-                          {groupedOptions.map((option, index) => (
-                            <Option {...getOptionProps({ option, index })}>{option}</Option>
-                          ))}
-                        </Listbox>
-                      )} */}
+                  
                     </AutocompleteWrapper>
                   </Layout>
+                  <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
+                            <Select
+                                value={selectedFolder}
+                                onChange={(e) => {
+                                  setSearchInputForGlobalSearch("");
+                                  setSelectedFolder(String(e.target.value));
+                                  return;
+                                }}
+                                displayEmpty
+                                inputProps={{ 'aria-label': 'Without label' }}
+                                className='custom-dropdown'
+                            >
+                                {folders.length > 0 && folders.map((itm) => {
+                                    return <MenuItem value={itm.FolderID}>{itm.Folder}</MenuItem>
+                                })}
+                            </Select>
+                        </FormControl>
                 </Box>
 
                 <Box className="d-flex align-items-center">
-
                   <Box>
                     <Button
                       id="basic-button3"

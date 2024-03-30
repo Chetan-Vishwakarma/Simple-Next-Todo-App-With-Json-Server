@@ -736,6 +736,7 @@ export default function DocumentList({ clientId }) {
                                 <MenuItem value="" style={{display:"none"}}>Folders</MenuItem>
                                 <MenuItem value="Folder">Clear Filters</MenuItem>
                                 {folders.length > 0 && folders.map((itm) => {
+                                    console.log("Folderndldslk",itm);
                                     return <MenuItem value={itm.Folder}>{itm.Folder}</MenuItem>
                                 })}
                                 {/* <MenuItem value="">
