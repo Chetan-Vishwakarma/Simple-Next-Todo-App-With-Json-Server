@@ -973,4 +973,32 @@ Json_GetContactListByFolder(obj,callBack) {
             }
         })
      }
+
+     Json_GetAllContacts(obj,callback) {
+        super.CreateNewServiceParamObject("Json_GetAllContacts",obj,true);
+        super.CallNewService("Json_GetAllContacts", function (status, Data) {
+            if (status) {
+                if (Data != "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+
+    Json_CompanyHouseDetails(obj,callback) {
+        super.CreateNewServiceParamObject("Json_CompanyHouseDetails",obj,false);
+        super.CallNewService("Json_CompanyHouseDetails", function (status, Data) {
+            if (status) {
+                if (Data != "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
 }
