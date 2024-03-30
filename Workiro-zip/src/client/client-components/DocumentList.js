@@ -586,7 +586,11 @@ export default function DocumentList({ clientId }) {
     const handleFilterOnClientSelection=(e)=>{
         let val = e.target.value;
         setSelectedClient(val);
-        if(val!==""){
+        if(val === "Reference"){
+            setSelectedClient("");
+            handleFilterDeletion("Client");
+            return;
+        }else if(val!==""){
             setFilterCriteria({...filterCriteria,Client:val});
         }else{
             handleFilterDeletion("Client");
@@ -770,15 +774,20 @@ export default function DocumentList({ clientId }) {
                             <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
                                 <Select
                                     value={sortByProperty}
-                                    onChange={(e) => setSortByProperty(e.target.value)}
+                                    onChange={(e) => {
+                                        if(e.target.value==="Sort By"){
+                                            setSortByProperty("")
+                                            return;
+                                        }
+                                        setSortByProperty(e.target.value)
+                                    }
+                                }
                                     displayEmpty
                                     inputProps={{ 'aria-label': 'Without label' }}
                                     className='custom-dropdown'
                                 >
-                                    <MenuItem value="">
-                                        Sort By
-                                    </MenuItem>
-                                    <MenuItem value="None" onClick={() => setAdvFilteredResult([])}>None</MenuItem>
+                                    <MenuItem value="" style={{display:"none"}}>Sort By</MenuItem>
+                                    <MenuItem value="Sort By" onClick={() => setAdvFilteredResult([])}>Clear Sortby</MenuItem>
                                     <MenuItem value={"Date"}>By Date</MenuItem>
                                     <MenuItem value={"Description"}>By Description</MenuItem>
                                 </Select>
@@ -807,9 +816,8 @@ export default function DocumentList({ clientId }) {
                                     inputProps={{ 'aria-label': 'Without label' }}
                                     className='custom-dropdown'
                                 >
-                                    <MenuItem value="">
-                                        Select Reference
-                                    </MenuItem>
+                                    <MenuItem value="" style={{display:"none"}}>Reference</MenuItem>
+                                    <MenuItem value="Reference" >Clear Filter</MenuItem>
                                     {clientList.length>0 && clientList.map(itm=><MenuItem value={itm}>{itm}</MenuItem>)}
                                 </Select>
                             </FormControl>}
