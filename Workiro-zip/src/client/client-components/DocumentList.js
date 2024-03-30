@@ -749,14 +749,17 @@ export default function DocumentList({ clientId }) {
                                     displayEmpty
                                     inputProps={{ 'aria-label': 'Without label' }}
                                     className='custom-dropdown'
-                                    onChange={(e) => setSelectedGroup(e.target.value)}
+                                    onChange={(e) => {
+                                        if(e.target.value==="Group By"){
+                                            setSelectedGroup("");
+                                            return;
+                                        }
+                                        setSelectedGroup(e.target.value);
+                                    }}
                                 >
-                                    <MenuItem value="">
-                                        Group By
-                                    </MenuItem>
-                                    <MenuItem value="Description">
-                                        Description
-                                    </MenuItem>
+                                    <MenuItem value="" style={{display:"none"}}>Group By</MenuItem>
+                                    <MenuItem value="Group By">Clear Groupby</MenuItem>
+                                    <MenuItem value="Description">Description</MenuItem>
                                     <MenuItem value={"CommentBy"}>Comment By</MenuItem>
                                     <MenuItem value={"Type"}>Type</MenuItem>
                                     <MenuItem value={"Comments"}>Comments</MenuItem>
