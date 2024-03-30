@@ -2928,7 +2928,7 @@ export default function CreateNewModalTask({ ...props }) {
                                     </Box>
 
                                     <Box className="select-dropdown">
-                                        <BootstrapTooltip title="Sction" arrow
+                                        <BootstrapTooltip title="Section" arrow
                                             placement="bottom-start"
                                             slotProps={{
                                                 popper: {
@@ -2973,7 +2973,7 @@ export default function CreateNewModalTask({ ...props }) {
                                         >
                                             <Box className='px-1'>
                                                 <TextField
-                                                    label="Sction"
+                                                    label="Section"
                                                     variant="outlined"
                                                     autoFocus
                                                     value={searchSectionQuery}

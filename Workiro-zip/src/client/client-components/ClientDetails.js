@@ -246,10 +246,10 @@ function ClientDetails() {
                     <TabPanel value="2" className='p-0'>
                         <ClientAddress></ClientAddress>
                     </TabPanel>
-                    <TabPanel value="3">
+                    <TabPanel value="3" className='p-0'>
                         <Contact></Contact>
                     </TabPanel>
-                    <TabPanel value="4">
+                    <TabPanel value="4" className='p-0'>
                         <TaskList></TaskList>
                     </TabPanel>
 

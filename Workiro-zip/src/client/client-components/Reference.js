@@ -413,23 +413,26 @@ function Reference() {
                 <StepContent>
                   <Typography>{step.description}</Typography>
                   <Box sx={{ mb: 2 }}>
-                    <div className="mt-3">
-                      <Button
-                        variant="contained"
-                        onClick={handleNext}
-                        sx={{ mt: 1, mr: 1 }}
-                        className="btn-blue"
-                      >
-                        {index === steps.length - 1 ? 'Finish' : 'Continue'}
-                      </Button>
+                    <Box className="mt-3">
+                      
                       <Button
                         disabled={index === 0}
                         onClick={handleBack}
                         sx={{ mt: 1, mr: 1 }}
+                        size="small"
                       >
                         Back
                       </Button>
-                    </div>
+                      <Button
+                        variant="contained"
+                        onClick={handleNext}
+                        sx={{ mt: 1, mr: 1 }}
+                        className="btn-blue-2"
+                        size="small"
+                      >
+                        {index === steps.length - 1 ? 'Finish' : 'Continue'}
+                      </Button>
+                    </Box>
                   </Box>
                 </StepContent>
               </Step>

@@ -3,9 +3,13 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
 import { FormControl } from "@mui/material";
+import Box from "@mui/material/Box";
 import CommanCLS from "../../services/CommanService";
 import { memo } from 'react';
-const  AddClientdetails =  React.memo(({ userDetail, setUserDetail })=> {
+import Button from '@mui/material/Button';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+
+const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -150,8 +154,41 @@ const  AddClientdetails =  React.memo(({ userDetail, setUserDetail })=> {
   }, []);
   return (
     <div>
-      <Grid container spacing={3}>
-        <Grid item xs={6} md={6}>
+
+      <Box className='well'>
+        <h2 className="font-14 bold mb-2 text-black">Import from Companies House</h2>
+        <Grid container spacing={3} className="mb-">
+          <Grid item lg={6} xs={6} md={6}>
+            <Autocomplete
+              {...clientlist}
+              id="clientlist"
+              clearOnEscape
+              onChange={onChangeclientlist}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  name="Selectclient"
+                  value={userDetail.Selectclient}
+                  onChange={onChange}
+                  label="Enter Company Name or Number"
+                />
+              )}
+            />
+          </Grid>
+          <Grid item lg={6} xs={6} md={6} className="d-flex align-items-center">
+            <Button className="min-width-auto text-danger">
+              <HighlightOffIcon className="font-32"/>
+            </Button>
+          </Grid>
+          {/* <Grid item lg={6} xs={6} md={6} className="d-flex align-items-center">
+            <FormControlLabel control={<Checkbox />} label="Active" />
+          </Grid> */}
+        </Grid>
+      </Box>
+
+      <Grid container spacing={3} className="mt-2">
+        <Grid item lg={4} xs={6} md={6}>
           <TextField
             fullWidth
             id="standard-basic-client"
@@ -163,8 +200,7 @@ const  AddClientdetails =  React.memo(({ userDetail, setUserDetail })=> {
           />
         </Grid>
 
-        <Grid item xs={6} md={6}>
-        
+        <Grid item lg={4} xs={6} md={6}>
           <TextField
             fullWidth
             id="standard-basic-id"
@@ -174,11 +210,9 @@ const  AddClientdetails =  React.memo(({ userDetail, setUserDetail })=> {
             value={userDetail.Clientid}
             onChange={onChange}
           />
-          
-          
         </Grid>
 
-        <Grid item xs={6} md={6}>
+        <Grid item lg={4} xs={6} md={6}>
           <Autocomplete
             {...clientlist}
             id="clientlist"
@@ -196,7 +230,7 @@ const  AddClientdetails =  React.memo(({ userDetail, setUserDetail })=> {
             )}
           />
         </Grid>
-        <Grid item xs={6} md={6}>
+        <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
             <Autocomplete
               {...bussinesslist}
@@ -216,7 +250,7 @@ const  AddClientdetails =  React.memo(({ userDetail, setUserDetail })=> {
             />
           </FormControl>
         </Grid>
-        <Grid item xs={6} md={6}>
+        <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
             <Autocomplete
               {...statuslistdata}
@@ -236,7 +270,7 @@ const  AddClientdetails =  React.memo(({ userDetail, setUserDetail })=> {
             />
           </FormControl>
         </Grid>
-        <Grid item xs={6} md={6}>
+        <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
             <Autocomplete
               {...sourcelist}
@@ -256,7 +290,7 @@ const  AddClientdetails =  React.memo(({ userDetail, setUserDetail })=> {
             />
           </FormControl>
         </Grid>
-        <Grid item xs={6} md={6}>
+        <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
             <Autocomplete
               {...userlistdata}
@@ -283,7 +317,7 @@ const  AddClientdetails =  React.memo(({ userDetail, setUserDetail })=> {
             />
           </FormControl>
         </Grid>
-        <Grid item xs={6} md={6}>
+        <Grid item lg={4} xs={6} md={6}>
           <TextField
             fullWidth
             id="standard-basic"
@@ -295,7 +329,7 @@ const  AddClientdetails =  React.memo(({ userDetail, setUserDetail })=> {
             onChange={onChange}
           />
         </Grid>
-        <Grid item xs={6} md={6}>
+        <Grid item lg={4} xs={6} md={6}>
           <TextField
             fullWidth
             id="standard-basic"
@@ -307,7 +341,7 @@ const  AddClientdetails =  React.memo(({ userDetail, setUserDetail })=> {
             onChange={onChange}
           />
         </Grid>
-        <Grid item xs={6} md={6}>
+        <Grid item lg={4} xs={6} md={6}>
           <TextField
             fullWidth
             id="standard-basic"

@@ -140,9 +140,8 @@ function TaskList() {
 
   }, [])
 
-  
   return (
-    <div>
+    <div className='table-responsive table-grid'>
       <DataGrid
         id="gridContainer"
         ref={dataGridRef}

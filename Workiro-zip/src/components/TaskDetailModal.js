@@ -1205,23 +1205,23 @@ const rows = [
                                         }}
                                         className="custom-dropdown"
                                     >
-                                        <MenuItem onClick={handleClose4} className="text-yellow pe-4">
+                                        <MenuItem onClick={handleClose4} className="text-red pe-4">
                                             <EjectIcon>
-                                                <PanoramaFishEyeIcon className="text-yellow" fontSize="medium" />
+                                                <PanoramaFishEyeIcon className="text-red" fontSize="medium" />
                                             </EjectIcon>
                                             High
                                         </MenuItem>
 
-                                        <MenuItem onClick={handleClose4} className="text-success pe-4">
+                                        <MenuItem onClick={handleClose4} className="text-warning pe-4">
                                             <ListItemIcon>
-                                                <RadioButtonUncheckedIcon fontSize="medium" className="text-success" />
+                                                <RadioButtonUncheckedIcon fontSize="medium" className="text-warning" />
                                             </ListItemIcon>
                                             Medium
                                         </MenuItem>
 
-                                        <MenuItem onClick={handleClose4} className="text-red pe-4">
+                                        <MenuItem onClick={handleClose4} className="text-success pe-4">
                                             <ListItemIcon>
-                                                <EjectIcon fontSize="medium" className="text-red rotate-180" />
+                                                <EjectIcon fontSize="medium" className="text-success rotate-180" />
                                             </ListItemIcon>
                                             Low
                                         </MenuItem>

@@ -78,7 +78,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail })=>{
       <Box sx={{ width: "100%", typography: "body1" }}>
 
 
-        <Box>
+        <Box className='mt-2'>
           <TabContext value={value}>
             <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs mb-2'>
               <Tab label="Main Address" value="1" />
