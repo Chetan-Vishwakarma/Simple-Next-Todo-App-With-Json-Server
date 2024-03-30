@@ -666,7 +666,11 @@ export default function DocumentList({ clientId }) {
                                 value={selectedSection}
                                 onChange={(e) => {
                                     setSelectedSection(e.target.value);
-                                    if (e.target.value !== '') {
+                                    if(e.target.value==="Section"){
+                                        handleFilterDeletion('Section');
+                                        setSelectedSection("");
+                                        return;
+                                    }else if (e.target.value !== '') {
                                         setFilterCriteria({ ...filterCriteria, Section: [e.target.value] })
                                     } else {
                                         handleFilterDeletion('Section');
@@ -684,9 +688,10 @@ export default function DocumentList({ clientId }) {
                                 inputProps={{ 'aria-label': 'Without label' }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value="">
+                                <MenuItem value="" style={{ display: "none" }}>
                                     Sections
                                 </MenuItem>
+                                <MenuItem value="Section">00. Clear Filter</MenuItem>
                                 {sections.length > 0 && sections.map((itm) => {
                                     return <MenuItem value={itm.Sec}>{itm.Sec}</MenuItem>
                                 })}
@@ -702,7 +707,11 @@ export default function DocumentList({ clientId }) {
                                 value={selectedFolder}
                                 onChange={(e) => {
                                     setSelectedFolder(e.target.value);
-                                    if (e.target.value !== '') {
+                                    if(e.target.value==="Folder"){
+                                        handleFilterDeletion("Folder");
+                                        setSelectedFolder("");
+                                        return;
+                                    }else if (e.target.value !== '') {
                                         setFilterCriteria({ ...filterCriteria, Folder: [e.target.value] });
                                     } else {
                                         handleFilterDeletion('Folder');
@@ -720,9 +729,8 @@ export default function DocumentList({ clientId }) {
                                 inputProps={{ 'aria-label': 'Without label' }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value="">
-                                    Folders
-                                </MenuItem>
+                                <MenuItem value="" style={{display:"none"}}>Folders</MenuItem>
+                                <MenuItem value="Folder">Clear Filters</MenuItem>
                                 {folders.length > 0 && folders.map((itm) => {
                                     return <MenuItem value={itm.Folder}>{itm.Folder}</MenuItem>
                                 })}
