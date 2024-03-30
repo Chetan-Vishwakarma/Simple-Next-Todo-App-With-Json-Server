@@ -294,11 +294,11 @@ export default function SidebarNav() {
     });
   }
 
-  const [tabs, setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active: false }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false }, { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false },
+  const [tabs, setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon:<DashboardIcon/> }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon:<AccountBoxIcon/> }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false, tabIcon:<AssignmentIcon/> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon:<GroupIcon/> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon:<ViewCarouselIcon/> }, { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false, tabIcon:<ContentPasteSearchIcon/> },
   
-  { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false },
+  { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false, tabIcon:<PersonAddIcon/> },
   
-  { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active: false }]);
+  { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active: false, tabIcon:<LogoutIcon/> }]);
 
   const [searchInputForGlobalSearch, setSearchInputForGlobalSearch] = useState("");
 
@@ -643,7 +643,7 @@ export default function SidebarNav() {
                       justifyContent: 'center',
                     }}
                   >
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                    {text.tabIcon}
                   </ListItemIcon>
 
                   <ListItemText primary={text.tabName} sx={{ opacity: open ? 1 : 0 }} />
