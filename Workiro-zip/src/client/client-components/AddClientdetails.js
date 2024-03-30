@@ -19,12 +19,13 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
   const [bussiness, setBussiness] = useState([]);
   const [sources, setSources] = useState([]);
   const [mangers, setMangers] = useState([]);
+  const [defaultUser, setDefaultUser] = useState(null);
   const [status, setStatus] = useState([]);
   const [intUserid, setIntUserid] = useState(localStorage.getItem("UserId"));
   const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
   let Cls = new CommanCLS(baseUrl, agrno, Email, password);
   let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
-  const defaultUser = mangers.find((manager) => manager.UserId == intUserid);
+  // const defaultUser = mangers.find((manager) => manager.UserId == intUserid);
   const clientlist = {
     options: folders,
     getOptionLabel: (option) => option.Folder || "",
@@ -85,6 +86,8 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
     if (value) {
       let data = { ...userDetail };
       data = { ...data, ["UserId"]: value.UserId };
+      console.log(defaultUser, "dataOnchange111",value);
+        setDefaultUser(value);
       setUserDetail(data);
     } else {
     }
@@ -114,6 +117,10 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
             setBussiness(json.Table1);
             setSources(json.Table2);
             setMangers(json.Table3);
+            let defaultUser1 = json.Table3.find(
+              (manager) => manager.UserId == localStorage.getItem("UserId")
+            );
+            setDefaultUser(defaultUser1);
             setStatus(json.Table);
           }
         }
@@ -293,14 +300,9 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
         <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
             <Autocomplete
-              {...userlistdata}
-              // options={mangers.map((manager: UserList) => ({
-              //   id: manager.UserId,
-              //   label: manager.UserName
-              // }))}
-              // getOptionLabel={(option:any) => option.label}
-              // id={`clear-on-escape-manager`}
               key={`uniques-manager`}
+              options={mangers}
+              getOptionLabel={(option) => option.UserName}
               value={defaultUser || null}
               onChange={onChangeuser}
               clearOnEscape
