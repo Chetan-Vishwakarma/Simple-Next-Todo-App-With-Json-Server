@@ -528,23 +528,23 @@ export default function SidebarNav() {
                       className='custom-dropdown'
                     >
                       <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
-                        <PersonIcon className="font-20 me-1" /></ListItemIcon>
+                        <FolderSharedIcon className="font-20 me-1" /></ListItemIcon>
                         Client
                       </MenuItem>
                       <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
-                        <TipsAndUpdatesIcon className="font-20 me-1" /></ListItemIcon>
+                        <FolderSharedIcon className="font-20 me-1" /></ListItemIcon>
                         Cases
                       </MenuItem>
                       <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
-                        <PeopleIcon className="font-20 me-1" /></ListItemIcon>
+                        <FolderSharedIcon className="font-20 me-1" /></ListItemIcon>
                         Customers
                       </MenuItem>
                       <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
-                        <ShareIcon className="font-20 me-1" /></ListItemIcon>
+                        <FolderSharedIcon className="font-20 me-1" /></ListItemIcon>
                         Share Allotments
                       </MenuItem>
                       <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
-                        <GroupIcon className="font-20 me-1" /></ListItemIcon>
+                        <FolderSharedIcon className="font-20 me-1" /></ListItemIcon>
                         M Customer
                       </MenuItem>
                       <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
