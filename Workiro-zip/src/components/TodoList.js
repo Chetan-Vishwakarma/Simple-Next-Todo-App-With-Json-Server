@@ -33,11 +33,17 @@ import DvrIcon from '@mui/icons-material/Dvr';
 import LanguageIcon from '@mui/icons-material/Language';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import CustomBreadCrumbs from './CustomBreadCrumbs';
+import SortIcon from '@mui/icons-material/Sort';
+import PersonIcon from '@mui/icons-material/Person';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
+import SubjectIcon from '@mui/icons-material/Subject';
+
 
 function TodoList() {
     const location = useLocation();
-    let dddd = location.state!==null? location.state: {globalSearchTask:[]};
-    const {globalSearchTask, strGlobal} = dddd;
+    let dddd = location.state !== null ? location.state : { globalSearchTask: [] };
+    const { globalSearchTask, strGlobal } = dddd;
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -108,7 +114,7 @@ function TodoList() {
         }
     }
     const Json_CRM_GetOutlookTask = () => {
-        if(globalSearchTask.length>0){
+        if (globalSearchTask.length > 0) {
             const formattedTasks = globalSearchTask.map((task) => {
                 let timestamp;
                 if (task.EndDateTime) {
@@ -133,7 +139,7 @@ function TodoList() {
                 return { ...task, CreationDate: date };
             }).sort((a, b) => b.CreationDate - a.CreationDate);
 
-            
+
             setActualData([...hasCreationDate]);
             setAllTask([...hasCreationDate]);
             // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
@@ -164,14 +170,14 @@ function TodoList() {
 
                             return { ...task, EndDateTime: date };
                         });
-                     
+
                         // setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
 
                         // let tasks = formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime);
                         // let myTasks = tasks.filter((item)=>item.AssignedToID.split(",").includes(userId));
                         let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
 
-                      
+
 
                         let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                             let timestamp;
@@ -183,9 +189,9 @@ function TodoList() {
 
                             return { ...task, CreationDate: date };
                         }).sort((a, b) => b.CreationDate - a.CreationDate);
-                        
 
-                       
+
+
                         // setActualData([...myTasks]);
                         setActualData([...hasCreationDate]);
                         setAllTask([...hasCreationDate]);
@@ -328,7 +334,7 @@ function TodoList() {
             });
         });
 
-        console.log("fltData2222",fltData)
+        console.log("fltData2222", fltData)
 
         setAllTask([...fltData]);
         if (Object.keys(dataInGroup).length > 0) {
@@ -502,7 +508,7 @@ function TodoList() {
         <>
             <Box className="container-fluid p-0">
 
-            {globalSearchTask.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str="+strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/MyTask", tabName: "My Task" }]} />}
+                {globalSearchTask.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/MyTask", tabName: "My Task" }]} />}
 
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
@@ -631,8 +637,8 @@ function TodoList() {
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value={"Status"} style={{ display: "none" }}>Status</MenuItem>
-                                <MenuItem value={""} ><WatchLaterIcon className='text-danger ps-1' /> Clear Filter</MenuItem>
+                                <MenuItem value={"Status"} style={{ display: "none" }}> Status</MenuItem>
+                                <MenuItem value={""} ><WatchLaterIcon className='text-danger ps-1 me-1' /> Clear Filter</MenuItem>
                                 {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm}>  <WatchLaterIcon className="font-20 me-2" />{itm}</MenuItem>)}
                             </Select>
                         </FormControl>
@@ -701,13 +707,13 @@ function TodoList() {
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value="Sort By" style={{ display: "none" }}>Sort By</MenuItem>
-                                <MenuItem value="" onClick={() => setAllTask([...actualData])}>Clear Sortby</MenuItem>
-                                <MenuItem value="Client">Client Name</MenuItem>
-                                <MenuItem value="EndDateTime">Due Date</MenuItem>
-                                <MenuItem value="Priority">Priority</MenuItem>
-                                <MenuItem value="Section">Section</MenuItem>
-                                <MenuItem value="CreationDate">Start Date</MenuItem>
+                                <MenuItem className='ps-2' value="Sort By" style={{ display: "none" }}><SortIcon />Sort By</MenuItem>
+                                <MenuItem className='ps-2 text-red' value="" onClick={() => setAllTask([...actualData])}><ClearIcon />Clear Sortby</MenuItem>
+                                <MenuItem className='ps-2' value="Client"><PersonIcon className='font-18 me-1' />Client Name</MenuItem>
+                                <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-18 me-1' />Due Date</MenuItem>
+                                <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-18 me-1' />Priority</MenuItem>
+                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-18 me-1' />Section</MenuItem>
+                                <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-18 me-1' />Start Date</MenuItem>
                             </Select>
                         </FormControl>
                         {selectedSortBy !== "Sort By" && <Checkbox onClick={(e) => handleSortBy(e.target.checked)} className='p-0' {...label} icon={<UpgradeIcon />} checkedIcon={<VerticalAlignBottomIcon />} />}
@@ -729,14 +735,14 @@ function TodoList() {
                                 className='custom-dropdown'
 
                             >
-                                <MenuItem value="Group By" style={{ display: "none" }}>Group By</MenuItem>
-                                <MenuItem value="">Clear Groupby</MenuItem>
-                                <MenuItem value="Client">Client Name</MenuItem>
-                                <MenuItem value="EndDateTime">Due Date</MenuItem>
-                                <MenuItem value="Priority">Priority</MenuItem>
-                                <MenuItem value="Section">Section</MenuItem>
-                                <MenuItem value="CreationDate">Start Date</MenuItem>
-                                <MenuItem value="Subject">Subject</MenuItem>
+                                <MenuItem className='ps-2' value="Group By" style={{ display: "none" }}>Group By</MenuItem>
+                                <MenuItem className='ps-2' value=""><ClearIcon className='font-18 me-1' />Clear Groupby</MenuItem>
+                                <MenuItem className='ps-2' value="Client"><PersonIcon className='font-18 me-1' />Client Name</MenuItem>
+                                <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-18 me-1' />Due Date</MenuItem>
+                                <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-18 me-1' />Priority</MenuItem>
+                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-18 me-1' />Section</MenuItem>
+                                <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-18 me-1' />Start Date</MenuItem>
+                                <MenuItem className='ps-2' value="Subject"><SubjectIcon className='font-18 me-1' />Subject</MenuItem>
                             </Select>
 
                         </FormControl>
@@ -747,8 +753,6 @@ function TodoList() {
                                 <DownloadIcon />
                             </ToggleButton>
                         </ToggleButtonGroup>
-
-
 
                     </Box>
                 </Box>
@@ -767,8 +771,8 @@ function TodoList() {
                                         <h4>{key == 1 ? "High" : key == 2 ? "Medium" : key}</h4>
 
                                         {dataInGroup[key].length > 0 && dataInGroup[key].map((item, index) => {
-                                         
-                                         return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+
+                                            return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                                 <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
 
                                                     <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
