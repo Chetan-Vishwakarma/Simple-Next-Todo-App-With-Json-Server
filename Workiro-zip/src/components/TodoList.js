@@ -45,7 +45,8 @@ import ShareIcon from '@mui/icons-material/Share';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 
 
-const foldersIconList = [<PersonIcon/>,<TipsAndUpdatesIcon/>,<PeopleIcon/>,<ShareIcon/>,<FolderSharedIcon/>];
+const foldersIconList = [<PersonIcon className='me-1 font-20'/>,<TipsAndUpdatesIcon className='me-1 font-20'/>,<PeopleIcon className='me-1 font-20'/>,<ShareIcon className='me-1 font-20'/>,<FolderSharedIcon className='me-1 font-20'/>,<FolderSharedIcon className='me-1 font-20'/>];
+const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20'/>,<PublishedWithChangesIcon color='primary' className='me-1 font-20'/>,<HourglassBottomIcon color='primary' className='me-1 font-20'/>,<CheckCircleOutlineIcon color='success' className='me-1 font-20'/>];
 
 function TodoList() {
     const location = useLocation();
@@ -138,7 +139,7 @@ function TodoList() {
                 return { ...task, EndDateTime: date };
             });
 
-            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
+            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus!=="Completed");
 
             let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                 let timestamp;
@@ -183,13 +184,7 @@ function TodoList() {
                             return { ...task, EndDateTime: date };
                         });
 
-                        // setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
-
-                        // let tasks = formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime);
-                        // let myTasks = tasks.filter((item)=>item.AssignedToID.split(",").includes(userId));
-                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
-
-
+                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus!=="Completed");
 
                         let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                             let timestamp;
@@ -202,9 +197,6 @@ function TodoList() {
                             return { ...task, CreationDate: date };
                         }).sort((a, b) => b.CreationDate - a.CreationDate);
 
-
-
-                        // setActualData([...myTasks]);
                         setActualData([...hasCreationDate]);
                         setAllTask([...hasCreationDate]);
                         // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
@@ -640,7 +632,7 @@ function TodoList() {
                             >
                                 <MenuItem value="Folder" style={{ display: "none" }}>Folders</MenuItem>
                                 <MenuItem value="" className='text-danger ps-1'><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
-                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'><LanguageIcon className="font-20 me-2" /> {fld.Folder}</MenuItem>)}
+                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'>{foldersIconList[i]} {fld.Folder}</MenuItem>)}
                             </Select>
                         </FormControl>
 
@@ -702,8 +694,8 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value={"Status"} style={{ display: "none" }}> Status</MenuItem>
-                                <MenuItem className='text-danger ps-1' value={""} ><WatchLaterIcon className='me-1 font-20' /> Clear Filter</MenuItem>
-                                {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm} className='ps-1'>  <WatchLaterIcon className="font-20 me-1" />{itm}</MenuItem>)}
+                                <MenuItem className='text-danger ps-1' value={""} ><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
+                                {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm} className='ps-1'> {statusIconList[i]} {itm}</MenuItem>)}
                             </Select>
                         </FormControl>
                     </Box>
