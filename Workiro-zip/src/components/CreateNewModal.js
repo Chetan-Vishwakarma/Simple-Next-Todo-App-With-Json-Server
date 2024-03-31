@@ -69,6 +69,10 @@ import moment from "moment";
 import { Toast } from "devextreme-react";
 import Reference from "../client/client-components/Reference";
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
+import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { data } from "jquery";
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -88,6 +92,8 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
+
+const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-20'/>,<PublishedWithChangesIcon color='primary' className='font-20'/>,<HourglassBottomIcon color='primary' className='font-20'/>,<CheckCircleOutlineIcon color='success' className='font-20'/>];
 
  function CreateNewModalTask({ ...props }) {
 
@@ -3350,7 +3356,8 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                                     }}>
 
                                                         <ListItemIcon>
-                                                            <RadioButtonUncheckedIcon fontSize="medium" className="text-success" />
+                                                            {/* <RadioButtonUncheckedIcon fontSize="medium" className="text-success" /> */}
+                                                            {statusIconList[index]}
                                                         </ListItemIcon>
 
                                                         {item.name}</MenuItem>
