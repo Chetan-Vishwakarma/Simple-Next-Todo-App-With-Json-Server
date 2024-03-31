@@ -39,6 +39,7 @@ import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
 import SubjectIcon from '@mui/icons-material/Subject';
 
+import { toast } from 'react-toastify';
 
 function TodoList() {
     const location = useLocation();
@@ -54,6 +55,11 @@ function TodoList() {
 
     let Cls = new CommanCLS(baseUrlPractice, agrno, Email, password);
     //let Clsp = new CommanCLS(baseUrlPractice, agrno, Email, password);
+
+    const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+
+    let ClsSms = new CommanCLS(baseUrl, agrno, Email, password);
+
 
     const [allTask, setAllTask] = useState([]);
     const [actualData, setActualData] = useState([]);
@@ -504,6 +510,58 @@ function TodoList() {
     };
 
 
+    const MarkComplete=(e)=>{
+        console.log("MarkComplete",e)
+        Cls.ConfirmMessage("Are you sure you want to complete task",function(res){
+            if(res){
+                Json_UpdateTaskField("Status", "Completed",e);
+            }
+        })
+    }
+    function Json_UpdateTaskField(FieldName, FieldValue,e) {
+        let o = {
+            agrno: agrno,
+            strEmail: Email,
+            password: password,
+            TaskId: e.ID,
+            FieldName: FieldName,
+            FieldValue: FieldValue
+        }      
+        
+        ClsSms.Json_UpdateTaskField(o, function (sts, data) {
+            if (sts && data) {
+                if (data === "Success") {
+                    toast.success("Completed")
+                    Json_AddSupplierActivity(e);
+                }
+                console.log("Json_UpdateTaskField", data)
+            }
+        })
+    }
+
+    const Json_AddSupplierActivity = (e) => {
+        let obj = {};
+        obj.OriginatorNo = e.ClientNo;
+        obj.ActionReminder = "";
+        obj.Notes = "Completed by "+ e["Forwarded By"];
+        obj.Status = "sys"; //selectedTask.Status;
+        obj.TaskId = e.ID;
+        obj.TaskName = "";
+        obj.ActivityLevelID = "";
+        obj.ItemId = "";
+
+        try {
+            ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
+                if (sts && data) {
+                    console.log({ status: true, messages: "Success",res:data }); 
+                    Json_CRM_GetOutlookTask()                  
+                }
+            });
+        } catch (error) {
+            console.log({ status: false, messages: "Faild Please Try again" });
+        }
+    };
+
     return (
         <>
             <Box className="container-fluid p-0">
@@ -771,9 +829,9 @@ function TodoList() {
                                         <h4>{key == 1 ? "High" : key == 2 ? "Medium" : key}</h4>
 
                                         {dataInGroup[key].length > 0 && dataInGroup[key].map((item, index) => {
-
-                                            return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
-                                                <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
+                                          const arr = item.AssignedToID.split(",").map(Number);
+                                         return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                                                <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
                                                     <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
                                                         sx={{
@@ -791,7 +849,7 @@ function TodoList() {
                                                         <Typography variant='subtitle1'><pan className='text-gray'>
                                                             {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
                                                             {/* <a href='#'>Patrick</a>, */}
-                                                            <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +1</a></Typography>
+                                                            <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +{arr.length}</a></Typography>
                                                         <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                                     </Box>
 
@@ -807,8 +865,11 @@ function TodoList() {
                                                                     aria-expanded={open ? 'true' : undefined}
                                                                     onClick={handleClick}
                                                                     className='font-14'
+                                                                    sx={{
+                                                                        color: item.mstatus === "Completed" ? "green" : "primary"
+                                                                    }}
                                                                 >
-                                                                    {item.Status && item.Status}
+                                                                    {item.mstatus}
                                                                 </Button>
                                                                 <Menu
                                                                     id="basic-menu"
@@ -830,7 +891,7 @@ function TodoList() {
                                                     </Box>
 
                                                     <Box className='mt-2'>
-                                                        <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
+                                                        <Button variant="text" className='btn-blue-2 me-2' onClick={()=>MarkComplete(item)} >Mark Complete</Button>
                                                         <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
                                                     </Box>
 
@@ -841,8 +902,9 @@ function TodoList() {
                                 })}
                             </>) : (allTask.length > 0 ?
                                 (allTask.slice(0, loadMore).map((item, index) => {
+                                    const arr = item.AssignedToID.split(",").map(Number);
                                     return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
-                                        <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
+                                        <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
                                             <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
                                                 sx={{
@@ -860,7 +922,7 @@ function TodoList() {
                                                 <Typography variant='subtitle1'><pan className='text-gray'>
                                                     {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
                                                     {/* <a href='#'>Patrick</a>, */}
-                                                    <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +1</a></Typography>
+                                                    <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +{arr.length}</a></Typography>
                                                 <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                             </Box>
 
@@ -876,8 +938,11 @@ function TodoList() {
                                                             aria-expanded={open ? 'true' : undefined}
                                                             onClick={handleClick}
                                                             className='font-14'
+                                                            sx={{
+                                                                color: item.mstatus === "Completed" ? "green" : "primary"
+                                                            }}
                                                         >
-                                                            {item.Status && item.Status}
+                                                            {item.mstatus}
                                                         </Button>
                                                         <Menu
                                                             id="basic-menu"
@@ -899,7 +964,7 @@ function TodoList() {
                                             </Box>
 
                                             <Box className='mt-2'>
-                                                <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
+                                                <Button variant="text" className='btn-blue-2 me-2' onClick={()=>MarkComplete(item)} >Mark Complete</Button>
                                                 <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
                                             </Box>
 
