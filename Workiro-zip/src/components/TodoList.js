@@ -71,6 +71,7 @@ function TodoList() {
     const [allTask, setAllTask] = useState([]);
     const [actualData, setActualData] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
+    console.log("sdklfjfkl",selectedTask);
 
     const [anchorEl, setAnchorEl] = React.useState(null);
 
