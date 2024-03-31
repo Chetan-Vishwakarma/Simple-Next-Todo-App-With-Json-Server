@@ -2216,9 +2216,6 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-2
                                             </Box>
                                         </Box> */}
 
-
-
-
                                         {/* attached to start */}
                                         <Box className='mt-3'>
 
@@ -2235,6 +2232,7 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-2
                                                             getOptionLabel={(option) => option.ForwardTo}
                                                             renderInput={(params) => <TextField {...params} label="From" />}
                                                             className="w-100"
+                                                            size="small"
                                                             value={selectedUSer}
                                                             onChange={handleOptionChangeFromUser}
                                                         />
@@ -2247,9 +2245,11 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-2
                                                             options={portalUser}
                                                             disableCloseOnSelect
                                                             getOptionLabel={(option) => option["E-Mail"]}
+                                                            size="small"
                                                             renderOption={(props, option, { selected }) => (
                                                                 <li {...props}>
                                                                     <Checkbox
+
                                                                         icon={icon}
                                                                         checkedIcon={checkedIcon}
                                                                         style={{ marginRight: 8 }}
@@ -2273,6 +2273,7 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-2
                                                             options={portalUser}
                                                             disableCloseOnSelect
                                                             getOptionLabel={(option) => option["E-Mail"]}
+                                                            size="small"
                                                             renderOption={(props, option, { selected }) => (
                                                                 <li {...props}>
                                                                     <Checkbox
@@ -3465,6 +3466,7 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-2
                             selectedRowKeys={selectedRows}
                             selection={{ mode: 'multiple' }}
                             onSelectionChanged={handleSelectionChanged} // Handle selection change event
+                            className="table-grid"
                         >
                             <FilterRow visible={true} />
                             <SearchPanel visible={true} highlightCaseSensitive={true} />

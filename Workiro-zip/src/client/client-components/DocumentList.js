@@ -573,20 +573,20 @@ export default function DocumentList({ clientId }) {
     const handleFilterOnClientSelection = (e) => {
         let val = e.target.value;
         setSelectedClient(val);
-        if(val === "Reference"){
+        if (val === "Reference") {
             setSelectedClient("");
             handleFilterDeletion("Client");
             return;
-        }else if(val!==""){
-            setFilterCriteria({...filterCriteria,Client:val});
-        }else{
+        } else if (val !== "") {
+            setFilterCriteria({ ...filterCriteria, Client: val });
+        } else {
             handleFilterDeletion("Client");
         }
     }
 
     return (
         <>
-            {globalSearchDocs.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str="+strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/DocumentList", tabName: "Documents List" }]} />}
+            {globalSearchDocs.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/DocumentList", tabName: "Documents List" }]} />}
 
             {isLoading ? <CustomLoader /> : <>
                 <Box className='d-flex flex-wrap align-items-center justify-content-between'>
@@ -778,18 +778,18 @@ export default function DocumentList({ clientId }) {
                                 <Select
                                     value={sortByProperty}
                                     onChange={(e) => {
-                                        if(e.target.value==="Sort By"){
+                                        if (e.target.value === "Sort By") {
                                             setSortByProperty("")
                                             return;
                                         }
                                         setSortByProperty(e.target.value)
                                     }
-                                }
+                                    }
                                     displayEmpty
                                     inputProps={{ 'aria-label': 'Without label' }}
                                     className='custom-dropdown'
                                 >
-                                    <MenuItem value="" style={{display:"none"}}>
+                                    <MenuItem value="" style={{ display: "none" }}>
                                         <SwapVertIcon className='pe-1' /> Sort By
                                     </MenuItem>
                                     <MenuItem value="None" onClick={() => setAdvFilteredResult([])}><WarningIcon className='pe-1' />  Clear Sortby</MenuItem>
@@ -824,7 +824,7 @@ export default function DocumentList({ clientId }) {
                                 inputProps={{ 'aria-label': 'Without label' }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value=""  style={{display:"none"}}>
+                                <MenuItem value="" style={{ display: "none" }}>
                                     Select Reference
                                 </MenuItem>
                                 {clientList.length > 0 && clientList.map(itm => <MenuItem value={itm}>{itm}</MenuItem>)}
@@ -859,7 +859,7 @@ export default function DocumentList({ clientId }) {
 
                 </Box>
 
-                {toggleScreen.tableGridView ? <Box className='table-responsive table-grid'>
+                {toggleScreen.tableGridView ? <Box className='table-responsive table-grid table-grid-2'>
                     <DataGrid
                         id="dataGrid"
                         style={{ width: "100%" }}
@@ -968,7 +968,7 @@ export default function DocumentList({ clientId }) {
                             </Box>
 
                                 <Button disabled={searchByPropertyKey !== "" && searchByPropertyInput !== "" ? false : true} className={searchByPropertyKey !== "" && searchByPropertyInput !== "" ? 'btn-blue-2 mb-2 ms-2' : 'btn-blue-2 btn-grey-2 mb-2 ms-2'} onClick={() => handleSearchByProperty()}>Submit</Button></>}
-                            <Button className='btn-blue-2 mb-2 ms-2' onClick={() => setIsAdvFilter(!isAdvFilter)}>{!isAdvFilter?"Advanced Search":"Simple"}</Button>
+                            <Button className='btn-blue-2 mb-2 ms-2' onClick={() => setIsAdvFilter(!isAdvFilter)}>{!isAdvFilter ? "Advanced Search" : "Simple"}</Button>
                         </Box>
 
                         <Box className='d-flex flex-wrap justify-content-between'>
@@ -1014,7 +1014,6 @@ export default function DocumentList({ clientId }) {
                                                                         {/* Size: {itm["FileSize"] ? itm["FileSize"] : "0.00KB"}  */}
                                                                         Date {itm["Item.Date"] ? itm["Item.Date"] : ""} |
                                                                         Uploaded by <span className='sembold'>Patrick</span>
-
                                                                     </Typography>
                                                                 </Box>
                                                             </Box>

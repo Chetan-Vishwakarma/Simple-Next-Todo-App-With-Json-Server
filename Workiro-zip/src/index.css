@@ -173,9 +173,11 @@ input,
   background: #4780FF !important;
   transition: .5s all ease;
 }
+
 .btn-blue-2.Mui-disabled {
   opacity: .5;
 }
+
 .btn-grey-2 {
   background: rgb(158, 141, 141) !important;
   transition: .5s all ease;
@@ -220,14 +222,18 @@ button {
 }
 
 .btn-favorite.Mui-selected {
-  background: #D41B20 !important;
   color: #fff !important;
 }
 
-/* .table-grid  .dx-datagrid-rowsview .dx-datagrid-content:not(.dx-datagrid-content-fixed) {
+.table-grid-2  .dx-datagrid-rowsview .dx-datagrid-content:not(.dx-datagrid-content-fixed) {
   height: calc(100vh - 450px);
   overflow: auto;
-} */
+}
+
+.table-grid-2 {
+  width: calc(100vw - 278px);
+  overflow-y: auto;
+}
 
 .table-grid .dx-datagrid .dx-column-lines>td {
   /* background: #d61226; */
@@ -1495,6 +1501,7 @@ span.tox-statusbar__branding {
 .text-yellow {
   color: #f58e00 !important;
 }
+
 .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root {
   font-size: 14px;
   padding-top: 4px;
@@ -1745,6 +1752,7 @@ span.tox-statusbar__branding {
 .custom-dropdown-2 * {
   font-size: 14px !important;
 }
+
 .custom-dropdown-2 svg {
   font-size: 22px !important;
 }
@@ -1887,12 +1895,15 @@ span.tox-statusbar__branding {
   padding: 8px 0;
   color: #fff;
 }
+
 .rotate-180 {
   transform: rotate(180deg);
 }
+
 .date-padding-0 .MuiStack-root {
   padding-top: 0px;
 }
+
 .dx-datagrid-borders>.dx-datagrid-header-panel {
   display: none;
 }
@@ -2040,11 +2051,13 @@ span.tox-statusbar__branding {
 .custom-datepicker {
   position: relative;
 }
+
 .custom-datepicker .form-control {
   border: 0;
   padding: 0 0 0 28px;
   /* font-size: 14px !important; */
 }
+
 .custom-datepicker svg {
   position: absolute;
   left: 0;
@@ -2054,31 +2067,41 @@ span.tox-statusbar__branding {
   color: #d42027;
   pointer-events: none;
 }
+
 .custom-datepicker-bordered {
   border-bottom: 2px solid;
   padding: 4px 0px 4px 0 !important;
   font-weight: 600;
 }
-.rdtPicker tr td, .rdtPicker tr th {
+
+.rdtPicker tr td,
+.rdtPicker tr th {
   background: #fff;
   color: #000;
   border-right: 1px solid #f1f1f1;
   border-bottom: 1px solid #f1f1f1;
   font-size: 13px;
 }
-.rdtPicker tr th:last-child, .rdtPicker tr td:last-child {
+
+.rdtPicker tr th:last-child,
+.rdtPicker tr td:last-child {
   border-right: 0;
 }
+
 .address-list {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
+
 .rdtPicker table thead th,
-.rdtPicker table thead th:hover, .rdtPicker td.rdtActive, .rdtPicker td.rdtActive:hover {
+.rdtPicker table thead th:hover,
+.rdtPicker td.rdtActive,
+.rdtPicker td.rdtActive:hover {
   background: #4880FF !important;
   color: #fff !important;
 }
+
 .address-list li {
   font-size: 13px;
   display: flex;
@@ -2099,7 +2122,7 @@ span.tox-statusbar__branding {
   margin-right: 5px;
 }
 
-.address-list li  .add-heading-client {
+.address-list li .add-heading-client {
   min-width: auto;
 }
 
