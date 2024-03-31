@@ -2032,8 +2032,9 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                     aria-haspopup="true"
                     aria-expanded={open4 ? 'true' : undefined}
                     onClick={handleClick4}
-                    className="btn-outlin-2"
-                    variant="outlined"
+                    className="btn-blue-2 btn-round btn-block"
+                    variant="text"
+                    size="small"
                 >
                     <span className="material-symbols-outlined font-18">edit_square</span>{" "}
                     <span className="ps-2 font-13">Add New  </span>
@@ -2067,6 +2068,12 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                         <ListItemIcon>
                             <GroupIcon className="font-20" />
                         </ListItemIcon> Reference
+                    </MenuItem>
+
+                    <MenuItem>
+                        <ListItemIcon>
+                            <GroupIcon className="font-20" />
+                        </ListItemIcon> Add Contacts
                     </MenuItem>
 
                     <MenuItem onClick={handleClose4}>
@@ -2545,7 +2552,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                                 </Box>
 
                                                 <Box className="inner-user-list-dropdown">
-                                                    <p className="sembold">My Team</p>
+                                                    <p className="sembold mb-0">My Team</p>
 
                                                     <Box className="box-user-list-dropdown" style={{ maxHeight: "200px", overflowY: "auto" }}>
                                                         <Box className="mb-1 mt-3 px-3">

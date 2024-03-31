@@ -161,8 +161,8 @@ export default function SidebarNav() {
   const [myTotalTasks, setMyTotalTasks] = useState([]);
   const [taskSubjects, setTasksSubjects] = useState([]);
   const [filteredTaskSubjects, setFilteredTaskSubjects] = useState([]);
-  const [folders,setFolders] = useState([]);
-  const [selectedFolder,setSelectedFolder] = useState(folderId);
+  const [folders, setFolders] = useState([]);
+  const [selectedFolder, setSelectedFolder] = useState(folderId);
 
   const {
     getRootProps,
@@ -197,7 +197,7 @@ export default function SidebarNav() {
     navigate("/");
   }
 
-  const Json_AdvanceSearchDoc = (f_id=folderId) => {
+  const Json_AdvanceSearchDoc = (f_id = folderId) => {
     if (forDocuments !== "") {
       let obj = {
         ClientId: "",
@@ -244,25 +244,25 @@ export default function SidebarNav() {
 
   function Json_GetFolders() {
     let obj = {
-        agrno: agrno,
-        Email: Email,
-        password: password
+      agrno: agrno,
+      Email: Email,
+      password: password
     }
     try {
-        Cls.Json_GetFolders(obj, function (sts, data) {
-            if (sts) {
-                if (data) {
-                    let js = JSON.parse(data);
-                    let tbl = js.Table;
-                    // console.log("Json_GetFolders", tbl);
-                    setFolders(tbl);
-                }
-            }
-        });
+      Cls.Json_GetFolders(obj, function (sts, data) {
+        if (sts) {
+          if (data) {
+            let js = JSON.parse(data);
+            let tbl = js.Table;
+            // console.log("Json_GetFolders", tbl);
+            setFolders(tbl);
+          }
+        }
+      });
     } catch (err) {
-        console.log("Error while calling Json_GetFolders", err);
+      console.log("Error while calling Json_GetFolders", err);
     }
-}
+  }
 
   const Json_CRM_GetOutlookTask = () => {
     let obj = {
@@ -319,11 +319,11 @@ export default function SidebarNav() {
     });
   }
 
-  const [tabs, setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon:<DashboardIcon/> }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon:<AccountBoxIcon/> }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false, tabIcon:<AssignmentIcon/> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon:<GroupIcon/> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon:<ViewCarouselIcon/> }, { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false, tabIcon:<ContentPasteSearchIcon/> },
-  
-  { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false, tabIcon:<PersonAddIcon/> },
-  
-  { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active: false, tabIcon:<LogoutIcon/> }]);
+  const [tabs, setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon: <DashboardIcon /> }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon: <AccountBoxIcon /> }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false, tabIcon: <AssignmentIcon /> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon: <GroupIcon /> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon: <ViewCarouselIcon /> }, { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false, tabIcon: <ContentPasteSearchIcon /> },
+
+  { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false, tabIcon: <PersonAddIcon /> },
+
+  { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active: false, tabIcon: <LogoutIcon /> }]);
 
   const [searchInputForGlobalSearch, setSearchInputForGlobalSearch] = useState("");
 
@@ -381,49 +381,23 @@ export default function SidebarNav() {
             <Box className="w-100">
 
               <Box className="d-flex align-items-center justify-content-between w-100">
-                <Box className="search-box ms-4">
-                  <Layout>
-                    <AutocompleteWrapper>
-                      <AutocompleteRoot
-                        sx={{
-                          borderColor: '#D5D5D5',
-                          color: 'success.main',
-                        }}
-                        className={isSearch ? 'Mui-focused' : ''}>
-                        <span className="material-symbols-outlined search-icon">search</span>
 
-                        <form onSubmit={(e) => {
-                          e.preventDefault();
-                          navigate(`/dashboard/SearchResult?str=${forDocuments}&folder=${selectedFolder}`);
-                          setIsSearch(false);
-                          tabs.map(itm => {
-                            if (itm.tabName === "Search Result") {
-                              itm.active = true;
-                            } else {
-                              itm.active = false;
-                            }
-                          });
-                        }} >
-                          <Input
-                            onChange={(e) => handleGlobalSearch(e.target.value)}
-                            // onBlur={() => setIsSearch(false)}
-                            value={searchInputForGlobalSearch}
-                            placeholder='Search'
-                            className='ps-0' />
-                        </form>
-                        
-                      </AutocompleteRoot>
+                <Box className='d-flex flex-wrap'>
+                  <Box className="search-box ms-4 me-4">
+                    <Layout>
+                      <AutocompleteWrapper>
+                        <AutocompleteRoot
+                          sx={{
+                            borderColor: '#D5D5D5',
+                            color: 'success.main',
+                          }}
+                          className={isSearch ? 'Mui-focused' : ''}>
+                          <span className="material-symbols-outlined search-icon">search</span>
 
-                      
-
-                      {isSearch && <Listbox sx={{ zIndex: 1 }}>
-
-                        {filteredTaskSubjects.length > 0 && filteredTaskSubjects.slice(0.20).map((itm, i) => {
-                          return <Option key={i} onClick={(e) => {
-                            e.stopPropagation();
+                          <form onSubmit={(e) => {
+                            e.preventDefault();
+                            navigate(`/dashboard/SearchResult?str=${forDocuments}&folder=${selectedFolder}`);
                             setIsSearch(false);
-                            navigate(`/dashboard/SearchResult?str=${itm}&folder=${selectedFolder}`);
-                            setSearchInputForGlobalSearch(itm);
                             tabs.map(itm => {
                               if (itm.tabName === "Search Result") {
                                 itm.active = true;
@@ -431,51 +405,85 @@ export default function SidebarNav() {
                                 itm.active = false;
                               }
                             });
-                          }}>
-                            <FormatListNumberedRtlIcon className='me-1' />
-                            {itm}</Option>
-                        })}
+                          }} >
+                            <Input
+                              onChange={(e) => handleGlobalSearch(e.target.value)}
+                              // onBlur={() => setIsSearch(false)}
+                              value={searchInputForGlobalSearch}
+                              placeholder='Search'
+                              className='ps-0' />
+                          </form>
 
-                        {documentsDescription.length > 0 && documentsDescription.slice(0, 20).map((itm, i) => {
-                          return <Option key={i} onClick={(e) => {
-                            e.stopPropagation();
-                            setIsSearch(false);
-                            navigate(`/dashboard/SearchResult?str=${itm}&folder=${selectedFolder}`);
-                            setSearchInputForGlobalSearch(itm);
-                            tabs.map(itm => {
-                              if (itm.tabName === "Search Result") {
-                                itm.active = true;
-                              } else {
-                                itm.active = false;
-                              }
-                            });
-                          }}>
-                            <DescriptionIcon className='me-1' />
-                            {itm}</Option>
-                        })}
+                        </AutocompleteRoot>
 
-                      </Listbox>}
-                  
-                    </AutocompleteWrapper>
-                  </Layout>
-                  <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
-                            <Select
-                                value={selectedFolder}
-                                onChange={(e) => {
-                                  setSearchInputForGlobalSearch("");
-                                  setSelectedFolder(String(e.target.value));
-                                  return;
-                                }}
-                                displayEmpty
-                                inputProps={{ 'aria-label': 'Without label' }}
-                                className='custom-dropdown'
-                            >
-                                {folders.length > 0 && folders.map((itm) => {
-                                    return <MenuItem value={itm.FolderID}>{itm.Folder}</MenuItem>
-                                })}
-                            </Select>
-                        </FormControl>
+
+
+                        {isSearch && <Listbox sx={{ zIndex: 1 }}>
+
+                          {filteredTaskSubjects.length > 0 && filteredTaskSubjects.slice(0.20).map((itm, i) => {
+                            return <Option key={i} onClick={(e) => {
+                              e.stopPropagation();
+                              setIsSearch(false);
+                              navigate(`/dashboard/SearchResult?str=${itm}&folder=${selectedFolder}`);
+                              setSearchInputForGlobalSearch(itm);
+                              tabs.map(itm => {
+                                if (itm.tabName === "Search Result") {
+                                  itm.active = true;
+                                } else {
+                                  itm.active = false;
+                                }
+                              });
+                            }}>
+                              <FormatListNumberedRtlIcon className='me-1' />
+                              {itm}</Option>
+                          })}
+
+                          {documentsDescription.length > 0 && documentsDescription.slice(0, 20).map((itm, i) => {
+                            return <Option key={i} onClick={(e) => {
+                              e.stopPropagation();
+                              setIsSearch(false);
+                              navigate(`/dashboard/SearchResult?str=${itm}&folder=${selectedFolder}`);
+                              setSearchInputForGlobalSearch(itm);
+                              tabs.map(itm => {
+                                if (itm.tabName === "Search Result") {
+                                  itm.active = true;
+                                } else {
+                                  itm.active = false;
+                                }
+                              });
+                            }}>
+                              <DescriptionIcon className='me-1' />
+                              {itm}</Option>
+                          })}
+
+                        </Listbox>}
+
+                      </AutocompleteWrapper>
+                    </Layout>
+                  </Box>
+
+                  <FormControl size="small" className='select-border'>
+                    <Select
+                      value={selectedFolder}
+                      onChange={(e) => {
+                        setSearchInputForGlobalSearch("");
+                        setSelectedFolder(String(e.target.value));
+                        return;
+                      }}
+                      displayEmpty
+                      inputProps={{ 'aria-label': 'Without label' }}
+                      className='custom-dropdown'
+                    >
+                      {folders.length > 0 && folders.map((itm) => {
+                        return <MenuItem value={itm.FolderID}>{itm.Folder}</MenuItem>
+                      })}
+                    </Select>
+                  </FormControl>
+
                 </Box>
+
+
+
 
                 <Box className="d-flex align-items-center">
                   <Box>

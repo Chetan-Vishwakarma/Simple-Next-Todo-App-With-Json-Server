@@ -70,7 +70,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         <>
 
             <Box className='mb-5'>
-                <h3 className='font-20'><SearchIcon /> We found the following Tasks matching <span className='text-blue bold'>"{target}"</span></h3>
+                <h3 className='font-20 mt-3'><SearchIcon /> We found the following Tasks matching <span className='text-blue bold'>"{target}"</span></h3>
                 <Grid className='mt-0' container spacing={2} >
                     {filteredTasks.length > 0 ? filteredTasks.slice(0, 9).map(item => {
                         return <Grid className='pt-0' item xs={12} lg={4} md={4} sm={12}>
