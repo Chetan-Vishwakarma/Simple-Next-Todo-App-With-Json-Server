@@ -67,7 +67,9 @@ const ClientGrid = ({selectedChoice,data,handleContactNavigattion,handleClientNa
 
     return (
         <>
-        <div className='white-box table-grid' style={{ height: 'auto', overflowY: 'auto',width:'85vw' }}>
+        <div className='white-box table-grid table-grid-2' >
+{/* style={{ height: 'auto', overflowY: 'auto',width:'85vw' }} */}
+            
             <DataGrid
                 id="dataGrid"
                 ref={dataGridRef}

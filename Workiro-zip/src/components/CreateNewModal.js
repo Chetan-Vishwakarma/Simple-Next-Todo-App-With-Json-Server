@@ -2038,8 +2038,9 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-2
                     aria-haspopup="true"
                     aria-expanded={open4 ? 'true' : undefined}
                     onClick={handleClick4}
-                    className="btn-outlin-2"
-                    variant="outlined"
+                    className="btn-blue-2 btn-round btn-block"
+                    variant="text"
+                    size="small"
                 >
                     <span className="material-symbols-outlined font-18">edit_square</span>{" "}
                     <span className="ps-2 font-13">Add New  </span>
@@ -2073,6 +2074,12 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-2
                         <ListItemIcon>
                             <GroupIcon className="font-20" />
                         </ListItemIcon> Reference
+                    </MenuItem>
+
+                    <MenuItem>
+                        <ListItemIcon>
+                            <GroupIcon className="font-20" />
+                        </ListItemIcon> Add Contacts
                     </MenuItem>
 
                     <MenuItem onClick={handleClose4}>
@@ -2209,9 +2216,6 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-2
                                             </Box>
                                         </Box> */}
 
-
-
-
                                         {/* attached to start */}
                                         <Box className='mt-3'>
 
@@ -2228,6 +2232,7 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-2
                                                             getOptionLabel={(option) => option.ForwardTo}
                                                             renderInput={(params) => <TextField {...params} label="From" />}
                                                             className="w-100"
+                                                            size="small"
                                                             value={selectedUSer}
                                                             onChange={handleOptionChangeFromUser}
                                                         />
@@ -2240,9 +2245,11 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-2
                                                             options={portalUser}
                                                             disableCloseOnSelect
                                                             getOptionLabel={(option) => option["E-Mail"]}
+                                                            size="small"
                                                             renderOption={(props, option, { selected }) => (
                                                                 <li {...props}>
                                                                     <Checkbox
+
                                                                         icon={icon}
                                                                         checkedIcon={checkedIcon}
                                                                         style={{ marginRight: 8 }}
@@ -2266,6 +2273,7 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-2
                                                             options={portalUser}
                                                             disableCloseOnSelect
                                                             getOptionLabel={(option) => option["E-Mail"]}
+                                                            size="small"
                                                             renderOption={(props, option, { selected }) => (
                                                                 <li {...props}>
                                                                     <Checkbox
@@ -2551,7 +2559,7 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-2
                                                 </Box>
 
                                                 <Box className="inner-user-list-dropdown">
-                                                    <p className="sembold">My Team</p>
+                                                    <p className="sembold mb-0">My Team</p>
 
                                                     <Box className="box-user-list-dropdown" style={{ maxHeight: "200px", overflowY: "auto" }}>
                                                         <Box className="mb-1 mt-3 px-3">
@@ -3458,6 +3466,7 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-2
                             selectedRowKeys={selectedRows}
                             selection={{ mode: 'multiple' }}
                             onSelectionChanged={handleSelectionChanged} // Handle selection change event
+                            className="table-grid"
                         >
                             <FilterRow visible={true} />
                             <SearchPanel visible={true} highlightCaseSensitive={true} />

@@ -542,8 +542,6 @@ console.log("Create New Task")
                                         );
                                     })}
 
-
-
                                 </Box>
 
                             </TabPanel>
@@ -606,14 +604,10 @@ console.log("Create New Task")
                                         </>)
                                     }) : ""}
 
-
                                 </Box>
 
                             </TabPanel>
                         </TabContext>
-
-
-
 
                     </Box>
                 </DialogContentText>
