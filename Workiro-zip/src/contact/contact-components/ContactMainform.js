@@ -23,6 +23,7 @@ const ContactMainform = React.memo(
       countries.find((country) => country.label === "United Kingdom")?.label
     );
     const [mangers, setMangers] = useState([]); // State to hold folders data
+    const [Roles, setRoles] = useState([]);
     // const defaultUser1 = mangers.find((manager) => manager.UserId == intUserid);
     const [defaultUser, setDefaultUser] = useState(null);
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -45,6 +46,7 @@ const ContactMainform = React.memo(
               //   setBussiness(json.Table1);
               //   setSources(json.Table2);
               setMangers(json.Table3);
+              setRoles(json.Table4);
               //   setStatus(json.Table);
 
               let defaultUser1 = json.Table3.find(
@@ -119,6 +121,16 @@ const ContactMainform = React.memo(
         let data = { ...userContactDetails };
         data = { ...data, ["Title"]: value.label };
         console.log(data, "onChangetitle");
+        setContactDetails(data);
+      } else {
+      }
+    };
+    const onChangeRoles = (event, value) => {
+      event.preventDefault();
+      if (value) {
+        let data = { ...userContactDetails };
+        data = { ...data, ["RolesData"]: value.RoleName };
+        console.log(data, "onChangeRoles");
         setContactDetails(data);
       } else {
       }
@@ -237,10 +249,12 @@ const ContactMainform = React.memo(
           <Grid item xs={6} md={6}>
             <FormControl fullWidth variant="outlined">
               <Autocomplete
-                options={titleData}
+                // options={titleData}
                 key={`uniques-roles`}
+                options={Roles}
+          getOptionLabel={(option) => option.RoleName}
                 // value={defaultUser || null}
-                // onChange={onChangeRoles}
+                onChange={onChangeRoles}
                 clearOnEscape
                 renderInput={(params) => (
                   <TextField
@@ -271,6 +285,7 @@ const ContactMainform = React.memo(
                       // value={currentDate}
                       
                       onChange={(e) => handleInputOnDateChage(e)}
+                      label="Birth date"
                     />
 
                   </DemoContainer>
