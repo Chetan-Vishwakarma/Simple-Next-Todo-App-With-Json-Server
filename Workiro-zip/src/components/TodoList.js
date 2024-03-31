@@ -38,8 +38,9 @@ import PersonIcon from '@mui/icons-material/Person';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
 import SubjectIcon from '@mui/icons-material/Subject';
-
 import { toast } from 'react-toastify';
+
+const foldersIconList = [<PersonIcon/>,<TipsAndUpdatesIcon/>,<PeopleIcon/>,<ShareIcon/>,<FolderSharedIcon/>];
 
 function TodoList() {
     const location = useLocation();
