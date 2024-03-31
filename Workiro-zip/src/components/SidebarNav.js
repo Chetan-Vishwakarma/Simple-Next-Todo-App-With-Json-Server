@@ -49,6 +49,14 @@ import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
 import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LogoutIcon from '@mui/icons-material/Logout';
+import FolderSharedIcon from '@mui/icons-material/FolderShared';
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
+import PeopleIcon from '@mui/icons-material/People';
+import ShareIcon from '@mui/icons-material/Share';
+import PersonIcon from '@mui/icons-material/Person';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import ToggleButton from '@mui/material/ToggleButton';
+
 
 
 let options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
@@ -163,6 +171,8 @@ export default function SidebarNav() {
   const [filteredTaskSubjects, setFilteredTaskSubjects] = useState([]);
   const [folders, setFolders] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState(folderId);
+  const [anchorEl4, setAnchorEl4] = React.useState(null);
+
 
   const {
     getRootProps,
@@ -364,6 +374,17 @@ export default function SidebarNav() {
     return () => clearTimeout(data);
   }, [forDocuments]);
 
+
+
+  // dropdown
+  const open4 = Boolean(anchorEl4);
+  const handleClick4 = (event) => {
+    setAnchorEl4(event.currentTarget);
+  };
+  const handleClose4 = () => {
+    setAnchorEl4(null);
+  };
+
   return (
     <>
       <Box className='d-block d-md-flex' onClick={() => setIsSearch(false)}>
@@ -462,7 +483,7 @@ export default function SidebarNav() {
                     </Layout>
                   </Box>
 
-                  <FormControl size="small" className='select-border'>
+                  {/* <FormControl size="small" className='select-border'>
                     <Select
                       value={selectedFolder}
                       onChange={(e) => {
@@ -478,12 +499,63 @@ export default function SidebarNav() {
                         return <MenuItem value={itm.FolderID}>{itm.Folder}</MenuItem>
                       })}
                     </Select>
-                  </FormControl>
+                  </FormControl> */}
+
+
+                  <div>
+
+                    <ToggleButton
+                      // value="check"
+                      id="basic-button"
+                      aria-controls={open4 ? 'basic-menu' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open4 ? 'true' : undefined}
+                      onClick={handleClick4}
+                      size='small'
+                      className='bg-blue'
+                    >
+                      <FolderOpenIcon className='text-blue' />
+                    </ToggleButton>
+
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={anchorEl4}
+                      open={open4}
+                      onClose={handleClose4}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                      }}
+                      className='custom-dropdown'
+                    >
+                      <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
+                        <PersonIcon className="font-20 me-1" /></ListItemIcon>
+                        Client
+                      </MenuItem>
+                      <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
+                        <TipsAndUpdatesIcon className="font-20 me-1" /></ListItemIcon>
+                        Cases
+                      </MenuItem>
+                      <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
+                        <PeopleIcon className="font-20 me-1" /></ListItemIcon>
+                        Customers
+                      </MenuItem>
+                      <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
+                        <ShareIcon className="font-20 me-1" /></ListItemIcon>
+                        Share Allotments
+                      </MenuItem>
+                      <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
+                        <GroupIcon className="font-20 me-1" /></ListItemIcon>
+                        M Customer
+                      </MenuItem>
+                      <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
+                        <FolderSharedIcon className="font-20 me-1" /></ListItemIcon>
+                        Process Folder
+                      </MenuItem>
+
+                    </Menu>
+                  </div>
 
                 </Box>
-
-
-
 
                 <Box className="d-flex align-items-center">
                   <Box>
