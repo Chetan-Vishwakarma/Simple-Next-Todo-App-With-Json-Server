@@ -196,7 +196,7 @@ function AddContacts() {
           "Email": Email,
           "password": password,
           "ClientId": userContactDetails.ReferenceID,
-          "ContactEmail": ""
+          "ContactEmail": userContactDetails.EmailName
       }
         console.log(contactData,"contactData");
         Cls.Json_GetContactNumber(contactData, (sts, data) => {
@@ -205,19 +205,54 @@ function AddContacts() {
             let jsonparse = JSON.parse(data);
             if (jsonparse) {
                 console.log(jsonparse,"successcontact");
-              
-                // toast.success("Contact Added Successfully !"); 
-             
-                // toast.success("Reference ID Already Exists!"); 
+                Json_UpdateContactField(jsonparse);
               
             }
           }
          
         });
       };  
+      const Json_UpdateContactField = (contactNumber) => {
+        let contactData = 
+          {
+
+            "fieldName": "BirthDate"
+        }
+      //   let profile = 
+      //   {
+
+      //     "fieldName": "BirthDate"
+      // }
+        console.log(contactData,"contactData");
+        if(contactData.fieldName=="BirthDate"){
+          let birthdayObj =  {
+            "agrno": agrno,
+            "Email": Email,
+            "password": password,
+            "ClientId": userContactDetails.ReferenceID,
+            "projectid": folderId,
+            "ContactNo": contactNumber,
+            "fieldName": "BirthDate",
+            "fieldValue": userContactDetails.BirthDate
+        }
+        
+          Cls.Json_UpdateContactField(birthdayObj, (sts, data) => {
+            if(sts){
+              console.log(sts, data,"newcontactData");
+              // let jsonparse = JSON.parse(data);
+              // if (jsonparse) {
+              //     console.log(jsonparse,"successcontact");
+                
+                
+              // }
+            }
+           
+          });
+        } 
+      }; 
       const handleSubmit = (event) => {
         event.preventDefault();
-        Json_GetContactNumber();
+        
         let contactData = {
           "agrno": agrno,
           "Email": Email,
@@ -246,18 +281,18 @@ function AddContacts() {
           "accid": agrno
       }
         console.log(contactData,"contactData");
-        // Cls.AddContact(contactData, (sts, data) => {
-        //   console.log(sts, data,"newcontactData");
-        //   let jsonparse = data;
-        //   if (jsonparse=='Success') {
-        //       console.log(jsonparse,"successcontact");
-            
-        //       toast.success("Contact Added Successfully !"); 
+        Cls.AddContact(contactData, (sts, data) => {
+          console.log(sts, data,"newcontactData");
+          let jsonparse = data;
+          if (jsonparse=='Success') {
+              console.log(jsonparse,"successcontact");
+              Json_GetContactNumber();
+              toast.success("Contact Added Successfully !"); 
            
-        //       // toast.success("Reference ID Already Exists!"); 
+              // toast.success("Reference ID Already Exists!"); 
             
-        //   }
-        // });
+          }
+        });
       };    
   const handleListItemClick = (item) => {
     console.log('Selecteditem:', item);
