@@ -224,6 +224,11 @@ button {
   color: #fff !important;
 }
 
+/* .table-grid  .dx-datagrid-rowsview .dx-datagrid-content:not(.dx-datagrid-content-fixed) {
+  height: calc(100vh - 450px);
+  overflow: auto;
+} */
+
 .table-grid .dx-datagrid .dx-column-lines>td {
   /* background: #d61226; */
   padding: 12px;
@@ -1787,6 +1792,10 @@ span.tox-statusbar__branding {
   color: #7e7e7e;
   cursor: no-drop;
   pointer-events: none;
+}
+
+.client-details-scroll-search {
+  max-height: calc(100vh - 310px);
 }
 
 .client-details-scroll {
