@@ -13,42 +13,22 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import SendIcon from '@mui/icons-material/Send';
-// import CompanyDetails from './CompanyDetails';
-// import ClientOverview from './ClientOverview';
-//import Utils from "../../services/Utils";
-// import CommanCLS from '../../services/CommanService';
-// import UdfCard from './UdfCard';
 import { useLocation, useSearchParams } from 'react-router-dom';
-// import DocumentList from './Document';
-// import DocumentList from './DocumentList';
-// import UploadDocument from './UploadDocument';
-// import ClientAddress from './ClientAddress';
-// import Contact from './Contact';
-// import CompaniesHouse from './CompaniesHouse';
-// import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
-// import TaskList from './TaskList';
-import CompanyDetails from '../client/client-components/CompanyDetails';
-import ClientOverview from '../client/client-components/ClientOverview';
-import ClientAddress from '../client/client-components/ClientAddress';
 import CompaniesHouse from '../client/client-components/CompaniesHouse';
-import UploadDocument from '../client/client-components/UploadDocument';
 import TaskList from '../client/client-components/TaskList';
 import CustomBreadCrumbs from './CustomBreadCrumbs';
-import DocumentList from '../client/client-components/DocumentList';
 import Contact from '../client/client-components/Contact';
 import CommanCLS from '../services/CommanService';
 import { Autocomplete, Grid, List, ListItem, ListItemIcon, ListItemText, TextField } from '@mui/material';
-import MainContact from '../contact/contact-components/MainContact';
 import ContactMainform from '../contact/contact-components/ContactMainform';
-// import MainContact from './MainContact';
-
+import UploadButtons from '../contact/contact-components/UploadProfile';
+import ContactUDF from '../contact/contact-components/ContactUDF';
+import { toast } from 'react-toastify';
 let originatorNo;
 let folderData;
 let clientData;
 let clientName;
 function AddContacts() {
-
-    const location = useLocation();
     const [contact, setContact] = useState([]);
     const [fillcontact, setFillContact] = useState({});
     const [searchParams,setSearchParams] = useSearchParams();
@@ -67,6 +47,7 @@ function AddContacts() {
     const [bussiness, setBussiness] = useState([]); // State to hold folders data
     const [selectedFolderID, setSelectedFolderID] = useState(null);
     const [selectedBussId, setSelectedBussId] = useState(null);
+    const [dataFromChild, setDataFromChild] = useState([]);
     const [userContactDetails, setContactDetails] = useState({
       Title: "",
       FirstName: "",
@@ -77,6 +58,7 @@ function AddContacts() {
       GreetingName: "",
       EmailName: "",
       MainUserId: -1,
+      MainUserName:"",
       MainLine1Name: "",
       MainLine2Name: "",
       MainLine3Name: "",
@@ -88,7 +70,9 @@ function AddContacts() {
       mainCountry: "",
       billingsCountry: "",
       ragistersCountry: "",
-      ReferenceID:""
+      ReferenceID:"",
+      BirthDate:"",
+      RolesData:""
     });
     const [companyDetails, setCompanyDetails] = useState([]);
 
@@ -116,7 +100,32 @@ function AddContacts() {
     };
 
    
-
+    const Json_GetCRMContactUDFValues = () => {
+      let obj = {
+          agrno: agrno,
+          Email: Email,
+          password: password,
+          ProjectId: folderId,
+          // ClientId: localStorage.getItem("origiNator") ? localStorage.getItem("origiNator") : userContactDetails.ReferenceID,
+          ClientId:"0007",
+          ContactId:"-1"
+      };
+      try {
+          Cls.Json_GetCRMContactUDFValues(obj, (sts, data) => {
+              if (sts) {
+                  if (data) {
+                      let json = JSON.parse(data);
+                      console.log("Json_GetCRMContactUDFValues", json);
+                      setClientDetails(json);
+                    
+                    
+                  }
+              }
+          });
+      } catch (err) {
+          console.log("Error while calling Json_GetCRMContactUDFValues", err)
+      }
+  }
     const Json_GetClientCardDetails = () => {
         let obj = {
             Email: Email,
@@ -181,7 +190,75 @@ function AddContacts() {
           }
           
       }
-      
+      const Json_GetContactNumber = () => {
+        let contactData = {
+          "agrno": agrno,
+          "Email": Email,
+          "password": password,
+          "ClientId": userContactDetails.ReferenceID,
+          "ContactEmail": ""
+      }
+        console.log(contactData,"contactData");
+        Cls.Json_GetContactNumber(contactData, (sts, data) => {
+          if(sts){
+            console.log(sts, data,"newcontactData");
+            let jsonparse = JSON.parse(data);
+            if (jsonparse) {
+                console.log(jsonparse,"successcontact");
+              
+                // toast.success("Contact Added Successfully !"); 
+             
+                // toast.success("Reference ID Already Exists!"); 
+              
+            }
+          }
+         
+        });
+      };  
+      const handleSubmit = (event) => {
+        event.preventDefault();
+        Json_GetContactNumber();
+        let contactData = {
+          "agrno": agrno,
+          "Email": Email,
+          "password": password,
+          "FirstName": userContactDetails.FirstName,
+          "LastName": userContactDetails.LastName,
+          "Add1": userContactDetails.MainLine1Name,
+          "Add2": userContactDetails.MainLine2Name,
+          "Add3": userContactDetails.MainLine3Name,
+          "Town": userContactDetails.MainTownName,
+          "PostCode": userContactDetails.MainPostcodeName,
+          "Country": userContactDetails.mainCountry,
+          "ManagerName": userContactDetails.FirstName+" "+userContactDetails.LastName,
+          "Role": userContactDetails.RolesData,
+          "Tel": userContactDetails.MainTelephoneName,
+          "Mobile": userContactDetails.MainMobileName,
+          "greeting": userContactDetails.GreetingName,
+          "email":userContactDetails.EmailName,
+          "note": "",
+          "emailupdate":userContactDetails.EmailName,
+          "CActive": "Yes",
+          "AssignedManager": userContactDetails.MainUserId,
+          "maincontact": userContactDetails.MainContact,
+          "CCode": userContactDetails.ReferenceID,
+          "Salutation": userContactDetails.Title,
+          "accid": agrno
+      }
+        console.log(contactData,"contactData");
+        // Cls.AddContact(contactData, (sts, data) => {
+        //   console.log(sts, data,"newcontactData");
+        //   let jsonparse = data;
+        //   if (jsonparse=='Success') {
+        //       console.log(jsonparse,"successcontact");
+            
+        //       toast.success("Contact Added Successfully !"); 
+           
+        //       // toast.success("Reference ID Already Exists!"); 
+            
+        //   }
+        // });
+      };    
   const handleListItemClick = (item) => {
     console.log('Selecteditem:', item);
     setFillContact(item);
@@ -223,6 +300,7 @@ function AddContacts() {
         event.preventDefault();
         if (value) {
           clientData = value.ClientID;
+          localStorage.setItem("origiNator",clientData);
           clientName = value.Client;
           setclientNames(clientName);
           updateReferenceID(value.Client);
@@ -338,6 +416,7 @@ function AddContacts() {
       // setIntUserid(localStorage.getItem("UserId"));
       Json_GetFolders();
         Json_GetClientCardDetails();
+        Json_GetCRMContactUDFValues();
         Json_GetAllContacts();
     }, []);
 
@@ -354,14 +433,19 @@ function AddContacts() {
                             <Tab label="Contact Details" value="1" />
                             <Tab label="AML Details" value="2" />
                             <Tab label="UDF Details" value="3" />
-                            <Tab label="Send Proposal" value="4" />
+                            {/* <Tab label="Send Proposal" value="4" />
                             <Tab label="Portal User" value="5" />
                             <Tab label="Companies House" value="6" />
-                            <Tab label="Requested Document" value="7" />
+                            <Tab label="Requested Document" value="7" /> */}
                         </TabList>
                     </Box>
                     <TabPanel value="1" className='p-0'>
+                 
+                  
                         <Box className="general-tab white-box">
+                        <Box className="row mb-3">
+              <UploadButtons />
+              </Box>
                         <Box className="row mb-3">
                         <Grid container spacing={3}>
                         <Grid item xs={6} md={6}>
@@ -479,15 +563,36 @@ function AddContacts() {
                         </Grid>
                         </Grid>
               </Box>
+              <Box className="row mb-3">
+              <Grid container spacing={3}>
+      <Grid item xs={6} md={6}>
+      <Button
+              style={{ marginTop: "5px" }}
+              variant="contained"
+              disabled={!clientData || !selectedFolderID}
+              onClick={handleSubmit}
+            >
+              Add New Contact
+            </Button>{" "}
+                        </Grid>
+                        </Grid>
+              </Box>
                         </Box>
                        
                     </TabPanel>
 
                     <TabPanel value="2" className='p-0'>
-                        <ClientAddress></ClientAddress>
+                        {/* <ClientAddress></ClientAddress> */}
                     </TabPanel>
                     <TabPanel value="3">
-                        <Contact></Contact>
+                         {/* <Contact></Contact> */}
+                         <Box className="general-tab white-box">
+                         <ContactUDF
+                         data={clientDetails}
+                         setDataFromChild={setDataFromChild}
+                         ></ContactUDF>
+                         </Box>
+                       
                     </TabPanel>
                     <TabPanel value="4">
                         <TaskList></TaskList>

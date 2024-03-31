@@ -949,10 +949,22 @@ console.log("formattedDate",formattedDate)
             }
         })
      }
-
+      
      Json_AddClient(obj,callBack){   
         super.CreateNewServiceParamObject("Json_AddClient",obj,true);
         super.CallNewService("Json_AddClient",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+     AddContact(obj,callBack){   
+        super.CreateNewServiceParamObject("AddContact",obj,true);
+        super.CallNewService("AddContact",function(status,Data){
             if(status){
                 return callBack(true,Data);
             }
@@ -988,6 +1000,54 @@ console.log("formattedDate",formattedDate)
         })
     }
 
+    Json_CompanyHouseDetails(obj,callback) {
+        super.CreateNewServiceParamObject("Json_CompanyHouseDetails",obj,false);
+        super.CallNewService("Json_CompanyHouseDetails", function (status, Data) {
+            if (status) {
+                if (Data != "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+    
+    Json_GetCRMContactUDFValues(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetCRMContactUDFValues",obj,true);
+        super.CallNewService("Json_GetCRMContactUDFValues",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+     
+     Json_GetContactNumber(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_GetContactNumber",obj,true);
+        super.CallNewService("Json_GetContactNumber",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+     Json_UpdateContactField(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_UpdateContactField",obj,true);
+        super.CallNewService("Json_UpdateContactField",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
     Json_CompanyHouseDetails(obj,callback) {
         super.CreateNewServiceParamObject("Json_CompanyHouseDetails",obj,false);
         super.CallNewService("Json_CompanyHouseDetails", function (status, Data) {
