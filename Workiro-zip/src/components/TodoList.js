@@ -12,7 +12,6 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import moment from 'moment';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
-
 import CustomLoader from './CustomLoader';
 // import { data } from 'jquery';
 import MergeIcon from '@mui/icons-material/Merge';
@@ -29,6 +28,10 @@ import PortalDetails from './PortalDetails';
 import DataNotFound from './DataNotFound';
 import { styled } from '@mui/system';
 import { useLocation } from 'react-router-dom';
+import ClearIcon from '@mui/icons-material/Clear';
+import DvrIcon from '@mui/icons-material/Dvr';
+import LanguageIcon from '@mui/icons-material/Language';
+import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import CustomBreadCrumbs from './CustomBreadCrumbs';
 
 function TodoList() {
@@ -66,7 +69,7 @@ function TodoList() {
     const [dataInGroup, setDataInGroup] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const [suggestionList,setSuggestionList] = useState([]);
+    const [suggestionList, setSuggestionList] = useState([]);
 
     // for date datepicker
     const [state, setState] = useState({
@@ -145,11 +148,11 @@ function TodoList() {
             password: password
         };
         try {
-            Cls.Json_CRM_GetOutlookTask(obj, (sts, data) => {
+            Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_CRM_GetOutlookTask", json.Table);
+                        console.log("Json_CRM_GetOutlookTask111", json);
                         let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
                         const formattedTasks = result.map((task) => {
                             let timestamp;
@@ -161,8 +164,14 @@ function TodoList() {
 
                             return { ...task, EndDateTime: date };
                         });
+                     
+                        // setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
 
+                        // let tasks = formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime);
+                        // let myTasks = tasks.filter((item)=>item.AssignedToID.split(",").includes(userId));
                         let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
+
+                      
 
                         let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                             let timestamp;
@@ -174,7 +183,10 @@ function TodoList() {
 
                             return { ...task, CreationDate: date };
                         }).sort((a, b) => b.CreationDate - a.CreationDate);
+                        
 
+                       
+                        // setActualData([...myTasks]);
                         setActualData([...hasCreationDate]);
                         setAllTask([...hasCreationDate]);
                         // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
@@ -316,9 +328,13 @@ function TodoList() {
             });
         });
 
+        console.log("fltData2222",fltData)
+
         setAllTask([...fltData]);
         if (Object.keys(dataInGroup).length > 0) {
+
             let gData = groupByProperty(fltData, selectedGroupBy);
+
             setDataInGroup(gData);
         }
 
@@ -492,7 +508,6 @@ function TodoList() {
 
                 <Box className='d-flex main-search-box mb-3 align-items-center justify-content-between'>
                     <Box className='d-flex align-items-center'>
-
                         <Layout>
                             <AutocompleteWrapper>
                                 <AutocompleteRoot
@@ -500,31 +515,31 @@ function TodoList() {
                                         borderColor: '#D5D5D5',
                                         color: 'success.main',
                                     }}
-                                    // className={isSearch ? 'Mui-focused' : ''}
-                                    >
+                                // className={isSearch ? 'Mui-focused' : ''}
+                                >
                                     <span className="material-symbols-outlined search-icon">search</span>
 
                                     <Input
                                         // onClick={(e) => handleDialogsOpen(e, "Search")}
                                         onChange={(e) => {
-                                            if(e.target.value==="") {
+                                            if (e.target.value === "") {
                                                 setSuggestionList([]);
                                                 handleFilterDeletion("Subject");
                                                 return;
                                             }
-                                            let fltData = allTask.filter(itm=>itm.Subject.toLowerCase().includes(e.target.value.toLowerCase()));
+                                            let fltData = allTask.filter(itm => itm.Subject.toLowerCase().includes(e.target.value.toLowerCase()));
                                             setSuggestionList(fltData);
-                                            setTaskFilter({...taskFilter,Subject:[e.target.value]});
+                                            setTaskFilter({ ...taskFilter, Subject: [e.target.value] });
                                         }}
                                         placeholder='Search'
                                         className='ps-0' />
                                 </AutocompleteRoot>
 
-                                {suggestionList.length>0&& <Listbox sx={{ zIndex: 1 }}>
-                                    {suggestionList.map((itm,i)=>{
+                                {suggestionList.length > 0 && <Listbox sx={{ zIndex: 1 }}>
+                                    {suggestionList.map((itm, i) => {
                                         return <Option key={i}>
-                                        {/* <ApartmentIcon className='me-1' /> */}
-                                        {itm.Subject}</Option>
+                                            {/* <ApartmentIcon className='me-1' /> */}
+                                            {itm.Subject}</Option>
                                     })}
                                 </Listbox>}
                             </AutocompleteWrapper>
@@ -554,8 +569,8 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value="Folder" style={{ display: "none" }}>Folders</MenuItem>
-                                <MenuItem value="">Clear Filter</MenuItem>
-                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder}>{fld.Folder}</MenuItem>)}
+                                <MenuItem value="" className='text-danger ps-1'><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
+                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'><LanguageIcon className="font-20 me-2" /> {fld.Folder}</MenuItem>)}
                             </Select>
                         </FormControl>
 
@@ -582,9 +597,15 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value="Source" style={{ display: "none" }}>Type</MenuItem>
-                                <MenuItem value="">Clear Filter</MenuItem>
-                                <MenuItem value="CRM">CRM</MenuItem>
-                                <MenuItem value="Portal">Portal</MenuItem>
+                                <MenuItem value="" className='ps-1 text-danger' >
+                                    <ClearIcon className="font-20 me-2" />
+                                    Clear Filter</MenuItem>
+                                <MenuItem className='ps-1' value="CRM">
+                                    <DvrIcon className="font-20 me-2" />
+                                    CRM</MenuItem>
+                                <MenuItem className='ps-1' value="Portal">
+                                    <LanguageIcon className="font-20 me-2" />
+                                    Portal</MenuItem>
                             </Select>
                         </FormControl>
 
@@ -611,8 +632,8 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value={"Status"} style={{ display: "none" }}>Status</MenuItem>
-                                <MenuItem value={""} >Clear Filter</MenuItem>
-                                {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm}>{itm}</MenuItem>)}
+                                <MenuItem value={""} ><WatchLaterIcon className='text-danger ps-1' /> Clear Filter</MenuItem>
+                                {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm}>  <WatchLaterIcon className="font-20 me-2" />{itm}</MenuItem>)}
                             </Select>
                         </FormControl>
                     </Box>
@@ -741,10 +762,13 @@ function TodoList() {
 
                             Object.keys(dataInGroup).length > 0 ? (<>
                                 {Object.keys(dataInGroup).map((key) => {
+
                                     return <>
                                         <h4>{key == 1 ? "High" : key == 2 ? "Medium" : key}</h4>
+
                                         {dataInGroup[key].length > 0 && dataInGroup[key].map((item, index) => {
-                                            return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                                         
+                                         return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                                 <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
 
                                                     <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
