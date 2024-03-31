@@ -17,7 +17,7 @@ import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import CustomBreadCrumbs from '../components/CustomBreadCrumbs';
+import CustomLoader from '../components/CustomLoader';
 
 
 const CommonFilters = [
@@ -98,6 +98,8 @@ function Client() {
     const [filteredClients, setFilteredClients] = useState([]);
     const [selectedProperty, setSelectedProperty] = useState("");
     const [selectedPropertyValue, setSelectedPropertyValue] = useState("");
+
+    const [isLoading,setIsLoading] = useState(true);
     const colorArr = ["#e26124", "#20aedb", "#075adb", "#be1de8", "#00983b", "#ed32b3"];
 
 
@@ -184,6 +186,7 @@ function Client() {
                         console.log("Json_GetContactListByFolder", json);
                         setContacts(formateDate(json?.Table));  // ye date formate ke liye use kiya he
                         setContactKeys(Object.keys(json.Table[0]));
+                        setIsLoading(false);
                         Json_GetFolders();
                     }
                 }
@@ -208,6 +211,7 @@ function Client() {
                         console.log("Json_GetSupplierListByProject", json);
                         setClients(json?.Table);
                         setClientKeys(Object.keys(json.Table[0]));
+                        setIsLoading(false);
                         Json_GetContactListByFolder(folder_id);
                     }
                 }
@@ -673,28 +677,7 @@ function Client() {
     return (
         <Box className='container-fluid p-0' onClick={handleClick}>
 
-            <CustomBreadCrumbs tabs={[{tabLink:"/dashboard/Connections",tabName:"Connections"}]}/>
-
-
-            {/* <div role="presentation" className='mb-2 mb-3 '>
-                <Breadcrumbs aria-label="breadcrumb">
-                    <Link underline="hover" color="inherit" href="/">
-                        Home
-                    </Link>
-                    <Link
-                        underline="hover"
-                        color="inherit"
-                        href="/material-ui/getting-started/installation/"
-                    >
-                        Clients
-                    </Link>
-                    <Typography color="text.primary">Client Details</Typography>
-                </Breadcrumbs>
-            </div> */}
-
-
-
-            <Box className='row'>
+            {isLoading? <CustomLoader/> :<Box className='row'>
                 <Box className='col-lg-12'>
                     <Box className='d-flex main-search-box mb-2 align-items-center justify-content-between'>
                         <Box className='d-flex'>
@@ -1054,7 +1037,7 @@ function Client() {
                         />}
                     </Box>
                 </Box>
-            </Box>
+            </Box>}
         </Box>
     )
 }

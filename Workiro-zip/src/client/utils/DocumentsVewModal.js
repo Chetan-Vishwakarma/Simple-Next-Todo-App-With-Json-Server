@@ -530,9 +530,9 @@ console.log("Create New Task")
 
                                 <Box className='text-center'>
                                     {getAssociatedTaskList && getAssociatedTaskList.map((item, index) => {
-                                        let str = item.AssignedToID;
-                                        let arr = str.split(',').map(Number);
-                                        let isUserAssigned = arr.includes(parseInt(localStorage.getItem('UserId')));
+                                        let str = item?.AssignedToID;
+                                        let arr = str?.split(',').map(Number);
+                                        let isUserAssigned = arr?.includes(parseInt(localStorage.getItem('UserId')));
                                         console.log("isUserAssigned", isUserAssigned)
                                         return (
                                             <label key={index} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex">

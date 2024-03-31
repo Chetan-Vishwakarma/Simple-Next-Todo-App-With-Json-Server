@@ -527,30 +527,16 @@ export default function SidebarNav() {
                       }}
                       className='custom-dropdown'
                     >
-                      <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
-                        <FolderSharedIcon className="font-20 me-1" /></ListItemIcon>
-                        Client
-                      </MenuItem>
-                      <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
-                        <FolderSharedIcon className="font-20 me-1" /></ListItemIcon>
-                        Cases
-                      </MenuItem>
-                      <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
-                        <FolderSharedIcon className="font-20 me-1" /></ListItemIcon>
-                        Customers
-                      </MenuItem>
-                      <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
-                        <FolderSharedIcon className="font-20 me-1" /></ListItemIcon>
-                        Share Allotments
-                      </MenuItem>
-                      <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
-                        <FolderSharedIcon className="font-20 me-1" /></ListItemIcon>
-                        M Customer
-                      </MenuItem>
-                      <MenuItem className='ps-2' onClick={handleClose4}><ListItemIcon>
-                        <FolderSharedIcon className="font-20 me-1" /></ListItemIcon>
-                        Process Folder
-                      </MenuItem>
+                      {folders.length > 0 && folders.map((itm) => {
+                        return <MenuItem value={itm.FolderID} onClick={(e)=>{
+                          if(e.target.value){
+                            setSearchInputForGlobalSearch("");
+                            setSelectedFolder(String(e.target.value));
+                          }
+                          handleClose4(e);
+                        }}><ListItemIcon>
+                        <FolderSharedIcon className="font-20 me-1" /></ListItemIcon>{itm.Folder}</MenuItem>
+                      })}
 
                     </Menu>
                   </div>

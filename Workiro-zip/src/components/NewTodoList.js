@@ -428,7 +428,7 @@ function NewTodoList() {
             <Box className='pe-5'>
 
                 <Typography variant='subtitle1' className='font-20 bold mb-0'>Welcome {userName}</Typography>
-                <Typography variant='subtitle1' className='font-16 bold mb-2'>The following tasks are due soon:</Typography>
+                <Typography  id="section1" variant='subtitle1' className='font-16 bold mb-2'>The following tasks are due soon:</Typography>
 
                 <Box className='row'>
                     {/* {
@@ -586,18 +586,18 @@ function NewTodoList() {
                     }) : ""}
                 </Box>
 
-                <Box className='py-4 text-center'>
+                <Box  id="section2" className='py-4 text-center'>
                     <Button variant="outlined" onClick={handleLoadMore}>View More</Button>
                 </Box>
 
                 {/* row end */}
-                <hr />
+                <hr/>
 
                 {/* <Typography variant='subtitle1' className='font-20 bold mb-0'>Welcome Patirck</Typography>
                 <Typography variant='subtitle1' className='font-16 bold mb-2'>The following tasks are due soon:</Typography> */}
 
 
-                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>The following tasks were recently updated: </Typography>
+                <Typography  variant='subtitle1' className='font-18 bold mb-2 mt-4'>The following tasks were recently updated: </Typography>
 
                 <Box className='row'>
                     {Array(9).fill("").map(() => {
@@ -692,7 +692,7 @@ function NewTodoList() {
                 {/* row end */}
                 <hr />
 
-                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>You pinned the following tasks:</Typography>
+                <Typography id="section3" variant='subtitle1' className='font-18 bold mb-2 mt-4'>You pinned the following tasks:</Typography>
 
                 <Box className='row'>
                     {Array(9).fill("").map(() => {
@@ -782,7 +782,7 @@ function NewTodoList() {
 
                 {/* row end */}
                 <hr />
-                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>You accessed the following documents recently:</Typography>
+                <Typography id="section4" variant='subtitle1' className='font-18 bold mb-2 mt-4'>You accessed the following documents recently:</Typography>
 
                 {/* <DocumentDetails></DocumentDetails> */}
 
