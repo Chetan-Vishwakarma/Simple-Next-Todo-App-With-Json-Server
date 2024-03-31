@@ -38,8 +38,12 @@ import PersonIcon from '@mui/icons-material/Person';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
 import SubjectIcon from '@mui/icons-material/Subject';
-
 import { toast } from 'react-toastify';
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
+import PeopleIcon from '@mui/icons-material/People';
+import ShareIcon from '@mui/icons-material/Share';
+import FolderSharedIcon from '@mui/icons-material/FolderShared';
+
 
 function TodoList() {
     const location = useLocation();
@@ -696,8 +700,8 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value={"Status"} style={{ display: "none" }}> Status</MenuItem>
-                                <MenuItem value={""} ><WatchLaterIcon className='text-danger ps-1 me-1' /> Clear Filter</MenuItem>
-                                {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm}>  <WatchLaterIcon className="font-20 me-2" />{itm}</MenuItem>)}
+                                <MenuItem className='text-danger ps-1' value={""} ><WatchLaterIcon className='me-1 font-20' /> Clear Filter</MenuItem>
+                                {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm} className='ps-1'>  <WatchLaterIcon className="font-20 me-1" />{itm}</MenuItem>)}
                             </Select>
                         </FormControl>
                     </Box>
@@ -767,11 +771,11 @@ function TodoList() {
                             >
                                 <MenuItem className='ps-2' value="Sort By" style={{ display: "none" }}><SortIcon />Sort By</MenuItem>
                                 <MenuItem className='ps-2 text-red' value="" onClick={() => setAllTask([...actualData])}><ClearIcon />Clear Sortby</MenuItem>
-                                <MenuItem className='ps-2' value="Client"><PersonIcon className='font-18 me-1' />Client Name</MenuItem>
-                                <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-18 me-1' />Due Date</MenuItem>
-                                <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-18 me-1' />Priority</MenuItem>
-                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-18 me-1' />Section</MenuItem>
-                                <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-18 me-1' />Start Date</MenuItem>
+                                <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
+                                <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
+                                <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-20 me-1' />Priority</MenuItem>
+                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-20 me-1' />Section</MenuItem>
+                                <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-20 me-1' />Start Date</MenuItem>
                             </Select>
                         </FormControl>
                         {selectedSortBy !== "Sort By" && <Checkbox onClick={(e) => handleSortBy(e.target.checked)} className='p-0' {...label} icon={<UpgradeIcon />} checkedIcon={<VerticalAlignBottomIcon />} />}
@@ -791,20 +795,17 @@ function TodoList() {
                                     handleGrouping(e.target.value)
                                 }}
                                 className='custom-dropdown'
-
                             >
                                 <MenuItem className='ps-2' value="Group By" style={{ display: "none" }}>Group By</MenuItem>
-                                <MenuItem className='ps-2' value=""><ClearIcon className='font-18 me-1' />Clear Groupby</MenuItem>
-                                <MenuItem className='ps-2' value="Client"><PersonIcon className='font-18 me-1' />Client Name</MenuItem>
-                                <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-18 me-1' />Due Date</MenuItem>
-                                <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-18 me-1' />Priority</MenuItem>
-                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-18 me-1' />Section</MenuItem>
-                                <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-18 me-1' />Start Date</MenuItem>
-                                <MenuItem className='ps-2' value="Subject"><SubjectIcon className='font-18 me-1' />Subject</MenuItem>
+                                <MenuItem className='ps-2' value=""><ClearIcon className='font-20 me-1' />Clear Groupby</MenuItem>
+                                <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
+                                <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
+                                <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-20 me-1' />Priority</MenuItem>
+                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-20 me-1' />Section</MenuItem>
+                                <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-20 me-1' />Start Date</MenuItem>
+                                <MenuItem className='ps-2' value="Subject"><SubjectIcon className='font-20 me-1' />Subject</MenuItem>
                             </Select>
-
                         </FormControl>
-
 
                         <ToggleButtonGroup className='ms-3' size='small'>
                             <ToggleButton value="left" aria-label="left aligned">

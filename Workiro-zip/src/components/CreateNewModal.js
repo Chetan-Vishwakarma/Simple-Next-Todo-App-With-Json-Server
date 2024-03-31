@@ -3236,7 +3236,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                 </Box>
 
                                 <Box className="select-dropdown">
-                                    <BootstrapTooltip title="Select Priority" arrow
+                                    <BootstrapTooltip title="Priority" arrow
                                         placement="bottom-start"
                                         slotProps={{
                                             popper: {
@@ -3297,7 +3297,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                 </Box>
 
                                 <Box className="select-dropdown">
-                                    <BootstrapTooltip title="Select Status" arrow
+                                    <BootstrapTooltip title="Status" arrow
                                         placement="bottom-start"
                                         slotProps={{
                                             popper: {
