@@ -56,8 +56,19 @@ import ShareIcon from '@mui/icons-material/Share';
 import PersonIcon from '@mui/icons-material/Person';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import ToggleButton from '@mui/material/ToggleButton';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 
 
+const BootstrapTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.arrow}`]: {
+    color: theme.palette.common.black,
+  },
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.common.black,
+  },
+}));
 
 let options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
 
@@ -329,7 +340,8 @@ export default function SidebarNav() {
     });
   }
 
-  const [tabs, setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon: <DashboardIcon /> }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon: <AccountBoxIcon /> }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false, tabIcon: <AssignmentIcon /> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon: <GroupIcon /> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon: <ViewCarouselIcon /> }, { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false, tabIcon: <ContentPasteSearchIcon /> },
+  const [tabs, setTabs] = useState([{
+    tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon: <DashboardIcon />}, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon: <AccountBoxIcon /> }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false, tabIcon: <AssignmentIcon /> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon: <GroupIcon /> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon: <ViewCarouselIcon /> }, { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false, tabIcon: <ContentPasteSearchIcon /> },
 
   { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false, tabIcon: <PersonAddIcon /> },
 
@@ -747,7 +759,26 @@ export default function SidebarNav() {
                       justifyContent: 'center',
                     }}
                   >
-                    {text.tabIcon}
+
+
+                    <BootstrapTooltip title="Folder" arrow
+                      placement="bottom-start"
+                      slotProps={{
+                        popper: {
+                          modifiers: [
+                            {
+                              name: 'offset',
+                              options: {
+                                offset: [0, 5],
+                              },
+                            },
+                          ],
+                        },
+                      }}
+                    >
+                      {text.tabIcon}
+                    </BootstrapTooltip>
+
                   </ListItemIcon>
 
                   <ListItemText primary={text.tabName} sx={{ opacity: open ? 1 : 0 }} />
@@ -805,123 +836,123 @@ const grey = {
 };
 
 const AutocompleteWrapper = styled('div')`
-  position: relative;
-`;
+      position: relative;
+      `;
 
 const AutocompleteRoot = styled('div')(
   ({ theme }) => `
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-weight: 400;
-  border-radius: 8px;
-  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[500]};
-  background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-  border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-  box-shadow: 0px 2px 4px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.5)' : 'rgba(0,0,0, 0.05)'
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-weight: 400;
+      border-radius: 8px;
+      color: ${theme.palette.mode === 'dark' ? grey[300] : grey[500]};
+      background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+      border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+      box-shadow: 0px 2px 4px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.5)' : 'rgba(0,0,0, 0.05)'
     };
-  display: flex;
-  gap: 5px;
-  padding-right: 5px;
-  overflow: hidden;
-  width: 320px;
+      display: flex;
+      gap: 5px;
+      padding-right: 5px;
+      overflow: hidden;
+      width: 320px;
 
-  &.Mui-focused {
-    border-color: ${blue[400]};
-    box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[700] : blue[200]};
+      &.Mui-focused {
+        border - color: ${blue[400]};
+      box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[700] : blue[200]};
   }
 
-  &:hover {
-    border-color: ${blue[400]};
+      &:hover {
+        border - color: ${blue[400]};
   }
 
-  &:focus-visible {
-    outline: 0;
+      &:focus-visible {
+        outline: 0;
   }
-`,
+      `,
 );
 
 const Input = styled('input')(
   ({ theme }) => `
-  font-size: 0.875rem;
-  font-family: inherit;
-  font-weight: 400;
-  line-height: 1.5;
-  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-  background: inherit;
-  border: none;
-  border-radius: inherit;
-  padding: 8px 12px;
-  outline: 0;
-  flex: 1 0 auto;
-`,
+      font-size: 0.875rem;
+      font-family: inherit;
+      font-weight: 400;
+      line-height: 1.5;
+      color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+      background: inherit;
+      border: none;
+      border-radius: inherit;
+      padding: 8px 12px;
+      outline: 0;
+      flex: 1 0 auto;
+      `,
 );
 
 const Listbox = styled('ul')(
   ({ theme }) => `
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 0.875rem;
-  box-sizing: border-box;
-  padding: 6px;
-  margin: 12px 0;
-  max-width: 320px;
-  border-radius: 12px;
-  overflow: auto;
-  outline: 0px;
-  max-height: 300px;
-  z-index: 1;
-  position: absolute;
-  left: 0;
-  right: 0;
-  background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-  border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-  box-shadow: 0px 4px 6px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.50)' : 'rgba(0,0,0, 0.05)'
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.875rem;
+      box-sizing: border-box;
+      padding: 6px;
+      margin: 12px 0;
+      max-width: 320px;
+      border-radius: 12px;
+      overflow: auto;
+      outline: 0px;
+      max-height: 300px;
+      z-index: 1;
+      position: absolute;
+      left: 0;
+      right: 0;
+      background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+      border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+      color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+      box-shadow: 0px 4px 6px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.50)' : 'rgba(0,0,0, 0.05)'
     };
-  `,
+      `,
 );
 
 const Option = styled('li')(
   ({ theme }) => `
-  list-style: none;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: default;
+      list-style: none;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: default;
 
-  &:last-of-type {
-    border-bottom: none;
+      &:last-of-type {
+        border - bottom: none;
   }
 
-  &:hover {
-    cursor: pointer;
+      &:hover {
+        cursor: pointer;
   }
 
-  &[aria-selected=true] {
-    background-color: ${theme.palette.mode === 'dark' ? blue[900] : blue[100]};
-    color: ${theme.palette.mode === 'dark' ? blue[100] : blue[900]};
+      &[aria-selected=true] {
+        background - color: ${theme.palette.mode === 'dark' ? blue[900] : blue[100]};
+      color: ${theme.palette.mode === 'dark' ? blue[100] : blue[900]};
   }
 
-  &.base--focused,
-  &.base--focusVisible {
-    background-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[100]};
-    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+      &.base--focused,
+      &.base--focusVisible {
+        background - color: ${theme.palette.mode === 'dark' ? grey[800] : grey[100]};
+      color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
   }
 
-  &.base--focusVisible {
-    box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[500] : blue[200]};
+      &.base--focusVisible {
+        box - shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[500] : blue[200]};
   }
 
-  &[aria-selected=true].base--focused,
-  &[aria-selected=true].base--focusVisible {
-    background-color: ${theme.palette.mode === 'dark' ? blue[900] : blue[100]};
-    color: ${theme.palette.mode === 'dark' ? blue[100] : blue[900]};
+      &[aria-selected=true].base--focused,
+      &[aria-selected=true].base--focusVisible {
+        background - color: ${theme.palette.mode === 'dark' ? blue[900] : blue[100]};
+      color: ${theme.palette.mode === 'dark' ? blue[100] : blue[900]};
   }
-  `,
+      `,
 );
 
 const Layout = styled('div')`
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 4px;
-`;
+      display: flex;
+      flex-flow: column nowrap;
+      gap: 4px;
+      `;
 
 const Pre = styled('pre')(({ theme }) => ({
   margin: '0.5rem 0',
