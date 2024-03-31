@@ -761,7 +761,7 @@ export default function SidebarNav() {
                   >
 
 
-                    <BootstrapTooltip title="Folder" arrow
+                    <BootstrapTooltip title={text.tabName} arrow
                       placement="bottom-start"
                       slotProps={{
                         popper: {
