@@ -949,10 +949,22 @@ Json_GetContactListByFolder(obj,callBack) {
             }
         })
      }
-
+      
      Json_AddClient(obj,callBack){   
         super.CreateNewServiceParamObject("Json_AddClient",obj,true);
         super.CallNewService("Json_AddClient",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
+     AddContact(obj,callBack){   
+        super.CreateNewServiceParamObject("AddContact",obj,true);
+        super.CallNewService("AddContact",function(status,Data){
             if(status){
                 return callBack(true,Data);
             }

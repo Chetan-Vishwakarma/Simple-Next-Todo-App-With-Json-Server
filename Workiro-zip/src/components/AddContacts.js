@@ -13,42 +13,20 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import SendIcon from '@mui/icons-material/Send';
-// import CompanyDetails from './CompanyDetails';
-// import ClientOverview from './ClientOverview';
-//import Utils from "../../services/Utils";
-// import CommanCLS from '../../services/CommanService';
-// import UdfCard from './UdfCard';
 import { useLocation, useSearchParams } from 'react-router-dom';
-// import DocumentList from './Document';
-// import DocumentList from './DocumentList';
-// import UploadDocument from './UploadDocument';
-// import ClientAddress from './ClientAddress';
-// import Contact from './Contact';
-// import CompaniesHouse from './CompaniesHouse';
-// import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
-// import TaskList from './TaskList';
-import CompanyDetails from '../client/client-components/CompanyDetails';
-import ClientOverview from '../client/client-components/ClientOverview';
-import ClientAddress from '../client/client-components/ClientAddress';
 import CompaniesHouse from '../client/client-components/CompaniesHouse';
-import UploadDocument from '../client/client-components/UploadDocument';
 import TaskList from '../client/client-components/TaskList';
 import CustomBreadCrumbs from './CustomBreadCrumbs';
-import DocumentList from '../client/client-components/DocumentList';
 import Contact from '../client/client-components/Contact';
 import CommanCLS from '../services/CommanService';
 import { Autocomplete, Grid, List, ListItem, ListItemIcon, ListItemText, TextField } from '@mui/material';
-import MainContact from '../contact/contact-components/MainContact';
 import ContactMainform from '../contact/contact-components/ContactMainform';
-// import MainContact from './MainContact';
-
+import { toast } from 'react-toastify';
 let originatorNo;
 let folderData;
 let clientData;
 let clientName;
 function AddContacts() {
-
-    const location = useLocation();
     const [contact, setContact] = useState([]);
     const [fillcontact, setFillContact] = useState({});
     const [searchParams,setSearchParams] = useSearchParams();
@@ -77,6 +55,7 @@ function AddContacts() {
       GreetingName: "",
       EmailName: "",
       MainUserId: -1,
+      MainUserName:"",
       MainLine1Name: "",
       MainLine2Name: "",
       MainLine3Name: "",
@@ -88,7 +67,8 @@ function AddContacts() {
       mainCountry: "",
       billingsCountry: "",
       ragistersCountry: "",
-      ReferenceID:""
+      ReferenceID:"",
+      BirthDate:""
     });
     const [companyDetails, setCompanyDetails] = useState([]);
 
@@ -181,7 +161,49 @@ function AddContacts() {
           }
           
       }
-      
+      const handleSubmit = (event) => {
+        event.preventDefault();
+        let contactData = {
+          "agrno": agrno,
+          "Email": Email,
+          "password": password,
+          "FirstName": userContactDetails.FirstName,
+          "LastName": userContactDetails.LastName,
+          "Add1": userContactDetails.MainLine1Name,
+          "Add2": userContactDetails.MainLine2Name,
+          "Add3": userContactDetails.MainLine3Name,
+          "Town": userContactDetails.MainTownName,
+          "PostCode": userContactDetails.MainPostcodeName,
+          "Country": userContactDetails.mainCountry,
+          "ManagerName": userContactDetails.FirstName+" "+userContactDetails.LastName,
+          "Role": "",
+          "Tel": userContactDetails.MainTelephoneName,
+          "Mobile": userContactDetails.MainMobileName,
+          "greeting": userContactDetails.GreetingName,
+          "email":userContactDetails.EmailName,
+          "note": "",
+          "emailupdate":userContactDetails.EmailName,
+          "CActive": "Yes",
+          "AssignedManager": userContactDetails.MainUserId,
+          "maincontact": userContactDetails.MainContact,
+          "CCode": userContactDetails.ReferenceID,
+          "Salutation": userContactDetails.Title,
+          "accid": agrno
+      }
+        console.log(contactData,"contactData");
+        Cls.AddContact(contactData, (sts, data) => {
+          console.log(sts, data,"newcontactData");
+          let jsonparse = data;
+          if (jsonparse=='Success') {
+              console.log(jsonparse,"successcontact");
+            
+              toast.success("Contact Added Successfully !"); 
+           
+              // toast.success("Reference ID Already Exists!"); 
+            
+          }
+        });
+      };    
   const handleListItemClick = (item) => {
     console.log('Selecteditem:', item);
     setFillContact(item);
@@ -479,12 +501,26 @@ function AddContacts() {
                         </Grid>
                         </Grid>
               </Box>
+              <Box className="row mb-3">
+              <Grid container spacing={3}>
+      <Grid item xs={6} md={6}>
+      <Button
+              style={{ marginTop: "5px" }}
+              variant="contained"
+              disabled={!clientData || !selectedFolderID}
+              onClick={handleSubmit}
+            >
+              Add New Contact
+            </Button>{" "}
+                        </Grid>
+                        </Grid>
+              </Box>
                         </Box>
                        
                     </TabPanel>
 
                     <TabPanel value="2" className='p-0'>
-                        <ClientAddress></ClientAddress>
+                        {/* <ClientAddress></ClientAddress> */}
                     </TabPanel>
                     <TabPanel value="3">
                         <Contact></Contact>

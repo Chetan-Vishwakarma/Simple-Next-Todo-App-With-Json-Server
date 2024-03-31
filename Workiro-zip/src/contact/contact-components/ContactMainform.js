@@ -3,8 +3,14 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
 import { FormControl } from "@mui/material";
-import { FormControlLabel, Switch } from "@mui/material";
+import {  Switch } from "@mui/material";
 import CommanCLS from "../../services/CommanService";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 const ContactMainform = React.memo(
   ({ contact,clientNames, userContactDetails, setContactDetails }) => {
     console.log(userContactDetails, "userContactDetails");
@@ -12,8 +18,10 @@ const ContactMainform = React.memo(
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
-    const [intUserid, setIntUserid] = useState(localStorage.getItem("UserId"));
-
+    const [Dataset, setDataset] = useState("");
+    const [mainCountry, setMainCountry] = useState(
+      countries.find((country) => country.label === "United Kingdom")?.label
+    );
     const [mangers, setMangers] = useState([]); // State to hold folders data
     // const defaultUser1 = mangers.find((manager) => manager.UserId == intUserid);
     const [defaultUser, setDefaultUser] = useState(null);
@@ -95,7 +103,7 @@ const ContactMainform = React.memo(
         // setSelectedUserId(value.UserId);
         // console.log(value.UserId, "UserId", selectedUserId);
         let data = { ...userContactDetails };
-        data = { ...data, ["MainUserId"]: value.UserId };
+        data = { ...data, ["MainUserId"]: value.UserId,["MainUserName"]:value.UserName };
         console.log(defaultUser, "dataOnchange111",value);
         setDefaultUser(value);
         setContactDetails(data);
@@ -108,18 +116,23 @@ const ContactMainform = React.memo(
     const onChangetitle = (event, value) => {
       event.preventDefault();
       if (value) {
-        // Update the selectedFolderID state with the FolderID of the selected option
-        // managerData = value.UserId;
-        // setSelectedUserId(value.UserId);
-        // console.log(value.UserId, "UserId", selectedUserId);
         let data = { ...userContactDetails };
         data = { ...data, ["Title"]: value.label };
         console.log(data, "onChangetitle");
         setContactDetails(data);
       } else {
-        // If no option is selected, clear the selectedFolderID state
-        // setSelectedUserId(null);
       }
+    };
+    const handleInputOnDateChage = (event, value) => {
+      // event.preventDefault();
+     
+        let date = dayjs(event).format("YYYY/MM/DD");
+        let data = { ...userContactDetails };
+        data = { ...data, ["BirthDate"]: date };
+        console.log(data, "onChangetitle");
+        setDataset(date);
+        setContactDetails(data);
+      
     };
     const onChangecountry = (event, value) => {
       event.preventDefault();
@@ -131,6 +144,7 @@ const ContactMainform = React.memo(
         let data = { ...userContactDetails };
         data = { ...data, ["Maincontactcountry"]: value.label };
         console.log(data, "onChangetitle");
+        setMainCountry(value.label);
         setContactDetails(data);
       } else {
         // If no option is selected, clear the selectedFolderID state
@@ -167,6 +181,7 @@ const ContactMainform = React.memo(
         ["billingsCountry"]: "",
         ["ragistersCountry"]: "",
         ["ReferenceID"]: clientNames,
+        ["BirthDate"]: Dataset
       };
       setContactDetails(data);
     }, [contact]);
@@ -177,14 +192,7 @@ const ContactMainform = React.memo(
           <Grid item xs={6} md={6}>
             <FormControl fullWidth variant="outlined">
               <Autocomplete
-                // {...userlistdata}
                 options={titleData}
-                // options={mangers.map((manager: UserList) => ({
-                //   id: manager.UserId,
-                //   label: manager.UserName
-                // }))}
-                // getOptionLabel={(option:any) => option.label}
-                // id={`clear-on-escape-manager`}
                 key={`uniques-manager`}
                 // value={defaultUser || null}
                 onChange={onChangetitle}
@@ -226,7 +234,48 @@ const ContactMainform = React.memo(
               onChange={onChange}
             />
           </Grid>
+          <Grid item xs={6} md={6}>
+            <FormControl fullWidth variant="outlined">
+              <Autocomplete
+                options={titleData}
+                key={`uniques-roles`}
+                // value={defaultUser || null}
+                // onChange={onChangeRoles}
+                clearOnEscape
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    key={`titlemain`}
+                    name="Role"
+                    // onChange={onChange}
+                    label="Role"
+                    variant="outlined"
+                  />
+                )}
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={6} md={6}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DemoContainer
+                    components={[
+                      "DatePicker",
+                      "TimePicker",
+                      "DateTimePicker",
+                      "DateRangePicker",
+                    ]}
+                  >
 
+                    <DatePicker
+                      // dateFormat="DD/MM/YYYY"
+                      // value={currentDate}
+                      
+                      onChange={(e) => handleInputOnDateChage(e)}
+                    />
+
+                  </DemoContainer>
+                </LocalizationProvider>
+          </Grid>
           <Grid item xs={6} md={6}>
             <TextField
               fullWidth
@@ -398,6 +447,11 @@ const ContactMainform = React.memo(
               <Autocomplete
                 options={countries}
                 key={`maincontact-Country`}
+                getOptionLabel={(option) => option.label}
+                value={countries.find(
+                  (country) => country.label === mainCountry
+                )}
+                onChange={onChangecountry}
                 // value={defaultUser || null}
                 // onChange={onChangeuser}
                 clearOnEscape
@@ -406,7 +460,7 @@ const ContactMainform = React.memo(
                     {...params}
                     key={`Countrymain`}
                     name="Country"
-                    onChange={onChangecountry}
+                    // onChange={onChangecountry}
                     label="Country"
                     variant="outlined"
                   />
