@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import user from "../images/user.jpg";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommanCLS from '../services/CommanService';
@@ -12,9 +12,12 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import DescriptionIcon from '@mui/icons-material/Description';
 import PushPinIcon from '@mui/icons-material/PushPin';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import moment from 'moment';
+import DocumentsVewModal from '../client/utils/DocumentsVewModal';
+import { toast } from 'react-toastify';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
-
 
 function NewTodoList() {
 
@@ -24,21 +27,24 @@ function NewTodoList() {
 
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
-
-
-
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+    const baseUrlPortal = "https://sharepoint.docusoftweb.com/dsdesktopwebservice.asmx/";
+    const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
+    let ClsSms = new CommanCLS(baseUrl, agrno, Email, password);
     let Cls = new CommanCLS(baseUrlPractice, agrno, Email, password);
+    let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
     //let Clsp = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
     const [allTask, setAllTask] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
 
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [userName, setUserName] = React.useState(null);
+    const [recentDocument, setRecentDocument] = React.useState([]);
 
-    const [loadMore, setLoadMore] = useState(20);
 
+    const [loadMore, setLoadMore] = useState(9);
 
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -47,6 +53,29 @@ function NewTodoList() {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const Json_Get_CRM_UserByProjectId = () => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ProjectId: folderId
+        };
+        ClsSms.Json_Get_CRM_UserByProjectId(obj, (sts, data) => {
+            if (sts) {
+                if (data) {
+                    let json = JSON.parse(data);
+                    console.log("Json_Get_CRM_UserByProjectId", json.Table);
+                    json.Table.map((item) => {
+                        if (item.loggedInUser === "True") {
+                            setUserName(item.DisplayName);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     const Json_CRM_GetOutlookTask = () => {
         let obj = {
             agrno: agrno,
@@ -54,11 +83,11 @@ function NewTodoList() {
             password: password
         };
         try {
-            Cls.Json_CRM_GetOutlookTask(obj, (sts, data) => {
+            Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_CRM_GetOutlookTask", json.Table);
+
                         const formattedTasks = json.Table.map((task) => {
                             let timestamp;
                             if (task.EndDateTime) {
@@ -70,7 +99,42 @@ function NewTodoList() {
                             return { ...task, EndDateTime: date };
                         });
 
-                        setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
+                        // Sorting by EndDateTime
+                        formattedTasks.sort((a, b) => b.EndDateTime - a.EndDateTime);
+
+                        console.log("Json_CRM_GetOutlookTask", formattedTasks);
+                        setAllTask(formattedTasks);
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_CRM_GetOutlookTask", err);
+        }
+    }
+
+
+
+    const Json_getRecentTaskList = () => {
+
+        try {
+            ClsPortal.Json_getRecentTaskList((sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_getRecentTaskList", json);
+
+                        // const formattedTasks = json.Table.map((task) => {
+                        //     let timestamp;
+                        //     if (task.EndDateTime) {
+                        //         timestamp = parseInt(task.EndDateTime.slice(6, -2));
+                        //     }
+
+                        //     const date = new Date(timestamp);
+
+                        //     return { ...task, EndDateTime: date };
+                        // });
+
+                        //setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
                         // setAllTask(json.Table);
                     }
                 }
@@ -83,15 +147,78 @@ function NewTodoList() {
     const [isApi, setIsApi] = useState(false);
 
 
-    const eventHandler = (e) => {
-        if (window.innerHeight + e.target.documentElement.scrollTop + 1 >= e.target.documentElement.scrollHeight) {
-            setLoadMore((preValue) => preValue + 20);
+    const Json_ExplorerSearchDoc = () => {
+        try {
+            let obj = {};
+            obj.ProjectId = folderId;
+            obj.ClientId = "";
+            obj.sectionId = "-1";
+            Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
+                if (sts && data) {
+                    //console.log("ExplorerSearchDoc", JSON.parse(data));
+                    let json = JSON.parse(data);
+                    if (json?.Table6?.length > 0) {
+
+                        // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
+                        let docs = json.Table6;
+
+                        if (docs?.length > 0) {
+                            console.log("ExplorerSearchDoc", docs);
+                            Json_getRecentDocumentList(docs)
+                        }
+                    }
+                }
+            })
+        } catch (error) {
+            console.log("ExplorerSearchDoc", error)
         }
     }
 
+    const Json_getRecentDocumentList = (exData = []) => {
+
+        try {
+            ClsPortal.Json_getRecentDocumentList((sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        let tbl = json.Table;
+
+                        const itemIdSet = new Set(tbl.map(item => item.ItemId));
+                        console.log("Json_getRecentDocumentList", itemIdSet);
+
+                        if (exData.length > 0) {
+                            const filteredArray2 = exData.filter(item => itemIdSet.has(item["Registration No."]));
+                            console.log("Json_getRecentDocumentList1", filteredArray2);
+                            if (filteredArray2.length > 0) {
+                                setRecentDocument(filteredArray2);
+                            }
+
+                        }
+
+
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_getRecentDocumentList", err);
+        }
+    }
+
+
+
+    const handleLoadMore = () => {
+        // Increase the number of items to display by, for example, 5 when the button is clicked
+        setLoadMore(prevLoadMore => prevLoadMore + 9);
+    };
+
     useEffect(() => {
+        Json_getRecentDocumentList();
+        Json_ExplorerSearchDoc();
+        Json_Get_CRM_UserByProjectId();
         Json_CRM_GetOutlookTask();
-        window.addEventListener('scroll', eventHandler)
+        Json_getRecentTaskList();
+
+
     }, [isApi])
 
 
@@ -119,12 +246,71 @@ function NewTodoList() {
     // modal
     const [openModal, setOpen] = React.useState(false);
 
-    const handleClickOpen = (task = selectedTask) => {
+    const handleClickOpen = (task = selectedTask) => { 
         setSelectedTask(task);
-
         setOpen(true);
     };
 
+   
+
+    function returnMessageStatus(status) {
+        if (status === "Completed") {
+            return "Task Completed!";
+        } else {
+            return `Task status set to ${status}.`;
+        }
+    }
+    const MarkComplete=(e)=>{
+        console.log("MarkComplete",e)
+        Cls.ConfirmMessage("Are you sure you want to complete task",function(res){
+            if(res){
+                Json_UpdateTaskField("Status", "Completed",e);
+            }
+        })
+    }
+    function Json_UpdateTaskField(FieldName, FieldValue,e) {
+        let o = {
+            agrno: agrno,
+            strEmail: Email,
+            password: password,
+            TaskId: e.ID,
+            FieldName: FieldName,
+            FieldValue: FieldValue
+        }      
+        
+        ClsSms.Json_UpdateTaskField(o, function (sts, data) {
+            if (sts && data) {
+                if (data === "Success") {
+                    toast.success("Completed")
+                    Json_AddSupplierActivity(e);
+                }
+                console.log("Json_UpdateTaskField", data)
+            }
+        })
+    }
+
+    const Json_AddSupplierActivity = (e) => {
+        let obj = {};
+        obj.OriginatorNo = e.ClientNo;
+        obj.ActionReminder = "";
+        obj.Notes = "Completed by "+ e["Forwarded By"];
+        obj.Status = "sys"; //selectedTask.Status;
+        obj.TaskId = e.ID;
+        obj.TaskName = "";
+        obj.ActivityLevelID = "";
+        obj.ItemId = "";
+
+        try {
+            ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
+                if (sts && data) {
+                    console.log({ status: true, messages: "Success",res:data }); 
+                    Json_CRM_GetOutlookTask()                  
+                }
+            });
+        } catch (error) {
+            console.log({ status: false, messages: "Faild Please Try again" });
+        }
+    };
 
     // details dropdown
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState(null);
@@ -134,9 +320,40 @@ function NewTodoList() {
         event.stopPropagation();
         setAnchorElDocumentList(event.currentTarget);
     };
+
     const handleCloseDocument = () => {
         setAnchorElDocumentList(null);
     };
+
+    const handleDowloadDocument = (e) => {
+        setAnchorElDocumentList(null);
+        console.log("document object", e);
+        let o = { ItemId: e["Registration No."] };
+        ClsSms.Json_GetItemBase64DataById(o, function (sts, data) {
+            if (sts && data) {
+                // console.log("Json_GetItemBase64DataById",data)
+                let ankr = document.createElement("a");
+                ankr.href = `data:application/octet-stream;base64,${data}`;
+                ankr.download = e.Path;
+                ankr.click();
+            }
+        })
+    };
+
+    const [selectedDocument, setSelectedDocument] = React.useState(null);
+    const [openPDFView, setOpenPDFView] = React.useState(false);
+
+    const ViewerDocument = (e) => {
+        setAnchorElDocumentList(null);
+        console.log("document object", e);
+        setSelectedDocument(e);
+        setOpenPDFView(true); 
+    //    let url =`https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=1002909&filetype=txt&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=&PortalID=`;
+    // window.open(url);
+       
+    };
+
+   
 
 
     // Document details List
@@ -148,8 +365,21 @@ function NewTodoList() {
         setOpenDocumentDetailsList(false);
     };
 
+    function startFormattingDate(dt) {
+        //const timestamp = parseInt(/\d+/.exec(dt));
+        const date = new Date(dt);
+        const formattedDate = date.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        });
+
+        return formattedDate === "Invalid Date" ? " " : formattedDate;
+    }
+
     return (
         <Box className="container-fluid p-0">
+            <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
             <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
             <Box className='d-flex flex-wrap align-items-end justify-content-end'>
@@ -171,17 +401,34 @@ function NewTodoList() {
                     </Box>
                 </Box> */}
 
-                <Box className='mb-3'>
+                {/* <Box className='mb-3'>
                     <Button variant="text" className='btn-blue-2 mb-2 ms-2'>Task Due Soon</Button>
                     <Button variant="text" className='btn-blue-2 mb-2 ms-2'>Recently Updated</Button>
                     <Button variant="text" className='btn-blue-2 mb-2 ms-2'>Pinned Task</Button>
-                    <Button variant="text" className='btn-blue-2 mb-2 ms-2'>Recently Access Documents</Button>
-                </Box>
+                    <Button variant="text" className='btn-blue-2 mb-2 ms-2'>Recently Accessed Documents</Button>
+                </Box> */}
             </Box>
 
-            <Box className='clearfix'>
 
-                <Typography variant='subtitle1' className='font-18 bold mb-2'>Task Due Soon</Typography>
+            {/*  */}
+            <Box className='no-touch'>
+                <nav class="cd-vertical-nav">
+                    <ul>
+                        <li><a href="#section1" class="active"><span class="label">Task Due <br />Soon</span>
+                            <EventNoteIcon className='hover-icon' />
+                        </a></li>
+                        <li><a href="#section2" class=""><span class="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li><a href="#section3" class=""><span class="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li><a href="#section4" class=""><span class="label">Recently Accessed Documents</span><EventNoteIcon className='hover-icon' /></a></li>
+                    </ul>
+                </nav>
+            </Box>
+            {/*  */}
+
+            <Box className='pe-5'>
+
+                <Typography variant='subtitle1' className='font-20 bold mb-0'>Welcome {userName}</Typography>
+                <Typography variant='subtitle1' className='font-16 bold mb-2'>The following tasks are due soon:</Typography>
 
                 <Box className='row'>
                     {/* {
@@ -253,32 +500,40 @@ function NewTodoList() {
                     } */}
 
 
-                    {Array(9).fill("").map(() => {
+                    {allTask.length > 0 ? allTask.slice(0, loadMore).map((item, index) => {
+                        const arr = item.AssignedToID.split(",").map(Number);
+
+                        const priority = item.Priority === 1 ? "High" :
+                            item.Priority === 2 ? "Normal" :
+                                item.Priority === 3 ? "Low" : "Normal";
+
+
+
                         return <>
 
-                            <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                            <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                 <Box className='todo-list-box white-box relative w-100'
-                                    onClick={() => handleClickOpen()}>
+                                    onDoubleClick={() => handleClickOpen(item)}>
 
-                                    <Radio className='text-red check-todo'
+                                    <Radio className='check-todo'
                                         checked
                                         sx={{
                                             '&.Mui-checked': {
-                                                color: "secondary",
-                                            },
+                                                color: item.Priority === 1 ? "red" : item.Priority === 2?"secondary":item.Priority === 3?"green":"primary"
+                                            }
                                         }}
                                     />
 
-                                    <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> Signature Tast</Typography>
+                                    <Typography variant='subtitle1 mb-3 d-block'><strong>Type: </strong> {item.Source} </Typography>
 
-                                    <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography>
+                                    <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
 
                                     <Box className='d-flex align-items-center justify-content-between'>
                                         <Typography variant='subtitle1' ><pan className='text-gray'>
-                                            You <ArrowForwardIosIcon className='font-14' /> </pan>
-                                            <a href='#'>Patrick</a>,
-                                            <a href='#'>Patrick</a> <a href='#'> +2</a></Typography>
-                                        <Typography variant='subtitle1 sembold'>01/05/23</Typography>
+                                            <a href='#'>{item.UserName}</a> <ArrowForwardIosIcon className='font-14' /> </pan>
+
+                                            <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +{arr.length}</a></Typography>
+                                        <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                     </Box>
 
                                     <Box className='d-flex align-items-center justify-content-between'>
@@ -292,8 +547,12 @@ function NewTodoList() {
                                                     aria-haspopup="true"
                                                     aria-expanded={open ? 'true' : undefined}
                                                     onClick={handleClick}
+                                                    className='font-14'
+                                                    sx={{
+                                                        color: item.mstatus === "Completed" ? "green" : "primary"
+                                                    }}
                                                 >
-                                                    priority
+                                                    {item.mstatus}
                                                 </Button>
                                                 <Menu
                                                     id="basic-menu"
@@ -315,8 +574,8 @@ function NewTodoList() {
                                     </Box>
 
                                     <Box className='mt-2'>
-                                        <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
-                                        <Button variant="outlined">Defer</Button>
+                                        <Button variant="text" className='btn-blue-2 me-2' onClick={()=>MarkComplete(item)}>Mark Complete</Button>
+                                        <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
                                     </Box>
 
                                 </Box>
@@ -324,18 +583,21 @@ function NewTodoList() {
                             {/* col end */}
 
                         </>
-                    })}
+                    }) : ""}
                 </Box>
 
                 <Box className='py-4 text-center'>
-                    <Button variant="outlined">View More</Button>
+                    <Button variant="outlined" onClick={handleLoadMore}>View More</Button>
                 </Box>
 
                 {/* row end */}
                 <hr />
 
+                {/* <Typography variant='subtitle1' className='font-20 bold mb-0'>Welcome Patirck</Typography>
+                <Typography variant='subtitle1' className='font-16 bold mb-2'>The following tasks are due soon:</Typography> */}
 
-                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>Recently Updated</Typography>
+
+                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>The following tasks were recently updated: </Typography>
 
                 <Box className='row'>
                     {Array(9).fill("").map(() => {
@@ -404,7 +666,7 @@ function NewTodoList() {
 
                                     <Box className='mt-2'>
                                         <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
-                                        <Button variant="outlined">Defer</Button>
+                                        <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
                                     </Box>
 
                                     <Box className="todo-list-details d-flex align-items-center user-dropdown">
@@ -425,14 +687,12 @@ function NewTodoList() {
                     })}
                 </Box>
 
-                <Box className='py-4 text-center'>
-                    <Button variant="outlined">View More</Button>
-                </Box>
+
 
                 {/* row end */}
                 <hr />
 
-                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>Pinned Task</Typography>
+                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>You pinned the following tasks:</Typography>
 
                 <Box className='row'>
                     {Array(9).fill("").map(() => {
@@ -507,7 +767,7 @@ function NewTodoList() {
 
                                     <Box className='mt-2'>
                                         <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
-                                        <Button variant="outlined">Defer</Button>
+                                        <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
                                     </Box>
 
                                 </Box>
@@ -522,15 +782,15 @@ function NewTodoList() {
 
                 {/* row end */}
                 <hr />
-                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>Recently Access Documents</Typography>
+                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>You accessed the following documents recently:</Typography>
 
                 {/* <DocumentDetails></DocumentDetails> */}
 
                 <Box className='row'>
-                    {Array(20).fill("").map(() => {
+                    {recentDocument.length > 0 ? recentDocument.map((item, index) => {
                         return <>
 
-                            <Box className='col-xxl-3 col-xl-4 col-md-6'>
+                            <Box className='col-xxl-3 col-xl-4 col-md-6' key={index}>
                                 <Box className="file-uploads">
                                     <label className="file-uploads-label file-uploads-document">
                                         <Box className="d-flex align-items-center">
@@ -543,12 +803,14 @@ function NewTodoList() {
                                                 }}
                                                 className='me-2 ms-0'
                                             />
-                                            <Box className="upload-content pe-3">
+                                            <Box className="upload-content pe-3" onDoubleClick={(e) => ViewerDocument(item)}>
                                                 <Typography variant="h4" >
-                                                    lorem ipsome dolor site amet
+                                                    {item.Description}
                                                 </Typography>
                                                 <Typography variant="body1">
-                                                    Size:  <span className='sembold'>0.00 KB</span> | Date <span className='sembold'>09/03/2024</span>
+                                                    {/* Size:  <span className='sembold'>{item.FileSize}</span> |   */}
+                                                    <span className='sembold'>{moment(item["Item Date"]).format("DD/MM/YYYY")}</span>
+                                                    | Uploaded by <span className='sembold'>Patrick</span>
                                                 </Typography>
                                             </Box>
                                         </Box>
@@ -592,12 +854,12 @@ function NewTodoList() {
                                                         <DriveFileRenameOutlineIcon fontSize="medium" />
                                                     </ListItemIcon>
                                                     Rename Document</MenuItem>
-                                                <MenuItem onClick={handleCloseDocument}>
+                                                <MenuItem onClick={handleCloseDocument} >
                                                     <ListItemIcon>
                                                         <TravelExploreIcon fontSize="medium" />
                                                     </ListItemIcon>
                                                     Open in Browser</MenuItem>
-                                                <MenuItem onClick={handleCloseDocument}>
+                                                <MenuItem onClick={(e) => handleDowloadDocument(item)}>
                                                     <ListItemIcon>
                                                         <CloudDownloadIcon fontSize="medium" />
                                                     </ListItemIcon>
@@ -609,7 +871,7 @@ function NewTodoList() {
                             </Box>
 
                         </>
-                    })}
+                    }) : ""}
 
                 </Box>
 

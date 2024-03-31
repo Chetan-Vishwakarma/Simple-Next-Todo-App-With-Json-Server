@@ -16,6 +16,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import CustomBreadCrumbs from '../components/CustomBreadCrumbs';
 
 
 const CommonFilters = [
@@ -98,10 +100,26 @@ function Client() {
     const [selectedPropertyValue, setSelectedPropertyValue] = useState("");
     const colorArr = ["#e26124", "#20aedb", "#075adb", "#be1de8", "#00983b", "#ed32b3"];
 
+
+    // new functionality for colors start
+    const [exclusionArr, setExclusionArr] = useState([]);
+    const filteredColors = colorArr.filter(color => !exclusionArr.includes(color));
+    // const [actualColors, setActualColors] = useState(filteredColors);
+    const getRandomColors = (arr, num) => {
+        const result = [];
+        for (let i = 0; i < num; i++) {
+            const randomIndex = Math.floor(Math.random() * arr.length);
+            result.push(arr[randomIndex]);
+            arr.splice(randomIndex, 1); // Remove the selected color from the array to prevent duplicates
+        }
+        return result;
+    }
+    const TwoColors = getRandomColors(filteredColors, 2);
+    const [actualColors, setActualColors] = useState(TwoColors);
+    // new functionality for colors start
+
+
     const [isFirstColorSelected, setIsFirstColorSelected] = useState(true);
-    const [firstAdvFilterResult, setFirstAdvFilterResult] = useState([]);
-    const [secondAdvFilterResult, setSecondAdvFilterResult] = useState([]);
-    const [thirdAdvFilterResult, setThirdAdvFilterResult] = useState([]);
     // advance filter states ends
     // search box states start
     const [isSearch, setIsSearch] = useState(false);
@@ -115,12 +133,13 @@ function Client() {
     const [objFilterClient, setObjFilterClient] = useState({});
     const [objFilterColor, setObjFilterColor] = useState({});
 
-    const [selectedColor, setSelectedColor] = useState(Object.keys(objFilter).length === 1 ? colorArr[2] : Object.keys(objFilter).length === 2 ? colorArr[4] : colorArr[0]);
+    const [selectedColor, setSelectedColor] = useState(actualColors[0]);
 
     const [selectedPropertyForClient, setSelectedPropertyForClient] = useState("");
     const [isDataNotFoundInClient, setIsDataNotFoundInClient] = useState(false);
     const [isDataNotFoundInContact, setIsDataNotFoundInContact] = useState(false);
     const [isDataNotFoundInBoth, setIsDataNotFoundInBoth] = useState(false);
+    const [loadMore, setLoadMore] = useState(20);
 
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -218,12 +237,18 @@ function Client() {
         })
         return data;
     }
+    const eventHandler = (e) => {
+        if (window.innerHeight + e.target.documentElement.scrollTop + 1 >= e.target.documentElement.scrollHeight) {
+            setLoadMore((preValue) => preValue + 20);
+        }
+    }
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
         Json_GetSupplierListByProject();
+        window.addEventListener('scroll', eventHandler)
     }, []);
     const basedOnClientContactAndAll = (target) => {
         setSelectedChoice(target);
@@ -249,7 +274,7 @@ function Client() {
         setSearchInput(value);
         // for clients filter
         let filteredClientData = clients.filter((item) => {
-            return item["Company Name"]!=="" && item["Company Name"].toLowerCase().includes(searchInput.toLowerCase());
+            return item["Company Name"] !== "" && item["Company Name"].toLowerCase().includes(searchInput.toLowerCase());
         });
         if (value === "") {
             setClientsForSearchBoxNotFound(false);
@@ -264,7 +289,7 @@ function Client() {
         }
         // for contacts filter
         let filteredContactData = contacts.filter((item) => {
-            return (item["First Name"]!=="" || item["Last Name"]) && `${item["First Name"]} ${item["Last Name"]}`.toLowerCase().includes(searchInput.toLowerCase());
+            return (item["First Name"] !== "" || item["Last Name"]) && `${item["First Name"]} ${item["Last Name"]}`.toLowerCase().includes(searchInput.toLowerCase());
         });
         if (value === "") {
             setContactsForSearchBoxNotFound(false);
@@ -297,13 +322,27 @@ function Client() {
         });
     }
     let handleAdvanceFilterAgain = () => {
+
+
+        let test = [...exclusionArr, selectedColor];
+        setExclusionArr([...exclusionArr, selectedColor]);
+        const filteredColors = colorArr.filter(color => !test.includes(color));
+        const TwoColors = getRandomColors(filteredColors, 2);
+        setActualColors(TwoColors);
+        setSelectedColor(TwoColors[0]);
+
+
         if (selectedProperty !== "" && selectedPropertyValue !== "") {
             if (selectedChoice === "Clients") {
+
                 let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
                 setObjFilter(obj);
-                let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
-                let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
+                // let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
+                // let obj2 = { ...objFilterColor, [selectedProperty]: [selectedColor] };
+                let obj2 = { ...objFilterColor, [selectedProperty]: [selectedColor] };
                 setObjFilterColor(obj2);
+                // setSelectedColor(Object.keys(obj).length === 1 ? colorArr[2] : Object.keys(obj).length === 2 ? colorArr[4] : colorArr[5]);
+                setIsFirstColorSelected(true);
                 let fltData = handleSearchBy(clients, obj);
                 setFilteredClients(fltData);
                 // console.log("Filtered Clients: ",fltData.length);
@@ -316,9 +355,11 @@ function Client() {
             } else if (selectedChoice === "Contacts") {
                 let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
                 setObjFilter(obj);
-                let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
-                let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
+                // let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
+                let obj2 = { ...objFilterColor, [selectedProperty]: [selectedColor] };
                 setObjFilterColor(obj2);
+                // setSelectedColor(Object.keys(obj).length === 1 ? colorArr[2] : Object.keys(obj).length === 2 ? colorArr[4] : colorArr[5]);
+                setIsFirstColorSelected(true);
                 let fltData = handleSearchBy(contacts, obj);
                 setFilteredContacts(fltData);
                 // console.log("Filtered Clients: ",fltData.length);
@@ -331,9 +372,11 @@ function Client() {
             } else if (selectedChoice === "All") {
                 let obj = { ...objFilter, [selectedProperty]: [selectedPropertyValue] };
                 setObjFilter(obj);
-                let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
-                let obj2 = { ...objFilterColor, [selectedProperty]: [color] };
+                // let color = Object.keys(obj).length === 1 ? colorArr[0] : Object.keys(obj).length === 2 ? colorArr[2] : colorArr[4]
+                let obj2 = { ...objFilterColor, [selectedProperty]: [selectedColor] };
                 setObjFilterColor(obj2);
+                // setSelectedColor(Object.keys(obj).length === 1 ? colorArr[2] : Object.keys(obj).length === 2 ? colorArr[4] : colorArr[5]);
+                setIsFirstColorSelected(true);
 
                 // if (onlyClients) {
                 let obj4 = { ...objFilterClient, [selectedPropertyForClient]: [selectedPropertyValue] };
@@ -363,7 +406,7 @@ function Client() {
         }
     }
 
-    let handleFilterDeletion = (target) => {
+    let handleFilterDeletion = (target, colorForRemove) => {
         // console.log("target", target);
         let obj = Object.keys(objFilter).filter(objKey =>
             objKey !== target).reduce((newObj, key) => {
@@ -372,6 +415,16 @@ function Client() {
             }, {}
             );
         // console.log("obj",obj);
+
+        // for new color changing functionality start
+        let fltColor = exclusionArr.filter(icol => icol !== colorForRemove);
+        setExclusionArr(fltColor);
+        const filteredColors = colorArr.filter(color => !fltColor.includes(color));
+        const TwoColors = getRandomColors(filteredColors, 2);
+        setActualColors(TwoColors);
+        setSelectedColor(TwoColors[0]);
+        // for new color changing functionality end
+
 
         if (selectedChoice === "Clients") {
             let fltData = handleSearchBy(clients, obj);
@@ -459,6 +512,8 @@ function Client() {
         }
         setObjFilter({});
         setObjFilterClient({});
+        setSelectedColor(actualColors[0]);
+        setExclusionArr([]);
     }
 
 
@@ -473,8 +528,8 @@ function Client() {
             });
         });
     }
-    useEffect(() => {
 
+    useEffect(() => {
         filterData(clients, advSearchKeyValue);
     }, [advSearchKeyValue]);
 
@@ -490,6 +545,7 @@ function Client() {
             setAdvSearchKeyValue(advSearchKeyValue.filter((item) => item.key !== target));
         }
     }
+
     let handleDialogsOpen = (e, toOpen) => {
         e.stopPropagation();
         if (toOpen === "Folder") {
@@ -541,7 +597,8 @@ function Client() {
                 Email: Email,
                 password: password,
                 folderId: folderId,
-                originatorNo: clientId
+                originatorNo: clientId,
+                globalSearchDocs:[]
             }
         })
     }
@@ -553,7 +610,7 @@ function Client() {
         let fltRepeatData = [];
         data.map((itm) => {
             if (itm[value] && itm[value] !== "" && itm[value] !== null && itm[value] !== undefined && itm[value] !== "null" && itm[value] !== "undefined") {
-                return itm[value];
+                return String(itm[value]);
             }
         }).filter((flt) => {
             if (flt && flt !== "undefined" && flt !== undefined) {
@@ -566,20 +623,34 @@ function Client() {
     }
 
     function handleSuggestionList(value, label) {
-        if (selectedChoice==="Contacts") {
-            let fltRepeatData = createSuggestionList(value, contacts);
-            setSuggestionList(fltRepeatData);
+        if (selectedChoice === "Contacts") {
+            if (filteredContacts.length > 0) {
+                let fltRepeatData = createSuggestionList(value, filteredContacts);
+                setSuggestionList(fltRepeatData);
+                return;
+            } else {
+                let fltRepeatData = createSuggestionList(value, contacts);
+                setSuggestionList(fltRepeatData);
+                return;
+            }
             //console.log("Contacts's Property suggestion list",fltRepeatData);
 
-        } else if (selectedChoice==="Clients") {
-            let fltRepeatData = createSuggestionList(value, clients);
-            setSuggestionList(fltRepeatData);
-            
-        } else if (selectedChoice==="All") {
+        } else if (selectedChoice === "Clients") {
+            if (filteredClients.length > 0) {
+                let fltRepeatData = createSuggestionList(value, filteredClients);
+                setSuggestionList(fltRepeatData);
+                return;
+            } else {
+                let fltRepeatData = createSuggestionList(value, clients);
+                setSuggestionList(fltRepeatData);
+                return;
+            }
+
+
+        } else if (selectedChoice === "All") {
             let list1 = createSuggestionList(label, clients);
             let list2 = createSuggestionList(value, contacts);
             let fltRepeatData = [...list1];
-            // console.log("Suggestion for both client and contact",fltRepeatData);
 
             list2.filter((itm) => {
                 if (!fltRepeatData.includes(itm)) {
@@ -587,7 +658,6 @@ function Client() {
                 }
             });
             setSuggestionList(fltRepeatData);
-            // console.log("Suggestion for both client and contact",fltRepeatData);
         }
     }
 
@@ -603,7 +673,7 @@ function Client() {
     return (
         <Box className='container-fluid p-0' onClick={handleClick}>
 
-
+            <CustomBreadCrumbs tabs={[{tabLink:"/dashboard/Connections",tabName:"Connections"}]}/>
 
 
             {/* <div role="presentation" className='mb-2 mb-3 '>
@@ -639,23 +709,27 @@ function Client() {
                                             className={isSearch ? 'Mui-focused' : ''}>
                                             <span className="material-symbols-outlined search-icon">search</span>
 
-                                            <Input onClick={(e) => handleDialogsOpen(e, "Search")} onChange={(e) => handleSearch(e.target.value)} placeholder='Search' className='ps-0' />
+                                            <Input 
+                                                onClick={(e) => handleDialogsOpen(e, "Search")} 
+                                                onChange={(e) => handleSearch(e.target.value)} 
+                                                placeholder='Search' 
+                                                className='ps-0' />
                                         </AutocompleteRoot>
 
-                                    {isSearch && <Listbox sx={{ zIndex: 1 }}>
-                                        {filteredClientsForSearchBox.length > 0 ? filteredClientsForSearchBox.map((option, i) => (
-                                            <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}>
-                                                <ApartmentIcon className='me-1' />
-                                                {option["Company Name"]}</Option>
-                                        )) : clientsForSearchBoxNotFound ? <></> : clients.map((option, i) => (
-                                            <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}><ApartmentIcon className='me-1' />{option["Company Name"]}</Option>
-                                        ))}
-                                        {filteredContactsForSearchBox.length > 0 ? filteredContactsForSearchBox.map((option, i) => (
-                                            <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo, option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
-                                        )) : contactsForSearchBoxNotFound ? <></> : contacts.map((option, i) => (
-                                            <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo, option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
-                                        ))}
-                                    </Listbox>}
+                                        {isSearch && <Listbox sx={{ zIndex: 1 }}>
+                                            {filteredClientsForSearchBox.length > 0 ? filteredClientsForSearchBox.map((option, i) => (
+                                                <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}>
+                                                    <ApartmentIcon className='me-1' />
+                                                    {option["Company Name"]}</Option>
+                                            )) : clientsForSearchBoxNotFound ? <></> : clients.map((option, i) => (
+                                                <Option key={i} onClick={() => handleClientNavigation(option.OriginatorNo)}><ApartmentIcon className='me-1' />{option["Company Name"]}</Option>
+                                            ))}
+                                            {filteredContactsForSearchBox.length > 0 ? filteredContactsForSearchBox.map((option, i) => (
+                                                <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo, option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
+                                            )) : contactsForSearchBoxNotFound ? <></> : contacts.map((option, i) => (
+                                                <Option key={i} onClick={() => handleContactNavigattion(option.OriginatorNo, option.ContactNo)}><PersonIcon className='me-1' />{option["First Name"]} {option["Last Name"]}</Option>
+                                            ))}
+                                        </Listbox>}
 
                                     </AutocompleteWrapper>
                                 </Layout>
@@ -712,7 +786,7 @@ function Client() {
                                         <Box className='clearfix'>
 
                                             <Box className='clearfix'>
-                                                <Typography variant='Body1' className='mb-2 d-block  bold'>Filter:</Typography>
+                                                <Typography variant='Body1' className='mb-2 d-block  bold'>Filter: {Object.keys(objFilter).length}/3</Typography>
 
                                                 <Box className='d-flex justify-content-between'>
                                                     <Box className='row w-100 pe-3'>
@@ -811,6 +885,12 @@ function Client() {
 
                                                         <Box className="color-box">
                                                             {
+                                                                actualColors.map((itmColor, i) => <button onClick={(e) => {
+                                                                    setSelectedColor(itmColor);
+                                                                    setIsFirstColorSelected(i == 0 ? true : false);
+                                                                }} type='button' className={i == 0 ? (isFirstColorSelected ? 'btn-color selected' : 'btn-color') : (isFirstColorSelected ? 'btn-color' : 'btn-color selected')} style={{ backgroundColor: itmColor }}></button>)
+                                                            }
+                                                            {/* {
                                                                 Object.keys(objFilter).length === 0 && <><button onClick={(e) => {
                                                                     setSelectedColor(colorArr[0]);
                                                                     setIsFirstColorSelected(true);
@@ -836,28 +916,20 @@ function Client() {
                                                                     setIsFirstColorSelected(true);
                                                                 }} type='button' className={isFirstColorSelected ? 'btn-color selected' : 'btn-color'} style={{ backgroundColor: colorArr[4] }}></button>
                                                                     <button onClick={() => {
-                                                                        setSelectedColor(colorArr[4]);
+                                                                        setSelectedColor(colorArr[5]);
                                                                         setIsFirstColorSelected(false);
                                                                     }} type='button' className={isFirstColorSelected ? 'btn-color' : 'btn-color selected'} style={{ backgroundColor: colorArr[5] }}></button></>
-                                                            }
-                                                            {/* {
-                                                            advSearchKeyValue.length === 1 && <><button onClick={() => setSelectedColor(colorArr[2])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[2] }}></button>
-                                                                <button onClick={() => setSelectedColor(colorArr[3])} type='button' className='btn-color' style={{ backgroundColor: colorArr[3] }}></button></>
-                                                        }
-                                                        {
-                                                            advSearchKeyValue.length === 2 && <><button onClick={() => setSelectedColor(colorArr[4])} type='button' className='btn-color selected' style={{ backgroundColor: colorArr[4] }}></button>
-                                                                <button onClick={() => setSelectedColor(colorArr[5])} type='button' className='btn-color' style={{ backgroundColor: colorArr[5] }}></button></>
-                                                        } */}
+                                                            } */}
                                                         </Box>
                                                     </Box>
                                                 </Box>
 
 
                                                 <Box className='mt-2'>
-                                                    <Button onClick={handleAdvanceFilterAgain} variant="contained" size='small' color="success">
+                                                    <Button onClick={handleAdvanceFilterAgain} disabled={Object.keys(objFilter).length < 3 ? false : true} variant="contained" size='small' color="success">
                                                         <span class="material-symbols-outlined">
                                                             add
-                                                        </span> Add
+                                                        </span>
                                                     </Button>
                                                 </Box>
                                             </Box>
@@ -866,22 +938,7 @@ function Client() {
                                 </Box>
                                 {/*  */}
 
-                                <Box className="mb-2 ms-3">
-                                    {Object.keys(objFilter).map((item) => {
-                                        return <Button sx={{ backgroundColor: objFilterColor[item][0] }} className='btn-white text-white'><span className='text-white'>{item}: {objFilter[item][0]}</span>
-                                            <span onClick={() => handleFilterDeletion(item)} className="material-symbols-outlined font-16 text-white">
-                                                close
-                                            </span></Button>
-                                    })}
-
-                                    {Object.keys(objFilter).length > 0 && <span className='pointer text-danger ms-2' onClick={handleClearAll}>
-                                        <ClearIcon className='font-26' />
-                                    </span>}
-
-                                    {/* <Fab size="small" className='btn-plus  ms-2' aria-label="add">
-                                <AddIcon />
-                            </Fab> */}
-                                </Box></>}
+                            </>}
                         </Box>
 
                         <Box className=''>
@@ -932,10 +989,26 @@ function Client() {
                             </div>} */}
                     </Box>
 
+                    <Box className="">
+                        {Object.keys(objFilter).map((item) => {
+                            return <Button sx={{ backgroundColor: objFilterColor[item][0] }} className='btn-arrow'><span className='text-white me-1'>{item}: {objFilter[item][0]}</span>
+                                <span onClick={() => handleFilterDeletion(item, objFilterColor[item][0])} className="material-symbols-outlined font-16 text-white close">
+                                    close
+                                </span>
+                                <PlayArrowIcon className='arrow-icon' sx={{ color: objFilterColor[item][0] }} />
+                            </Button>
+                        })}
 
-                    <Box className='mt-4'>
-                        {isGridView && <ClientGrid selectedChoice={selectedChoice} data={selectedChoice === "All" || selectedChoice === "Contacts" ? contacts : clients} handleContactNavigattion={handleContactNavigattion} handleClientNavigation={handleClientNavigation} />}
+                        {Object.keys(objFilter).length > 0 && <span className='pointer text-danger ms-2' onClick={handleClearAll}>
+                            <ClearIcon className='font-26' />
+                        </span>}
+
+                        {/* <Fab size="small" className='btn-plus  ms-2' aria-label="add">
+                                <AddIcon />
+                            </Fab> */}
                     </Box>
+
+                    {isGridView && <Box className='mt-3'><ClientGrid selectedChoice={selectedChoice} data={selectedChoice === "All" || selectedChoice === "Contacts" ? contacts : clients} handleContactNavigattion={handleContactNavigattion} handleClientNavigation={handleClientNavigation} /></Box>}
 
                     <Box className='row'>
                         {isCardView && <CardView
@@ -976,6 +1049,8 @@ function Client() {
                             isDataNotFoundInContact={isDataNotFoundInContact}
                             isDataNotFoundInBoth={isDataNotFoundInBoth}
                             objFilterColor={objFilterColor}
+                            objFilterClient={objFilterClient}
+                            loadMore={loadMore}
                         />}
                     </Box>
                 </Box>

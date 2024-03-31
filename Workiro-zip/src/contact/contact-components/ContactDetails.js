@@ -57,6 +57,7 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Autocomplete from '@mui/material/Autocomplete';
 import TestPDF from '../TestPDF';
+import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
 
 
 
@@ -67,8 +68,6 @@ function ContactDetails() {
     const location = useLocation();
 
     const { agrno, Email, password, folderId, originatorNo, contactNo } = location.state;
-
-    const [selected, setSelected] = React.useState(false);
 
     const [value, setValue] = React.useState('1');
 
@@ -235,6 +234,9 @@ function ContactDetails() {
 
     return (
         <Box className="container-fluid p-0">
+            
+            <CustomBreadCrumbs tabs={[{tabLink:"/dashboard/Connections",tabName:"Connections"},{tabLink:"/dashboard/ContactDetails",tabName:"Contact Details"}]}/>
+
             <Box className="d-flex align-items-center justify-content-between flex-wrap">
                 <Box className='d-flex flex-wrap align-items-center'>
                     <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
@@ -321,7 +323,7 @@ function ContactDetails() {
                                 <Box className="col-xl-4 col-lg-4 col-md-12 d-flex">
                                     {
                                         contactDetails.length > 0 ?
-                                            contactDetails.map((item) => {
+                                            contactDetails.slice(0,1).map((item) => {
                                                 return <Box className='white-box w-100'>
 
                                                     <Box className='d-flex align-items-center'>
@@ -465,7 +467,6 @@ function ContactDetails() {
 
                                                 <Box className='card-box d-flex mt-2'>
                                                     <FmdGoodIcon className='me-2 text-primary' />
-
                                                     <Box className=''>
                                                         <p className='font-16 bold mb-1 text-primary'>Address</p>
                                                         <p className='mb-0 font-14 text-gray'>testing/address</p>
@@ -474,13 +475,11 @@ function ContactDetails() {
 
                                                 <Box className='card-box d-flex mt-2'>
                                                     <LocalPhoneIcon className='me-2 text-primary' />
-
                                                     <Box className=''>
                                                         <p className='font-16 bold mb-1 text-primary'>Phone</p>
                                                         <p className='mb-0 font-14 text-gray'>0000000000, 000000000</p>
                                                     </Box>
                                                 </Box>
-
                                             </Box>
                                     }
 

@@ -21,10 +21,15 @@ import CommanCLS from '../../services/CommanService';
 import dayjs from 'dayjs';
 import CreateNewModalTask from '../../components/CreateNewModal';
 import { red } from '@mui/material/colors';
-
-
+import moment from 'moment';
+import { ToastContainer, toast } from 'react-toastify';
+import { useLocation, useSearchParams } from 'react-router-dom';
+let originatorNo;
 function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
-
+//console.log("location state",localtion.state)
+const localtion = useLocation();
+try{const { originatorNo } = localtion.state;}catch(e){}
+console.log("location state1",originatorNo)
     const handleCloseDocumentUpload = () => {
         setOpenUploadDocument(false);
     };
@@ -49,7 +54,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const [selectedFiles, setSelectedFiles] = useState([]);////////////Set file selected and upload
 
-    const [txtClientId, setTxtClientId] = useState(null);/////////////////for clientid set
+    const [txtClientId, setTxtClientId] = useState(originatorNo);/////////////////for clientid set
 
     const [txtClientData, setTxtClientData] = useState(null);/////////////////for clientid set
 
@@ -207,7 +212,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     }
 
     function Json_GetFolderData() {
-        console.log("Json_GetFolderData11", txtFolderId);
+       // console.log("Json_GetFolderData11", txtFolderId);
         try {
             let o = {};
             o.ProjectId = txtFolderId;
@@ -216,11 +221,20 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
             cls.Json_GetFolderData(o, function (sts, data) {
                 if (sts) {
                     let js = JSON.parse(data);
-                    console.log("Json_GetFolderData", js);
+                   
                     setGetAllFolderData(js);
                     let clientList = js.Table1;
+                    console.log("Json_GetFolderData", js);
                     if (clientList.length > 0) {
                         setClientList(clientList);
+                       
+                        let res =clientList.filter((c)=>c.ClientID===originatorNo);
+                       if(res.length>0){
+                        setTxtClientData(res[0])
+                       
+                       }
+                       
+
                     }
                     let sectionList = js.Table;
                     if (sectionList.length > 0) {
@@ -244,10 +258,10 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     useEffect(() => {
         Json_GetFolders();
         Json_GetFolderData();
-        setDocumentDate(dayjs(cls.GetCurrentDayDate)); // Update the selected date state with the new date value
-        setReceivedDate(dayjs(cls.GetNextDayDate)); // Update the selected date state with the new date value
-        console.log("GetCurrentDayDate", cls.GetCurrentDayDate());
-        console.log("GetNextDayDate", cls.GetNextDayDate());
+        setDocumentDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
+        setReceivedDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
+      console.log("GetCurrentDayDate", dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD"));
+       console.log("GetNextDayDate", cls.GetNextDayDate());
         setOpenModal(false);
         setshowModalCreateTask(false)
     }, [])
@@ -265,8 +279,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const handleClientChange = (data) => {
         console.log("Get Clietn On click", data);
-        setTxtClientId(data.ClientID)
-        setTxtClientData(data)
+        setTxtClientId(data.ClientID);
+        setTxtClientData(data);
     }
 
 
@@ -378,31 +392,27 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
 
     const handleCheckboxChangeCreateTask = (event) => {
-        setCreateTaskChk(event.target.checked); // Update the createTask state when the checkbox value changes
-        setTaskType("CRM");
-        if (event.target.checked || createPublishChk) {
-            setButtonNameText("Submit & Create Task");
-
+        const isChecked = event.target.checked;
+        setCreateTaskChk(isChecked);
+        setTaskType(isChecked ? "CRM" : "Portal");
+        if (isChecked) {
+            setButtonNameText(createPublishChk === "Portal" ? "Submit & Create Portal Task" : "Submit & Create Task");
+        } else {
+            setButtonNameText(createPublishChk === "Portal" ? "Submit" : "Submit & Create Portal Task");
         }
-        else {
-            setButtonNameText("Submit")
-        }
-
     };
-
-
-
+    
     const handleCheckboxChangeCreatePublish = (event) => {
-        setCreatePublishChk(event.target.checked); // Update the createTask state when the checkbox value changes
-        setTaskType("Portal");
-        if (event.target.checked || createTaskChk) {
-            setButtonNameText("Submit & Create Task")
+        const isChecked = event.target.checked;
+        setCreatePublishChk(isChecked);
+        setTaskType(isChecked ? "Portal" : "CRM");
+        if (isChecked) {
+            setButtonNameText(createTaskChk === "CRM" ? "Submit & Create Task" : "Submit & Create Portal Task");
+        } else {
+            setButtonNameText(createTaskChk === "CRM" ? "Submit & Create Portal Task" : "Submit");
         }
-        else {
-            setButtonNameText("Submit")
-        }
-
     };
+    
 
 
 
@@ -489,29 +499,35 @@ if(udfIdWithValue){
                 "EmailMessageId": ""
             }
             console.log("Json_RegisterItem", obj);
-            if(fileData){
-                fileData.DocId = "111111";
-            }
+           
            
 
             setCreateNewFileObj((Previous) => [...Previous, fileData]);
             //setOpenUploadDocument(false);
             setshowModalCreateTask(true);
             setOpenModal(true);
-
             //    setTimeout(() => {
             //     setPassButtonHide(false);
             // }, 3000);
+            cls.Json_RegisterItem(obj, function (sts, data) {
+                if (sts && data) {
+                    let js = JSON.parse(data)
+                    console.log("Json_RegisterItem", js)
+                    if (js.Status) {
+                        toast.success("Created Task !");                       
+                        if(fileData){
+                            fileData.DocId = js.ItemId;
+                        }
+                        
+                    }
+                    else{
+                        toast.success("Faild Please Try Again"); 
+                    }
+                   
 
-            // cls.Json_RegisterItem1(obj, function (sts, data) {
-            //     if (sts && data) {
-            //         let js = JSON.parse(data)
-            //         console.log("Json_RegisterItem", js)
 
-
-
-            //     }
-            // })
+                }
+            })
 
         } else {
             // Data is invalid, set the validation message
@@ -563,6 +579,9 @@ if(udfIdWithValue){
 
     };
 
+
+    
+
     return (
         <React.Fragment>
             {/* <Button variant="outlined" onClick={handleClickOpenUploadDocument}>
@@ -577,14 +596,13 @@ if(udfIdWithValue){
                 aria-describedby="alert-dialog-description"
                 className='custom-modal'
             >
-
                 <DialogContent className='pb-0'>
                     <DialogContentText id="alert-dialog-description">
 
                         <Box className="d-flex align-items-center justify-content-between">
                             <Box className="dropdown-box">
                                 <Typography variant="h4" className='font-18 bold text-black'>
-                                    ({fileLangth}) Upload Document
+                                     Upload Document <span className='bold text-blue'>({fileLangth})</span>
                                 </Typography>
                             </Box>
 
@@ -670,7 +688,7 @@ if(udfIdWithValue){
 
                                         getOptionLabel={(option) => option.Client}
                                         getOptionSelected={(option, value) => option.ClientID === value.ClientID} // Add this line
-
+                                        value={clientList.find(option => option.ClientID === originatorNo) || null} 
                                         onChange={(event, newValue) => handleClientChange(newValue)} // Handle the onChange event
 
                                         renderInput={(params) => (
@@ -709,7 +727,7 @@ if(udfIdWithValue){
                                     <LocalizationProvider dateAdapter={AdapterDayjs} >
                                         <DatePicker className=" w-100"
                                             format="DD/MM/YYYY"
-                                            defaultValue={documentDate}
+                                            defaultValue={moment()}
                                             onChange={handleDateChangeDocument} // Handle date changes
                                         />
 
@@ -724,7 +742,7 @@ if(udfIdWithValue){
                                     <LocalizationProvider dateAdapter={AdapterDayjs} >
                                         <DatePicker className=" w-100"
                                             format="DD/MM/YYYY"
-                                            defaultValue={receivedDate}
+                                            defaultValue={moment()}
                                             onChange={handleDateChangeRecieved} // Handle date changes
                                         />
                                     </LocalizationProvider>
@@ -812,7 +830,7 @@ if(udfIdWithValue){
 
                             </Box>
 
-                            {showModalCreateTask && <CreateNewModalTask
+                            {showModalCreateTask && TaskType && <CreateNewModalTask
                                 documentDate={documentDate}
                                 receivedDate={receivedDate}
                                 createNewFileObj={createNewFileObj}
@@ -852,11 +870,8 @@ if(udfIdWithValue){
                             </Button>
 
                             <Button variant="text" style={{ float: 'right' }} className="btn-blue-2" onClick={UploadDocumentCreattTask}>
-
                                 {buttonNameText}
-
                             </Button>
-
 
                         </>)}
 
@@ -872,19 +887,9 @@ if(udfIdWithValue){
                     </Box>
                 </DialogActions>
             </Dialog>
+            <ToastContainer></ToastContainer>
         </React.Fragment>
     )
 }
 
 export default UploadDocument
-
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-const Folder = [
-    { label: 'Client' },
-    { label: 'Cases' },
-    { label: 'Customer' },
-    { label: 'Share Allotments' },
-    { label: 'M Customer' },
-    { label: 'Process Folder' }
-];

@@ -1,4 +1,4 @@
-import React,{useState,useEffect, useReducer} from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -18,8 +18,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
-import { Route, Routes, useNavigate } from 'react-router-dom';
-import { Menu, MenuItem } from '@mui/material';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { FormControl, Menu, MenuItem, Select } from '@mui/material';
 import logo from "../images/logo.png";
 import user from "../images/user.jpg";
 import Button from '@mui/material/Button';
@@ -28,18 +28,30 @@ import Settings from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import CreateNewModal from './CreateNewModal';
 import Client from '../client/Client';
-
 import Badge from '@mui/material/Badge';
-
 import { useAutocomplete } from '@mui/base/useAutocomplete';
 import ClientDetails from '../client/client-components/ClientDetails';
 import ContactDetails from '../contact/contact-components/ContactDetails';
 import TodoList from './TodoList';
 import CommanCLS from '../services/CommanService';
 import Logout from './Logout';
+import AddContacts from './AddContacts';
 import NewTodoList from './NewTodoList';
+import FormatListNumberedRtlIcon from '@mui/icons-material/FormatListNumberedRtl';
+import DescriptionIcon from '@mui/icons-material/Description';
+import SearchResult from './SearchResult';
+import DocumentList from '../client/client-components/DocumentList';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import GroupIcon from '@mui/icons-material/Group';
+import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
+import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import LogoutIcon from '@mui/icons-material/Logout';
 
-const options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
+
+let options = ['Firefox', 'Google Chrome', 'Microsoft Edge', 'Safari', 'Opera'];
 
 const drawerWidth = 220;
 
@@ -110,19 +122,24 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export default function SidebarNav() {
 
+  const location = useLocation();
+
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
   const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
+  const [userId, setUserId] = useState(localStorage.getItem("UserId"));
 
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
-    let Cls = new CommanCLS(baseUrl, agrno, Email, password);
+  const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+  let Cls = new CommanCLS(baseUrl, agrno, Email, password);
+  let practiceCls = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
   const navigate = useNavigate();
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
   const [userName, setUserName] = React.useState("");
-  const [userEmail,setUserEmail] = useState("");
+  const [userEmail, setUserEmail] = useState("");
 
   const handleDrawerOpen = () => {
     setOpen(false);
@@ -135,6 +152,17 @@ export default function SidebarNav() {
 
   const [value, setValue] = React.useState(options[0]);
   const [inputValue, setInputValue] = React.useState('');
+
+  const [documentsDescription, setDocumentsDescription] = useState([]);
+  const [myDocuments, setMyDocuments] = useState([]);
+  const [isSearch, setIsSearch] = useState(false);
+  const [forDocuments, setForDocuments] = useState("");
+
+  const [myTotalTasks, setMyTotalTasks] = useState([]);
+  const [taskSubjects, setTasksSubjects] = useState([]);
+  const [filteredTaskSubjects, setFilteredTaskSubjects] = useState([]);
+  const [folders,setFolders] = useState([]);
+  const [selectedFolder,setSelectedFolder] = useState(folderId);
 
   const {
     getRootProps,
@@ -157,7 +185,6 @@ export default function SidebarNav() {
   const opens = Boolean(anchorEl);
   const opens2 = Boolean(anchorEl);
   const handleClick = (event) => {
-    console.log("current target",event.currentTarget);
     event.preventDefault();
     setAnchorEl(event.currentTarget);
   };
@@ -170,42 +197,176 @@ export default function SidebarNav() {
     navigate("/");
   }
 
-  const Json_Get_CRM_UserByProjectId=()=>{
+  const Json_AdvanceSearchDoc = (f_id=folderId) => {
+    if (forDocuments !== "") {
+      let obj = {
+        ClientId: "",
+        Description: forDocuments,
+        Email: Email,
+        IsUDF: "F",
+        ItemFDate: "01/01/1900",
+        ItemTDate: "01/01/1900",
+        ItemrecFDate: "01/01/1900",
+        ItemrecTDate: "01/01/1900",
+        ProjectId: f_id,
+        agrno: agrno,
+        password: password,
+        sectionId: "-1",
+        udflist: [],
+        udfvalueList: []
+      };
+      try {
+        Cls.Json_AdvanceSearchDoc(obj, (sts, data) => {
+          if (sts) {
+            if (data) {
+              let json = JSON.parse(data);
+              console.log("Json_AdvanceSearchDoc", json.Table6);
+              if (json.Table6) {
+                let fltDouble = [];
+                let allDescriptions = json.Table6.map((itm) => itm.Description).filter(item => {
+                  if (!fltDouble.includes(item)) {
+                    fltDouble.push(item);
+                  }
+                });
+                console.log("Json_AdvanceSearchDoc", allDescriptions);
+                // options = fltDouble;
+                setDocumentsDescription(fltDouble);
+                setMyDocuments(json.Table6);
+              }
+            }
+          }
+        });
+      } catch (err) {
+        console.log("Error while calling Json_AdvanceSearchDoc", err);
+      }
+    }
+  }
+
+  function Json_GetFolders() {
+    let obj = {
+        agrno: agrno,
+        Email: Email,
+        password: password
+    }
+    try {
+        Cls.Json_GetFolders(obj, function (sts, data) {
+            if (sts) {
+                if (data) {
+                    let js = JSON.parse(data);
+                    let tbl = js.Table;
+                    // console.log("Json_GetFolders", tbl);
+                    setFolders(tbl);
+                }
+            }
+        });
+    } catch (err) {
+        console.log("Error while calling Json_GetFolders", err);
+    }
+}
+
+  const Json_CRM_GetOutlookTask = () => {
+    let obj = {
+      agrno: agrno,
+      Email: Email,
+      password: password
+    };
+    try {
+      Cls.Json_CRM_GetOutlookTask(obj, (sts, data) => {
+        if (sts) {
+          if (data) {
+            console.log("Json_CRM_GetOutlookTask", JSON.parse(data));
+            let tasks = JSON.parse(data).Table;
+            let myTasks = tasks.filter((item) => item.AssignedToID.split(",").includes(userId) && (item.Source === "CRM" || item.Source === "Portal"));
+            let fltDouble = [];
+            [...myTasks].map(itm => itm.Subject).filter(subject => {
+              if (!fltDouble.includes(subject)) {
+                fltDouble.push(subject);
+              }
+            });
+            setTasksSubjects(fltDouble);
+            // setFilteredTaskSubjects(fltDouble);
+            setMyTotalTasks(myTasks);
+            Json_GetFolders();
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_CRM_GetOutlookTask", err);
+    }
+  }
+
+  const Json_Get_CRM_UserByProjectId = () => {
     let obj = {
       agrno: agrno,
       Email: Email,
       password: password,
       ProjectId: folderId
-  };
+    };
     Cls.Json_Get_CRM_UserByProjectId(obj, (sts, data) => {
       if (sts) {
-          if (data) {
-              let json = JSON.parse(data);
-              console.log("Json_Get_CRM_UserByProjectId", json.Table);
-              json.Table.map((item)=>{
-                if(item.loggedInUser==="True"){
-                  setUserName(item.DisplayName);
-                  setUserEmail(item.Name);
-                }
-              });
-          }
+        if (data) {
+          let json = JSON.parse(data);
+          console.log("Json_Get_CRM_UserByProjectId", json.Table);
+          json.Table.map((item) => {
+            if (item.loggedInUser === "True") {
+              setUserName(item.DisplayName);
+              setUserEmail(item.Name);
+              Json_CRM_GetOutlookTask();
+            }
+          });
+        }
       }
-  });
+    });
   }
+
+  const [tabs, setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon:<DashboardIcon/> }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon:<AccountBoxIcon/> }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false, tabIcon:<AssignmentIcon/> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon:<GroupIcon/> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon:<ViewCarouselIcon/> }, { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false, tabIcon:<ContentPasteSearchIcon/> },
+  
+  { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false, tabIcon:<PersonAddIcon/> },
+  
+  { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active: false, tabIcon:<LogoutIcon/> }]);
+
+  const [searchInputForGlobalSearch, setSearchInputForGlobalSearch] = useState("");
 
   React.useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setFolderId(localStorage.getItem("FolderId"));
     setPassword(localStorage.getItem("Password"));
     setEmail(localStorage.getItem("Email"));
+    setUserId(localStorage.getItem("UserId"));
     Json_Get_CRM_UserByProjectId();
+    // console.log("location Object",location.pathname.split("/").pop());
+    tabs.length > 0 && tabs.map(itm => {
+      if (itm.tabLink.split("/").pop() === location.pathname.split("/").pop()) {
+        itm.active = true;
+      } else {
+        itm.active = false;
+      }
+    })
+
   }, []);
 
-  const [tabs,setTabs] = useState([{ tabLink: "/dashboard", tabName: 'Dashboard', active:false }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active:false }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active:true },  { tabLink: "/dashboard/Connections", tabName: 'Connections', active:false }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active:false }, { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active:false }]);
-  
+  const handleGlobalSearch = (val) => {
+    setSearchInputForGlobalSearch(val);
+    if (val === "") {
+      setIsSearch(false);
+    } else {
+      setIsSearch(true);
+    }
+    setForDocuments(val);
+    let fltTaskSubjects = taskSubjects.filter(itm => itm.toLowerCase().includes(val.toLowerCase()));
+    setFilteredTaskSubjects(fltTaskSubjects);
+  }
+
+  useEffect(() => {
+    const data = setTimeout(() => {
+      Json_AdvanceSearchDoc(selectedFolder);
+    }, 1000);
+    return () => clearTimeout(data);
+  }, [forDocuments]);
+
   return (
     <>
-      <Box className='d-block d-md-flex'>
+      <Box className='d-block d-md-flex' onClick={() => setIsSearch(false)}>
         <CssBaseline />
         <AppBar className='header' position="fixed" open={open} color='inherit'>
           <Toolbar>
@@ -228,25 +389,95 @@ export default function SidebarNav() {
                           borderColor: '#D5D5D5',
                           color: 'success.main',
                         }}
-                        {...getRootProps()}
-                        className={focused ? 'Mui-focused' : ''}>
+                        className={isSearch ? 'Mui-focused' : ''}>
                         <span className="material-symbols-outlined search-icon">search</span>
 
-                        <Input {...getInputProps()} placeholder='Search' className='ps-0' />
+                        <form onSubmit={(e) => {
+                          e.preventDefault();
+                          navigate(`/dashboard/SearchResult?str=${forDocuments}&folder=${selectedFolder}`);
+                          setIsSearch(false);
+                          tabs.map(itm => {
+                            if (itm.tabName === "Search Result") {
+                              itm.active = true;
+                            } else {
+                              itm.active = false;
+                            }
+                          });
+                        }} >
+                          <Input
+                            onChange={(e) => handleGlobalSearch(e.target.value)}
+                            // onBlur={() => setIsSearch(false)}
+                            value={searchInputForGlobalSearch}
+                            placeholder='Search'
+                            className='ps-0' />
+                        </form>
+                        
                       </AutocompleteRoot>
-                      {groupedOptions.length > 0 && (
-                        <Listbox {...getListboxProps()}>
-                          {groupedOptions.map((option, index) => (
-                            <Option {...getOptionProps({ option, index })}>{option}</Option>
-                          ))}
-                        </Listbox>
-                      )}
+
+                      
+
+                      {isSearch && <Listbox sx={{ zIndex: 1 }}>
+
+                        {filteredTaskSubjects.length > 0 && filteredTaskSubjects.slice(0.20).map((itm, i) => {
+                          return <Option key={i} onClick={(e) => {
+                            e.stopPropagation();
+                            setIsSearch(false);
+                            navigate(`/dashboard/SearchResult?str=${itm}&folder=${selectedFolder}`);
+                            setSearchInputForGlobalSearch(itm);
+                            tabs.map(itm => {
+                              if (itm.tabName === "Search Result") {
+                                itm.active = true;
+                              } else {
+                                itm.active = false;
+                              }
+                            });
+                          }}>
+                            <FormatListNumberedRtlIcon className='me-1' />
+                            {itm}</Option>
+                        })}
+
+                        {documentsDescription.length > 0 && documentsDescription.slice(0, 20).map((itm, i) => {
+                          return <Option key={i} onClick={(e) => {
+                            e.stopPropagation();
+                            setIsSearch(false);
+                            navigate(`/dashboard/SearchResult?str=${itm}&folder=${selectedFolder}`);
+                            setSearchInputForGlobalSearch(itm);
+                            tabs.map(itm => {
+                              if (itm.tabName === "Search Result") {
+                                itm.active = true;
+                              } else {
+                                itm.active = false;
+                              }
+                            });
+                          }}>
+                            <DescriptionIcon className='me-1' />
+                            {itm}</Option>
+                        })}
+
+                      </Listbox>}
+                  
                     </AutocompleteWrapper>
                   </Layout>
+                  <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
+                            <Select
+                                value={selectedFolder}
+                                onChange={(e) => {
+                                  setSearchInputForGlobalSearch("");
+                                  setSelectedFolder(String(e.target.value));
+                                  return;
+                                }}
+                                displayEmpty
+                                inputProps={{ 'aria-label': 'Without label' }}
+                                className='custom-dropdown'
+                            >
+                                {folders.length > 0 && folders.map((itm) => {
+                                    return <MenuItem value={itm.FolderID}>{itm.Folder}</MenuItem>
+                                })}
+                            </Select>
+                        </FormControl>
                 </Box>
 
                 <Box className="d-flex align-items-center">
-
                   <Box>
                     <Button
                       id="basic-button3"
@@ -354,7 +585,7 @@ export default function SidebarNav() {
                       </Box>
                     </Button>
 
-                    
+
                     <Menu
                       id="basic-menu2"
                       className='custom-dropdown'
@@ -421,7 +652,7 @@ export default function SidebarNav() {
           <List className='side-navi'>
 
             {tabs.map((text, index, arr) => (
-              <ListItem className={text.active? 'active': ''} key={index} disablePadding sx={{ display: 'block' }}>
+              <ListItem className={text.active ? 'active' : ''} key={index} disablePadding sx={{ display: 'block' }}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -430,10 +661,10 @@ export default function SidebarNav() {
                   }}
                   onClick={() => {
                     navigate(text.tabLink);
-                    let test = tabs.map((item)=>{
-                      if(item.tabName===text.tabName){
+                    let test = tabs.map((item) => {
+                      if (item.tabName === text.tabName) {
                         item.active = true;
-                      }else{
+                      } else {
                         item.active = false;
                       }
                       return item;
@@ -442,7 +673,7 @@ export default function SidebarNav() {
                     // setTabs(tabs.map(()))
                   }}
                 >
-                  
+
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
@@ -450,8 +681,9 @@ export default function SidebarNav() {
                       justifyContent: 'center',
                     }}
                   >
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                    {text.tabIcon}
                   </ListItemIcon>
+
                   <ListItemText primary={text.tabName} sx={{ opacity: open ? 1 : 0 }} />
                 </ListItemButton>
               </ListItem>
@@ -471,8 +703,11 @@ export default function SidebarNav() {
             <Route path="/ContactDetails" element={<ContactDetails />} />
             <Route path="/MyTask" element={<TodoList />} />
             <Route path="/TodoList" element={<NewTodoList />} />
+            <Route path="/AddContacts" element={<AddContacts />} />
             <Route path="/SmartViews" element={<></>} />
-            <Route path="/LogOut" element={<Logout/>} />
+            <Route path="/SearchResult" element={<SearchResult myTotalTasks={myTotalTasks} myDocuments={myDocuments} />} />
+            <Route path="/DocumentList" element={<DocumentList clientId="" />} />
+            <Route path="/LogOut" element={<Logout />} />
           </Routes>
         </Box>
       </Box>

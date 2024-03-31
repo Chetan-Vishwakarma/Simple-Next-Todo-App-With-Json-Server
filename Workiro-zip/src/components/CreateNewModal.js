@@ -6,19 +6,15 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import DatePicker from 'react-datetime';
 import user from "../images/user.jpg";
-import Logout from "@mui/icons-material/Logout";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
-import DeleteIcon from "@mui/icons-material/Delete";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Checkbox from "@mui/material/Checkbox";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -26,33 +22,31 @@ import Autocomplete from '@mui/material/Autocomplete';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import DescriptionIcon from '@mui/icons-material/Description';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import DvrIcon from '@mui/icons-material/Dvr';
 import LanguageIcon from '@mui/icons-material/Language';
 import 'react-datetime/css/react-datetime.css';
 import { v4 as uuidv4 } from 'uuid';
-
 import Swal from 'sweetalert2';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import GroupIcon from '@mui/icons-material/Group';
+import DescriptionIcon from '@mui/icons-material/Description';
+import SaveAsIcon from '@mui/icons-material/SaveAs';
+
 import {
     List,
     ListItem,
-    ListItemAvatar,
-    Avatar,
     ListItemText,
-    Divider,
     TextField,
 } from "@mui/material";
+import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+
 
 import dayjs from 'dayjs';
-////////////////////////////////////////////////////////////////Dxdata Grid
-import ODataStore from 'devextreme/data/odata/store';
 import DataGrid, {
     Column,
-    DataGridTypes,
-    Grouping,
-    GroupPanel,
     FilterRow,
     Pager,
     Paging,
@@ -60,26 +54,33 @@ import DataGrid, {
 } from 'devextreme-react/data-grid';
 
 
-import BookmarkIcon from "@mui/icons-material/Bookmark";
-
-import RadioButtonUncheckedOutlinedIcon from "@mui/icons-material/RadioButtonUncheckedOutlined";
-
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-
 // import LoginDetails from "../services/Utils";
 import CommanCLS from "../services/CommanService";
 import { useEffect } from "react";
 import { useState } from "react";
 import Fade from '@mui/material/Fade';
 import HtmlEditorDX from "./HtmlEditor";
+import { styled } from '@mui/material/styles';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { renderTimeViewClock } from "@mui/x-date-pickers";
 import moment from "moment";
 import { Toast } from "devextreme-react";
+import Reference from "../client/client-components/Reference";
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { data } from "jquery";
 
-
+const BootstrapTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+    [`& .${tooltipClasses.arrow}`]: {
+        color: theme.palette.common.black,
+    },
+    [`& .${tooltipClasses.tooltip}`]: {
+        backgroundColor: theme.palette.common.black,
+    },
+}));
 
 // 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -88,7 +89,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-export default function CreateNewModalTask({ ...props }) {
+ function CreateNewModalTask({ ...props }) {
 
     let {
         documentDate,
@@ -103,7 +104,8 @@ export default function CreateNewModalTask({ ...props }) {
         openModal
     } = props;
 
-    console.log("documentDate txtSectionId1", createNewFileObj, txtFolderData, txtClientData, txtSectionData)
+    console.log("documentDate txtSectionId1", documentDate,
+        receivedDate, createNewFileObj)
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -204,9 +206,6 @@ export default function CreateNewModalTask({ ...props }) {
 
     const [txtPriorityId, setTxtPriorityId] = useState(2);
 
-
-
-
     const [prioriyAnchorEl, setPrioriyAnchorEl] = React.useState(null);
     const [selectedPrioriyMenu, setSelectedPrioriyMenu] = useState(null);
     const boolPriority = Boolean(prioriyAnchorEl);
@@ -238,7 +237,7 @@ export default function CreateNewModalTask({ ...props }) {
     };
 
     const handleClose = () => {
-        setOpen(false);
+        setOpen(false);       
     };
 
     // dropdown add
@@ -263,6 +262,27 @@ export default function CreateNewModalTask({ ...props }) {
         setuserDropdownAnchorEl(null);
         setuserDropdownAnchorElRight(null)
     };
+
+
+    const [anchorElpriority, setAnchorElPrior] = React.useState(null);
+    const openpriority = Boolean(anchorElpriority);
+    const handleClickpriority = (event) => {
+        setAnchorElPrior(event.currentTarget);
+    };
+    const handleClosepriority = () => {
+        setAnchorElPrior(null);
+    };
+
+
+    const [anchorElstatus, setAnchorElstatus] = React.useState(null);
+    const openstatus = Boolean(anchorElstatus);
+    const handleClickstatus = (event) => {
+        setAnchorElstatus(event.currentTarget);
+    };
+    const handleClosestatus = () => {
+        setAnchorElstatus(null);
+    };
+
 
 
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -346,6 +366,13 @@ export default function CreateNewModalTask({ ...props }) {
 
     };
 
+    const disableDueDate = (date) => {
+        const today = currentDate;
+        return date.isSameOrAfter(today, 'day'); // Disable past dates
+
+
+    };
+
     const disablePastDtTwoDate = (date) => {
         const today = new Date();
         today.setDate(today.getDate() - 1);
@@ -358,11 +385,11 @@ export default function CreateNewModalTask({ ...props }) {
 
     const userAdd = Boolean(anchorel);
 
-    function Json_GetForwardUserList() {
+    function Json_GetForwardUserList(fid) {
         setAddUser([])
         try {
             let o = {};
-            o.ProjectId = txtFolderId;
+            o.ProjectId = fid;
             o.SectionId = "-1";
             cls.Json_GetForwardUserList(o, function (sts, data) {
                 if (sts) {
@@ -522,16 +549,13 @@ export default function CreateNewModalTask({ ...props }) {
             currentDate = new Date(receivedDate);
         }
 
-        const nextDate = new Date(currentDate);
-        nextDate.setDate(currentDate.getDate() + 1); // Increment the day by 1 to get the next day's date
 
-        const day = nextDate.getDate().toString().padStart(2, '0'); // Get the day and pad with 0 if needed
-        const month = (nextDate.getMonth() + 1).toString().padStart(2, '0'); // Get the month (Note: January is 0)
-        const year = nextDate.getFullYear(); // Get the full year
-
+        currentDate.setDate(currentDate.getDate() + 1); // Increment the day by 1 to get the next day's date
+        const day = currentDate.getDate().toString().padStart(2, '0'); // Get the day and pad with 0 if needed
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Get the month (Note: January is 0)
+        const year = currentDate.getFullYear(); // Get the full year
         // Construct the date string in "yyyy/mm/dd" format
         const formattedDate = `${year}-${month}-${day}`;
-
         return formattedDate;
     }
 
@@ -551,11 +575,13 @@ export default function CreateNewModalTask({ ...props }) {
         setFolderAnchorEl(null);
     };
 
+    
+
     useEffect(() => {
 
         const handleClickOutside = (event) => {
             // Check if the menu is open and the click is outside the menu and not in the search box
-            if (folderAnchorEl && folderListRef.current && !folderListRef.current.contains(event.target) && !event.target.closest('.px-3')) {
+            if (folderAnchorEl && folderListRef.current && !folderListRef.current.contains(event.target) && !event.target.closest('.px-1')) {
                 // Clicked outside the menu list, so close the menu
                 handleMenuClose();
             }
@@ -583,7 +609,7 @@ export default function CreateNewModalTask({ ...props }) {
     useEffect(() => {
         const handleClickOutside = (event) => {
             // Check if the menu is open and the click is outside the menu and not in the search box
-            if (clientAnchorEl && clientListRef.current && !clientListRef.current.contains(event.target) && !event.target.closest('.px-3')) {
+            if (clientAnchorEl && clientListRef.current && !clientListRef.current.contains(event.target) && !event.target.closest('.px-1')) {
                 // Clicked outside the menu list, so close the menu
                 handleMenuCloseClient();
             }
@@ -612,7 +638,7 @@ export default function CreateNewModalTask({ ...props }) {
     useEffect(() => {
         const handleClickOutside = (event) => {
             // Check if the menu is open and the click is outside the menu and not in the search box
-            if (sectionAnchorEl && sectionListRef.current && !sectionListRef.current.contains(event.target) && !event.target.closest('.px-3')) {
+            if (sectionAnchorEl && sectionListRef.current && !sectionListRef.current.contains(event.target) && !event.target.closest('.px-1')) {
                 // Clicked outside the menu list, so close the menu
                 handleMenuCloseSection();
             }
@@ -696,6 +722,24 @@ export default function CreateNewModalTask({ ...props }) {
         setUserFilter(res);
     }, [filterText])
 
+    const CurrentDateChange = (e) => {
+        setCurrentDate(e);
+       // setNextDate(formattedDate);
+    }
+    useEffect(() => {
+        const currentDate1 = new Date(currentDate);
+        const nextDate = new Date(currentDate1); // Copy the current date        
+        nextDate.setDate(currentDate1.getDate() + 1); // Increment the day by 1 to get the next day's date    
+        // Get the day, month, and year
+        const day = nextDate.getDate().toString().padStart(2, '0');
+        const month = (nextDate.getMonth() + 1).toString().padStart(2, '0');
+        const year = nextDate.getFullYear();    
+        // Construct the date string in "yyyy/mm/dd" format
+        const formattedDate = `${day}/${month}/${year}`;
+        console.log("formattedDate", formattedDate);    
+        setNextDate(formattedDate); // Set nextDate with formatted date
+    }, [currentDate]);
+
     useEffect(() => {
 
         let strGuid = uuidv4().replace(/-/g, '');
@@ -710,12 +754,12 @@ export default function CreateNewModalTask({ ...props }) {
 
         // setCurrentDate(dayjs(getCurrentDate()));
 
-        setNextDate(dayjs(getNextDate()));
+        //setNextDate(dayjs(getNextDate()));
         //setRemiderDate(dayjs(getCurrentDate()));
         setExpireDate(dayjs(getCurrentDate()));
 
         Json_GetFolders();
-        Json_GetForwardUserList();
+        Json_GetForwardUserList(txtFolderId);
         Json_GetFolderData();
         Json_GetSections(txtFolderId);
         //console.log(nextDate, currentDate)
@@ -1023,13 +1067,19 @@ export default function CreateNewModalTask({ ...props }) {
         const isaddUser = addUser.map(obj => obj.ID).join(',');
         const attString = attachmentPath.map(obj => obj.Path).join('|');
 
-
-
+        //console.log("nextDate1", currentDate)
+       let nxtdd =dayjs(nextDate).format("YYYY/MM/DD");
+    if(nxtdd==="Invalid Date"){
+        let dd = nextDate.split("/");//30/03/2024
+        nxtdd= dd[2]+"/"+dd[1]+"/"+dd[0];
+    }
+       
+        //console.log("nextDate",dayjs(nxtdd).format("YYYY/MM/DD"))
         let ooo = {
 
             "ClientIsRecurrence": false,
             "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-            "ClientEnd": dayjs(nextDate).format("YYYY/MM/DD"),
+            "ClientEnd": dayjs(nxtdd).format("YYYY/MM/DD"),
             "ClientDayNumber": "1",
             "ClientMonth": "1",
             "ClientOccurrenceCount": "1",
@@ -1044,7 +1094,7 @@ export default function CreateNewModalTask({ ...props }) {
             "FolderId": txtFolderId.toString(),
             "Subject": textSubject,
             "TypeofTaskID": txtSectionId.toString(),
-            "EndDateTime": dayjs(nextDate).format("YYYY/MM/DD"),
+            "EndDateTime": dayjs(nxtdd).format("YYYY/MM/DD"),
             "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
             "Status": txtStatus,
             "Priority": txtPriorityId.toString(),
@@ -1070,12 +1120,13 @@ export default function CreateNewModalTask({ ...props }) {
                 console.log("save task rerurn value", js);
 
                 if (js.Status === "success") {
-
+                    toast.success("Created Task !");
                     setMessageId(js.Message);
+                    console.log("selectedDocumentFile", selectedDocumentFile)
                     if (selectedDocumentFile.length > 0) {
                         Json_CRM_TaskDMSAttachmentInsert(js.Message);
                     }
-                    toast.success("Created Task !");
+
 
                     //setLoading(false);
                     // Inside your function or event handler where you want to show the success message
@@ -1196,8 +1247,8 @@ export default function CreateNewModalTask({ ...props }) {
     };
 
     const handleDocumentClickOpen = () => {
-
         setAnchorSelectFileEl(null);
+
         if (textClientId) {
 
             Json_ExplorerSearchDoc();
@@ -1260,10 +1311,10 @@ export default function CreateNewModalTask({ ...props }) {
     let statusarr = [
         { id: 1, "name": "Not Started" },
         { id: 2, "name": "In Progress" },
-        { id: 3, "name": "Waiting on someone else" },
-        { id: 4, "name": "Deferred" },
-        { id: 5, "name": "Done" },
-        { id: 6, "name": "Completed" },
+        { id: 3, "name": "On Hold" },
+        { id: 4, "name": "Completed" },
+        // { id: 5, "name": "Done" },
+        // { id: 6, "name": "Completed" },
     ];
     //////////////////End Priority
 
@@ -1328,14 +1379,17 @@ export default function CreateNewModalTask({ ...props }) {
     const [selectedEmail, setSelectedEmail] = useState([]);
 
     const handleAutocompleteChange = (event, newValue) => {
+        
         setSelectedEmail(newValue ? newValue : null);
-        console.log("handleAutocompleteChange", newValue);
+
+
+        //console.log("handleAutocompleteChange", newValue,event);
     };
 
     const [selectedEmailCC, setSelectedEmailCC] = useState(null);
     const handleAutocompleteChangeOnCC = (event, newValue) => {
+
         setSelectedEmailCC(newValue ? newValue : null);
-        console.log("handleAutocompleteChange CC", newValue);
     };
 
     //const filteredOptions = portalUser ? portalUser.filter(option => option["E-Mail"] !== selectedEmail) : [];
@@ -1347,13 +1401,15 @@ export default function CreateNewModalTask({ ...props }) {
 
             Json_GetItemBase64DataById(row["Registration No."], function (base64data) {
                 const fileData = {
-                    FileName: row.Path,
+                    FileName: row.Description + "." + row.Type,
                     Base64: base64data ? base64data : "", // Base64 data of the file
-                    FileSize: row.FileSize,
+                    FileSize: "",
                     Preview: "", // Data URL for preview
                     DocId: row["Registration No."],
                     Guid: localStorage.getItem("GUID"),
                     FileType: row["Type"].toLowerCase(),
+                    Description: row.Description
+
                 };
                 filesData.push(fileData);
                 // Check if this is the last file
@@ -1567,12 +1623,22 @@ export default function CreateNewModalTask({ ...props }) {
 
 
     function CreatePortalTask() {
+       // console.log("nextDate1", currentDate)
+        ////console.log("nextDate", nextDate)
+
+        let nxtdd =dayjs(nextDate).format("YYYY/MM/DD");
+        if(nxtdd==="Invalid Date"){
+            let dd = nextDate.split("/");//30/03/2024
+            nxtdd= dd[2]+"/"+dd[1]+"/"+dd[0];
+        }
+        
+
         try {
             const isaddUser = addUser.map(obj => obj.ID).join(',');
             let ooo = {
                 "ClientIsRecurrence": false,
                 "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-                "ClientEnd": dayjs(nextDate).format("YYYY/MM/DD"),
+                "ClientEnd": dayjs(nxtdd).format("YYYY/MM/DD"),
                 "ClientDayNumber": "1",
                 "ClientMonth": "1",
                 "ClientOccurrenceCount": "1",
@@ -1587,7 +1653,7 @@ export default function CreateNewModalTask({ ...props }) {
                 "FolderId": txtFolderId.toString(),
                 "Subject": textSubject,
                 "TypeofTaskID": txtSectionId.toString(),
-                "EndDateTime": dayjs(nextDate).format("YYYY/MM/DD"),
+                "EndDateTime": dayjs(nxtdd).format("YYYY/MM/DD"),
                 "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
                 "Status": txtStatus,
                 "Priority": txtPriorityId.toString(),
@@ -1603,7 +1669,7 @@ export default function CreateNewModalTask({ ...props }) {
                 "ElectronicFile": false,
                 "PaperFile": false,
                 "Notes": "",
-                "TaskSource": "CRM"
+                "TaskSource": txtTaskType
             }
             console.log("final save data obj", ooo);
             cls.Json_CRM_Task_Save(ooo, function (sts, data) {
@@ -1612,7 +1678,8 @@ export default function CreateNewModalTask({ ...props }) {
                     console.log("Json_CRM_Task_Save ", js);
                     if (js.Status === "success") {
                         setMessageId(js.Message);
-                        UploadPortalTaskRelation_Json(js.Message);
+                        CreatePortalMessage(js.Message)
+                        //toast.success("Created Task");
                     }
                     else {
                         toast.error("Task Not Created Please Try Again");
@@ -1631,25 +1698,9 @@ export default function CreateNewModalTask({ ...props }) {
         }
     }
 
-    function UploadPortalTaskRelation_Json(tid) {
-        let obj = {
-            accid: agrno,
-            email: Email,
-            password: password,
-            uploadID:localStorage.getItem("GUID"),
-            TaskId: tid,
-        }
-        var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
-        let cls = new CommanCLS(urlLetter, agrno, Email, password);
-        cls.UploadPortalTaskRelation_Json(obj,function(sts,data){
-            if(sts){
-                console.log("UploadPortalTaskRelation_Json",data)
-                CreatePortalMessage();
-            }
-        })
-    }
 
-    async function CreatePortalMessage() {
+
+    async function CreatePortalMessage(taskid) {
 
         try {
             if (selectedUSer.ID) {
@@ -1688,7 +1739,8 @@ export default function CreateNewModalTask({ ...props }) {
                     "docuBoxEmails": "",
                     "daysToDelete": 0,
                     "approvalResponse": "",
-                    "uploadID": localStorage.getItem("GUID")
+                    "uploadID": localStorage.getItem("GUID"),
+                    "PubTaskid": taskid
 
 
                 }
@@ -1703,6 +1755,8 @@ export default function CreateNewModalTask({ ...props }) {
                         if (data === "") {
                             toast.success("Task Created");
                         }
+                        setOpen(false);
+                       
                         // let js = JSON.parse(data);
 
                         // if (js.Status == "success") {
@@ -1725,15 +1779,10 @@ export default function CreateNewModalTask({ ...props }) {
                 error: error,
             });
         }
-
-
-
-
-
     }
 
-
     const [isCheckedForApproval, setIsCheckedForApproval] = useState(false);
+    const [isDisabledForApproval, setIsDisabledForApproval] = useState(false);
 
     const handleCheckboxChangeForAppoval = (event) => {
         setIsCheckedForApproval(event.target.checked);
@@ -1753,9 +1802,6 @@ export default function CreateNewModalTask({ ...props }) {
         setuserDropdownAnchorElRight(event.currentTarget);
         //setDropdownPosition({ x: event.clientX, y: event.clientY });
     };
-
-
-
 
     const firsorScandCtr = (item) => {
         if (item) {
@@ -1822,6 +1868,8 @@ export default function CreateNewModalTask({ ...props }) {
 
 
     const SigningMethods = (e) => {
+        setIsCheckedForApproval(true);
+        setIsDisabledForApproval(true);
         const ToEmail = selectedEmail.map(obj => obj["E-Mail"]).join(",");
         let url = `https://signing.docusms.uk/Signing.aspx?accid=${agrno}&email=${Email}&password=${password}&sendclient=${textClientId}&sendemail=&clientname=${txtClient}&option=upload&file=${agrno}-${localStorage.getItem("GUID")}/${e.FileName}&to=${ToEmail}&rwndrnd=0.8166129123678032`;
         window.open(url);
@@ -1904,7 +1952,7 @@ export default function CreateNewModalTask({ ...props }) {
 
     function ConvertToPdf_Json(d) {
         setAnchorElDoc(null);
-       // console.log("ConvertToPdf_Json", selectedFiles)
+        // console.log("ConvertToPdf_Json", selectedFiles)
         try {
             let o = {
                 accid: agrno,
@@ -1931,7 +1979,7 @@ export default function CreateNewModalTask({ ...props }) {
                         setSelectedFiles(res)
                         toast.success("Converted File !")
                     }
-                    else{
+                    else {
                         toast.error("Not Converted !")
                     }
                 }
@@ -1945,27 +1993,104 @@ export default function CreateNewModalTask({ ...props }) {
         }
     }
 
+    // dropdown
+    const [anchorEl4, setAnchorEl4] = React.useState(null);
+    const open4 = Boolean(anchorEl4);
+    const handleClick4 = (event) => {
+        setAnchorEl4(event.currentTarget);
+    };
+    const handleClose4 = () => {
+        setAnchorEl4(null);
+    };
 
+
+
+    // Referance modal
+    const [Referance, setReferance] = React.useState(false);
+
+    const handleClickReferance = () => {
+        setReferance(true);
+    };
+    const DocumentHandleClose = () => {
+        setReferance(false);
+    };
 
     return (
         <React.Fragment>
-            <Button
+            {/* <Button
                 className="btn-blue btn-round btn-block"
                 onClick={handleClickOpen}
             >
                 <span className="material-symbols-outlined">edit_square</span>{" "}
-                <span className="ps-2 create-text">Create New</span>
-            </Button>
+                <span className="ps-2 create-text">Create New  </span>
+            </Button> */}
 
+            <div className="select-border my-0 m-auto">
+                <Button
+                    id="basic-button"
+                    aria-controls={open4 ? 'basic-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open4 ? 'true' : undefined}
+                    onClick={handleClick4}
+                    className="btn-outlin-2"
+                    variant="outlined"
+                >
+                    <span className="material-symbols-outlined font-18">edit_square</span>{" "}
+                    <span className="ps-2 font-13">Add New  </span>
+
+                </Button>
+                <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl4}
+                    open={open4}
+                    onClose={handleClose4}
+                    MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                    }}
+                    className="custom-dropdown"
+                >
+                    <MenuItem onClick={handleClickOpen}>
+                        {/* <ListItemIcon>
+                            <EjectIcon fontSize="medium" className="text-red rotate-180" />
+                        </ListItemIcon> */}
+                        <ListItemIcon>
+                            <DvrIcon className="font-20" />
+                        </ListItemIcon> CRM Task
+                    </MenuItem>
+
+                    <MenuItem onClick={handleClickOpen}><ListItemIcon>
+                        <LanguageIcon className="font-20" />
+                    </ListItemIcon>
+                        Portal Task</MenuItem>
+
+                    <MenuItem onClick={handleClickReferance}>
+                        <ListItemIcon>
+                            <GroupIcon className="font-20" />
+                        </ListItemIcon> Reference
+                    </MenuItem>
+
+                    <MenuItem onClick={handleClose4}>
+                        <ListItemIcon>
+                            <SaveAsIcon className="font-20" />
+                        </ListItemIcon>
+                        Note
+                    </MenuItem>
+
+
+                    <MenuItem onClick={handleClose4}>
+                        <ListItemIcon>
+                            <DescriptionIcon className="font-20" />
+                        </ListItemIcon>
+                        Document</MenuItem>
+                </Menu>
+            </div>
 
             <Dialog
                 fullScreen={fullScreen}
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="responsive-dialog-title"
-                className="custom-modal"
-                maxWidth="xl" // Set maxWidth to control the width
-                fullWidth={true} // Ensure the dialog takes up the full width
+                className="custom-modal custom-modal-1200"
             >
                 <DialogContent>
                     <DialogContentText>
@@ -1978,7 +2103,7 @@ export default function CreateNewModalTask({ ...props }) {
                                     aria-haspopup="true"
                                     aria-expanded={TastkType ? 'true' : undefined}
                                     onClick={handleClickTastkType}
-                                    className="btn-select"
+                                    className="btn-select min-width-auto"
                                 >
                                     {txtTaskType}
                                 </Button>
@@ -1992,9 +2117,18 @@ export default function CreateNewModalTask({ ...props }) {
                                     }}
                                     className="custom-dropdown"
                                 >
+                                    <MenuItem onClick={handleCloseTastkType}>
+                                        <ListItemIcon>
+                                            <DvrIcon className="font-20" />
+                                        </ListItemIcon>
+                                        CRM</MenuItem>
 
-                                    <MenuItem onClick={handleCloseTastkType} className="font-14"><DvrIcon className='me-2' /> CRM</MenuItem>
-                                    <MenuItem onClick={handleCloseTastkType} className="font-14"><LanguageIcon className='me-2' />Portal</MenuItem>
+                                    <MenuItem onClick={handleCloseTastkType}>
+                                        <ListItemIcon>
+                                            <LanguageIcon className="font-20" />
+                                        </ListItemIcon>
+                                        Portal
+                                    </MenuItem>
                                 </Menu>
                             </Box>
 
@@ -2026,11 +2160,11 @@ export default function CreateNewModalTask({ ...props }) {
 
                         <hr />
 
-                        <Box className="row">
+                        <Box className="row full-height-modal">
                             <Box className="col-lg-8 border-end">
                                 <Box className="clearfix">
                                     <Box>
-                                        <Box className="d-flex align-items-center">
+                                        <Box className="align-items-center">
                                             {/* <span class="material-symbols-outlined">
                                                 edit_square
                                             </span> */}
@@ -2049,7 +2183,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                 className="p-0"
                                             /> */}
 
-                                            <Box className>
+                                            <Box>
                                                 <input
                                                     placeholder="Subject..."
                                                     className="input-text"
@@ -2146,7 +2280,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                     </Box>
 
                                                     <Box className='mb-2'>
-                                                        <FormControlLabel control={<Checkbox checked={isCheckedForApproval} onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
+                                                        <FormControlLabel control={<Checkbox checked={isCheckedForApproval} disabled={isDisabledForApproval} onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
                                                         <FormControlLabel control={<Checkbox checked={isCheckedWithOutmgs} onChange={handleCheckboxChangeisCheckedWithOutmgs} />} label="Send Without Message" />
 
                                                         <Button
@@ -2210,14 +2344,11 @@ export default function CreateNewModalTask({ ...props }) {
                                         {!isVisibleByTypeCRM && (<>
                                             <Box className="mt-3 mb-3">
                                                 <textarea
-                                                    className="form-control textarea resize-none"
+                                                    className="form-control textarea-text resize-none"
                                                     placeholder="Description"
                                                     value={txtdescription} // Bind the value to the state
                                                     onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
                                                 ></textarea>
-
-
-
                                             </Box>
                                         </>)}
 
@@ -2270,13 +2401,9 @@ export default function CreateNewModalTask({ ...props }) {
                                                                         >
                                                                             <p>{result}</p>
                                                                         </Box>
-
-
                                                                     </>
                                                                 );
                                                             }
-
-
                                                         })
                                                         : null}
 
@@ -2426,6 +2553,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                                 type="text"
                                                                 className="form-control"
                                                                 placeholder="Search..."
+                                                                size='small'
                                                                 value={filterText}
                                                                 onChange={(e) => setFilterText(e.target.value)}
                                                             />
@@ -2493,6 +2621,7 @@ export default function CreateNewModalTask({ ...props }) {
                                             aria-haspopup="true"
                                             aria-expanded={openSelectFile ? 'true' : undefined}
                                             onClick={handleClickSelectFile}
+                                            className="btn-blue-2"
                                         >
                                             Select file
                                         </Button>
@@ -2504,12 +2633,12 @@ export default function CreateNewModalTask({ ...props }) {
                                             MenuListProps={{
                                                 'aria-labelledby': 'basic-button',
                                             }}
+                                            className="custom-dropdown"
                                         >
-                                            <label htmlFor="file-upload">
+                                            <label onClick={handleSelectFileClose} htmlFor="file-upload">
                                                 <MenuItem>Upload File(s)</MenuItem>
                                             </label>
                                             <MenuItem onClick={handleDocumentClickOpen}>Select From DMS</MenuItem>
-
 
                                         </Menu>
 
@@ -2517,7 +2646,7 @@ export default function CreateNewModalTask({ ...props }) {
                                 </Box>
 
                                 <Box className="file-uploads file-upload-height">
-                                    {selectedFiles
+                                    {selectedFiles.length > 0
                                         ? selectedFiles.map((file, index) => {
                                             // console.log("Uploadin", file);
 
@@ -2530,10 +2659,10 @@ export default function CreateNewModalTask({ ...props }) {
                                                             </span>
                                                             <Box className="upload-content pe-3">
                                                                 <Typography variant="h4">
-                                                                    {file.FileName}
+                                                                    {file ? file.FileName : ""}
                                                                 </Typography>
                                                                 <Typography variant="body1">
-                                                                    {kbToMb(file.FileSize)} MB
+                                                                    {file ? kbToMb(file.FileSize) : ""} MB
                                                                 </Typography>
                                                             </Box>
                                                         </Box>
@@ -2543,9 +2672,6 @@ export default function CreateNewModalTask({ ...props }) {
                                                                 <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
                                                                     Sign
                                                                 </Button>
-
-
-
                                                             </>)}
 
                                                             <Box className="ps-2">
@@ -2556,6 +2682,8 @@ export default function CreateNewModalTask({ ...props }) {
                                                                     aria-haspopup="true"
                                                                     aria-expanded={openDoc ? 'true' : undefined}
                                                                     onClick={(event) => handleClickDoc(event, index)} // Pass index to handleClickDoc
+                                                                    className="min-width-auto"
+
                                                                 >
                                                                     <span className="material-symbols-outlined">
                                                                         more_vert
@@ -2564,6 +2692,7 @@ export default function CreateNewModalTask({ ...props }) {
 
                                                                 <Menu
                                                                     id="basic-menu"
+                                                                    className="custom-dropdown"
                                                                     anchorEl={anchorElDoc}
                                                                     open={openDoc && selectedFileIndex === index} // Ensure the menu opens only for the selected file
                                                                     onClose={handleCloseDoc}
@@ -2628,27 +2757,42 @@ export default function CreateNewModalTask({ ...props }) {
                             <Box className="col-lg-4">
                                 <Box className="border-bottom mb-2">
                                     <label className="font-14 sembold">Index</label>
-
                                     <Box className="select-dropdown">
-                                        <Button
-                                            id="basic-button-folder22"
-                                            style={getButtonColorfolder()}
-                                            aria-controls={
-                                                boolFolder && selectedFolderMenu === "folder"
-                                                    ? "basic-menu"
-                                                    : undefined
-                                            }
-                                            aria-haspopup="true"
-                                            aria-expanded={
-                                                boolFolder && selectedFolderMenu === "folder"
-                                                    ? "true"
-                                                    : undefined
-                                            }
-                                            onClick={(event) => handleClick3(event, "folder")}
+                                        <BootstrapTooltip title="Folder" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
                                         >
-                                            {txtFolder}
-                                            <KeyboardArrowDownIcon />
-                                        </Button>
+                                            <Button
+                                                id="basic-button-folder22"
+                                                style={getButtonColorfolder()}
+                                                aria-controls={
+                                                    boolFolder && selectedFolderMenu === "folder"
+                                                        ? "basic-menu"
+                                                        : undefined
+                                                }
+                                                aria-haspopup="true"
+                                                aria-expanded={
+                                                    boolFolder && selectedFolderMenu === "folder"
+                                                        ? "true"
+                                                        : undefined
+                                                }
+                                                onClick={(event) => handleClick3(event, "folder")}
+                                            >
+                                                {txtFolder}
+                                                <KeyboardArrowDownIcon />
+                                            </Button>
+                                        </BootstrapTooltip>
                                         <Menu
                                             id="basic-menu"
                                             anchorEl={folderAnchorEl}
@@ -2658,14 +2802,16 @@ export default function CreateNewModalTask({ ...props }) {
                                             }}
                                             className="search-list-main"
                                         >
-                                            <Box className='px-3' >
+                                            <Box className='px-1'>
                                                 <TextField
-                                                    label="Search"
+                                                    label="Folder"
                                                     variant="outlined"
+                                                    autoFocus
                                                     value={searchFolderQuery}
                                                     onChange={handleSearchInputChangeFolder}
                                                     onClick={(e) => e.stopPropagation()} // Prevent event propagation
                                                     sx={{ width: "100%" }}
+                                                    size="small"
                                                 />
                                             </Box>
 
@@ -2692,6 +2838,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                                     settxtClient("Select Reference");
                                                                     settxtSection("Select Section");
                                                                     Json_GetSections(item.FolderID);
+                                                                    Json_GetForwardUserList(item.FolderID)
                                                                 }}
                                                                 className="search-list"
                                                                 ref={folderListRef}
@@ -2731,41 +2878,60 @@ export default function CreateNewModalTask({ ...props }) {
                                     </Box>
 
                                     <Box className="select-dropdown">
-                                        <Button
-                                            id="basic-button-client"
-                                            style={txtColor}
-                                            aria-controls={
-                                                boolClient && selectedClientMenu === "client"
-                                                    ? "basic-menu"
-                                                    : undefined
-                                            }
-                                            aria-haspopup="true"
-                                            aria-expanded={
-                                                boolClient && selectedClientMenu === "client"
-                                                    ? "true"
-                                                    : undefined
-                                            }
-                                            onClick={(event) => handleClick3(event, "client")}
+                                        <BootstrapTooltip title="Client" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
                                         >
-                                            {txtClient}
-                                            <KeyboardArrowDownIcon />
-                                        </Button>
+                                            <Button
+                                                id="basic-button-client"
+                                                style={txtColor}
+                                                aria-controls={
+                                                    boolClient && selectedClientMenu === "client"
+                                                        ? "basic-menu"
+                                                        : undefined
+                                                }
+                                                aria-haspopup="true"
+                                                aria-expanded={
+                                                    boolClient && selectedClientMenu === "client"
+                                                        ? "true"
+                                                        : undefined
+                                                }
+                                                onClick={(event) => handleClick3(event, "client")}
+                                            >
+                                                {txtClient}
+                                                <KeyboardArrowDownIcon />
+                                            </Button>
+                                        </BootstrapTooltip>
                                         <Menu
                                             id="basic-menu"
                                             anchorEl={clientAnchorEl}
                                             open={Boolean(clientAnchorEl)}
                                             onClose={handleCloseClient}
+                                            className="search-list-main"
                                             MenuListProps={{
                                                 "aria-labelledby": "basic-button",
                                             }}
                                         >
-                                            <Box className='px-3' >
+                                            <Box className='px-1' >
                                                 <TextField
-                                                    label="Search"
+                                                    label="Client"
                                                     variant="outlined"
+                                                    autoFocus
                                                     value={searchQuery}
                                                     onChange={handleSearchInputChange}
                                                     sx={{ width: "100%" }}
+                                                    size="small"
                                                 />
                                             </Box>
 
@@ -2802,6 +2968,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                             </ListItemAvatar> */}
                                                             <ListItemText
                                                                 primary={item.Client}
+                                                                className='m-0'
                                                                 secondary={
                                                                     <React.Fragment>
                                                                         <Typography
@@ -2825,39 +2992,58 @@ export default function CreateNewModalTask({ ...props }) {
                                     </Box>
 
                                     <Box className="select-dropdown">
-                                        <Button
-                                            id="basic-button-section"
-                                            aria-controls={
-                                                boolSection && selectedSectionMenu === "section"
-                                                    ? "basic-menu"
-                                                    : undefined
-                                            }
-                                            aria-haspopup="true"
-                                            aria-expanded={
-                                                boolSection && selectedSectionMenu === "section"
-                                                    ? "true"
-                                                    : undefined
-                                            }
-                                            onClick={(event) => handleClick3(event, "section")}
+                                        <BootstrapTooltip title="Section" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
                                         >
-                                            {txtSection}
-                                            <KeyboardArrowDownIcon />
-                                        </Button>
+                                            <Button
+                                                id="basic-button-section"
+                                                aria-controls={
+                                                    boolSection && selectedSectionMenu === "section"
+                                                        ? "basic-menu"
+                                                        : undefined
+                                                }
+                                                aria-haspopup="true"
+                                                aria-expanded={
+                                                    boolSection && selectedSectionMenu === "section"
+                                                        ? "true"
+                                                        : undefined
+                                                }
+                                                onClick={(event) => handleClick3(event, "section")}
+                                            >
+                                                {txtSection}
+                                                <KeyboardArrowDownIcon />
+                                            </Button>
+                                        </BootstrapTooltip>
                                         <Menu
                                             id="basic-menu"
                                             anchorEl={sectionAnchorEl}
                                             open={Boolean(sectionAnchorEl)}
+                                            className="search-list-main"
                                             MenuListProps={{
                                                 "aria-labelledby": "basic-button",
                                             }}
                                         >
-                                            <Box className='px-3'>
+                                            <Box className='px-1'>
                                                 <TextField
-                                                    label="Search"
+                                                    label="Section"
                                                     variant="outlined"
+                                                    autoFocus
                                                     value={searchSectionQuery}
                                                     onChange={handleSearchInputChangeSection}
                                                     sx={{ width: "100%" }}
+                                                    size="small"
                                                 />
                                             </Box>
                                             <List
@@ -2891,6 +3077,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                                 </ListItemAvatar> */}
                                                                 <ListItemText
                                                                     primary={item.Sec}
+                                                                    className='m-0'
                                                                     secondary={
                                                                         <React.Fragment>
                                                                             <Typography
@@ -2915,36 +3102,34 @@ export default function CreateNewModalTask({ ...props }) {
                                     </Box>
                                 </Box>
 
-                                <Box className="border-bottom mb-2">
+                                <Box className="mb-3">
                                     <Box className="mb-2 ">
-                                        <label className="font-14 semibold">Due By</label>
+                                        <label className="font-14 mb-1">Start Date</label>
+                                        <Box className='custom-datepicker'>
+                                            <LocalizationProvider
+                                                className="pe-0 custom-datepicker"
+                                                dateAdapter={AdapterDayjs}
+                                            >
+                                                <CalendarMonthIcon />
+                                                <DatePicker
+                                                    showIcon
+                                                    dateFormat="DD/MM/YYYY"
+                                                    value={currentDate}
+                                                    onChange={(e) => CurrentDateChange(e)} // Handle date changes
+                                                    timeFormat={false}
+                                                    isValidDate={disablePastDt}
+                                                    closeOnSelect={true}
+                                                    icon="fa fa-calendar"
+                                                />
 
-
-
-                                        <LocalizationProvider
-                                            className="pe-0"
-                                            dateAdapter={AdapterDayjs}
-                                        >
-
-                                            <DatePicker className=" w-100"
-                                                showIcon
-                                                dateFormat="DD/MM/YYYY"
-                                                value={currentDate}
-                                                onChange={(e) => setCurrentDate(e)} // Handle date changes
-                                                timeFormat={false}
-                                                isValidDate={disablePastDt}
-                                                closeOnSelect={true}
-                                                icon="fa fa-calendar"
-
-                                            />
-
-
-                                            {/* <DatePicker className="datepicker w-100"
+                                                {/* <DatePicker className="datepicker w-100"
                                                 defaultValue={currentDate}// Set the default value using the value prop
                                                 onChange={(e) => setCurrentDate(e)} // Update the default date when the user changes it                      
                                                 inputFormat="DD/MM/YYYY" // Set the input format to "dd/mm/yyyy"
                                             /> */}
-                                        </LocalizationProvider>
+                                            </LocalizationProvider>
+                                        </Box>
+
                                     </Box>
                                 </Box>
 
@@ -2958,62 +3143,69 @@ export default function CreateNewModalTask({ ...props }) {
                                     
                                 </Box> */}
 
-                                <Box className="mb-2 border-bottom">
-                                    <label className="font-14">Start Date</label>
-                                    <LocalizationProvider
-                                        className="pe-0"
-                                        dateAdapter={AdapterDayjs}
-                                    >
+                                <Box className="mb-3">
+                                    <label className="font-14 semibold mb-1">Due By </label>
 
-                                        <DatePicker className=" w-100"
-                                            showIcon
-                                            dateFormat="DD/MM/YYYY"
-                                            value={nextDate}
-                                            onChange={(e) => setNextDate(e)} // Handle date changes
-                                            timeFormat={false}
-                                            isValidDate={disablePastDt}
-                                            closeOnSelect={true}
-                                            icon="fa fa-calendar"
+                                    <Box className='custom-datepicker'>
 
-                                        />
+                                        <LocalizationProvider
+                                            className="pe-0"
+                                            dateAdapter={AdapterDayjs}
+                                        >
+                                            <CalendarMonthIcon />
+                                            <DatePicker className=" w-100"
+                                                showIcon
+                                                dateFormat="DD/MM/YYYY"
+                                                value={nextDate}
+                                                onChange={(e) => setNextDate(e)} // Handle date changes
+                                                timeFormat={false}
+                                                isValidDate={disableDueDate}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
+                                            />
+                                        </LocalizationProvider>
 
 
-                                    </LocalizationProvider>
+                                    </Box>
+
+
                                 </Box>
 
-                                <Box className="mb-2 border-bottom">
+                                <Box className="mb-2">
                                     <label className="font-14 d-block" sx={{ with: "30%" }}>
                                         Remind me
                                         <Checkbox onChange={handleRemindMe} {...label} size="small" />
                                     </label>
 
-
-
                                     {isRemindMe && (<>
-                                        <label className="font-14 d-block">Reminder Date</label>
-                                        <LocalizationProvider
-                                            className="pe-0"
-                                            dateAdapter={AdapterDayjs}
-                                            timeFormat={false}
-                                            isValidDate={disablePastDtTwoDate}
-                                        >
+                                        <label className="font-14 d-block mb-1">Reminder Date</label>
 
-                                            <DatePicker className=" w-100"
-                                                showIcon
-                                                dateFormat="DD/MM/YYYY"
-                                                value={remiderDate}
-                                                onChange={(e) => setRemiderDate(e)} // Handle date changes
-
+                                        <Box className='custom-datepicker'>
+                                            <CalendarMonthIcon />
+                                            <LocalizationProvider
+                                                className="pe-0"
+                                                dateAdapter={AdapterDayjs}
                                                 timeFormat={false}
                                                 isValidDate={disablePastDtTwoDate}
-                                                closeOnSelect={true}
+                                            >
 
-                                                icon="fa fa-calendar"
+                                                <DatePicker className=" w-100"
+                                                    showIcon
+                                                    dateFormat="DD/MM/YYYY"
+                                                    value={remiderDate}
+                                                    onChange={(e) => setRemiderDate(e)} // Handle date changes
 
-                                            />
+                                                    timeFormat={false}
+                                                    isValidDate={disablePastDtTwoDate}
+                                                    closeOnSelect={true}
+                                                    placeholder='Reminder Date'
 
+                                                    icon="fa fa-calendar"
 
-                                        </LocalizationProvider>
+                                                />
+                                            </LocalizationProvider>
+                                        </Box>
+
                                     </>)}
 
 
@@ -3044,159 +3236,124 @@ export default function CreateNewModalTask({ ...props }) {
                                 </Box>
 
                                 <Box className="select-dropdown">
-                                    <Button
-                                        id="basic-button-section"
-                                        aria-controls={
-                                            boolPriority && selectedPrioriyMenu === "priority"
-                                                ? "basic-menu"
-                                                : undefined
-                                        }
-                                        aria-haspopup="true"
-                                        aria-expanded={
-                                            boolPriority && selectedPrioriyMenu === "priority"
-                                                ? "true"
-                                                : undefined
-                                        }
-                                        onClick={(event) => handleClick3(event, "priority")}
-                                    >
-                                        {txtPrioriy}
-                                        <KeyboardArrowDownIcon />
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={prioriyAnchorEl}
-                                        open={Boolean(prioriyAnchorEl)}
-                                        MenuListProps={{
-                                            "aria-labelledby": "basic-button",
+                                    <BootstrapTooltip title="Select Priority" arrow
+                                        placement="bottom-start"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
                                         }}
                                     >
-
-                                        <List
-                                            sx={{
-                                                width: "100%",
-                                                maxWidth: 600,
-                                                bgcolor: "background.paper",
-                                            }}
+                                        <Button
+                                            id="basic-button-section"
+                                            aria-controls={openpriority ? 'basic-menu' : undefined}
+                                            aria-haspopup="true"
+                                            aria-expanded={openpriority ? 'true' : undefined}
+                                            onClick={handleClickpriority}
                                         >
-                                            {priorityarr
-                                                ? priorityarr.map((item, index) => (
-                                                    <React.Fragment key={index}>
-                                                        <ListItem
-                                                            alignItems="flex-start"
-                                                            onClick={(e) => {
-                                                                console.log("client select", item.name);
-                                                                setTxtPriority(item.name); // Assuming item.Client holds the value you want
-                                                                setTxtPriorityId(item.id)
-                                                                setPrioriyAnchorEl(null);
-                                                            }}
-                                                            className="search-list"
-                                                        >
-                                                            {/* <ListItemAvatar>
-                                                                <Avatar
-                                                                    alt="Remy Sharp"
-                                                                    src="/static/images/avatar/1.jpg"
-                                                                />
-                                                            </ListItemAvatar> */}
-                                                            <ListItemText
-                                                                primary={item.name}
-                                                                secondary={
-                                                                    <React.Fragment>
-                                                                        <Typography
-                                                                            sx={{ display: "inline" }}
-                                                                            component="span"
-                                                                            variant="body2"
-                                                                            color="text.primary"
-                                                                        >
-                                                                            {/* {item.id} */}
-                                                                        </Typography>
-                                                                        {/* {item.CLMandatory} */}
-                                                                    </React.Fragment>
-                                                                }
-                                                            />
-                                                        </ListItem>
-                                                        {/* <Divider variant="inset" component="li" /> */}
-                                                    </React.Fragment>
-                                                ))
-                                                : null}
-                                        </List>
+                                            {txtPrioriy}
+                                            <KeyboardArrowDownIcon />
+                                        </Button>
+                                    </BootstrapTooltip>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorElpriority}
+                                        open={openpriority}
+                                        onClose={handleClosepriority}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+                                    >
+                                        {priorityarr
+                                            ? priorityarr.map((item, index) => (
+                                                <React.Fragment key={index}>
+                                                    <MenuItem onClick={(e) => {
+                                                        console.log("client select", item.name);
+                                                        setTxtPriority(item.name); // Assuming item.Client holds the value you want
+                                                        setTxtPriorityId(item.id)
+                                                        setAnchorElPrior(null);
+                                                    }}
+                                                        className='ps-2'
+                                                    >
+                                                        <ListItemIcon>
+                                                            <PanoramaFishEyeIcon fontSize="medium" />
+                                                        </ListItemIcon>
+
+                                                        {item.name}</MenuItem>
+                                                    {/* <Divider variant="inset" component="li" /> */}
+                                                </React.Fragment>
+                                            ))
+                                            : null}
                                     </Menu>
+
+
                                 </Box>
 
                                 <Box className="select-dropdown">
-                                    <Button
-                                        id="basic-button-section"
-                                        aria-controls={
-                                            boolStatus && selectedStatusMenu === "status"
-                                                ? "basic-menu"
-                                                : undefined
-                                        }
-                                        aria-haspopup="true"
-                                        aria-expanded={
-                                            boolStatus && selectedStatusMenu === "status" ? "true" : undefined
-                                        }
-                                        onClick={(event) => handleClick3(event, "status")}
-                                    >
-                                        {txtStatus}
-                                        <KeyboardArrowDownIcon />
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={statusAnchorEl}
-                                        open={Boolean(statusAnchorEl)}
-                                        MenuListProps={{
-                                            "aria-labelledby": "basic-button",
+                                    <BootstrapTooltip title="Select Status" arrow
+                                        placement="bottom-start"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
                                         }}
                                     >
-                                        <List
-                                            sx={{
-                                                width: "100%",
-                                                maxWidth: 600,
-                                                bgcolor: "background.paper",
-                                                height: '200px'
-                                            }}
+                                        <Button
+                                            id="basic-button-section"
+                                            aria-controls={openstatus ? 'basic-menu' : undefined}
+                                            aria-haspopup="true"
+                                            aria-expanded={openstatus ? 'true' : undefined}
+                                            onClick={handleClickstatus}
                                         >
-                                            {statusarr
-                                                ? statusarr.map((item, index) => (
-                                                    <React.Fragment key={index}>
-                                                        <ListItem
-                                                            alignItems="flex-start"
-                                                            onClick={(e) => {
-                                                                //console.log("client select", item.name);
-                                                                setTxtStatus(item.name); // Assuming item.Client holds the value you want
+                                            {txtStatus}
+                                            <KeyboardArrowDownIcon />
+                                        </Button>
+                                    </BootstrapTooltip>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorElstatus}
+                                        open={openstatus}
+                                        onClose={handleClosestatus}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+                                        className="custom-dropdown"
+                                    >
+                                        {statusarr
+                                            ? statusarr.map((item, index) => (
+                                                <React.Fragment key={index}>
+                                                    <MenuItem onClick={(e) => {
+                                                        //console.log("client select", item.name);
+                                                        setTxtStatus(item.name); // Assuming item.Client holds the value you want
+                                                        setAnchorElstatus(null);
+                                                    }}>
 
-                                                                setStatusAnchorEl(null);
-                                                            }}
-                                                            className="search-list"
-                                                        >
-                                                            {/* <ListItemAvatar>
-                                                                <Avatar
-                                                                    alt="Remy Sharp"
-                                                                    src="/static/images/avatar/1.jpg"
-                                                                />
-                                                            </ListItemAvatar> */}
-                                                            <ListItemText
-                                                                primary={item.name}
-                                                                secondary={
-                                                                    <React.Fragment>
-                                                                        <Typography
-                                                                            sx={{ display: "inline" }}
-                                                                            component="span"
-                                                                            variant="body2"
-                                                                            color="text.primary"
-                                                                        >
-                                                                            {/* {item.id} */}
-                                                                        </Typography>
-                                                                        {/* {item.CLMandatory} */}
-                                                                    </React.Fragment>
-                                                                }
-                                                            />
-                                                        </ListItem>
-                                                        {/* <Divider variant="inset" component="li" /> */}
-                                                    </React.Fragment>
-                                                ))
-                                                : null}
-                                        </List>
+                                                        <ListItemIcon>
+                                                            <RadioButtonUncheckedIcon fontSize="medium" className="text-success" />
+                                                        </ListItemIcon>
+
+                                                        {item.name}</MenuItem>
+
+                                                </React.Fragment>
+                                            ))
+                                            : null}
                                     </Menu>
+
+
                                 </Box>
                             </Box>
                             {/* col end */}
@@ -3276,9 +3433,6 @@ export default function CreateNewModalTask({ ...props }) {
 
                             </div>
 
-
-
-
                             <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
                                 <span className="material-symbols-outlined text-black">
                                     cancel
@@ -3337,6 +3491,43 @@ export default function CreateNewModalTask({ ...props }) {
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
-        </React.Fragment>
+            {/* end */}
+
+
+            {/* create new modal */}
+            <Dialog
+                open={Referance}
+                onClose={DocumentHandleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className="custom-modal full-modal"
+            >
+
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <Box className="d-flex align-items-center justify-content-between">
+                            <div>
+                                <Button
+                                    id="basic-button"
+                                >
+                                    Document List
+                                </Button>
+                            </div>
+                            <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+                        </Box>
+                        <hr />
+
+                        <Reference />
+
+                    </DialogContentText>
+                </DialogContent>
+            </Dialog>
+        </React.Fragment >
     );
 }
+
+export default CreateNewModalTask;

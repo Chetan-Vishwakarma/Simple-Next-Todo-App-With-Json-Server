@@ -17,24 +17,30 @@ import ClientOverview from './ClientOverview';
 //import Utils from "../../services/Utils";
 import CommanCLS from '../../services/CommanService';
 import UdfCard from './UdfCard';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 // import DocumentList from './Document';
 import DocumentList from './DocumentList';
 import UploadDocument from './UploadDocument';
-
+import ClientAddress from './ClientAddress';
+import Contact from './Contact';
+import CompaniesHouse from './CompaniesHouse';
+import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
+import TaskList from './TaskList';
 
 
 function ClientDetails() {
 
     const location = useLocation();
-    const { agrno, Email, password, folderId, originatorNo } = location.state;
+
+    const [searchParams,setSearchParams] = useSearchParams();
+    const tabValue = searchParams.get("val");
+
+    const { agrno, Email, password, folderId, originatorNo, globalSearchDocs } = location.state;
     const [selected, setSelected] = React.useState(false);
-    const [value, setValue] = React.useState('1');
+    const [value, setValue] = React.useState(tabValue?tabValue:'1');
     const [clientDetails, setClientDetails] = useState({});
 
     const [companyDetails, setCompanyDetails] = useState([]);
-
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
@@ -137,27 +143,6 @@ function ClientDetails() {
         }
     }
 
-    // const Json_GetClientsByFolder=()=>{
-    //     let obj = {
-    //         agrno: agrno,
-    //         Email: Email,
-    //         password: password,
-    //         ProjectId: folderId
-    //     };
-    //     try{
-    //         Cls.Json_GetClientsByFolder(obj, (sts, data) => {
-    //             if (sts) {
-    //                 if (data) {
-    //                     let json = JSON.parse(data);
-    //                     console.log("Json_GetClientsByFolder", json);
-    //                 }
-    //             }
-    //         });
-    //     }catch(err){
-    //         console.log("Error while calling Json_GetClientsByFolder",err);
-    //     }
-    // }
-
     const Json_GetClientCardDetails = () => {
         let obj = {
             Email: Email,
@@ -183,13 +168,17 @@ function ClientDetails() {
             console.log("Error while calling Json_GetClientCardDetails", err)
         }
     }
+
     useEffect(() => {
         Json_GetClientCardDetails();
     }, []);
 
     return (
         <Box className="container-fluid p-0">
-            <Box className="d-flex align-items-center justify-content-between flex-wrap">
+
+            <CustomBreadCrumbs tabs={[{tabLink:"/dashboard/Connections",tabName:"Connections"},{tabLink:"/dashboard/clientDetails",tabName:"Client Details"}]}/>
+
+            {globalSearchDocs.length===0&&<Box className="d-flex align-items-center justify-content-between flex-wrap">
                 <Box className='d-flex flex-wrap align-items-center'>
                     <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
                         {clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}
@@ -218,16 +207,17 @@ function ClientDetails() {
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<GroupAddIcon />}>Add Client</Button>
                     <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<DeleteIcon />}>Notes</Button>
                     <Button className='btn-blue-2 mb-1' size="small" startIcon={<EmailIcon />}
-                    onClick={handleClickOpenUploadDocument}
+                        onClick={handleClickOpenUploadDocument}
                     >Add Document</Button>
                 </Box>
-            </Box>
+            </Box>}
 
-            <UploadDocument setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument}></UploadDocument>
+            <UploadDocument setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument} localtion={location}
+            ></UploadDocument>
 
-            <Box sx={{ width: '100%', typography: 'body1' }} className="mt-4 pt-1">
+            <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
                 <TabContext value={value}>
-                    <Box>
+                    <Box className='mb-1'>
                         <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
                             <Tab label="General" value="1" />
                             <Tab label="Address" value="2" />
@@ -252,18 +242,27 @@ function ClientDetails() {
                             <UdfCard data={clientDetails} />
                         </Box>
                     </TabPanel>
-                    <TabPanel value="2">Item Two</TabPanel>
-                    <TabPanel value="3">Item Three</TabPanel>
-                    <TabPanel value="4">Item Three</TabPanel>
+
+                    <TabPanel value="2" className='p-0'>
+                        <ClientAddress></ClientAddress>
+                    </TabPanel>
+                    <TabPanel value="3" className='p-0'>
+                        <Contact></Contact>
+                    </TabPanel>
+                    <TabPanel value="4" className='p-0'>
+                        <TaskList></TaskList>
+                    </TabPanel>
 
                     <TabPanel value="5" className='p-0'>
-                        <DocumentList clientId={originatorNo} ></DocumentList>
+                        <DocumentList clientId={originatorNo} globalSearchDocs={globalSearchDocs} ></DocumentList>
                     </TabPanel>
 
                     {/* <TabPanel value="5">
                         <DocumentList/>
                     </TabPanel> */}
-                    <TabPanel value="6">Item Three</TabPanel>
+                    <TabPanel value="6" className='p-0'>
+                        <CompaniesHouse></CompaniesHouse>
+                    </TabPanel>
                     <TabPanel value="7">Item Three</TabPanel>
                 </TabContext>
             </Box>

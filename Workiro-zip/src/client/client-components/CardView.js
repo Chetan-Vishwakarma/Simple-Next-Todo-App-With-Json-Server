@@ -1,264 +1,326 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material';
+import company from "../../images/building.svg";
 import user from "../../images/user.jpg";
-import Button from "@mui/material/Button";
-import Fab from '@mui/material/Fab';
-import AddIcon from '@mui/icons-material/Add';
-import { styled } from '@mui/system';
+import user2 from "../../images/user-2.svg";
+import noData from "../../images/no-data.gif";
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+
 // search
 import PersonIcon from '@mui/icons-material/Person';
 import ApartmentIcon from '@mui/icons-material/Apartment';
-
-
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import InfoIcon from '@mui/icons-material/Info';
+import EmailIcon from '@mui/icons-material/Email';
+import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import DataNotFound from '../../components/DataNotFound';
+import { ToastContainer, toast } from 'react-toastify';
 
 function CardView(props) {
-    const {
-        isSearch, handleDialogsOpen, handleSearch, filteredClientsForSearchBox, handleClientNavigation, filteredContactsForSearchBox,
-        handleContactNavigattion, handleFolderSelection, isFolder, allFolders, isChoice, isAdvFilter, selectedProperty, 
-        setSelectedProperty, clientKeys, contactKeys, selectedPropertyValue, setSelectedPropertyValue, advSearchKeyValue,
-        setSelectedColor, colorArr, handleAdvanceFilterAgain, handleFilterRemove, onlyClients, filteredClients, clients,
-        onlyContacts, filteredContacts, contacts, selectedFolder, selectedChoice, basedOnClientContactAndAll,objFilter,isDataNotFoundInClient,isDataNotFoundInContact,isDataNotFoundInBoth,objFilterColor
-    } = props;
+  const {
+    isSearch, handleDialogsOpen, handleSearch, filteredClientsForSearchBox, handleClientNavigation, filteredContactsForSearchBox,
+    handleContactNavigattion, handleFolderSelection, isFolder, allFolders, isChoice, isAdvFilter, selectedProperty,
+    setSelectedProperty, clientKeys, contactKeys, selectedPropertyValue, setSelectedPropertyValue, advSearchKeyValue,
+    setSelectedColor, colorArr, handleAdvanceFilterAgain, handleFilterRemove, onlyClients, filteredClients, clients,
+    onlyContacts, filteredContacts, contacts, selectedFolder, selectedChoice, basedOnClientContactAndAll, objFilter, isDataNotFoundInClient, isDataNotFoundInContact, isDataNotFoundInBoth, objFilterColor, loadMore
+  } = props;
+
+  const handleCopyToClipboard = (text) => {
+    console.log('Copied to clipboard:', text);
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        console.log('Copied to clipboard:', text);
+        // Optionally, you can show a toast or alert to indicate successful copying
+      })
+      .catch((error) => {
+        console.error('Error copying to clipboard:', error);
+      });
+  };
+
+  const handleCopyDetailsToClipboard = (details) => {
+    navigator.clipboard.writeText(details)
+      .then(() => {
+        console.log('Copied details to clipboard:', details);
+        toast.success("Copied");
+        // Optionally, you can show a toast or alert to indicate successful copying
+      })
+      .catch((error) => {
+        console.error('Error copying details to clipboard:', error);
+      });
+  };
+
   return (
     <>
-                        {
-                            isDataNotFoundInBoth ? <h1>Data Not Found</h1> :(onlyClients && (filteredClients.length > 0 ? filteredClients.map((item, i) => {
-                                return <Box key={i} className='client-box-main'>
-                                    <Box className='client-box' onClick={() => handleClientNavigation(item.OriginatorNo)}>
-                                        {/* <img src={pin} className='pin-img' /> */}
-                                        <Box className='client-img'>
-                                            <img src={user} />
-                                        </Box>
-                                        <Typography variant="h2">{item["Company Name"] && (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
-                                        {/* <Typography variant='h4'>Admin</Typography> */}
-                                        <Typography variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].substr(0, 22) + ".")}</Typography>
-                                        <Box className='color-filter-box mt-3'>
-                                            {Object.keys(objFilter).map((key)=>{
-                                              return <Typography variant='span' className='color-filter-row' style={{ color: objFilterColor[key], borderColor: objFilterColor[key] }}>{item[key]}</Typography>;
-                                            })}
-                                            {/* <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
-                                            <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
-                                            <Typography variant='span' className='color-filter-row' style={{ color: "#01018d", borderColor: "#01018d" }}>Blue</Typography> */}
-                                        </Box>
-                                    </Box>
-                                </Box>
-                            }) : isDataNotFoundInClient ? <h1>Data Not Found</h1> : clients.map((item, i) => {
-                                return <Box key={i} className='client-box-main'>
-                                    <Box className='client-box' onClick={() => handleClientNavigation(item.OriginatorNo)}>
-                                        {/* <img src={pin} className='pin-img' /> */}
-                                        <Box className='client-img'>
-                                            <img src={user} />
-                                        </Box>
-                                        <Typography variant="h2">{item["Company Name"] && (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
-                                        {/* <Typography variant='h4'>Admin</Typography> */}
-                                        <Typography variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].substr(0, 22) + ".")}</Typography>
-                                        {/* <Box className='color-filter-box mt-3'>
-                                            <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
-                                            <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
-                                            <Typography variant='span' className='color-filter-row' style={{ color: "#01018d", borderColor: "#01018d" }}>Blue</Typography>
-                                        </Box> */}
-                                    </Box>
-                                </Box>
-                            })))
-                        }
+      {
+        isDataNotFoundInBoth ? <Box className='text-center no-data-found'>
+          <img src={noData} />
+          <h4 className='font-18 text-gray'>Data Not Found</h4></Box> : (onlyClients && (filteredClients.length > 0 ? filteredClients.map((item, i) => {
+            return <Box key={i} className='client-box-main'>
+              <Box className='client-box' onDoubleClick={() => handleClientNavigation(item.OriginatorNo)}>
 
-                        {
-                            isDataNotFoundInBoth ? <></> :(onlyContacts && (filteredContacts.length > 0 ? filteredContacts.map((item, i) => {
-                                return <Box key={i} className='client-box-main'>
-                                    <Box className='client-box' onClick={() => handleContactNavigattion(item.OriginatorNo,item.ContactNo)}>
-                                        {/* <img src={pin} className='pin-img' /> */}
-                                        <Box className='client-img'>
-                                            <img src={user} />
-                                        </Box>
-                                        <Typography variant="h2">{item["First Name"]&&item["First Name"]} {item["Last Name"]&&item["Last Name"]}</Typography>
-                                        <Typography variant='h4'>{item["Company Name"]&& item["Company Name"].substr(0.15)+'.'}</Typography>
-                                        <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"] && item["E-Mail"].substr(0, 22) + "."}</Typography>
-                                        <Box className='color-filter-box mt-3'>
-                                            {Object.keys(objFilter).map((key)=>{
-                                              return <Typography variant='span' className='color-filter-row' style={{ color: objFilterColor[key], borderColor: objFilterColor[key] }}>{item[key]}</Typography>;
-                                            })}
-                                            {/* {advSearchKeyValue.map((data) => {
-                                                return <Typography variant='span' className='color-filter-row' style={{ color: data.color, borderColor: data.color }}>{item[data.key]}</Typography>;
-                                            })} */}
-                                        </Box>
-                                    </Box>
-                                </Box>
-                            }) : isDataNotFoundInContact ? <h1>Data Not Found</h1> : contacts.map((item, i) => {
-                                return <Box key={i} className='client-box-main'>
-                                    <Box className='client-box' onClick={() => handleContactNavigattion(item.OriginatorNo,item.ContactNo)}>
-                                        {/* <img src={pin} className='pin-img' /> */}
-                                        <Box className='client-img'>
-                                            <img src={user} />
-                                        </Box>
-                                        <Typography variant="h2">{item["First Name"]&&item["First Name"]} {item["Last Name"]&&item["Last Name"]}</Typography>
-                                        <Typography variant='h4'>{item["Company Name"]&& item["Company Name"].substr(0.15)+'.'}</Typography>
-                                        <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"]&& (item["E-Mail"].substr(0, 22) + ".")}</Typography>
-                                        {/* <Box className='color-filter-box mt-3'>
-                                            <Typography variant='span' className='color-filter-row' style={{ color: "#d80505", borderColor: "#d80505" }}>Red</Typography>
-                                            <Typography variant='span' className='color-filter-row' style={{ color: "#3b7605", borderColor: "#3b7605" }}>Green</Typography>
-                                            <Typography variant='span' className='color-filter-row' style={{ color: "#01018d", borderColor: "#01018d" }}>Blue</Typography>
-                                        </Box> */}
-                                    </Box>
-                                </Box>
-                            })))
-                        }
-                        </>
+                <Box className='client-box-icons d-flex'>
+                  {/* <PersonIcon className="me-2" /> */}
+                  <Tooltip title="Client" className='my-1'>
+                    <IconButton>
+                      <ApartmentIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Box className='info-details'>
+                    <Tooltip title="" className='my-1'>
+                      <IconButton>
+                        <InfoIcon />
+                      </IconButton>
+                    </Tooltip>
+
+                    <Box className='inner-info-details'>
+                      <Tooltip title="Copy Contact Number" className='my-1 copy-icon'>
+                        <IconButton onClick={() => handleCopyToClipboard(item["Contact Number"])}>
+                          <LocalPhoneIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Copy Email" className='my-1 copy-icon'>
+                        <IconButton onClick={() => handleCopyToClipboard(item["E-Mail"])}>
+                          <EmailIcon className='font-16' />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Copy Address" className='my-1 copy-icon'>
+                        <IconButton onClick={() => handleCopyToClipboard(item["Address Line 1"])}>
+                          <LocationOnIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <ul className='p-0 mb-0'>
+                        <li>
+                          <LocalPhoneIcon />
+                          {(item["Contact Number"] && item["Contact Number"] !== "") ? item["Contact Number"] : "ContactNo Not Available"}
+                        </li>
+                        <li>
+                          <EmailIcon className='font-16' />
+                          {(item["E-Mail"] && item["E-Mail"] !== "") ? item["E-Mail"] : "Email Not Available"}
+                        </li>
+                        <li>
+                          <LocationOnIcon />
+                          {(item["Address Line 1"] && item["Address Line 1"] !== "") ? item["Address Line 1"] : "Address Not Available"}
+                        </li>
+                      </ul>
+                    </Box>
+                  </Box>
+                </Box>
+
+                <Box className='inner-client-box'>
+                  {/* <img src={pin} className='pin-img' /> */}
+                  <Box className='client-img'>
+                    <img src={company} />
+                  </Box>
+                  <Typography variant="h2">{item["Company Name"] && (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
+                  {/* <Typography variant='h4'>Admin</Typography> */}
+                  <Typography variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].substr(0, 22) + ".")}</Typography>
+                </Box>
+                {Object.keys(objFilter).length > 0 && <Box className='color-filter-box mt-3'>
+                  {Object.keys(objFilter).map((key) => {
+                    console.log("sdfkfdsksdfj", key);
+                    return <Typography variant='span' className='color-filter-row' style={{ color: objFilterColor[key], borderColor: objFilterColor[key] }}>
+                      {
+                        key === "SourceName" ? item["Source"] && item["Source"]
+                          : key === "Address 1" ? item["Address Line 1"] && item["Address Line 1"]
+                            : key === "Address 2" ? item["Address Line 2"] && item["Address Line 2"]
+                              : key === "Address 3" ? item["Address Line 3"] && item["Address Line 3"]
+                                : key === "ContactNo" ? item["Contact Number"] && item["Contact Number"]
+                                  : key === "StatusName" ? item["Status"] && item["Status"]
+                                    : key === "SourceName" ? item["Source"] && item["Source"]
+                                      : item[key]
+                      }</Typography>;
+                  })}
+                </Box>}
+              </Box>
+            </Box>
+          }) : isDataNotFoundInClient ? <DataNotFound /> : clients.slice(0, loadMore).map((item, i) => {
+            return <Box key={i} className='client-box-main'>
+              <Box className='client-box sadik' onDoubleClick={() => handleClientNavigation(item.OriginatorNo)}>
+                {/* <img src={pin} className='pin-img' /> */}
+
+                <Box className='client-box-icons d-flex'>
+                  {/* <PersonIcon className="me-2" /> */}
+                  <Tooltip title="Client" className='my-1'>
+                    <IconButton>
+                      <ApartmentIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Box className='info-details'>
+                    <Tooltip title="" className='my-1'>
+                      <IconButton>
+                        <InfoIcon />
+                      </IconButton>
+                    </Tooltip>
+
+                    <Box className='inner-info-details'>
+
+                      <ul className='p-0 mb-0'>
+                        <li className='justify-content-between'>
+                          <Box className='d-flex'>
+                            <LocalPhoneIcon />
+                            {(item["Contact Number"] && item["Contact Number"] !== "") ? item["Contact Number"] : "ContactNo Not Available"}
+                          </Box>
+
+                          <IconButton onClick={() => handleCopyDetailsToClipboard(item["Contact Number"])}>
+                            <ContentCopyIcon className='font-18' />
+                          </IconButton>
+                        </li>
+
+                        <li className='justify-content-between'>
+                          <Box className='d-flex'>
+                            <EmailIcon className='font-16' />
+                            {(item["E-Mail"] && item["E-Mail"] !== "") ? item["E-Mail"] : "Email Not Available"}
+                          </Box>
+                          <IconButton onClick={() => handleCopyDetailsToClipboard(item["E-Mail"])}>
+                            <ContentCopyIcon className='font-18' />
+                          </IconButton>
+                        </li>
+
+                        <li className='justify-content-between'>
+                          <Box className='d-flex'>
+                            <LocationOnIcon />
+                            {(item["Address Line 1"] && item["Address Line 1"] !== "") ? item["Address Line 1"] : "Address Not Available"}
+                          </Box>
+                          <IconButton onClick={() => handleCopyDetailsToClipboard(item["Address Line 1"])}>
+                            <ContentCopyIcon className='font-18' />
+                          </IconButton>
+                        </li>
+                      </ul>
+                    </Box>
+                  </Box>
+                </Box>
+
+                <Box className='client-img'>
+                  <img src={company} />
+                </Box>
+                <Typography variant="h2">{item["Company Name"] && (item["Company Name"].length > 25 ? (item["Company Name"].substr(0, 20) + ".") : item["Company Name"])}</Typography>
+                {/* <Typography variant='h4'>Admin</Typography> */}
+                <Typography variant='p' className='mb-0'>{item["CompanyNo"] !== "" && item["CompanyNo"] !== null ? item["CompanyNo"] : "CH No. Not Available"}</Typography>
+              </Box>
+            </Box>
+          })))
+      }
+
+      {
+        isDataNotFoundInBoth ? <></> : (onlyContacts && (filteredContacts.length > 0 ? filteredContacts.map((item, i) => {
+          return <Box key={i} className='client-box-main'>
+            <Box className='client-box sadik' onClick={() => handleContactNavigattion(item.OriginatorNo, item.ContactNo)}>
+
+              <Box className='client-box-icons d-flex'>
+                {/* <PersonIcon className="me-2" /> */}
+                <Tooltip title="Client" className='my-1'>
+                  <IconButton>
+                    <ApartmentIcon />
+                  </IconButton>
+                </Tooltip>
+                <Box className='info-details'>
+                  <Tooltip title="" className='my-1'>
+                    <IconButton>
+                      <InfoIcon />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Box className='inner-info-details'>
+                    <Tooltip title="Copy Details" className='my-1 copy-icon'>
+                      <IconButton>
+                        <ContentCopyIcon className='font-18' />
+                      </IconButton>
+                    </Tooltip>
+                    <ul className='p-0 mb-0'>
+                      <li>
+                        <LocalPhoneIcon />
+                        {(item["Mobile"] && item["Mobile"] !== "") ? item["Mobile"] : "Mobile No. Not Available"}
+                      </li>
+                      <li>
+                        <EmailIcon className='font-16' />
+                        {(item["E-Mail"] && item["E-Mail"] !== "") ? item["E-Mail"] : "Email Not Available"}
+                      </li>
+                      <li>
+                        <LocationOnIcon />
+                        {(item["Address 1"] && item["Address 1"] !== "") ? item["Address 1"] : "Address Not Available"}
+                      </li>
+                    </ul>
+                  </Box>
+                </Box>
+              </Box>
+
+              {/* <img src={pin} className='pin-img' /> */}
+              <Box className='inner-client-box'>
+
+                <Box className='client-img'>
+                  <img src={user} />
+                </Box>
+                <Typography variant="h2">{item["First Name"] && item["First Name"]} {item["Last Name"] && item["Last Name"]}</Typography>
+                <Typography variant='h4'>{item["Company Name"] && item["Company Name"].substr(0.15) + '.'}</Typography>
+                {/* <Typography variant='p' className='mb-0'>{item["E-Mail"] && item["E-Mail"].substr(0, 22) + "."}</Typography> */}
+              </Box>
+
+              {Object.keys(objFilter).length > 0 && <Box className='color-filter-box mt-3'>
+                {Object.keys(objFilter).map((key) => {
+                  return <Typography variant='span' className='color-filter-row' style={{ color: objFilterColor[key], borderColor: objFilterColor[key] }}>{item[key]}</Typography>;
+                })}
+              </Box>}
+            </Box>
+          </Box>
+        }) : isDataNotFoundInContact ? <DataNotFound /> : contacts.slice(0, loadMore).map((item, i) => {
+          return <Box key={i} className='client-box-main'>
+            <Box className='client-box sadik' onClick={() => handleContactNavigattion(item.OriginatorNo, item.ContactNo)}>
+
+              <Box className='client-box-icons d-flex'>
+                {/* <PersonIcon className="me-2" /> */}
+                <Tooltip title="Contacts" className='my-1'>
+                  <IconButton>
+                    <PersonIcon />
+                  </IconButton>
+                </Tooltip>
+                <Box className='info-details'>
+                  <Tooltip title="" className='my-1'>
+                    <IconButton>
+                      <InfoIcon />
+                    </IconButton>
+                  </Tooltip>
+
+                  <Box className='inner-info-details'>
+                    <Tooltip title="Copy Details" className='my-1 copy-icon'>
+                      <IconButton>
+                        <ContentCopyIcon className='font-18' />
+                      </IconButton>
+                    </Tooltip>
+                    <ul className='p-0 mb-0'>
+                      <li>
+                        <LocalPhoneIcon />
+                        {(item["Mobile"] && item["Mobile"] !== "") ? item["Mobile"] : "Mobile No. Not Available"}
+                      </li>
+                      <li>
+                        <EmailIcon className='font-16' />
+                        {(item["E-Mail"] && item["E-Mail"] !== "") ? item["E-Mail"] : "Email Not Available"}
+                      </li>
+                      <li>
+                        <LocationOnIcon />
+                        {(item["Address 1"] && item["Address 1"] !== "") ? item["Address 1"] : "Address Not Available"}
+                      </li>
+                    </ul>
+                  </Box>
+                </Box>
+              </Box>
+
+              {/* <img src={pin} className='pin-img' /> */}
+
+              <Box className='client-img'>
+                <img src={user2} />
+              </Box>
+              <Typography variant="h2">{item["First Name"] && item["First Name"]} {item["Last Name"] && item["Last Name"]}</Typography>
+              <Typography variant='h4'>{item["Company Name"] && item["Company Name"].substr(0.15) + '.'}</Typography>
+              {/* <Typography title={item["E-Mail"]} variant='p' className='mb-0'>{item["E-Mail"] && (item["E-Mail"].substr(0, 22) + ".")}</Typography> */}
+            </Box>
+          </Box>
+        })))
+      }
+      <ToastContainer></ToastContainer>
+    </>
   )
 }
-
-const blue = {
-    100: '#DAECFF',
-    200: '#99CCF3',
-    400: '#3399FF',
-    500: '#007FFF',
-    600: '#0072E5',
-    700: '#0059B2',
-    900: '#003A75',
-};
-
-const grey = {
-    50: '#F3F6F9',
-    100: '#E5EAF2',
-    200: '#DAE2ED',
-    300: '#C7D0DD',
-    400: '#B0B8C4',
-    500: '#9DA8B7',
-    600: '#6B7A90',
-    700: '#434D5B',
-    800: '#303740',
-    900: '#1C2025',
-};
-
-const AutocompleteWrapper = styled('div')`
-  position: relative;
-`;
-
-const AutocompleteRoot = styled('div')(
-    ({ theme }) => `
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-weight: 400;
-  border-radius: 8px;
-  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[500]};
-  background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-  border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-  box-shadow: 0px 2px 4px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.5)' : 'rgba(0,0,0, 0.05)'
-        };
-  display: flex;
-  gap: 5px;
-  padding-right: 5px;
-  overflow: hidden;
-  width: 320px;
-
-  &.Mui-focused {
-    border-color: ${blue[400]};
-    box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[700] : blue[200]};
-  }
-
-  &:hover {
-    border-color: ${blue[400]};
-  }
-
-  &:focus-visible {
-    outline: 0;
-  }
-`,
-);
-
-const Input = styled('input')(
-    ({ theme }) => `
-  font-size: 0.875rem;
-  font-family: inherit;
-  font-weight: 400;
-  line-height: 1.5;
-  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-  background: inherit;
-  border: none;
-  border-radius: inherit;
-  padding: 8px 12px;
-  outline: 0;
-  flex: 1 0 auto;
-`,
-);
-
-const Listbox = styled('ul')(
-    ({ theme }) => `
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 0.875rem;
-  box-sizing: border-box;
-  padding: 6px;
-  margin: 12px 0;
-  max-width: 320px;
-  border-radius: 12px;
-  overflow: auto;
-  outline: 0px;
-  max-height: 300px;
-  z-index: 1;
-  position: absolute;
-  left: 0;
-  right: 0;
-  background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-  border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-  box-shadow: 0px 4px 6px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.50)' : 'rgba(0,0,0, 0.05)'
-        };
-  `,
-);
-
-const Option = styled('li')(
-    ({ theme }) => `
-  list-style: none;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: default;
-
-  &:last-of-type {
-    border-bottom: none;
-  }
-
-  &:hover {
-    cursor: pointer;
-  }
-
-  &[aria-selected=true] {
-    background-color: ${theme.palette.mode === 'dark' ? blue[900] : blue[100]};
-    color: ${theme.palette.mode === 'dark' ? blue[100] : blue[900]};
-  }
-
-  &.base--focused,
-  &.base--focusVisible {
-    background-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[100]};
-    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-  }
-
-  &.base--focusVisible {
-    box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[500] : blue[200]};
-  }
-
-  &[aria-selected=true].base--focused,
-  &[aria-selected=true].base--focusVisible {
-    background-color: ${theme.palette.mode === 'dark' ? blue[900] : blue[100]};
-    color: ${theme.palette.mode === 'dark' ? blue[100] : blue[900]};
-  }
-  `,
-);
-
-const Layout = styled('div')`
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 4px;
-`;
-
-const Pre = styled('pre')(({ theme }) => ({
-    margin: '0.5rem 0',
-    fontSize: '0.75rem',
-    '& code': {
-        backgroundColor: theme.palette.mode === 'light' ? grey[100] : grey[900],
-        border: '1px solid',
-        borderColor: theme.palette.mode === 'light' ? grey[300] : grey[700],
-        color: theme.palette.mode === 'light' ? '#000' : '#fff',
-        padding: '0.125rem 0.25rem',
-        borderRadius: 3,
-    },
-}));
 
 export default CardView
