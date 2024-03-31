@@ -212,7 +212,7 @@ console.log("location state1",originatorNo)
     }
 
     function Json_GetFolderData() {
-        console.log("Json_GetFolderData11", txtFolderId);
+       // console.log("Json_GetFolderData11", txtFolderId);
         try {
             let o = {};
             o.ProjectId = txtFolderId;
@@ -224,13 +224,14 @@ console.log("location state1",originatorNo)
                    
                     setGetAllFolderData(js);
                     let clientList = js.Table1;
+                    console.log("Json_GetFolderData", js);
                     if (clientList.length > 0) {
                         setClientList(clientList);
                        
                         let res =clientList.filter((c)=>c.ClientID===originatorNo);
                        if(res.length>0){
                         setTxtClientData(res[0])
-                        console.log("Json_GetFolderData", res);
+                       
                        }
                        
 

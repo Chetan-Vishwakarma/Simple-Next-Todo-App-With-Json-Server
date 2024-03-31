@@ -967,6 +967,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                     a.href = "data:" + Cls.FileType(fileName) + ";base64," + js.Message; //Image Base64 Goes here
                     a.download = fileName; //File name Here
                     a.click(); //Downloaded file
+                    setOpenDocumentList(false);
 
                 }
 
@@ -2056,7 +2057,7 @@ const rows = [
                                                                     <TravelExploreIcon fontSize="medium" />
                                                                 </ListItemIcon>
                                                                 Open in Browser</MenuItem>
-                                                            <MenuItem onClick={handleCloseDocument}>
+                                                            <MenuItem onClick={()=>handleDownloadDoc(item)}>
                                                                 <ListItemIcon>
                                                                     <CloudDownloadIcon fontSize="medium" />
                                                                 </ListItemIcon>

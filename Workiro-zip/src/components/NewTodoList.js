@@ -252,14 +252,7 @@ function NewTodoList() {
         setOpen(true);
     };
 
-    const MarkComplete=(e)=>{
-        console.log("MarkComplete",e)
-        Cls.ConfirmMessage("Are you sure you want to complete task",function(res){
-            if(res){
-                Json_UpdateTaskField("Status", "Completed",e);
-            }
-        })
-    }
+   
 
     function returnMessageStatus(status) {
         if (status === "Completed") {
@@ -267,6 +260,14 @@ function NewTodoList() {
         } else {
             return `Task status set to ${status}.`;
         }
+    }
+    const MarkComplete=(e)=>{
+        console.log("MarkComplete",e)
+        Cls.ConfirmMessage("Are you sure you want to complete task",function(res){
+            if(res){
+                Json_UpdateTaskField("Status", "Completed",e);
+            }
+        })
     }
     function Json_UpdateTaskField(FieldName, FieldValue,e) {
         let o = {
