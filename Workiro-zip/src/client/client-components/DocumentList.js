@@ -292,8 +292,6 @@ export default function DocumentList({ clientId }) {
             obj.ClientId = clientId;
             obj.sectionId = "-1";
             if (globalSearchDocs.length > 0) {
-                console.log("dsfkjhdkjfh", globalSearchDocs);
-
                 let fltDouble = [];
                 globalSearchDocs.map(itm => itm.Client).filter(item => {
                     if (!fltDouble.includes(item)) {
@@ -320,33 +318,20 @@ export default function DocumentList({ clientId }) {
                         console.log("ExplorerSearchDoc", JSON.parse(data));
                         let json = JSON.parse(data);
                         if (json?.Table6?.length > 0) {
-                            // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                             let docs = json.Table6;
                             if (docs?.length > 0) {
                                 if (globalSearchDocs.length === 0) {
                                     let docKeys = Object.keys(docs[0]);
-                                    // console.log("documentKeys",docKeys);
                                     setDocumentKeys(docKeys);
-
                                     docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
-                                    //docs.map((itm)=>console.log("check in map",itm["Item Date"]));
                                     setDocuments(docs);
-                                    // console.log("fdlljsddjkl",docs);
                                     handleDocumentsFilter(docs);
+                                    // setAdvFilteredResult(docs);
+
                                     let desc = docs.filter((item) => item.Description !== "");
-                                    // console.log("desc", desc);
                                     setgroupedOptions(desc);
-                                } else {
-                                    // console.log("dsfkjhdkjfh",globalSearchDocs);
-                                    // let docKeys = Object.keys(globalSearchDocs[0]);
-                                    // // console.log("documentKeys",docKeys);
-                                    // setDocumentKeys(docKeys);
-                                    // setDocuments(globalSearchDocs);
-                                    // handleDocumentsFilter(globalSearchDocs);
-                                    // let desc = globalSearchDocs.filter((item) => item.Description !== "");
-                                    // setgroupedOptions(desc);
                                 }
-                                // Json_GetFolderData();
+                                Json_GetFolderData();
                             }
                         }
                     }
@@ -573,10 +558,6 @@ export default function DocumentList({ clientId }) {
                 }
             });
         });
-
-        console.log("For Filter Criteria", fltData.length);
-        console.log("For Filter Criteria", fltData[0]?.Description);
-        console.log("For Filter Criteria", fltData[fltData.length - 1]?.Description);
         if (fltData.length === 0) {
             setDataNotFoundBoolean(true);
             return;
@@ -987,7 +968,7 @@ export default function DocumentList({ clientId }) {
                             </Box>
 
                                 <Button disabled={searchByPropertyKey !== "" && searchByPropertyInput !== "" ? false : true} className={searchByPropertyKey !== "" && searchByPropertyInput !== "" ? 'btn-blue-2 mb-2 ms-2' : 'btn-blue-2 btn-grey-2 mb-2 ms-2'} onClick={() => handleSearchByProperty()}>Submit</Button></>}
-                            <Button className='btn-blue-2 mb-2 ms-2' onClick={() => setIsAdvFilter(!isAdvFilter)}>Toggle</Button>
+                            <Button className='btn-blue-2 mb-2 ms-2' onClick={() => setIsAdvFilter(!isAdvFilter)}>{!isAdvFilter?"Advanced Search":"Simple"}</Button>
                         </Box>
 
                         <Box className='d-flex flex-wrap justify-content-between'>
