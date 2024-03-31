@@ -1138,6 +1138,12 @@ span.tox-statusbar__branding {
   align-items: center;
 }
 
+.css-2dum1v-MuiDrawer-docked .add-new-btn {
+  width: 30px !important;
+  min-width: 30px;
+}
+
+
 .css-2dum1v-MuiDrawer-docked .MuiDrawer-paper .create-text {
   display: none;
 }
@@ -1155,6 +1161,10 @@ span.tox-statusbar__branding {
 
 .css-2dum1v-MuiDrawer-docked .MuiDrawer-paper .btn-blue span {
   padding: 0px !important;
+}
+
+.css-2dum1v-MuiDrawer-docked .MuiDrawer-paper .btn-2.add-new-btn {
+  padding: 8px 4px !important;
 }
 
 .file-uploads,

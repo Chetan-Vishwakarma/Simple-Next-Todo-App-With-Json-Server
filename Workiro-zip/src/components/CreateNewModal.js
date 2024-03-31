@@ -2038,12 +2038,12 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-2
                     aria-haspopup="true"
                     aria-expanded={open4 ? 'true' : undefined}
                     onClick={handleClick4}
-                    className="btn-blue-2 btn-round btn-block"
+                    className="btn-blue-2 btn-round btn-block add-new-btn"
                     variant="text"
                     size="small"
                 >
                     <span className="material-symbols-outlined font-18">edit_square</span>{" "}
-                    <span className="ps-2 font-13">Add New  </span>
+                    <span className="ps-2 font-13 create-text">Add New  </span>
 
                 </Button>
                 <Menu
