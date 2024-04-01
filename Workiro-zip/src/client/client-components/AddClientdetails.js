@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
@@ -8,8 +8,10 @@ import CommanCLS from "../../services/CommanService";
 import { memo } from 'react';
 import Button from '@mui/material/Button';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+const UserDetailContext = createContext();
+// const UserDetailContext = createContext();
 
-const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
+const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse }) => {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -20,6 +22,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
   const [sources, setSources] = useState([]);
   const [mangers, setMangers] = useState([]);
   const [defaultUser, setDefaultUser] = useState(null);
+  const [defaultStatus, setDefaultStatus] = useState(null);
   const [status, setStatus] = useState([]);
   const [ImportContact, setImportContact] = useState([]);
   const [ImportCompanyDetails, setImportCompanyDetails] = useState([]);
@@ -71,6 +74,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
     if (value) {
       let data = { ...userDetail };
       data = { ...data, ["StatusId"]: value.StatusId };
+      setDefaultStatus(value);
       setUserDetail(data);
     } else {
     }
@@ -123,6 +127,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
             let defaultUser1 = json.Table3.find(
               (manager) => manager.UserId == localStorage.getItem("UserId")
             );
+            console.log(defaultUser1,"defaulttManager");
             setDefaultUser(defaultUser1);
             setStatus(json.Table);
           }
@@ -159,14 +164,16 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
       CompanyName_Number:inputValue
     };
     try {
-      Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
+       Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
         if (sts) {
           if (data) {
             let json = JSON.parse(data);
             console.log(json,"Json_CompanyHouseDetails");
             let jdata = json.CompanyBasicDetails;
             console.log("Json_CompanyHouseDetails1", jdata);
-
+            let singledata = json.CompanyDetails;
+            console.log(singledata,"singledatasingledata");
+            // setImportCompanyDetails(singledata[0]);
             // setContactlistdata(json.Table);
             if(jdata.length > 0){
               setImportContact(jdata);
@@ -178,11 +185,46 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
       console.log("Error while calling Json_GetToFavourites", err);
     }
   };
+  const 
+  Json_CompanyDetails = (inputValue) => {
+    let requestBody = {
+      CompanyName_Number:inputValue
+    };
+    try {
+       Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
+        if (sts) {
+          if (data) {
+            let json = JSON.parse(data);
+            console.log(json,"Json_CompanyDetails");
+            
+            let singledata = json.CompanyDetails[0];
+            console.log(singledata,"singledatasingledata");
+                const defaultCompanyStatus = singledata.company_status;
 
-  
-  const companyhouselist = {
-    options: ImportContact,
-    getOptionLabel: (option) => option.Folder || "",
+// Find the status object corresponding to the default company status
+const defaultStatusObject = status.find(status => status.StatusName.toLowerCase() === defaultCompanyStatus.toLowerCase());
+
+// If a matching status object is found, set it as the default status
+const defaultStatus = defaultStatusObject || null;
+console.log(defaultStatus,"defaultStatus22222",singledata);
+    let data1 = { ...userDetail };
+    data1 = { 
+      ...data1,
+      CHNumber: singledata.company_number,
+      Clientname:singledata.company_name,
+      StatusId:setDefaultStatus(defaultStatus)
+      
+    };
+    setUserDetail(data1);
+            // setImportCompanyDetails(singledata[0]);
+            setDataCompanyHouse(singledata);
+            
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_GetToFavourites", err);
+    }
   };
   const onChangeImportData = (e) => {
            
@@ -198,80 +240,16 @@ const [open, setOpen] = useState(false);
 
 const handleOptionClick = (id) => {
   console.log(id, "onSelectData");
+      setTxtValue(id);
+    setOpen(false); 
   // Perform actions with the id
   let data = id.company_number;
-  Json_CompanyHouseDetails(data);
-  setTxtValue(id);
-  setOpen(false); // Close the Autocomplete dropdown
+  Json_CompanyDetails(id.company_number);
+  console.log(data, "onSelectDatacnnumbr");
+
 };
-const handleListItemClick = (item) => {
-  console.log('Selecteditem:', item);
-  // setFillContact(item);
-  let data = { ...userDetail };
-        data = { ...data,  CHnumber: "",
-        Clientname: "",
-        Clientid: "",
-        Mobile: "",
-        Telephone: "",
-        Line1: "",
-        Line2: "",
-        Line3: "",
-        Town: "",
-        MCounty: "",
-        Postcode: "",
-        BilLine1: "",
-        BilLine2: "",
-        BilLine3: "",
-        BilTown: "",
-        BilCountry: "",
-        BilPostcode: "",
-        regLine1: "",
-        regLine2: "",
-        regLine3: "",
-        regTown: "",
-        regCountry: "",
-        regPostcode: "",
-        Selectclient: "",
-        Selectteamsa: "",
-        addDetails: "",
-        mainAddress: "",
-        biliAddress: "",
-        regAddress: "",
-        fullAddress: "",
-        Bussiness: "",
-        Status: "",
-        Source: "",
-        Manager: "",
-        Email: "",
-        folderId: localStorage.getItem("FolderId"),
-        BussId: -1,
-        UserId: -1,
-        SourceId: -1,
-        StatusId: -1,
-        Title: "",
-        FirstName: "",
-        LastName: "",
-        ReferenceName: "",
-        MainContact: false,
-        Inactive: false,
-        GreetingName: "",
-        EmailName: "",
-        MainUserId: -1,
-        MainLine1Name: "",
-        MainLine2Name: "",
-        MainLine3Name: "",
-        MainTownName: "",
-        MainPostcodeName: "",
-        Maincontactcountry: "",
-        MainTelephoneName: "",
-        MainMobileName: "",
-        mainCountry: "",
-        billingsCountry: "",
-        ragistersCountry: ""
-      };
-        // setUserDetail(data);
-};
-  console.log(Importdata,"Importdata")
+
+  console.log(Importdata,"Importdata",ImportCompanyDetails)
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
@@ -281,6 +259,8 @@ const handleListItemClick = (item) => {
     //   Json_GetClientCardDetails();
     Json_GetFolders();
     Json_GetConfiguration();
+   
+    // setUserDetail(data);
   }, []);
   return (
     <div>
@@ -374,6 +354,18 @@ const handleListItemClick = (item) => {
       </Box>
 
       <Grid container spacing={3} className="mt-2">
+      <Grid item lg={4} xs={6} md={6}>
+          <TextField
+            fullWidth
+            id="CHNumber"
+            label="CH Number"
+            variant="outlined"
+            name="CHNumber"
+            value={userDetail.CHNumber}
+            disabled={true}
+            // onChange={onChange}
+          />
+        </Grid>
         <Grid item lg={4} xs={6} md={6}>
           <TextField
             fullWidth
@@ -439,7 +431,10 @@ const handleListItemClick = (item) => {
         <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
             <Autocomplete
-              {...statuslistdata}
+              // {...statuslistdata}
+              options={status}
+              getOptionLabel={(option) => option.StatusName}
+              value={defaultStatus || null}
               id="clear-on-escape-status"
               clearOnEscape
               onChange={onChangestatuss}

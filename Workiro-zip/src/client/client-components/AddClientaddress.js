@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
@@ -9,7 +9,8 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 
-const AddClientaddress =  React.memo(({ userDetail, setUserDetail })=>{
+const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHouse })=>{
+  console.log(dataCompanyHouse,"dataCompanyHouse");
   const [mainCountry, setMainCountry] = useState(
     countries.find((country) => country.label === "United Kingdom")?.label
   );
@@ -71,9 +72,37 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail })=>{
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
-
+  useEffect(() => {
+    let data1 = { ...userDetail };
+    data1 = { 
+      ...data1,
+      Line1: dataCompanyHouse.address_line_1,
+      Line2:dataCompanyHouse.address_line_2,
+      // Line3: dataCompanyHouse.company_number,
+      Town:dataCompanyHouse.locality,
+      MCounty:dataCompanyHouse.region,
+      Postcode:dataCompanyHouse.postal_code,
+      mainCountry:"",
+      BilLine1:dataCompanyHouse.address_line_1,
+      BilLine2:dataCompanyHouse.address_line_2,
+      // BilLine3:,
+      BilTown:dataCompanyHouse.locality,
+      BilCountry:dataCompanyHouse.region,
+      BilPostcode:dataCompanyHouse.postal_code,
+      billingsCountry:"",
+      regLine1:dataCompanyHouse.address_line_1,
+      regLine2:dataCompanyHouse.address_line_2,
+      // regLine3:,
+      regTown:dataCompanyHouse.locality,
+      regCountry:dataCompanyHouse.region,
+      regPostcode:dataCompanyHouse.postal_code,
+      ragistersCountry:"",
+      fullAddress:dataCompanyHouse.address_line_1+"\r\n"+dataCompanyHouse.address_line_2+"\r\n"+dataCompanyHouse.locality+"\r\n"+dataCompanyHouse.region+"\r\n"+dataCompanyHouse.country,
+    };
+    setUserDetail(data1);
+  }, [dataCompanyHouse]);
   return (
+    
     <div>
       <Box sx={{ width: "100%", typography: "body1" }}>
 

@@ -27,10 +27,10 @@ function Reference() {
   const [clientDetails, setClientDetails] = useState({});
   const [selectedFolderID, setSelectedFolderID] = useState(null);
   const [dataFromChild, setDataFromChild] = useState([]);
+  const [dataCompanyHouse, setDataCompanyHouse] = useState([]);
   const [activeStep, setActiveStep] = React.useState(0);
 
   const [userDetail, setUserDetail] = useState({
-    CHnumber: "",
     Clientname: "",
     Clientid: "",
     Mobile: "",
@@ -89,7 +89,8 @@ function Reference() {
     MainMobileName: "",
     mainCountry: "",
     billingsCountry: "",
-    ragistersCountry: ""
+    ragistersCountry: "",
+    CHNumber:""
   });
   console.log("userDetailuserDetail", userDetail);
   const [originatorNo, setoriginatorNo] = useState("");
@@ -339,7 +340,7 @@ function Reference() {
 
             setUserDetail={setUserDetail}
             // 
-
+            setDataCompanyHouse={setDataCompanyHouse}
             setSelectedFolderID={setSelectedFolderID}
           // 
 
@@ -373,7 +374,7 @@ function Reference() {
             <AddClientaddress
               userDetail={userDetail}
               // 
-
+              dataCompanyHouse={dataCompanyHouse}
               setUserDetail={setUserDetail}
             // 
 
