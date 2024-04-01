@@ -44,6 +44,13 @@ function NewTodoList() {
     const [userName, setUserName] = React.useState(null);
     const [recentDocument, setRecentDocument] = React.useState([]);
 
+    const [activeSectionList,setActiveSectionList] = useState({
+        section1:true,
+        section2:false,
+        section3:false,
+        section4:false,
+    });
+
 
     const [loadMore, setLoadMore] = useState(9);
 
@@ -403,6 +410,16 @@ let url =`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getIt
         return formattedDate === "Invalid Date" ? " " : formattedDate;
     }
 
+    const handleActiveTab=(target)=>{
+        for(let key in activeSectionList){
+            if(key===target){
+                activeSectionList[key] = true;
+            }else{
+                activeSectionList[key] = false;
+            }
+        }
+    }
+
     return (
         <Box className="container-fluid p-0">
             <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
@@ -440,21 +457,21 @@ let url =`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getIt
             <Box className='no-touch'>
                 <nav class="cd-vertical-nav">
                     <ul>
-                        <li><a href="#section1" class="active"><span class="label">Task Due <br />Soon</span>
+                        <li onClick={()=>handleActiveTab("section1")}><a href="#section1" class={activeSectionList.section1? "active":""}><span class="label">Task Due <br />Soon</span>
                             <EventNoteIcon className='hover-icon' />
                         </a></li>
-                        <li><a href="#section2" class=""><span class="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
-                        <li><a href="#section3" class=""><span class="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
-                        <li><a href="#section4" class=""><span class="label">Recently Accessed Documents</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={()=>handleActiveTab("section2")}><a href="#section2" class={activeSectionList.section2? "active":""}><span class="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={()=>handleActiveTab("section3")}><a href="#section3" class={activeSectionList.section3? "active":""}><span class="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={()=>handleActiveTab("section4")}><a href="#section4" class={activeSectionList.section4? "active":""}><span class="label">Recently Accessed Documents</span><EventNoteIcon className='hover-icon' /></a></li>
                     </ul>
                 </nav>
             </Box>
             {/*  */}
 
-            <Box className='pe-5'>
+            <Box className='pe-5' id="section1">
 
                 <Typography variant='subtitle1' className='font-20 bold mb-0'>Welcome {userName}</Typography>
-                <Typography  id="section1" variant='subtitle1' className='font-16 bold mb-2'>The following tasks are due soon:</Typography>
+                <Typography variant='subtitle1' className='font-16 bold mb-2'>The following tasks are due soon:</Typography>
 
                 <Box className='row'>
                     {/* {
@@ -712,7 +729,7 @@ let url =`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getIt
                         </>
                     }):""}
                 </Box>
-                <Box className='py-4 text-center'>
+                <Box  id="section3" className='py-4 text-center'>
                     <Button variant="outlined" onClick={handleLoadMoreRecentTask}>View More</Button>
                 </Box>
 
@@ -720,7 +737,7 @@ let url =`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getIt
                 {/* row end */}
                 <hr />
 
-                <Typography id="section3" variant='subtitle1' className='font-18 bold mb-2 mt-4'>You pinned the following tasks:</Typography>
+                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>You pinned the following tasks:</Typography>
 
                 <Box className='row'>
                     {Array(9).fill("").map(() => {

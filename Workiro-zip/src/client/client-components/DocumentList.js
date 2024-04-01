@@ -210,11 +210,9 @@ export default function DocumentList({ clientId }) {
 
     // for filter criteria
     const [filterCriteria, setFilterCriteria] = useState({
-        "Item Date": [formatDatePickerDate(start._d), formatDatePickerDate(end._d)]
+        // "Item Date": [formatDatePickerDate(start._d), formatDatePickerDate(end._d)]
     });
-    // setTimeout(()=>{
-    //     setFilterCriteria({...filterCriteria,"Item Date": [formatDatePickerDate(start._d),formatDatePickerDate(end._d)]});
-    // },1000);
+
     const [dataNotFoundBoolean, setDataNotFoundBoolean] = useState(false);
 
 
@@ -359,6 +357,9 @@ export default function DocumentList({ clientId }) {
                                 }
                                 Json_GetFolderData();
                             }
+                        }else{
+                            setIsLoading(false);
+                            setDataNotFoundBoolean(true);
                         }
                     }
                 })
@@ -378,9 +379,13 @@ export default function DocumentList({ clientId }) {
     }, []);
     const handleSearch = (text) => {
         if (documents.length > 0) {
-            let filteredDocuments = documents.filter((item) => {
-                return Object.entries(item).join("").toLowerCase().includes(text.toLowerCase());
+            let fltDesc = documents.filter(itm=>itm.Description!=="");
+            let filteredDocuments = fltDesc.filter((item) => {
+                return item.Description.toLowerCase().includes(text.toLowerCase());
             });
+            if(text!==""){
+                setFilterCriteria({...filterCriteria,Description:[text]});
+            }
             setFilteredDocResult(filteredDocuments);
         }
     }
@@ -394,9 +399,6 @@ export default function DocumentList({ clientId }) {
         const paddedMonth = month < 10 ? `0${month}` : month;
         return `${paddedDay}/${paddedMonth}/${year}`;
     }
-
-    function getRootProps(params) { }
-    function getListboxProps(params) { }
 
     const handleSearchByProperty = (flitData) => {
         // console.log(searchByPropertyKey, "--------", searchByPropertyInput);
@@ -1051,7 +1053,6 @@ export default function DocumentList({ clientId }) {
                                             borderColor: '#D5D5D5',
                                             color: 'success.main',
                                         }}
-                                        {...getRootProps()}
                                     // className={focused ? 'Mui-focused' : ''}
                                     >
                                         <span className="material-symbols-outlined search-icon">search</span>
@@ -1059,7 +1060,7 @@ export default function DocumentList({ clientId }) {
                                         />
                                     </AutocompleteRoot>
                                     {isSearchOpen ? (groupedOptions.length > 0 && (
-                                        <Listbox {...getListboxProps()}>
+                                        <Listbox>
                                             {filteredDocResult.length === 0 ? groupedOptions.map((option, index) => (
                                                 <Option onClick={handleSearchOpen}>{option.Description}</Option>
                                             )) : filteredDocResult.map((option, index) => (
@@ -1124,7 +1125,7 @@ export default function DocumentList({ clientId }) {
                                     {/* <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
                                         <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} /> */}
                                     {Object.keys(filterCriteria).length > 0 && Object.keys(filterCriteria).map((key) => {
-                                        if (!["Item Date", "Folder", "Section", "Client"].includes(key)) {
+                                        if (!["Item Date", "Folder", "Section", "Client", "Description"].includes(key)) {
                                             return <Chip label={`${key}: ${filterCriteria[key][0]}`} variant="outlined" onDelete={() => {
                                                 handleFilterDeletion(key);
                                             }} />
