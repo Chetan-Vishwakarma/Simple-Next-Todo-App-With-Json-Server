@@ -38,6 +38,7 @@ function NewTodoList() {
 
     const [allTask, setAllTask] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
+    const [recentTaskList, setRecentTaskList] = useState([]);
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [userName, setUserName] = React.useState(null);
@@ -122,7 +123,11 @@ function NewTodoList() {
                     if (data) {
                         let json = JSON.parse(data);
                         console.log("Json_getRecentTaskList", json);
+                          let tbl = json.Table;
+                          if(tbl.length>0){
 
+                            setRecentTaskList(tbl)
+                          }
                         // const formattedTasks = json.Table.map((task) => {
                         //     let timestamp;
                         //     if (task.EndDateTime) {
@@ -207,6 +212,10 @@ function NewTodoList() {
 
 
     const handleLoadMore = () => {
+        // Increase the number of items to display by, for example, 5 when the button is clicked
+        setLoadMore(prevLoadMore => prevLoadMore + 9);
+    };
+    const handleLoadMoreRecentTask = () => {
         // Increase the number of items to display by, for example, 5 when the button is clicked
         setLoadMore(prevLoadMore => prevLoadMore + 9);
     };
@@ -338,6 +347,23 @@ function NewTodoList() {
                 ankr.click();
             }
         })
+    };
+
+    const handleOpenBrower = (e) => {
+        setAnchorElDocumentList(null);
+        console.log("document object", e);      
+        var IsApproved = e["IsApproved"];
+        var PortalDocId = e["PortalDocId"];
+        let IsApp = "";
+        let PortalID = "";
+
+        if (IsApproved === "SIG" && PortalDocId !== "") {
+            IsApp = IsApproved;
+            PortalID = PortalDocId;
+        }
+
+let url =`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${e["Registration No."]}&ext=${e.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
+       window.open(url);
     };
 
     const [selectedDocument, setSelectedDocument] = React.useState(null);
@@ -501,7 +527,7 @@ function NewTodoList() {
 
 
                     {allTask.length > 0 ? allTask.slice(0, loadMore).map((item, index) => {
-                        const arr = item.AssignedToID.split(",").map(Number);
+                         const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
 
                         const priority = item.Priority === 1 ? "High" :
                             item.Priority === 2 ? "Normal" :
@@ -600,10 +626,10 @@ function NewTodoList() {
                 <Typography  variant='subtitle1' className='font-18 bold mb-2 mt-4'>The following tasks were recently updated: </Typography>
 
                 <Box className='row'>
-                    {Array(9).fill("").map(() => {
+                    {recentTaskList.length > 0?recentTaskList.slice(0, loadMore).map((item, index) => {
                         return <>
 
-                            <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                            <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                 <Box className='todo-list-box white-box relative w-100'
                                     onClick={() => handleClickOpen()}>
 
@@ -621,7 +647,7 @@ function NewTodoList() {
 
                                     <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> Signature Tast</Typography>
 
-                                    <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography>
+                                    <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
 
                                     <Box className='d-flex align-items-center justify-content-between'>
                                         <Typography variant='subtitle1' ><pan className='text-gray'>
@@ -684,9 +710,11 @@ function NewTodoList() {
                             {/* col end */}
 
                         </>
-                    })}
+                    }):""}
                 </Box>
-
+                <Box className='py-4 text-center'>
+                    <Button variant="outlined" onClick={handleLoadMoreRecentTask}>View More</Button>
+                </Box>
 
 
                 {/* row end */}
@@ -854,7 +882,7 @@ function NewTodoList() {
                                                         <DriveFileRenameOutlineIcon fontSize="medium" />
                                                     </ListItemIcon>
                                                     Rename Document</MenuItem>
-                                                <MenuItem onClick={handleCloseDocument} >
+                                                <MenuItem onClick={()=>handleOpenBrower(item)} >
                                                     <ListItemIcon>
                                                         <TravelExploreIcon fontSize="medium" />
                                                     </ListItemIcon>

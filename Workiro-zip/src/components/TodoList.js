@@ -825,7 +825,7 @@ function TodoList() {
                                         <h4>{key == 1 ? "High" : key == 2 ? "Medium" : key}</h4>
 
                                         {dataInGroup[key].length > 0 && dataInGroup[key].map((item, index) => {
-                                          const arr = item.AssignedToID.split(",").map(Number);
+                                          const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
                                          return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                                 <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
@@ -898,7 +898,7 @@ function TodoList() {
                                 })}
                             </>) : (allTask.length > 0 ?
                                 (allTask.slice(0, loadMore).map((item, index) => {
-                                    const arr = item.AssignedToID.split(",").map(Number);
+                                    const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
                                     return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                         <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
