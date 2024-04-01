@@ -495,6 +495,7 @@ function AddContacts() {
                             <Tab label="Requested Document" value="7" /> */}
             </TabList>
           </Box>
+
           <TabPanel value="1" className='p-0'>
             <Box className="general-tab white-box">
               <Box className="row mb-3">
@@ -542,7 +543,6 @@ function AddContacts() {
                     />
                   </Grid>
 
-
                 </Grid>
 
               </Box>
@@ -572,6 +572,7 @@ function AddContacts() {
                   </Grid>
                 </Grid>
               </Box>
+
               <Box className="row mb-3">
                 <ContactMainform
                   clientNames={clientNames}
@@ -580,6 +581,7 @@ function AddContacts() {
                   setContactDetails={setContactDetails}
                 />
               </Box>
+
               <Box className="row mb-3">
                 <Grid container spacing={3}>
                   <Grid item xs={6} md={6}>
@@ -620,6 +622,7 @@ function AddContacts() {
                   </Grid>
                 </Grid>
               </Box>
+
               <Box className="row mb-3">
                 <Grid container spacing={3}>
                   <Grid item xs={6} md={6}>
@@ -634,6 +637,7 @@ function AddContacts() {
                   </Grid>
                 </Grid>
               </Box>
+
             </Box>
 
           </TabPanel>
@@ -641,6 +645,7 @@ function AddContacts() {
           <TabPanel value="2" className='p-0'>
             {/* <ClientAddress></ClientAddress> */}
           </TabPanel>
+
           <TabPanel value="3">
             {/* <Contact></Contact> */}
             <Box className="general-tab white-box">
@@ -651,6 +656,7 @@ function AddContacts() {
             </Box>
 
           </TabPanel>
+          
           <TabPanel value="4">
             <TaskList></TaskList>
           </TabPanel>
