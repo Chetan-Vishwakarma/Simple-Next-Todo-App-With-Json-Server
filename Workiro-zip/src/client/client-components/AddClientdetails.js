@@ -21,7 +21,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
   const [mangers, setMangers] = useState([]);
   const [defaultUser, setDefaultUser] = useState(null);
   const [status, setStatus] = useState([]);
-  const [ImportContact, setImportContact] = useState("");
+  const [ImportContact, setImportContact] = useState([]);
   const [Importdata, setImportdata] = useState("");
   const [intUserid, setIntUserid] = useState(localStorage.getItem("UserId"));
   const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
@@ -153,9 +153,9 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
   };
 
   const 
-  Json_CompanyHouseDetails = () => {
+  Json_CompanyHouseDetails = (inputValue) => {
     let requestBody = {
-      CompanyName_Number:Importdata
+      CompanyName_Number:inputValue
     };
     try {
       Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
@@ -183,9 +183,9 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
   const onChangeImportData = (e) => {
            
     e.preventDefault();
-    console.log(e.target.value, "onChangeImportData");
-    setImportdata(e.target.value);
-    Json_CompanyHouseDetails();
+    const inputValue = e.target.value;
+    setImportdata(inputValue);
+    Json_CompanyHouseDetails(inputValue);
 };
 const handleListItemClick = (item) => {
   console.log('Selecteditem:', item);
@@ -271,20 +271,60 @@ const handleListItemClick = (item) => {
         <h2 className="font-14 bold mb-2 text-black">Import from Companies House</h2>
         <Grid container spacing={3} className="mb-">
           <Grid item lg={6} xs={6} md={6}>
-          <TextField
+          {/* <TextField
                           fullWidth
                           variant="outlined"
                           name="importclient"
                           onChange={onChangeImportData}
                           label="Enter Company Name or Number"
-                        />
+                        /> */}
+                        <Autocomplete
+      fullWidth
+      // options={ImportContact.map((option) => option.title)}
+      options={ImportContact} // Pass the entire ImportContact array
+      getOptionLabel={(option) => option.title}
+      onChange={(e, value) => setImportdata(value)}
+      // inputValue={ImportContact}
+      noOptionsText="No matches found"
+      filterOptions={(x) => x}
+      autoComplete
+      includeInputInList
+      renderOption={(props, option) => {
+        // Custom rendering for each option
+        console.log(option,"rendwered dynamic from apifff",props);
+        return (
+          <li {...props}>
+            {/* Your custom rendering */}
+            <Grid container alignItems="center">
+            
+              <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                {option.title}          
+              </Grid>
+              <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                {option.date_of_creation}
+              </Grid>
+            </Grid>
+          </li>
+        );
+      }}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          fullWidth
+          variant="outlined"
+          name="importclient"
+          onChange={onChangeImportData}
+          label="Enter Company Name or Number"
+        />
+      )}
+    />
           </Grid>
           <Grid item lg={6} xs={6} md={6} className="d-flex align-items-center">
             <Button className="min-width-auto text-danger">
               <HighlightOffIcon className="font-32"/>
             </Button>
           </Grid>
-          {ImportContact && ImportContact.length > 0 && (
+          {/* {ImportContact && ImportContact.length > 0 && (
             <List >
               {ImportContact.map((item, index) => (
                 // !item.resigned_on && ( // Add this condition
@@ -299,7 +339,7 @@ const handleListItemClick = (item) => {
               // )
               ))}
             </List>
-          )}
+          )} */}
           {/* <Grid item lg={6} xs={6} md={6} className="d-flex align-items-center">
             <FormControlLabel control={<Checkbox />} label="Active" />
           </Grid> */}
