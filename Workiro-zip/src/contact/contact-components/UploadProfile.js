@@ -11,9 +11,10 @@ const Input = styled('input')({
   display: 'none',
 });
 
-export default function UploadButtons() {
+export default function UploadButtons({userContactDetails,setContactDetails}) {
+   console.log(userContactDetails,"setContactDetails_TEST");
   const [images, setImages] = useState([]);
-  const [contactNumber, setContactNumber] = useState([]);
+  const [contactImgdata, setContactImgdata] = useState([]);
   const [previewImage, setPreviewImage] = useState(null);
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -100,7 +101,13 @@ export default function UploadButtons() {
       reader.onload = (e) => {
         base64Images.push(e.target.result);
         console.log(e.target.result,"bae64daataa")
-        Json_UpdateContactField(e.target.result);
+        // Json_UpdateContactField(e.target.result);
+        setContactImgdata(e.target.result);
+        let imgdata = e.target.result;
+let data = { ...userContactDetails };
+data = { ...data, ["Base64ImgData"]: imgdata}
+console.log(data,"getiMAGE");
+setContactDetails(data);
         // If all files have been read, set the images state and preview the first image
         if (base64Images.length === selectedFiles.length) {
           setImages(base64Images);
@@ -110,6 +117,8 @@ export default function UploadButtons() {
       };
       reader.readAsDataURL(file);
     });
+    console.log(contactImgdata,"contactImage")
+    
   };
 
   const removeImage = (indexToRemove) => {
