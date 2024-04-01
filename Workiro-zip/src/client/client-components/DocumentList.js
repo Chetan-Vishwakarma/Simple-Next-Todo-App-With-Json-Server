@@ -322,7 +322,8 @@ export default function DocumentList({ clientId }) {
                     // console.log("documentKeys",docKeys);
                     setDocumentKeys(docKeys);
                     setDocuments(globalSearchDocs);
-                    handleDocumentsFilter(globalSearchDocs);
+                    // handleDocumentsFilter(globalSearchDocs);
+                    setAdvFilteredResult(globalSearchDocs);
                     let desc = globalSearchDocs.filter((item) => item.Description !== "");
                     setgroupedOptions(desc);
                     setIsLoading(false);
@@ -331,8 +332,11 @@ export default function DocumentList({ clientId }) {
                 // return;
             } else {
                 Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
+                    if(data==="" || JSON.parse(data)?.Table[0]?.Message){  // for data loading issue (api response issue)
+                        Json_ExplorerSearchDoc();
+                        return;
+                    }
                     if (sts && data) {
-                        console.log("ExplorerSearchDoc", JSON.parse(data));
                         let json = JSON.parse(data);
                         if (json?.Table6?.length > 0) {
                             let docs = json.Table6;
@@ -342,8 +346,13 @@ export default function DocumentList({ clientId }) {
                                     setDocumentKeys(docKeys);
                                     docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
                                     setDocuments(docs);
-                                    handleDocumentsFilter(docs);
-                                    // setAdvFilteredResult(docs);
+                                    if(docs[0].Message){   // for data loading issue (api response issue)
+                                        Json_ExplorerSearchDoc();
+                                        return;
+                                    }
+                                    // handleDocumentsFilter(docs);
+                                    setAdvFilteredResult(docs);
+                                    setIsLoading(false);
 
                                     let desc = docs.filter((item) => item.Description !== "");
                                     setgroupedOptions(desc);
@@ -584,7 +593,9 @@ export default function DocumentList({ clientId }) {
         setIsLoading(false);
     }
     useEffect(() => {
-        handleDocumentsFilter(documents);
+        if(documents.length>0){
+            handleDocumentsFilter(documents);
+        }
     }, [filterCriteria]);
 
     const handleFilterOnClientSelection = (e) => {
@@ -616,7 +627,6 @@ export default function DocumentList({ clientId }) {
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
-
     return (
         <>
             {globalSearchDocs.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/DocumentList", tabName: "Documents List" }]} />}
@@ -625,7 +635,7 @@ export default function DocumentList({ clientId }) {
 
 
 
-                <div className='main-client-details-filter'>
+                <div style={{top:globalSearchDocs.length>0&&"80px"}} className='main-client-details-filter'>
                     <Button aria-describedby={id} variant="" className='min-width-auto btn-blue px-0' onClick={handleClick}>
                         <TuneIcon />
                     </Button>
@@ -722,7 +732,7 @@ export default function DocumentList({ clientId }) {
                                 <hr className='mt-1' />
 
                                 <Typography variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
-                                    Sort By
+                                    Filter By
                                 </Typography>
 
                                 <Box className='d-flex'>
@@ -772,7 +782,7 @@ export default function DocumentList({ clientId }) {
 
                                                 <MenuItem value="" style={{ display: "none" }}>
 
-                                                    Sections sssssssss
+                                                    Sections
                                                 </MenuItem>
                                                 <MenuItem value="Section" >00. Clear Filter</MenuItem>
                                                 {sections.length > 0 && sections.map((itm) => {
@@ -851,7 +861,7 @@ export default function DocumentList({ clientId }) {
                                 {/* <hr /> */}
 
                                 <Typography variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
-                                    Filter By
+                                    Sort By
                                 </Typography>
 
 

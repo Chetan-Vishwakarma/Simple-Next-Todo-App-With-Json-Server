@@ -230,6 +230,10 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         return dateA - dateB;
     };
 
+    useEffect(()=>{
+        console.log("dsfdsf documents",documents);
+        console.log("dsfdsf advFilteredResult",advFilteredResult);
+    },[]);
 
     return (
         <>
@@ -247,7 +251,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                 </Box> */}
 
                 {dataNotFoundBoolean ? <DataNotFound /> : <DataGrid
-                    dataSource={dataNotFoundBoolean ? [] : advFilteredResult.length > 0 ? advFilteredResult : documents}
+                    dataSource={advFilteredResult.length > 0 ? advFilteredResult : documents}
                     keyExpr="Guid"
                     allowColumnReordering={true}
                     rowAlternationEnabled={true}
