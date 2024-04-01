@@ -22,6 +22,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
   const [defaultUser, setDefaultUser] = useState(null);
   const [status, setStatus] = useState([]);
   const [ImportContact, setImportContact] = useState([]);
+  const [ImportCompanyDetails, setImportCompanyDetails] = useState([]);
   const [Importdata, setImportdata] = useState("");
   const [intUserid, setIntUserid] = useState(localStorage.getItem("UserId"));
   const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
@@ -165,6 +166,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
             console.log(json,"Json_CompanyHouseDetails");
             let jdata = json.CompanyBasicDetails;
             console.log("Json_CompanyHouseDetails1", jdata);
+
             // setContactlistdata(json.Table);
             if(jdata.length > 0){
               setImportContact(jdata);
@@ -176,6 +178,8 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
       console.log("Error while calling Json_GetToFavourites", err);
     }
   };
+
+  
   const companyhouselist = {
     options: ImportContact,
     getOptionLabel: (option) => option.Folder || "",
@@ -184,8 +188,21 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
            
     e.preventDefault();
     const inputValue = e.target.value;
+    console.log(inputValue,"import_data");
     setImportdata(inputValue);
     Json_CompanyHouseDetails(inputValue);
+};
+
+const [txtValue,setTxtValue]=useState(null);
+const [open, setOpen] = useState(false);
+
+const handleOptionClick = (id) => {
+  console.log(id, "onSelectData");
+  // Perform actions with the id
+  let data = id.company_number;
+  Json_CompanyHouseDetails(data);
+  setTxtValue(id);
+  setOpen(false); // Close the Autocomplete dropdown
 };
 const handleListItemClick = (item) => {
   console.log('Selecteditem:', item);
@@ -254,6 +271,7 @@ const handleListItemClick = (item) => {
       };
         // setUserDetail(data);
 };
+  console.log(Importdata,"Importdata")
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
@@ -289,11 +307,20 @@ const handleListItemClick = (item) => {
       filterOptions={(x) => x}
       autoComplete
       includeInputInList
+    value={txtValue}
+    open={open} // Controlled by state
+    onOpen={() => setOpen(true)} // Open the Autocomplete dropdown
+    onClose={() => setOpen(false)} // Close the Autocomplete dropdown
       renderOption={(props, option) => {
         // Custom rendering for each option
         console.log(option,"rendwered dynamic from apifff",props);
         return (
-          <li {...props}>
+          <li {...props} 
+          onClick={() => {
+            
+            handleOptionClick(option); // Pass the id directly
+          }}
+  >
             {/* Your custom rendering */}
             <Grid container alignItems="center">
             
