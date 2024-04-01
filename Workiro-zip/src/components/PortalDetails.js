@@ -55,7 +55,7 @@ function PortalDetails() {
                     </p>
                 </Box>
 
-                <Box className='d-flex flex-wrap align-items-center justify-content-between'>
+                <Box className='d-flex flex-wrap align-items-center justify-content-between '>
                     <Box className='d-flex'>
                         <MarkunreadIcon className='text-blue' />
                         {/* <DraftsIcon /> */}
