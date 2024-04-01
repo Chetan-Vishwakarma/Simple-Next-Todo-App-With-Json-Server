@@ -46,6 +46,29 @@ Json_GetContactListByFolder(obj,callBack) {
 
     ////////////////////////////////////////Portal Methods
    
+    GetComments_Json(obj,callBack) {
+        super.CreateNewServiceParamObject("GetComments_Json",obj,false);
+        super.CallNewService("GetComments_Json", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+    SendReminder_Json(obj,callBack) {
+        super.CreateNewServiceParamObject("SendReminder_Json",obj,false);
+        super.CallNewService("SendReminder_Json", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+
     GetCommentsHtml_Json(obj,callBack) {
         super.CreateNewServiceParamObject("GetCommentsHtml_Json",obj,false);
         super.CallNewService("GetCommentsHtml_Json", function (status, Data) {

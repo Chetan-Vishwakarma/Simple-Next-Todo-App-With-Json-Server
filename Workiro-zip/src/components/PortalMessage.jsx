@@ -99,11 +99,21 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem }) => {
         ClsPortal.GetMessageHtml_Json(o, function (sts, data) {
             if (sts) {
                 console.log("GetMessageHtml_Json", data);
-                setTemplateDataMarkup(data)
+                
+                setTemplateDataMarkup(HtmlToText(data))
             }
         })
     }
-
+function HtmlToText(data){
+    if(data){
+        const textContent = data.replace(/<[^>]*>/g, '');
+        return textContent;
+    }
+    else {
+        return ""; 
+    }
+   
+}
     const GetCertificate_Json = (mgsId) => {
         let o = {
             accid: agrno,
@@ -219,16 +229,54 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem }) => {
             }
         })
     }
+    const GetComments_Json = (m) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageId: m.PortalDocId,
+        };
+
+        ClsPortal.GetComments_Json(o, function (sts, data) {
+            if (sts) {
+
+                console.log("GetComments_Json", data);
+                if (data) {
+                }
+                // setTemplateDataMarkup(data)
+            }
+        })
+    }
+
+    const SendReminder_Json = (m) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageId: m.PortalDocId,
+        };
+
+        ClsPortal.SendReminder_Json(o, function (sts, data) {
+            if (sts) {
+
+                console.log("SendReminder_Json", data);
+                if (data) {
+                }
+                // setTemplateDataMarkup(data)
+            }
+        })
+    }
 
     const handleCloseMgs = (e) => {
         setAnchorElMgs(null);
         console.log("GetMessageHtml_Json11", e);
         //console.log("GetMessageHtml_Json11", e);
         if (e.PortalDocId) {
-
+         
             GetMessageHtml_Json(e.PortalDocId);
             GetCertificate_Json(e.PortalDocId);
             GetCommentsHtml_Json(e);
+            GetComments_Json(e);
             GetDocumentStatus_Json(e);
             setMessageEmail(e.emailid);
             setPortalEmailOpbject(e);
@@ -698,6 +746,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem }) => {
                         setEditorContentValue={setEditorContentValue}
                         className="form-control textarea"
                         disabled={selectedTask.Source === "Portal"}
+                        value={templateDataMarkup}
                     ></textarea>
                 </Box>
 

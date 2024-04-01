@@ -82,7 +82,7 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 
-function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) {
+function TaskDetailModal({setIsApi, isApi, selectedTask, openModal, setOpen }) {
     console.log("TaskDetailModal2222", selectedTask);
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
     const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
@@ -96,6 +96,8 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
 
     /////////////////////////////////////////Task Activity
+    const [anchorEl4, setAnchorEl4] = React.useState(null);
+    const [NumPriority, setNumPriority] = React.useState(selectedTask.Priority);
 
     const [folderList, setFolderList] = useState([]);
 
@@ -905,6 +907,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 if (data === "Success") {
                     toast.success(mgsd)
                     Json_AddSupplierActivity(mgsd + " by " + forwardUser.ForwardTo, "sys");
+                    setIsApi(!isApi);
                 }
                 console.log("Json_UpdateTaskField", data)
             }
@@ -1167,13 +1170,24 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     };
 
     // CRM & Portal Dropdown
-    const [anchorEl4, setAnchorEl4] = React.useState(null);
+
     const open4 = Boolean(anchorEl4);
     const handleClick4 = (event) => {
         setAnchorEl4(event.currentTarget);
     };
-    const handleClose4 = () => {
+    const handleClose4 = (e) => {
+
         setAnchorEl4(null);
+        console.log("Priority", e.target.innerText)
+
+      
+
+        let pri = e.target.innerText;
+let res = pri === "High" ? 1:pri === "Medium" ? 2 : pri === "Low" ? 3 : null;
+        Json_UpdateTaskField("Priority", res , "Priority updated!");
+       
+       setNumPriority(res)
+
     };
 
 
@@ -1204,27 +1218,28 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                         onClick={handleClick4}
                                         className="min-width-auto"
                                     >
-                                        {selectedTask.Priority === 1 && (
-                                            
-                                                <PanoramaFishEyeIcon className="text-red" fontSize="medium" />
-                                           
+                                        {NumPriority=== 1 && (
+
+                                            <PanoramaFishEyeIcon className="text-red" fontSize="medium" />
+
                                         )}
-                                        {selectedTask.Priority === 2 && (
-                                           
-                                                <RadioButtonUncheckedIcon fontSize="medium" className="text-warning" />
-                                            
+                                        {NumPriority === 2 && (
+
+                                            <RadioButtonUncheckedIcon fontSize="medium" className="text-warning" />
+
                                         )}
-                                        {selectedTask.Priority === 3 && (
-                                           
-                                                <EjectIcon fontSize="medium" className="text-success rotate-180" />
-                                            
+                                        {NumPriority === 3 && (
+
+                                            <EjectIcon fontSize="medium" className="text-success rotate-180" />
+
                                         )}
-                                        {selectedTask.Priority !== 1 && selectedTask.Priority !== 2 && selectedTask.Priority !== 3 && (
+                                        {NumPriority !== 1 && NumPriority !== 2 && NumPriority !== 3 && (
                                             <CheckCircleIcon />
                                         )}
 
                                     </Button>
-                                    <Menu
+                                    {selectedTask.Source === "CRM" && (<>
+                                        <Menu
                                         id="basic-menu"
                                         anchorEl={anchorEl4}
                                         open={open4}
@@ -1256,6 +1271,8 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                         </MenuItem>
 
                                     </Menu>
+                                    </>)}
+                                   
                                 </div>
 
                                 {/* <div>
@@ -1524,7 +1541,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                         value={txtdescription} // Bind the value to the state
                                         onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
                                         onClick={handalClickEditeSubject}
-                                        
+
                                     ></textarea>
                                 </>)}
 
@@ -1685,7 +1702,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                                 value={nextDate}
                                                 onChange={(e) => {
                                                     setNextDate(e);
-                                                    let enddatetime = dayjs(remiderDate).format("YYYY/MM/DD");
+                                                    let enddatetime = dayjs(e).format("YYYY/MM/DD");
                                                     if (enddatetime) {
                                                         Json_UpdateTaskField("EndDateTime", enddatetime, "Due date updated!")
                                                     }
