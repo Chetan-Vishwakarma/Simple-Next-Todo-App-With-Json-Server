@@ -225,7 +225,7 @@ button {
   color: #fff !important;
 }
 
-.table-grid-2  .dx-datagrid-rowsview .dx-datagrid-content:not(.dx-datagrid-content-fixed) {
+.table-grid-2 .dx-datagrid-rowsview .dx-datagrid-content:not(.dx-datagrid-content-fixed) {
   height: calc(100vh - 450px);
   overflow: auto;
 }
@@ -1916,6 +1916,22 @@ span.tox-statusbar__branding {
 
 .dx-datagrid-borders>.dx-datagrid-header-panel {
   display: none;
+}
+
+.main-client-details-filter {
+  position: absolute;
+  right: 0;
+  top: -46px;
+}
+
+.client-details-filter-btn {
+  background: #f1f1f1;
+  padding: 10px;
+}
+.client-details-filter-btn button {
+  /* width: 100%; */
+  background: #fff;
+  margin: 0 2px;
 }
 
 @media only screen and (max-width: 1366px) {

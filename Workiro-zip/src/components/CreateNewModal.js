@@ -914,7 +914,6 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-2
             const fileNames = filedata.map(obj => obj["FileName"]);
             const fileDataBase64 = filedata.filter(obj => obj["Base64"] !== "").map(obj => obj["Base64"]);
 
-
             let o = {};
             o.accid = agrno;
             o.email = Email;

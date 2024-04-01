@@ -253,7 +253,7 @@ function ClientDetails() {
                         <TaskList></TaskList>
                     </TabPanel>
 
-                    <TabPanel value="5" className='p-0'>
+                    <TabPanel value="5" className='p-0 relative'>
                         <DocumentList clientId={originatorNo} globalSearchDocs={globalSearchDocs} ></DocumentList>
                     </TabPanel>
 
