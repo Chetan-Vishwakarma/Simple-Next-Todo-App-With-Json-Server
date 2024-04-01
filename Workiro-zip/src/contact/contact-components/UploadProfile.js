@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -11,8 +11,8 @@ const Input = styled('input')({
   display: 'none',
 });
 
-export default function UploadButtons({userContactDetails,setContactDetails}) {
-   console.log(userContactDetails,"setContactDetails_TEST");
+export default function UploadButtons({ userContactDetails, setContactDetails }) {
+  console.log(userContactDetails, "setContactDetails_TEST");
   const [images, setImages] = useState([]);
   const [contactImgdata, setContactImgdata] = useState([]);
   const [previewImage, setPreviewImage] = useState(null);
@@ -42,13 +42,13 @@ export default function UploadButtons({userContactDetails,setContactDetails}) {
       "ClientId": "0007",
       "ContactNo": null,
       "fieldName": "imgPath",
-      "fieldValue": base64  
+      "fieldValue": base64
     }
     try {
       Cls.Json_UpdateContactField(requestBody, (sts, data) => {
         if (sts) {
           if (data) {
-            console.log(data,"getdata")
+            console.log(data, "getdata")
             // let json = JSON.parse(data);
             // setFolders(json.Table);
           }
@@ -65,7 +65,7 @@ export default function UploadButtons({userContactDetails,setContactDetails}) {
       "password": password,
       "ClientId": "0007",
       "ContactEmail": ""
-  }
+    }
     try {
       Cls.Json_GetContactNumber(requestBody, (sts, data) => {
         if (sts) {
@@ -91,34 +91,34 @@ export default function UploadButtons({userContactDetails,setContactDetails}) {
   }, []);
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
-    
+
     // Create an array to store base64 representations of selected files
     const base64Images = [];
-    
+
     // Use FileReader to read each file as base64
     selectedFiles.forEach(file => {
       const reader = new FileReader();
       reader.onload = (e) => {
         base64Images.push(e.target.result);
-        console.log(e.target.result,"bae64daataa")
+        console.log(e.target.result, "bae64daataa")
         // Json_UpdateContactField(e.target.result);
         setContactImgdata(e.target.result);
         let imgdata = e.target.result;
-let data = { ...userContactDetails };
-data = { ...data, ["Base64ImgData"]: imgdata}
-console.log(data,"getiMAGE");
-setContactDetails(data);
+        let data = { ...userContactDetails };
+        data = { ...data, ["Base64ImgData"]: imgdata }
+        console.log(data, "getiMAGE");
+        setContactDetails(data);
         // If all files have been read, set the images state and preview the first image
         if (base64Images.length === selectedFiles.length) {
           setImages(base64Images);
           setPreviewImage(base64Images[0]); // Set the first image as preview
-          console.log(images,"previewimccccg",previewImage);
+          console.log(images, "previewimccccg", previewImage);
         }
       };
       reader.readAsDataURL(file);
     });
-    console.log(contactImgdata,"contactImage")
-    
+    console.log(contactImgdata, "contactImage")
+
   };
 
   const removeImage = (indexToRemove) => {
@@ -130,26 +130,9 @@ setContactDetails(data);
   };
 
   return (
-    <Stack direction="row" alignItems="center" spacing={2}>
-      <label htmlFor="contained-button-file">
-        <Input
-          accept="*"
-          id="contained-button-file"
-          multiple
-          type="file"
-          onChange={handleFileChange}
-        />
-        {/* <Button variant="contained" component="span">
-          Upload
-        </Button> */}
-        <IconButton
-          color="primary"
-          aria-label="upload picture"
-          component="span"
-        >
-          <PhotoCamera />
-        </IconButton>
-      </label>
+    <Stack alignItems="start" spacing={2}>
+
+
       <label htmlFor="icon-button-file">
         <Input
           accept="image/*"
@@ -158,7 +141,7 @@ setContactDetails(data);
           onChange={handleFileChange}
         />
       </label>
-      <div>
+      <div >
         {images.map((image, index) => (
           <div
             key={index}
@@ -168,14 +151,14 @@ setContactDetails(data);
               <img
                 src={previewImage}
                 alt="Preview"
-                style={{ width: '100px', height: '100px', borderRadius: '50%' }}
+                style={{ width: '100px', height: '100px', borderRadius: '90px' }}
               />
             ) : (
               <img
-              // src={}
-              alt="Preview"
-              style={{ width: '100px', height: '100px', borderRadius: '50%' }}
-            />
+                // src={}
+                alt="Preview"
+                style={{ width: '100px', height: '100px', borderRadius: '90px' }}
+              />
             )}
             <IconButton
               style={{ position: 'absolute', top: '5px', right: '5px' }}
@@ -186,9 +169,35 @@ setContactDetails(data);
           </div>
         ))}
         {images.length === 0 && !previewImage && (
-          <img src="https://via.placeholder.com/100" alt="Blank Preview" style={{ maxWidth: '100px', maxHeight: '100px', margin: '5px' }} />
+          <img src="https://via.placeholder.com/100" alt="Blank Preview" style={{ maxWidth: '100px', maxHeight: '100px', margin: '5px',  borderRadius: '90px'  }} />
         )}
       </div>
+
+
+      <label htmlFor="contained-button-file">
+        <Input
+          accept="*"
+          id="contained-button-file"
+          multiple
+          type="file"
+          onChange={handleFileChange}
+        />
+        <Button variant="contained" component="span"
+          size='small'
+          className='btn-blue-2'>
+          <IconButton
+
+            // color="primary"
+            className='font-16 text-white'
+            aria-label="upload picture"
+            component="span"
+          >
+            <PhotoCamera className='font-18' />
+          </IconButton>
+          Image Upload
+        </Button>
+      </label>
+
     </Stack>
   );
 }
