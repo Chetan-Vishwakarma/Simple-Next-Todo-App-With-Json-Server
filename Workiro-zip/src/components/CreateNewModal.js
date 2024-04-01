@@ -39,6 +39,7 @@ import {
     ListItem,
     ListItemText,
     TextField,
+    responsiveFontSizes,
 } from "@mui/material";
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
@@ -89,7 +90,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
- function CreateNewModalTask({ ...props }) {
+function CreateNewModalTask({ ...props }) {
 
     let {
         documentDate,
@@ -120,6 +121,12 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
     //   let dt = new LoginDetails();
 
     let cls = new CommanCLS(baseUrl, agrno, Email, password);
+
+    const baseurlSMs = "https://docusms.uk/dsdesktopwebservice.asmx/"; // base url for api
+    //   let dt = new LoginDetails();
+
+    let clsSms = new CommanCLS(baseurlSMs, agrno, Email, password);
+
 
     const [filterText, setFilterText] = React.useState("");
 
@@ -232,12 +239,23 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-    const handleClickOpen = () => {
+    const handleClickOpen = (vl) => {
+        console.log("Type show 1111", vl)
+        if (vl === "Portal") {
+            settxtTaskType(vl)
+            setIsVisibleByTypeCRM(true);
+        }
+        else {
+            settxtTaskType(vl)
+            setIsVisibleByTypeCRM(false);
+        }
+
         setOpen(true);
+
     };
 
     const handleClose = () => {
-        setOpen(false);       
+        setOpen(false);
     };
 
     // dropdown add
@@ -413,8 +431,14 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
                         setUserList(result);
                         let removeuser = result.filter((e) => e.ID !== localStorage.getItem("UserId"));
+
+                     
                         setUserListData(removeuser);
                         setUserFilter(removeuser);
+
+                        let commanuser = result.filter((e) => e.ID === localStorage.getItem("UserId"));
+                        console.log("Json_GetForwardUserList11", commanuser);
+                        setSelectedUSer(commanuser[0]);
 
                     }
                 }
@@ -575,7 +599,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
         setFolderAnchorEl(null);
     };
 
-    
+
 
     useEffect(() => {
 
@@ -724,7 +748,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
     const CurrentDateChange = (e) => {
         setCurrentDate(e);
-       // setNextDate(formattedDate);
+        // setNextDate(formattedDate);
     }
     useEffect(() => {
         const currentDate1 = new Date(currentDate);
@@ -733,10 +757,10 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
         // Get the day, month, and year
         const day = nextDate.getDate().toString().padStart(2, '0');
         const month = (nextDate.getMonth() + 1).toString().padStart(2, '0');
-        const year = nextDate.getFullYear();    
+        const year = nextDate.getFullYear();
         // Construct the date string in "yyyy/mm/dd" format
         const formattedDate = `${day}/${month}/${year}`;
-        console.log("formattedDate", formattedDate);    
+        console.log("formattedDate", formattedDate);
         setNextDate(formattedDate); // Set nextDate with formatted date
     }, [currentDate]);
 
@@ -1068,12 +1092,12 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
         const attString = attachmentPath.map(obj => obj.Path).join('|');
 
         //console.log("nextDate1", currentDate)
-       let nxtdd =dayjs(nextDate).format("YYYY/MM/DD");
-    if(nxtdd==="Invalid Date"){
-        let dd = nextDate.split("/");//30/03/2024
-        nxtdd= dd[2]+"/"+dd[1]+"/"+dd[0];
-    }
-       
+        let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
+        if (nxtdd === "Invalid Date") {
+            let dd = nextDate.split("/");//30/03/2024
+            nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
+        }
+
         //console.log("nextDate",dayjs(nxtdd).format("YYYY/MM/DD"))
         let ooo = {
 
@@ -1113,7 +1137,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
             "TaskSource": "CRM"
         }
         console.log("final save data obj", ooo);
-        cls.Json_CRM_Task_Save(ooo, function (sts, data) {
+        clsSms.Json_CRM_Task_Save(ooo, function (sts, data) {
             if (sts) {
                 let js = JSON.parse(data);
 
@@ -1274,8 +1298,10 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
     const [anchorElTastkType, setAnchorElTastkType] = React.useState(null);
 
     const [portalUser, setPortalUser] = React.useState([]);
+    const [portalUserCC, setPortalUserCC] = React.useState([]);
+    const [portalUserTo, setPortalUserTo] = React.useState([]);
 
-    const [txtTaskType, settxtTaskType] = React.useState("CRM");
+    const [txtTaskType, settxtTaskType] = React.useState("");
 
     const [isVisibleByTypeCRM, setIsVisibleByTypeCRM] = React.useState(false);
 
@@ -1343,6 +1369,8 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                             let filteredUsers = tble6.filter(el => el["Portal User"] === true && el["Portal User"] !== null);
                             if (filteredUsers.length > 0) {
                                 setPortalUser(filteredUsers.length > 0 ? filteredUsers : null);
+                                setPortalUserCC(filteredUsers.length > 0 ? filteredUsers : null);
+                                setPortalUserTo(filteredUsers.length > 0 ? filteredUsers : null);
                             }
                             console.log("Json_GetClientCardDetails", filteredUsers);
                         }
@@ -1379,17 +1407,41 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
     const [selectedEmail, setSelectedEmail] = useState([]);
 
     const handleAutocompleteChange = (event, newValue) => {
-        
+      
         setSelectedEmail(newValue ? newValue : null);
-
-
-        //console.log("handleAutocompleteChange", newValue,event);
+    
+        if (newValue) {
+            let res = portalUser.filter((user) => {
+                let unk = newValue.find((u) => u.ContactNo === user.ContactNo);
+               // console.log("selected email", unk);
+                return unk === undefined; // If unk is undefined, it means there's no matching ContactNo in newValue
+            });
+            setPortalUserCC(res)
+           // console.log("selected email11", res);
+        } else {
+            console.log("selected email11", portalUser); // If newValue is null, log the entire portalUser
+        }
+    
+        //console.log("handleAutocompleteChange", newValue, event);
     };
+    
 
     const [selectedEmailCC, setSelectedEmailCC] = useState(null);
     const handleAutocompleteChangeOnCC = (event, newValue) => {
 
         setSelectedEmailCC(newValue ? newValue : null);
+
+        if (newValue) {
+            let res = portalUser.filter((user) => {
+                let unk = newValue.find((u) => u.ContactNo === user.ContactNo);
+               // console.log("selected email", unk);
+                return unk === undefined; // If unk is undefined, it means there's no matching ContactNo in newValue
+            });
+            setPortalUserTo(res)
+           // console.log("selected email11", res);
+        } else {
+            console.log("selected email11", portalUser); // If newValue is null, log the entire portalUser
+        }
     };
 
     //const filteredOptions = portalUser ? portalUser.filter(option => option["E-Mail"] !== selectedEmail) : [];
@@ -1623,15 +1675,15 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 
     function CreatePortalTask() {
-       // console.log("nextDate1", currentDate)
+        // console.log("nextDate1", currentDate)
         ////console.log("nextDate", nextDate)
 
-        let nxtdd =dayjs(nextDate).format("YYYY/MM/DD");
-        if(nxtdd==="Invalid Date"){
+        let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
+        if (nxtdd === "Invalid Date") {
             let dd = nextDate.split("/");//30/03/2024
-            nxtdd= dd[2]+"/"+dd[1]+"/"+dd[0];
+            nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
         }
-        
+
 
         try {
             const isaddUser = addUser.map(obj => obj.ID).join(',');
@@ -1756,7 +1808,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                             toast.success("Task Created");
                         }
                         setOpen(false);
-                       
+
                         // let js = JSON.parse(data);
 
                         // if (js.Status == "success") {
@@ -2049,7 +2101,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                     }}
                     className="custom-dropdown"
                 >
-                    <MenuItem onClick={handleClickOpen}>
+                    <MenuItem onClick={() => handleClickOpen("CRM")}>
                         {/* <ListItemIcon>
                             <EjectIcon fontSize="medium" className="text-red rotate-180" />
                         </ListItemIcon> */}
@@ -2058,7 +2110,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                         </ListItemIcon> CRM Task
                     </MenuItem>
 
-                    <MenuItem onClick={handleClickOpen}><ListItemIcon>
+                    <MenuItem onClick={() => handleClickOpen("Portal")}><ListItemIcon>
                         <LanguageIcon className="font-20" />
                     </ListItemIcon>
                         Portal Task</MenuItem>
@@ -2231,7 +2283,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                                         <Autocomplete
                                                             multiple
                                                             id="checkboxes-tags-demo"
-                                                            options={portalUser}
+                                                            options={portalUserTo}
                                                             disableCloseOnSelect
                                                             getOptionLabel={(option) => option["E-Mail"]}
                                                             renderOption={(props, option, { selected }) => (
@@ -2257,7 +2309,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                                         <Autocomplete
                                                             multiple
                                                             id="checkboxes-tags-demo"
-                                                            options={portalUser}
+                                                            options={portalUserCC}
                                                             disableCloseOnSelect
                                                             getOptionLabel={(option) => option["E-Mail"]}
                                                             renderOption={(props, option, { selected }) => (
@@ -2699,7 +2751,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                                                     MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
                                                                 >
                                                                     <MenuItem onClick={() => DeleteFile(file)}>Delete</MenuItem>
-                                                                    {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
+                                                                    {txtTaskType === "Portal" && (file.FileType.toLowerCase() === "docx" || file.FileType.toLowerCase() === "doc" || file.FileType.toLowerCase() === "xls" || file.FileType.toLowerCase() === "xlsx" || file.FileType.toLowerCase() === "msg") && (
                                                                         <MenuItem onClick={(e) => ConvertToPdf_Json(file)}>Convert To Pdf</MenuItem>
                                                                     )}
 
