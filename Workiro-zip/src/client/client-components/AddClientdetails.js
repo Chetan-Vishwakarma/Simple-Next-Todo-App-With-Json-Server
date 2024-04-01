@@ -88,8 +88,8 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
     if (value) {
       let data = { ...userDetail };
       data = { ...data, ["UserId"]: value.UserId };
-      console.log(defaultUser, "dataOnchange111",value);
-        setDefaultUser(value);
+      console.log(defaultUser, "dataOnchange111", value);
+      setDefaultUser(value);
       setUserDetail(data);
     } else {
     }
@@ -152,108 +152,109 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail }) => {
     }
   };
 
-  const 
-  Json_CompanyHouseDetails = () => {
-    let requestBody = {
-      CompanyName_Number:Importdata
-    };
-    try {
-      Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
-        if (sts) {
-          if (data) {
-            let json = JSON.parse(data);
-            console.log(json,"Json_CompanyHouseDetails");
-            let jdata = json.CompanyBasicDetails;
-            console.log("Json_CompanyHouseDetails1", jdata);
-            // setContactlistdata(json.Table);
-            if(jdata.length > 0){
-              setImportContact(jdata);
+  const
+    Json_CompanyHouseDetails = () => {
+      let requestBody = {
+        CompanyName_Number: Importdata
+      };
+      try {
+        Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
+          if (sts) {
+            if (data) {
+              let json = JSON.parse(data);
+              console.log(json, "Json_CompanyHouseDetails");
+              let jdata = json.CompanyBasicDetails;
+              console.log("Json_CompanyHouseDetails1", jdata);
+              // setContactlistdata(json.Table);
+              if (jdata.length > 0) {
+                setImportContact(jdata);
+              }
             }
           }
-        }
-      });
-    } catch (err) {
-      console.log("Error while calling Json_GetToFavourites", err);
-    }
-  };
+        });
+      } catch (err) {
+        console.log("Error while calling Json_GetToFavourites", err);
+      }
+    };
   const companyhouselist = {
     options: ImportContact,
     getOptionLabel: (option) => option.Folder || "",
   };
   const onChangeImportData = (e) => {
-           
+
     e.preventDefault();
     console.log(e.target.value, "onChangeImportData");
     setImportdata(e.target.value);
     Json_CompanyHouseDetails();
-};
-const handleListItemClick = (item) => {
-  console.log('Selecteditem:', item);
-  // setFillContact(item);
-  let data = { ...userDetail };
-        data = { ...data,  CHnumber: "",
-        Clientname: "",
-        Clientid: "",
-        Mobile: "",
-        Telephone: "",
-        Line1: "",
-        Line2: "",
-        Line3: "",
-        Town: "",
-        MCounty: "",
-        Postcode: "",
-        BilLine1: "",
-        BilLine2: "",
-        BilLine3: "",
-        BilTown: "",
-        BilCountry: "",
-        BilPostcode: "",
-        regLine1: "",
-        regLine2: "",
-        regLine3: "",
-        regTown: "",
-        regCountry: "",
-        regPostcode: "",
-        Selectclient: "",
-        Selectteamsa: "",
-        addDetails: "",
-        mainAddress: "",
-        biliAddress: "",
-        regAddress: "",
-        fullAddress: "",
-        Bussiness: "",
-        Status: "",
-        Source: "",
-        Manager: "",
-        Email: "",
-        folderId: localStorage.getItem("FolderId"),
-        BussId: -1,
-        UserId: -1,
-        SourceId: -1,
-        StatusId: -1,
-        Title: "",
-        FirstName: "",
-        LastName: "",
-        ReferenceName: "",
-        MainContact: false,
-        Inactive: false,
-        GreetingName: "",
-        EmailName: "",
-        MainUserId: -1,
-        MainLine1Name: "",
-        MainLine2Name: "",
-        MainLine3Name: "",
-        MainTownName: "",
-        MainPostcodeName: "",
-        Maincontactcountry: "",
-        MainTelephoneName: "",
-        MainMobileName: "",
-        mainCountry: "",
-        billingsCountry: "",
-        ragistersCountry: ""
-      };
-        // setUserDetail(data);
-};
+  };
+  const handleListItemClick = (item) => {
+    console.log('Selecteditem:', item);
+    // setFillContact(item);
+    let data = { ...userDetail };
+    data = {
+      ...data, CHnumber: "",
+      Clientname: "",
+      Clientid: "",
+      Mobile: "",
+      Telephone: "",
+      Line1: "",
+      Line2: "",
+      Line3: "",
+      Town: "",
+      MCounty: "",
+      Postcode: "",
+      BilLine1: "",
+      BilLine2: "",
+      BilLine3: "",
+      BilTown: "",
+      BilCountry: "",
+      BilPostcode: "",
+      regLine1: "",
+      regLine2: "",
+      regLine3: "",
+      regTown: "",
+      regCountry: "",
+      regPostcode: "",
+      Selectclient: "",
+      Selectteamsa: "",
+      addDetails: "",
+      mainAddress: "",
+      biliAddress: "",
+      regAddress: "",
+      fullAddress: "",
+      Bussiness: "",
+      Status: "",
+      Source: "",
+      Manager: "",
+      Email: "",
+      folderId: localStorage.getItem("FolderId"),
+      BussId: -1,
+      UserId: -1,
+      SourceId: -1,
+      StatusId: -1,
+      Title: "",
+      FirstName: "",
+      LastName: "",
+      ReferenceName: "",
+      MainContact: false,
+      Inactive: false,
+      GreetingName: "",
+      EmailName: "",
+      MainUserId: -1,
+      MainLine1Name: "",
+      MainLine2Name: "",
+      MainLine3Name: "",
+      MainTownName: "",
+      MainPostcodeName: "",
+      Maincontactcountry: "",
+      MainTelephoneName: "",
+      MainMobileName: "",
+      mainCountry: "",
+      billingsCountry: "",
+      ragistersCountry: ""
+    };
+    // setUserDetail(data);
+  };
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
@@ -271,32 +272,32 @@ const handleListItemClick = (item) => {
         <h2 className="font-14 bold mb-2 text-black">Import from Companies House</h2>
         <Grid container spacing={3} className="mb-">
           <Grid item lg={6} xs={6} md={6}>
-          <TextField
-                          fullWidth
-                          variant="outlined"
-                          name="importclient"
-                          onChange={onChangeImportData}
-                          label="Enter Company Name or Number"
-                        />
+            <TextField
+              fullWidth
+              variant="outlined"
+              name="importclient"
+              onChange={onChangeImportData}
+              label="Enter Company Name or Number"
+            />
           </Grid>
           <Grid item lg={6} xs={6} md={6} className="d-flex align-items-center">
             <Button className="min-width-auto text-danger">
-              <HighlightOffIcon className="font-32"/>
+              <HighlightOffIcon className="font-32" />
             </Button>
           </Grid>
           {ImportContact && ImportContact.length > 0 && (
-            <List >
+            <List className="custom-dropdown">
               {ImportContact.map((item, index) => (
                 // !item.resigned_on && ( // Add this condition
                 <ListItem key={index} button
-                onClick={() => handleListItemClick(item)}
+                  onClick={() => handleListItemClick(item)}
                 >
-                 
-                  <ListItemText primary={item.title}/>
+
+                  <ListItemText primary={item.title} />
                   <ListItemText secondary={item.date_of_creation} />
-                 
+
                 </ListItem>
-              // )
+                // )
               ))}
             </List>
           )}

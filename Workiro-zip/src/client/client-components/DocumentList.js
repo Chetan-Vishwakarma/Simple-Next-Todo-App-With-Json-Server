@@ -47,6 +47,20 @@ import SwapVertIcon from '@mui/icons-material/SwapVert';
 import WarningIcon from '@mui/icons-material/Warning';
 import Popover from '@mui/material/Popover';
 import TuneIcon from '@mui/icons-material/Tune';
+import FolderSharedIcon from '@mui/icons-material/FolderShared';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+
+
+const BootstrapTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+    [`& .${tooltipClasses.arrow}`]: {
+        color: theme.palette.common.black,
+    },
+    [`& .${tooltipClasses.tooltip}`]: {
+        backgroundColor: theme.palette.common.black,
+    },
+}));
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -612,7 +626,7 @@ export default function DocumentList({ clientId }) {
 
 
                 <div className='main-client-details-filter'>
-                    <Button aria-describedby={id} variant="" className='min-width-auto' onClick={handleClick}>
+                    <Button aria-describedby={id} variant="" className='min-width-auto btn-blue px-0' onClick={handleClick}>
                         <TuneIcon />
                     </Button>
                     <Popover
@@ -624,6 +638,7 @@ export default function DocumentList({ clientId }) {
                             vertical: 'bottom',
                             horizontal: 'left',
                         }}
+
                         className='p-5'
                     >
                         <Box className='client-details-filter p-2'>
@@ -632,7 +647,7 @@ export default function DocumentList({ clientId }) {
                             </Typography>
 
                             <div className='text-center mb-2 client-details-filter-btn d-flex'>
-                                <ToggleButton className='w-100' value="left" aria-label="left aligned" onClick={() => setToggleScreen({ singleCardView: true, multipleCardView: false, tableGridView: false })}>
+                                <ToggleButton className='w-100 active' value="left" aria-label="left aligned" onClick={() => setToggleScreen({ singleCardView: true, multipleCardView: false, tableGridView: false })}>
                                     <DnsIcon />
                                 </ToggleButton>
                                 <ToggleButton className='w-100' value="center" aria-label="centered" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: true, tableGridView: false })}>
@@ -643,9 +658,9 @@ export default function DocumentList({ clientId }) {
                                 </ToggleButton>
                             </div>
 
-                            <Box className='mb-2'>
+                            <Box className='mb-0'>
                                 {/* sadik */}
-                                <Box sx={{ m: 1 }}>
+                                <Box sx={{ m: 1 }} className='pt-2'>
                                     <DateRangePicker
                                         initialSettings={{
                                             startDate: start.toDate(),
@@ -704,154 +719,234 @@ export default function DocumentList({ clientId }) {
                                     </DateRangePicker>
                                 </Box>
 
+                                <hr className='mt-1' />
 
-                                <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
-                                    <Select
-                                        value={selectedSection}
-                                        onChange={(e) => {
-                                            setSelectedSection(e.target.value);
-                                            if (e.target.value === "Section") {
-                                                handleFilterDeletion('Section');
-                                                setSelectedSection("");
-                                                return;
-                                            } else if (e.target.value !== '') {
-                                                setFilterCriteria({ ...filterCriteria, Section: [e.target.value] })
-                                            } else {
-                                                handleFilterDeletion('Section');
-                                                // let obj = Object.keys(filterCriteria).filter(objKey =>
-                                                //     objKey !== 'Section').reduce((newObj, key) =>
-                                                //     {
-                                                //         newObj[key] = filterCriteria[key];
-                                                //         return newObj;
-                                                //     }, {}
-                                                // );
-                                                // setFilterCriteria(obj);
-                                            }
-                                        }}
-                                        displayEmpty
-                                        inputProps={{ 'aria-label': 'Without label' }}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem value="" style={{ display: "none" }}>
-                                            Sections
-                                        </MenuItem>
-                                        <MenuItem value="Section" >00. Clear Filter</MenuItem>
-                                        {sections.length > 0 && sections.map((itm) => {
-                                            return <MenuItem value={itm.Sec}>{itm.Sec}</MenuItem>
-                                        })}
+                                <Typography variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
+                                    Sort By
+                                </Typography>
 
-                                        {/* <MenuItem value={10}>Section 1</MenuItem>
+                                <Box className='d-flex'>
+
+                                    <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0'>
+                                        <BootstrapTooltip title="Sections" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
+                                        >
+                                            <Select
+                                                value={selectedSection}
+                                                onChange={(e) => {
+                                                    setSelectedSection(e.target.value);
+                                                    if (e.target.value === "Section") {
+                                                        handleFilterDeletion('Section');
+                                                        setSelectedSection("");
+                                                        return;
+                                                    } else if (e.target.value !== '') {
+                                                        setFilterCriteria({ ...filterCriteria, Section: [e.target.value] })
+                                                    } else {
+                                                        handleFilterDeletion('Section');
+                                                        // let obj = Object.keys(filterCriteria).filter(objKey =>
+                                                        //     objKey !== 'Section').reduce((newObj, key) =>
+                                                        //     {
+                                                        //         newObj[key] = filterCriteria[key];
+                                                        //         return newObj;
+                                                        //     }, {}
+                                                        // );
+                                                        // setFilterCriteria(obj);
+                                                    }
+                                                }}
+                                                displayEmpty
+                                                inputProps={{ 'aria-label': 'Without label' }}
+                                                className='custom-dropdown'
+                                            >
+
+                                                <MenuItem value="" style={{ display: "none" }}>
+
+                                                    Sections sssssssss
+                                                </MenuItem>
+                                                <MenuItem value="Section" >00. Clear Filter</MenuItem>
+                                                {sections.length > 0 && sections.map((itm) => {
+                                                    return <MenuItem value={itm.Sec}>{itm.Sec}</MenuItem>
+                                                })}
+
+                                                {/* <MenuItem value={10}>Section 1</MenuItem>
                                     <MenuItem value={20}>Section 2</MenuItem> */}
-                                    </Select>
-                                </FormControl>
+                                            </Select>
+                                        </BootstrapTooltip>
+                                    </FormControl>
 
+                                    <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0'>
+                                        <BootstrapTooltip title="Folders" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
+                                        >
+                                            <Select
+                                                value={selectedFolder}
+                                                onChange={(e) => {
+                                                    setSelectedFolder(e.target.value);
+                                                    if (e.target.value === "Folder") {
+                                                        handleFilterDeletion("Folder");
+                                                        setSelectedFolder("");
+                                                        return;
+                                                    } else if (e.target.value !== '') {
+                                                        setFilterCriteria({ ...filterCriteria, Folder: [e.target.value] });
+                                                    } else {
+                                                        handleFilterDeletion('Folder');
+                                                        // let obj = Object.keys(filterCriteria).filter(objKey =>
+                                                        //     objKey !== 'Folder').reduce((newObj, key) =>
+                                                        //     {
+                                                        //         newObj[key] = filterCriteria[key];
+                                                        //         return newObj;
+                                                        //     }, {}
+                                                        // );
+                                                        // setFilterCriteria(obj);
+                                                    }
+                                                }}
+                                                displayEmpty
+                                                inputProps={{ 'aria-label': 'Without label' }}
+                                                className='custom-dropdown'
+                                            >
+                                                <MenuItem value="" style={{ display: "none" }}>Folders</MenuItem>
 
-                                <FormControl sx={{ m: 1, width: '90px' }} size="small" className='select-border'>
-                                    <Select
-                                        value={selectedFolder}
-                                        onChange={(e) => {
-                                            setSelectedFolder(e.target.value);
-                                            if (e.target.value === "Folder") {
-                                                handleFilterDeletion("Folder");
-                                                setSelectedFolder("");
-                                                return;
-                                            } else if (e.target.value !== '') {
-                                                setFilterCriteria({ ...filterCriteria, Folder: [e.target.value] });
-                                            } else {
-                                                handleFilterDeletion('Folder');
-                                                // let obj = Object.keys(filterCriteria).filter(objKey =>
-                                                //     objKey !== 'Folder').reduce((newObj, key) =>
-                                                //     {
-                                                //         newObj[key] = filterCriteria[key];
-                                                //         return newObj;
-                                                //     }, {}
-                                                // );
-                                                // setFilterCriteria(obj);
-                                            }
-                                        }}
-                                        displayEmpty
-                                        inputProps={{ 'aria-label': 'Without label' }}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem value="" style={{ display: "none" }}>Folders</MenuItem>
+                                                <MenuItem value="Folder" className='text-danger ps-1'>
+                                                    <ClearIcon className='font-18 me-1' />
+                                                    Clear Filters</MenuItem>
 
-                                        <MenuItem value="Folder" className='text-danger ps-1'>
-                                            <ClearIcon className='font-18 me-1' />
-                                            Clear Filters</MenuItem>
-
-                                        {folders.length > 0 && folders.map((itm) => {
-                                            return <MenuItem value={itm.Folder} className='ps-1'>
-                                                <FormatAlignJustifyIcon className='font-18 me-1' />
-                                                {itm.Folder}</MenuItem>
-                                        })}
-                                        {/* <MenuItem value="">
+                                                {folders.length > 0 && folders.map((itm) => {
+                                                    return <MenuItem value={itm.Folder} className='ps-1'>
+                                                        <FolderSharedIcon className='font-18 me-1' />
+                                                        {itm.Folder}</MenuItem>
+                                                })}
+                                                {/* <MenuItem value="">
                                         Select
                                     </MenuItem>
                                     <MenuItem value={10}>Select 1</MenuItem>
                                     <MenuItem value={20}>Select 2</MenuItem> */}
-                                    </Select>
-                                </FormControl>
-
-                                <Box className='d-flex'>
-                                    <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
-                                        <Select
-                                            value={selectedGroup}
-                                            displayEmpty
-                                            inputProps={{ 'aria-label': 'Without label' }}
-                                            className='custom-dropdown'
-                                            onChange={(e) => {
-                                                if (e.target.value === "Group By") {
-                                                    setSelectedGroup("");
-                                                    return;
-                                                }
-                                                setSelectedGroup(e.target.value);
-                                            }}
-                                        >
-                                            <MenuItem value="" style={{ display: "none" }}> Group By</MenuItem>
-                                            <MenuItem className='ps-1 text-red' value="Group By">
-                                                <CloseIcon className='font-18 me-1' />
-                                                Clear Group by</MenuItem>
-                                            <MenuItem className='ps-1' value="Description">
-                                                <DescriptionIcon className='font-18 me-1' />
-                                                Description</MenuItem>
-                                            <MenuItem className='ps-1' value={"CommentBy"}>
-                                                <InsertCommentIcon className='font-18 me-1' />
-                                                Comment By</MenuItem>
-                                            <MenuItem className='ps-1' value={"Type"}>
-                                                <ChecklistIcon className='font-18 me-1' />
-                                                Type</MenuItem>
-                                            {/* <MenuItem className='ps-1' value={"Comments"}>
-                                    <CloseIcon className='font-18 me-1' />
-                                        Comments</MenuItem> */}
-                                            {/* <MenuItem value={20}>Comment</MenuItem> */}
-                                        </Select>
+                                            </Select>
+                                        </BootstrapTooltip>
                                     </FormControl>
 
-                                    <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
-                                        <Select
-                                            value={sortByProperty}
-                                            onChange={(e) => {
-                                                if (e.target.value === "Sort By") {
-                                                    setSortByProperty("")
-                                                    return;
-                                                }
-                                                setSortByProperty(e.target.value)
-                                            }
-                                            }
-                                            displayEmpty
-                                            inputProps={{ 'aria-label': 'Without label' }}
-                                            className='custom-dropdown'
+                                </Box>
+                                {/* <hr /> */}
+
+                                <Typography variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
+                                    Filter By
+                                </Typography>
+
+
+                                <Box className='d-flex'>
+                                    <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 '>
+                                        <BootstrapTooltip title="Group By" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
                                         >
-                                            <MenuItem value="" style={{ display: "none" }}>
-                                                <SwapVertIcon className='pe-1' /> Sort By
-                                            </MenuItem>
-                                            <MenuItem value="None" onClick={() => setAdvFilteredResult([])}><WarningIcon className='pe-1' />  Clear Sortby</MenuItem>
-                                            <MenuItem value={"Date"}>
-                                                <CalendarMonthIcon className='pe-1' />
-                                                By Date</MenuItem>
-                                            <MenuItem value={"Description"}><DescriptionIcon className='pe-1' />
-                                                By Description</MenuItem>
-                                        </Select>
+                                            <Select
+                                                value={selectedGroup}
+                                                displayEmpty
+                                                inputProps={{ 'aria-label': 'Without label' }}
+                                                className='custom-dropdown'
+                                                onChange={(e) => {
+                                                    if (e.target.value === "Group By") {
+                                                        setSelectedGroup("");
+                                                        return;
+                                                    }
+                                                    setSelectedGroup(e.target.value);
+                                                }}
+                                            >
+                                                <MenuItem value="" style={{ display: "none" }}> Group By</MenuItem>
+                                                <MenuItem className='ps-1 text-red' value="Group By">
+                                                    <CloseIcon className='font-18 me-1' />
+                                                    Clear Group by</MenuItem>
+                                                <MenuItem className='ps-1' value="Description">
+                                                    <DescriptionIcon className='font-18 me-1' />
+                                                    Description</MenuItem>
+                                                <MenuItem className='ps-1' value={"CommentBy"}>
+                                                    <InsertCommentIcon className='font-18 me-1' />
+                                                    Comment By</MenuItem>
+                                                <MenuItem className='ps-1' value={"Type"}>
+                                                    <ChecklistIcon className='font-18 me-1' />
+                                                    Type</MenuItem>
+                                                {/* <MenuItem className='ps-1' value={"Comments"}>
+                                    <CloseIcon className='font-18 me-1' />
+                                        Comments</MenuItem> */}
+                                                {/* <MenuItem value={20}>Comment</MenuItem> */}
+                                            </Select>
+                                        </BootstrapTooltip>
+                                    </FormControl>
+
+                                    <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0'>
+                                        <BootstrapTooltip title="Sort By" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
+                                        >
+                                            <Select
+                                                value={sortByProperty}
+                                                onChange={(e) => {
+                                                    if (e.target.value === "Sort By") {
+                                                        setSortByProperty("")
+                                                        return;
+                                                    }
+                                                    setSortByProperty(e.target.value)
+                                                }
+                                                }
+                                                displayEmpty
+                                                inputProps={{ 'aria-label': 'Without label' }}
+                                                className='custom-dropdown'
+                                            >
+                                                <MenuItem value="" style={{ display: "none" }}>
+                                                    <SwapVertIcon className='pe-1' /> Sort By
+                                                </MenuItem>
+                                                <MenuItem className='ps-1' value="None" onClick={() => setAdvFilteredResult([])}><WarningIcon className='ps-1' />  Clear Sortby</MenuItem>
+                                                <MenuItem value={"Date"} className='ps-1'>
+                                                    <CalendarMonthIcon className='pe-1' />
+                                                    By Date</MenuItem>
+                                                <MenuItem value={"Description"} className='ps-1'><DescriptionIcon className='pe-1' />
+                                                    By Description dsfaaa</MenuItem>
+                                            </Select>
+                                        </BootstrapTooltip>
                                     </FormControl>
 
                                     {sortByProperty !== "" && sortByProperty !== "None" && <Checkbox
@@ -890,8 +985,6 @@ export default function DocumentList({ clientId }) {
                                 {/* <FormControlLabel control={<Switch />} label="Save View" className='ms-2' /> */}
 
                             </Box>
-
-
 
                         </Box>
 

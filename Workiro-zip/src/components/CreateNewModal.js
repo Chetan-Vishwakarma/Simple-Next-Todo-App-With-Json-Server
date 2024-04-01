@@ -2428,10 +2428,7 @@ function CreateNewModalTask({ ...props }) {
                                                 onClick={handleUserClick}
                                                 onContextMenu={handleRightClick}
                                                 className="p-0 w-auto d-inline-block"
-
-
                                             >
-
 
                                                 <Box className="d-flex align-items-center">
                                                     {ownerRighClick && (<>

@@ -1817,7 +1817,7 @@ span.tox-statusbar__branding {
 }
 
 .client-details-scroll {
-  max-height: calc(100vh - 388px);
+  max-height: calc(100vh - 348px);
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -1921,7 +1921,7 @@ span.tox-statusbar__branding {
 .main-client-details-filter {
   position: absolute;
   right: 0;
-  top: -46px;
+  top: -55px;
 }
 
 .client-details-filter-btn {
@@ -1932,6 +1932,24 @@ span.tox-statusbar__branding {
   /* width: 100%; */
   background: #fff;
   margin: 0 2px;
+}
+.client-details-filter-btn button.active {
+  background-color: #4780FF !important;
+  color: #fff;
+}
+.client-details-filter {
+  width: 360px;
+}
+.client-details-filter .select-border .custom-dropdown .MuiSelect-select {
+  border: 0;
+  /* font-weight: 400; */
+  color: #4780FF;
+  font-size: 12px;
+  padding-top: 0px !important;
+
+}
+.client-details-filter .custom-datepicker-bordered {
+  border-bottom: 0px solid;
 }
 
 @media only screen and (max-width: 1366px) {

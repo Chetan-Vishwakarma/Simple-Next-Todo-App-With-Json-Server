@@ -32,12 +32,12 @@ function ClientDetails() {
 
     const location = useLocation();
 
-    const [searchParams,setSearchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const tabValue = searchParams.get("val");
 
     const { agrno, Email, password, folderId, originatorNo, globalSearchDocs } = location.state;
     const [selected, setSelected] = React.useState(false);
-    const [value, setValue] = React.useState(tabValue?tabValue:'1');
+    const [value, setValue] = React.useState(tabValue ? tabValue : '1');
     const [clientDetails, setClientDetails] = useState({});
 
     const [companyDetails, setCompanyDetails] = useState([]);
@@ -176,9 +176,9 @@ function ClientDetails() {
     return (
         <Box className="container-fluid p-0">
 
-            <CustomBreadCrumbs tabs={[{tabLink:"/dashboard/Connections",tabName:"Connections"},{tabLink:"/dashboard/clientDetails",tabName:"Client Details"}]}/>
+            <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/Connections", tabName: "Connections" }, { tabLink: "/dashboard/clientDetails", tabName: "Client Details" }]} />
 
-            {globalSearchDocs.length===0&&<Box className="d-flex align-items-center justify-content-between flex-wrap">
+            {globalSearchDocs.length === 0 && <Box className="d-flex align-items-center justify-content-between flex-wrap">
                 <Box className='d-flex flex-wrap align-items-center'>
                     <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
                         {clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}
@@ -214,8 +214,8 @@ function ClientDetails() {
 
             <UploadDocument setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument} localtion={location}
             ></UploadDocument>
-
-            <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
+            <hr />
+            <Box sx={{ width: '100%', typography: 'body1' }} className="">
                 <TabContext value={value}>
                     <Box className='mb-1'>
                         <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
