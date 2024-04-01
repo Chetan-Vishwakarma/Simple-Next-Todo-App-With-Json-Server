@@ -88,8 +88,11 @@ function TodoList() {
 
     const [dataInGroup, setDataInGroup] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isSearch, setIsSearch] = useState(false);
 
     const [suggestionList, setSuggestionList] = useState([]);
+
+
 
     // for date datepicker
     const [state, setState] = useState({
@@ -583,13 +586,19 @@ function TodoList() {
                                     <span className="material-symbols-outlined search-icon">search</span>
 
                                     <Input
-                                        // onClick={(e) => handleDialogsOpen(e, "Search")}
+                                        onClick={(e) => {
+                                            if(e.target.value!==""){
+                                                setIsSearch(true);
+                                            }
+                                        }}
+                                        onBlur={(e)=>setIsSearch(false)}
                                         onChange={(e) => {
                                             if (e.target.value === "") {
                                                 setSuggestionList([]);
                                                 handleFilterDeletion("Subject");
                                                 return;
                                             }
+                                            setIsSearch(true);
                                             let fltData = allTask.filter(itm => itm.Subject.toLowerCase().includes(e.target.value.toLowerCase()));
                                             setSuggestionList(fltData);
                                             setTaskFilter({ ...taskFilter, Subject: [e.target.value] });
@@ -598,7 +607,7 @@ function TodoList() {
                                         className='ps-0' />
                                 </AutocompleteRoot>
 
-                                {suggestionList.length > 0 && <Listbox sx={{ zIndex: 1 }}>
+                                {isSearch && suggestionList.length > 0 && <Listbox sx={{ zIndex: 1 }}>
                                     {suggestionList.map((itm, i) => {
                                         return <Option key={i}>
                                             {/* <ApartmentIcon className='me-1' /> */}
