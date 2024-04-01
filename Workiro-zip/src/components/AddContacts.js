@@ -72,7 +72,8 @@ function AddContacts() {
       ragistersCountry: "",
       ReferenceID:"",
       BirthDate:"",
-      RolesData:""
+      RolesData:"",
+      Base64ImgData:""
     });
     const [companyDetails, setCompanyDetails] = useState([]);
 
@@ -215,14 +216,9 @@ function AddContacts() {
       const Json_UpdateContactField = (contactNumber) => {
         let contactData = 
           {
-
-            "fieldName": "BirthDate"
-        }
-      //   let profile = 
-      //   {
-
-      //     "fieldName": "BirthDate"
-      // }
+            "fieldName": "BirthDate",
+            "fieldFile": "imgPath"
+         }
         console.log(contactData,"contactData");
         if(contactData.fieldName=="BirthDate"){
           let birthdayObj =  {
@@ -235,10 +231,9 @@ function AddContacts() {
             "fieldName": "BirthDate",
             "fieldValue": userContactDetails.BirthDate
         }
-        
           Cls.Json_UpdateContactField(birthdayObj, (sts, data) => {
             if(sts){
-              console.log(sts, data,"newcontactData");
+              console.log(sts, data,"birthdaynewcontactData");
               // let jsonparse = JSON.parse(data);
               // if (jsonparse) {
               //     console.log(jsonparse,"successcontact");
@@ -249,6 +244,31 @@ function AddContacts() {
            
           });
         } 
+         if(contactData.fieldFile=="imgPath"){
+          let profileObj =  {
+            "agrno": agrno,
+            "Email": Email,
+            "password": password,
+            "ClientId": userContactDetails.ReferenceID,
+            "projectid": folderId,
+            "ContactNo": contactNumber,
+            "fieldName": "BirthDate",
+            "fieldValue": userContactDetails.Base64ImgData
+        }
+        
+          Cls.Json_UpdateContactField(profileObj, (sts, data) => {
+            if(sts){
+              console.log(sts, data,"profilenewcontactData");
+              // let jsonparse = JSON.parse(data);
+              // if (jsonparse) {
+              //     console.log(jsonparse,"successcontact");
+                
+                
+              // }
+            }
+           
+          });
+        }
       }; 
       const handleSubmit = (event) => {
         event.preventDefault();
@@ -479,7 +499,10 @@ function AddContacts() {
                   
                         <Box className="general-tab white-box">
                         <Box className="row mb-3">
-              <UploadButtons />
+              <UploadButtons 
+               userContactDetails={userContactDetails}
+               setContactDetails={setContactDetails}
+              />
               </Box>
                         <Box className="row mb-3">
                         <Grid container spacing={3}>
