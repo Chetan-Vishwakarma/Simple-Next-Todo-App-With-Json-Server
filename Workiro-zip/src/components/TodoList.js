@@ -43,11 +43,11 @@ import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
 import PeopleIcon from '@mui/icons-material/People';
 import ShareIcon from '@mui/icons-material/Share';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
+import CreateNewModalTask from './CreateNewModal';
 
 
 const foldersIconList = [<PersonIcon className='me-1 font-20'/>,<TipsAndUpdatesIcon className='me-1 font-20'/>,<PeopleIcon className='me-1 font-20'/>,<ShareIcon className='me-1 font-20'/>,<FolderSharedIcon className='me-1 font-20'/>,<FolderSharedIcon className='me-1 font-20'/>];
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20'/>,<PublishedWithChangesIcon color='primary' className='me-1 font-20'/>,<HourglassBottomIcon color='primary' className='me-1 font-20'/>,<CheckCircleOutlineIcon color='success' className='me-1 font-20'/>];
-import CreateNewModalTask from './CreateNewModal';
 
 function TodoList() {
     const location = useLocation();
