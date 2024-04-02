@@ -7,15 +7,13 @@ import AddClientdetails from "./AddClientdetails";
 import AddClientaddress from "./AddClientaddress";
 import AddClientmaincontact from "./AddClientmaincontact";
 import { ToastContainer, toast } from 'react-toastify';
-import { memo } from 'react';
-import Stepper from '@mui/material/Stepper';
-import Step from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
-import StepContent from '@mui/material/StepContent';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-// import Paper from '@mui/material';
-
+import { memo } from "react";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import StepContent from "@mui/material/StepContent";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 function Reference() {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -90,7 +88,7 @@ function Reference() {
     mainCountry: "",
     billingsCountry: "",
     ragistersCountry: "",
-    CHNumber:""
+    CHNumber: ""
   });
   console.log("userDetailuserDetail", userDetail);
   const [originatorNo, setoriginatorNo] = useState("");
@@ -115,7 +113,6 @@ function Reference() {
             console.log("Json_GetClientCardDetails", json);
             setClientDetails(json);
             setCompanyDetails(json.Table1);
-           
           }
         }
       });
@@ -224,22 +221,23 @@ function Reference() {
       ManagerId: userDetail.UserId ? userDetail.UserId : parseInt(intUserid),
       OrgActive: "Yes",
     };
+    // toast.success("Reference Added Successfully !");
     // Json_InsertContact();
-    console.log(clientdata,"clientdata");
+    console.log(clientdata, "clientdata");
     Cls.Json_AddClient(clientdata, (sts, data) => {
-      console.log(sts, data,"newclientdata");
+      console.log(sts, data, "newclientdata");
       let jsonparse = JSON.parse(data);
       if (sts) {
-        if (jsonparse.Status=="Success") {
+        if (jsonparse.Status == "Success") {
           console.log("Response", data);
-          toast.success("Reference Added Successfully !"); 
+          toast.success("Reference Added Successfully !");
           // Json_InsertContact(); Main contact not need
           saveUDF();
           mainAddress();
           billingAddress();
           ragisterAddress();
         } else {
-          toast.success("Reference ID Already Exists!"); 
+          toast.success("Reference ID Already Exists!");
         }
       }
     });
@@ -256,7 +254,9 @@ function Reference() {
       Add3: userDetail.MainLine3Name ? userDetail.MainLine3Name : "",
       Town: userDetail.MainTownName ? userDetail.MainTownName : "",
       PostCode: userDetail.MainPostcodeName ? userDetail.MainPostcodeName : "",
-      Country: userDetail.Maincontactcountry ? userDetail.Maincontactcountry : "",
+      Country: userDetail.Maincontactcountry
+        ? userDetail.Maincontactcountry
+        : "",
       ManagerName: "",
       Role: "",
       Tel: userDetail.MainTelephoneName ? userDetail.MainTelephoneName : "",
@@ -269,14 +269,13 @@ function Reference() {
       maincontact: userDetail.MainContact ? userDetail.MainContact : false,
       CCode: userDetail.Clientid ? userDetail.Clientid : "",
       Salutation: userDetail.Title ? userDetail.Title : "",
-      accid: agrno
-    }
+      accid: agrno,
+    };
     console.log(InsertContact, "Json_InsertContact");
     Cls.Json_InsertContact(InsertContact, (sts, data) => {
       if (sts) {
         if (data == "Success") {
           console.log("Response", data);
-          
         }
       }
     });
@@ -284,31 +283,30 @@ function Reference() {
   const saveUDF = () => {
     const result = Object.entries(dataFromChild)
       .map(([key, value]) => `${key}: ${value}`)
-      .join(', ');
+      .join(", ");
 
     console.log(result, "resultresult");
     let requestBody = {
-        agrno: agrno,
-        Email: Email,
-        password: password,
-        OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
-        ProjectId:  userDetail.folderId ? userDetail.folderId : -1,
-        ClientUDFString:result ? result : "",
-        ContactUDFString:""	,
-        ContactNo:""
-    }
-   try{
-    Cls.Json_CRMSaveUDFValues(requestBody, (sts, data) => {
-      if (sts) {
-        if (data) {
-          console.log("Json_CRMSaveUDFValues", data);
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
+      ProjectId: userDetail.folderId ? userDetail.folderId : -1,
+      ClientUDFString: result ? result : "",
+      ContactUDFString: "",
+      ContactNo: "",
+    };
+    try {
+      Cls.Json_CRMSaveUDFValues(requestBody, (sts, data) => {
+        if (sts) {
+          if (data) {
+            console.log("Json_CRMSaveUDFValues", data);
+          }
         }
-      }
-    });
-   } catch (e) {}
-  }
+      });
+    } catch (e) {}
+  };
   useEffect(() => {
-
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
     setEmail(localStorage.getItem("Email"));
@@ -317,7 +315,7 @@ function Reference() {
     Json_GetClientCardDetails();
   }, []);
 
-  // stepper 
+  // stepper
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
@@ -331,22 +329,23 @@ function Reference() {
   // Stepper form
   const steps = [
     {
-      label: 'Client Details',
-      description: <Box className="clearfix">
-        {
-          <AddClientdetails
-            userDetail={userDetail}
-            //  
+      label: "Client Details",
+      description: (
+        <Box className="clearfix">
+          {
+            <AddClientdetails
+              userDetail={userDetail}
+              //
 
-            setUserDetail={setUserDetail}
-            // 
-            setDataCompanyHouse={setDataCompanyHouse}
-            setSelectedFolderID={setSelectedFolderID}
-          // 
-
-          ></AddClientdetails>
-        }
-      </Box>,
+              setUserDetail={setUserDetail}
+              //
+              setDataCompanyHouse={setDataCompanyHouse}
+              setSelectedFolderID={setSelectedFolderID}
+              //
+            ></AddClientdetails>
+          }
+        </Box>
+      ),
     },
     // {
     //   label: 'Main Contact',
@@ -355,11 +354,10 @@ function Reference() {
     //       {
     //         <AddClientmaincontact
     //           userDetail={userDetail}
-    //           // 
-
+    //           //
 
     //           setUserDetail={setUserDetail}
-    //         // 
+    //         //
 
     //         ></AddClientmaincontact>
     //       }
@@ -367,38 +365,40 @@ function Reference() {
     // },
 
     {
-      label: 'Address',
-      description:
+      label: "Address",
+      description: (
         <Box className="clearfix">
           {
             <AddClientaddress
               userDetail={userDetail}
-              // 
+              //
               dataCompanyHouse={dataCompanyHouse}
               setUserDetail={setUserDetail}
-            // 
-
+              //
             ></AddClientaddress>
           }
-        </Box>,
+        </Box>
+      ),
     },
 
     {
-      label: 'Details',
-      description:
+      label: "Details",
+      description: (
         <Box className="clearfix">
           <UDFClientcard
             data={clientDetails}
             setDataFromChild={setDataFromChild}
           />
-        </Box>,
+        </Box>
+      ),
     },
   ];
 
   return (
     <Box className="container-fluid p-0">
+       <ToastContainer></ToastContainer>
       <Box sx={{ width: "100%", typography: "body1" }} className="mt-4 pt-1">
-        <Box sx={{ maxWidth: '100%' }}>
+        <Box sx={{ maxWidth: "100%" }}>
           <Stepper activeStep={activeStep} orientation="vertical">
             {steps.map((step, index) => (
               <Step key={step.label}>
@@ -415,7 +415,6 @@ function Reference() {
                   <Typography>{step.description}</Typography>
                   <Box sx={{ mb: 2 }}>
                     <Box className="mt-3">
-                      
                       <Button
                         disabled={index === 0}
                         onClick={handleBack}
@@ -431,7 +430,7 @@ function Reference() {
                         className="btn-blue-2"
                         size="small"
                       >
-                        {index === steps.length - 1 ? 'Finish' : 'Continue'}
+                        {index === steps.length - 1 ? "Finish" : "Continue"}
                       </Button>
                     </Box>
                   </Box>
@@ -441,7 +440,9 @@ function Reference() {
           </Stepper>
           {activeStep === steps.length && (
             <Paper square elevation={0} sx={{ p: 3 }}>
-              <Typography>All steps completed - you&apos;re finished</Typography>
+              <Typography>
+                All steps completed - you&apos;re finished
+              </Typography>
               <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
                 Reset
               </Button>
@@ -450,10 +451,7 @@ function Reference() {
         </Box>
         {/* Stepper end  */}
 
-
-
         <Box className="main-accordian">
-
           {/* <UDFClientcard data={clientDetails} setDataFromChild={setDataFromChild} /> */}
 
           <div style={{ marginBottom: "20px" }}>
@@ -462,8 +460,7 @@ function Reference() {
               variant="contained"
               onClick={handleSubmit}
               disabled={
-                !userDetail.Clientname ||
-                !userDetail.Clientid
+                !userDetail.Clientname || !userDetail.Clientid
                 // !folderData
               }
             >

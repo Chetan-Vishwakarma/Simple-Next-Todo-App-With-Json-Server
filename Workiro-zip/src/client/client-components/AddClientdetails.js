@@ -27,6 +27,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
   const [ImportContact, setImportContact] = useState([]);
   const [ImportCompanyDetails, setImportCompanyDetails] = useState([]);
   const [Importdata, setImportdata] = useState("");
+  const [errors, setErrors] = useState({});
   const [intUserid, setIntUserid] = useState(localStorage.getItem("UserId"));
   const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
   let Cls = new CommanCLS(baseUrl, agrno, Email, password);
@@ -108,6 +109,22 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
     data = { ...data, [name]: val };
     console.log(data, "dataOnchange", e);
     setUserDetail(data);
+    if (name === 'Email' && val.trim() !== '' && !validateEmail(val)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: 'Invalid email address',
+      }));
+    } else {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: '', // Clear error message if validation succeeds or if value is empty
+      }));
+    }
+  };
+  const validateEmail = (email) => {
+    // Basic email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
   const Json_GetConfiguration = () => {
     let requestBody = {
@@ -526,6 +543,9 @@ const handleOptionClick = (id) => {
             name="Email"
             value={userDetail.Email}
             onChange={onChange}
+            error={!!errors['Email']} // Set error state based on whether there is an error message
+          helperText={errors['Email']} // Display error message if there is one
+       
           />
         </Grid>
       </Grid>

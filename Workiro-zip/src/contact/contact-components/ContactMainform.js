@@ -11,6 +11,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+import { toast } from 'react-toastify';
 const ContactMainform = React.memo(
   ({ contact,clientNames, userContactDetails, setContactDetails }) => {
     console.log(userContactDetails, "userContactDetails");
@@ -19,6 +20,11 @@ const ContactMainform = React.memo(
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
     const [Dataset, setDataset] = useState("");
+    const [errors, setErrors] = useState({});
+    const [checkboxfeb, setCheckboxfeb] = useState(false);
+    const [advancedSettingChecked, setAdvancedSettingChecked] = useState(false);
+    const [advancedInactive, setAdvancedInactive] = useState(false);
+    const [createPortal, setCreatePortal] = useState(false);
     const [mainCountry, setMainCountry] = useState(
       countries.find((country) => country.label === "United Kingdom")?.label
     );
@@ -87,6 +93,24 @@ const ContactMainform = React.memo(
       data = { ...data, [name]: val };
       console.log(data, "dataOnchange", e);
       setContactDetails(data);
+        // Perform validation here
+    // Perform validation here
+    if (name === 'EmailName' && val.trim() !== '' && !validateEmail(val)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: 'Invalid email address',
+      }));
+    } else {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: '', // Clear error message if validation succeeds or if value is empty
+      }));
+    }
+    };
+    const validateEmail = (email) => {
+      // Basic email validation regex
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
     };
     const onChangecheckbox = (e) => {
       e.preventDefault();
@@ -95,7 +119,9 @@ const ContactMainform = React.memo(
       let val = e.target.checked;
       data = { ...data, [name]: val };
       console.log(data, "dataOnchange", e);
+     
       setContactDetails(data);
+      setCheckboxfeb(e.target.checked);
     };
     const onChangeUser = (event, value) => {
       event.preventDefault();
@@ -162,6 +188,33 @@ const ContactMainform = React.memo(
         // If no option is selected, clear the selectedFolderID state
         // setSelectedUserId(null);
       }
+    };
+    const handleAdvancedSettingChange = (event) => {
+      setAdvancedSettingChecked(event.target.checked);
+      let data = { ...userContactDetails };
+      let name = event.target.name;
+      let val = event.target.checked;
+      data = { ...data, [name]: val };
+      console.log(data, "dataOnchange", event);
+      setContactDetails(data);
+    };
+    const handleAdvancedInactive = (event) => {
+      setAdvancedInactive(event.target.checked);
+      let data = { ...userContactDetails };
+      let name = event.target.name;
+      let val = event.target.checked;
+      data = { ...data, [name]: val };
+      console.log(data, "dataOnchange", event);
+      setContactDetails(data);
+    };
+    const handleAdvancedCreatePortal = (event) => {
+      setCreatePortal(event.target.checked);
+      let data = { ...userContactDetails };
+      let name = event.target.name;
+      let val = event.target.checked;
+      data = { ...data, [name]: val };
+      console.log(data, "dataOnchange", event);
+      setContactDetails(data);
     };
     useEffect(() => {
       setAgrNo(localStorage.getItem("agrno"));
@@ -309,11 +362,9 @@ const ContactMainform = React.memo(
               key={`maincheckbox`}
               control={
                 <Switch
-                  // defaultChecked
-
                   name="MainContact"
-                  onChange={onChangecheckbox}
-                  value={userContactDetails.MainContact}
+                  checked={advancedSettingChecked}
+                  onChange={handleAdvancedSettingChange}
                 />
               }
               label="Main Contact"
@@ -324,16 +375,25 @@ const ContactMainform = React.memo(
               key={`inactive`}
               control={
                 <Switch
-                  // defaultChecked
-                  // onChange={(e) =>
-                  //   handleChangeTabs(e, i, item1)
-                  // }
                   name="Inactive"
-                  onChange={onChangecheckbox}
-                  value={userContactDetails.Inactive}
+                  checked={advancedInactive}
+                  onChange={handleAdvancedInactive}
                 />
               }
               label="In Active"
+            />
+          </Grid>
+          <Grid item xs={6} md={6}>
+            <FormControlLabel
+              key={`createportal`}
+              control={
+                <Switch
+                  name="CreatePortal"
+                  checked={createPortal}
+                  onChange={handleAdvancedCreatePortal}
+                />
+              }
+              label="Create Portal"
             />
           </Grid>
           <Grid item xs={6} md={6}>
@@ -358,6 +418,8 @@ const ContactMainform = React.memo(
               name="EmailName"
               value={userContactDetails.EmailName}
               onChange={onChange}
+              error={!!errors['EmailName']} // Set error state based on whether there is an error message
+              helperText={errors['EmailName']} // Display error message if there is one    
             />
           </Grid>
           <Grid item xs={6} md={6}>

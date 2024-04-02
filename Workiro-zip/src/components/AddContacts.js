@@ -73,7 +73,8 @@ function AddContacts() {
       ReferenceID:"",
       BirthDate:"",
       RolesData:"",
-      Base64ImgData:""
+      Base64ImgData:"",
+      CreatePortal:false,
     });
     const [companyDetails, setCompanyDetails] = useState([]);
 
@@ -272,7 +273,7 @@ function AddContacts() {
       }; 
       const handleSubmit = (event) => {
         event.preventDefault();
-        
+        console.log(userContactDetails.CreatePortal,"createportal");
         let contactData = {
           "agrno": agrno,
           "Email": Email,
