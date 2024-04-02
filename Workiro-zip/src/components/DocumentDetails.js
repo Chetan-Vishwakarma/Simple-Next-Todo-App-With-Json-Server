@@ -207,6 +207,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
     const handleClickOpenDocumentDetailsList = (event, sDoc) => {
         Json_getAssociatedTaskListByDocumentId(sDoc);
+        setSelectedDocument(sDoc);  //WARNING: If it create any issue so create a new state whose name will be [docForDetails,setDocForDetails]
         event.stopPropagation();
         setOpenDocumentDetailsList(true);
     };
@@ -229,11 +230,6 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         const dateB = new Date(b);
         return dateA - dateB;
     };
-
-    useEffect(()=>{
-        console.log("dsfdsf documents",documents);
-        console.log("dsfdsf advFilteredResult",advFilteredResult);
-    },[]);
 
     return (
         <>
@@ -1001,6 +997,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
+                                                
                                                 {rows.map((row) => (
                                                     <TableRow
                                                         key={row.name}
