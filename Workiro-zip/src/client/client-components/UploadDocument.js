@@ -234,12 +234,14 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                     if (clientList.length > 0) {
 
                         setClientList(clientList);
+if(originatorNo){
+    let res = clientList.filter((c) => c.ClientID === originatorNo.originatorNo);
+    if (res.length > 0) {
+        setTxtClientData(res[0])
 
-                        let res = clientList.filter((c) => c.ClientID === originatorNo.originatorNo);
-                        if (res.length > 0) {
-                            setTxtClientData(res[0])
-
-                        }
+    }
+}
+                        
 
 
                     }
@@ -530,11 +532,12 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                 if (sts && data) {
                     let js = JSON.parse(data)
                     console.log("Json_RegisterItem", js)
-                    if (js.Status) {
+                    if (js.Status=="true") {
                         toast.success("Created Task !");
                         if (fileData) {
                             fileData.DocId = js.ItemId;
                         }
+                        setOpenUploadDocument(false);
 
                     }
                     else {

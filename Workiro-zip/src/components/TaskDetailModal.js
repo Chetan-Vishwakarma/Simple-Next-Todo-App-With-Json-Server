@@ -82,10 +82,11 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 
-function TaskDetailModal({setIsApi, isApi, selectedTask, openModal, setOpen }) {
+function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) {
     console.log("TaskDetailModal2222", selectedTask);
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
     const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
+    const baseUrlSms= "https://docusms.uk/dsdesktopwebservice.asmx/";
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -94,6 +95,7 @@ function TaskDetailModal({setIsApi, isApi, selectedTask, openModal, setOpen }) {
 
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
     let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
+    let ClsSms = new CommanCLS(baseUrlSms, agrno, Email, password);
 
     /////////////////////////////////////////Task Activity
     const [anchorEl4, setAnchorEl4] = React.useState(null);
@@ -374,10 +376,20 @@ function TaskDetailModal({setIsApi, isApi, selectedTask, openModal, setOpen }) {
                     // }, 3000);
 
                     for (let item of table6) {
-                        let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };
-                        setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+                        
+                       
+                        if(item.DestinationPath && !item.ItemId){
+                            let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };                        
+                            setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+                        }
+                        else{
+                            if(item.ItemId){
+                                SetFileataByItemId(item.ItemId);
+                            }
+                          
+                        }
                     }
-
+        
 
 
 
@@ -385,6 +397,26 @@ function TaskDetailModal({setIsApi, isApi, selectedTask, openModal, setOpen }) {
                 }
             }
         });
+    }
+
+    function SetFileataByItemId(itemid){
+        try {
+            let o={ItemId:itemid.toString()}
+            ClsSms.Json_SearchDocById(o,function(sts,data){
+                if(sts){
+                    if(data){
+                        //let js =JSON.parse(data);
+
+                        console.log("Json_SearchDocById",data)
+                       // let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };                        
+                       // setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+                    }
+                }
+            }) 
+        } catch (error) {
+            console.log("datanot found Json_SearchDocById",error)
+        }
+       
     }
 
     function GetFileNamebyPath(path) {
@@ -593,6 +625,7 @@ function TaskDetailModal({setIsApi, isApi, selectedTask, openModal, setOpen }) {
         }, 2500);
 
         setIsVisible(false)
+      
     }, [selectedTask]);
 
 
@@ -1180,13 +1213,13 @@ function TaskDetailModal({setIsApi, isApi, selectedTask, openModal, setOpen }) {
         setAnchorEl4(null);
         console.log("Priority", e.target.innerText)
 
-      
+
 
         let pri = e.target.innerText;
-let res = pri === "High" ? 1:pri === "Medium" ? 2 : pri === "Low" ? 3 : null;
-        Json_UpdateTaskField("Priority", res , "Priority updated!");
-       
-       setNumPriority(res)
+        let res = pri === "High" ? 1 : pri === "Medium" ? 2 : pri === "Low" ? 3 : null;
+        Json_UpdateTaskField("Priority", res, "Priority updated!");
+
+        setNumPriority(res)
 
     };
 
@@ -1218,7 +1251,7 @@ let res = pri === "High" ? 1:pri === "Medium" ? 2 : pri === "Low" ? 3 : null;
                                         onClick={handleClick4}
                                         className="min-width-auto"
                                     >
-                                        {NumPriority=== 1 && (
+                                        {NumPriority === 1 && (
 
                                             <PanoramaFishEyeIcon className="text-red" fontSize="medium" />
 
@@ -1240,39 +1273,39 @@ let res = pri === "High" ? 1:pri === "Medium" ? 2 : pri === "Low" ? 3 : null;
                                     </Button>
                                     {selectedTask.Source === "CRM" && (<>
                                         <Menu
-                                        id="basic-menu"
-                                        anchorEl={anchorEl4}
-                                        open={open4}
-                                        onClose={handleClose4}
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                        className="custom-dropdown"
-                                    >
-                                        <MenuItem onClick={handleClose4} className="text-red pe-4">
-                                            <EjectIcon>
-                                                <PanoramaFishEyeIcon className="text-red" fontSize="medium" />
-                                            </EjectIcon>
-                                            High
-                                        </MenuItem>
+                                            id="basic-menu"
+                                            anchorEl={anchorEl4}
+                                            open={open4}
+                                            onClose={handleClose4}
+                                            MenuListProps={{
+                                                'aria-labelledby': 'basic-button',
+                                            }}
+                                            className="custom-dropdown"
+                                        >
+                                            <MenuItem onClick={handleClose4} className="text-red pe-4">
+                                                <EjectIcon>
+                                                    <PanoramaFishEyeIcon className="text-red" fontSize="medium" />
+                                                </EjectIcon>
+                                                High
+                                            </MenuItem>
 
-                                        <MenuItem onClick={handleClose4} className="text-warning pe-4">
-                                            <ListItemIcon>
-                                                <RadioButtonUncheckedIcon fontSize="medium" className="text-warning" />
-                                            </ListItemIcon>
-                                            Medium
-                                        </MenuItem>
+                                            <MenuItem onClick={handleClose4} className="text-warning pe-4">
+                                                <ListItemIcon>
+                                                    <RadioButtonUncheckedIcon fontSize="medium" className="text-warning" />
+                                                </ListItemIcon>
+                                                Medium
+                                            </MenuItem>
 
-                                        <MenuItem onClick={handleClose4} className="text-success pe-4">
-                                            <ListItemIcon>
-                                                <EjectIcon fontSize="medium" className="text-success rotate-180" />
-                                            </ListItemIcon>
-                                            Low
-                                        </MenuItem>
+                                            <MenuItem onClick={handleClose4} className="text-success pe-4">
+                                                <ListItemIcon>
+                                                    <EjectIcon fontSize="medium" className="text-success rotate-180" />
+                                                </ListItemIcon>
+                                                Low
+                                            </MenuItem>
 
-                                    </Menu>
+                                        </Menu>
                                     </>)}
-                                   
+
                                 </div>
 
                                 {/* <div>
@@ -1724,6 +1757,7 @@ let res = pri === "High" ? 1:pri === "Medium" ? 2 : pri === "Low" ? 3 : null;
                             <Box className="main-chatbox">
                                 {crmTaskAcivity
                                     ? crmTaskAcivity.map((item, index) => {
+                                        const notesArray = item.Notes.split(',');
                                         // console.log("forwardUser22",forwardUser.ForwardTo)
                                         if (item.status === "sys") {
                                             return (
@@ -1736,12 +1770,11 @@ let res = pri === "High" ? 1:pri === "Medium" ? 2 : pri === "Low" ? 3 : null;
                                                             "border-radius": "3px",
                                                         }}
                                                     >
-                                                        <Typography
-                                                            variant="body1"
-                                                            className="font-14 sembold"
-                                                        >
-                                                            {item.Notes}
-                                                        </Typography>
+                                                        {notesArray.map((note, index) => (
+                                                            <Typography key={index} variant="body1" className="font-14 semibold">
+                                                                {note.trim()} {/* Display each note */}
+                                                            </Typography>
+                                                        ))}
                                                         <Typography variant="body1" className="font-12">
                                                             {dateAndTime(item.ActivityDate)}
                                                         </Typography>

@@ -71,6 +71,7 @@ import { Toast } from "devextreme-react";
 import Reference from "../client/client-components/Reference";
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { data } from "jquery";
+import UploadDocument from "../client/client-components/UploadDocument";
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -93,6 +94,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 function CreateNewModalTask({ ...props }) {
 
     let {
+       
         documentDate,
         receivedDate,
         createNewFileObj,
@@ -102,7 +104,9 @@ function CreateNewModalTask({ ...props }) {
         TaskType,
         // passButtonHide,
         // setPassButtonHide,
-        openModal
+        openModal,
+       
+
     } = props;
 
     console.log("documentDate txtSectionId1", documentDate,
@@ -432,12 +436,12 @@ function CreateNewModalTask({ ...props }) {
                         setUserList(result);
                         let removeuser = result.filter((e) => e.ID !== localStorage.getItem("UserId"));
 
-                     
+
                         setUserListData(removeuser);
                         setUserFilter(removeuser);
 
                         let commanuser = result.filter((e) => e.ID === localStorage.getItem("UserId"));
-                        console.log("Json_GetForwardUserList11", commanuser);
+                        console.log("Json_GetForwardUserList11", removeuser);
                         setSelectedUSer(commanuser[0]);
 
                     }
@@ -753,15 +757,15 @@ function CreateNewModalTask({ ...props }) {
 
     const [selectedDate, setSelectedDate] = useState(null); // State for selected date
 
-    
 
-    useEffect(() => {      
-        console.log("get folder list112222", selectedDate);  
+
+    useEffect(() => {
+        console.log("get folder list112222", selectedDate);
         setSelectedDate(null); // Set the selected date to null to clear it
     }, [currentDate]);
 
     useEffect(() => {
-
+        setLoading(false);
         let strGuid = uuidv4().replace(/-/g, '');
         localStorage.setItem("GUID", strGuid)
         setAnchorSelectFileEl(null);
@@ -799,16 +803,16 @@ function CreateNewModalTask({ ...props }) {
 
 
         const currentDate1 = new Date(currentDate);
-            const nextDate = new Date(currentDate1); // Copy the current date        
-            nextDate.setDate(currentDate1.getDate() + 1); // Increment the day by 1 to get the next day's date    
-            // Get the day, month, and year
-            const day = nextDate.getDate().toString().padStart(2, '0');
-            const month = (nextDate.getMonth() + 1).toString().padStart(2, '0');
-            const year = nextDate.getFullYear();
-            // Construct the date string in "yyyy/mm/dd" format
-            const formattedDate = `${day}/${month}/${year}`;
-           // console.log("formattedDate", formattedDate);
-            setNextDate(formattedDate); // Set nextDate with formatted date
+        const nextDate = new Date(currentDate1); // Copy the current date        
+        nextDate.setDate(currentDate1.getDate() + 1); // Increment the day by 1 to get the next day's date    
+        // Get the day, month, and year
+        const day = nextDate.getDate().toString().padStart(2, '0');
+        const month = (nextDate.getMonth() + 1).toString().padStart(2, '0');
+        const year = nextDate.getFullYear();
+        // Construct the date string in "yyyy/mm/dd" format
+        const formattedDate = `${day}/${month}/${year}`;
+        // console.log("formattedDate", formattedDate);
+        setNextDate(formattedDate); // Set nextDate with formatted date
 
 
     }, []);
@@ -933,7 +937,7 @@ function CreateNewModalTask({ ...props }) {
         try {
             // let myNewArr = [...selectedFilesFromBrower, ...selectedDocumentFile];
             // console.log("myNewArr", myNewArr)
-
+            console.log("PrepareDocumentsForPublish_Json22", filedata);
             const ItemId = filedata.map(obj => obj.DocId);
             const fileNames = filedata.map(obj => obj["FileName"]);
             const fileDataBase64 = filedata.filter(obj => obj["Base64"] !== "").map(obj => obj["Base64"]);
@@ -1001,7 +1005,7 @@ function CreateNewModalTask({ ...props }) {
 
     async function UploadAttachment(filedata) {
 
-       // setLoading(true);
+        // setLoading(true);
         // Your form submission logic, for example, making an API call
         try {
             let o = {};
@@ -1094,6 +1098,12 @@ function CreateNewModalTask({ ...props }) {
 
     async function Json_CRM_Task_Save() {
         setLoading(true);
+        if(txtSection){
+            setLoading(false);
+        }
+        else{
+            toast.error("Please Select a Section !")
+        }
         const isaddUser = addUser.map(obj => obj.ID).join(',');
         const attString = attachmentPath.map(obj => obj.Path).join('|');
 
@@ -1109,7 +1119,7 @@ function CreateNewModalTask({ ...props }) {
 
             "ClientIsRecurrence": false,
             "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-            "ClientEnd":nxtdd?dayjs(nxtdd).format("YYYY/MM/DD"):"1900/01/01",
+            "ClientEnd": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
             "ClientDayNumber": "1",
             "ClientMonth": "1",
             "ClientOccurrenceCount": "1",
@@ -1124,7 +1134,7 @@ function CreateNewModalTask({ ...props }) {
             "FolderId": txtFolderId.toString(),
             "Subject": textSubject,
             "TypeofTaskID": txtSectionId.toString(),
-            "EndDateTime":nxtdd? dayjs(nxtdd).format("YYYY/MM/DD"):"1900/01/01",
+            "EndDateTime": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
             "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
             "Status": txtStatus,
             "Priority": txtPriorityId.toString(),
@@ -1145,11 +1155,11 @@ function CreateNewModalTask({ ...props }) {
         console.log("final save data obj", ooo);
         cls.Json_CRM_Task_Save(ooo, function (sts, data) {
             if (sts) {
-                if(data){
+                if (data) {
                     let js = JSON.parse(data);
 
                     console.log("save task rerurn value", js);
-    
+
                     if (js.Status === "success") {
                         setLoading(false);
                         toast.success("Created Task !");
@@ -1158,9 +1168,9 @@ function CreateNewModalTask({ ...props }) {
                         if (selectedDocumentFile.length > 0) {
                             Json_CRM_TaskDMSAttachmentInsert(js.Message);
                         }
-    
-    
-                        
+                        setOpen(false);
+                       // setIsApi(!isApi);
+
                         // Inside your function or event handler where you want to show the success message
                         //handleSuccess(js.Message);
                         // setOpen(false);
@@ -1170,11 +1180,11 @@ function CreateNewModalTask({ ...props }) {
                         console.log("Response final", data)
                     }
                 }
-                else{
-                    toast.error("Faild Created Task Try again !"); 
-                    setLoading(false); 
+                else {
+                    toast.error("Faild Created Task Try again !");
+                    setLoading(false);
                 }
-               
+
 
                 // setLoading(false);
             }
@@ -1421,24 +1431,24 @@ function CreateNewModalTask({ ...props }) {
     const [selectedEmail, setSelectedEmail] = useState([]);
 
     const handleAutocompleteChange = (event, newValue) => {
-      
+
         setSelectedEmail(newValue ? newValue : null);
-    
+
         if (newValue) {
             let res = portalUser.filter((user) => {
                 let unk = newValue.find((u) => u.ContactNo === user.ContactNo);
-               // console.log("selected email", unk);
+                // console.log("selected email", unk);
                 return unk === undefined; // If unk is undefined, it means there's no matching ContactNo in newValue
             });
             setPortalUserCC(res)
-           // console.log("selected email11", res);
+            // console.log("selected email11", res);
         } else {
             console.log("selected email11", portalUser); // If newValue is null, log the entire portalUser
         }
-    
+
         //console.log("handleAutocompleteChange", newValue, event);
     };
-    
+
 
     const [selectedEmailCC, setSelectedEmailCC] = useState(null);
     const handleAutocompleteChangeOnCC = (event, newValue) => {
@@ -1448,11 +1458,11 @@ function CreateNewModalTask({ ...props }) {
         if (newValue) {
             let res = portalUser.filter((user) => {
                 let unk = newValue.find((u) => u.ContactNo === user.ContactNo);
-               // console.log("selected email", unk);
+                // console.log("selected email", unk);
                 return unk === undefined; // If unk is undefined, it means there's no matching ContactNo in newValue
             });
             setPortalUserTo(res)
-           // console.log("selected email11", res);
+            // console.log("selected email11", res);
         } else {
             console.log("selected email11", portalUser); // If newValue is null, log the entire portalUser
         }
@@ -1465,7 +1475,7 @@ function CreateNewModalTask({ ...props }) {
         let filesData = [];
         selectedRows.forEach((row, index) => {
 
-            Json_GetItemBase64DataById(row["Registration No."], function (base64data) {
+            Json_GetItemBase64DataById(row, function (base64data) {
                 const fileData = {
                     FileName: row.Description + "." + row.Type,
                     Base64: base64data ? base64data : "", // Base64 data of the file
@@ -1505,18 +1515,24 @@ function CreateNewModalTask({ ...props }) {
 
     }
 
-    function Json_GetItemBase64DataById(ItemId, callBack) {
+    function Json_GetItemBase64DataById(item, callBack) {
         try {
             let obj = {};
-            obj.ItemId = ItemId
+            obj.ItemId = item["Registration No."]
             const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/"; // base url for api
             //   let dt = new LoginDetails();
 
             let cls = new CommanCLS(baseUrl, agrno, Email, password);
             cls.Json_GetItemBase64DataById(obj, function (sts, data) {
-                if (sts && data) {
-                    // console.log("Json_GetItemBase64DataById data", data)
-                    return callBack(data);
+                if (sts) {
+                    if (data !== "No Data Exist") {
+                        // console.log("Json_GetItemBase64DataById data", data)
+                        return callBack(data);
+                    }
+                    else {
+                        toast.error(item.Description + "was not uploaded as it had no data")
+                    }
+
                 }
 
             })
@@ -1705,7 +1721,7 @@ function CreateNewModalTask({ ...props }) {
             let ooo = {
                 "ClientIsRecurrence": false,
                 "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-                "ClientEnd":nxtdd? dayjs(nxtdd).format("YYYY/MM/DD"):"1900/01/01",
+                "ClientEnd": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
                 "ClientDayNumber": "1",
                 "ClientMonth": "1",
                 "ClientOccurrenceCount": "1",
@@ -1720,7 +1736,7 @@ function CreateNewModalTask({ ...props }) {
                 "FolderId": txtFolderId.toString(),
                 "Subject": textSubject,
                 "TypeofTaskID": txtSectionId.toString(),
-                "EndDateTime":nxtdd? dayjs(nxtdd).format("YYYY/MM/DD"):"1900/01/01",
+                "EndDateTime": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
                 "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
                 "Status": txtStatus,
                 "Priority": txtPriorityId.toString(),
@@ -1741,7 +1757,7 @@ function CreateNewModalTask({ ...props }) {
             console.log("final save data obj", ooo);
             clsSms.Json_CRM_Task_Save(ooo, function (sts, data) {
                 if (sts) {
-                    if(data){
+                    if (data) {
                         setLoading(false);
                         let js = JSON.parse(data);
                         console.log("Json_CRM_Task_Save ", js);
@@ -1750,17 +1766,18 @@ function CreateNewModalTask({ ...props }) {
                             CreatePortalMessage(js.Message)
                             //toast.success("Created Task");
                             setOpen(false);
+                           // setIsApi(!isApi);
                         }
                         else {
                             toast.error("Task Not Created Please Try Again");
                             console.log("Response final", data)
                         }
-                    }else{
+                    } else {
                         setLoading(false);
-                    toast.error("Faild Created Task Try again !");  
-                }
+                        toast.error("Faild Created Task Try again !");
+                    }
 
-                    
+
 
                     // setLoading(false);
                 }
@@ -2071,12 +2088,18 @@ function CreateNewModalTask({ ...props }) {
 
     // dropdown
     const [anchorEl4, setAnchorEl4] = React.useState(null);
+    const [openUploadDocument, setOpenUploadDocument] = React.useState(false);
     const open4 = Boolean(anchorEl4);
     const handleClick4 = (event) => {
         setAnchorEl4(event.currentTarget);
     };
     const handleClose4 = () => {
         setAnchorEl4(null);
+    };
+
+    const handleUploadDocument = () => {
+        setAnchorEl4(null);
+        setOpenUploadDocument(true)
     };
 
 
@@ -2091,6 +2114,8 @@ function CreateNewModalTask({ ...props }) {
         setReferance(false);
     };
 
+
+
     return (
         <React.Fragment>
             {/* <Button
@@ -2100,7 +2125,7 @@ function CreateNewModalTask({ ...props }) {
                 <span className="material-symbols-outlined">edit_square</span>{" "}
                 <span className="ps-2 create-text">Create New  </span>
             </Button> */}
-
+            <UploadDocument openUploadDocument={openUploadDocument} setOpenUploadDocument={setOpenUploadDocument}></UploadDocument>
             <div className="select-border my-0 m-auto">
                 <Button
                     id="basic-button"
@@ -2153,7 +2178,7 @@ function CreateNewModalTask({ ...props }) {
                     </MenuItem>
 
 
-                    <MenuItem onClick={handleClose4}>
+                    <MenuItem onClick={handleUploadDocument}>
                         <ListItemIcon>
                             <DescriptionIcon className="font-20" />
                         </ListItemIcon>
@@ -2775,7 +2800,7 @@ function CreateNewModalTask({ ...props }) {
                                                                     MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
                                                                 >
                                                                     <MenuItem onClick={() => DeleteFile(file)}>Delete</MenuItem>
-                                                                    {txtTaskType === "Portal" && (file.FileType.toLowerCase() === "docx" || file.FileType.toLowerCase() === "doc" || file.FileType.toLowerCase() === "xls" || file.FileType.toLowerCase() === "xlsx" || file.FileType.toLowerCase() === "msg") && (
+                                                                    {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
                                                                         <MenuItem onClick={(e) => ConvertToPdf_Json(file)}>Convert To Pdf</MenuItem>
                                                                     )}
 
@@ -2809,7 +2834,7 @@ function CreateNewModalTask({ ...props }) {
                                         onClick={Json_CRM_Task_Save}
                                         disabled={!textSubject || loading}
                                         className="btn-blue-2 mt-3"
-                                        
+
                                     >
                                         {'CRM Task'}
                                     </Button>
@@ -2820,7 +2845,7 @@ function CreateNewModalTask({ ...props }) {
                                         variant="contained"
                                         onClick={CreatePortalTask}
                                         disabled={!textSubject || loading}
-                                       
+
                                         className="btn-blue-2 mt-1"
                                     >
                                         {'Portal Task'}
@@ -3240,7 +3265,7 @@ function CreateNewModalTask({ ...props }) {
                                                 isValidDate={disableDueDate}
                                                 closeOnSelect={true}
                                                 icon="fa fa-calendar"
-                                                isClearable  
+                                                isClearable
                                             />
                                         </LocalizationProvider>
 
