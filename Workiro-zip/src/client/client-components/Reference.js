@@ -285,7 +285,7 @@ function Reference() {
       .map(([key, value]) => `${key}: ${value}`)
       .join(", ");
 
-    console.log(result, "resultresult");
+    
     let requestBody = {
       agrno: agrno,
       Email: Email,
@@ -296,11 +296,13 @@ function Reference() {
       ContactUDFString: "",
       ContactNo: "",
     };
+    console.log(result, "resultresult_requestBody",requestBody);
     try {
       Cls.Json_CRMSaveUDFValues(requestBody, (sts, data) => {
         if (sts) {
           if (data) {
             console.log("Json_CRMSaveUDFValues", data);
+            toast.success("UDF Saved Successfully !");
           }
         }
       });

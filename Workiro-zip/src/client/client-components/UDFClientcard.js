@@ -87,42 +87,46 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
         switch (data?.TextControlValue) {
           case "Integer":
             if (data && data.UdfValue) {
-              <TextField
-                fullWidth
-                label={data.Name}
-                variant="outlined"
-                name="regLine1"
-                id={
-                  data.UserDefFieldID +
-                  "_" +
-                  data.UserDefFieldTypeID +
-                  "_" +
-                  data.TextControlValue +
-                  "_UDF"
-                }
-                // value={data.UdfValue}
-                onChange={handleInputChange}
-              />
-
-            } else {
-
-              <TextField
-                fullWidth
-                label={data.Name}
-                variant="outlined"
-                name="regLine1"
-                id={
-                  data.UserDefFieldID +
-                  "_" +
-                  data.UserDefFieldTypeID +
-                  "_" +
-                  data.TextControlValue +
-                  "_UDF"
-                }
-                //   value={data.UdfValue}
-                onChange={handleInputChange}
-              />;
-            }
+              renderedContent = (
+            <TextField
+              fullWidth
+              label={data.Name}
+              variant="outlined"
+              type="number"
+              name="regLine1"
+              id={
+                data.UserDefFieldID +
+                "_" +
+                data.UserDefFieldTypeID +
+                "_" +
+                data.TextControlValue +
+                "_UDF"
+              }
+              // value={data.UdfValue}
+              onChange={handleInputChange}
+            />
+              );
+          } else {
+              renderedContent = (
+            <TextField
+              fullWidth
+              label={data.Name}
+              variant="outlined"
+              type="number"
+              name="regLine1"
+              id={
+                data.UserDefFieldID +
+                "_" +
+                data.UserDefFieldTypeID +
+                "_" +
+                data.TextControlValue +
+                "_UDF"
+              }
+              //   value={data.UdfValue}
+              onChange={handleInputChange}
+            />
+              )
+          }
             break;
           case "String":
             if (data && data.UdfValue) {
@@ -222,7 +226,7 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
                         data.TextControlValue +
                         "_UDF"
                       }
-                      onChange={(e) => handleInputOnDateChage(e, `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}}`)}
+                      onChange={(e) => handleInputOnDateChage(e, `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}_UDF`)}
                     />
 
                   </DemoContainer>

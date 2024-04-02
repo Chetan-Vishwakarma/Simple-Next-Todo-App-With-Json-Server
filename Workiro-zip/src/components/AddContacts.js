@@ -42,6 +42,7 @@ function AddContacts() {
     const [folders, setFolders] = useState([]);
     const [Importdata, setImportdata] = useState("");
     const [clientNames, setclientNames] = useState("");
+    const [clientIddata, setClientIddata] = useState(-1);
     const [ImportContact, setImportContact] = useState("");
     const [contactlistdata, setContactlistdata] = useState([]);
     const [bussiness, setBussiness] = useState([]); // State to hold folders data
@@ -83,6 +84,7 @@ function AddContacts() {
     const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
     const portalUrl = "https://portal.docusoftweb.com/clientservices.asmx/";
 
+    const ContactUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
     //let Util = new Utils();
 
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
@@ -193,23 +195,51 @@ function AddContacts() {
           }
           
       }
+      function saveUDF(contactnumber){
+        console.log(contactnumber,"contactNumber",dataFromChild);
+        const result = Object.entries(dataFromChild)
+          .map(([key, value]) => `${key}: ${value}`)
+          .join(", ");
+    
+        console.log(result, "resultresult");
+        let requestBody = {
+          agrno: agrno,
+          Email: Email,
+          password: password,
+          OriginatorNo: clientIddata ? clientIddata : "",
+          ProjectId: folderId ? folderId : -1,
+          ClientUDFString: "",
+          ContactUDFString: result ? result : "",
+          ContactNo: contactnumber ? contactnumber : -1,
+        };
+          console.log(requestBody,"requestBody11");
+          Cls.Json_CRMSaveUDFValues(requestBody, (sts, data) => {
+            if (sts) {
+              if (data) {
+                console.log("Json_CRMSaveUDFValues", data);
+                toast.success("Contact UDF Saved Successfully !"); 
+              }
+            }
+          });
+       
+      };
       const Json_GetContactNumber = () => {
         let contactData = {
           "agrno": agrno,
           "Email": Email,
           "password": password,
-          "ClientId": userContactDetails.ReferenceID,
-          "ContactEmail": userContactDetails.EmailName
+          "ClientId": clientIddata ? clientIddata : -1,
+          "ContactEmail": userContactDetails.EmailName ? userContactDetails.EmailName : "",
       }
         console.log(contactData,"contactData");
         Cls.Json_GetContactNumber(contactData, (sts, data) => {
           if(sts){
-            console.log(sts, data,"newcontactData");
-            let jsonparse = JSON.parse(data);
-            if (jsonparse) {
-                console.log(jsonparse,"successcontact");
-                Json_UpdateContactField(jsonparse);
-              
+            // console.log(sts, data,"newcontactData");
+            // let jsonparse = JSON.parse(data);
+            if (data) {
+                console.log(data,"successcontact");
+                Json_UpdateContactField(data);
+                saveUDF(data);
             }
           }
          
@@ -227,7 +257,7 @@ function AddContacts() {
             "agrno": agrno,
             "Email": Email,
             "password": password,
-            "ClientId": userContactDetails.ReferenceID,
+            "ClientId": clientIddata ? clientIddata : -1,
             "projectid": folderId,
             "ContactNo": contactNumber,
             "fieldName": "BirthDate",
@@ -251,7 +281,7 @@ function AddContacts() {
             "agrno": agrno,
             "Email": Email,
             "password": password,
-            "ClientId": userContactDetails.ReferenceID,
+            "ClientId": clientIddata ? clientIddata : -1,
             "projectid": folderId,
             "ContactNo": contactNumber,
             "fieldName": "BirthDate",
@@ -286,8 +316,8 @@ function AddContacts() {
     "LoggedIn": false,
     "Blocked": false,
     "emailAddress": userContactDetails.EmailName ? userContactDetails.EmailName : "",
-    "ccode": userContactDetails.ReferenceID ? userContactDetails.ReferenceID : "",
-    "clientName": clientNames
+    "ccode": clientIddata ? clientIddata : "",
+    "clientName": clientNames ? clientNames : "",
 };
         try {
             portlCls.PortalUserAccountCreated_Json(obj, (sts, data) => {
@@ -304,10 +334,10 @@ function AddContacts() {
             console.log("Error while calling PortalUserAccountCreated_Json", err)
         }
     }
-
+    
       const handleSubmit = (event) => {
         event.preventDefault();
-        console.log(userContactDetails.CreatePortal,"createportal");
+        console.log(userContactDetails,"createportal");
         let contactData = {
           "agrno": agrno,
           "Email": Email,
@@ -328,28 +358,31 @@ function AddContacts() {
           "email":userContactDetails.EmailName ? userContactDetails.EmailName : "",
           "note": "",
           "emailupdate":userContactDetails.EmailName ? userContactDetails.EmailName : "",
-          "CActive": "Yes",
+          "CActive": userContactDetails.Inactive === true ? "Yes" : "No",
           "AssignedManager": userContactDetails.MainUserId ? userContactDetails.MainUserId : -1,
           "maincontact": userContactDetails.MainContact ? userContactDetails.MainContact : false,
-          "CCode": userContactDetails.ReferenceID ? userContactDetails.ReferenceID : "",
+          "CCode": clientIddata ? clientIddata : -1,
           "Salutation": userContactDetails.Title ? userContactDetails.Title : "",
           "accid": agrno
       }
         console.log(contactData,"contactData");
         Cls.AddContact(contactData, (sts, data) => {
-          console.log(sts, data,"newcontactData");
-          let jsonparse = data;
-          if (jsonparse=='Success') {
-              console.log(jsonparse,"successcontact");
-              if(userContactDetails.CreatePortal==true){
-                PortalUserAccountCreated_Json();
-              }
-              Json_GetContactNumber();
-              toast.success("Contact Added Successfully !"); 
-           
-              // toast.success("Reference ID Already Exists!"); 
-            
+          if(sts){
+            if(data){
+              if (data=='Success') {
+                console.log(data,"successcontact");
+                if(userContactDetails.CreatePortal==true){
+                  PortalUserAccountCreated_Json();
+                }
+                Json_GetContactNumber();
+                toast.success("Contact Added Successfully !"); 
+             
+                // toast.success("Reference ID Already Exists!"); 
+              
+            }
+            }
           }
+         
         });
       };    
   const handleListItemClick = (item) => {
@@ -376,7 +409,8 @@ function AddContacts() {
           ["mainCountry"]: "",
           ["billingsCountry"]: "",
           ["ragistersCountry"]: "",
-          ["ReferenceID"]:clientNames };
+          ["ReferenceID"]:clientNames 
+        };
           setContactDetails(data);
   };
   const updateReferenceID = (client) => {
@@ -392,10 +426,12 @@ function AddContacts() {
       ) => {
         event.preventDefault();
         if (value) {
+          console.log(value,"valueclientid");
           clientData = value.ClientID;
           localStorage.setItem("origiNator",clientData);
           clientName = value.Client;
           setclientNames(clientName);
+          setClientIddata(value.ClientID);
           updateReferenceID(value.Client);
         } else {
         }

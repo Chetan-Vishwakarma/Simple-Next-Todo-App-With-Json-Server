@@ -93,20 +93,7 @@ const ContactMainform = React.memo(
       data = { ...data, [name]: val };
       console.log(data, "dataOnchange", e);
       setContactDetails(data);
-        // Perform validation here
-    // Perform validation here
-    // if (name === 'EmailName' && val.trim() !== '' && !validateEmail(val)) {
-    //   setErrors((prevErrors) => ({
-    //     ...prevErrors,
-    //     [name]: 'Invalid email address',
-    //   }));
-    // } else {
-    //   setErrors((prevErrors) => ({
-    //     ...prevErrors,
-    //     [name]: '', // Clear error message if validation succeeds or if value is empty
-    //   }));
-    // }
-     // Perform validation here
+    
      if (name === 'EmailName' && val.trim() !== '') {
       // Check if the email already exists in contactlistdata.EmailID
       const emailExists = contactlistdata.some((contact) => contact.EMailId == val.trim());

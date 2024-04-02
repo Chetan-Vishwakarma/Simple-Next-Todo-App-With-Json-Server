@@ -92,6 +92,7 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
                 fullWidth
                 label={data.Name}
                 variant="outlined"
+                type="number"
                 name="regLine1"
                 id={
                   data.UserDefFieldID +
@@ -111,6 +112,7 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
                 fullWidth
                 label={data.Name}
                 variant="outlined"
+                type="number"
                 name="regLine1"
                 id={
                   data.UserDefFieldID +
@@ -224,7 +226,7 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
                         data.TextControlValue +
                         "_UDF"
                       }
-                      onChange={(e) => handleInputOnDateChage(e, `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}}`)}
+                      onChange={(e) => handleInputOnDateChage(e, `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}_UDF`)}
                     />
 
                   </DemoContainer>

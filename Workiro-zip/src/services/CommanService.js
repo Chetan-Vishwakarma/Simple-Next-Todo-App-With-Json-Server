@@ -973,7 +973,17 @@ Json_GetContactListByFolder(obj,callBack) {
             }
         })
      }
-
+     Json_CRMSaveUDFValues(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_CRMSaveUDFValues",obj,true);
+        super.CallNewService("Json_CRMSaveUDFValues",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
      AddContact(obj,callBack){   
         super.CreateNewServiceParamObject("AddContact",obj,true);
         super.CallNewService("AddContact",function(status,Data){
