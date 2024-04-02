@@ -210,11 +210,9 @@ export default function DocumentList({ clientId }) {
 
     // for filter criteria
     const [filterCriteria, setFilterCriteria] = useState({
-        "Item Date": [formatDatePickerDate(start._d), formatDatePickerDate(end._d)]
+        // "Item Date": [formatDatePickerDate(start._d), formatDatePickerDate(end._d)]
     });
-    // setTimeout(()=>{
-    //     setFilterCriteria({...filterCriteria,"Item Date": [formatDatePickerDate(start._d),formatDatePickerDate(end._d)]});
-    // },1000);
+
     const [dataNotFoundBoolean, setDataNotFoundBoolean] = useState(false);
 
 
@@ -322,7 +320,8 @@ export default function DocumentList({ clientId }) {
                     // console.log("documentKeys",docKeys);
                     setDocumentKeys(docKeys);
                     setDocuments(globalSearchDocs);
-                    handleDocumentsFilter(globalSearchDocs);
+                    // handleDocumentsFilter(globalSearchDocs);
+                    setAdvFilteredResult(globalSearchDocs);
                     let desc = globalSearchDocs.filter((item) => item.Description !== "");
                     setgroupedOptions(desc);
                     setIsLoading(false);
@@ -331,8 +330,11 @@ export default function DocumentList({ clientId }) {
                 // return;
             } else {
                 Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
+                    if(data==="" || JSON.parse(data)?.Table[0]?.Message){  // for data loading issue (api response issue)
+                        Json_ExplorerSearchDoc();
+                        return;
+                    }
                     if (sts && data) {
-                        console.log("ExplorerSearchDoc", JSON.parse(data));
                         let json = JSON.parse(data);
                         if (json?.Table6?.length > 0) {
                             let docs = json.Table6;
@@ -342,14 +344,22 @@ export default function DocumentList({ clientId }) {
                                     setDocumentKeys(docKeys);
                                     docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
                                     setDocuments(docs);
-                                    handleDocumentsFilter(docs);
-                                    // setAdvFilteredResult(docs);
+                                    if(docs[0].Message){   // for data loading issue (api response issue)
+                                        Json_ExplorerSearchDoc();
+                                        return;
+                                    }
+                                    // handleDocumentsFilter(docs);
+                                    setAdvFilteredResult(docs);
+                                    setIsLoading(false);
 
                                     let desc = docs.filter((item) => item.Description !== "");
                                     setgroupedOptions(desc);
                                 }
                                 Json_GetFolderData();
                             }
+                        }else{
+                            setIsLoading(false);
+                            setDataNotFoundBoolean(true);
                         }
                     }
                 })
@@ -369,9 +379,13 @@ export default function DocumentList({ clientId }) {
     }, []);
     const handleSearch = (text) => {
         if (documents.length > 0) {
-            let filteredDocuments = documents.filter((item) => {
-                return Object.entries(item).join("").toLowerCase().includes(text.toLowerCase());
+            let fltDesc = documents.filter(itm=>itm.Description!=="");
+            let filteredDocuments = fltDesc.filter((item) => {
+                return item.Description.toLowerCase().includes(text.toLowerCase());
             });
+            if(text!==""){
+                setFilterCriteria({...filterCriteria,Description:[text]});
+            }
             setFilteredDocResult(filteredDocuments);
         }
     }
@@ -385,9 +399,6 @@ export default function DocumentList({ clientId }) {
         const paddedMonth = month < 10 ? `0${month}` : month;
         return `${paddedDay}/${paddedMonth}/${year}`;
     }
-
-    function getRootProps(params) { }
-    function getListboxProps(params) { }
 
     const handleSearchByProperty = (flitData) => {
         // console.log(searchByPropertyKey, "--------", searchByPropertyInput);
@@ -584,7 +595,9 @@ export default function DocumentList({ clientId }) {
         setIsLoading(false);
     }
     useEffect(() => {
-        handleDocumentsFilter(documents);
+        if(documents.length>0){
+            handleDocumentsFilter(documents);
+        }
     }, [filterCriteria]);
 
     const handleFilterOnClientSelection = (e) => {
@@ -616,14 +629,15 @@ export default function DocumentList({ clientId }) {
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
-
     return (
         <>
             {globalSearchDocs.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/DocumentList", tabName: "Documents List" }]} />}
 
             {isLoading ? <CustomLoader /> : <>
 
-                <div className='main-client-details-filter'>
+
+
+                <div style={{top:globalSearchDocs.length>0&&"80px"}} className='main-client-details-filter'>
                     <Button aria-describedby={id} variant="" className='min-width-auto btn-blue px-0' onClick={handleClick}>
                         <TuneIcon />
                     </Button>
@@ -720,7 +734,7 @@ export default function DocumentList({ clientId }) {
                                 <hr className='mt-1' />
 
                                 <Typography variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
-                                    Sort By
+                                    Filter By
                                 </Typography>
 
                                 <Box className='d-flex'>
@@ -770,7 +784,7 @@ export default function DocumentList({ clientId }) {
 
                                                 <MenuItem value="" style={{ display: "none" }}>
 
-                                                    Sections sssssssss
+                                                    Sections
                                                 </MenuItem>
                                                 <MenuItem value="Section" >00. Clear Filter</MenuItem>
                                                 {sections.length > 0 && sections.map((itm) => {
@@ -849,7 +863,7 @@ export default function DocumentList({ clientId }) {
                                 {/* <hr /> */}
 
                                 <Typography variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
-                                    Filter By
+                                    Sort By
                                 </Typography>
 
 
@@ -1036,7 +1050,6 @@ export default function DocumentList({ clientId }) {
                                             borderColor: '#D5D5D5',
                                             color: 'success.main',
                                         }}
-                                        {...getRootProps()}
                                     // className={focused ? 'Mui-focused' : ''}
                                     >
                                         <span className="material-symbols-outlined search-icon">search</span>
@@ -1044,7 +1057,7 @@ export default function DocumentList({ clientId }) {
                                         />
                                     </AutocompleteRoot>
                                     {isSearchOpen ? (groupedOptions.length > 0 && (
-                                        <Listbox {...getListboxProps()}>
+                                        <Listbox>
                                             {filteredDocResult.length === 0 ? groupedOptions.map((option, index) => (
                                                 <Option onClick={handleSearchOpen}>{option.Description}</Option>
                                             )) : filteredDocResult.map((option, index) => (
@@ -1109,7 +1122,7 @@ export default function DocumentList({ clientId }) {
                                     {/* <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
                                         <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} /> */}
                                     {Object.keys(filterCriteria).length > 0 && Object.keys(filterCriteria).map((key) => {
-                                        if (!["Item Date", "Folder", "Section", "Client"].includes(key)) {
+                                        if (!["Item Date", "Folder", "Section", "Client", "Description"].includes(key)) {
                                             return <Chip label={`${key}: ${filterCriteria[key][0]}`} variant="outlined" onDelete={() => {
                                                 handleFilterDeletion(key);
                                             }} />

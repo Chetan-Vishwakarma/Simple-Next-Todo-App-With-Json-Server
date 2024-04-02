@@ -207,6 +207,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
     const handleClickOpenDocumentDetailsList = (event, sDoc) => {
         Json_getAssociatedTaskListByDocumentId(sDoc);
+        setSelectedDocument(sDoc);  //WARNING: If it create any issue so create a new state whose name will be [docForDetails,setDocForDetails]
         event.stopPropagation();
         setOpenDocumentDetailsList(true);
     };
@@ -230,7 +231,6 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         return dateA - dateB;
     };
 
-
     return (
         <>
             <Box>
@@ -247,7 +247,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                 </Box> */}
 
                 {dataNotFoundBoolean ? <DataNotFound /> : <DataGrid
-                    dataSource={dataNotFoundBoolean ? [] : advFilteredResult.length > 0 ? advFilteredResult : documents}
+                    dataSource={advFilteredResult.length > 0 ? advFilteredResult : documents}
                     keyExpr="Guid"
                     allowColumnReordering={true}
                     rowAlternationEnabled={true}
@@ -997,6 +997,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
+                                                
                                                 {rows.map((row) => (
                                                     <TableRow
                                                         key={row.name}

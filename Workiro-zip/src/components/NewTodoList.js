@@ -16,6 +16,7 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import moment from 'moment';
 import DocumentsVewModal from '../client/utils/DocumentsVewModal';
 import { toast } from 'react-toastify';
+import DocDetails from './DocDetails';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -43,6 +44,15 @@ function NewTodoList() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [userName, setUserName] = React.useState(null);
     const [recentDocument, setRecentDocument] = React.useState([]);
+
+    const [expanded, setExpanded] = React.useState('panel1');
+
+    const [activeSectionList, setActiveSectionList] = useState({
+        section1: true,
+        section2: false,
+        section3: false,
+        section4: false,
+    });
 
 
     const [loadMore, setLoadMore] = useState(9);
@@ -123,11 +133,11 @@ function NewTodoList() {
                     if (data) {
                         let json = JSON.parse(data);
                         console.log("Json_getRecentTaskList", json);
-                          let tbl = json.Table;
-                          if(tbl.length>0){
+                        let tbl = json.Table;
+                        if (tbl.length > 0) {
 
                             setRecentTaskList(tbl)
-                          }
+                        }
                         // const formattedTasks = json.Table.map((task) => {
                         //     let timestamp;
                         //     if (task.EndDateTime) {
@@ -255,12 +265,12 @@ function NewTodoList() {
     // modal
     const [openModal, setOpen] = React.useState(false);
 
-    const handleClickOpen = (task = selectedTask) => { 
+    const handleClickOpen = (task = selectedTask) => {
         setSelectedTask(task);
         setOpen(true);
     };
 
-   
+
 
     function returnMessageStatus(status) {
         if (status === "Completed") {
@@ -269,15 +279,15 @@ function NewTodoList() {
             return `Task status set to ${status}.`;
         }
     }
-    const MarkComplete=(e)=>{
-        console.log("MarkComplete",e)
-        Cls.ConfirmMessage("Are you sure you want to complete task",function(res){
-            if(res){
-                Json_UpdateTaskField("Status", "Completed",e);
+    const MarkComplete = (e) => {
+        console.log("MarkComplete", e)
+        Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
+            if (res) {
+                Json_UpdateTaskField("Status", "Completed", e);
             }
         })
     }
-    function Json_UpdateTaskField(FieldName, FieldValue,e) {
+    function Json_UpdateTaskField(FieldName, FieldValue, e) {
         let o = {
             agrno: agrno,
             strEmail: Email,
@@ -285,8 +295,8 @@ function NewTodoList() {
             TaskId: e.ID,
             FieldName: FieldName,
             FieldValue: FieldValue
-        }      
-        
+        }
+
         ClsSms.Json_UpdateTaskField(o, function (sts, data) {
             if (sts && data) {
                 if (data === "Success") {
@@ -302,7 +312,7 @@ function NewTodoList() {
         let obj = {};
         obj.OriginatorNo = e.ClientNo;
         obj.ActionReminder = "";
-        obj.Notes = "Completed by "+ e["Forwarded By"];
+        obj.Notes = "Completed by " + e["Forwarded By"];
         obj.Status = "sys"; //selectedTask.Status;
         obj.TaskId = e.ID;
         obj.TaskName = "";
@@ -312,8 +322,8 @@ function NewTodoList() {
         try {
             ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
                 if (sts && data) {
-                    console.log({ status: true, messages: "Success",res:data }); 
-                    Json_CRM_GetOutlookTask()                  
+                    console.log({ status: true, messages: "Success", res: data });
+                    Json_CRM_GetOutlookTask()
                 }
             });
         } catch (error) {
@@ -323,19 +333,38 @@ function NewTodoList() {
 
     // details dropdown
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState(null);
-    const DocumentList = Boolean(anchorElDocumentList);
-    const handleClickDocumentList = (event) => {
-        console.log(event.currentTarget);
-        event.stopPropagation();
-        setAnchorElDocumentList(event.currentTarget);
+    // const DocumentList = Boolean(anchorElDocumentList);
+    // const handleClickDocumentList = (event) => {
+    //     console.log(event.currentTarget);
+    //     event.stopPropagation();
+    //     setAnchorElDocumentList(event.currentTarget);
+    // };
+
+    // const handleCloseDocument = () => {
+    //     setAnchorElDocumentList(null);
+    // };
+
+
+    const [openMenus, setOpenMenus] = React.useState({});
+
+    const handleClickDocumentList = (event, index) => {
+        setOpenMenus(prevState => ({
+            ...prevState,
+            [index]: event.currentTarget
+        }));
     };
 
-    const handleCloseDocument = () => {
-        setAnchorElDocumentList(null);
+    const handleCloseDocument = (index) => {
+        setOpenMenus(prevState => ({
+            ...prevState,
+            [index]: null
+        }));
     };
 
-    const handleDowloadDocument = (e) => {
-        setAnchorElDocumentList(null);
+
+    const handleDowloadDocument = (e,index) => {
+        handleCloseDocument(index);
+        // setAnchorElDocumentList(null);
         console.log("document object", e);
         let o = { ItemId: e["Registration No."] };
         ClsSms.Json_GetItemBase64DataById(o, function (sts, data) {
@@ -349,9 +378,10 @@ function NewTodoList() {
         })
     };
 
-    const handleOpenBrower = (e) => {
-        setAnchorElDocumentList(null);
-        console.log("document object", e);      
+    const handleOpenBrower = (e,index) => {
+        handleCloseDocument(index);
+        //setAnchorElDocumentList(null);
+        console.log("document object", e);
         var IsApproved = e["IsApproved"];
         var PortalDocId = e["PortalDocId"];
         let IsApp = "";
@@ -362,8 +392,8 @@ function NewTodoList() {
             PortalID = PortalDocId;
         }
 
-let url =`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${e["Registration No."]}&ext=${e.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
-       window.open(url);
+        let url = `https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${e["Registration No."]}&ext=${e.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
+        window.open(url);
     };
 
     const [selectedDocument, setSelectedDocument] = React.useState(null);
@@ -373,18 +403,21 @@ let url =`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getIt
         setAnchorElDocumentList(null);
         console.log("document object", e);
         setSelectedDocument(e);
-        setOpenPDFView(true); 
-    //    let url =`https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=1002909&filetype=txt&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=&PortalID=`;
-    // window.open(url);
-       
+        setOpenPDFView(true);
+        //    let url =`https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=1002909&filetype=txt&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=&PortalID=`;
+        // window.open(url);
+
     };
 
-   
+
 
 
     // Document details List
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
-    const handleClickOpenDocumentDetailsList = () => {
+    const [docForDetails, setDocForDetails] = useState({});
+    const handleClickOpenDocumentDetailsList = (sDoc) => {
+        setDocForDetails(sDoc);
+        setExpanded("panel1");
         setOpenDocumentDetailsList(true);
     };
     const handleCloseDocumentDetailsList = () => {
@@ -403,10 +436,22 @@ let url =`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getIt
         return formattedDate === "Invalid Date" ? " " : formattedDate;
     }
 
+    const handleActiveTab = (target) => {
+        for (let key in activeSectionList) {
+            if (key === target) {
+                activeSectionList[key] = true;
+            } else {
+                activeSectionList[key] = false;
+            }
+        }
+    }
+
     return (
         <Box className="container-fluid p-0">
             <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
             <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
+
+            <DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList }/>
 
             <Box className='d-flex flex-wrap align-items-end justify-content-end'>
                 {/* <Box className='clearfix'>
@@ -440,21 +485,21 @@ let url =`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getIt
             <Box className='no-touch'>
                 <nav class="cd-vertical-nav">
                     <ul>
-                        <li><a href="#section1" class="active"><span class="label">Task Due <br />Soon</span>
+                        <li onClick={() => handleActiveTab("section1")}><a href="#section1" class={activeSectionList.section1 ? "active" : ""}><span class="label">Task Due <br />Soon</span>
                             <EventNoteIcon className='hover-icon' />
                         </a></li>
-                        <li><a href="#section2" class=""><span class="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
-                        <li><a href="#section3" class=""><span class="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
-                        <li><a href="#section4" class=""><span class="label">Recently Accessed Documents</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section2")}><a href="#section2" class={activeSectionList.section2 ? "active" : ""}><span class="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section3")}><a href="#section3" class={activeSectionList.section3 ? "active" : ""}><span class="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section4")}><a href="#section4" class={activeSectionList.section4 ? "active" : ""}><span class="label">Recently Accessed Documents</span><EventNoteIcon className='hover-icon' /></a></li>
                     </ul>
                 </nav>
             </Box>
             {/*  */}
 
-            <Box className='pe-5'>
+            <Box className='pe-5' id="section1">
 
                 <Typography variant='subtitle1' className='font-20 bold mb-0'>Welcome {userName}</Typography>
-                <Typography  id="section1" variant='subtitle1' className='font-16 bold mb-2'>The following tasks are due soon:</Typography>
+                <Typography variant='subtitle1' className='font-16 bold mb-2'>The following tasks are due soon:</Typography>
 
                 <Box className='row'>
                     {/* {
@@ -527,7 +572,7 @@ let url =`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getIt
 
 
                     {allTask.length > 0 ? allTask.slice(0, loadMore).map((item, index) => {
-                         const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
+                        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
 
                         const priority = item.Priority === 1 ? "High" :
                             item.Priority === 2 ? "Normal" :
@@ -545,7 +590,7 @@ let url =`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getIt
                                         checked
                                         sx={{
                                             '&.Mui-checked': {
-                                                color: item.Priority === 1 ? "red" : item.Priority === 2?"secondary":item.Priority === 3?"green":"primary"
+                                                color: item.Priority === 1 ? "red" : item.Priority === 2 ? "secondary" : item.Priority === 3 ? "green" : "primary"
                                             }
                                         }}
                                     />
@@ -600,7 +645,7 @@ let url =`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getIt
                                     </Box>
 
                                     <Box className='mt-2'>
-                                        <Button variant="text" className='btn-blue-2 me-2' onClick={()=>MarkComplete(item)}>Mark Complete</Button>
+                                        <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)}>Mark Complete</Button>
                                         <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
                                     </Box>
 
@@ -612,21 +657,21 @@ let url =`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getIt
                     }) : ""}
                 </Box>
 
-                <Box  id="section2" className='py-4 text-center'>
+                <Box id="section2" className='py-4 text-center'>
                     <Button variant="outlined" onClick={handleLoadMore}>View More</Button>
                 </Box>
 
                 {/* row end */}
-                <hr/>
+                <hr />
 
                 {/* <Typography variant='subtitle1' className='font-20 bold mb-0'>Welcome Patirck</Typography>
                 <Typography variant='subtitle1' className='font-16 bold mb-2'>The following tasks are due soon:</Typography> */}
 
 
-                <Typography  variant='subtitle1' className='font-18 bold mb-2 mt-4'>The following tasks were recently updated: </Typography>
+                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>The following tasks were recently updated: </Typography>
 
                 <Box className='row'>
-                    {recentTaskList.length > 0?recentTaskList.slice(0, loadMore).map((item, index) => {
+                    {recentTaskList.length > 0 ? recentTaskList.slice(0, loadMore).map((item, index) => {
                         return <>
 
                             <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
@@ -710,9 +755,9 @@ let url =`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getIt
                             {/* col end */}
 
                         </>
-                    }):""}
+                    }) : ""}
                 </Box>
-                <Box className='py-4 text-center'>
+                <Box id="section3" className='py-4 text-center'>
                     <Button variant="outlined" onClick={handleLoadMoreRecentTask}>View More</Button>
                 </Box>
 
@@ -720,7 +765,7 @@ let url =`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getIt
                 {/* row end */}
                 <hr />
 
-                <Typography id="section3" variant='subtitle1' className='font-18 bold mb-2 mt-4'>You pinned the following tasks:</Typography>
+                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>You pinned the following tasks:</Typography>
 
                 <Box className='row'>
                     {Array(9).fill("").map(() => {
@@ -837,57 +882,57 @@ let url =`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getIt
                                                 </Typography>
                                                 <Typography variant="body1">
                                                     {/* Size:  <span className='sembold'>{item.FileSize}</span> |   */}
-                                                    <span className='sembold'>{moment(item["Item Date"]).format("DD/MM/YYYY")}</span>
-                                                    | Uploaded by <span className='sembold'>Patrick</span>
+                                                    <span className='sembold'>{moment(item["Item Date"]).format("DD/MM/YYYY")!=="Invalid date"?moment(item["Item Date"]).format("DD/MM/YYYY"):"01/01/2000"}</span>
+                                                    | Uploaded by <span className='sembold'>{item.Client!==""&&item.Client!==null&&item.Client!=="undefined"&&item.Client!==undefined? item.Client: ""}</span>
                                                 </Typography>
                                             </Box>
                                         </Box>
                                         <Box>
                                             <Button
-                                                id="basic-button"
-                                                aria-controls={DocumentList ? 'basic-menu' : undefined}
+                                                id={`basic-button-${index}`}
+                                                aria-controls={openMenus[index] ? `basic-menu-${index}` : undefined}
                                                 aria-haspopup="true"
-                                                aria-expanded={DocumentList ? 'true' : undefined}
-                                                onClick={handleClickDocumentList}
+                                                aria-expanded={openMenus[index] ? 'true' : undefined}
+                                                onClick={(event) => handleClickDocumentList(event, index)}
                                                 className='min-width-auto'
                                             >
                                                 <MoreVertIcon />
                                             </Button>
                                             <Menu
-                                                id="basic-menu"
-                                                anchorEl={anchorElDocumentList}
-                                                open={DocumentList}
-                                                onClose={handleCloseDocument}
+                                                id={`basic-menu-${index}`}
+                                                anchorEl={openMenus[index]}
+                                                open={Boolean(openMenus[index])}
+                                                onClose={() => handleCloseDocument(index)}
                                                 MenuListProps={{
-                                                    'aria-labelledby': 'basic-button',
+                                                    'aria-labelledby': `basic-button-${index}`,
                                                 }}
                                                 className='custom-dropdown'
                                             >
                                                 <MenuItem onClick={() => {
-                                                    handleCloseDocument()
-                                                    handleClickOpenDocumentDetailsList()
+                                                    handleCloseDocument(index)
+                                                    handleClickOpenDocumentDetailsList(item)
                                                 }}>
                                                     <ListItemIcon>
                                                         <ArticleIcon fontSize="medium" />
                                                     </ListItemIcon>
                                                     Document Details</MenuItem>
 
-                                                <MenuItem onClick={handleCloseDocument}>
+                                                <MenuItem onClick={()=>handleCloseDocument(index)}>
                                                     <ListItemIcon>
                                                         <CloudUploadIcon fontSize="medium" />
                                                     </ListItemIcon>
                                                     Upload New Version</MenuItem>
-                                                <MenuItem onClick={handleCloseDocument}>
+                                                <MenuItem onClick={()=>handleCloseDocument(index)}>
                                                     <ListItemIcon>
                                                         <DriveFileRenameOutlineIcon fontSize="medium" />
                                                     </ListItemIcon>
                                                     Rename Document</MenuItem>
-                                                <MenuItem onClick={()=>handleOpenBrower(item)} >
+                                                <MenuItem onClick={() => handleOpenBrower(item,index)} >
                                                     <ListItemIcon>
                                                         <TravelExploreIcon fontSize="medium" />
                                                     </ListItemIcon>
                                                     Open in Browser</MenuItem>
-                                                <MenuItem onClick={(e) => handleDowloadDocument(item)}>
+                                                <MenuItem onClick={(e) => handleDowloadDocument(item,index)}>
                                                     <ListItemIcon>
                                                         <CloudDownloadIcon fontSize="medium" />
                                                     </ListItemIcon>

@@ -234,12 +234,14 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                     if (clientList.length > 0) {
 
                         setClientList(clientList);
+if(originatorNo){
+    let res = clientList.filter((c) => c.ClientID === originatorNo.originatorNo);
+    if (res.length > 0) {
+        setTxtClientData(res[0])
 
-                        let res = clientList.filter((c) => c.ClientID === originatorNo.originatorNo);
-                        if (res.length > 0) {
-                            setTxtClientData(res[0])
-
-                        }
+    }
+}
+                        
 
 
                     }
@@ -405,14 +407,15 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
         const isChecked = event.target.checked;
         setCreateTaskChk(isChecked);
-        setCreatePublishChk(false);
+      
 
         setTaskType(isChecked ? "CRM" : "Portal");
         if (isChecked) {
             setButtonNameText(createPublishChk === "Portal" ? "Submit & Create Portal Task" : "Submit & Create Task");
         } else {
-            setButtonNameText(createPublishChk === "Portal" ? "Submit" : "Submit & Create Portal Task");
+            setButtonNameText(createPublishChk === "Portal" ? "Submit" : "Submit");
         }
+        setCreatePublishChk(false);
 
     };
 
@@ -421,13 +424,14 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
         const isChecked = event.target.checked;
         setCreatePublishChk(isChecked);
-        setCreateTaskChk(false);
+       
         setTaskType(isChecked ? "Portal" : "CRM");
         if (isChecked) {
             setButtonNameText(createTaskChk === "CRM" ? "Submit & Create Task" : "Submit & Create Portal Task");
         } else {
-            setButtonNameText(createTaskChk === "CRM" ? "Submit & Create Portal Task" : "Submit");
+            setButtonNameText(createTaskChk === "CRM" ? "Submit" : "Submit");
         }
+        setCreateTaskChk(false);
     };
 
 
@@ -530,11 +534,12 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                 if (sts && data) {
                     let js = JSON.parse(data)
                     console.log("Json_RegisterItem", js)
-                    if (js.Status) {
+                    if (js.Status=="true") {
                         toast.success("Created Task !");
                         if (fileData) {
                             fileData.DocId = js.ItemId;
                         }
+                       // setOpenUploadDocument(false);
 
                     }
                     else {

@@ -46,6 +46,51 @@ Json_GetContactListByFolder(obj,callBack) {
 
     ////////////////////////////////////////Portal Methods
    
+    Json_ExplorerSearchDoc(obj,callBack) {
+        super.CreateNewServiceParamObject("Json_ExplorerSearchDoc",obj,true);
+        super.CallNewService("Json_ExplorerSearchDoc", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+    Json_SearchDocById(obj,callBack) {
+        super.CreateNewServiceParamObject("Json_SearchDocById",obj,true);
+        super.CallNewService("Json_SearchDocById", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+    GetComments_Json(obj,callBack) {
+        super.CreateNewServiceParamObject("GetComments_Json",obj,false);
+        super.CallNewService("GetComments_Json", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+    SendReminder_Json(obj,callBack) {
+        super.CreateNewServiceParamObject("SendReminder_Json",obj,false);
+        super.CallNewService("SendReminder_Json", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+
     GetCommentsHtml_Json(obj,callBack) {
         super.CreateNewServiceParamObject("GetCommentsHtml_Json",obj,false);
         super.CallNewService("GetCommentsHtml_Json", function (status, Data) {
