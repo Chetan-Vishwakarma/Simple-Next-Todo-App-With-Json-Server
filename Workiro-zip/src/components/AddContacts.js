@@ -23,7 +23,7 @@ import { Autocomplete, Grid, List, ListItem, ListItemIcon, ListItemText, TextFie
 import ContactMainform from '../contact/contact-components/ContactMainform';
 import UploadButtons from '../contact/contact-components/UploadProfile';
 import ContactUDF from '../contact/contact-components/ContactUDF';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 let originatorNo;
 let folderData;
 let clientData;
@@ -295,7 +295,7 @@ function AddContacts() {
                     if (data) {
                         // let json = JSON.parse(data);
                         console.log("PortalUserAccountCreated_Json", data);
-                       
+                        toast.success("Portal Account Created Successfully !"); 
                       
                     }
                 }
@@ -515,7 +515,7 @@ function AddContacts() {
 
     return (
         <Box className="container-fluid p-0">
-
+ <ToastContainer></ToastContainer>
             <CustomBreadCrumbs tabs={[{tabLink:"/dashboard/Connections",tabName:"Connections"},{tabLink:"/dashboard/clientDetails",tabName:"Client Details"}]}/>
 
 
@@ -615,6 +615,7 @@ function AddContacts() {
               <ContactMainform 
               clientNames={clientNames}
               contact={contact}
+              contactlistdata={contactlistdata}
                userContactDetails={userContactDetails}
                setContactDetails={setContactDetails}
               />

@@ -13,8 +13,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { toast } from 'react-toastify';
 const ContactMainform = React.memo(
-  ({ contact,clientNames, userContactDetails, setContactDetails }) => {
-    console.log(userContactDetails, "userContactDetails");
+  ({ contact,clientNames, userContactDetails, setContactDetails,contactlistdata }) => {
+    console.log(contactlistdata, "contactlistdata");
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -95,15 +95,42 @@ const ContactMainform = React.memo(
       setContactDetails(data);
         // Perform validation here
     // Perform validation here
-    if (name === 'EmailName' && val.trim() !== '' && !validateEmail(val)) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        [name]: 'Invalid email address',
-      }));
+    // if (name === 'EmailName' && val.trim() !== '' && !validateEmail(val)) {
+    //   setErrors((prevErrors) => ({
+    //     ...prevErrors,
+    //     [name]: 'Invalid email address',
+    //   }));
+    // } else {
+    //   setErrors((prevErrors) => ({
+    //     ...prevErrors,
+    //     [name]: '', // Clear error message if validation succeeds or if value is empty
+    //   }));
+    // }
+     // Perform validation here
+     if (name === 'EmailName' && val.trim() !== '') {
+      // Check if the email already exists in contactlistdata.EmailID
+      const emailExists = contactlistdata.some((contact) => contact.EMailId == val.trim());
+      console.log(emailExists,val,"emailExist",contactlistdata);
+      if (emailExists) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [name]: 'Email already exists',
+        }));
+      } else if (!validateEmail(val)) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [name]: 'Invalid email address',
+        }));
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [name]: '', // Clear error message if validation succeeds or if val is empty
+        }));
+      }
     } else {
       setErrors((prevErrors) => ({
         ...prevErrors,
-        [name]: '', // Clear error message if validation succeeds or if value is empty
+        [name]: '', // Clear error message if val is empty
       }));
     }
     };
