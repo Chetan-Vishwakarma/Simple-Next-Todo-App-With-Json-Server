@@ -14,7 +14,10 @@ import StepLabel from "@mui/material/StepLabel";
 import StepContent from "@mui/material/StepContent";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-function Reference() {
+import EditClientdetails from "./EditClientdetails";
+import EditUDFClientcard from "./EditUDFClientcard";
+import EditClientaddress from "./EditClientaddress";
+function EditReference() {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -335,7 +338,7 @@ function Reference() {
       description: (
         <Box className="clearfix">
           {
-            <AddClientdetails
+            <EditClientdetails
               userDetail={userDetail}
               //
               dataCompanyHouse={dataCompanyHouse}
@@ -345,7 +348,7 @@ function Reference() {
               setDataCompanyHouse={setDataCompanyHouse}
               setSelectedFolderID={setSelectedFolderID}
               //
-            ></AddClientdetails>
+            ></EditClientdetails>
           }
         </Box>
       ),
@@ -372,13 +375,13 @@ function Reference() {
       description: (
         <Box className="clearfix">
           {
-            <AddClientaddress
+            <EditClientaddress
               userDetail={userDetail}
               //
               dataCompanyHouse={dataCompanyHouse}
               setUserDetail={setUserDetail}
               //
-            ></AddClientaddress>
+            ></EditClientaddress>
           }
         </Box>
       ),
@@ -388,7 +391,7 @@ function Reference() {
       label: "Details",
       description: (
         <Box className="clearfix">
-          <UDFClientcard
+          <EditUDFClientcard
             data={clientDetails}
             setDataFromChild={setDataFromChild}
           />
@@ -475,4 +478,4 @@ function Reference() {
     </Box>
   );
 }
-export default memo(Reference);
+export default memo(EditReference);

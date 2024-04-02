@@ -65,6 +65,7 @@ import moment from "moment";
 import { Toast } from "devextreme-react";
 import Reference from "../client/client-components/Reference";
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import EditReference from "../client/client-components/EditReference";
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -1971,14 +1972,19 @@ export default function CreateNewModalTask({ ...props }) {
 
     // Referance modal
     const [Referance, setReferance] = React.useState(false);
-
+    const [ReferanceEdit, setReferanceEdit] = React.useState(false);
     const handleClickReferance = () => {
         setReferance(true);
     };
     const DocumentHandleClose = () => {
         setReferance(false);
     };
-
+    const handleClickEditReferance = () => {
+        setReferanceEdit(true);
+    };
+    const EditDocumentHandleClose = () => {
+        setReferanceEdit(false);
+    };
     return (
         <React.Fragment>
             {/* <Button
@@ -2017,6 +2023,9 @@ export default function CreateNewModalTask({ ...props }) {
                     <MenuItem onClick={handleClickReferance}>Reference</MenuItem>
                     <MenuItem onClick={handleClose4}>Note</MenuItem>
                     <MenuItem onClick={handleClose4}>Document</MenuItem>
+                    <MenuItem 
+                    onClick={handleClickEditReferance}
+                    >Edit Reference</MenuItem>
                 </Menu>
             </div>
 
@@ -3453,6 +3462,39 @@ export default function CreateNewModalTask({ ...props }) {
                         <hr />
 
                         <Reference />
+
+                    </DialogContentText>
+                </DialogContent>
+            </Dialog>
+
+
+            <Dialog
+                open={ReferanceEdit}
+                onClose={EditDocumentHandleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className="custom-modal full-modal"
+            >
+
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <Box className="d-flex align-items-center justify-content-between">
+                            <div>
+                                <Button
+                                    id="basic-button"
+                                >
+                                    Document List
+                                </Button>
+                            </div>
+                            <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+                        </Box>
+                        <hr />
+
+                        <EditReference />
 
                     </DialogContentText>
                 </DialogContent>

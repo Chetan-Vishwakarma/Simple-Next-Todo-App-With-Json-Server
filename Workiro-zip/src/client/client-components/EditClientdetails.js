@@ -11,7 +11,7 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 const UserDetailContext = createContext();
 // const UserDetailContext = createContext();
 
-const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse}) => {
+const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse}) => {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -542,5 +542,5 @@ const clearDataCard = () => {
     </div>
   );
 });
-export default memo(AddClientdetails);
+export default memo(EditClientdetails);
 
