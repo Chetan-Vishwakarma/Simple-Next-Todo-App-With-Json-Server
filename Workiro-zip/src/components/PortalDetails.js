@@ -106,7 +106,6 @@ function PortalDetails() {
 
             </Box>
 
-
             {/* history modal start */}
             <Dialog
                 open={open}

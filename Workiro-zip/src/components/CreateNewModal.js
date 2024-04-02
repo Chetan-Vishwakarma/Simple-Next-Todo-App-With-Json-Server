@@ -30,11 +30,16 @@ import 'react-datetime/css/react-datetime.css';
 import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import GroupIcon from '@mui/icons-material/Group';
+import DescriptionIcon from '@mui/icons-material/Description';
+import SaveAsIcon from '@mui/icons-material/SaveAs';
+
 import {
     List,
     ListItem,
     ListItemText,
     TextField,
+    responsiveFontSizes,
 } from "@mui/material";
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
@@ -65,6 +70,11 @@ import moment from "moment";
 import { Toast } from "devextreme-react";
 import Reference from "../client/client-components/Reference";
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
+import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { data } from "jquery";
 import EditReference from "../client/client-components/EditReference";
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -85,7 +95,9 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-export default function CreateNewModalTask({ ...props }) {
+const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-20'/>,<PublishedWithChangesIcon color='primary' className='font-20'/>,<HourglassBottomIcon color='primary' className='font-20'/>,<CheckCircleOutlineIcon color='success' className='font-20'/>];
+
+function CreateNewModalTask({ ...props }) {
 
     let {
         documentDate,
@@ -116,6 +128,12 @@ export default function CreateNewModalTask({ ...props }) {
     //   let dt = new LoginDetails();
 
     let cls = new CommanCLS(baseUrl, agrno, Email, password);
+
+    const baseurlSMs = "https://docusms.uk/dsdesktopwebservice.asmx/"; // base url for api
+    //   let dt = new LoginDetails();
+
+    let clsSms = new CommanCLS(baseurlSMs, agrno, Email, password);
+
 
     const [filterText, setFilterText] = React.useState("");
 
@@ -228,8 +246,19 @@ export default function CreateNewModalTask({ ...props }) {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-    const handleClickOpen = () => {
+    const handleClickOpen = (vl) => {
+        console.log("Type show 1111", vl)
+        if (vl === "Portal") {
+            settxtTaskType(vl)
+            setIsVisibleByTypeCRM(true);
+        }
+        else {
+            settxtTaskType(vl)
+            setIsVisibleByTypeCRM(false);
+        }
+
         setOpen(true);
+
     };
 
     const handleClose = () => {
@@ -362,6 +391,13 @@ export default function CreateNewModalTask({ ...props }) {
 
     };
 
+    const disableDueDate = (date) => {
+        const today = currentDate;
+        return date.isSameOrAfter(today, 'day'); // Disable past dates
+
+
+    };
+
     const disablePastDtTwoDate = (date) => {
         const today = new Date();
         today.setDate(today.getDate() - 1);
@@ -402,8 +438,14 @@ export default function CreateNewModalTask({ ...props }) {
 
                         setUserList(result);
                         let removeuser = result.filter((e) => e.ID !== localStorage.getItem("UserId"));
+
+                     
                         setUserListData(removeuser);
                         setUserFilter(removeuser);
+
+                        let commanuser = result.filter((e) => e.ID === localStorage.getItem("UserId"));
+                        console.log("Json_GetForwardUserList11", commanuser);
+                        setSelectedUSer(commanuser[0]);
 
                     }
                 }
@@ -540,14 +582,11 @@ export default function CreateNewModalTask({ ...props }) {
 
 
         currentDate.setDate(currentDate.getDate() + 1); // Increment the day by 1 to get the next day's date
-
         const day = currentDate.getDate().toString().padStart(2, '0'); // Get the day and pad with 0 if needed
         const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Get the month (Note: January is 0)
         const year = currentDate.getFullYear(); // Get the full year
-
         // Construct the date string in "yyyy/mm/dd" format
         const formattedDate = `${year}-${month}-${day}`;
-
         return formattedDate;
     }
 
@@ -566,6 +605,8 @@ export default function CreateNewModalTask({ ...props }) {
     const handleMenuClose = () => {
         setFolderAnchorEl(null);
     };
+
+
 
     useEffect(() => {
 
@@ -712,6 +753,24 @@ export default function CreateNewModalTask({ ...props }) {
         setUserFilter(res);
     }, [filterText])
 
+    const CurrentDateChange = (e) => {
+        setCurrentDate(e);
+        // setNextDate(formattedDate);
+    }
+    useEffect(() => {
+        const currentDate1 = new Date(currentDate);
+        const nextDate = new Date(currentDate1); // Copy the current date        
+        nextDate.setDate(currentDate1.getDate() + 1); // Increment the day by 1 to get the next day's date    
+        // Get the day, month, and year
+        const day = nextDate.getDate().toString().padStart(2, '0');
+        const month = (nextDate.getMonth() + 1).toString().padStart(2, '0');
+        const year = nextDate.getFullYear();
+        // Construct the date string in "yyyy/mm/dd" format
+        const formattedDate = `${day}/${month}/${year}`;
+        console.log("formattedDate", formattedDate);
+        setNextDate(formattedDate); // Set nextDate with formatted date
+    }, [currentDate]);
+
     useEffect(() => {
 
         let strGuid = uuidv4().replace(/-/g, '');
@@ -726,7 +785,7 @@ export default function CreateNewModalTask({ ...props }) {
 
         // setCurrentDate(dayjs(getCurrentDate()));
 
-        setNextDate(dayjs(getNextDate()));
+        //setNextDate(dayjs(getNextDate()));
         //setRemiderDate(dayjs(getCurrentDate()));
         setExpireDate(dayjs(getCurrentDate()));
 
@@ -879,7 +938,6 @@ export default function CreateNewModalTask({ ...props }) {
             const ItemId = filedata.map(obj => obj.DocId);
             const fileNames = filedata.map(obj => obj["FileName"]);
             const fileDataBase64 = filedata.filter(obj => obj["Base64"] !== "").map(obj => obj["Base64"]);
-
 
             let o = {};
             o.accid = agrno;
@@ -1039,14 +1097,19 @@ export default function CreateNewModalTask({ ...props }) {
         const isaddUser = addUser.map(obj => obj.ID).join(',');
         const attString = attachmentPath.map(obj => obj.Path).join('|');
 
-        console.log("nextDate1", currentDate)
-        console.log("nextDate", nextDate)
+        //console.log("nextDate1", currentDate)
+        let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
+        if (nxtdd === "Invalid Date") {
+            let dd = nextDate.split("/");//30/03/2024
+            nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
+        }
 
+        //console.log("nextDate",dayjs(nxtdd).format("YYYY/MM/DD"))
         let ooo = {
 
             "ClientIsRecurrence": false,
             "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-            "ClientEnd": dayjs(nextDate).format("YYYY/MM/DD"),
+            "ClientEnd": dayjs(nxtdd).format("YYYY/MM/DD"),
             "ClientDayNumber": "1",
             "ClientMonth": "1",
             "ClientOccurrenceCount": "1",
@@ -1061,7 +1124,7 @@ export default function CreateNewModalTask({ ...props }) {
             "FolderId": txtFolderId.toString(),
             "Subject": textSubject,
             "TypeofTaskID": txtSectionId.toString(),
-            "EndDateTime": dayjs(nextDate).format("YYYY/MM/DD"),
+            "EndDateTime": dayjs(nxtdd).format("YYYY/MM/DD"),
             "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
             "Status": txtStatus,
             "Priority": txtPriorityId.toString(),
@@ -1080,7 +1143,7 @@ export default function CreateNewModalTask({ ...props }) {
             "TaskSource": "CRM"
         }
         console.log("final save data obj", ooo);
-        cls.Json_CRM_Task_Save(ooo, function (sts, data) {
+        clsSms.Json_CRM_Task_Save(ooo, function (sts, data) {
             if (sts) {
                 let js = JSON.parse(data);
 
@@ -1241,8 +1304,10 @@ export default function CreateNewModalTask({ ...props }) {
     const [anchorElTastkType, setAnchorElTastkType] = React.useState(null);
 
     const [portalUser, setPortalUser] = React.useState([]);
+    const [portalUserCC, setPortalUserCC] = React.useState([]);
+    const [portalUserTo, setPortalUserTo] = React.useState([]);
 
-    const [txtTaskType, settxtTaskType] = React.useState("CRM");
+    const [txtTaskType, settxtTaskType] = React.useState("");
 
     const [isVisibleByTypeCRM, setIsVisibleByTypeCRM] = React.useState(false);
 
@@ -1276,8 +1341,8 @@ export default function CreateNewModalTask({ ...props }) {
     ////////////////// Priority
     let priorityarr = [{ id: 1, "name": "High" }, { id: 2, "name": "Normal" }, { id: 3, "name": "Low" }];
     let statusarr = [
-        { id: 1, "name": "Not Started"},
-        { id: 2, "name": "In Progress"},
+        { id: 1, "name": "Not Started" },
+        { id: 2, "name": "In Progress" },
         { id: 3, "name": "On Hold" },
         { id: 4, "name": "Completed" },
         // { id: 5, "name": "Done" },
@@ -1310,6 +1375,8 @@ export default function CreateNewModalTask({ ...props }) {
                             let filteredUsers = tble6.filter(el => el["Portal User"] === true && el["Portal User"] !== null);
                             if (filteredUsers.length > 0) {
                                 setPortalUser(filteredUsers.length > 0 ? filteredUsers : null);
+                                setPortalUserCC(filteredUsers.length > 0 ? filteredUsers : null);
+                                setPortalUserTo(filteredUsers.length > 0 ? filteredUsers : null);
                             }
                             console.log("Json_GetClientCardDetails", filteredUsers);
                         }
@@ -1346,23 +1413,40 @@ export default function CreateNewModalTask({ ...props }) {
     const [selectedEmail, setSelectedEmail] = useState([]);
 
     const handleAutocompleteChange = (event, newValue) => {
-        if (newValue.length === 0) {
-            setSelectedEmail(newValue ? newValue : null);
+      
+        setSelectedEmail(newValue ? newValue : null);
+    
+        if (newValue) {
+            let res = portalUser.filter((user) => {
+                let unk = newValue.find((u) => u.ContactNo === user.ContactNo);
+               // console.log("selected email", unk);
+                return unk === undefined; // If unk is undefined, it means there's no matching ContactNo in newValue
+            });
+            setPortalUserCC(res)
+           // console.log("selected email11", res);
         } else {
-            toast.error("No data found please change a reference")
+            console.log("selected email11", portalUser); // If newValue is null, log the entire portalUser
         }
-
-
-        //console.log("handleAutocompleteChange", newValue,event);
+    
+        //console.log("handleAutocompleteChange", newValue, event);
     };
+    
 
     const [selectedEmailCC, setSelectedEmailCC] = useState(null);
     const handleAutocompleteChangeOnCC = (event, newValue) => {
 
-        if (newValue.length === 0) {
-            setSelectedEmailCC(newValue ? newValue : null);
+        setSelectedEmailCC(newValue ? newValue : null);
+
+        if (newValue) {
+            let res = portalUser.filter((user) => {
+                let unk = newValue.find((u) => u.ContactNo === user.ContactNo);
+               // console.log("selected email", unk);
+                return unk === undefined; // If unk is undefined, it means there's no matching ContactNo in newValue
+            });
+            setPortalUserTo(res)
+           // console.log("selected email11", res);
         } else {
-            toast.error("No data found please change a reference")
+            console.log("selected email11", portalUser); // If newValue is null, log the entire portalUser
         }
     };
 
@@ -1597,15 +1681,22 @@ export default function CreateNewModalTask({ ...props }) {
 
 
     function CreatePortalTask() {
-        console.log("nextDate1", currentDate)
-        console.log("nextDate", nextDate)
+        // console.log("nextDate1", currentDate)
+        ////console.log("nextDate", nextDate)
+
+        let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
+        if (nxtdd === "Invalid Date") {
+            let dd = nextDate.split("/");//30/03/2024
+            nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
+        }
+
 
         try {
             const isaddUser = addUser.map(obj => obj.ID).join(',');
             let ooo = {
                 "ClientIsRecurrence": false,
                 "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-                "ClientEnd": dayjs(nextDate).format("YYYY/MM/DD"),
+                "ClientEnd": dayjs(nxtdd).format("YYYY/MM/DD"),
                 "ClientDayNumber": "1",
                 "ClientMonth": "1",
                 "ClientOccurrenceCount": "1",
@@ -1620,7 +1711,7 @@ export default function CreateNewModalTask({ ...props }) {
                 "FolderId": txtFolderId.toString(),
                 "Subject": textSubject,
                 "TypeofTaskID": txtSectionId.toString(),
-                "EndDateTime": dayjs(nextDate).format("YYYY/MM/DD"),
+                "EndDateTime": dayjs(nxtdd).format("YYYY/MM/DD"),
                 "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
                 "Status": txtStatus,
                 "Priority": txtPriorityId.toString(),
@@ -1646,7 +1737,7 @@ export default function CreateNewModalTask({ ...props }) {
                     if (js.Status === "success") {
                         setMessageId(js.Message);
                         CreatePortalMessage(js.Message)
-                        toast.success("Created Task");
+                        //toast.success("Created Task");
                     }
                     else {
                         toast.error("Task Not Created Please Try Again");
@@ -1722,6 +1813,8 @@ export default function CreateNewModalTask({ ...props }) {
                         if (data === "") {
                             toast.success("Task Created");
                         }
+                        setOpen(false);
+
                         // let js = JSON.parse(data);
 
                         // if (js.Status == "success") {
@@ -1995,18 +2088,20 @@ export default function CreateNewModalTask({ ...props }) {
                 <span className="ps-2 create-text">Create New  </span>
             </Button> */}
 
-            <div>
+            <div className="select-border my-0 m-auto">
                 <Button
                     id="basic-button"
                     aria-controls={open4 ? 'basic-menu' : undefined}
                     aria-haspopup="true"
                     aria-expanded={open4 ? 'true' : undefined}
                     onClick={handleClick4}
-                    className="btn-blue btn-round btn-block"
+                    className="btn-blue-2 btn-round btn-block add-new-btn"
+                    variant="text"
+                    size="small"
                 >
-                    <span className="material-symbols-outlined">edit_square</span>{" "}
-                <span className="ps-2 create-text">Add New  </span>
-                    
+                    <span className="material-symbols-outlined font-18">edit_square</span>{" "}
+                    <span className="ps-2 font-13 create-text">Add New  </span>
+
                 </Button>
                 <Menu
                     id="basic-menu"
@@ -2028,7 +2123,6 @@ export default function CreateNewModalTask({ ...props }) {
                     >Edit Reference</MenuItem>
                 </Menu>
             </div>
-
 
             <Dialog
                 fullScreen={fullScreen}
@@ -2148,9 +2242,6 @@ export default function CreateNewModalTask({ ...props }) {
                                             </Box>
                                         </Box> */}
 
-
-
-
                                         {/* attached to start */}
                                         <Box className='mt-3'>
 
@@ -2167,6 +2258,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                             getOptionLabel={(option) => option.ForwardTo}
                                                             renderInput={(params) => <TextField {...params} label="From" />}
                                                             className="w-100"
+                                                            size="small"
                                                             value={selectedUSer}
                                                             onChange={handleOptionChangeFromUser}
                                                         />
@@ -2176,12 +2268,14 @@ export default function CreateNewModalTask({ ...props }) {
                                                         <Autocomplete
                                                             multiple
                                                             id="checkboxes-tags-demo"
-                                                            options={portalUser}
+                                                            options={portalUserTo}
                                                             disableCloseOnSelect
                                                             getOptionLabel={(option) => option["E-Mail"]}
+                                                            size="small"
                                                             renderOption={(props, option, { selected }) => (
                                                                 <li {...props}>
                                                                     <Checkbox
+
                                                                         icon={icon}
                                                                         checkedIcon={checkedIcon}
                                                                         style={{ marginRight: 8 }}
@@ -2202,9 +2296,10 @@ export default function CreateNewModalTask({ ...props }) {
                                                         <Autocomplete
                                                             multiple
                                                             id="checkboxes-tags-demo"
-                                                            options={portalUser}
+                                                            options={portalUserCC}
                                                             disableCloseOnSelect
                                                             getOptionLabel={(option) => option["E-Mail"]}
+                                                            size="small"
                                                             renderOption={(props, option, { selected }) => (
                                                                 <li {...props}>
                                                                     <Checkbox
@@ -2308,10 +2403,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                 onClick={handleUserClick}
                                                 onContextMenu={handleRightClick}
                                                 className="p-0 w-auto d-inline-block"
-
-
                                             >
-
 
                                                 <Box className="d-flex align-items-center">
                                                     {ownerRighClick && (<>
@@ -2490,7 +2582,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                 </Box>
 
                                                 <Box className="inner-user-list-dropdown">
-                                                    <p className="sembold">My Team</p>
+                                                    <p className="sembold mb-0">My Team</p>
 
                                                     <Box className="box-user-list-dropdown" style={{ maxHeight: "200px", overflowY: "auto" }}>
                                                         <Box className="mb-1 mt-3 px-3">
@@ -2644,7 +2736,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                                     MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
                                                                 >
                                                                     <MenuItem onClick={() => DeleteFile(file)}>Delete</MenuItem>
-                                                                    {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
+                                                                    {txtTaskType === "Portal" && (file.FileType.toLowerCase() === "docx" || file.FileType.toLowerCase() === "doc" || file.FileType.toLowerCase() === "xls" || file.FileType.toLowerCase() === "xlsx" || file.FileType.toLowerCase() === "msg") && (
                                                                         <MenuItem onClick={(e) => ConvertToPdf_Json(file)}>Convert To Pdf</MenuItem>
                                                                     )}
 
@@ -3049,8 +3141,7 @@ export default function CreateNewModalTask({ ...props }) {
 
                                 <Box className="mb-3">
                                     <Box className="mb-2 ">
-                                        <label className="font-14 semibold mb-1">Due By </label>
-
+                                        <label className="font-14 mb-1">Start Date</label>
                                         <Box className='custom-datepicker'>
                                             <LocalizationProvider
                                                 className="pe-0 custom-datepicker"
@@ -3061,7 +3152,7 @@ export default function CreateNewModalTask({ ...props }) {
                                                     showIcon
                                                     dateFormat="DD/MM/YYYY"
                                                     value={currentDate}
-                                                    onChange={(e) => setCurrentDate(e)} // Handle date changes
+                                                    onChange={(e) => CurrentDateChange(e)} // Handle date changes
                                                     timeFormat={false}
                                                     isValidDate={disablePastDt}
                                                     closeOnSelect={true}
@@ -3090,8 +3181,10 @@ export default function CreateNewModalTask({ ...props }) {
                                 </Box> */}
 
                                 <Box className="mb-3">
-                                    <label className="font-14 mb-1">Start Date</label>
+                                    <label className="font-14 semibold mb-1">Due By </label>
+
                                     <Box className='custom-datepicker'>
+
                                         <LocalizationProvider
                                             className="pe-0"
                                             dateAdapter={AdapterDayjs}
@@ -3103,12 +3196,16 @@ export default function CreateNewModalTask({ ...props }) {
                                                 value={nextDate}
                                                 onChange={(e) => setNextDate(e)} // Handle date changes
                                                 timeFormat={false}
-                                                isValidDate={disablePastDt}
+                                                isValidDate={disableDueDate}
                                                 closeOnSelect={true}
                                                 icon="fa fa-calendar"
                                             />
                                         </LocalizationProvider>
+
+
                                     </Box>
+
+
                                 </Box>
 
                                 <Box className="mb-2">
@@ -3176,7 +3273,7 @@ export default function CreateNewModalTask({ ...props }) {
                                 </Box>
 
                                 <Box className="select-dropdown">
-                                    <BootstrapTooltip title="Select Priority" arrow
+                                    <BootstrapTooltip title="Priority" arrow
                                         placement="bottom-start"
                                         slotProps={{
                                             popper: {
@@ -3237,7 +3334,7 @@ export default function CreateNewModalTask({ ...props }) {
                                 </Box>
 
                                 <Box className="select-dropdown">
-                                    <BootstrapTooltip title="Select Status" arrow
+                                    <BootstrapTooltip title="Status" arrow
                                         placement="bottom-start"
                                         slotProps={{
                                             popper: {
@@ -3283,7 +3380,8 @@ export default function CreateNewModalTask({ ...props }) {
                                                     }}>
 
                                                         <ListItemIcon>
-                                                            <RadioButtonUncheckedIcon fontSize="medium" className="text-success" />
+                                                            {/* <RadioButtonUncheckedIcon fontSize="medium" className="text-success" /> */}
+                                                            {statusIconList[index]}
                                                         </ListItemIcon>
 
                                                         {item.name}</MenuItem>
@@ -3391,6 +3489,7 @@ export default function CreateNewModalTask({ ...props }) {
                             selectedRowKeys={selectedRows}
                             selection={{ mode: 'multiple' }}
                             onSelectionChanged={handleSelectionChanged} // Handle selection change event
+                            className="table-grid"
                         >
                             <FilterRow visible={true} />
                             <SearchPanel visible={true} highlightCaseSensitive={true} />
@@ -3502,3 +3601,5 @@ export default function CreateNewModalTask({ ...props }) {
         </React.Fragment >
     );
 }
+
+export default CreateNewModalTask;

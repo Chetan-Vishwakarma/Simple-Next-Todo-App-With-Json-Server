@@ -406,8 +406,17 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         if (dt) {
             // let fullDate = new Date(parseInt(dt.substr(6)));
             let fullDate = new Date(dt);
-            //console.log("date formet111", fullDate);
+
+            // if(dt.includes("/Date")){
+            //     let fullDate = new Date(parseInt(dt.substr(6)));
+            //     console.log("date formet111", fullDate);
+            //     return fullDate;
+            // }
+            // else{
+            //     return fullDate;
+            // }
             return fullDate;
+
         }
         else {
             return "";
@@ -581,6 +590,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
             Json_Get_CRM_Task_ActivityByTaskId(selectedTask.ID);
         }, 2500);
 
+        setIsVisible(false)
     }, [selectedTask]);
 
 
@@ -958,6 +968,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                     a.href = "data:" + Cls.FileType(fileName) + ";base64," + js.Message; //Image Base64 Goes here
                     a.download = fileName; //File name Here
                     a.click(); //Downloaded file
+                    setOpenDocumentList(false);
 
                 }
 
@@ -1126,28 +1137,28 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     const handleCloseDocumentDetailsList = () => {
         setOpenDocumentDetailsList(false);
     };
-// sadik code start
-function createData(document, details) {
-    return { document, details };
-}
+    // sadik code start
+    function createData(document, details) {
+        return { document, details };
+    }
 
-const rows = [
-    createData('Folder', 'Client'),
-    createData('Client', '212121Test'),
-    createData('Section', '01. General Correspondence'),
-    createData('Received Date', '02/03/2024'),
-    createData('Doc. Date', '02/03/2024'),
-    createData('Description', 'General Letter'),
-    createData('Notes', 'Yes'),
-    createData('Category', '1. Received'),
-    createData('DocDirection', 'Incoming'),
-    createData('ItemId', 998301),
-    createData('Tax Year', '18/19'),
-    createData('Financial Year', '2020'),
-    createData('From Email', 'test@gmail.com'),
-    createData('to Email', 'test@gmail.com'),
-    createData('CC', 'test@gmail.com')
-];
+    const rows = [
+        createData('Folder', 'Client'),
+        createData('Client', '212121Test'),
+        createData('Section', '01. General Correspondence'),
+        createData('Received Date', '02/03/2024'),
+        createData('Doc. Date', '02/03/2024'),
+        createData('Description', 'General Letter'),
+        createData('Notes', 'Yes'),
+        createData('Category', '1. Received'),
+        createData('DocDirection', 'Incoming'),
+        createData('ItemId', 998301),
+        createData('Tax Year', '18/19'),
+        createData('Financial Year', '2020'),
+        createData('From Email', 'test@gmail.com'),
+        createData('to Email', 'test@gmail.com'),
+        createData('CC', 'test@gmail.com')
+    ];
     // accordian
     const [expanded, setExpanded] = React.useState('panel1');
 
@@ -1193,7 +1204,25 @@ const rows = [
                                         onClick={handleClick4}
                                         className="min-width-auto"
                                     >
-                                        <CheckCircleIcon />
+                                        {selectedTask.Priority === 1 && (
+                                            
+                                                <PanoramaFishEyeIcon className="text-red" fontSize="medium" />
+                                           
+                                        )}
+                                        {selectedTask.Priority === 2 && (
+                                           
+                                                <RadioButtonUncheckedIcon fontSize="medium" className="text-warning" />
+                                            
+                                        )}
+                                        {selectedTask.Priority === 3 && (
+                                           
+                                                <EjectIcon fontSize="medium" className="text-success rotate-180" />
+                                            
+                                        )}
+                                        {selectedTask.Priority !== 1 && selectedTask.Priority !== 2 && selectedTask.Priority !== 3 && (
+                                            <CheckCircleIcon />
+                                        )}
+
                                     </Button>
                                     <Menu
                                         id="basic-menu"
@@ -1470,10 +1499,11 @@ const rows = [
                             <Box className='d-flex'>
                                 <Checkbox
                                     {...label}
-                                    icon={<PanoramaFishEyeIcon />}
+                                    icon={<PanoramaFishEyeIcon className={status === "Completed" ? "text-success" : "text-gray"} />}
                                     onChange={handleChangeStatus}
-                                    checkedIcon={<CheckCircleIcon />}
+                                    checkedIcon={<CheckCircleIcon className={status === "Completed" ? "text-success" : "text-gray"} />}
                                     className="ps-0"
+                                    checked={status === "Completed"}
                                 />
                                 <input
                                     ariant="h4"
@@ -1482,6 +1512,7 @@ const rows = [
                                     onChange={handalChangeSetSubject}
                                     onClick={handalClickEditeSubject}
                                     value={tSubject}
+                                    disabled={selectedTask.Source === "Portal"}
                                 />
                             </Box>
 
@@ -1493,6 +1524,7 @@ const rows = [
                                         value={txtdescription} // Bind the value to the state
                                         onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
                                         onClick={handalClickEditeSubject}
+                                        
                                     ></textarea>
                                 </>)}
 
@@ -1506,7 +1538,7 @@ const rows = [
 
 
 
-                            {isVisible && ( // Show the box if isVisible is true
+                            {isVisible && selectedTask.Source === "CRM" && ( // Show the box if isVisible is true
                                 <Box className='mb-3 mt-2'>
                                     <Stack spacing={2} direction="row">
                                         <Button variant="outlined" onClick={toggleVisibilityCancle}>Cancel</Button>
@@ -1615,50 +1647,23 @@ const rows = [
                             {/* dropdown end */}
                         </Box>
                         {/*  */}
-
-                        <Box className="d-flex flex-wrap">
-                            <label className='text-decoration-none d-flex'
-                                onClick={handleClickOpen}
-                            ><BallotIcon className='me-1' /> {attachmentFile.length} Documents</label>
-                            {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
-                        </Box>
-                        <Box className="d-flex mt-3">
-                            <Box className="mb-2 me-3">
-                                <label className="font-14 text-black mb-1">Start Date</label>
-                                <Box className='custom-datepicker'>
-                                    <CalendarMonthIcon />
-                                    <DatePicker
-                                        showIcon
-                                        dateFormat="DD/MM/YYYY"
-                                        value={currentDate}
-                                        onChange={(e) => setCurrentDate(e)} // Handle date changes
-                                        timeFormat={false}
-                                        isValidDate={disablePastDt}
-                                        closeOnSelect={true}
-                                        icon="fa fa-calendar"
-                                    />
-                                </Box>
+                        {selectedTask.Source === "CRM" && (<>
+                            <Box className="d-flex flex-wrap">
+                                <label className='text-decoration-none d-flex'
+                                    onClick={handleClickOpen}
+                                ><BallotIcon className='me-1' /> {attachmentFile.length} Documents</label>
+                                {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
                             </Box>
-
-                            <Box className="mb-2" sx={{ float: "right" }}>
-                                <Box className="mb-2 ">
-                                    <label className="font-14 semibold text-black mb-1">
-                                        Due By
-                                    </label>
+                            <Box className="d-flex mt-3">
+                                <Box className="mb-2 me-3">
+                                    <label className="font-14 text-black mb-1">Start Date</label>
                                     <Box className='custom-datepicker'>
                                         <CalendarMonthIcon />
                                         <DatePicker
                                             showIcon
                                             dateFormat="DD/MM/YYYY"
-                                            value={nextDate}
-                                            onChange={(e) => {
-                                                setNextDate(e);
-                                                let enddatetime = dayjs(remiderDate).format("YYYY/MM/DD");
-                                                if (enddatetime) {
-                                                    Json_UpdateTaskField("EndDateTime", enddatetime, "Due date updated!")
-                                                }
-
-                                            }} // Handle date changes
+                                            value={currentDate}
+                                            onChange={(e) => setCurrentDate(e)} // Handle date changes
                                             timeFormat={false}
                                             isValidDate={disablePastDt}
                                             closeOnSelect={true}
@@ -1666,8 +1671,37 @@ const rows = [
                                         />
                                     </Box>
                                 </Box>
+
+                                <Box className="mb-2" sx={{ float: "right" }}>
+                                    <Box className="mb-2 ">
+                                        <label className="font-14 semibold text-black mb-1">
+                                            Due By
+                                        </label>
+                                        <Box className='custom-datepicker'>
+                                            <CalendarMonthIcon />
+                                            <DatePicker
+                                                showIcon
+                                                dateFormat="DD/MM/YYYY"
+                                                value={nextDate}
+                                                onChange={(e) => {
+                                                    setNextDate(e);
+                                                    let enddatetime = dayjs(remiderDate).format("YYYY/MM/DD");
+                                                    if (enddatetime) {
+                                                        Json_UpdateTaskField("EndDateTime", enddatetime, "Due date updated!")
+                                                    }
+
+                                                }} // Handle date changes
+                                                timeFormat={false}
+                                                isValidDate={disablePastDt}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
+                                            />
+                                        </Box>
+                                    </Box>
+                                </Box>
                             </Box>
-                        </Box>
+                        </>)}
+
 
                         <Box className="pb-0 mb-0">
                             <Box className="main-chatbox">
@@ -1883,17 +1917,20 @@ const rows = [
                                     </Stack>
 
                                     <Box className='position-relative'>
-                                        <Box className='upload-chat-file'>
-                                            <input
-                                                type="file"
-                                                id={`file-upload ${selectedTask.ID}`}
-                                                multiple
-                                                onChange={handleFileSelect}
-                                                className="file-input"
-                                            />
-                                            <label for={`file-upload ${selectedTask.ID}`} className="pointer"><AttachFileIcon /></label>
+                                        {selectedTask.Source === "CRM" && (<>
+                                            <Box className='upload-chat-file'>
+                                                <input
+                                                    type="file"
+                                                    id={`file-upload ${selectedTask.ID}`}
+                                                    multiple
+                                                    onChange={handleFileSelect}
+                                                    className="file-input"
+                                                />
+                                                <label for={`file-upload ${selectedTask.ID}`} className="pointer"><AttachFileIcon /></label>
 
-                                        </Box>
+                                            </Box>
+                                        </>)}
+
 
                                         <textarea
                                             className="textarea"
@@ -1974,7 +2011,12 @@ const rows = [
                             <Grid item xs={12} md={6}>
 
                                 <Box className="search-box">
-                                    {Array(6).fill("").map(() => {
+                                    {attachmentFile.length > 0 ? attachmentFile.map((item, index) => {
+                                        let fileName = "";
+                                        if (item.FileName) {
+                                            let Typest = item.FileName.lastIndexOf("\\");
+                                            fileName = item.FileName.slice(Typest + 1);
+                                        }
                                         return <>
                                             <Box className="file-uploads">
                                                 <label className="file-uploads-label file-uploads-document">
@@ -1990,7 +2032,7 @@ const rows = [
                                                         />
                                                         <Box className="upload-content pe-3">
                                                             <Typography variant="h4" >
-                                                                lorem ipsome dolor site amet
+                                                                {fileName}
                                                             </Typography>
                                                             <Typography variant="body1">
                                                                 Size:  <span className='sembold'>0.00 KB</span> | Date <span className='sembold'>09/03/2024</span>
@@ -2042,7 +2084,7 @@ const rows = [
                                                                     <TravelExploreIcon fontSize="medium" />
                                                                 </ListItemIcon>
                                                                 Open in Browser</MenuItem>
-                                                            <MenuItem onClick={handleCloseDocument}>
+                                                            <MenuItem onClick={() => handleDownloadDoc(item)}>
                                                                 <ListItemIcon>
                                                                     <CloudDownloadIcon fontSize="medium" />
                                                                 </ListItemIcon>
@@ -2053,7 +2095,7 @@ const rows = [
                                             </Box>
                                             {/* file upload end */}
                                         </>
-                                    })}
+                                    }) : ""}
                                 </Box>
 
                                 {/* <Demo>

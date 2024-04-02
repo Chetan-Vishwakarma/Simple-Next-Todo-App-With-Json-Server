@@ -42,7 +42,6 @@ import CommanCLS from "../../services/CommanService"
 import { useLocation } from 'react-router-dom';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -58,6 +57,7 @@ import FormLabel from '@mui/material/FormLabel';
 import Autocomplete from '@mui/material/Autocomplete';
 import TestPDF from '../TestPDF';
 import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
+import AMLCheck from '../AMLCheck';
 
 
 
@@ -96,9 +96,10 @@ function ContactDetails() {
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
+    let Cls = new CommanCLS(baseUrl, agrno, Email, password);
+
     const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
 
-    let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
     let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
 
@@ -816,7 +817,8 @@ function ContactDetails() {
 
 
             {/* AML check modal Start */}
-            <Dialog
+            <AMLCheck isAMLChkOpen={isAMLChkOpen} setisAMLChkOpen={setisAMLChkOpen} contactDetails={contactDetails}/>
+            {/* <Dialog
                 open={isAMLChkOpen}
                 onClose={() => setisAMLChkOpen(false)}
                 aria-labelledby="alert-dialog-title"
@@ -888,19 +890,13 @@ function ContactDetails() {
 
                     </DialogContentText>
                 </DialogContent>
-                {/* <DialogActions>
-                        <Button onClick={handleClose}>Disagree</Button>
-                        <Button onClick={handleClose} autoFocus>
-                            Agree
-                        </Button>
-                    </DialogActions> */}
-            </Dialog>
+            </Dialog> */}
 
             {/* AML check modal End */}
 
 
             {/* Checkmodal modal Start */}
-            <Dialog
+            {/* <Dialog
                 open={verificationModal}
                 onClose={() => setVerificationModalOpen(false)}
                 aria-labelledby="alert-dialog-title"
@@ -969,24 +965,10 @@ function ContactDetails() {
                                             inputFormat="DD/MM/YYYY" // Set the input format to "dd/mm/yyyy"
                                         />
                                     </LocalizationProvider>
-
-                                    {/* <LocalizationProvider
-                                        className="pe-0"
-                                        dateAdapter={AdapterDayjs}
-                                    >
-                                        <DatePicker className="datepicker w-100"
-                                            defaultValue={nextDate}
-                                            onChange={(e) => setNextDate(e)}                      
-                                            inputFormat="DD/MM/YYYY"
-                                        />
-                                    </LocalizationProvider> */}
                                 </Box>
                             </Box>
 
                             <Box className='col-xl-6 col-md-6'>
-                                {/* <Box class="input-group mb-3">
-                                    <TextField label="Gender" variant="outlined" className='form-control' />
-                                </Box> */}
 
                                 <FormControl>
                                     <FormLabel id="demo-row-radio-buttons-group-label" className='sembold'>Gender</FormLabel>
@@ -1095,13 +1077,7 @@ function ContactDetails() {
 
                     </DialogContentText>
                 </DialogContent>
-                {/* <DialogActions>
-                        <Button onClick={handleClose}>Disagree</Button>
-                        <Button onClick={handleClose} autoFocus>
-                            Agree
-                        </Button>
-                    </DialogActions> */}
-            </Dialog>
+            </Dialog> */}
 
             {/* Checkmodal check modal End */}
 

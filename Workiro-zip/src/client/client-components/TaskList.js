@@ -92,7 +92,7 @@ function TaskList() {
   const [showHeaderFilter, setShowHeaderFilter] = useState(true);
   const [currentFilter, setCurrentFilter] = useState(applyFilterTypes[0].key);
 
-  
+
   const [outlookTaskList, setOutlookTaskList] = useState([]);
 
   const dataGridRef = useRef(null);
@@ -114,26 +114,26 @@ function TaskList() {
   // const onCurrentFilterChanged = useCallback((e) => {
   //     setCurrentFilter(e.value);
   // }, []);
-  
 
-  const Json_CRM_GetOutlookTask = () => {    
+
+  const Json_CRM_GetOutlookTask = () => {
     try {
-        cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
-            if (sts) {
-                if (data) {
-                    let json = JSON.parse(data);                    
-                    console.log("Json_CRM_GetOutlookTask", json?.Table);  
-                    if(json?.Table.length>0){
-                      setOutlookTaskList(json.Table)
-                    }
-                                     
-                }
+      cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
+        if (sts) {
+          if (data) {
+            let json = JSON.parse(data);
+            console.log("Json_CRM_GetOutlookTask", json?.Table);
+            if (json?.Table.length > 0) {
+              setOutlookTaskList(json.Table)
             }
-        });
+
+          }
+        }
+      });
     } catch (err) {
-        console.log("Error while calling Json_CRM_GetOutlookTask", err);
+      console.log("Error while calling Json_CRM_GetOutlookTask", err);
     }
-}
+  }
 
   useEffect(() => {
     Json_CRM_GetOutlookTask();
@@ -141,73 +141,73 @@ function TaskList() {
   }, [])
 
   return (
-    <div className='table-responsive table-grid'>
+    <div className='table-responsive table-grid table-grid-2'>
       <DataGrid
         id="gridContainer"
         ref={dataGridRef}
         dataSource={outlookTaskList}
         keyExpr="ID"
         showBorders={true}>
-          <FilterRow visible={true} />
-                <FilterPanel visible={true} />
-                <HeaderFilter visible={true} />
-                {/* <Scrolling  rowRenderingMode="virtual" /> */}
-                <Scrolling mode="standard" />
-                <Selection
-                    mode="multiple"
-                />
-                <Paging defaultPageSize={20} />
-                <Pager
-                    visible={true} />
-                <SearchPanel
-                    visible={true}
-                    width={240}
-                    placeholder="Search..." />
+        <FilterRow visible={true} />
+        <FilterPanel visible={true} />
+        <HeaderFilter visible={true} />
+        {/* <Scrolling  rowRenderingMode="virtual" /> */}
+        <Scrolling mode="standard" />
+        <Selection
+          mode="multiple"
+        />
+        <Paging defaultPageSize={20} />
+        <Pager
+          visible={true} />
+        <SearchPanel
+          visible={true}
+          width={240}
+          placeholder="Search..." />
 
-       
+
         <Column
-          dataField="ID"         
+          dataField="ID"
           caption="Client ID">
           {/* <HeaderFilter groupInterval={10000} /> */}
-        </Column>       
+        </Column>
         <Column
           dataField="Client"
           // alignment="right"
           caption="Client Name"
-          // format="M/d/yyyy, HH:mm"
-         />
-         <Column
+        // format="M/d/yyyy, HH:mm"
+        />
+        <Column
           dataField="Section"
           // alignment="right"
-        caption="Section"
-          // format="M/d/yyyy, HH:mm"
-         />
+          caption="Section"
+        // format="M/d/yyyy, HH:mm"
+        />
 
-       <Column
+        <Column
           dataField="Forwarded By"
           // alignment="right"
-        caption="Forwarded By"
-          // format="M/d/yyyy, HH:mm"
-         />
-       
+          caption="Forwarded By"
+        // format="M/d/yyyy, HH:mm"
+        />
 
-        <Column 
-        dataField="Start"
-        dataType="date"
-           format="M/d/yyyy"        
+
+        <Column
+          dataField="Start"
+          dataType="date"
+          format="M/d/yyyy"
         />
         <Column dataField="EndDateTime"
-        dataType="date"
-        format="M/d/yyyy"
+          dataType="date"
+          format="M/d/yyyy"
         />
         <Column dataField="Subject" />
         <Column
-          dataField="mstatus"         
-         />
+          dataField="mstatus"
+        />
         <Column
-          dataField="Source"         
-         />
-       
+          dataField="Source"
+        />
+
       </DataGrid>
 
     </div>

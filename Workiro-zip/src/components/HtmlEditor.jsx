@@ -40,22 +40,22 @@ const HtmlEditorDX =({templateDataMarkup,setTemplateDataMarkup,setEditorContentV
   };
 
 return(<>
-<Editor
+  <Editor
         apiKey='foebdh6s9f6mgpr7an0cfkxfggpd92q0e3jqurzedcarlcsn'
-        onInit={(evt, editor) => editorRef.current = editor}
         initialValue={templateDataMarkup}
         init={{
-        height: 300,
-        menubar: false,
-        plugins: [
-           'a11ychecker','advlist','advcode','advtable','autolink','checklist','export',
-           'lists','link','image','charmap','preview','anchor','searchreplace','visualblocks',
-           'powerpaste','fullscreen','formatpainter','insertdatetime','media','table','help','wordcount'
-        ],
-        toolbar: 'undo redo | casechange blocks | bold italic backcolor | ' +
-           'alignleft aligncenter alignright alignjustify | ' +
-           'bullist numlist checklist outdent indent | removeformat | a11ycheck code table help',
-        content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+            height: 400,
+            menubar: false,
+            plugins: [
+                'a11ychecker','advlist','advcode','advtable','autolink','checklist','export',
+                'lists','link','image','charmap','preview','anchor','searchreplace','visualblocks',
+                'powerpaste','fullscreen','formatpainter','insertdatetime','media','table','help','wordcount','resize'
+            ],
+            toolbar: 'undo redo | casechange blocks | bold italic backcolor | ' +
+                'alignleft aligncenter alignright alignjustify | ' +
+                'bullist numlist checklist outdent indent | removeformat | a11ycheck code table help',
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+            resize: true // Enable resizing
         }}
         onEditorChange={handleEditorChange}
     />

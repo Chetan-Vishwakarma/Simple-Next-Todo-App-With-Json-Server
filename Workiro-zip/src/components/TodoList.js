@@ -12,7 +12,6 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import moment from 'moment';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
-
 import CustomLoader from './CustomLoader';
 // import { data } from 'jquery';
 import MergeIcon from '@mui/icons-material/Merge';
@@ -29,8 +28,30 @@ import PortalDetails from './PortalDetails';
 import DataNotFound from './DataNotFound';
 import { styled } from '@mui/system';
 import { useLocation } from 'react-router-dom';
+import ClearIcon from '@mui/icons-material/Clear';
+import DvrIcon from '@mui/icons-material/Dvr';
+import LanguageIcon from '@mui/icons-material/Language';
+import WatchLaterIcon from '@mui/icons-material/WatchLater';
+import CustomBreadCrumbs from './CustomBreadCrumbs';
+import SortIcon from '@mui/icons-material/Sort';
+import PersonIcon from '@mui/icons-material/Person';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
+import SubjectIcon from '@mui/icons-material/Subject';
+import { toast } from 'react-toastify';
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
+import PeopleIcon from '@mui/icons-material/People';
+import ShareIcon from '@mui/icons-material/Share';
+import FolderSharedIcon from '@mui/icons-material/FolderShared';
+
+
+const foldersIconList = [<PersonIcon className='me-1 font-20'/>,<TipsAndUpdatesIcon className='me-1 font-20'/>,<PeopleIcon className='me-1 font-20'/>,<ShareIcon className='me-1 font-20'/>,<FolderSharedIcon className='me-1 font-20'/>,<FolderSharedIcon className='me-1 font-20'/>];
+const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20'/>,<PublishedWithChangesIcon color='primary' className='me-1 font-20'/>,<HourglassBottomIcon color='primary' className='me-1 font-20'/>,<CheckCircleOutlineIcon color='success' className='me-1 font-20'/>];
 
 function TodoList() {
+    const location = useLocation();
+    let dddd = location.state !== null ? location.state : { globalSearchTask: [] };
+    const { globalSearchTask, strGlobal } = dddd;
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -42,9 +63,15 @@ function TodoList() {
     let Cls = new CommanCLS(baseUrlPractice, agrno, Email, password);
     //let Clsp = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
+    const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+
+    let ClsSms = new CommanCLS(baseUrl, agrno, Email, password);
+
+
     const [allTask, setAllTask] = useState([]);
     const [actualData, setActualData] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
+    console.log("sdklfjfkl",selectedTask);
 
     const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -62,7 +89,7 @@ function TodoList() {
     const [dataInGroup, setDataInGroup] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const [suggestionList,setSuggestionList] = useState([]);
+    const [suggestionList, setSuggestionList] = useState([]);
 
     // for date datepicker
     const [state, setState] = useState({
@@ -101,17 +128,51 @@ function TodoList() {
         }
     }
     const Json_CRM_GetOutlookTask = () => {
+        if (globalSearchTask.length > 0) {
+            const formattedTasks = globalSearchTask.map((task) => {
+                let timestamp;
+                if (task.EndDateTime) {
+                    timestamp = parseInt(task.EndDateTime.slice(6, -2));
+                }
+
+                const date = new Date(timestamp);
+
+                return { ...task, EndDateTime: date };
+            });
+
+            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus!=="Completed");
+
+            let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
+                let timestamp;
+                if (task.CreationDate) {
+                    timestamp = parseInt(task.CreationDate.slice(6, -2));
+                }
+
+                const date = new Date(timestamp);
+
+                return { ...task, CreationDate: date };
+            }).sort((a, b) => b.CreationDate - a.CreationDate);
+
+
+            setActualData([...hasCreationDate]);
+            setAllTask([...hasCreationDate]);
+            // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
+            Json_GetFolders();
+            setIsApi(true);
+            setIsLoading(false);
+            return;
+        }
         let obj = {
             agrno: agrno,
             Email: Email,
             password: password
         };
         try {
-            Cls.Json_CRM_GetOutlookTask(obj, (sts, data) => {
+            Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_CRM_GetOutlookTask", json.Table);
+                        console.log("Json_CRM_GetOutlookTask111", json);
                         let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
                         const formattedTasks = result.map((task) => {
                             let timestamp;
@@ -124,7 +185,7 @@ function TodoList() {
                             return { ...task, EndDateTime: date };
                         });
 
-                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
+                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus!=="Completed");
 
                         let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                             let timestamp;
@@ -278,9 +339,13 @@ function TodoList() {
             });
         });
 
+        console.log("fltData2222", fltData)
+
         setAllTask([...fltData]);
         if (Object.keys(dataInGroup).length > 0) {
+
             let gData = groupByProperty(fltData, selectedGroupBy);
+
             setDataInGroup(gData);
         }
 
@@ -444,14 +509,68 @@ function TodoList() {
     };
 
 
+    const MarkComplete=(e)=>{
+        console.log("MarkComplete",e)
+        Cls.ConfirmMessage("Are you sure you want to complete task",function(res){
+            if(res){
+                Json_UpdateTaskField("Status", "Completed",e);
+            }
+        })
+    }
+    function Json_UpdateTaskField(FieldName, FieldValue,e) {
+        let o = {
+            agrno: agrno,
+            strEmail: Email,
+            password: password,
+            TaskId: e.ID,
+            FieldName: FieldName,
+            FieldValue: FieldValue
+        }      
+        
+        ClsSms.Json_UpdateTaskField(o, function (sts, data) {
+            if (sts && data) {
+                if (data === "Success") {
+                    toast.success("Completed")
+                    Json_AddSupplierActivity(e);
+                }
+                console.log("Json_UpdateTaskField", data)
+            }
+        })
+    }
+
+    const Json_AddSupplierActivity = (e) => {
+        let obj = {};
+        obj.OriginatorNo = e.ClientNo;
+        obj.ActionReminder = "";
+        obj.Notes = "Completed by "+ e["Forwarded By"];
+        obj.Status = "sys"; //selectedTask.Status;
+        obj.TaskId = e.ID;
+        obj.TaskName = "";
+        obj.ActivityLevelID = "";
+        obj.ItemId = "";
+
+        try {
+            ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
+                if (sts && data) {
+                    console.log({ status: true, messages: "Success",res:data }); 
+                    Json_CRM_GetOutlookTask()                  
+                }
+            });
+        } catch (error) {
+            console.log({ status: false, messages: "Faild Please Try again" });
+        }
+    };
+
     return (
         <>
             <Box className="container-fluid p-0">
+
+                {globalSearchTask.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/MyTask", tabName: "My Task" }]} />}
+
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
                 <Box className='d-flex main-search-box mb-3 align-items-center justify-content-between'>
                     <Box className='d-flex align-items-center'>
-
                         <Layout>
                             <AutocompleteWrapper>
                                 <AutocompleteRoot
@@ -459,31 +578,31 @@ function TodoList() {
                                         borderColor: '#D5D5D5',
                                         color: 'success.main',
                                     }}
-                                    // className={isSearch ? 'Mui-focused' : ''}
-                                    >
+                                // className={isSearch ? 'Mui-focused' : ''}
+                                >
                                     <span className="material-symbols-outlined search-icon">search</span>
 
                                     <Input
                                         // onClick={(e) => handleDialogsOpen(e, "Search")}
                                         onChange={(e) => {
-                                            if(e.target.value==="") {
+                                            if (e.target.value === "") {
                                                 setSuggestionList([]);
                                                 handleFilterDeletion("Subject");
                                                 return;
                                             }
-                                            let fltData = allTask.filter(itm=>itm.Subject.toLowerCase().includes(e.target.value.toLowerCase()));
+                                            let fltData = allTask.filter(itm => itm.Subject.toLowerCase().includes(e.target.value.toLowerCase()));
                                             setSuggestionList(fltData);
-                                            setTaskFilter({...taskFilter,Subject:[e.target.value]});
+                                            setTaskFilter({ ...taskFilter, Subject: [e.target.value] });
                                         }}
                                         placeholder='Search'
                                         className='ps-0' />
                                 </AutocompleteRoot>
 
-                                {suggestionList.length>0&& <Listbox sx={{ zIndex: 1 }}>
-                                    {suggestionList.map((itm,i)=>{
+                                {suggestionList.length > 0 && <Listbox sx={{ zIndex: 1 }}>
+                                    {suggestionList.map((itm, i) => {
                                         return <Option key={i}>
-                                        {/* <ApartmentIcon className='me-1' /> */}
-                                        {itm.Subject}</Option>
+                                            {/* <ApartmentIcon className='me-1' /> */}
+                                            {itm.Subject}</Option>
                                     })}
                                 </Listbox>}
                             </AutocompleteWrapper>
@@ -513,8 +632,8 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value="Folder" style={{ display: "none" }}>Folders</MenuItem>
-                                <MenuItem value="">Clear Filter</MenuItem>
-                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder}>{fld.Folder}</MenuItem>)}
+                                <MenuItem value="" className='text-danger ps-1'><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
+                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'>{foldersIconList[i]} {fld.Folder}</MenuItem>)}
                             </Select>
                         </FormControl>
 
@@ -541,9 +660,15 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value="Source" style={{ display: "none" }}>Type</MenuItem>
-                                <MenuItem value="">Clear Filter</MenuItem>
-                                <MenuItem value="CRM">CRM</MenuItem>
-                                <MenuItem value="Portal">Portal</MenuItem>
+                                <MenuItem value="" className='ps-1 text-danger' >
+                                    <ClearIcon className="font-20 me-2" />
+                                    Clear Filter</MenuItem>
+                                <MenuItem className='ps-1' value="CRM">
+                                    <DvrIcon className="font-20 me-2" />
+                                    CRM</MenuItem>
+                                <MenuItem className='ps-1' value="Portal">
+                                    <LanguageIcon className="font-20 me-2" />
+                                    Portal</MenuItem>
                             </Select>
                         </FormControl>
 
@@ -569,9 +694,9 @@ function TodoList() {
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value={"Status"} style={{ display: "none" }}>Status</MenuItem>
-                                <MenuItem value={""} >Clear Filter</MenuItem>
-                                {["Done", "Not Started", "In Progress", "Waiting on someone else", "Deferred", "Deleted", "Completed"].map((itm, i) => <MenuItem key={i} value={itm}>{itm}</MenuItem>)}
+                                <MenuItem value={"Status"} style={{ display: "none" }}> Status</MenuItem>
+                                <MenuItem className='text-danger ps-1' value={""} ><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
+                                {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm} className='ps-1'> {statusIconList[i]} {itm}</MenuItem>)}
                             </Select>
                         </FormControl>
                     </Box>
@@ -639,13 +764,13 @@ function TodoList() {
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value="Sort By" style={{ display: "none" }}>Sort By</MenuItem>
-                                <MenuItem value="" onClick={() => setAllTask([...actualData])}>Clear Sortby</MenuItem>
-                                <MenuItem value="Client">Client Name</MenuItem>
-                                <MenuItem value="EndDateTime">Due Date</MenuItem>
-                                <MenuItem value="Priority">Priority</MenuItem>
-                                <MenuItem value="Section">Section</MenuItem>
-                                <MenuItem value="CreationDate">Start Date</MenuItem>
+                                <MenuItem className='ps-2' value="Sort By" style={{ display: "none" }}><SortIcon />Sort By</MenuItem>
+                                <MenuItem className='ps-2 text-red' value="" onClick={() => setAllTask([...actualData])}><ClearIcon />Clear Sortby</MenuItem>
+                                <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
+                                <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
+                                <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-20 me-1' />Priority</MenuItem>
+                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-20 me-1' />Section</MenuItem>
+                                <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-20 me-1' />Start Date</MenuItem>
                             </Select>
                         </FormControl>
                         {selectedSortBy !== "Sort By" && <Checkbox onClick={(e) => handleSortBy(e.target.checked)} className='p-0' {...label} icon={<UpgradeIcon />} checkedIcon={<VerticalAlignBottomIcon />} />}
@@ -665,28 +790,23 @@ function TodoList() {
                                     handleGrouping(e.target.value)
                                 }}
                                 className='custom-dropdown'
-
                             >
-                                <MenuItem value="Group By" style={{ display: "none" }}>Group By</MenuItem>
-                                <MenuItem value="">Clear Groupby</MenuItem>
-                                <MenuItem value="Client">Client Name</MenuItem>
-                                <MenuItem value="EndDateTime">Due Date</MenuItem>
-                                <MenuItem value="Priority">Priority</MenuItem>
-                                <MenuItem value="Section">Section</MenuItem>
-                                <MenuItem value="CreationDate">Start Date</MenuItem>
-                                <MenuItem value="Subject">Subject</MenuItem>
+                                <MenuItem className='ps-2' value="Group By" style={{ display: "none" }}>Group By</MenuItem>
+                                <MenuItem className='ps-2' value=""><ClearIcon className='font-20 me-1' />Clear Groupby</MenuItem>
+                                <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
+                                <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
+                                <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-20 me-1' />Priority</MenuItem>
+                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-20 me-1' />Section</MenuItem>
+                                <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-20 me-1' />Start Date</MenuItem>
+                                <MenuItem className='ps-2' value="Subject"><SubjectIcon className='font-20 me-1' />Subject</MenuItem>
                             </Select>
-
                         </FormControl>
-
 
                         <ToggleButtonGroup className='ms-3' size='small'>
                             <ToggleButton value="left" aria-label="left aligned">
                                 <DownloadIcon />
                             </ToggleButton>
                         </ToggleButtonGroup>
-
-
 
                     </Box>
                 </Box>
@@ -700,11 +820,14 @@ function TodoList() {
 
                             Object.keys(dataInGroup).length > 0 ? (<>
                                 {Object.keys(dataInGroup).map((key) => {
+
                                     return <>
                                         <h4>{key == 1 ? "High" : key == 2 ? "Medium" : key}</h4>
+
                                         {dataInGroup[key].length > 0 && dataInGroup[key].map((item, index) => {
-                                            return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
-                                                <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
+                                          const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
+                                         return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                                                <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
                                                     <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
                                                         sx={{
@@ -722,7 +845,7 @@ function TodoList() {
                                                         <Typography variant='subtitle1'><pan className='text-gray'>
                                                             {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
                                                             {/* <a href='#'>Patrick</a>, */}
-                                                            <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +1</a></Typography>
+                                                            <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +{arr.length}</a></Typography>
                                                         <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                                     </Box>
 
@@ -738,8 +861,11 @@ function TodoList() {
                                                                     aria-expanded={open ? 'true' : undefined}
                                                                     onClick={handleClick}
                                                                     className='font-14'
+                                                                    sx={{
+                                                                        color: item.mstatus === "Completed" ? "green" : "primary"
+                                                                    }}
                                                                 >
-                                                                    {item.Status && item.Status}
+                                                                    {item.mstatus}
                                                                 </Button>
                                                                 <Menu
                                                                     id="basic-menu"
@@ -761,7 +887,7 @@ function TodoList() {
                                                     </Box>
 
                                                     <Box className='mt-2'>
-                                                        <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
+                                                        <Button variant="text" className='btn-blue-2 me-2' onClick={()=>MarkComplete(item)} >Mark Complete</Button>
                                                         <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
                                                     </Box>
 
@@ -772,8 +898,9 @@ function TodoList() {
                                 })}
                             </>) : (allTask.length > 0 ?
                                 (allTask.slice(0, loadMore).map((item, index) => {
+                                    const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
                                     return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
-                                        <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
+                                        <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
                                             <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
                                                 sx={{
@@ -791,7 +918,7 @@ function TodoList() {
                                                 <Typography variant='subtitle1'><pan className='text-gray'>
                                                     {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
                                                     {/* <a href='#'>Patrick</a>, */}
-                                                    <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +1</a></Typography>
+                                                    <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +{arr.length}</a></Typography>
                                                 <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                             </Box>
 
@@ -807,8 +934,11 @@ function TodoList() {
                                                             aria-expanded={open ? 'true' : undefined}
                                                             onClick={handleClick}
                                                             className='font-14'
+                                                            sx={{
+                                                                color: item.mstatus === "Completed" ? "green" : "primary"
+                                                            }}
                                                         >
-                                                            {item.Status && item.Status}
+                                                            {item.mstatus}
                                                         </Button>
                                                         <Menu
                                                             id="basic-menu"
@@ -830,7 +960,7 @@ function TodoList() {
                                             </Box>
 
                                             <Box className='mt-2'>
-                                                <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
+                                                <Button variant="text" className='btn-blue-2 me-2' onClick={()=>MarkComplete(item)} >Mark Complete</Button>
                                                 <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
                                             </Box>
 

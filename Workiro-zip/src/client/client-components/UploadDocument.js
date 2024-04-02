@@ -26,10 +26,16 @@ import { ToastContainer, toast } from 'react-toastify';
 import { useLocation, useSearchParams } from 'react-router-dom';
 let originatorNo;
 function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
-//console.log("location state",localtion.state)
-const localtion = useLocation();
-try{const { originatorNo } = localtion.state;}catch(e){}
-console.log("location state1",originatorNo)
+    //console.log("location state",localtion.state)
+    const localtion = useLocation();
+    try { 
+          originatorNo  = localtion.state; } 
+
+    catch (e) { 
+
+    }
+
+    console.log("location state1", originatorNo)
     const handleCloseDocumentUpload = () => {
         setOpenUploadDocument(false);
     };
@@ -212,7 +218,7 @@ console.log("location state1",originatorNo)
     }
 
     function Json_GetFolderData() {
-        console.log("Json_GetFolderData11", txtFolderId);
+        // console.log("Json_GetFolderData11", txtFolderId);
         try {
             let o = {};
             o.ProjectId = txtFolderId;
@@ -221,18 +227,20 @@ console.log("location state1",originatorNo)
             cls.Json_GetFolderData(o, function (sts, data) {
                 if (sts) {
                     let js = JSON.parse(data);
-                   
+
                     setGetAllFolderData(js);
                     let clientList = js.Table1;
+                    console.log("Json_GetFolderData", js);
                     if (clientList.length > 0) {
+
                         setClientList(clientList);
-                       
-                        let res =clientList.filter((c)=>c.ClientID===originatorNo);
-                       if(res.length>0){
-                        setTxtClientData(res[0])
-                        console.log("Json_GetFolderData", res);
-                       }
-                       
+
+                        let res = clientList.filter((c) => c.ClientID === originatorNo.originatorNo);
+                        if (res.length > 0) {
+                            setTxtClientData(res[0])
+
+                        }
+
 
                     }
                     let sectionList = js.Table;
@@ -259,8 +267,8 @@ console.log("location state1",originatorNo)
         Json_GetFolderData();
         setDocumentDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
         setReceivedDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
-      console.log("GetCurrentDayDate", dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD"));
-       console.log("GetNextDayDate", cls.GetNextDayDate());
+        console.log("GetCurrentDayDate", dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD"));
+        console.log("GetNextDayDate", cls.GetNextDayDate());
         setOpenModal(false);
         setshowModalCreateTask(false)
     }, [])
@@ -268,7 +276,7 @@ console.log("location state1",originatorNo)
     const handleOnFolderClick = (data) => {
         setInputValue('');
         console.log("Get Folder On click", data);
-        if(data){
+        if (data) {
             setTxtFolderId(data.FolderID)
             setTextFolderData(data)
         }
@@ -391,19 +399,29 @@ console.log("location state1",originatorNo)
 
 
     const handleCheckboxChangeCreateTask = (event) => {
+
+     
+        
+
         const isChecked = event.target.checked;
         setCreateTaskChk(isChecked);
+        setCreatePublishChk(false);
+
         setTaskType(isChecked ? "CRM" : "Portal");
         if (isChecked) {
             setButtonNameText(createPublishChk === "Portal" ? "Submit & Create Portal Task" : "Submit & Create Task");
         } else {
             setButtonNameText(createPublishChk === "Portal" ? "Submit" : "Submit & Create Portal Task");
         }
+
     };
-    
+
     const handleCheckboxChangeCreatePublish = (event) => {
+
+
         const isChecked = event.target.checked;
         setCreatePublishChk(isChecked);
+        setCreateTaskChk(false);
         setTaskType(isChecked ? "Portal" : "CRM");
         if (isChecked) {
             setButtonNameText(createTaskChk === "CRM" ? "Submit & Create Task" : "Submit & Create Portal Task");
@@ -411,7 +429,7 @@ console.log("location state1",originatorNo)
             setButtonNameText(createTaskChk === "CRM" ? "Submit & Create Portal Task" : "Submit");
         }
     };
-    
+
 
 
 
@@ -442,13 +460,13 @@ console.log("location state1",originatorNo)
     const [createNewFileObj, setCreateNewFileObj] = useState([]);
 
     function Json_RegisterItem(fileData) {
-        let  values;
+        let values;
         let concatenatedString;
-if(udfIdWithValue){
-     values = Object.values(udfIdWithValue);
-     concatenatedString = values.join(', ');
-}
-       
+        if (udfIdWithValue) {
+            values = Object.values(udfIdWithValue);
+            concatenatedString = values.join(', ');
+        }
+
 
         let validationMessage = '';
 
@@ -498,8 +516,8 @@ if(udfIdWithValue){
                 "EmailMessageId": ""
             }
             console.log("Json_RegisterItem", obj);
-           
-           
+
+
 
             setCreateNewFileObj((Previous) => [...Previous, fileData]);
             //setOpenUploadDocument(false);
@@ -513,16 +531,16 @@ if(udfIdWithValue){
                     let js = JSON.parse(data)
                     console.log("Json_RegisterItem", js)
                     if (js.Status) {
-                        toast.success("Created Task !");                       
-                        if(fileData){
+                        toast.success("Created Task !");
+                        if (fileData) {
                             fileData.DocId = js.ItemId;
                         }
-                        
+
                     }
-                    else{
-                        toast.success("Faild Please Try Again"); 
+                    else {
+                        toast.success("Faild Please Try Again");
                     }
-                   
+
 
 
                 }
@@ -541,29 +559,29 @@ if(udfIdWithValue){
 
     }
 
-   
 
-    const handleAutocompleteChangeUdf = (id, newValue,udf) => { 
-        let setUdf=newValue.UDFID+":"+newValue[udf];   
+
+    const handleAutocompleteChangeUdf = (id, newValue, udf) => {
+        let setUdf = newValue.UDFID + ":" + newValue[udf];
 
         setSelectedValueUDF(prevState => ({
             ...prevState,
             [id]: newValue // Update selected value for a specific ComboBox
         }));
-     //console.log("newValue",id,newValue,udf)
+        //console.log("newValue",id,newValue,udf)
 
         setUDFidWithValue(prevState => ({
             ...prevState,
             [id]: setUdf // Update selected value for a specific ComboBox
         }));
 
-       
-      //  const stringRepresentation = JSON.stringify(udfIdWithValue);
-       // console.log("newValue11",stringRepresentation);
+
+        //  const stringRepresentation = JSON.stringify(udfIdWithValue);
+        // console.log("newValue11",stringRepresentation);
     };
 
-    const handleAutocompleteChangeUdfText = (id, newValue) => {  
-        let setUdf=id+":"+newValue;      
+    const handleAutocompleteChangeUdfText = (id, newValue) => {
+        let setUdf = id + ":" + newValue;
         setselectedValueUDFText(prevState => ({
             ...prevState,
             [id]: newValue // Update selected value for a specific ComboBox
@@ -574,12 +592,12 @@ if(udfIdWithValue){
             [id]: setUdf // Update selected value for a specific ComboBox
         }));
 
-       // console.log("newValue",udfIdWithValue);
+        // console.log("newValue",udfIdWithValue);
 
     };
 
 
-    
+
 
     return (
         <React.Fragment>
@@ -601,7 +619,7 @@ if(udfIdWithValue){
                         <Box className="d-flex align-items-center justify-content-between">
                             <Box className="dropdown-box">
                                 <Typography variant="h4" className='font-18 bold text-black'>
-                                     Upload Document <span className='bold text-blue'>({fileLangth})</span>
+                                    Upload Document <span className='bold text-blue'>({fileLangth})</span>
                                 </Typography>
                             </Box>
 
@@ -669,7 +687,7 @@ if(udfIdWithValue){
                             <Box className='row'>
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                     <Autocomplete
-                                        disablePortal
+                                        
                                         id="combo-box-demo"
                                         options={folderList}
                                         value={txtFolderData}
@@ -681,15 +699,19 @@ if(udfIdWithValue){
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                     <Autocomplete
-                                        disablePortal
+                                        
                                         id="combo-box-demo"
                                         options={clientList}
-
                                         getOptionLabel={(option) => option.Client}
-                                        getOptionSelected={(option, value) => option.ClientID === value.ClientID} // Add this line
-                                        value={clientList.find(option => option.ClientID === originatorNo) || null} 
-                                        onChange={(event, newValue) => handleClientChange(newValue)} // Handle the onChange event
-
+                                        getOptionSelected={(option, value) => option.ClientID === value.ClientID}
+                                        value={txtClientData || null}
+                                        onChange={(event, newValue) => handleClientChange(newValue)}
+                                        filterOptions={(options, { inputValue }) =>
+                                            options.filter(option =>
+                                                option.Client.toLowerCase().includes(inputValue.toLowerCase()) ||
+                                                option.Client.includes(inputValue)
+                                            )
+                                        }
                                         renderInput={(params) => (
                                             <TextField {...params} label="Reference" />
                                         )}
@@ -698,7 +720,7 @@ if(udfIdWithValue){
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 d-flex align-items-end'>
                                     <Autocomplete
-                                        disablePortal
+                                        
                                         id="combo-box-demo"
                                         options={sectionList}
 
@@ -803,9 +825,9 @@ if(udfIdWithValue){
                                                         <Autocomplete
                                                             disablePortal
                                                             id="combo-box-demo"
-                                                            options={data}  
-                                                            value={selectedValueUDF['combo-box-1']}                                                         
-                                                            onChange={(event,vlaue)=>handleAutocompleteChangeUdf(index, vlaue,item.UDF)} // Handle onChange event
+                                                            options={data}
+                                                            value={selectedValueUDF['combo-box-1']}
+                                                            onChange={(event, vlaue) => handleAutocompleteChangeUdf(index, vlaue, item.UDF)} // Handle onChange event
                                                             getOptionLabel={(option) => option[item.UDF]} // Adjust this based on your option structure
                                                             renderInput={(params) => <TextField {...params} label={item.UDF} />}
                                                         />
@@ -816,7 +838,7 @@ if(udfIdWithValue){
                                         case "TextBox":
                                             return (
                                                 <Box key={index} className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-                                                    <TextField value={selectedValueUDFText[item.UDFId] || ""}   onChange={(event,vlaue)=>handleAutocompleteChangeUdfText(item.UDFId, event.target.value)}  id="outlined-basic" label={item.UDF} variant="outlined" className='w-100' />
+                                                    <TextField value={selectedValueUDFText[item.UDFId] || ""} onChange={(event, vlaue) => handleAutocompleteChangeUdfText(item.UDFId, event.target.value)} id="outlined-basic" label={item.UDF} variant="outlined" className='w-100' />
                                                 </Box>
                                             );
                                         default:
@@ -869,11 +891,8 @@ if(udfIdWithValue){
                             </Button>
 
                             <Button variant="text" style={{ float: 'right' }} className="btn-blue-2" onClick={UploadDocumentCreattTask}>
-
                                 {buttonNameText}
-
                             </Button>
-
 
                         </>)}
 
@@ -895,14 +914,3 @@ if(udfIdWithValue){
 }
 
 export default UploadDocument
-
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-// const Folder = [
-//     { label: 'Client' },
-//     { label: 'Cases' },
-//     { label: 'Customer' },
-//     { label: 'Share Allotments' },
-//     { label: 'M Customer' },
-//     { label: 'Process Folder' }
-// ];

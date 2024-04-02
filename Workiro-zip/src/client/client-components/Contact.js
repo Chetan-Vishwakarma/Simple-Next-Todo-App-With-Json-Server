@@ -144,7 +144,7 @@ function Contact() {
 
 
   return (
-    <div className='table-responsive table-grid'>
+    <div className='table-responsive table-grid table-grid-2'>
       <DataGrid
         id="gridContainer"
         ref={dataGridRef}

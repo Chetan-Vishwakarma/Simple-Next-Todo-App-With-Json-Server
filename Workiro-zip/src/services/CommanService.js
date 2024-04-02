@@ -46,6 +46,18 @@ Json_GetContactListByFolder(obj,callBack) {
 
     ////////////////////////////////////////Portal Methods
    
+    GetCommentsHtml_Json(obj,callBack) {
+        super.CreateNewServiceParamObject("GetCommentsHtml_Json",obj,false);
+        super.CallNewService("GetCommentsHtml_Json", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+
     Json_getRecentDocumentList(callBack) {
         super.CreateNewServiceParamObject("Json_getRecentDocumentList");
         super.CallNewService("Json_getRecentDocumentList", function (status, Data) {
@@ -281,7 +293,7 @@ Json_GetContactListByFolder(obj,callBack) {
 
         // Construct the date string in "yyyy/mm/dd" format
         const formattedDate = `${year}/${month}/${day}`;
-
+console.log("formattedDate",formattedDate)
         return formattedDate;
     }
     GetCurrentDayDate() {

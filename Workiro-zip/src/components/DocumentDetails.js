@@ -28,6 +28,8 @@ import DataGrid, {
     Sorting
 } from 'devextreme-react/data-grid';
 import DataNotFound from "./DataNotFound";
+import CommanCLS from "../services/CommanService";
+import TaskDetailModal from "./TaskDetailModal";
 
 
 // sadik code start
@@ -55,15 +57,32 @@ const rows = [
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 // sadik code end
+const agrno = localStorage.getItem("agrno");
+const Email = localStorage.getItem("Email");
+const password = localStorage.getItem("password");
+const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+const baseUrlDocuSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
-function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFilteredResult, dataNotFoundBoolean, selectedGroup }) {
+function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, selectedGroup }) {
 
-    // sadik js start
-    console.log("Selected Document", documents)
-    
+    const Cls = new CommanCLS(baseUrl, agrno, Email, password);
+    const ClsDocuSms = new CommanCLS(baseUrlDocuSms, agrno, Email, password);
+
     const [openPDFView, setOpenPDFView] = React.useState(false);
 
     const [selectedDocument, setSelectedDocument] = React.useState(null);
+
+    const [associatedTask,setAssociatedTask] = useState([]);
+    const [selectedTask,setSelectedTask] = useState({});
+    const [isApi, setIsApi] = useState(false);
+
+    // modal
+    const [openModal, setOpen] = React.useState(false);
+
+    const handleClickDetailOpen = () => {
+        setOpen(true);
+    };
+
     const handleClickOpenPDFView = (event, data) => {
         event.preventDefault();
         event.stopPropagation();
@@ -101,18 +120,93 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
         newAnchorElDocumentList[rowData.key] = event.currentTarget;
         setAnchorElDocumentList(newAnchorElDocumentList);
     };
-    
-    const handleCloseDocument = (event,rowData) => {
+
+    const handleCloseDocument = (event, rowData) => {
         event.stopPropagation();
         const newAnchorElDocumentList = { ...anchorElDocumentList };
         delete newAnchorElDocumentList[rowData.key];
         setAnchorElDocumentList(newAnchorElDocumentList);
     };
 
+    // const Json_Get_CRM_Task_ActivityByTaskId=(sTask)=>{
+    //     let obj = {
+    //         Email: localStorage.getItem('Email'),
+    //         TaskID: sTask["Taskid"],
+    //         agrno: localStorage.getItem("agrno"),
+    //         password: localStorage.getItem("Password")
+    //     }
+    //     try{
+    //         Cls.Json_Get_CRM_Task_ActivityByTaskId(obj,(sts,data)=>{
+    //             const res = JSON.parse(data);
+    //             if(res.Table.length>0){
+    //                 console.log("sjdjsfs",res.Table[0]);
+    //             }
+    //         })
+    //     }catch(err){
+    //         console.log("Error while calling Json_Get_CRM_Task_ActivityByTaskId",err);
+    //     }
+    // }
+
+    const Json_CRM_GetOutlookTask=(event,sTask)=>{
+        event.preventDefault();
+        let obj = {
+            Email: localStorage.getItem('Email'),
+            agrno: localStorage.getItem("agrno"),
+            password: localStorage.getItem("Password") 
+        };
+        try{
+            Cls.Json_CRM_GetOutlookTask(obj,(sts,data)=>{
+                const res = JSON.parse(data);
+                if(res.Table){
+                    const fltTask = res.Table.filter(itm=>itm.ID===sTask.Taskid);
+                    const formattedTasks = fltTask.map((task) => {
+                        let timestamp,timestamp2;
+                        if (task.EndDateTime) {
+                            timestamp = parseInt(task.EndDateTime.slice(6, -2));
+                        }
+                        if(task.CreationDate){
+                            timestamp2 = parseInt(task.CreationDate.slice(6, -2));
+                        }
+        
+                        const date = new Date(timestamp);
+                        const date2 = new Date(timestamp2);
+        
+                        return { ...task, EndDateTime: date, CreationDate: date2 };
+                    });
+                    setSelectedTask(formattedTasks[0]);
+                    handleClickDetailOpen(formattedTasks[0]);
+                }
+            });
+        }catch(err){
+            console.log("Error while calling Json_CRM_GetOutlookTask",err);
+        }
+    }
+
+    const Json_getAssociatedTaskListByDocumentId=(sDoc)=>{
+        let obj = {
+            Email: localStorage.getItem('Email'),
+            ItemId: sDoc["Registration No."],
+            agrno: localStorage.getItem("agrno"),
+            password: localStorage.getItem("Password")
+        }
+        try{
+            Cls.Json_getAssociatedTaskListByDocumentId(obj, (sts,data)=>{
+                const res = JSON.parse(data);
+                if(res.Table.length>0){
+                    setAssociatedTask(res.Table);
+                }else{
+                    setAssociatedTask([]);
+                }
+            })
+        }catch(err){
+            console.log("Error while calling Json_getAssociatedTaskListByDocumentId",err);
+        }
+    }
 
     // Document details List
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
-    const handleClickOpenDocumentDetailsList = (event) => {
+    const handleClickOpenDocumentDetailsList = (event, sDoc) => {
+        Json_getAssociatedTaskListByDocumentId(sDoc);
         event.stopPropagation();
         setOpenDocumentDetailsList(true);
     };
@@ -139,9 +233,8 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
 
     return (
         <>
-
-
             <Box>
+                <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
                 <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
                 {/* <Box className='d-flex mb-3 mt-2'>
@@ -153,7 +246,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
 
                 </Box> */}
 
-                {dataNotFoundBoolean?<DataNotFound/>:<DataGrid
+                {dataNotFoundBoolean ? <DataNotFound /> : <DataGrid
                     dataSource={dataNotFoundBoolean ? [] : advFilteredResult.length > 0 ? advFilteredResult : documents}
                     keyExpr="Guid"
                     allowColumnReordering={true}
@@ -196,7 +289,9 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                                                 {data.data.Description ? data.data.Description : "Demo"}
                                             </Typography>
                                             <Typography variant="body1">
-                                                Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span> | Date <span className='sembold'>{data.data["Item Date"] ? data.data["Item Date"] : ""}</span>
+                                                {/* Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span>  */}
+                                                Date <span className='sembold'>{data.data["Item Date"] ? data.data["Item Date"] : ""}</span> |
+                                                Uploaded by <span className='sembold'>Patrick</span>
                                             </Typography>
                                         </Box>
                                     </Box>
@@ -206,7 +301,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                                             aria-controls={anchorElDocumentList[data.key] ? `basic-menu-${data.key}` : undefined}
                                             aria-haspopup="true"
                                             aria-expanded={Boolean(anchorElDocumentList[data.key])}
-                                            onClick={(event)=>handleClickDocumentList(event, data)}
+                                            onClick={(event) => handleClickDocumentList(event, data)}
                                             className='min-width-auto'
                                         >
                                             <MoreVertIcon />
@@ -215,15 +310,15 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                                             id={`basic-menu-${data.key}`}
                                             anchorEl={anchorElDocumentList[data.key]}
                                             open={Boolean(anchorElDocumentList[data.key])}
-                                            onClose={(event)=>handleCloseDocument(event,data)}
+                                            onClose={(event) => handleCloseDocument(event, data)}
                                             MenuListProps={{
                                                 'aria-labelledby': `basic-button-${data.key}`,
                                             }}
                                             className='custom-dropdown'
                                         >
                                             <MenuItem onClick={(event) => {
-                                                handleCloseDocument(event,data)
-                                                handleClickOpenDocumentDetailsList(event)
+                                                handleCloseDocument(event, data)
+                                                handleClickOpenDocumentDetailsList(event, data.data)
                                             }}>
                                                 <ListItemIcon>
                                                     <ArticleIcon fontSize="medium" />
@@ -231,28 +326,28 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                                                 Document Details</MenuItem>
 
                                             <MenuItem
-                                             onClick={(event)=>handleCloseDocument(event,data)}
-                                             >
+                                                onClick={(event) => handleCloseDocument(event, data)}
+                                            >
                                                 <ListItemIcon>
                                                     <CloudUploadIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Upload New Version</MenuItem>
-                                            <MenuItem 
-                                            onClick={(event)=>handleCloseDocument(event,data)}
+                                            <MenuItem
+                                                onClick={(event) => handleCloseDocument(event, data)}
                                             >
                                                 <ListItemIcon>
                                                     <DriveFileRenameOutlineIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Rename Document</MenuItem>
-                                            <MenuItem 
-                                            onClick={(event)=>handleCloseDocument(event,data)}
+                                            <MenuItem
+                                                onClick={(event) => handleCloseDocument(event, data)}
                                             >
                                                 <ListItemIcon>
                                                     <TravelExploreIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Open in Browser</MenuItem>
-                                            <MenuItem 
-                                            onClick={(event)=>handleCloseDocument(event,data)}
+                                            <MenuItem
+                                                onClick={(event) => handleCloseDocument(event, data)}
                                             >
                                                 <ListItemIcon>
                                                     <CloudDownloadIcon fontSize="medium" />
@@ -745,7 +840,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                         <Box className="d-flex align-items-center justify-content-between">
                             <Box className="dropdown-box">
                                 <Typography variant="h4" className='font-18 bold mb-2 text-black'>
-                                    Document List 
+                                    Document List
                                 </Typography>
                                 {/* <Box className="btn-Select">
                                     <Button className='btn-white'>Action</Button>
@@ -854,7 +949,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
             {/* document modal list details */}
             <Dialog
                 open={openDocumentDetailsList}
-                onClose={(event)=>handleCloseDocumentDetailsList(event)}
+                onClose={(event) => handleCloseDocumentDetailsList(event)}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 className='custom-modal'
@@ -874,7 +969,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                             </Box>
 
                             {/*  */}
-                            <Button onClick={(event)=>handleCloseDocumentDetailsList(event)} autoFocus sx={{ minWidth: 30 }}>
+                            <Button onClick={(event) => handleCloseDocumentDetailsList(event)} autoFocus sx={{ minWidth: 30 }}>
                                 <span className="material-symbols-outlined text-black">
                                     cancel
                                 </span>
@@ -1035,9 +1130,9 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                                 <AccordionDetails>
                                     <Box className='mt-3'>
 
-                                        {Array(5).fill("").map(() => {
+                                        {associatedTask.length>0 && associatedTask.map((itm,i) => {
                                             return <>
-                                                <Link href="#" className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />Contact agreement</Link>
+                                                <Link key={i} href="#" onClick={(e)=>Json_CRM_GetOutlookTask(e,itm)} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />{itm.Subject}</Link>
                                             </>
                                         })}
                                     </Box>

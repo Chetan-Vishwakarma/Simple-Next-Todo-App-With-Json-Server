@@ -12,6 +12,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const target = searchParams.get("str");
+    const folder = searchParams.get("folder");
     const [filteredTasks, setFilteredTasks] = useState([]);
     const [filteredDocuments, setFilteredDocuments] = useState([]);
 
@@ -25,6 +26,17 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         return `${paddedDay}/${paddedMonth}/${year}`;
     }
 
+    // useEffect(() => {
+    //     let fltTasks = myTotalTasks.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
+    //     setFilteredTasks(fltTasks);
+    //     let fltDocuments = myDocuments.filter(itm => itm.Description.toLowerCase().includes(target.toLowerCase()));
+    //     fltDocuments.map(itm => {
+    //         itm["Item Date"] = formatDate(itm["Item Date"])
+    //     })
+    //     setFilteredDocuments(fltDocuments);
+    //     // console.log("fkjhdkjs",fltDocuments);
+    // }, []);
+
     useEffect(() => {
         let fltTasks = myTotalTasks.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
         setFilteredTasks(fltTasks);
@@ -34,23 +46,14 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         })
         setFilteredDocuments(fltDocuments);
         // console.log("fkjhdkjs",fltDocuments);
-    }, [target]);
+    }, [target,folder]);
 
     const handleDocumentNavigation = () => {
-        navigate("/dashboard/DocumentList", { state: { globalSearchDocs: filteredDocuments } });
-        // navigate("/dashboard/clientDetails?val=5",{
-        //     state:{
-        //         agrno: "",
-        //         Email: "",
-        //         password: "",
-        //         folderId: "",
-        //         originatorNo: "",
-        //         globalSearchDocs:filteredDocuments
-        //     }
-        // });
+        navigate("/dashboard/DocumentList", { state: { globalSearchDocs: filteredDocuments, strGlobal: target } });
     }
+
     const handleMyTaskNavigation = () => {
-        navigate("/dashboard/MyTask", { state: { globalSearchTask: filteredTasks } });
+        navigate("/dashboard/MyTask", { state: { globalSearchTask: filteredTasks, strGlobal: target } });
     }
     function startFormattingDate(dt) {
         //const timestamp = parseInt(/\d+/.exec(dt));
@@ -67,7 +70,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         <>
 
             <Box className='mb-5'>
-                <h3 className='font-20'><SearchIcon /> We found the following Tasks matching <span className='text-blue bold'>"{target}"</span></h3>
+                <h3 className='font-20 mt-1'><SearchIcon /> We found the following Tasks matching <span className='text-blue bold'>"{target}"</span></h3>
                 <Grid className='mt-0' container spacing={2} >
                     {filteredTasks.length > 0 ? filteredTasks.slice(0, 9).map(item => {
                         return <Grid className='pt-0' item xs={12} lg={4} md={4} sm={12}>
@@ -113,7 +116,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                     }):<DataNotFound/>}
                 </Grid>
 
-                {filteredTasks.length > 9 && <Box className='text-center'><Button variant="text" className='btn-blue-2 mt-4 mb-4' size='small'>View More</Button></Box>}
+                {filteredTasks.length > 9 && <Box className='text-center'><Button onClick={handleMyTaskNavigation} variant="text" className='btn-blue-2 mt-4 mb-4' size='small'>View More</Button></Box>}
             </Box>
 
 
@@ -130,7 +133,9 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                             {item.Description? item.Description: ""}
                                         </Typography>
                                         <Typography variant="body1">
-                                            Size:  <span className='sembold'>{item.FileSize? item.FileSize: ""}</span> | Date <span className='sembold'>{item["Item Date"]!=="NaN/NaN/NaN"?item["Item Date"]:"01/01/2000"}</span>
+                                            {/* Size:  <span className='sembold'>{item.FileSize? item.FileSize: ""}</span> |  */}
+                                            Date <span className='sembold'>{item["Item Date"]!=="NaN/NaN/NaN"?item["Item Date"]:"01/01/2000"}</span>
+                                            | Uploaded by <span className='sembold'>Patrick</span>
                                         </Typography>
                                     </Box>
                                 </Box>
