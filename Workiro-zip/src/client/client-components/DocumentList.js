@@ -1004,10 +1004,6 @@ export default function DocumentList({ clientId }) {
                     </Popover>
                 </div>
 
-
-
-
-
                 {toggleScreen.tableGridView ? <Box className='table-responsive table-grid table-grid-2'>
                     <DataGrid
                         id="dataGrid"
@@ -1042,9 +1038,10 @@ export default function DocumentList({ clientId }) {
                     container
                     justifyContent="center"
                     alignItems="center"
-
                 >
-                    <Grid item xs={12} sm={10} md={toggleScreen.multipleCardView ? 12 : 6} lg={toggleScreen.multipleCardView ? 12 : 7} className='white-box'>
+                    <Grid item xs={12} sm={12} md={toggleScreen.multipleCardView ? 12 : 12} lg={toggleScreen.multipleCardView ? 12 : 10}
+                        xl={toggleScreen.multipleCardView ? 12 : 8}
+                        className='white-box'>
                         <Box className={toggleScreen.multipleCardView ? 'd-flex m-auto justify-content-start w-100 align-items-end' : 'd-flex m-auto w-100 align-items-en'}>
                             {isAdvFilter === false && <Layout className=''>
                                 <AutocompleteWrapper className='mb-2'>
