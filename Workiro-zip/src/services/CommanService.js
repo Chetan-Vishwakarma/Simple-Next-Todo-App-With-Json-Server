@@ -962,6 +962,18 @@ Json_GetContactListByFolder(obj,callBack) {
         })
      }
 
+     PortalUserAccountCreated_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("PortalUserAccountCreated_Json",obj,true);
+        super.CallNewService("PortalUserAccountCreated_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
      AddContact(obj,callBack){   
         super.CreateNewServiceParamObject("AddContact",obj,true);
         super.CallNewService("AddContact",function(status,Data){

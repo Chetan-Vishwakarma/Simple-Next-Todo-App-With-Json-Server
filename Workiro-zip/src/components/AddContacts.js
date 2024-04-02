@@ -81,11 +81,12 @@ function AddContacts() {
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
     const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
+    const portalUrl = "https://portal.docusoftweb.com/clientservices.asmx/";
 
     //let Util = new Utils();
 
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
-
+    let portlCls = new CommanCLS(portalUrl, agrno, Email, password);
     let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
 
 
@@ -271,6 +272,39 @@ function AddContacts() {
           });
         }
       }; 
+      const PortalUserAccountCreated_Json = () => {
+        let obj = {
+    "accid": agrno,
+    "email": Email,
+    "password": password,
+    "PresetMemorableData": true,
+    "IssueReminders": false,
+    "ExcludeMessageLink": false,
+    "KeepSignedIn": false,
+    "AllowUpload": false,
+    "ChangeProfile": false,
+    "LoggedIn": false,
+    "Blocked": false,
+    "emailAddress": userContactDetails.EmailName ? userContactDetails.EmailName : "",
+    "ccode": userContactDetails.ReferenceID ? userContactDetails.ReferenceID : "",
+    "clientName": clientNames
+};
+        try {
+            portlCls.PortalUserAccountCreated_Json(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        // let json = JSON.parse(data);
+                        console.log("PortalUserAccountCreated_Json", data);
+                       
+                      
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling PortalUserAccountCreated_Json", err)
+        }
+    }
+
       const handleSubmit = (event) => {
         event.preventDefault();
         console.log(userContactDetails.CreatePortal,"createportal");
@@ -307,6 +341,9 @@ function AddContacts() {
           let jsonparse = data;
           if (jsonparse=='Success') {
               console.log(jsonparse,"successcontact");
+              if(userContactDetails.CreatePortal==true){
+                PortalUserAccountCreated_Json();
+              }
               Json_GetContactNumber();
               toast.success("Contact Added Successfully !"); 
            
