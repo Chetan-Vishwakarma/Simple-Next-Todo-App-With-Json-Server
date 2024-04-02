@@ -47,6 +47,7 @@ import FolderSharedIcon from '@mui/icons-material/FolderShared';
 
 const foldersIconList = [<PersonIcon className='me-1 font-20'/>,<TipsAndUpdatesIcon className='me-1 font-20'/>,<PeopleIcon className='me-1 font-20'/>,<ShareIcon className='me-1 font-20'/>,<FolderSharedIcon className='me-1 font-20'/>,<FolderSharedIcon className='me-1 font-20'/>];
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20'/>,<PublishedWithChangesIcon color='primary' className='me-1 font-20'/>,<HourglassBottomIcon color='primary' className='me-1 font-20'/>,<CheckCircleOutlineIcon color='success' className='me-1 font-20'/>];
+import CreateNewModalTask from './CreateNewModal';
 
 function TodoList() {
     const location = useLocation();
@@ -228,7 +229,10 @@ function TodoList() {
 
     const loaderRef = useRef(null);
 
+
+
     useEffect(() => {
+
         const handleScroll = () => {
             if (
                 window.innerHeight + document.documentElement.scrollTop >=
@@ -244,6 +248,7 @@ function TodoList() {
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
+
     }, []);
 
 
@@ -288,12 +293,45 @@ function TodoList() {
         return type;
     }
 
+    const [userList, setUserList] = React.useState([]);
+
+    function Json_GetForwardUserList() {
+        try {
+
+            let o = {};
+            o.ProjectId = localStorage.getItem("FolderId");
+            o.SectionId = "-1";
+            ClsSms.Json_GetForwardUserList(o, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        let dt = js.Table;
+                        console.log("Json_GetForwardUserList111", dt)
+                        if (dt.length > 0) {
+                            let result = dt.filter((el) => {
+                                return el.CGroup !== "Yes";
+                            });
+
+                            setUserList(result);
+
+                        }
+                    }
+
+                }
+            });
+        } catch (error) {
+            console.log("error", error);
+        }
+    }
+
     useEffect(() => {
+        Json_GetForwardUserList();
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
         Json_CRM_GetOutlookTask();
+
     }, []);
 
     function startFormattingDate(dt) {
@@ -512,15 +550,15 @@ function TodoList() {
     };
 
 
-    const MarkComplete=(e)=>{
-        console.log("MarkComplete",e)
-        Cls.ConfirmMessage("Are you sure you want to complete task",function(res){
-            if(res){
-                Json_UpdateTaskField("Status", "Completed",e);
+    const MarkComplete = (e) => {
+        console.log("MarkComplete", e)
+        Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
+            if (res) {
+                Json_UpdateTaskField("Status", "Completed", e);
             }
         })
     }
-    function Json_UpdateTaskField(FieldName, FieldValue,e) {
+    function Json_UpdateTaskField(FieldName, FieldValue, e) {
         let o = {
             agrno: agrno,
             strEmail: Email,
@@ -528,8 +566,8 @@ function TodoList() {
             TaskId: e.ID,
             FieldName: FieldName,
             FieldValue: FieldValue
-        }      
-        
+        }
+
         ClsSms.Json_UpdateTaskField(o, function (sts, data) {
             if (sts && data) {
                 if (data === "Success") {
@@ -545,7 +583,7 @@ function TodoList() {
         let obj = {};
         obj.OriginatorNo = e.ClientNo;
         obj.ActionReminder = "";
-        obj.Notes = "Completed by "+ e["Forwarded By"];
+        obj.Notes = "Completed by " + e["Forwarded By"];
         obj.Status = "sys"; //selectedTask.Status;
         obj.TaskId = e.ID;
         obj.TaskName = "";
@@ -555,14 +593,46 @@ function TodoList() {
         try {
             ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
                 if (sts && data) {
-                    console.log({ status: true, messages: "Success",res:data }); 
-                    Json_CRM_GetOutlookTask()                  
+                    console.log({ status: true, messages: "Success", res: data });
+                    Json_CRM_GetOutlookTask()
                 }
             });
         } catch (error) {
             console.log({ status: false, messages: "Faild Please Try again" });
         }
     };
+
+
+
+
+    const FiterAssinee = (ownerid) => {
+
+        let res = userList.filter((e) => e.ID === ownerid);
+        // console.log("userList212121",res);
+        if (res.length > 0) {
+            return res[0].ForwardTo;
+        }
+
+    }
+
+    const FilterAgs = (item) => {
+        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
+     
+        const userId = parseInt(localStorage.getItem("UserId"));
+    
+        const filteredIds = arr.filter((k) => k !== item.OwnerID);
+
+        const user = filteredIds.find((u) => u === userId);
+
+    
+        const userToFind = user ? user: filteredIds[0];
+
+        
+
+        const res =userToFind? userList.find((e) => e.ID === userToFind):null;
+       
+        return res?res.ForwardTo:"";
+    }
 
     return (
         <>
@@ -571,7 +641,7 @@ function TodoList() {
                 {globalSearchTask.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/MyTask", tabName: "My Task" }]} />}
 
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
-
+                {/* <CreateNewModalTask setIsApi={setIsApi} isApi={isApi}></CreateNewModalTask> */}
                 <Box className='d-flex main-search-box mb-3 align-items-center justify-content-between'>
                     <Box className='d-flex align-items-center'>
                         <Layout>
@@ -834,8 +904,8 @@ function TodoList() {
                                         <h4>{key == 1 ? "High" : key == 2 ? "Medium" : key}</h4>
 
                                         {dataInGroup[key].length > 0 && dataInGroup[key].map((item, index) => {
-                                          const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
-                                         return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                                            const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
+                                            return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                                 <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
                                                     <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
@@ -852,9 +922,11 @@ function TodoList() {
 
                                                     <Box className='d-flex align-items-center justify-content-between'>
                                                         <Typography variant='subtitle1'><pan className='text-gray'>
-                                                            {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
+                                                            {FiterAssinee(item.OwnerID)} <ArrowForwardIosIcon className='font-14' /> </pan>
                                                             {/* <a href='#'>Patrick</a>, */}
-                                                            <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +{arr.length}</a></Typography>
+                                                            <a href='#'>{FilterAgs(item)}</a> <a href='#'> {arr.length > 2 && (<>
+                                                                + {arr.length - 2}
+                                                            </>)}</a></Typography>
                                                         <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                                     </Box>
 
@@ -896,7 +968,7 @@ function TodoList() {
                                                     </Box>
 
                                                     <Box className='mt-2'>
-                                                        <Button variant="text" className='btn-blue-2 me-2' onClick={()=>MarkComplete(item)} >Mark Complete</Button>
+                                                        <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)} >Mark Complete</Button>
                                                         <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
                                                     </Box>
 
@@ -907,6 +979,7 @@ function TodoList() {
                                 })}
                             </>) : (allTask.length > 0 ?
                                 (allTask.slice(0, loadMore).map((item, index) => {
+                                    console.log("userList212121111",FilterAgs(item))
                                     const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
                                     return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                         <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
@@ -925,9 +998,11 @@ function TodoList() {
 
                                             <Box className='d-flex align-items-center justify-content-between'>
                                                 <Typography variant='subtitle1'><pan className='text-gray'>
-                                                    {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
+                                                    {FiterAssinee(item.OwnerID)} <ArrowForwardIosIcon className='font-14' /> </pan>
                                                     {/* <a href='#'>Patrick</a>, */}
-                                                    <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +{arr.length}</a></Typography>
+                                                    <a href='#'>{FilterAgs(item)}</a> <a href='#'> {arr.length > 2 && (<>
+                                                        +{arr.length - 2}
+                                                    </>)}</a></Typography>
                                                 <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                             </Box>
 
@@ -969,7 +1044,7 @@ function TodoList() {
                                             </Box>
 
                                             <Box className='mt-2'>
-                                                <Button variant="text" className='btn-blue-2 me-2' onClick={()=>MarkComplete(item)} >Mark Complete</Button>
+                                                <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)} >Mark Complete</Button>
                                                 <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
                                             </Box>
 
@@ -979,7 +1054,7 @@ function TodoList() {
                         }
 
                         {/* statick box */}
-                        <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex' onClick={handleClickOpenPortal}>
+                        {/* <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex' onClick={handleClickOpenPortal}>
                             <Box className='todo-list-box white-box relative w-100'>
 
                                 <Radio className='text-red check-todo' checked
@@ -1041,7 +1116,7 @@ function TodoList() {
                                 </Box>
 
                             </Box>
-                        </Box>
+                        </Box> */}
                         {/* col end */}
                     </Box>)}
                 </Box>
