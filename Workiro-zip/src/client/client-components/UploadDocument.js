@@ -407,14 +407,15 @@ if(originatorNo){
 
         const isChecked = event.target.checked;
         setCreateTaskChk(isChecked);
-        setCreatePublishChk(false);
+      
 
         setTaskType(isChecked ? "CRM" : "Portal");
         if (isChecked) {
             setButtonNameText(createPublishChk === "Portal" ? "Submit & Create Portal Task" : "Submit & Create Task");
         } else {
-            setButtonNameText(createPublishChk === "Portal" ? "Submit" : "Submit & Create Portal Task");
+            setButtonNameText(createPublishChk === "Portal" ? "Submit" : "Submit");
         }
+        setCreatePublishChk(false);
 
     };
 
@@ -423,13 +424,14 @@ if(originatorNo){
 
         const isChecked = event.target.checked;
         setCreatePublishChk(isChecked);
-        setCreateTaskChk(false);
+       
         setTaskType(isChecked ? "Portal" : "CRM");
         if (isChecked) {
             setButtonNameText(createTaskChk === "CRM" ? "Submit & Create Task" : "Submit & Create Portal Task");
         } else {
-            setButtonNameText(createTaskChk === "CRM" ? "Submit & Create Portal Task" : "Submit");
+            setButtonNameText(createTaskChk === "CRM" ? "Submit" : "Submit");
         }
+        setCreateTaskChk(false);
     };
 
 
@@ -537,7 +539,7 @@ if(originatorNo){
                         if (fileData) {
                             fileData.DocId = js.ItemId;
                         }
-                        setOpenUploadDocument(false);
+                       // setOpenUploadDocument(false);
 
                     }
                     else {
