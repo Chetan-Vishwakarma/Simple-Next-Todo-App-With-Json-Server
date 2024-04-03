@@ -161,9 +161,9 @@ function TodoList() {
                 return { ...task, CreationDate: date };
             }).sort((a, b) => b.CreationDate - a.CreationDate);
 
-            dispatch(setMyTasks([...hasCreationDate]));
-            // setActualData([...hasCreationDate]);
-            // setAllTask([...hasCreationDate]);
+            // dispatch(setMyTasks([...hasCreationDate]));
+            setActualData([...hasCreationDate]);
+            setAllTask([...hasCreationDate]);
 
             // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
             Json_GetFolders();
