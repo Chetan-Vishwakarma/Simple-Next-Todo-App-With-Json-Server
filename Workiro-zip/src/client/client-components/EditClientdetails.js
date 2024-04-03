@@ -290,7 +290,7 @@ const clearDataCard = () => {
   return (
     <div>
 
-      <Box className='well'>
+      <Box className='well' style={{"display":"none"}}>
         <h2 className="font-14 bold mb-2 text-black">Import from Companies House</h2>
         <Grid container spacing={3} className="mb-">
           <Grid item lg={6} xs={6} md={6}>
