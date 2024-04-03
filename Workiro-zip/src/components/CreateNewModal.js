@@ -2122,12 +2122,9 @@ function CreateNewModalTask({ ...props }) {
     const handleClickEditReferance = () => {
         setReferanceEdit(true);
     };
-    const EditDocumentHandleClose = () => {
+    const EditDocumentHandleClose = () => {   
         setReferanceEdit(false);
     };
-
-
-
     return (
         <React.Fragment>
             {/* <Button
@@ -3677,7 +3674,7 @@ function CreateNewModalTask({ ...props }) {
                                     Document List
                                 </Button>
                             </div>
-                            <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
+                            <Button onClick={EditDocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
                                 <span className="material-symbols-outlined text-black">
                                     cancel
                                 </span>
