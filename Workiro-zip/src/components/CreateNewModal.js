@@ -1341,6 +1341,7 @@ function CreateNewModalTask({ ...props }) {
     const TastkType = Boolean(anchorElTastkType);
     const handleClickTastkType = (event) => {
         setAnchorElTastkType(event.currentTarget);
+
     };
 
     const handleCloseTastkType = (e) => {
@@ -2165,8 +2166,8 @@ function CreateNewModalTask({ ...props }) {
                     }}
                     className="custom-dropdown"
                 >
-                    <MenuItem onClick={handleClickOpen}>CRM Task</MenuItem>
-                    <MenuItem onClick={handleClickOpen}>Portal Task</MenuItem>
+                    <MenuItem onClick={()=>handleClickOpen("CRM")}>CRM Task</MenuItem>
+                    <MenuItem onClick={()=>handleClickOpen("Portal")}>Portal Task</MenuItem>
                     <MenuItem onClick={handleClickReferance}>Reference</MenuItem>
                     <MenuItem onClick={handleClose4}>Note</MenuItem>
                     <MenuItem onClick={handleClose4}>Document</MenuItem>
