@@ -288,6 +288,8 @@ function ClientDetails() {
                 </Box>
             </Box>
 
+
+            {/* edit Referance modal */}
             <Dialog
                 open={Referance}
                 onClose={EditCLientHandleClose}
@@ -298,6 +300,24 @@ function ClientDetails() {
 
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
+
+                        <Box className="d-flex align-items-center justify-content-between">
+                            <Box className="dropdown-box">
+                                <Typography variant="h4" className='font-18 bold text-black'>
+                                    Edit Client
+                                </Typography>
+                            </Box>
+
+                            {/*  */}
+                            <Button onClick={EditCLientHandleClose}>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+                        </Box>
+
+                        <hr />
+
                         <EditReference></EditReference>
                     </DialogContentText>
                 </DialogContent>
