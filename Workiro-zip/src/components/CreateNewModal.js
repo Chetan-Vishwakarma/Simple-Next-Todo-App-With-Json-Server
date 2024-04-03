@@ -2168,9 +2168,9 @@ function CreateNewModalTask({ ...props }) {
                     <MenuItem onClick={handleClickReferance}>Reference</MenuItem>
                     <MenuItem onClick={handleClose4}>Note</MenuItem>
                     <MenuItem onClick={handleClose4}>Document</MenuItem>
-                    <MenuItem 
+                    {/* <MenuItem 
                     onClick={handleClickEditReferance}
-                    >Edit Reference</MenuItem>
+                    >Edit Reference</MenuItem> */}
                     <MenuItem onClick={() => handleClickOpen("CRM")}>
                         {/* <ListItemIcon>
                             <EjectIcon fontSize="medium" className="text-red rotate-180" />

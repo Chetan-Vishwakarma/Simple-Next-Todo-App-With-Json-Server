@@ -26,6 +26,12 @@ import Contact from './Contact';
 import CompaniesHouse from './CompaniesHouse';
 import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
 import TaskList from './TaskList';
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import EditClientdetails from './EditClientdetails';
+import EditReference from './EditReference';
 
 
 function ClientDetails() {
@@ -173,100 +179,136 @@ function ClientDetails() {
         Json_GetClientCardDetails();
     }, []);
 
+
+    // edit client modal
+    const [Referance, setReferance] = React.useState(false);
+    const handleClickReferance = () => {
+        setReferance(true);
+    };
+    const EditCLientHandleClose = () => {
+        setReferance(false);
+    };
+
+
     return (
-        <Box className="container-fluid p-0">
+        <>
+            <Box className="container-fluid p-0">
 
-            <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/Connections", tabName: "Connections" }, { tabLink: "/dashboard/clientDetails", tabName: "Client Details" }]} />
+                <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/Connections", tabName: "Connections" }, { tabLink: "/dashboard/clientDetails", tabName: "Client Details" }]} />
 
-            {globalSearchDocs.length === 0 && <Box className="d-flex align-items-center justify-content-between flex-wrap">
-                <Box className='d-flex flex-wrap align-items-center'>
-                    <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
-                        {clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}
-                    </Typography>
+                {globalSearchDocs.length === 0 && <Box className="d-flex align-items-center justify-content-between flex-wrap">
+                    <Box className='d-flex flex-wrap align-items-center'>
+                        <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
+                            {clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}
+                        </Typography>
 
-                    <ToggleButton
-                        value="check"
-                        selected={selected}
-                        onChange={() => {
-                            //setSelected(!selected);
-                            if (selected) {
-                                Json_RemoveToFavourite();
-                            } else {
-                                Json_AddToFavourite();
-                            }
+                        <ToggleButton
+                            value="check"
+                            selected={selected}
+                            onChange={() => {
+                                //setSelected(!selected);
+                                if (selected) {
+                                    Json_RemoveToFavourite();
+                                } else {
+                                    Json_AddToFavourite();
+                                }
 
-                        }}
-                        className='mb-2 btn-favorite'
-                    >
-                        <FavoriteIcon />
-                    </ToggleButton>
-                </Box>
-
-                <Box className='d-flex flex-wrap'>
-                    <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<BorderColorIcon />}>Edit Client</Button>
-                    <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<GroupAddIcon />}>Add Client</Button>
-                    <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<DeleteIcon />}>Notes</Button>
-                    <Button className='btn-blue-2 mb-1' size="small" startIcon={<EmailIcon />}
-                        onClick={handleClickOpenUploadDocument}
-                    >Add Document</Button>
-                </Box>
-            </Box>}
-
-            <UploadDocument setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument} localtion={location}
-            ></UploadDocument>
-            <hr />
-            <Box sx={{ width: '100%', typography: 'body1' }} className="">
-                <TabContext value={value}>
-                    <Box className='mb-1'>
-                        <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
-                            <Tab label="General" value="1" />
-                            <Tab label="Address" value="2" />
-                            <Tab label="Contact" value="3" />
-                            <Tab label="Tasks" value="4" />
-                            <Tab label="Documents" value="5" />
-                            <Tab label="Companies House" value="6" />
-                            <Tab label="Requested Document" value="7" />
-                        </TabList>
+                            }}
+                            className='mb-2 btn-favorite'
+                        >
+                            <FavoriteIcon />
+                        </ToggleButton>
                     </Box>
-                    <TabPanel value="1" className='p-0'>
-                        <Box className="general-tab white-box">
-                            <Box className="row">
-                                {/* For CompanyDetails */}
-                                <CompanyDetails companyDetails={companyDetails} />
-                                {/* For ClientOverview */}
-                                <ClientOverview Cls={Cls} webClientCLS={webClientCLS} locationState={location.state} />
+
+                    <Box className='d-flex flex-wrap'>
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<BorderColorIcon />}
+                            onClick={handleClickReferance}>Edit Client</Button>
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<GroupAddIcon />}>Add Client</Button>
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<DeleteIcon />}>Notes</Button>
+                        <Button className='btn-blue-2 mb-1' size="small" startIcon={<EmailIcon />}
+                            onClick={handleClickOpenUploadDocument}
+                        >Add Document</Button>
+                    </Box>
+                </Box>}
+
+                <UploadDocument setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument} localtion={location}
+                ></UploadDocument>
+                <hr />
+                <Box sx={{ width: '100%', typography: 'body1' }} className="">
+                    <TabContext value={value}>
+                        <Box className='mb-1'>
+                            <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
+                                <Tab label="General" value="1" />
+                                <Tab label="Address" value="2" />
+                                <Tab label="Contact" value="3" />
+                                <Tab label="Tasks" value="4" />
+                                <Tab label="Documents" value="5" />
+                                <Tab label="Companies House" value="6" />
+                                <Tab label="Requested Document" value="7" />
+                            </TabList>
+                        </Box>
+                        <TabPanel value="1" className='p-0'>
+                            <Box className="general-tab white-box">
+                                <Box className="row">
+                                    {/* For CompanyDetails */}
+                                    <CompanyDetails companyDetails={companyDetails} />
+                                    {/* For ClientOverview */}
+                                    <ClientOverview Cls={Cls} webClientCLS={webClientCLS} locationState={location.state} />
+                                </Box>
                             </Box>
-                        </Box>
-                        <Box className='main-accordian'>
-                            {/* For UDFs */}
-                            <UdfCard data={clientDetails} />
-                        </Box>
-                    </TabPanel>
+                            <Box className='main-accordian'>
+                                {/* For UDFs */}
+                                <UdfCard data={clientDetails} />
+                            </Box>
+                        </TabPanel>
 
-                    <TabPanel value="2" className='p-0'>
-                        <ClientAddress></ClientAddress>
-                    </TabPanel>
-                    <TabPanel value="3" className='p-0'>
-                        <Contact></Contact>
-                    </TabPanel>
-                    <TabPanel value="4" className='p-0'>
-                        <TaskList></TaskList>
-                    </TabPanel>
+                        <TabPanel value="2" className='p-0'>
+                            <ClientAddress></ClientAddress>
+                        </TabPanel>
+                        <TabPanel value="3" className='p-0'>
+                            <Contact></Contact>
+                        </TabPanel>
+                        <TabPanel value="4" className='p-0'>
+                            <TaskList></TaskList>
+                        </TabPanel>
 
-                    <TabPanel value="5" className='p-0 relative'>
-                        <DocumentList clientId={originatorNo} globalSearchDocs={globalSearchDocs} ></DocumentList>
-                    </TabPanel>
+                        <TabPanel value="5" className='p-0 relative'>
+                            <DocumentList clientId={originatorNo} globalSearchDocs={globalSearchDocs} ></DocumentList>
+                        </TabPanel>
 
-                    {/* <TabPanel value="5">
+                        {/* <TabPanel value="5">
                         <DocumentList/>
                     </TabPanel> */}
-                    <TabPanel value="6" className='p-0'>
-                        <CompaniesHouse></CompaniesHouse>
-                    </TabPanel>
-                    <TabPanel value="7">Item Three</TabPanel>
-                </TabContext>
+                        <TabPanel value="6" className='p-0'>
+                            <CompaniesHouse></CompaniesHouse>
+                        </TabPanel>
+                        <TabPanel value="7">Item Three</TabPanel>
+                    </TabContext>
+                </Box>
             </Box>
-        </Box>
+
+            <Dialog
+                open={Referance}
+                onClose={EditCLientHandleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal full-modal'
+            >
+
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <EditReference></EditReference>
+                    </DialogContentText>
+                </DialogContent>
+                {/* <DialogActions>
+                    <Button onClick={EditCLientHandleClose}>Disagree</Button>
+                    <Button onClick={EditCLientHandleClose} autoFocus>
+                        Agree
+                    </Button>
+                </DialogActions> */}
+            </Dialog>
+
+        </>
     )
 }
 export default ClientDetails
