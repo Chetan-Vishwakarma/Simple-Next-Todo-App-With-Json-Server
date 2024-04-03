@@ -1958,7 +1958,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                             <Box className="d-flex align-items-end main-file-upload  pt-3">
                                 <Box className="w-100">
-                                    <Stack direction="row" className='pb-3' spacing={1}>
+                                    <Stack direction="row" className='pb-2 custom-chips' spacing={1}>
                                         {selectedFiles ? selectedFiles.map((item, index) => {
 
                                             return (<Chip key={index} label={item.FileName} variant="outlined" onDelete={() => handleDelete(item)} />);

@@ -570,13 +570,9 @@ function AddContacts() {
             </TabList>
           </Box>
           <TabPanel value="1" className='p-0'>
-
-
             <Box className="general-tab white-box">
-
-
               <Box className='d-flex'>
-                <Box className="mb-3 w-100">
+                <Box className="mb-3 pe-4 border-end me-4">
                   <UploadButtons
                     userContactDetails={userContactDetails}
                     setContactDetails={setContactDetails}
@@ -584,7 +580,8 @@ function AddContacts() {
                 </Box>
 
                 <Box className="mb-3 w-100">
-                  <Grid container spacing={3}>
+
+                  <Grid container spacing={2}>
                     <Grid item xs={6} md={6}>
                       <Autocomplete
                         {...clientlist}
@@ -603,6 +600,7 @@ function AddContacts() {
                         )}
                       />
                     </Grid>
+
                     <Grid item xs={6} md={6}>
                       <Autocomplete
                         {...bussinesslist}
@@ -621,64 +619,66 @@ function AddContacts() {
                         )}
                       />
                     </Grid>
+
+                    <Grid item xs={6} md={6}>
+                      <Autocomplete
+                        {...contactlist}
+                        id="contactlist"
+                        clearOnEscape
+                        onChange={onChangecontactlist}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant="outlined"
+                            name="contactlist"
+                            value={""}
+                            //   onChange={onChange}
+                            label="Contact List"
+                          />
+                        )}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12} md={12}>
+                      <ContactMainform
+                        clientNames={clientNames}
+                        contact={contact}
+                        contactlistdata={contactlistdata}
+                        userContactDetails={userContactDetails}
+                        setContactDetails={setContactDetails}
+                      />
+                    </Grid>
+
+
+                    <Grid item xs={6} md={6}>
+                      <TextField
+                        // {...params}wid
+                        fullWidth
+                        variant="outlined"
+                        name="importclient"
+                        // value={Importdata}
+                        onKeyDown={handleKeyDown}
+                        onChange={onChangeImportData}
+                        label="Import List"
+                      />
+                    </Grid>
+
                   </Grid>
+
                 </Box>
               </Box>
 
-
-
-              
               <Box className="mb-3">
                 {/* <MainContact 
               userContactDetails={userContactDetails}
               setContactDetails={setContactDetails}
               /> */}
                 <Grid container spacing={3}>
-                  <Grid item xs={6} md={6}>
-                    <Autocomplete
-                      {...contactlist}
-                      id="contactlist"
-                      clearOnEscape
-                      onChange={onChangecontactlist}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          variant="outlined"
-                          name="contactlist"
-                          value={""}
-                          //   onChange={onChange}
-                          label="Contact List"
-                        />
-                      )}
-                    />
-                  </Grid>
+
                 </Grid>
               </Box>
-              <Box className="mb-3">
-                <ContactMainform
-                  clientNames={clientNames}
-                  contact={contact}
-                  contactlistdata={contactlistdata}
-                  userContactDetails={userContactDetails}
-                  setContactDetails={setContactDetails}
-                />
-              </Box>
-              <Box className="mb-3">
-                <Grid container spacing={3}>
-                  <Grid item xs={6} md={6}>
-                    <TextField
-                      // {...params}wid
-                      fullWidth
-                      variant="outlined"
-                      name="importclient"
-                      // value={Importdata}
-                      onKeyDown={handleKeyDown}
-                      onChange={onChangeImportData}
-                      label="Import List"
-                    />
-                  </Grid>
-                </Grid>
-              </Box>
+
+
 
               <Box className="mb-3">
                 <Grid container spacing={3}>
@@ -703,19 +703,16 @@ function AddContacts() {
                   </Grid>
                 </Grid>
               </Box>
-              <Box className="mb-3">
-                <Grid container spacing={3}>
-                  <Grid item xs={6} md={6}>
-                    <Button
-                      style={{ marginTop: "5px" }}
-                      variant="contained"
-                      disabled={!clientData || !selectedFolderID}
-                      onClick={handleSubmit}
-                    >
-                      Add New Contact
-                    </Button>{" "}
-                  </Grid>
-                </Grid>
+              <Box className='text-end'>
+                <Button
+                  style={{ marginTop: "5px" }}
+                  variant="contained"
+                  disabled={!clientData || !selectedFolderID}
+                  onClick={handleSubmit}
+                  className='btn-blue-2'
+                >
+                  Add New Contact
+                </Button>
               </Box>
             </Box>
 

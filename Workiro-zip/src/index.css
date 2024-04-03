@@ -1957,6 +1957,10 @@ span.tox-statusbar__branding {
   border-bottom: 0px solid;
 }
 
+.custom-chips {
+  overflow-x: auto;
+}
+
 @media only screen and (max-width: 1366px) {
   .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root {
     font-size: 12px;
@@ -2995,6 +2999,16 @@ span.tox-statusbar__branding {
 }
 
 /* hover effect css end */
+.btn-remove {
+  position: absolute !important;
+  top: -5px;
+  right: -5px;
+  /* background: #fff; */
+  padding: 0 !important;
+  color: #D41B20 !important;
+  border: 2px solid #D41B20 !important;
+  background: #fff !important;
+}
 
 .well {
   border: 1px solid #ededed;

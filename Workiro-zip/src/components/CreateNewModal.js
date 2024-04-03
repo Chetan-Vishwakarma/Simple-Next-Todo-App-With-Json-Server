@@ -912,8 +912,6 @@ function CreateNewModalTask({ ...props }) {
                     UploadAttachment(fileData)
                 }
 
-
-
                 // Check if this is the last file
                 if (index === selectedFilesArray.length - 1) {
                     // Add new files to the uploadedFiles array
@@ -939,7 +937,6 @@ function CreateNewModalTask({ ...props }) {
             }
         }, 3000);
     };
-
 
     function PrepareDocumentsForPublish_Json(filedata, ids) {
         try {
@@ -2551,7 +2548,7 @@ function CreateNewModalTask({ ...props }) {
                                                             person_add
                                                         </span>
                                                     </Box>
-
+                                                    
                                                 </Box>
 
                                             </Button>
