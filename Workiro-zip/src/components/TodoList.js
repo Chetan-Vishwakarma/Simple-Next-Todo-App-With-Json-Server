@@ -44,6 +44,8 @@ import PeopleIcon from '@mui/icons-material/People';
 import ShareIcon from '@mui/icons-material/Share';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import CreateNewModalTask from './CreateNewModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { setMyTasks } from '../redux/reducers/counterSlice';
 
 
 const foldersIconList = [<PersonIcon className='me-1 font-20'/>,<TipsAndUpdatesIcon className='me-1 font-20'/>,<PeopleIcon className='me-1 font-20'/>,<ShareIcon className='me-1 font-20'/>,<FolderSharedIcon className='me-1 font-20'/>,<FolderSharedIcon className='me-1 font-20'/>];
@@ -51,6 +53,9 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 f
 
 function TodoList() {
     const location = useLocation();
+    const reduxData = useSelector((data)=>data.counter.myTasks);
+    console.log("fdjkfhfhsf",reduxData);
+    const dispatch = useDispatch();
     let dddd = location.state !== null ? location.state : { globalSearchTask: [] };
     const { globalSearchTask, strGlobal } = dddd;
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -69,10 +74,9 @@ function TodoList() {
     let ClsSms = new CommanCLS(baseUrl, agrno, Email, password);
 
 
-    const [allTask, setAllTask] = useState([]);
-    const [actualData, setActualData] = useState([]);
+    const [allTask, setAllTask] = useState([...reduxData]);
+    const [actualData, setActualData] = useState([...reduxData]);
     const [selectedTask, setSelectedTask] = useState({});
-    console.log("sdklfjfkl",selectedTask);
 
     const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -157,9 +161,10 @@ function TodoList() {
                 return { ...task, CreationDate: date };
             }).sort((a, b) => b.CreationDate - a.CreationDate);
 
-
+            // dispatch(setMyTasks([...hasCreationDate]));
             setActualData([...hasCreationDate]);
             setAllTask([...hasCreationDate]);
+
             // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
             Json_GetFolders();
             setIsApi(true);
@@ -202,8 +207,10 @@ function TodoList() {
                             return { ...task, CreationDate: date };
                         }).sort((a, b) => b.CreationDate - a.CreationDate);
 
-                        setActualData([...hasCreationDate]);
-                        setAllTask([...hasCreationDate]);
+                        dispatch(setMyTasks([...hasCreationDate]));
+                        // setActualData([...hasCreationDate]);
+                        // setAllTask([...hasCreationDate]);
+
                         // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
                         setIsLoading(false);
                         Json_GetFolders();
@@ -633,6 +640,11 @@ function TodoList() {
        
         return res?res.ForwardTo:"";
     }
+
+    useEffect(()=>{
+        setAllTask([...reduxData]);
+        setActualData([...reduxData]);
+    },[reduxData]);
 
     return (
         <>

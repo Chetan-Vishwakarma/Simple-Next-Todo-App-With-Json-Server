@@ -78,6 +78,8 @@ import { data } from "jquery";
 import EditReference from "../client/client-components/EditReference";
 import UploadDocument from "../client/client-components/UploadDocument";
 import AddContacts from "./AddContacts";
+import { setMyTasks } from "../redux/reducers/counterSlice";
+import { useDispatch } from "react-redux";
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -99,8 +101,10 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-20' />, <PublishedWithChangesIcon color='primary' className='font-20' />, <HourglassBottomIcon color='primary' className='font-20' />, <CheckCircleOutlineIcon color='success' className='font-20' />];
 
-function CreateNewModalTask({ ...props }) {
+const userId = localStorage.getItem("UserId");
 
+function CreateNewModalTask({ ...props }) {
+    const dispatch = useDispatch();
     let {
 
         documentDate,
@@ -1100,6 +1104,53 @@ function CreateNewModalTask({ ...props }) {
 
     // }
 
+    function Json_CRM_GetOutlookTask_ForTask(){
+        try {
+            cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_CRM_GetOutlookTask111", json);
+                        let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
+                        const formattedTasks = result.map((task) => {
+                            let timestamp;
+                            if (task.EndDateTime) {
+                                timestamp = parseInt(task.EndDateTime.slice(6, -2));
+                            }
+
+                            const date = new Date(timestamp);
+
+                            return { ...task, EndDateTime: date };
+                        });
+
+                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus!=="Completed");
+
+                        let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
+                            let timestamp;
+                            if (task.CreationDate) {
+                                timestamp = parseInt(task.CreationDate.slice(6, -2));
+                            }
+
+                            const date = new Date(timestamp);
+
+                            return { ...task, CreationDate: date };
+                        }).sort((a, b) => b.CreationDate - a.CreationDate);
+
+                        dispatch(setMyTasks([...hasCreationDate]));
+                        // setActualData([...hasCreationDate]);
+                        // setAllTask([...hasCreationDate]);
+
+                        // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
+                        // setIsLoading(false);
+                        // Json_GetFolders();
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_CRM_GetOutlookTask", err);
+        }
+    }
+
     async function Json_CRM_Task_Save() {
         setLoading(true);
         if (txtSection) {
@@ -1165,6 +1216,7 @@ function CreateNewModalTask({ ...props }) {
                     console.log("save task rerurn value", js);
 
                     if (js.Status === "success") {
+                        Json_CRM_GetOutlookTask_ForTask();
                         setLoading(false);
                         toast.success("Created Task !");
                         setMessageId(js.Message);

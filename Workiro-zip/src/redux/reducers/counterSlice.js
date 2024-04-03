@@ -6,7 +6,8 @@ const counterSlices = createSlice({
     initialState: {
         userDetail: null,
         dataCompanyHouse: null,
-        selectedFolderID: null    
+        selectedFolderID: null,
+        myTasks:[],   
     },
     reducers: {
         //sonam state
@@ -19,10 +20,13 @@ const counterSlices = createSlice({
           setSelectedFolderID: (state, action) => {
             state.selectedFolderID = action.payload;
           },
+          setMyTasks: (state, action) => {
+            state.myTasks = action.payload;
+          }
     }
 });
 
-export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID } = counterSlices.actions;
+export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks } = counterSlices.actions;
 
 // export const getUsers = () => async(dispatch) => {
 //     const response = await axios.get("https://jsonplaceholder.typicode.com/users");
