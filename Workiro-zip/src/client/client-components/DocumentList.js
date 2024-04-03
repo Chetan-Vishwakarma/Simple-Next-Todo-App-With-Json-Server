@@ -45,6 +45,23 @@ import InsertCommentIcon from '@mui/icons-material/InsertComment';
 import ChecklistIcon from '@mui/icons-material/Checklist';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import WarningIcon from '@mui/icons-material/Warning';
+import Popover from '@mui/material/Popover';
+import TuneIcon from '@mui/icons-material/Tune';
+import FolderSharedIcon from '@mui/icons-material/FolderShared';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+
+
+const BootstrapTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+    [`& .${tooltipClasses.arrow}`]: {
+        color: theme.palette.common.black,
+    },
+    [`& .${tooltipClasses.tooltip}`]: {
+        backgroundColor: theme.palette.common.black,
+    },
+}));
+
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -193,11 +210,9 @@ export default function DocumentList({ clientId }) {
 
     // for filter criteria
     const [filterCriteria, setFilterCriteria] = useState({
-        "Item Date": [formatDatePickerDate(start._d), formatDatePickerDate(end._d)]
+        // "Item Date": [formatDatePickerDate(start._d), formatDatePickerDate(end._d)]
     });
-    // setTimeout(()=>{
-    //     setFilterCriteria({...filterCriteria,"Item Date": [formatDatePickerDate(start._d),formatDatePickerDate(end._d)]});
-    // },1000);
+
     const [dataNotFoundBoolean, setDataNotFoundBoolean] = useState(false);
 
 
@@ -292,8 +307,6 @@ export default function DocumentList({ clientId }) {
             obj.ClientId = clientId;
             obj.sectionId = "-1";
             if (globalSearchDocs.length > 0) {
-                console.log("dsfkjhdkjfh", globalSearchDocs);
-
                 let fltDouble = [];
                 globalSearchDocs.map(itm => itm.Client).filter(item => {
                     if (!fltDouble.includes(item)) {
@@ -307,7 +320,8 @@ export default function DocumentList({ clientId }) {
                     // console.log("documentKeys",docKeys);
                     setDocumentKeys(docKeys);
                     setDocuments(globalSearchDocs);
-                    handleDocumentsFilter(globalSearchDocs);
+                    // handleDocumentsFilter(globalSearchDocs);
+                    setAdvFilteredResult(globalSearchDocs);
                     let desc = globalSearchDocs.filter((item) => item.Description !== "");
                     setgroupedOptions(desc);
                     setIsLoading(false);
@@ -316,38 +330,36 @@ export default function DocumentList({ clientId }) {
                 // return;
             } else {
                 Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
+                    if(data==="" || JSON.parse(data)?.Table[0]?.Message){  // for data loading issue (api response issue)
+                        Json_ExplorerSearchDoc();
+                        return;
+                    }
                     if (sts && data) {
-                        console.log("ExplorerSearchDoc", JSON.parse(data));
                         let json = JSON.parse(data);
                         if (json?.Table6?.length > 0) {
-                            // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
                             let docs = json.Table6;
                             if (docs?.length > 0) {
                                 if (globalSearchDocs.length === 0) {
                                     let docKeys = Object.keys(docs[0]);
-                                    // console.log("documentKeys",docKeys);
                                     setDocumentKeys(docKeys);
-
                                     docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
-                                    //docs.map((itm)=>console.log("check in map",itm["Item Date"]));
                                     setDocuments(docs);
-                                    // console.log("fdlljsddjkl",docs);
-                                    handleDocumentsFilter(docs);
+                                    if(docs[0].Message){   // for data loading issue (api response issue)
+                                        Json_ExplorerSearchDoc();
+                                        return;
+                                    }
+                                    // handleDocumentsFilter(docs);
+                                    setAdvFilteredResult(docs);
+                                    setIsLoading(false);
+
                                     let desc = docs.filter((item) => item.Description !== "");
-                                    // console.log("desc", desc);
                                     setgroupedOptions(desc);
-                                } else {
-                                    // console.log("dsfkjhdkjfh",globalSearchDocs);
-                                    // let docKeys = Object.keys(globalSearchDocs[0]);
-                                    // // console.log("documentKeys",docKeys);
-                                    // setDocumentKeys(docKeys);
-                                    // setDocuments(globalSearchDocs);
-                                    // handleDocumentsFilter(globalSearchDocs);
-                                    // let desc = globalSearchDocs.filter((item) => item.Description !== "");
-                                    // setgroupedOptions(desc);
                                 }
-                                // Json_GetFolderData();
+                                Json_GetFolderData();
                             }
+                        }else{
+                            setIsLoading(false);
+                            setDataNotFoundBoolean(true);
                         }
                     }
                 })
@@ -367,9 +379,13 @@ export default function DocumentList({ clientId }) {
     }, []);
     const handleSearch = (text) => {
         if (documents.length > 0) {
-            let filteredDocuments = documents.filter((item) => {
-                return Object.entries(item).join("").toLowerCase().includes(text.toLowerCase());
+            let fltDesc = documents.filter(itm=>itm.Description!=="");
+            let filteredDocuments = fltDesc.filter((item) => {
+                return item.Description.toLowerCase().includes(text.toLowerCase());
             });
+            if(text!==""){
+                setFilterCriteria({...filterCriteria,Description:[text]});
+            }
             setFilteredDocResult(filteredDocuments);
         }
     }
@@ -383,9 +399,6 @@ export default function DocumentList({ clientId }) {
         const paddedMonth = month < 10 ? `0${month}` : month;
         return `${paddedDay}/${paddedMonth}/${year}`;
     }
-
-    function getRootProps(params) { }
-    function getListboxProps(params) { }
 
     const handleSearchByProperty = (flitData) => {
         // console.log(searchByPropertyKey, "--------", searchByPropertyInput);
@@ -573,10 +586,6 @@ export default function DocumentList({ clientId }) {
                 }
             });
         });
-
-        console.log("For Filter Criteria", fltData.length);
-        console.log("For Filter Criteria", fltData[0]?.Description);
-        console.log("For Filter Criteria", fltData[fltData.length - 1]?.Description);
         if (fltData.length === 0) {
             setDataNotFoundBoolean(true);
             return;
@@ -586,73 +595,125 @@ export default function DocumentList({ clientId }) {
         setIsLoading(false);
     }
     useEffect(() => {
-        handleDocumentsFilter(documents);
+        if(documents.length>0){
+            handleDocumentsFilter(documents);
+        }
     }, [filterCriteria]);
 
     const handleFilterOnClientSelection = (e) => {
         let val = e.target.value;
         setSelectedClient(val);
-        if(val === "Reference"){
+        if (val === "Reference") {
             setSelectedClient("");
             handleFilterDeletion("Client");
             return;
-        }else if(val!==""){
-            setFilterCriteria({...filterCriteria,Client:val});
-        }else{
+        } else if (val !== "") {
+            setFilterCriteria({ ...filterCriteria, Client: val });
+        } else {
             handleFilterDeletion("Client");
         }
     }
 
+
+    // 
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
+
     return (
         <>
-            {globalSearchDocs.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str="+strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/DocumentList", tabName: "Documents List" }]} />}
+            {globalSearchDocs.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/DocumentList", tabName: "Documents List" }]} />}
 
             {isLoading ? <CustomLoader /> : <>
-                <Box className='d-flex flex-wrap align-items-center justify-content-between'>
-                    <Box className='d-flex flex-wrap align-items-center mb-2'>
-                        {/* sadik */}
-                        <Box sx={{ m: 1 }}>
-                            <DateRangePicker
-                                initialSettings={{
-                                    startDate: start.toDate(),
-                                    endDate: end.toDate(),
-                                    ranges: {
-                                        'All': [
-                                            moment({ year: 1990, month: 0, day: 1 }).toDate(),
-                                            moment().toDate()
-                                        ],
-                                        Today: [moment().toDate(), moment().toDate()],
-                                        Yesterday: [
-                                            moment().subtract(1, 'days').toDate(),
-                                            moment().subtract(1, 'days').toDate(),
-                                        ],
-                                        'Last 7 Days': [
-                                            moment().subtract(6, 'days').toDate(),
-                                            moment().toDate(),
-                                        ],
-                                        'Last 30 Days': [
-                                            moment().subtract(29, 'days').toDate(),
-                                            moment().toDate(),
-                                        ],
-                                        'This Month': [
-                                            moment().startOf('month').toDate(),
-                                            moment().endOf('month').toDate(),
-                                        ],
-                                        'Last Month': [
-                                            moment().subtract(1, 'month').startOf('month').toDate(),
-                                            moment().subtract(1, 'month').endOf('month').toDate(),
-                                        ],
-                                    },
-                                }}
-                                onCallback={handleCallback}
-                            >
 
-                                <div className='pointer d-flex align-items-center custom-datepicker-bordered' id="reportrange">
-                                    <i className="fa fa-calendar"></i>
-                                    <CalendarMonthIcon className='me-2 text-red' />
-                                    <span className='font-14'>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
-                                </div>
-                                {/* <div
+
+
+                <div style={{top:globalSearchDocs.length>0&&"80px"}} className='main-client-details-filter'>
+                    <Button aria-describedby={id} variant="" className='min-width-auto btn-blue px-0' onClick={handleClick}>
+                        <TuneIcon />
+                    </Button>
+                    <Popover
+                        id={id}
+                        open={open}
+                        anchorEl={anchorEl}
+                        onClose={handleClose}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+
+                        className='p-5'
+                    >
+                        <Box className='client-details-filter p-2'>
+                            <Typography variant="Body2" className='font-14 sembold mb-2 text-black'>
+                                View
+                            </Typography>
+
+                            <div className='text-center mb-2 client-details-filter-btn d-flex'>
+                                <ToggleButton className='w-100 active' value="left" aria-label="left aligned" onClick={() => setToggleScreen({ singleCardView: true, multipleCardView: false, tableGridView: false })}>
+                                    <DnsIcon />
+                                </ToggleButton>
+                                <ToggleButton className='w-100' value="center" aria-label="centered" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: true, tableGridView: false })}>
+                                    <AppsIcon />
+                                </ToggleButton>
+                                <ToggleButton className='w-100' value="right" aria-label="right aligned" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: false, tableGridView: true })}>
+                                    <TableRowsIcon />
+                                </ToggleButton>
+                            </div>
+
+                            <Box className='mb-0'>
+                                {/* sadik */}
+                                <Box sx={{ m: 1 }} className='pt-2'>
+                                    <DateRangePicker
+                                        initialSettings={{
+                                            startDate: start.toDate(),
+                                            endDate: end.toDate(),
+                                            ranges: {
+                                                'All': [
+                                                    moment({ year: 1990, month: 0, day: 1 }).toDate(),
+                                                    moment().toDate()
+                                                ],
+                                                Today: [moment().toDate(), moment().toDate()],
+                                                Yesterday: [
+                                                    moment().subtract(1, 'days').toDate(),
+                                                    moment().subtract(1, 'days').toDate(),
+                                                ],
+                                                'Last 7 Days': [
+                                                    moment().subtract(6, 'days').toDate(),
+                                                    moment().toDate(),
+                                                ],
+                                                'Last 30 Days': [
+                                                    moment().subtract(29, 'days').toDate(),
+                                                    moment().toDate(),
+                                                ],
+                                                'This Month': [
+                                                    moment().startOf('month').toDate(),
+                                                    moment().endOf('month').toDate(),
+                                                ],
+                                                'Last Month': [
+                                                    moment().subtract(1, 'month').startOf('month').toDate(),
+                                                    moment().subtract(1, 'month').endOf('month').toDate(),
+                                                ],
+                                            },
+                                        }}
+                                        onCallback={handleCallback}
+                                    >
+
+                                        <div className='pointer d-flex align-items-center custom-datepicker-bordered' id="reportrange">
+                                            <i className="fa fa-calendar"></i>
+                                            <CalendarMonthIcon className='me-2 text-red' />
+                                            <span className='font-14'>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
+                                        </div>
+                                        {/* <div
                                 id="reportrange"
                                 className="col-4"
                                 style={{
@@ -667,218 +728,283 @@ export default function DocumentList({ clientId }) {
                                 <i className="fa fa-calendar"></i>&nbsp;
                                 <span>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
                             </div> */}
-                            </DateRangePicker>
-                        </Box>
+                                    </DateRangePicker>
+                                </Box>
 
+                                <hr className='mt-1' />
 
-                        <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
-                            <Select
-                                value={selectedSection}
-                                onChange={(e) => {
-                                    setSelectedSection(e.target.value);
-                                    if (e.target.value === "Section") {
-                                        handleFilterDeletion('Section');
-                                        setSelectedSection("");
-                                        return;
-                                    } else if (e.target.value !== '') {
-                                        setFilterCriteria({ ...filterCriteria, Section: [e.target.value] })
-                                    } else {
-                                        handleFilterDeletion('Section');
-                                        // let obj = Object.keys(filterCriteria).filter(objKey =>
-                                        //     objKey !== 'Section').reduce((newObj, key) =>
-                                        //     {
-                                        //         newObj[key] = filterCriteria[key];
-                                        //         return newObj;
-                                        //     }, {}
-                                        // );
-                                        // setFilterCriteria(obj);
-                                    }
-                                }}
-                                displayEmpty
-                                inputProps={{ 'aria-label': 'Without label' }}
-                                className='custom-dropdown'
-                            >
-                                <MenuItem value="" style={{ display: "none" }}>
-                                    Sections
-                                </MenuItem>
-                                <MenuItem value="Section" >00. Clear Filter</MenuItem>
-                                {sections.length > 0 && sections.map((itm) => {
-                                    return <MenuItem value={itm.Sec}>{itm.Sec}</MenuItem>
-                                })}
+                                <Typography variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
+                                    Filter By
+                                </Typography>
 
-                                {/* <MenuItem value={10}>Section 1</MenuItem>
+                                <Box className='d-flex'>
+
+                                    <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0'>
+                                        <BootstrapTooltip title="Sections" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
+                                        >
+                                            <Select
+                                                value={selectedSection}
+                                                onChange={(e) => {
+                                                    setSelectedSection(e.target.value);
+                                                    if (e.target.value === "Section") {
+                                                        handleFilterDeletion('Section');
+                                                        setSelectedSection("");
+                                                        return;
+                                                    } else if (e.target.value !== '') {
+                                                        setFilterCriteria({ ...filterCriteria, Section: [e.target.value] })
+                                                    } else {
+                                                        handleFilterDeletion('Section');
+                                                        // let obj = Object.keys(filterCriteria).filter(objKey =>
+                                                        //     objKey !== 'Section').reduce((newObj, key) =>
+                                                        //     {
+                                                        //         newObj[key] = filterCriteria[key];
+                                                        //         return newObj;
+                                                        //     }, {}
+                                                        // );
+                                                        // setFilterCriteria(obj);
+                                                    }
+                                                }}
+                                                displayEmpty
+                                                inputProps={{ 'aria-label': 'Without label' }}
+                                                className='custom-dropdown'
+                                            >
+
+                                                <MenuItem value="" style={{ display: "none" }}>
+
+                                                    Sections
+                                                </MenuItem>
+                                                <MenuItem value="Section" >00. Clear Filter</MenuItem>
+                                                {sections.length > 0 && sections.map((itm) => {
+                                                    return <MenuItem value={itm.Sec}>{itm.Sec}</MenuItem>
+                                                })}
+
+                                                {/* <MenuItem value={10}>Section 1</MenuItem>
                                     <MenuItem value={20}>Section 2</MenuItem> */}
-                            </Select>
-                        </FormControl>
+                                            </Select>
+                                        </BootstrapTooltip>
+                                    </FormControl>
 
+                                    <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0'>
+                                        <BootstrapTooltip title="Folders" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
+                                        >
+                                            <Select
+                                                value={selectedFolder}
+                                                onChange={(e) => {
+                                                    setSelectedFolder(e.target.value);
+                                                    if (e.target.value === "Folder") {
+                                                        handleFilterDeletion("Folder");
+                                                        setSelectedFolder("");
+                                                        return;
+                                                    } else if (e.target.value !== '') {
+                                                        setFilterCriteria({ ...filterCriteria, Folder: [e.target.value] });
+                                                    } else {
+                                                        handleFilterDeletion('Folder');
+                                                        // let obj = Object.keys(filterCriteria).filter(objKey =>
+                                                        //     objKey !== 'Folder').reduce((newObj, key) =>
+                                                        //     {
+                                                        //         newObj[key] = filterCriteria[key];
+                                                        //         return newObj;
+                                                        //     }, {}
+                                                        // );
+                                                        // setFilterCriteria(obj);
+                                                    }
+                                                }}
+                                                displayEmpty
+                                                inputProps={{ 'aria-label': 'Without label' }}
+                                                className='custom-dropdown'
+                                            >
+                                                <MenuItem value="" style={{ display: "none" }}>Folders</MenuItem>
 
-                        <FormControl sx={{ m: 1, width: '90px' }} size="small" className='select-border'>
-                            <Select
-                                value={selectedFolder}
-                                onChange={(e) => {
-                                    setSelectedFolder(e.target.value);
-                                    if (e.target.value === "Folder") {
-                                        handleFilterDeletion("Folder");
-                                        setSelectedFolder("");
-                                        return;
-                                    } else if (e.target.value !== '') {
-                                        setFilterCriteria({ ...filterCriteria, Folder: [e.target.value] });
-                                    } else {
-                                        handleFilterDeletion('Folder');
-                                        // let obj = Object.keys(filterCriteria).filter(objKey =>
-                                        //     objKey !== 'Folder').reduce((newObj, key) =>
-                                        //     {
-                                        //         newObj[key] = filterCriteria[key];
-                                        //         return newObj;
-                                        //     }, {}
-                                        // );
-                                        // setFilterCriteria(obj);
-                                    }
-                                }}
-                                displayEmpty
-                                inputProps={{ 'aria-label': 'Without label' }}
-                                className='custom-dropdown'
-                            >
-                                <MenuItem value="" style={{ display: "none" }}>Folders</MenuItem>
+                                                <MenuItem value="Folder" className='text-danger ps-1'>
+                                                    <ClearIcon className='font-18 me-1' />
+                                                    Clear Filters</MenuItem>
 
-                                <MenuItem value="Folder" className='text-danger ps-1'>
-                                    <ClearIcon className='font-18 me-1' />
-                                    Clear Filters</MenuItem>
-
-                                {folders.length > 0 && folders.map((itm) => {
-                                    return <MenuItem value={itm.Folder} className='ps-1'>
-                                        <FormatAlignJustifyIcon className='font-18 me-1' />
-                                        {itm.Folder}</MenuItem>
-                                })}
-                                {/* <MenuItem value="">
+                                                {folders.length > 0 && folders.map((itm) => {
+                                                    return <MenuItem value={itm.Folder} className='ps-1'>
+                                                        <FolderSharedIcon className='font-18 me-1' />
+                                                        {itm.Folder}</MenuItem>
+                                                })}
+                                                {/* <MenuItem value="">
                                         Select
                                     </MenuItem>
                                     <MenuItem value={10}>Select 1</MenuItem>
                                     <MenuItem value={20}>Select 2</MenuItem> */}
-                            </Select>
-                        </FormControl>
+                                            </Select>
+                                        </BootstrapTooltip>
+                                    </FormControl>
 
-                        <Box className='d-flex'>
-                            <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
-                                <Select
-                                    value={selectedGroup}
-                                    displayEmpty
-                                    inputProps={{ 'aria-label': 'Without label' }}
-                                    className='custom-dropdown'
-                                    onChange={(e) => {
-                                        if (e.target.value === "Group By") {
-                                            setSelectedGroup("");
-                                            return;
-                                        }
-                                        setSelectedGroup(e.target.value);
-                                    }}
-                                >
-                                    <MenuItem value="" style={{ display: "none" }}> Group By</MenuItem>
-                                    <MenuItem className='ps-1 text-red' value="Group By">
-                                        <CloseIcon className='font-18 me-1' />
-                                        Clear Group by</MenuItem>
-                                    <MenuItem className='ps-1' value="Description">
-                                        <DescriptionIcon className='font-18 me-1' />
-                                        Description</MenuItem>
-                                    <MenuItem className='ps-1' value={"CommentBy"}>
-                                        <InsertCommentIcon className='font-18 me-1' />
-                                        Comment By</MenuItem>
-                                    <MenuItem className='ps-1' value={"Type"}>
-                                        <ChecklistIcon className='font-18 me-1' />
-                                        Type</MenuItem>
-                                    {/* <MenuItem className='ps-1' value={"Comments"}>
+                                </Box>
+                                {/* <hr /> */}
+
+                                <Typography variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
+                                    Sort By
+                                </Typography>
+
+
+                                <Box className='d-flex'>
+                                    <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 '>
+                                        <BootstrapTooltip title="Group By" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
+                                        >
+                                            <Select
+                                                value={selectedGroup}
+                                                displayEmpty
+                                                inputProps={{ 'aria-label': 'Without label' }}
+                                                className='custom-dropdown'
+                                                onChange={(e) => {
+                                                    if (e.target.value === "Group By") {
+                                                        setSelectedGroup("");
+                                                        return;
+                                                    }
+                                                    setSelectedGroup(e.target.value);
+                                                }}
+                                            >
+                                                <MenuItem value="" style={{ display: "none" }}> Group By</MenuItem>
+                                                <MenuItem className='ps-1 text-red' value="Group By">
+                                                    <CloseIcon className='font-18 me-1' />
+                                                    Clear Group by</MenuItem>
+                                                <MenuItem className='ps-1' value="Description">
+                                                    <DescriptionIcon className='font-18 me-1' />
+                                                    Description</MenuItem>
+                                                <MenuItem className='ps-1' value={"CommentBy"}>
+                                                    <InsertCommentIcon className='font-18 me-1' />
+                                                    Comment By</MenuItem>
+                                                <MenuItem className='ps-1' value={"Type"}>
+                                                    <ChecklistIcon className='font-18 me-1' />
+                                                    Type</MenuItem>
+                                                {/* <MenuItem className='ps-1' value={"Comments"}>
                                     <CloseIcon className='font-18 me-1' />
                                         Comments</MenuItem> */}
-                                    {/* <MenuItem value={20}>Comment</MenuItem> */}
-                                </Select>
-                            </FormControl>
+                                                {/* <MenuItem value={20}>Comment</MenuItem> */}
+                                            </Select>
+                                        </BootstrapTooltip>
+                                    </FormControl>
 
-                            <FormControl sx={{ m: 1, width: '120px' }} size="small" className='select-border'>
-                                <Select
-                                    value={sortByProperty}
-                                    onChange={(e) => {
-                                        if(e.target.value==="Sort By"){
-                                            setSortByProperty("")
-                                            return;
-                                        }
-                                        setSortByProperty(e.target.value)
-                                    }
-                                }
-                                    displayEmpty
-                                    inputProps={{ 'aria-label': 'Without label' }}
-                                    className='custom-dropdown'
-                                >
-                                    <MenuItem value="" style={{display:"none"}}>
-                                        <SwapVertIcon className='pe-1' /> Sort By
-                                    </MenuItem>
-                                    <MenuItem value="None" onClick={() => setAdvFilteredResult([])}><WarningIcon className='pe-1' />  Clear Sortby</MenuItem>
-                                    <MenuItem value={"Date"}>
-                                        <CalendarMonthIcon className='pe-1' />
-                                        By Date</MenuItem>
-                                    <MenuItem value={"Description"}><DescriptionIcon className='pe-1' />
-                                        By Description</MenuItem>
-                                </Select>
-                            </FormControl>
+                                    <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0'>
+                                        <BootstrapTooltip title="Sort By" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
+                                        >
+                                            <Select
+                                                value={sortByProperty}
+                                                onChange={(e) => {
+                                                    if (e.target.value === "Sort By") {
+                                                        setSortByProperty("")
+                                                        return;
+                                                    }
+                                                    setSortByProperty(e.target.value)
+                                                }
+                                                }
+                                                displayEmpty
+                                                inputProps={{ 'aria-label': 'Without label' }}
+                                                className='custom-dropdown'
+                                            >
+                                                <MenuItem value="" style={{ display: "none" }}>
+                                                    <SwapVertIcon className='pe-1' /> Sort By
+                                                </MenuItem>
+                                                <MenuItem className='ps-1' value="None" onClick={() => setAdvFilteredResult([])}><WarningIcon className='ps-1' />  Clear Sortby</MenuItem>
+                                                <MenuItem value={"Date"} className='ps-1'>
+                                                    <CalendarMonthIcon className='pe-1' />
+                                                    By Date</MenuItem>
+                                                <MenuItem value={"Description"} className='ps-1'><DescriptionIcon className='pe-1' />
+                                                    By Description dsfaaa</MenuItem>
+                                            </Select>
+                                        </BootstrapTooltip>
+                                    </FormControl>
 
-                            {sortByProperty !== "" && sortByProperty !== "None" && <Checkbox
-                                {...label}
-                                icon={<UpgradeIcon />}
-                                checkedIcon={<VerticalAlignBottomIcon />}
-                                className='p-0'
-                                onChange={(e) => {
-                                    if (e.target.checked) {
-                                        handleAscendingSort();
-                                    } else {
-                                        handleDescendingSort();
-                                    }
-                                }}
-                            />}
+                                    {sortByProperty !== "" && sortByProperty !== "None" && <Checkbox
+                                        {...label}
+                                        icon={<UpgradeIcon />}
+                                        checkedIcon={<VerticalAlignBottomIcon />}
+                                        className='p-0'
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                handleAscendingSort();
+                                            } else {
+                                                handleDescendingSort();
+                                            }
+                                        }}
+                                    />}
+                                </Box>
+
+                                {globalSearchDocs.length > 0 && <FormControl sx={{ m: 1, width: '110px' }} size="small" className='select-border'>
+                                    <Select
+                                        value={selectedClient}
+                                        onChange={handleFilterOnClientSelection}
+                                        displayEmpty
+                                        inputProps={{ 'aria-label': 'Without label' }}
+                                        className='custom-dropdown'
+                                    >
+                                        <MenuItem value="" style={{ display: "none" }}>
+                                            Select Reference
+                                        </MenuItem>
+                                        {clientList.length > 0 && clientList.map(itm => <MenuItem value={itm}>{itm}</MenuItem>)}
+                                    </Select>
+                                </FormControl>}
+
+
+                                {/* <Button className='btn-blue-2 mb-1 ms-1' onClick={() => handleDocumentsFilter("LastMonth")}>Save View</Button> */}
+
+                                {/* <FormControlLabel control={<Switch />} label="Save View" className='ms-2' /> */}
+
+                            </Box>
+
                         </Box>
 
-                        {globalSearchDocs.length > 0 && <FormControl sx={{ m: 1, width: '110px' }} size="small" className='select-border'>
-                            <Select
-                                value={selectedClient}
-                                onChange={handleFilterOnClientSelection}
-                                displayEmpty
-                                inputProps={{ 'aria-label': 'Without label' }}
-                                className='custom-dropdown'
-                            >
-                                <MenuItem value=""  style={{display:"none"}}>
-                                    Select Reference
-                                </MenuItem>
-                                {clientList.length > 0 && clientList.map(itm => <MenuItem value={itm}>{itm}</MenuItem>)}
-                            </Select>
-                        </FormControl>}
 
+                    </Popover>
+                </div>
 
-                        {/* <Button className='btn-blue-2 mb-1 ms-1' onClick={() => handleDocumentsFilter("LastMonth")}>Save View</Button> */}
-
-                        {/* <FormControlLabel control={<Switch />} label="Save View" className='ms-2' /> */}
-
-                    </Box>
-
-                    <div className='text-end mb-2'>
-                        <ToggleButtonGroup
-                            value={alignment}
-                            exclusive
-                            onChange={handleAlignment}
-                            aria-label="text alignment"
-                        >
-                            <ToggleButton value="left" aria-label="left aligned" onClick={() => setToggleScreen({ singleCardView: true, multipleCardView: false, tableGridView: false })}>
-                                <DnsIcon />
-                            </ToggleButton>
-                            <ToggleButton value="center" aria-label="centered" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: true, tableGridView: false })}>
-                                <AppsIcon />
-                            </ToggleButton>
-                            <ToggleButton value="right" aria-label="right aligned" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: false, tableGridView: true })}>
-                                <TableRowsIcon />
-                            </ToggleButton>
-                        </ToggleButtonGroup>
-                    </div>
-
-                </Box>
-
-                {toggleScreen.tableGridView ? <Box className='table-responsive table-grid'>
+                {toggleScreen.tableGridView ? <Box className='table-responsive table-grid table-grid-2'>
                     <DataGrid
                         id="dataGrid"
                         style={{ width: "100%" }}
@@ -912,9 +1038,10 @@ export default function DocumentList({ clientId }) {
                     container
                     justifyContent="center"
                     alignItems="center"
-
                 >
-                    <Grid item xs={12} sm={10} md={toggleScreen.multipleCardView ? 12 : 6} lg={toggleScreen.multipleCardView ? 12 : 7} className='white-box'>
+                    <Grid item xs={12} sm={12} md={toggleScreen.multipleCardView ? 12 : 12} lg={toggleScreen.multipleCardView ? 12 : 10}
+                        xl={toggleScreen.multipleCardView ? 12 : 8}
+                        className='white-box'>
                         <Box className={toggleScreen.multipleCardView ? 'd-flex m-auto justify-content-start w-100 align-items-end' : 'd-flex m-auto w-100 align-items-en'}>
                             {isAdvFilter === false && <Layout className=''>
                                 <AutocompleteWrapper className='mb-2'>
@@ -923,7 +1050,6 @@ export default function DocumentList({ clientId }) {
                                             borderColor: '#D5D5D5',
                                             color: 'success.main',
                                         }}
-                                        {...getRootProps()}
                                     // className={focused ? 'Mui-focused' : ''}
                                     >
                                         <span className="material-symbols-outlined search-icon">search</span>
@@ -931,7 +1057,7 @@ export default function DocumentList({ clientId }) {
                                         />
                                     </AutocompleteRoot>
                                     {isSearchOpen ? (groupedOptions.length > 0 && (
-                                        <Listbox {...getListboxProps()}>
+                                        <Listbox>
                                             {filteredDocResult.length === 0 ? groupedOptions.map((option, index) => (
                                                 <Option onClick={handleSearchOpen}>{option.Description}</Option>
                                             )) : filteredDocResult.map((option, index) => (
@@ -987,7 +1113,7 @@ export default function DocumentList({ clientId }) {
                             </Box>
 
                                 <Button disabled={searchByPropertyKey !== "" && searchByPropertyInput !== "" ? false : true} className={searchByPropertyKey !== "" && searchByPropertyInput !== "" ? 'btn-blue-2 mb-2 ms-2' : 'btn-blue-2 btn-grey-2 mb-2 ms-2'} onClick={() => handleSearchByProperty()}>Submit</Button></>}
-                            <Button className='btn-blue-2 mb-2 ms-2' onClick={() => setIsAdvFilter(!isAdvFilter)}>Toggle</Button>
+                            <Button className='btn-blue-2 mb-2 ms-2' onClick={() => setIsAdvFilter(!isAdvFilter)}>{!isAdvFilter ? "Advanced Search" : "Simple"}</Button>
                         </Box>
 
                         <Box className='d-flex flex-wrap justify-content-between'>
@@ -1007,7 +1133,7 @@ export default function DocumentList({ clientId }) {
                             </Box>
                         </Box>
 
-                        <Box className='client-details-scroll'>
+                        <Box className='client-details-scroll' name='client-details-scroll-search'>
                             {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
                             {toggleScreen.singleCardView && <DocumentDetails groupByFilterResult={groupByFilterResult} isGroupBy={isGroupBy} documents={documents} advFilteredResult={advFilteredResult} dataNotFoundBoolean={dataNotFoundBoolean} selectedGroup={selectedGroup}></DocumentDetails>}
                             {toggleScreen.multipleCardView &&
@@ -1033,7 +1159,6 @@ export default function DocumentList({ clientId }) {
                                                                         {/* Size: {itm["FileSize"] ? itm["FileSize"] : "0.00KB"}  */}
                                                                         Date {itm["Item.Date"] ? itm["Item.Date"] : ""} |
                                                                         Uploaded by <span className='sembold'>Patrick</span>
-
                                                                     </Typography>
                                                                 </Box>
                                                             </Box>

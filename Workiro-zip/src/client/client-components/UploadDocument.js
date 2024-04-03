@@ -239,7 +239,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                         //     return el; // Return the modified object
                         // });
 
-                       // console.log("Json_GetFolderData", res);
+                        // console.log("Json_GetFolderData", res);
                         setClientList(clientList);
                         if (originatorNo) {
                             let res = clientList.filter((c) => c.ClientID === originatorNo.originatorNo);
@@ -276,8 +276,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         Json_GetFolderData();
         setDocumentDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
         setReceivedDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
-       // console.log("GetCurrentDayDate", dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD"));
-       // console.log("GetNextDayDate", cls.GetNextDayDate());
+        // console.log("GetCurrentDayDate", dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD"));
+        // console.log("GetNextDayDate", cls.GetNextDayDate());
         setOpenModal(false);
         setshowModalCreateTask(false)
     }, [])
@@ -294,12 +294,12 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     }
 
     const handleClientChange = (data) => {
-        if(data !==null){
+        if (data !== null) {
             console.log("Get Clietn On click", data);
             setTxtClientId(data.ClientID);
             setTxtClientData(data);
         }
-       
+
     }
 
 
@@ -407,18 +407,16 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const [createPublishChk, setCreatePublishChk] = useState(false);
 
+    const [typeTaskBool, setTypeTaskBool] = useState(false);
+
     const [buttonNameText, setButtonNameText] = useState("Submit");
 
 
     const handleCheckboxChangeCreateTask = (event) => {
 
-
-
-
         const isChecked = event.target.checked;
         setCreateTaskChk(isChecked);
-
-
+        setTypeTaskBool(isChecked)
         setTaskType(isChecked ? "CRM" : "Portal");
         if (isChecked) {
             setButtonNameText(createPublishChk === "Portal" ? "Submit & Create Portal Task" : "Submit & Create Task");
@@ -427,6 +425,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         }
         setCreatePublishChk(false);
 
+
     };
 
     const handleCheckboxChangeCreatePublish = (event) => {
@@ -434,7 +433,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
         const isChecked = event.target.checked;
         setCreatePublishChk(isChecked);
-
+        setTypeTaskBool(isChecked)
         setTaskType(isChecked ? "Portal" : "CRM");
         if (isChecked) {
             setButtonNameText(createTaskChk === "CRM" ? "Submit & Create Task" : "Submit & Create Portal Task");
@@ -465,9 +464,11 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                 await Json_RegisterItem(i)
             }
             // setOpenUploadDocument(false);
+
         }
         else {
             Json_RegisterItem()
+            // toast.success("Document Uploaded!");
         }
     }
 
@@ -545,11 +546,18 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                     let js = JSON.parse(data)
                     console.log("Json_RegisterItem", js)
                     if (js.Status == "true") {
-                        toast.success("Created Task !");
+
                         if (fileData) {
                             fileData.DocId = js.ItemId;
                         }
-                        // setOpenUploadDocument(false);
+
+                        if (!typeTaskBool) {
+                          //  setOpenUploadDocument(false);
+                        }
+
+                        setTimeout(() => {
+                            toast.success(selectedFiles.length + "Document(s) Uploaded!");
+                        }, 4000);
 
                     }
                     else {
@@ -718,12 +726,12 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                         id="combo-box-demo"
                                         options={clientList}
                                         getOptionLabel={(option) => option.Client} // assuming "Client" is the property you want to display
-                                       
+
                                         onChange={(event, newValue) => handleClientChange(newValue)}
                                         renderInput={(params) => <TextField {...params} label="Reference1" />}
                                     />
 
-                                    
+
                                 </Box>
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 d-flex align-items-end'>

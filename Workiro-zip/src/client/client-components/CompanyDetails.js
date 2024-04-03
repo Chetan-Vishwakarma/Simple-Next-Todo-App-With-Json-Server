@@ -4,7 +4,7 @@ import PinDropIcon from '@mui/icons-material/PinDrop';
 import PhoneIcon from '@mui/icons-material/Phone';
 
 function CompanyDetails({companyDetails}) {
-    console.log("flljsdfsd",companyDetails[0]?.ManagerName);
+    console.log("flljsdfsd",companyDetails[0]);
     return (
         <Box className="col-xl-6 col-lg-6 col-md-12 main-company-details">
             <Typography variant="body1" className='mb-4 bold' gutterBottom>

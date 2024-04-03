@@ -38,12 +38,24 @@ import PersonIcon from '@mui/icons-material/Person';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
 import SubjectIcon from '@mui/icons-material/Subject';
-
 import { toast } from 'react-toastify';
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
+import PeopleIcon from '@mui/icons-material/People';
+import ShareIcon from '@mui/icons-material/Share';
+import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import CreateNewModalTask from './CreateNewModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { setMyTasks } from '../redux/reducers/counterSlice';
+
+
+const foldersIconList = [<PersonIcon className='me-1 font-20'/>,<TipsAndUpdatesIcon className='me-1 font-20'/>,<PeopleIcon className='me-1 font-20'/>,<ShareIcon className='me-1 font-20'/>,<FolderSharedIcon className='me-1 font-20'/>,<FolderSharedIcon className='me-1 font-20'/>];
+const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20'/>,<PublishedWithChangesIcon color='primary' className='me-1 font-20'/>,<HourglassBottomIcon color='primary' className='me-1 font-20'/>,<CheckCircleOutlineIcon color='success' className='me-1 font-20'/>];
 
 function TodoList() {
     const location = useLocation();
+    const reduxData = useSelector((data)=>data.counter.myTasks);
+    console.log("fdjkfhfhsf",reduxData);
+    const dispatch = useDispatch();
     let dddd = location.state !== null ? location.state : { globalSearchTask: [] };
     const { globalSearchTask, strGlobal } = dddd;
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -62,8 +74,8 @@ function TodoList() {
     let ClsSms = new CommanCLS(baseUrl, agrno, Email, password);
 
 
-    const [allTask, setAllTask] = useState([]);
-    const [actualData, setActualData] = useState([]);
+    const [allTask, setAllTask] = useState([...reduxData]);
+    const [actualData, setActualData] = useState([...reduxData]);
     const [selectedTask, setSelectedTask] = useState({});
 
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -81,8 +93,11 @@ function TodoList() {
 
     const [dataInGroup, setDataInGroup] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isSearch, setIsSearch] = useState(false);
 
     const [suggestionList, setSuggestionList] = useState([]);
+
+
 
     // for date datepicker
     const [state, setState] = useState({
@@ -133,7 +148,7 @@ function TodoList() {
                 return { ...task, EndDateTime: date };
             });
 
-            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
+            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus!=="Completed");
 
             let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                 let timestamp;
@@ -146,9 +161,10 @@ function TodoList() {
                 return { ...task, CreationDate: date };
             }).sort((a, b) => b.CreationDate - a.CreationDate);
 
-
+            // dispatch(setMyTasks([...hasCreationDate]));
             setActualData([...hasCreationDate]);
             setAllTask([...hasCreationDate]);
+
             // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
             Json_GetFolders();
             setIsApi(true);
@@ -178,13 +194,7 @@ function TodoList() {
                             return { ...task, EndDateTime: date };
                         });
 
-                        // setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
-
-                        // let tasks = formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime);
-                        // let myTasks = tasks.filter((item)=>item.AssignedToID.split(",").includes(userId));
-                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
-
-
+                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus!=="Completed");
 
                         let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                             let timestamp;
@@ -197,11 +207,10 @@ function TodoList() {
                             return { ...task, CreationDate: date };
                         }).sort((a, b) => b.CreationDate - a.CreationDate);
 
+                        dispatch(setMyTasks([...hasCreationDate]));
+                        // setActualData([...hasCreationDate]);
+                        // setAllTask([...hasCreationDate]);
 
-
-                        // setActualData([...myTasks]);
-                        setActualData([...hasCreationDate]);
-                        setAllTask([...hasCreationDate]);
                         // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
                         setIsLoading(false);
                         Json_GetFolders();
@@ -632,6 +641,11 @@ function TodoList() {
         return res?res.ForwardTo:"";
     }
 
+    useEffect(()=>{
+        setAllTask([...reduxData]);
+        setActualData([...reduxData]);
+    },[reduxData]);
+
     return (
         <>
             <Box className="container-fluid p-0">
@@ -654,13 +668,19 @@ function TodoList() {
                                     <span className="material-symbols-outlined search-icon">search</span>
 
                                     <Input
-                                        // onClick={(e) => handleDialogsOpen(e, "Search")}
+                                        onClick={(e) => {
+                                            if(e.target.value!==""){
+                                                setIsSearch(true);
+                                            }
+                                        }}
+                                        onBlur={(e)=>setIsSearch(false)}
                                         onChange={(e) => {
                                             if (e.target.value === "") {
                                                 setSuggestionList([]);
                                                 handleFilterDeletion("Subject");
                                                 return;
                                             }
+                                            setIsSearch(true);
                                             let fltData = allTask.filter(itm => itm.Subject.toLowerCase().includes(e.target.value.toLowerCase()));
                                             setSuggestionList(fltData);
                                             setTaskFilter({ ...taskFilter, Subject: [e.target.value] });
@@ -669,7 +689,7 @@ function TodoList() {
                                         className='ps-0' />
                                 </AutocompleteRoot>
 
-                                {suggestionList.length > 0 && <Listbox sx={{ zIndex: 1 }}>
+                                {isSearch && suggestionList.length > 0 && <Listbox sx={{ zIndex: 1 }}>
                                     {suggestionList.map((itm, i) => {
                                         return <Option key={i}>
                                             {/* <ApartmentIcon className='me-1' /> */}
@@ -704,7 +724,7 @@ function TodoList() {
                             >
                                 <MenuItem value="Folder" style={{ display: "none" }}>Folders</MenuItem>
                                 <MenuItem value="" className='text-danger ps-1'><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
-                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'><LanguageIcon className="font-20 me-2" /> {fld.Folder}</MenuItem>)}
+                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'>{foldersIconList[i]} {fld.Folder}</MenuItem>)}
                             </Select>
                         </FormControl>
 
@@ -766,8 +786,8 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value={"Status"} style={{ display: "none" }}> Status</MenuItem>
-                                <MenuItem value={""} ><WatchLaterIcon className='text-danger ps-1 me-1' /> Clear Filter</MenuItem>
-                                {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm}>  <WatchLaterIcon className="font-20 me-2" />{itm}</MenuItem>)}
+                                <MenuItem className='text-danger ps-1' value={""} ><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
+                                {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm} className='ps-1'> {statusIconList[i]} {itm}</MenuItem>)}
                             </Select>
                         </FormControl>
                     </Box>
@@ -837,11 +857,11 @@ function TodoList() {
                             >
                                 <MenuItem className='ps-2' value="Sort By" style={{ display: "none" }}><SortIcon />Sort By</MenuItem>
                                 <MenuItem className='ps-2 text-red' value="" onClick={() => setAllTask([...actualData])}><ClearIcon />Clear Sortby</MenuItem>
-                                <MenuItem className='ps-2' value="Client"><PersonIcon className='font-18 me-1' />Client Name</MenuItem>
-                                <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-18 me-1' />Due Date</MenuItem>
-                                <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-18 me-1' />Priority</MenuItem>
-                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-18 me-1' />Section</MenuItem>
-                                <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-18 me-1' />Start Date</MenuItem>
+                                <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
+                                <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
+                                <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-20 me-1' />Priority</MenuItem>
+                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-20 me-1' />Section</MenuItem>
+                                <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-20 me-1' />Start Date</MenuItem>
                             </Select>
                         </FormControl>
                         {selectedSortBy !== "Sort By" && <Checkbox onClick={(e) => handleSortBy(e.target.checked)} className='p-0' {...label} icon={<UpgradeIcon />} checkedIcon={<VerticalAlignBottomIcon />} />}
@@ -861,20 +881,17 @@ function TodoList() {
                                     handleGrouping(e.target.value)
                                 }}
                                 className='custom-dropdown'
-
                             >
                                 <MenuItem className='ps-2' value="Group By" style={{ display: "none" }}>Group By</MenuItem>
-                                <MenuItem className='ps-2' value=""><ClearIcon className='font-18 me-1' />Clear Groupby</MenuItem>
-                                <MenuItem className='ps-2' value="Client"><PersonIcon className='font-18 me-1' />Client Name</MenuItem>
-                                <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-18 me-1' />Due Date</MenuItem>
-                                <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-18 me-1' />Priority</MenuItem>
-                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-18 me-1' />Section</MenuItem>
-                                <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-18 me-1' />Start Date</MenuItem>
-                                <MenuItem className='ps-2' value="Subject"><SubjectIcon className='font-18 me-1' />Subject</MenuItem>
+                                <MenuItem className='ps-2' value=""><ClearIcon className='font-20 me-1' />Clear Groupby</MenuItem>
+                                <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
+                                <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
+                                <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-20 me-1' />Priority</MenuItem>
+                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-20 me-1' />Section</MenuItem>
+                                <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-20 me-1' />Start Date</MenuItem>
+                                <MenuItem className='ps-2' value="Subject"><SubjectIcon className='font-20 me-1' />Subject</MenuItem>
                             </Select>
-
                         </FormControl>
-
 
                         <ToggleButtonGroup className='ms-3' size='small'>
                             <ToggleButton value="left" aria-label="left aligned">

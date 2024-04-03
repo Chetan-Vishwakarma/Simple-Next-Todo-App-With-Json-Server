@@ -11,7 +11,7 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 const UserDetailContext = createContext();
 // const UserDetailContext = createContext();
 
-const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse}) => {
+const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse}) => {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -94,8 +94,8 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
     if (value) {
       let data = { ...userDetail };
       data = { ...data, ["UserId"]: value.UserId };
-      console.log(defaultUser, "dataOnchange111", value);
-      setDefaultUser(value);
+      console.log(defaultUser, "dataOnchange111",value);
+        setDefaultUser(value);
       setUserDetail(data);
     } else {
     }
@@ -238,7 +238,7 @@ console.log(defaultStatus,"defaultStatus22222",singledata);
     }
   };
   const onChangeImportData = (e) => {
-
+           
     e.preventDefault();
     const inputValue = e.target.value;
     console.log(inputValue,"import_data");
@@ -290,11 +290,11 @@ const clearDataCard = () => {
   return (
     <div>
 
-      <Box className='well'>
+      <Box className='well' style={{"display":"none"}}>
         <h2 className="font-14 bold mb-2 text-black">Import from Companies House</h2>
         <Grid container spacing={3} className="mb-">
           <Grid item lg={6} xs={6} md={6}>
-            {/* <TextField
+          {/* <TextField
                           fullWidth
                           variant="outlined"
                           name="importclient"
@@ -542,5 +542,5 @@ const clearDataCard = () => {
     </div>
   );
 });
-export default memo(AddClientdetails);
+export default memo(EditClientdetails);
 

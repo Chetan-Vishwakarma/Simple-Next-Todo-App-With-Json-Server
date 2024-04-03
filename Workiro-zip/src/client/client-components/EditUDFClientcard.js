@@ -9,7 +9,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Unstable_NumberInput as NumberInput } from '@mui/base/Unstable_NumberInput';
 import dayjs from "dayjs";
-const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
+const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
   console.log(data?.Table, "sdfsd", data.Table3);
   const [selectManager, setselectManagers] = useState([]);
   const [selectedDatetest, setSelectedDatetest] = useState([]);
@@ -533,4 +533,4 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
   );
 });
 
-export default UDFClientcard;
+export default EditUDFClientcard;
