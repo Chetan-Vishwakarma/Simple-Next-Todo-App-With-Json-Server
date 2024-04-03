@@ -28,10 +28,11 @@ let originatorNo;
 function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     //console.log("location state",localtion.state)
     const localtion = useLocation();
-    try { 
-          originatorNo  = localtion.state; } 
+    try {
+        originatorNo = localtion.state;
+    }
 
-    catch (e) { 
+    catch (e) {
 
     }
 
@@ -230,18 +231,24 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
                     setGetAllFolderData(js);
                     let clientList = js.Table1;
-                    console.log("Json_GetFolderData", js);
+
                     if (clientList.length > 0) {
 
-                        setClientList(clientList);
-if(originatorNo){
-    let res = clientList.filter((c) => c.ClientID === originatorNo.originatorNo);
-    if (res.length > 0) {
-        setTxtClientData(res[0])
+                        // let res = clientList.map((el) => {
+                        //     el.Client = el.Client.toLowerCase(); // Modify ClientID property to lowercase
+                        //     return el; // Return the modified object
+                        // });
 
-    }
-}
-                        
+                       // console.log("Json_GetFolderData", res);
+                        setClientList(clientList);
+                        if (originatorNo) {
+                            let res = clientList.filter((c) => c.ClientID === originatorNo.originatorNo);
+                            if (res.length > 0) {
+                                setTxtClientData(res[0])
+
+                            }
+                        }
+
 
 
                     }
@@ -269,8 +276,8 @@ if(originatorNo){
         Json_GetFolderData();
         setDocumentDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
         setReceivedDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
-        console.log("GetCurrentDayDate", dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD"));
-        console.log("GetNextDayDate", cls.GetNextDayDate());
+       // console.log("GetCurrentDayDate", dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD"));
+       // console.log("GetNextDayDate", cls.GetNextDayDate());
         setOpenModal(false);
         setshowModalCreateTask(false)
     }, [])
@@ -287,9 +294,12 @@ if(originatorNo){
     }
 
     const handleClientChange = (data) => {
-        console.log("Get Clietn On click", data);
-        setTxtClientId(data.ClientID);
-        setTxtClientData(data);
+        if(data !==null){
+            console.log("Get Clietn On click", data);
+            setTxtClientId(data.ClientID);
+            setTxtClientData(data);
+        }
+       
     }
 
 
@@ -402,12 +412,12 @@ if(originatorNo){
 
     const handleCheckboxChangeCreateTask = (event) => {
 
-     
-        
+
+
 
         const isChecked = event.target.checked;
         setCreateTaskChk(isChecked);
-      
+
 
         setTaskType(isChecked ? "CRM" : "Portal");
         if (isChecked) {
@@ -424,7 +434,7 @@ if(originatorNo){
 
         const isChecked = event.target.checked;
         setCreatePublishChk(isChecked);
-       
+
         setTaskType(isChecked ? "Portal" : "CRM");
         if (isChecked) {
             setButtonNameText(createTaskChk === "CRM" ? "Submit & Create Task" : "Submit & Create Portal Task");
@@ -534,12 +544,12 @@ if(originatorNo){
                 if (sts && data) {
                     let js = JSON.parse(data)
                     console.log("Json_RegisterItem", js)
-                    if (js.Status=="true") {
+                    if (js.Status == "true") {
                         toast.success("Created Task !");
                         if (fileData) {
                             fileData.DocId = js.ItemId;
                         }
-                       // setOpenUploadDocument(false);
+                        // setOpenUploadDocument(false);
 
                     }
                     else {
@@ -692,7 +702,7 @@ if(originatorNo){
                             <Box className='row'>
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                     <Autocomplete
-                                        
+
                                         id="combo-box-demo"
                                         options={folderList}
                                         value={txtFolderData}
@@ -704,28 +714,21 @@ if(originatorNo){
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                     <Autocomplete
-                                        
+                                        disablePortal
                                         id="combo-box-demo"
                                         options={clientList}
-                                        getOptionLabel={(option) => option.Client}
-                                        getOptionSelected={(option, value) => option.ClientID === value.ClientID}
-                                        value={txtClientData || null}
+                                        getOptionLabel={(option) => option.Client} // assuming "Client" is the property you want to display
+                                       
                                         onChange={(event, newValue) => handleClientChange(newValue)}
-                                        filterOptions={(options, { inputValue }) =>
-                                            options.filter(option =>
-                                                option.Client.toLowerCase().includes(inputValue.toLowerCase()) ||
-                                                option.Client.includes(inputValue)
-                                            )
-                                        }
-                                        renderInput={(params) => (
-                                            <TextField {...params} label="Reference" />
-                                        )}
+                                        renderInput={(params) => <TextField {...params} label="Reference1" />}
                                     />
+
+                                    
                                 </Box>
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 d-flex align-items-end'>
                                     <Autocomplete
-                                        
+
                                         id="combo-box-demo"
                                         options={sectionList}
 

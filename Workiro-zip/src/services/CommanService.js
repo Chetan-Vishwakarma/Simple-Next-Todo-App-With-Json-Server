@@ -91,17 +91,7 @@ Json_GetContactListByFolder(obj,callBack) {
         })
     }
 
-    GetCommentsHtml_Json(obj,callBack) {
-        super.CreateNewServiceParamObject("GetCommentsHtml_Json",obj,false);
-        super.CallNewService("GetCommentsHtml_Json", function (status, Data) {
-            if (status) {
-                return callBack(true, Data);
-            }
-            else {
-                return callBack(false, []);
-            }
-        })
-    }
+   
 
     Json_getRecentDocumentList(callBack) {
         super.CreateNewServiceParamObject("Json_getRecentDocumentList");

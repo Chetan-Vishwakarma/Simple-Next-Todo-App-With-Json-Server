@@ -706,6 +706,7 @@ function CreateNewModalTask({ ...props }) {
         if (txtClientData) {
             settxtClient(txtClientData.Client);
             setTextClientId(txtClientData.ClientID);
+            Json_GetClientCardDetails(txtClientData.ClientID)
         }
 
         if (txtSectionData) {
@@ -1764,7 +1765,7 @@ function CreateNewModalTask({ ...props }) {
                         if (js.Status === "success") {
                             setMessageId(js.Message);
                             CreatePortalMessage(js.Message)
-                            //toast.success("Created Task");
+                            toast.success("Created Task");
                             setOpen(false);
                            // setIsApi(!isApi);
                         }
@@ -2852,7 +2853,7 @@ function CreateNewModalTask({ ...props }) {
                                     </Button>
                                 )}
 
-                                <ToastContainer></ToastContainer>
+                               
                             </Box>
                             {/* col end */}
 
@@ -3630,6 +3631,9 @@ function CreateNewModalTask({ ...props }) {
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
+
+            <ToastContainer></ToastContainer>
+            
         </React.Fragment >
     );
 }

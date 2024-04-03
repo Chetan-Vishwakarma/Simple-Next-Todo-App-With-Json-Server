@@ -61,6 +61,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem }) => {
     const [filterAttachments, setFilterAttachments] = React.useState([]);
     const [totalAttachment, setTotalAttachment] = React.useState([]);
     const [allPortalAttachments, setAllPortalAttachments] = React.useState([]);
+    const [selectedEmail, setSelectedEmail] = React.useState({});
 
     const [txtRecipient, settxtRecipient] = React.useState(0);
 
@@ -99,21 +100,21 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem }) => {
         ClsPortal.GetMessageHtml_Json(o, function (sts, data) {
             if (sts) {
                 console.log("GetMessageHtml_Json", data);
-                
+
                 setTemplateDataMarkup(HtmlToText(data))
             }
         })
     }
-function HtmlToText(data){
-    if(data){
-        const textContent = data.replace(/<[^>]*>/g, '');
-        return textContent;
+    function HtmlToText(data) {
+        if (data) {
+            const textContent = data.replace(/<[^>]*>/g, '');
+            return textContent;
+        }
+        else {
+            return "";
+        }
+
     }
-    else {
-        return ""; 
-    }
-   
-}
     const GetCertificate_Json = (mgsId) => {
         let o = {
             accid: agrno,
@@ -147,20 +148,25 @@ function HtmlToText(data){
                         let js = JSON.parse(data);
                         // console.log("GetDocumentStatus_Json", js);
                         let res = js.filter((e) => e.Emailid === m.emailid);
-                        console.log("GetDocumentStatus_Json", res);
                         if (res.length > 0) {
                             const formattedActivity = res.map((el) => {
-                                let ActivityDate;
-                                if (el["Actioned On"]) {
-                                    ActivityDate = parseInt(el["Actioned On"].slice(6, -2));
+                                let ActivityDate; // Declare ActivityDate variable
+                                if (el["Actioned On"]) { // Check if "Actioned On" property exists
+                                    ActivityDate = el["Actioned On"].slice(6, -2); // If exists, slice the string
+                                   
                                 }
-                                const date = new Date(ActivityDate);
-                                return { ...el, ["Actioned On"]: date };
-                            });
-                           
-                            
+                                const date = new Date(ActivityDate); // Create Date object using ActivityDate
+                                return { ...el, ["Actioned On"]: date }; // Return new object with formatted date
 
-                            setDocumentStatus(formattedActivity)
+
+                            });
+
+
+
+
+                            setDocumentStatus(formattedActivity[0])
+                            console.log("GetDocumentStatus_Json", formattedActivity);
+
                         }
 
                     }
@@ -271,19 +277,19 @@ function HtmlToText(data){
         setAnchorElMgs(null);
         console.log("GetMessageHtml_Json11", e);
         //console.log("GetMessageHtml_Json11", e);
+       
         if (e.PortalDocId) {
-         
+            setSelectedEmail(e);
+            GetDocumentStatus_Json(e);
             GetMessageHtml_Json(e.PortalDocId);
             GetCertificate_Json(e.PortalDocId);
             GetCommentsHtml_Json(e);
             GetComments_Json(e);
-            GetDocumentStatus_Json(e);
             setMessageEmail(e.emailid);
             setPortalEmailOpbject(e);
             GetMessageViewHistory_Json(e);
             GetSignedAttachment_Json(e);
             ApprovalStatusChanged_Json(e);
-
             //handleClickOpenPortalAtt(true);
             let res = allPortalAttachments.length > 0 ? allPortalAttachments.filter((p) => p.emailid === e.emailid) : null;
 
@@ -628,6 +634,28 @@ function HtmlToText(data){
         setOpenCertificate(false);
     };
 
+ const HandalChangeSendReminder =()=>{
+    //setSelectedEmail
+    try {
+        let o={
+            accid:agrno,
+            email:Email,
+            password:password,
+            messageID:selectedEmail.PortalDocId,
+            contactEmail:selectedEmail.emailid
+        };
+        ClsPortal.SendReminder_Json(o,function(sts, data){
+            if(sts){
+                if(data){
+                    toast.success(data);
+                    console.log("SendReminder_Json",data)
+                }
+            }
+        })
+    } catch (error) {
+        console.log({message:false,Error:error})
+    }
+ }
     // document modal
     const [DocumentSent, setDocumentSent] = React.useState(false);
     const handleClickDocumentSent = () => {
@@ -773,18 +801,19 @@ function HtmlToText(data){
                                         <>
                                             <Box className='ps-3'>
                                                 <VerifiedIcon className='text-green' />
-                           <h5 className='font-14 text-black mb-1'>Message approved </h5>
-                  <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"]}</p>
+                                                <h5 className='font-14 text-black mb-1'>Message approved </h5>
+                                                <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"]}</p>
                                                 <Button className='btn-blue-2' size="small" onClick={handleClickOpenCertificate} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
                                             </Box>
                                         </>
                                     ) : (
                                         <>
+
                                             <Box className='ps-3'>
                                                 {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
                                                 <HourglassEmptyIcon className='text-gray' />
                                                 <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
-                                                <Button className='btn-blue-2' size="small" onClick={""} startIcon={<ScheduleIcon />}>Send Reminder</Button>
+                                                <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
                                             </Box>
                                         </>
                                     )}
