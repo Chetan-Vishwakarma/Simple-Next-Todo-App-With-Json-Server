@@ -17,6 +17,7 @@ import Typography from "@mui/material/Typography";
 import EditClientdetails from "./EditClientdetails";
 import EditUDFClientcard from "./EditUDFClientcard";
 import EditClientaddress from "./EditClientaddress";
+import { connect } from 'react-redux';
 function EditReference() {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -30,7 +31,6 @@ function EditReference() {
   const [dataFromChild, setDataFromChild] = useState([]);
   const [dataCompanyHouse, setDataCompanyHouse] = useState([]);
   const [activeStep, setActiveStep] = React.useState(0);
-
   const [userDetail, setUserDetail] = useState({
     Clientname: "",
     Clientid: "",
@@ -311,6 +311,21 @@ function EditReference() {
       });
     } catch (e) {}
   };
+  const mapStateToProps = (state) => ({
+    userDetail: state.userDetail,
+    dataCompanyHouse: state.dataCompanyHouse,
+  });
+  const mapDispatchToProps = {
+    setUserDetail,
+    setDataCompanyHouse,
+    setSelectedFolderID,
+  };
+  const EditClientdetailsContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(EditClientdetails);
+  
+ 
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
@@ -349,6 +364,7 @@ function EditReference() {
               setSelectedFolderID={setSelectedFolderID}
               //
             ></EditClientdetails>
+          
           }
         </Box>
       ),
