@@ -19,6 +19,7 @@ import { toast } from 'react-toastify';
 import DocDetails from './DocDetails';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+const userId = localStorage.getItem("UserId");
 
 function NewTodoList() {
 
@@ -113,8 +114,10 @@ function NewTodoList() {
                         // Sorting by EndDateTime
                         formattedTasks.sort((a, b) => b.EndDateTime - a.EndDateTime);
 
-                        console.log("Json_CRM_GetOutlookTask", formattedTasks);
-                        setAllTask(formattedTasks);
+                        const filtredTask = formattedTasks.filter(itm=>itm.AssignedToID.split(",").includes(userId) && itm.mstatus!=="Completed" && ["Portal","CRM"].includes(itm.Source));
+                        
+                        // console.log("Json_CRM_GetOutlookTask", filtredTask);
+                        setAllTask(filtredTask);
                     }
                 }
             });

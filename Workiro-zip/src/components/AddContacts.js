@@ -576,14 +576,14 @@ function AddContacts() {
 
 
               <Box className='d-flex'>
-                <Box className="mb-3">
+                <Box className="mb-3 w-100">
                   <UploadButtons
                     userContactDetails={userContactDetails}
                     setContactDetails={setContactDetails}
                   />
                 </Box>
 
-                <Box className="mb-3">
+                <Box className="mb-3 w-100">
                   <Grid container spacing={3}>
                     <Grid item xs={6} md={6}>
                       <Autocomplete
