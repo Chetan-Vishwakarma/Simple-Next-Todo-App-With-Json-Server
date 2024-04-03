@@ -57,7 +57,7 @@ function ClientDetails() {
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
     let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
-    console.log(originatorNo,"originatorNooriginatorNo")
+    console.log(originatorNo, "originatorNooriginatorNo")
 
     // upload document modal start
     const [openUploadDocument, setOpenUploadDocument] = React.useState(false);
@@ -182,8 +182,8 @@ function ClientDetails() {
 
     // edit client modal
     const [Referance, setReferance] = React.useState(false);
-    const handleClickReferance = (e,originatorNo) => {
-        console.log(originatorNo,"originatorNossss")
+    const handleClickReferance = (e, originatorNo) => {
+        console.log(originatorNo, "originatorNossss")
         setReferance(true);
     };
     const EditCLientHandleClose = () => {
@@ -223,7 +223,7 @@ function ClientDetails() {
 
                     <Box className='d-flex flex-wrap'>
                         <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<BorderColorIcon />}
-                            onClick={(e)=>handleClickReferance(e,originatorNo)}>Edit Client</Button>
+                            onClick={(e) => handleClickReferance(e, originatorNo)}>Edit Client</Button>
                         <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<GroupAddIcon />}>Add Client</Button>
                         <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<DeleteIcon />}>Notes</Button>
                         <Button className='btn-blue-2 mb-1' size="small" startIcon={<EmailIcon />}
@@ -297,27 +297,22 @@ function ClientDetails() {
                 aria-describedby="alert-dialog-description"
                 className='custom-modal full-modal'
             >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold text-black'>
+                            Edit Client
+                        </Typography>
+                    </Box>
 
+                    {/*  */}
+                    <Button onClick={EditCLientHandleClose}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="dropdown-box">
-                                <Typography variant="h4" className='font-18 bold text-black'>
-                                    Edit Client
-                                </Typography>
-                            </Box>
-
-                            {/*  */}
-                            <Button onClick={EditCLientHandleClose}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-
-                        <hr />
-
                         <EditReference></EditReference>
                     </DialogContentText>
                 </DialogContent>

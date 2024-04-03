@@ -400,7 +400,7 @@ function Reference() {
   return (
     <Box className="container-fluid p-0">
        <ToastContainer></ToastContainer>
-      <Box sx={{ width: "100%", typography: "body1" }} className="mt-4 pt-1">
+      <Box sx={{ width: "100%", typography: "body1" }} className="">
         <Box sx={{ maxWidth: "100%" }}>
           <Stepper activeStep={activeStep} orientation="vertical">
             {steps.map((step, index) => (

@@ -99,21 +99,21 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem }) => {
         ClsPortal.GetMessageHtml_Json(o, function (sts, data) {
             if (sts) {
                 console.log("GetMessageHtml_Json", data);
-                
+
                 setTemplateDataMarkup(HtmlToText(data))
             }
         })
     }
-function HtmlToText(data){
-    if(data){
-        const textContent = data.replace(/<[^>]*>/g, '');
-        return textContent;
+    function HtmlToText(data) {
+        if (data) {
+            const textContent = data.replace(/<[^>]*>/g, '');
+            return textContent;
+        }
+        else {
+            return "";
+        }
+
     }
-    else {
-        return ""; 
-    }
-   
-}
     const GetCertificate_Json = (mgsId) => {
         let o = {
             accid: agrno,
@@ -157,8 +157,8 @@ function HtmlToText(data){
                                 const date = new Date(ActivityDate);
                                 return { ...el, ["Actioned On"]: date };
                             });
-                           
-                            
+
+
 
                             setDocumentStatus(formattedActivity)
                         }
@@ -272,7 +272,7 @@ function HtmlToText(data){
         console.log("GetMessageHtml_Json11", e);
         //console.log("GetMessageHtml_Json11", e);
         if (e.PortalDocId) {
-         
+
             GetMessageHtml_Json(e.PortalDocId);
             GetCertificate_Json(e.PortalDocId);
             GetCommentsHtml_Json(e);
@@ -761,7 +761,7 @@ function HtmlToText(data){
                         </Box>
                     </Box>
 
-                    <Box className='d-flex'>
+                    <Box className='d-flex align-items-center'>
 
                         {/* <NewReleasesIcon className='text-warning' /> */}
 
@@ -773,14 +773,14 @@ function HtmlToText(data){
                                         <>
                                             <Box className='ps-3'>
                                                 <VerifiedIcon className='text-green' />
-                           <h5 className='font-14 text-black mb-1'>Message approved </h5>
-                  <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"]}</p>
+                                                <h5 className='font-14 text-black mb-1'>Message approved </h5>
+                                                <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"]}</p>
                                                 <Button className='btn-blue-2' size="small" onClick={handleClickOpenCertificate} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
                                             </Box>
                                         </>
                                     ) : (
                                         <>
-                                            <Box className='ps-3'>
+                                            <Box className='ps-2'>
                                                 {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
                                                 <HourglassEmptyIcon className='text-gray' />
                                                 <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
@@ -793,7 +793,7 @@ function HtmlToText(data){
                                 <>
                                     <DoDisturbIcon className='text-gray' />
                                     <Box className='ps-3'>
-                                        <h5 className='font-14 text-black mb-1'>Not sent for approval </h5>
+                                        <h5 className='font-14 text-black mb-0'>Not sent for approval </h5>
                                     </Box>
                                 </>
                             )
@@ -828,10 +828,6 @@ function HtmlToText(data){
             </Box>
         </>)}
 
-
-
-
-
         {/* history modal start */}
         <Dialog
             open={open}
@@ -840,28 +836,26 @@ function HtmlToText(data){
             aria-describedby="alert-dialog-description"
             className='custom-modal'
         >
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="align-items-center d-flex">
+                    <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                        View History
+                    </Typography>
+                </Box>
+
+                {/*  */}
+
+                <Box className='d-flex'>
+                    <Button onClick={handleClose} className='p-0'>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+            </Box>
+
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    <Box className="d-flex align-items-center justify-content-between">
-                        <Box className="align-items-center d-flex">
-                            <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                                View History
-                            </Typography>
-                        </Box>
-
-                        {/*  */}
-
-                        <Box className='d-flex'>
-                            <Button onClick={handleClose} className='p-0'>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-                    </Box>
-
-                    <hr />
-
                     <Box class="ml-auto mr-auto">
                         <Box class="activity-timeline">
                             <ul class="timeline-ul">
@@ -909,27 +903,25 @@ function HtmlToText(data){
             aria-describedby="alert-dialog-description"
             className='custom-modal'
         >
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="align-items-center d-flex">
+                    <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                        Certificate
+                    </Typography>
+                </Box>
+
+                {/*  */}
+
+                <Box className='d-flex'>
+                    <Button onClick={handleCloseCertificate} className='p-0'>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+            </Box>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    <Box className="d-flex align-items-center justify-content-between">
-                        <Box className="align-items-center d-flex">
-                            <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                                Certificate
-                            </Typography>
-                        </Box>
-
-                        {/*  */}
-
-                        <Box className='d-flex'>
-                            <Button onClick={handleCloseCertificate} className='p-0'>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-                    </Box>
-
-                    <hr />
 
                     <Box class="ml-auto mr-auto">
                         <Box class="activity-timeline">
@@ -957,25 +949,22 @@ function HtmlToText(data){
             aria-describedby="alert-dialog-description"
             className='custom-modal full-modal'
         >
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="align-items-center d-flex">
+                    <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                        Attachments
+                    </Typography>
+                </Box>
+                <Box className='d-flex'>
+                    <Button onClick={DocumentHandleClose} className='p-0 min-width-auto'>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+            </Box>
             <DialogContent>
                 <DialogContentText>
-
-                    <Box className="d-flex align-items-center justify-content-between">
-                        <Box className="align-items-center d-flex">
-                            <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                                Attachments
-                            </Typography>
-                        </Box>
-                        <Box className='d-flex'>
-                            <Button onClick={DocumentHandleClose} className='p-0 min-width-auto'>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-                    </Box>
-
-                    <hr />
                     <Box className='row'>
 
                         {filterAttachments.map((item, index) => {
@@ -1082,18 +1071,12 @@ function HtmlToText(data){
                 margin: '0 auto'
             }}
         >
-            {/* <DialogTitle id="alert-dialog-title">
-                        {"Use Google's location service?"}
-                    </DialogTitle> */}
-            <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-
-                    <Box className="d-flex align-items-center justify-content-between">
-                        <Box className="dropdown-box">
-                            <Typography variant="h4" className='font-18 bold mb-2 text-black'>
-                                Attachments
-                            </Typography>
-                            {/* <Box className="btn-Select">
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="dropdown-box">
+                    <Typography variant="h4" className='font-18 bold mb-2 text-black'>
+                        Attachments
+                    </Typography>
+                    {/* <Box className="btn-Select">
                                     <Button className='btn-white'>Action</Button>
                                     <Button className='btn-white'>Ser</Button>
                                     <Button className='btn-white'>Custom</Button>
@@ -1102,15 +1085,23 @@ function HtmlToText(data){
 
                                     <Button className='btn-blue-2' size="small">Apply Now</Button>
                                 </Box> */}
-                        </Box>
+                </Box>
 
-                        {/*  */}
-                        <Button onClick={handleClosePortalAtt} autoFocus sx={{ minWidth: 30 }}>
-                            <span className="material-symbols-outlined text-black">
-                                cancel
-                            </span>
-                        </Button>
-                    </Box>
+                {/*  */}
+                <Button onClick={handleClosePortalAtt} autoFocus sx={{ minWidth: 30 }}>
+                    <span className="material-symbols-outlined text-black">
+                        cancel
+                    </span>
+                </Button>
+            </Box>
+            {/* <DialogTitle id="alert-dialog-title">
+                        {"Use Google's location service?"}
+                    </DialogTitle> */}
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+
+
+
                     <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
                         <Box sx={{ flexGrow: 1 }}>
                             <Grid container spacing={2}>

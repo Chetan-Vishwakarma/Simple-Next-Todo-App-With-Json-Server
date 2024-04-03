@@ -114,27 +114,26 @@ function PortalDetails() {
                 aria-describedby="alert-dialog-description"
                 className='custom-modal'
             >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="align-items-center d-flex">
+                        <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                            View History
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+
+                    <Box className='d-flex'>
+                        <Button onClick={handleClose} className='p-0'>
+                            <span className="material-symbols-outlined text-black">
+                                cancel
+                            </span>
+                        </Button>
+                    </Box>
+                </Box>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="align-items-center d-flex">
-                                <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                                    View History
-                                </Typography>
-                            </Box>
 
-                            {/*  */}
-
-                            <Box className='d-flex'>
-                                <Button onClick={handleClose} className='p-0'>
-                                    <span className="material-symbols-outlined text-black">
-                                        cancel
-                                    </span>
-                                </Button>
-                            </Box>
-                        </Box>
-
-                        <hr />
 
                         <Box class="ml-auto mr-auto">
                             <Box class="activity-timeline">
@@ -187,25 +186,22 @@ function PortalDetails() {
                 aria-describedby="alert-dialog-description"
                 className='custom-modal custom-modal-1200'
             >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="align-items-center d-flex">
+                        <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                            View History
+                        </Typography>
+                    </Box>
+                    <Box className='d-flex'>
+                        <Button onClick={DocumentHandleClose} className='p-0'>
+                            <span className="material-symbols-outlined text-black">
+                                cancel
+                            </span>
+                        </Button>
+                    </Box>
+                </Box>
                 <DialogContent>
                     <DialogContentText>
-
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="align-items-center d-flex">
-                                <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                                    View History
-                                </Typography>
-                            </Box>
-                            <Box className='d-flex'>
-                                <Button onClick={DocumentHandleClose} className='p-0'>
-                                    <span className="material-symbols-outlined text-black">
-                                        cancel
-                                    </span>
-                                </Button>
-                            </Box>
-                        </Box>
-
-                        <hr />
                         <Box className='row'>
 
                             {Array(6).fill("").map(() => {

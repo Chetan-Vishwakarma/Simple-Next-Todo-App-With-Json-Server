@@ -1715,6 +1715,7 @@ span.tox-statusbar__branding {
   display: flex;
   align-items: center;
   justify-content: center;
+  word-break: break-all;
 }
 
 .hover-checkbox {

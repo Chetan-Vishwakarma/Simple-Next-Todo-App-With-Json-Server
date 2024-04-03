@@ -71,10 +71,10 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     const [openPDFView, setOpenPDFView] = React.useState(false);
 
     const [selectedDocument, setSelectedDocument] = React.useState(null);
-    const [docForDetails,setDocForDetails] = useState({});
+    const [docForDetails, setDocForDetails] = useState({});
 
-    const [associatedTask,setAssociatedTask] = useState([]);
-    const [selectedTask,setSelectedTask] = useState({});
+    const [associatedTask, setAssociatedTask] = useState([]);
+    const [selectedTask, setSelectedTask] = useState({});
     const [isApi, setIsApi] = useState(false);
 
     // modal
@@ -148,59 +148,59 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     //     }
     // }
 
-    const Json_CRM_GetOutlookTask=(event,sTask)=>{
+    const Json_CRM_GetOutlookTask = (event, sTask) => {
         event.preventDefault();
         let obj = {
             Email: localStorage.getItem('Email'),
             agrno: localStorage.getItem("agrno"),
-            password: localStorage.getItem("Password") 
+            password: localStorage.getItem("Password")
         };
-        try{
-            Cls.Json_CRM_GetOutlookTask(obj,(sts,data)=>{
+        try {
+            Cls.Json_CRM_GetOutlookTask(obj, (sts, data) => {
                 const res = JSON.parse(data);
-                if(res.Table){
-                    const fltTask = res.Table.filter(itm=>itm.ID===sTask.Taskid);
+                if (res.Table) {
+                    const fltTask = res.Table.filter(itm => itm.ID === sTask.Taskid);
                     const formattedTasks = fltTask.map((task) => {
-                        let timestamp,timestamp2;
+                        let timestamp, timestamp2;
                         if (task.EndDateTime) {
                             timestamp = parseInt(task.EndDateTime.slice(6, -2));
                         }
-                        if(task.CreationDate){
+                        if (task.CreationDate) {
                             timestamp2 = parseInt(task.CreationDate.slice(6, -2));
                         }
-        
+
                         const date = new Date(timestamp);
                         const date2 = new Date(timestamp2);
-        
+
                         return { ...task, EndDateTime: date, CreationDate: date2 };
                     });
                     setSelectedTask(formattedTasks[0]);
                     handleClickDetailOpen(formattedTasks[0]);
                 }
             });
-        }catch(err){
-            console.log("Error while calling Json_CRM_GetOutlookTask",err);
+        } catch (err) {
+            console.log("Error while calling Json_CRM_GetOutlookTask", err);
         }
     }
 
-    const Json_getAssociatedTaskListByDocumentId=(sDoc)=>{
+    const Json_getAssociatedTaskListByDocumentId = (sDoc) => {
         let obj = {
             Email: localStorage.getItem('Email'),
             ItemId: sDoc["Registration No."],
             agrno: localStorage.getItem("agrno"),
             password: localStorage.getItem("Password")
         }
-        try{
-            Cls.Json_getAssociatedTaskListByDocumentId(obj, (sts,data)=>{
+        try {
+            Cls.Json_getAssociatedTaskListByDocumentId(obj, (sts, data) => {
                 const res = JSON.parse(data);
-                if(res.Table.length>0){
+                if (res.Table.length > 0) {
                     setAssociatedTask(res.Table);
-                }else{
+                } else {
                     setAssociatedTask([]);
                 }
             })
-        }catch(err){
-            console.log("Error while calling Json_getAssociatedTaskListByDocumentId",err);
+        } catch (err) {
+            console.log("Error while calling Json_getAssociatedTaskListByDocumentId", err);
         }
     }
 
@@ -232,7 +232,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         return dateA - dateB;
     };
 
-    const startFormattingDate=(timeStamp)=>{
+    const startFormattingDate = (timeStamp) => {
         const dateObject = new Date(timeStamp);
         return `${dateObject.getDate()}/${dateObject.getMonth() + 1}/${dateObject.getFullYear()}`;
     }
@@ -837,18 +837,12 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                     margin: '0 auto'
                 }}
             >
-                {/* <DialogTitle id="alert-dialog-title">
-                        {"Use Google's location service?"}
-                    </DialogTitle> */}
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="dropdown-box">
-                                <Typography variant="h4" className='font-18 bold mb-2 text-black'>
-                                    Document List
-                                </Typography>
-                                {/* <Box className="btn-Select">
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold mb-2 text-black'>
+                            Document List
+                        </Typography>
+                        {/* <Box className="btn-Select">
                                     <Button className='btn-white'>Action</Button>
                                     <Button className='btn-white'>Ser</Button>
                                     <Button className='btn-white'>Custom</Button>
@@ -857,15 +851,22 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
 
                                     <Button className='btn-blue-2' size="small">Apply Now</Button>
                                 </Box> */}
-                            </Box>
+                    </Box>
 
-                            {/*  */}
-                            <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
+                    {/*  */}
+                    <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+                {/* <DialogTitle id="alert-dialog-title">
+                        {"Use Google's location service?"}
+                    </DialogTitle> */}
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+
+
 
 
                         {Array(5).fill("").map(() => {
@@ -964,25 +965,22 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                     margin: '0 auto'
                 }}
             >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                            Document Details
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={(event) => handleCloseDocumentDetailsList(event)} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
                 <DialogContent>
                     <DialogContentText>
-
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="dropdown-box">
-                                <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                                    Document Details
-                                </Typography>
-                            </Box>
-
-                            {/*  */}
-                            <Button onClick={(event) => handleCloseDocumentDetailsList(event)} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-
-                        <hr />
 
                         <Box className='main-accordian main-accordian-single-row'>
                             <Accordion className='accordian-box' expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
@@ -1003,14 +1001,14 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {Object.keys(docForDetails).length>0&& Object.keys(docForDetails).map((itm,i)=>{
+                                                {Object.keys(docForDetails).length > 0 && Object.keys(docForDetails).map((itm, i) => {
                                                     if (itm !== "StickyNotes") {
                                                         return <TableRow
                                                             key={i}
                                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                                         >
                                                             <TableCell align="left" className='bold'>{itm}</TableCell>
-                                                            <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date"].includes(itm)?startFormattingDate(docForDetails[itm]):docForDetails[itm] : ""}</TableCell>
+                                                            <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
                                                         </TableRow>
                                                     }
                                                 })}
@@ -1147,9 +1145,9 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                 <AccordionDetails>
                                     <Box className='mt-3'>
 
-                                        {associatedTask.length>0 && associatedTask.map((itm,i) => {
+                                        {associatedTask.length > 0 && associatedTask.map((itm, i) => {
                                             return <>
-                                                <Link key={i} href="#" onClick={(e)=>Json_CRM_GetOutlookTask(e,itm)} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />{itm.Subject}</Link>
+                                                <Link key={i} href="#" onClick={(e) => Json_CRM_GetOutlookTask(e, itm)} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />{itm.Subject}</Link>
                                             </>
                                         })}
                                     </Box>

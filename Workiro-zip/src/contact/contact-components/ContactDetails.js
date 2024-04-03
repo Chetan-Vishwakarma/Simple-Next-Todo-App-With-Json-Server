@@ -200,7 +200,7 @@ function ContactDetails() {
         }
     }
 
-    const Json_VerifyDrivingLicence=()=>{
+    const Json_VerifyDrivingLicence = () => {
         setIsViewerModalOpen(!isViewerModalOpen);
         let obj = {
             agrno: agrno,
@@ -212,20 +212,20 @@ function ContactDetails() {
             strLastName: "",
             dtDateOfBirth: "",
             strGender: "",
-            strAddress1:"",
+            strAddress1: "",
             strAddress2: "",
             strAddress3: "",
             strAddress4: "",
             strPostTown: "",
             strCounty: "",
-            strPostCode:"",
+            strPostCode: "",
             strCountry: "",
             strLicenseNo: amlDetails.drivingLicNo
         }
         try {
             Cls.Json_VerifyDrivingLicence(obj, (sts, data) => {
                 if (sts) {
-                    console.log("Json_VerifyDrivingLicence",data);
+                    console.log("Json_VerifyDrivingLicence", data);
                 }
             });
         } catch (err) {
@@ -235,8 +235,8 @@ function ContactDetails() {
 
     return (
         <Box className="container-fluid p-0">
-            
-            <CustomBreadCrumbs tabs={[{tabLink:"/dashboard/Connections",tabName:"Connections"},{tabLink:"/dashboard/ContactDetails",tabName:"Contact Details"}]}/>
+
+            <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/Connections", tabName: "Connections" }, { tabLink: "/dashboard/ContactDetails", tabName: "Contact Details" }]} />
 
             <Box className="d-flex align-items-center justify-content-between flex-wrap">
                 <Box className='d-flex flex-wrap align-items-center'>
@@ -324,7 +324,7 @@ function ContactDetails() {
                                 <Box className="col-xl-4 col-lg-4 col-md-12 d-flex">
                                     {
                                         contactDetails.length > 0 ?
-                                            contactDetails.slice(0,1).map((item) => {
+                                            contactDetails.slice(0, 1).map((item) => {
                                                 return <Box className='white-box w-100'>
 
                                                     <Box className='d-flex align-items-center'>
@@ -817,7 +817,7 @@ function ContactDetails() {
 
 
             {/* AML check modal Start */}
-            <AMLCheck isAMLChkOpen={isAMLChkOpen} setisAMLChkOpen={setisAMLChkOpen} contactDetails={contactDetails}/>
+            <AMLCheck isAMLChkOpen={isAMLChkOpen} setisAMLChkOpen={setisAMLChkOpen} contactDetails={contactDetails} />
             {/* <Dialog
                 open={isAMLChkOpen}
                 onClose={() => setisAMLChkOpen(false)}
@@ -1090,23 +1090,21 @@ function ContactDetails() {
                 className="custom-modal"
 
             >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 text-black'>Driving License Verification</Typography>
+                    </Box>
+
+                    <Button onClick={() => setIsViewerModalOpen(false)} autoFocus sx={{ minWidth: 30 }} className='p-0'>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="dropdown-box">
-                                <Typography variant="h4" className='font-18 text-black'>Driving License Verification</Typography>
-                            </Box>
 
-                            <Button onClick={() => setIsViewerModalOpen(false)} autoFocus sx={{ minWidth: 30 }} className='p-0'>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-
-                        <hr />
-
-                        <TestPDF/>
+                        <TestPDF />
 
                     </DialogContentText>
                 </DialogContent>

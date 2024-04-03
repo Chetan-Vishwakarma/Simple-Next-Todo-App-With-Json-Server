@@ -28,10 +28,11 @@ let originatorNo;
 function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     //console.log("location state",localtion.state)
     const localtion = useLocation();
-    try { 
-          originatorNo  = localtion.state; } 
+    try {
+        originatorNo = localtion.state;
+    }
 
-    catch (e) { 
+    catch (e) {
 
     }
 
@@ -234,14 +235,14 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                     if (clientList.length > 0) {
 
                         setClientList(clientList);
-if(originatorNo){
-    let res = clientList.filter((c) => c.ClientID === originatorNo.originatorNo);
-    if (res.length > 0) {
-        setTxtClientData(res[0])
+                        if (originatorNo) {
+                            let res = clientList.filter((c) => c.ClientID === originatorNo.originatorNo);
+                            if (res.length > 0) {
+                                setTxtClientData(res[0])
 
-    }
-}
-                        
+                            }
+                        }
+
 
 
                     }
@@ -402,12 +403,12 @@ if(originatorNo){
 
     const handleCheckboxChangeCreateTask = (event) => {
 
-     
-        
+
+
 
         const isChecked = event.target.checked;
         setCreateTaskChk(isChecked);
-      
+
 
         setTaskType(isChecked ? "CRM" : "Portal");
         if (isChecked) {
@@ -424,7 +425,7 @@ if(originatorNo){
 
         const isChecked = event.target.checked;
         setCreatePublishChk(isChecked);
-       
+
         setTaskType(isChecked ? "Portal" : "CRM");
         if (isChecked) {
             setButtonNameText(createTaskChk === "CRM" ? "Submit & Create Task" : "Submit & Create Portal Task");
@@ -534,12 +535,12 @@ if(originatorNo){
                 if (sts && data) {
                     let js = JSON.parse(data)
                     console.log("Json_RegisterItem", js)
-                    if (js.Status=="true") {
+                    if (js.Status == "true") {
                         toast.success("Created Task !");
                         if (fileData) {
                             fileData.DocId = js.ItemId;
                         }
-                       // setOpenUploadDocument(false);
+                        // setOpenUploadDocument(false);
 
                     }
                     else {
@@ -618,26 +619,23 @@ if(originatorNo){
                 aria-describedby="alert-dialog-description"
                 className='custom-modal'
             >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold text-black'>
+                            Upload Document <span className='bold text-blue'>({fileLangth})</span>
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={handleCloseDocumentUpload} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
                 <DialogContent className='pb-0'>
                     <DialogContentText id="alert-dialog-description">
-
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="dropdown-box">
-                                <Typography variant="h4" className='font-18 bold text-black'>
-                                    Upload Document <span className='bold text-blue'>({fileLangth})</span>
-                                </Typography>
-                            </Box>
-
-                            {/*  */}
-                            <Button onClick={handleCloseDocumentUpload} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-
-                        <hr />
-
                         {/* file upload */}
                         {step === 1 && (<>
                             <Box className="">
@@ -692,7 +690,7 @@ if(originatorNo){
                             <Box className='row'>
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                     <Autocomplete
-                                        
+
                                         id="combo-box-demo"
                                         options={folderList}
                                         value={txtFolderData}
@@ -704,7 +702,7 @@ if(originatorNo){
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                     <Autocomplete
-                                        
+
                                         id="combo-box-demo"
                                         options={clientList}
                                         getOptionLabel={(option) => option.Client}
@@ -725,7 +723,7 @@ if(originatorNo){
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 d-flex align-items-end'>
                                     <Autocomplete
-                                        
+
                                         id="combo-box-demo"
                                         options={sectionList}
 

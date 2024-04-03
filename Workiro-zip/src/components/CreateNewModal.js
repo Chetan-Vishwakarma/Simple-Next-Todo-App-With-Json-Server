@@ -1104,7 +1104,7 @@ function CreateNewModalTask({ ...props }) {
 
     // }
 
-    function Json_CRM_GetOutlookTask_ForTask(){
+    function Json_CRM_GetOutlookTask_ForTask() {
         try {
             cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
                 if (sts) {
@@ -1123,7 +1123,7 @@ function CreateNewModalTask({ ...props }) {
                             return { ...task, EndDateTime: date };
                         });
 
-                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus!=="Completed");
+                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
 
                         let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                             let timestamp;
@@ -2282,73 +2282,72 @@ function CreateNewModalTask({ ...props }) {
                 aria-labelledby="responsive-dialog-title"
                 className="custom-modal custom-modal-1200"
             >
-                <DialogContent>
-                    <DialogContentText>
-                        <Box className="d-flex align-items-center justify-content-between">
 
-                            <Box>
-                                <Button
-                                    id="basic-button"
-                                    aria-controls={TastkType ? 'basic-menu' : undefined}
-                                    aria-haspopup="true"
-                                    aria-expanded={TastkType ? 'true' : undefined}
-                                    onClick={handleClickTastkType}
-                                    className="btn-select min-width-auto"
-                                >
-                                    {txtTaskType}
-                                </Button>
-                                <Menu
-                                    id="basic-menu"
-                                    anchorEl={anchorElTastkType}
-                                    open={TastkType}
-                                    onClose={handleCloseTastkType}
-                                    MenuListProps={{
-                                        'aria-labelledby': 'basic-button',
-                                    }}
-                                    className="custom-dropdown"
-                                >
-                                    <MenuItem onClick={handleCloseTastkType}>
-                                        <ListItemIcon>
-                                            <DvrIcon className="font-20" />
-                                        </ListItemIcon>
-                                        CRM</MenuItem>
+                <Box className="d-flex align-items-center justify-content-between modal-head">
 
-                                    <MenuItem onClick={handleCloseTastkType}>
-                                        <ListItemIcon>
-                                            <LanguageIcon className="font-20" />
-                                        </ListItemIcon>
-                                        Portal
-                                    </MenuItem>
-                                </Menu>
-                            </Box>
+                    <Box>
+                        <Button
+                            id="basic-button"
+                            aria-controls={TastkType ? 'basic-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={TastkType ? 'true' : undefined}
+                            onClick={handleClickTastkType}
+                            className="btn-select min-width-auto"
+                        >
+                            {txtTaskType}
+                        </Button>
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorElTastkType}
+                            open={TastkType}
+                            onClose={handleCloseTastkType}
+                            MenuListProps={{
+                                'aria-labelledby': 'basic-button',
+                            }}
+                            className="custom-dropdown"
+                        >
+                            <MenuItem onClick={handleCloseTastkType}>
+                                <ListItemIcon>
+                                    <DvrIcon className="font-20" />
+                                </ListItemIcon>
+                                CRM</MenuItem>
 
+                            <MenuItem onClick={handleCloseTastkType}>
+                                <ListItemIcon>
+                                    <LanguageIcon className="font-20" />
+                                </ListItemIcon>
+                                Portal
+                            </MenuItem>
+                        </Menu>
+                    </Box>
 
-                            {/* <Box className="dropdown-box">
-                                <Button className="btn-select">
-                                    Select Type
-                                    <span className="material-symbols-outlined ps-2">
-                                        keyboard_arrow_down
-                                    </span>
-                                </Button>
-                                <Box className="btn-Select">
-                                    <Button className='btn-white'>Action</Button>
-                                    <Button className='btn-white'>Ser</Button>
-                                    <Button className='btn-white'>Custom</Button>
-
-                                    <hr />
-
-                                    <Button className='btn-blue-2' size="small">Apply Now</Button>
-                                </Box>
-                            </Box> */}
-
-                            <Button onClick={handleClose} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
+                    {/* <Box className="dropdown-box">
+                    <Button className="btn-select">
+                        Select Type
+                        <span className="material-symbols-outlined ps-2">
+                            keyboard_arrow_down
+                        </span>
+                    </Button>
+                    <Box className="btn-Select">
+                        <Button className='btn-white'>Action</Button>
+                        <Button className='btn-white'>Ser</Button>
+                        <Button className='btn-white'>Custom</Button>
 
                         <hr />
+
+                        <Button className='btn-blue-2' size="small">Apply Now</Button>
+                    </Box>
+                </Box> */}
+
+                    <Button onClick={handleClose} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                <DialogContent>
+                    <DialogContentText>
 
                         <Box className="row full-height-modal">
                             <Box className="col-lg-8 border-end">
@@ -2600,7 +2599,7 @@ function CreateNewModalTask({ ...props }) {
                                                             person_add
                                                         </span>
                                                     </Box>
-                                                    
+
                                                 </Box>
 
                                             </Button>
@@ -3611,29 +3610,27 @@ function CreateNewModalTask({ ...props }) {
                 {/* <DialogTitle id="alert-dialog-title">
                         {"Use Google's location service?"}
                     </DialogTitle> */}
+
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+
+                    <div>
+                        <Button
+                            id="basic-button"
+                        >
+                            Document List
+                        </Button>
+
+                    </div>
+
+                    <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-
-                        <Box className="d-flex align-items-center justify-content-between">
-
-                            <div>
-                                <Button
-                                    id="basic-button"
-                                >
-                                    Document List
-                                </Button>
-
-                            </div>
-
-                            <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-
-                        <hr />
-
                         <DataGrid
                             dataSource={dmsDocumentList}
                             allowColumnReordering={true}
@@ -3695,24 +3692,22 @@ function CreateNewModalTask({ ...props }) {
                 aria-describedby="alert-dialog-description"
                 className="custom-modal full-modal"
             >
-
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <div>
+                        <Button
+                            id="basic-button"
+                        >
+                            Document List
+                        </Button>
+                    </div>
+                    <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <div>
-                                <Button
-                                    id="basic-button"
-                                >
-                                    Document List
-                                </Button>
-                            </div>
-                            <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-                        <hr />
 
                         <Reference />
 
@@ -3728,24 +3723,22 @@ function CreateNewModalTask({ ...props }) {
                 aria-describedby="alert-dialog-description"
                 className="custom-modal full-modal"
             >
-
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <div>
+                        <Button
+                            id="basic-button"
+                        >
+                            Document List
+                        </Button>
+                    </div>
+                    <Button onClick={EditDocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <div>
-                                <Button
-                                    id="basic-button"
-                                >
-                                    Document List
-                                </Button>
-                            </div>
-                            <Button onClick={EditDocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-                        <hr />
 
                         <EditReference />
 
@@ -3753,11 +3746,9 @@ function CreateNewModalTask({ ...props }) {
                 </DialogContent>
             </Dialog>
 
-
-
             {/*  */}
 
-{console.log("dshfsf",open5)}
+            {console.log("dshfsf", open5)}
             <Dialog
                 open={open5}
                 onClose={handleClose5}

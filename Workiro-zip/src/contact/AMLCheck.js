@@ -13,7 +13,7 @@ const Email = localStorage.getItem("Email");
 const Password = localStorage.getItem("Password");
 
 function AMLCheck({ isAMLChkOpen, setisAMLChkOpen, contactDetails }) {
-  const [verificationModal,setVerificationModalOpen] = useState(false);
+  const [verificationModal, setVerificationModalOpen] = useState(false);
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   let Cls = new CommanCLS(baseUrl, agrno, Email, Password);
   const [amlDetails, setAmlDetails] = useState({
@@ -39,34 +39,34 @@ function AMLCheck({ isAMLChkOpen, setisAMLChkOpen, contactDetails }) {
   }
   const Json_UpdateContactVerify = () => {
     let obj = {
-        agrno: agrno,
-        Email: Email,
-        password: Password,
-        Contactemail: contactDetails[0]["E-Mail"],
-        BnkAccNumber: "",
-        BnkSrCode: "",
-        DrvLicNumber: amlDetails.drivingLicNo,
-        NatInsNumber: "",
-        PassportNumber: ""
+      agrno: agrno,
+      Email: Email,
+      password: Password,
+      Contactemail: contactDetails[0]["E-Mail"],
+      BnkAccNumber: "",
+      BnkSrCode: "",
+      DrvLicNumber: amlDetails.drivingLicNo,
+      NatInsNumber: "",
+      PassportNumber: ""
     }
     try {
-        Cls.Json_UpdateContactVerify(obj, (sts, data) => {
-            if (sts) {
-                if (data) {
-                    console.log("Json_UpdateContactVerify", data);
-                    if (data === "Success") {
-                        setVerificationModalOpen(true);
-                        // setAmlDetails({...amlDetails,isContactVerified:true});
-                    }else{
-                      toast.error("Contact verification failed");
-                    }
-                }
+      Cls.Json_UpdateContactVerify(obj, (sts, data) => {
+        if (sts) {
+          if (data) {
+            console.log("Json_UpdateContactVerify", data);
+            if (data === "Success") {
+              setVerificationModalOpen(true);
+              // setAmlDetails({...amlDetails,isContactVerified:true});
+            } else {
+              toast.error("Contact verification failed");
             }
-        });
+          }
+        }
+      });
     } catch (err) {
-        console.log("Error while calling Json_UpdateContactVerify", err);
+      console.log("Error while calling Json_UpdateContactVerify", err);
     }
-}
+  }
   const handleUpdateContactVerify = (target) => {
     if (target === "drivingLicNo") {
       if (isValidate("drivingLicNo")) {
@@ -85,22 +85,19 @@ function AMLCheck({ isAMLChkOpen, setisAMLChkOpen, contactDetails }) {
         aria-describedby="alert-dialog-description"
         className="custom-modal aml-details-modal"
       >
+        <Box className="d-flex align-items-center justify-content-between modal-head">
+          <Box className="dropdown-box">
+            <Typography variant="h4" className='font-18 text-black'>AML Details</Typography>
+          </Box>
+
+          <Button onClick={() => setisAMLChkOpen(false)} autoFocus sx={{ minWidth: 30 }} className='p-0'>
+            <span className="material-symbols-outlined text-black">
+              cancel
+            </span>
+          </Button>
+        </Box>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            <Box className="d-flex align-items-center justify-content-between">
-              <Box className="dropdown-box">
-                <Typography variant="h4" className='font-18 text-black'>AML Details</Typography>
-              </Box>
-
-              <Button onClick={() => setisAMLChkOpen(false)} autoFocus sx={{ minWidth: 30 }} className='p-0'>
-                <span className="material-symbols-outlined text-black">
-                  cancel
-                </span>
-              </Button>
-            </Box>
-
-            <hr />
-
             <Box className='row'>
               <Box className='col-md-6'>
                 <Box class="input-group mb-3">
@@ -162,7 +159,7 @@ function AMLCheck({ isAMLChkOpen, setisAMLChkOpen, contactDetails }) {
 
 
       {/* Checkmodal modal Start */}
-      <AMLVerification verificationModal={verificationModal} setVerificationModalOpen={setVerificationModalOpen} contactDetails={contactDetails} amlDetails={amlDetails} agrno={agrno} Email={Email} Password={Password} Cls={Cls}/>
+      <AMLVerification verificationModal={verificationModal} setVerificationModalOpen={setVerificationModalOpen} contactDetails={contactDetails} amlDetails={amlDetails} agrno={agrno} Email={Email} Password={Password} Cls={Cls} />
       {/* <Dialog
         open={verificationModal}
         onClose={() => setVerificationModalOpen(false)}

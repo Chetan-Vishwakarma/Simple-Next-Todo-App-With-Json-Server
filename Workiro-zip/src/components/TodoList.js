@@ -48,13 +48,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setMyTasks } from '../redux/reducers/counterSlice';
 
 
-const foldersIconList = [<PersonIcon className='me-1 font-20'/>,<TipsAndUpdatesIcon className='me-1 font-20'/>,<PeopleIcon className='me-1 font-20'/>,<ShareIcon className='me-1 font-20'/>,<FolderSharedIcon className='me-1 font-20'/>,<FolderSharedIcon className='me-1 font-20'/>];
-const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20'/>,<PublishedWithChangesIcon color='primary' className='me-1 font-20'/>,<HourglassBottomIcon color='primary' className='me-1 font-20'/>,<CheckCircleOutlineIcon color='success' className='me-1 font-20'/>];
+const foldersIconList = [<PersonIcon className='me-1 font-20' />, <TipsAndUpdatesIcon className='me-1 font-20' />, <PeopleIcon className='me-1 font-20' />, <ShareIcon className='me-1 font-20' />, <FolderSharedIcon className='me-1 font-20' />, <FolderSharedIcon className='me-1 font-20' />];
+const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20' />, <PublishedWithChangesIcon color='primary' className='me-1 font-20' />, <HourglassBottomIcon color='primary' className='me-1 font-20' />, <CheckCircleOutlineIcon color='success' className='me-1 font-20' />];
 
 function TodoList() {
     const location = useLocation();
-    const reduxData = useSelector((data)=>data.counter.myTasks);
-    console.log("fdjkfhfhsf",reduxData);
+    const reduxData = useSelector((data) => data.counter.myTasks);
+    console.log("fdjkfhfhsf", reduxData);
     const dispatch = useDispatch();
     let dddd = location.state !== null ? location.state : { globalSearchTask: [] };
     const { globalSearchTask, strGlobal } = dddd;
@@ -148,7 +148,7 @@ function TodoList() {
                 return { ...task, EndDateTime: date };
             });
 
-            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus!=="Completed");
+            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
 
             let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                 let timestamp;
@@ -194,7 +194,7 @@ function TodoList() {
                             return { ...task, EndDateTime: date };
                         });
 
-                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus!=="Completed");
+                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
 
                         let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                             let timestamp;
@@ -624,27 +624,27 @@ function TodoList() {
 
     const FilterAgs = (item) => {
         const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
-     
+
         const userId = parseInt(localStorage.getItem("UserId"));
-    
+
         const filteredIds = arr.filter((k) => k !== item.OwnerID);
 
         const user = filteredIds.find((u) => u === userId);
 
-    
-        const userToFind = user ? user: filteredIds[0];
 
-        
+        const userToFind = user ? user : filteredIds[0];
 
-        const res =userToFind? userList.find((e) => e.ID === userToFind):null;
-       
-        return res?res.ForwardTo:"";
+
+
+        const res = userToFind ? userList.find((e) => e.ID === userToFind) : null;
+
+        return res ? res.ForwardTo : "";
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         setAllTask([...reduxData]);
         setActualData([...reduxData]);
-    },[reduxData]);
+    }, [reduxData]);
 
     return (
         <>
@@ -669,11 +669,11 @@ function TodoList() {
 
                                     <Input
                                         onClick={(e) => {
-                                            if(e.target.value!==""){
+                                            if (e.target.value !== "") {
                                                 setIsSearch(true);
                                             }
                                         }}
-                                        onBlur={(e)=>setIsSearch(false)}
+                                        onBlur={(e) => setIsSearch(false)}
                                         onChange={(e) => {
                                             if (e.target.value === "") {
                                                 setSuggestionList([]);
@@ -991,7 +991,7 @@ function TodoList() {
                                 })}
                             </>) : (allTask.length > 0 ?
                                 (allTask.slice(0, loadMore).map((item, index) => {
-                                    console.log("userList212121111",FilterAgs(item))
+                                    console.log("userList212121111", FilterAgs(item))
                                     const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
                                     return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                         <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
@@ -1147,132 +1147,133 @@ function TodoList() {
                     margin: '0 auto'
                 }}
             >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="align-items-center d-flex">
+                        <Checkbox
+                            {...label}
+                            icon={<PanoramaFishEyeIcon />}
+                            // onChange={handleChangeStatus}
+                            checkedIcon={<CheckCircleIcon />}
+                            className="ps-0"
+                        />
+                        <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                            Portal Task
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+
+                    <Box className='d-flex'>
+
+
+                        <Box className='pe-2'>
+                            <Button
+                                id="basic-button"
+                                aria-controls={open4 ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open4 ? 'true' : undefined}
+                                onClick={handleClick4}
+                                className="min-width-auto px-0 text-danger"
+                            >
+
+                                <ListItemIcon className="min-width-auto  me-2 text-secondary">
+                                    <PublishedWithChangesIcon fontSize="medium" />
+                                </ListItemIcon>
+                                <span className="text-secondary">Profile</span>
+
+                            </Button>
+                            <Menu
+                                id="basic-menu"
+                                anchorEl={anchorEl4}
+                                open={open4}
+                                onClose={handleClose4}
+                                MenuListProps={{
+                                    'aria-labelledby': 'basic-button',
+                                }}
+                            >
+                                <MenuItem onClick={handleClose4} className="text-secondary">
+                                    <ListItemIcon>
+                                        <DoNotDisturbAltIcon fontSize="medium" className="text-secondary" />
+                                    </ListItemIcon>
+                                    Not Started
+                                </MenuItem>
+                                <MenuItem onClick={handleClose4} className="text-primary">
+                                    <ListItemIcon>
+                                        <PublishedWithChangesIcon fontSize="medium" className="text-primary" />
+                                    </ListItemIcon>
+                                    In Progress
+                                </MenuItem>
+
+                                <MenuItem onClick={handleClose4} className="text-primary">
+                                    <ListItemIcon>
+                                        <HourglassBottomIcon fontSize="medium" className="text-primary" />
+                                    </ListItemIcon>
+                                    On Hold
+                                </MenuItem>
+
+                                <MenuItem onClick={handleClose4} className="text-success"><ListItemIcon>
+                                    <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
+                                </ListItemIcon>
+                                    Completed
+                                </MenuItem>
+                            </Menu>
+                        </Box>
+
+                        <Box className='clearfix'>
+                            <Button
+                                id="basic-button"
+                                aria-controls={open3 ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open3 ? 'true' : undefined}
+                                onClick={handleClick3}
+                                className="min-width-auto px-0 text-gray"
+                            >
+                                <MoreVertIcon />
+                            </Button>
+                            <Menu
+                                id="basic-menu"
+                                anchorEl={anchorEl3}
+                                open={open3}
+                                onClose={handleClose3}
+                                className='custom-dropdown'
+                                MenuListProps={{
+                                    'aria-labelledby': 'basic-button',
+                                }}
+                            >
+                                <MenuItem onClick={handleClose3} className='ps-2'>
+                                    <ListItemIcon>
+                                        <ContentCopyIcon fontSize="medium" />
+                                    </ListItemIcon> Copy Link</MenuItem>
+
+                                <MenuItem onClick={handleClose3} className='ps-2'>
+                                    <ListItemIcon>
+                                        <MergeIcon fontSize="medium" />
+                                    </ListItemIcon> Merge</MenuItem>
+
+                                <MenuItem onClick={handleClose3} className='ps-2'>
+                                    <ListItemIcon>
+                                        <AttachEmailIcon fontSize="medium" />
+                                    </ListItemIcon> Retract Message (s)</MenuItem>
+
+                                <MenuItem onClick={handleClose3} className='ps-2'>
+                                    <ListItemIcon>
+                                        <DeleteIcon fontSize="medium" />
+                                    </ListItemIcon> Delete Message (s)</MenuItem>
+                            </Menu>
+                        </Box>
+
+                        <Button onClick={handleClosePortal} className='p-0'>
+                            <span className="material-symbols-outlined text-black">
+                                cancel
+                            </span>
+                        </Button>
+                    </Box>
+                </Box>
 
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="align-items-center d-flex">
-                                <Checkbox
-                                    {...label}
-                                    icon={<PanoramaFishEyeIcon />}
-                                    // onChange={handleChangeStatus}
-                                    checkedIcon={<CheckCircleIcon />}
-                                    className="ps-0"
-                                />
-                                <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                                    Portal Task
-                                </Typography>
-                            </Box>
-
-                            {/*  */}
-
-                            <Box className='d-flex'>
 
 
-                                <Box className='pe-2'>
-                                    <Button
-                                        id="basic-button"
-                                        aria-controls={open4 ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={open4 ? 'true' : undefined}
-                                        onClick={handleClick4}
-                                        className="min-width-auto px-0 text-danger"
-                                    >
-
-                                        <ListItemIcon className="min-width-auto  me-2 text-secondary">
-                                            <PublishedWithChangesIcon fontSize="medium" />
-                                        </ListItemIcon>
-                                        <span className="text-secondary">Profile</span>
-
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={anchorEl4}
-                                        open={open4}
-                                        onClose={handleClose4}
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                    >
-                                        <MenuItem onClick={handleClose4} className="text-secondary">
-                                            <ListItemIcon>
-                                                <DoNotDisturbAltIcon fontSize="medium" className="text-secondary" />
-                                            </ListItemIcon>
-                                            Not Started
-                                        </MenuItem>
-                                        <MenuItem onClick={handleClose4} className="text-primary">
-                                            <ListItemIcon>
-                                                <PublishedWithChangesIcon fontSize="medium" className="text-primary" />
-                                            </ListItemIcon>
-                                            In Progress
-                                        </MenuItem>
-
-                                        <MenuItem onClick={handleClose4} className="text-primary">
-                                            <ListItemIcon>
-                                                <HourglassBottomIcon fontSize="medium" className="text-primary" />
-                                            </ListItemIcon>
-                                            On Hold
-                                        </MenuItem>
-
-                                        <MenuItem onClick={handleClose4} className="text-success"><ListItemIcon>
-                                            <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
-                                        </ListItemIcon>
-                                            Completed
-                                        </MenuItem>
-                                    </Menu>
-                                </Box>
-
-                                <Box className='clearfix'>
-                                    <Button
-                                        id="basic-button"
-                                        aria-controls={open3 ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={open3 ? 'true' : undefined}
-                                        onClick={handleClick3}
-                                        className="min-width-auto px-0 text-gray"
-                                    >
-                                        <MoreVertIcon />
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={anchorEl3}
-                                        open={open3}
-                                        onClose={handleClose3}
-                                        className='custom-dropdown'
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                    >
-                                        <MenuItem onClick={handleClose3} className='ps-2'>
-                                            <ListItemIcon>
-                                                <ContentCopyIcon fontSize="medium" />
-                                            </ListItemIcon> Copy Link</MenuItem>
-
-                                        <MenuItem onClick={handleClose3} className='ps-2'>
-                                            <ListItemIcon>
-                                                <MergeIcon fontSize="medium" />
-                                            </ListItemIcon> Merge</MenuItem>
-
-                                        <MenuItem onClick={handleClose3} className='ps-2'>
-                                            <ListItemIcon>
-                                                <AttachEmailIcon fontSize="medium" />
-                                            </ListItemIcon> Retract Message (s)</MenuItem>
-
-                                        <MenuItem onClick={handleClose3} className='ps-2'>
-                                            <ListItemIcon>
-                                                <DeleteIcon fontSize="medium" />
-                                            </ListItemIcon> Delete Message (s)</MenuItem>
-                                    </Menu>
-                                </Box>
-
-                                <Button onClick={handleClosePortal} className='p-0'>
-                                    <span className="material-symbols-outlined text-black">
-                                        cancel
-                                    </span>
-                                </Button>
-                            </Box>
-                        </Box>
-                        <hr />
                         <PortalDetails></PortalDetails>
 
                     </DialogContentText>
