@@ -2193,10 +2193,10 @@ function CreateNewModalTask({ ...props }) {
                         </ListItemIcon> Reference
                     </MenuItem>
 
-                    <MenuItem>
+                    <MenuItem onClick={handleClickOpen5}>
                         <ListItemIcon>
-                            <GroupIcon className="font-20" onClick={handleClickOpen5} />
-                        </ListItemIcon> Add Contacts ssssssss
+                            <GroupIcon className="font-20" />
+                        </ListItemIcon> Add Contacts
                     </MenuItem>
 
                     <MenuItem onClick={handleClose4}>
@@ -3697,6 +3697,7 @@ function CreateNewModalTask({ ...props }) {
 
             {/*  */}
 
+{console.log("dshfsf",open5)}
             <Dialog
                 open={open5}
                 onClose={handleClose5}
