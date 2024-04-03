@@ -39,7 +39,8 @@ function CardView(props) {
       });
   };
 
-  const handleCopyDetailsToClipboard = (details) => {
+  const handleCopyDetailsToClipboard = (e, details) => {
+    e.stopPropagation();
     navigator.clipboard.writeText(details)
       .then(() => {
         console.log('Copied details to clipboard:', details);
@@ -91,17 +92,35 @@ function CardView(props) {
                         </IconButton>
                       </Tooltip>
                       <ul className='p-0 mb-0'>
-                        <li>
-                          <LocalPhoneIcon />
-                          {(item["Contact Number"] && item["Contact Number"] !== "") ? item["Contact Number"] : "ContactNo Not Available"}
+                      <li className='justify-content-between'>
+                          <Box className='d-flex'>
+                            <LocalPhoneIcon />
+                            {(item["Contact Number"] && item["Contact Number"] !== "") ? item["Contact Number"] : "ContactNo Not Available"}
+                          </Box>
+
+                          <IconButton onClick={(e) => handleCopyDetailsToClipboard(e,item["Contact Number"])}>
+                            {(item["Contact Number"] && item["Contact Number"] !== "") ? <ContentCopyIcon className='font-18' /> : ""}
+                          </IconButton>
                         </li>
-                        <li>
-                          <EmailIcon className='font-16' />
-                          {(item["E-Mail"] && item["E-Mail"] !== "") ? item["E-Mail"] : "Email Not Available"}
+
+                        <li className='justify-content-between'>
+                          <Box className='d-flex'>
+                            <EmailIcon className='font-16' />
+                            {(item["E-Mail"] && item["E-Mail"] !== "") ? item["E-Mail"] : "Email Not Available"}
+                          </Box>
+                          <IconButton onClick={(e) => handleCopyDetailsToClipboard(e,item["E-Mail"])}>
+                          {(item["E-Mail"] && item["E-Mail"] !== "") ? <ContentCopyIcon className='font-18' /> : ""} 
+                          </IconButton>
                         </li>
-                        <li>
-                          <LocationOnIcon />
-                          {(item["Address Line 1"] && item["Address Line 1"] !== "") ? item["Address Line 1"] : "Address Not Available"}
+
+                        <li className='justify-content-between'>
+                          <Box className='d-flex'>
+                            <LocationOnIcon />
+                            {(item["Address Line 1"] && item["Address Line 1"] !== "") ? item["Address Line 1"] : "Address Not Available"}
+                          </Box>
+                          <IconButton onClick={(e) => handleCopyDetailsToClipboard(e,item["Address Line 1"])}>
+                          {(item["Address Line 1"] && item["Address Line 1"] !== "") ? <ContentCopyIcon className='font-18' /> : ""}
+                          </IconButton>
                         </li>
                       </ul>
                     </Box>
@@ -163,8 +182,8 @@ function CardView(props) {
                             {(item["Contact Number"] && item["Contact Number"] !== "") ? item["Contact Number"] : "ContactNo Not Available"}
                           </Box>
 
-                          <IconButton onClick={() => handleCopyDetailsToClipboard(item["Contact Number"])}>
-                            <ContentCopyIcon className='font-18' />
+                          <IconButton onClick={(e) => handleCopyDetailsToClipboard(e,item["Contact Number"])}>
+                            {(item["Contact Number"] && item["Contact Number"] !== "") ? <ContentCopyIcon className='font-18' /> : ""}
                           </IconButton>
                         </li>
 
@@ -173,8 +192,8 @@ function CardView(props) {
                             <EmailIcon className='font-16' />
                             {(item["E-Mail"] && item["E-Mail"] !== "") ? item["E-Mail"] : "Email Not Available"}
                           </Box>
-                          <IconButton onClick={() => handleCopyDetailsToClipboard(item["E-Mail"])}>
-                            <ContentCopyIcon className='font-18' />
+                          <IconButton onClick={(e) => handleCopyDetailsToClipboard(e,item["E-Mail"])}>
+                          {(item["E-Mail"] && item["E-Mail"] !== "") ? <ContentCopyIcon className='font-18' /> : ""} 
                           </IconButton>
                         </li>
 
@@ -183,8 +202,8 @@ function CardView(props) {
                             <LocationOnIcon />
                             {(item["Address Line 1"] && item["Address Line 1"] !== "") ? item["Address Line 1"] : "Address Not Available"}
                           </Box>
-                          <IconButton onClick={() => handleCopyDetailsToClipboard(item["Address Line 1"])}>
-                            <ContentCopyIcon className='font-18' />
+                          <IconButton onClick={(e) => handleCopyDetailsToClipboard(e,item["Address Line 1"])}>
+                          {(item["Address Line 1"] && item["Address Line 1"] !== "") ? <ContentCopyIcon className='font-18' /> : ""}
                           </IconButton>
                         </li>
                       </ul>
@@ -223,23 +242,33 @@ function CardView(props) {
                   </Tooltip>
 
                   <Box className='inner-info-details'>
-                    <Tooltip title="Copy Details" className='my-1 copy-icon'>
-                      <IconButton>
-                        <ContentCopyIcon className='font-18' />
-                      </IconButton>
-                    </Tooltip>
                     <ul className='p-0 mb-0'>
-                      <li>
-                        <LocalPhoneIcon />
-                        {(item["Mobile"] && item["Mobile"] !== "") ? item["Mobile"] : "Mobile No. Not Available"}
+                      <li className='justify-content-between'>
+                        <Box className='d-flex'>
+                          <LocalPhoneIcon />
+                          {(item["Mobile"] && item["Mobile"] !== "") ? item["Mobile"] : "Mobile No. Not Available"}
+                        </Box>
+                        <IconButton onClick={(e) => handleCopyDetailsToClipboard(e,item["Mobile"])}>
+                        {(item["Mobile"] && item["Mobile"] !== "") ? <ContentCopyIcon className='font-18' /> : ""}
+                        </IconButton>
                       </li>
-                      <li>
-                        <EmailIcon className='font-16' />
-                        {(item["E-Mail"] && item["E-Mail"] !== "") ? item["E-Mail"] : "Email Not Available"}
+                      <li className='justify-content-between'>
+                        <Box className='d-flex'>
+                          <EmailIcon className='font-16' />
+                          {(item["E-Mail"] && item["E-Mail"] !== "") ? item["E-Mail"] : "Email Not Available"}
+                        </Box>
+                        <IconButton onClick={(e) => handleCopyDetailsToClipboard(e,item["E-Mail"])}>
+                        {(item["E-Mail"] && item["E-Mail"] !== "") ? <ContentCopyIcon className='font-18' /> : ""}
+                        </IconButton>
                       </li>
-                      <li>
-                        <LocationOnIcon />
-                        {(item["Address 1"] && item["Address 1"] !== "") ? item["Address 1"] : "Address Not Available"}
+                      <li className='justify-content-between'>
+                        <Box className='d-flex'>
+                          <LocationOnIcon />
+                          {(item["Address 1"] && item["Address 1"] !== "") ? item["Address 1"] : "Address Not Available"}
+                        </Box>
+                        <IconButton onClick={(e) => handleCopyDetailsToClipboard(e,item["Address 1"])}>
+                        {(item["Address 1"] && item["Address 1"] !== "") ? <ContentCopyIcon className='font-18' /> : ""}
+                        </IconButton>
                       </li>
                     </ul>
                   </Box>
@@ -283,23 +312,33 @@ function CardView(props) {
                   </Tooltip>
 
                   <Box className='inner-info-details'>
-                    <Tooltip title="Copy Details" className='my-1 copy-icon'>
-                      <IconButton>
-                        <ContentCopyIcon className='font-18' />
-                      </IconButton>
-                    </Tooltip>
                     <ul className='p-0 mb-0'>
-                      <li>
-                        <LocalPhoneIcon />
-                        {(item["Mobile"] && item["Mobile"] !== "") ? item["Mobile"] : "Mobile No. Not Available"}
+                    <li className='justify-content-between'>
+                        <Box className='d-flex'>
+                          <LocalPhoneIcon />
+                          {(item["Mobile"] && item["Mobile"] !== "") ? item["Mobile"] : "Mobile No. Not Available"}
+                        </Box>
+                        <IconButton onClick={(e) => handleCopyDetailsToClipboard(e,item["Mobile"])}>
+                        {(item["Mobile"] && item["Mobile"] !== "") ? <ContentCopyIcon className='font-18' /> : ""}
+                        </IconButton>
                       </li>
-                      <li>
-                        <EmailIcon className='font-16' />
-                        {(item["E-Mail"] && item["E-Mail"] !== "") ? item["E-Mail"] : "Email Not Available"}
+                      <li className='justify-content-between'>
+                        <Box className='d-flex'>
+                          <EmailIcon className='font-16' />
+                          {(item["E-Mail"] && item["E-Mail"] !== "") ? item["E-Mail"] : "Email Not Available"}
+                        </Box>
+                        <IconButton onClick={(e) => handleCopyDetailsToClipboard(e,item["E-Mail"])}>
+                        {(item["E-Mail"] && item["E-Mail"] !== "") ? <ContentCopyIcon className='font-18' /> : ""}
+                        </IconButton>
                       </li>
-                      <li>
-                        <LocationOnIcon />
-                        {(item["Address 1"] && item["Address 1"] !== "") ? item["Address 1"] : "Address Not Available"}
+                      <li className='justify-content-between'>
+                        <Box className='d-flex'>
+                          <LocationOnIcon />
+                          {(item["Address 1"] && item["Address 1"] !== "") ? item["Address 1"] : "Address Not Available"}
+                        </Box>
+                        <IconButton onClick={(e) => handleCopyDetailsToClipboard(e,item["Address 1"])}>
+                        {(item["Address 1"] && item["Address 1"] !== "") ? <ContentCopyIcon className='font-18' /> : ""}
+                        </IconButton>
                       </li>
                     </ul>
                   </Box>

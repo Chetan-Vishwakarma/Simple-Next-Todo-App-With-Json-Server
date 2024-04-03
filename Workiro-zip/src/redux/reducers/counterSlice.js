@@ -7,7 +7,7 @@ const counterSlices = createSlice({
         userDetail: null,
         dataCompanyHouse: null,
         selectedFolderID: null,
-        myTasks:[],   
+        myTasks:[]   
     },
     reducers: {
         //sonam state
