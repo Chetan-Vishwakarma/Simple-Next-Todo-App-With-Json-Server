@@ -77,6 +77,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { data } from "jquery";
 import EditReference from "../client/client-components/EditReference";
 import UploadDocument from "../client/client-components/UploadDocument";
+import AddContacts from "./AddContacts";
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -2165,15 +2166,16 @@ function CreateNewModalTask({ ...props }) {
                     }}
                     className="custom-dropdown"
                 >
-                    <MenuItem onClick={handleClickOpen}>CRM Task</MenuItem>
+                    {/* <MenuItem onClick={handleClickOpen}>CRM Task</MenuItem>
                     <MenuItem onClick={handleClickOpen}>Portal Task</MenuItem>
                     <MenuItem onClick={handleClickReferance}>Reference</MenuItem>
                     <MenuItem onClick={handleClose4}>Note</MenuItem>
-                    <MenuItem onClick={handleClose4}>Document</MenuItem>
+                    <MenuItem onClick={handleClose4}>Document</MenuItem> */}
                     {/* <MenuItem 
                     onClick={handleClickEditReferance}
                     >Edit Reference</MenuItem> */}
-                    <MenuItem onClick={() => handleClickOpen("CRM")}>
+                    <MenuItem onClick={() => handleClickOpen("CRM")
+                    }>
                         {/* <ListItemIcon>
                             <EjectIcon fontSize="medium" className="text-red rotate-180" />
                         </ListItemIcon> */}
@@ -2187,16 +2189,22 @@ function CreateNewModalTask({ ...props }) {
                     </ListItemIcon>
                         Portal Task</MenuItem>
 
-                    <MenuItem onClick={handleClickReferance}>
+                    <MenuItem onClick={() => {
+                        handleClickReferance()
+                        handleClose4()
+                    }}>
                         <ListItemIcon>
                             <GroupIcon className="font-20" />
                         </ListItemIcon> Reference
                     </MenuItem>
 
-                    <MenuItem>
+                    <MenuItem onClick={() => {
+                        handleClickOpen5()
+                        handleClose4()
+                    }}>
                         <ListItemIcon>
-                            <GroupIcon className="font-20" onClick={handleClickOpen5} />
-                        </ListItemIcon> Add Contacts ssssssss
+                            <GroupIcon className="font-20" />
+                        </ListItemIcon> Add Contacts
                     </MenuItem>
 
                     <MenuItem onClick={handleClose4}>
@@ -2206,8 +2214,10 @@ function CreateNewModalTask({ ...props }) {
                         Note
                     </MenuItem>
 
-
-                    <MenuItem onClick={handleUploadDocument}>
+                    <MenuItem onClick={() => {
+                        handleUploadDocument()
+                        handleClose4()
+                    }}>
                         <ListItemIcon>
                             <DescriptionIcon className="font-20" />
                         </ListItemIcon>
@@ -3702,14 +3712,35 @@ function CreateNewModalTask({ ...props }) {
                 onClose={handleClose5}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
+                className="custom-modal full-modal"
             >
                 {/* <DialogTitle id="alert-dialog-title">
                     {"Use Google's location service?"}
                 </DialogTitle> */}
-                <DialogContent>
+
+
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                            Edit Client
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={handleClose5}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                {/* <hr /> */}
+
+                <DialogContent className="pt-0">
                     <DialogContentText id="alert-dialog-description">
-                        Let Google help apps determine location. This means sending anonymous
-                        location data to Google, even when no apps are running.
+
+                        <AddContacts />
+
                     </DialogContentText>
                 </DialogContent>
                 {/* <DialogActions>
@@ -3719,27 +3750,6 @@ function CreateNewModalTask({ ...props }) {
                     </Button>
                 </DialogActions> */}
             </Dialog>
-
-
-            {/* <Dialog
-                open={Referance}
-                onClose={AddContactHandleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        Let Google help apps determine location. This means sending anonymous
-                        location data to Google, even when no apps are running.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={AddContactHandleClose}>Disagree</Button>
-                    <Button onClick={AddContactHandleClose} autoFocus>
-                        Agree
-                    </Button>
-                </DialogActions>
-            </Dialog> */}
 
         </React.Fragment >
     );

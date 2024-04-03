@@ -1928,18 +1928,22 @@ span.tox-statusbar__branding {
   background: #f1f1f1;
   padding: 10px;
 }
+
 .client-details-filter-btn button {
   /* width: 100%; */
   background: #fff;
   margin: 0 2px;
 }
+
 .client-details-filter-btn button.active {
   background-color: #4780FF !important;
   color: #fff;
 }
+
 .client-details-filter {
   width: 360px;
 }
+
 .client-details-filter .select-border .custom-dropdown .MuiSelect-select {
   border: 0;
   /* font-weight: 400; */
@@ -1948,6 +1952,7 @@ span.tox-statusbar__branding {
   padding-top: 0px !important;
 
 }
+
 .client-details-filter .custom-datepicker-bordered {
   border-bottom: 0px solid;
 }
@@ -2995,4 +3000,9 @@ span.tox-statusbar__branding {
   border: 1px solid #ededed;
   padding: 15px;
   border-radius: 3px;
+}
+
+.modal-head {
+  padding: 15px 0px 15px 25px;
+  border-bottom: 2px solid #f1f1f1;
 }
