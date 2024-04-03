@@ -71,6 +71,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     const [openPDFView, setOpenPDFView] = React.useState(false);
 
     const [selectedDocument, setSelectedDocument] = React.useState(null);
+    const [docForDetails,setDocForDetails] = useState({});
 
     const [associatedTask,setAssociatedTask] = useState([]);
     const [selectedTask,setSelectedTask] = useState({});
@@ -207,7 +208,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
     const handleClickOpenDocumentDetailsList = (event, sDoc) => {
         Json_getAssociatedTaskListByDocumentId(sDoc);
-        setSelectedDocument(sDoc);  //WARNING: If it create any issue so create a new state whose name will be [docForDetails,setDocForDetails]
+        setDocForDetails(sDoc);
         event.stopPropagation();
         setOpenDocumentDetailsList(true);
     };
@@ -230,6 +231,11 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         const dateB = new Date(b);
         return dateA - dateB;
     };
+
+    const startFormattingDate=(timeStamp)=>{
+        const dateObject = new Date(timeStamp);
+        return `${dateObject.getDate()}/${dateObject.getMonth() + 1}/${dateObject.getFullYear()}`;
+    }
 
     return (
         <>
@@ -997,8 +1003,18 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                
-                                                {rows.map((row) => (
+                                                {Object.keys(docForDetails).length>0&& Object.keys(docForDetails).map((itm,i)=>{
+                                                    if (itm !== "StickyNotes") {
+                                                        return <TableRow
+                                                            key={i}
+                                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                        >
+                                                            <TableCell align="left" className='bold'>{itm}</TableCell>
+                                                            <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date"].includes(itm)?startFormattingDate(docForDetails[itm]):docForDetails[itm] : ""}</TableCell>
+                                                        </TableRow>
+                                                    }
+                                                })}
+                                                {/* {rows.map((row) => (
                                                     <TableRow
                                                         key={row.name}
                                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -1006,7 +1022,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                                         <TableCell align="left" className='bold'>{row.document}</TableCell>
                                                         <TableCell align="left">{row.details}</TableCell>
                                                     </TableRow>
-                                                ))}
+                                                ))} */}
                                             </TableBody>
                                         </Table>
                                     </TableContainer>

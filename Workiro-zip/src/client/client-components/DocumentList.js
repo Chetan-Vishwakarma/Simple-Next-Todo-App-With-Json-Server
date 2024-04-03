@@ -1122,7 +1122,7 @@ export default function DocumentList({ clientId }) {
                                     {/* <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
                                         <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} /> */}
                                     {Object.keys(filterCriteria).length > 0 && Object.keys(filterCriteria).map((key) => {
-                                        if (!["Item Date", "Folder", "Section", "Client", "Description"].includes(key)) {
+                                        if (!["Item Date", "Folder", "Section", "Client"].includes(key)) {
                                             return <Chip label={`${key}: ${filterCriteria[key][0]}`} variant="outlined" onDelete={() => {
                                                 handleFilterDeletion(key);
                                             }} />
