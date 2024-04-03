@@ -452,7 +452,7 @@ function CreateNewModalTask({ ...props }) {
                         setUserListData(removeuser);
                         setUserFilter(removeuser);
 
-                        let commanuser = result.filter((e) => e.ID === localStorage.getItem("UserId"));
+                        let commanuser = result.filter((e) => e.ID ===parseInt(localStorage.getItem("UserId")));
                         console.log("Json_GetForwardUserList11", removeuser);
                         setSelectedUSer(commanuser[0]);
 
@@ -718,6 +718,7 @@ function CreateNewModalTask({ ...props }) {
         if (txtClientData) {
             settxtClient(txtClientData.Client);
             setTextClientId(txtClientData.ClientID);
+            Json_GetClientCardDetails(txtClientData.ClientID)
         }
 
         if (txtSectionData) {
@@ -1616,7 +1617,7 @@ function CreateNewModalTask({ ...props }) {
 
         // You can perform further actions with the selectedRows array
         console.log("Seleted Template", txtTemplateId); // Log the selected rows data
-        if (selectedEmail.length > 0) {
+        if (selectedItems.selectedRowsData.length > 0) {
             Json_GetStandardLetterData(selectedItems.selectedRowsData)
         }
         else {
@@ -1705,7 +1706,9 @@ function CreateNewModalTask({ ...props }) {
 
     function Json_GetStandardLetterData(data) {
         try {
-            let obj = {};
+            if(selectedEmail){
+
+                let obj = {};
             obj.agrno = agrno;
             obj.UserEmail = Email;
             obj.password = password;
@@ -1713,12 +1716,11 @@ function CreateNewModalTask({ ...props }) {
             obj.strClientId = textClientId;
             obj.strSectionId = data[0].ItemTypeId;
             obj.strTemplateId = data[0].TemplateID;
-            obj.ContactEmail = selectedEmail[0]["E-Mail"];
-            var urlLetter = "https://docusms.uk/dsdesktopwebservice.asmx/";
-            let cls = new CommanCLS(urlLetter, agrno, Email, password);
-            cls.Json_GetStandardLetterData(obj, function (sts, data) {
+            obj.ContactEmail =selectedEmail?selectedEmail[0]["E-Mail"]:toast.error("Please Select Email In To!");
+           
+            clsSms.Json_GetStandardLetterData(obj, function (sts, data) {
                 if (sts && data) {
-                    //console.log("Json_GetStandardLetterData", data)
+                    console.log("Json_GetStandardLetterData", data)
                     if (data.includes("File Not Found")) {
                         console.log("Json_GetStandardLetterData", data)
                     }
@@ -1728,6 +1730,16 @@ function CreateNewModalTask({ ...props }) {
 
                 }
             })
+
+               
+              
+            }
+            else{
+                
+                toast.error("Please Select a Email in To")
+               
+            }
+            
         } catch (error) {
             console.log("Error for Tempalte", error)
         }
@@ -1821,7 +1833,7 @@ function CreateNewModalTask({ ...props }) {
                         if (js.Status === "success") {
                             setMessageId(js.Message);
                             CreatePortalMessage(js.Message)
-                            //toast.success("Created Task");
+                            toast.success("Created Task");
                             setOpen(false);
                             // setIsApi(!isApi);
                         }
@@ -2516,6 +2528,7 @@ function CreateNewModalTask({ ...props }) {
                                                                 <Column
                                                                     dataField="Description"
                                                                     caption="Description"
+                                                                    width={400}
                                                                 />
 
                                                                 <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
@@ -2523,12 +2536,10 @@ function CreateNewModalTask({ ...props }) {
                                                             </DataGrid>
                                                         </Menu>
                                                     </Box>
-                                                    <Box className='text-editor-box-name'>
-                                                        {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
-                                                    </Box>
+                                                   
                                                 </>
                                             )}
-
+ {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
                                         </Box>
 
                                         {!isVisibleByTypeCRM && (<>
@@ -2938,7 +2949,7 @@ function CreateNewModalTask({ ...props }) {
                                     </Button>
                                 )}
 
-                                <ToastContainer></ToastContainer>
+                               
                             </Box>
                             {/* col end */}
 
@@ -3554,7 +3565,7 @@ function CreateNewModalTask({ ...props }) {
 
 
 
-
+                           
 
                         </Box>
                     </DialogContentText>
@@ -3715,6 +3726,8 @@ function CreateNewModalTask({ ...props }) {
                 </DialogContent>
             </Dialog>
 
+          
+            
 
             <Dialog
                 open={ReferanceEdit}
@@ -3748,7 +3761,6 @@ function CreateNewModalTask({ ...props }) {
 
             {/*  */}
 
-            {console.log("dshfsf", open5)}
             <Dialog
                 open={open5}
                 onClose={handleClose5}
@@ -3793,7 +3805,12 @@ function CreateNewModalTask({ ...props }) {
                 </DialogActions> */}
             </Dialog>
 
+
+            <ToastContainer></ToastContainer>
+            
         </React.Fragment >
+
+
     );
 }
 

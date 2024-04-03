@@ -19,18 +19,19 @@ const HtmlEditorDX =({templateDataMarkup,setTemplateDataMarkup,setEditorContentV
     const handleContentChange = (e) => {
         setEditorContent(e.value);
     };
-
+    // const editorRef = useRef(null);
+    // const editor = editorRef.current?.editor;
+    // if (editor) {
+    //   const contentHeight = editor.getContentHeight();
+    //   editor.theme.resizeTo(null, contentHeight);
+    // }
     useEffect(()=>{
         setTemplateDataMarkup(templateDataMarkup)
+       
     },[templateDataMarkup])
 
-    const editorRef = useRef(null);
-    const log = () => {
-    if (editorRef.current) {
-        console.log(editorRef.current.getContent());
-    }
-  };
-
+   
+  
 
 
   // Function to handle editor content changes
@@ -44,7 +45,7 @@ return(<>
         apiKey='foebdh6s9f6mgpr7an0cfkxfggpd92q0e3jqurzedcarlcsn'
         initialValue={templateDataMarkup}
         init={{
-            height: 400,
+            height: "300px",
             menubar: false,
             plugins: [
                 'a11ychecker','advlist','advcode','advtable','autolink','checklist','export',
@@ -58,6 +59,9 @@ return(<>
             resize: true // Enable resizing
         }}
         onEditorChange={handleEditorChange}
+        // onInit={(evt, editor) => {
+        //     editorRef.current = editor;
+        //   }}
     />
   
     
