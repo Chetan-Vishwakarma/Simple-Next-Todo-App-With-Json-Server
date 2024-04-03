@@ -96,12 +96,12 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-20'/>,<PublishedWithChangesIcon color='primary' className='font-20'/>,<HourglassBottomIcon color='primary' className='font-20'/>,<CheckCircleOutlineIcon color='success' className='font-20'/>];
+const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-20' />, <PublishedWithChangesIcon color='primary' className='font-20' />, <HourglassBottomIcon color='primary' className='font-20' />, <CheckCircleOutlineIcon color='success' className='font-20' />];
 
 function CreateNewModalTask({ ...props }) {
 
     let {
-       
+
         documentDate,
         receivedDate,
         createNewFileObj,
@@ -112,7 +112,7 @@ function CreateNewModalTask({ ...props }) {
         // passButtonHide,
         // setPassButtonHide,
         openModal,
-       
+
 
     } = props;
 
@@ -1104,10 +1104,10 @@ function CreateNewModalTask({ ...props }) {
 
     async function Json_CRM_Task_Save() {
         setLoading(true);
-        if(txtSection){
+        if (txtSection) {
             setLoading(false);
         }
-        else{
+        else {
             toast.error("Please Select a Section !")
         }
         const isaddUser = addUser.map(obj => obj.ID).join(',');
@@ -1175,7 +1175,7 @@ function CreateNewModalTask({ ...props }) {
                             Json_CRM_TaskDMSAttachmentInsert(js.Message);
                         }
                         setOpen(false);
-                       // setIsApi(!isApi);
+                        // setIsApi(!isApi);
 
                         // Inside your function or event handler where you want to show the success message
                         //handleSuccess(js.Message);
@@ -1772,7 +1772,7 @@ function CreateNewModalTask({ ...props }) {
                             CreatePortalMessage(js.Message)
                             //toast.success("Created Task");
                             setOpen(false);
-                           // setIsApi(!isApi);
+                            // setIsApi(!isApi);
                         }
                         else {
                             toast.error("Task Not Created Please Try Again");
@@ -2033,11 +2033,7 @@ function CreateNewModalTask({ ...props }) {
                 error: error,
             });
         }
-
-
     }
-
-
 
     // Function to get file extension from file name
     const getFileName = (fileName) => {
@@ -2046,8 +2042,6 @@ function CreateNewModalTask({ ...props }) {
         // Return the last part, which is the extension
         return parts[0];
     };
-
-
 
     function ConvertToPdf_Json(d) {
         setAnchorElDoc(null);
@@ -2108,8 +2102,6 @@ function CreateNewModalTask({ ...props }) {
         setOpenUploadDocument(true)
     };
 
-
-
     // Referance modal
     const [Referance, setReferance] = React.useState(false);
     const [ReferanceEdit, setReferanceEdit] = React.useState(false);
@@ -2122,9 +2114,22 @@ function CreateNewModalTask({ ...props }) {
     const handleClickEditReferance = () => {
         setReferanceEdit(true);
     };
-    const EditDocumentHandleClose = () => {   
+    const EditDocumentHandleClose = () => {
         setReferanceEdit(false);
     };
+
+
+    // 
+    const [open5, setOpen5] = React.useState(false);
+
+    const handleClickOpen5 = () => {
+        setOpen5(true);
+    };
+
+    const handleClose5 = () => {
+        setOpen5(false);
+    };
+
     return (
         <React.Fragment>
             {/* <Button
@@ -2190,8 +2195,8 @@ function CreateNewModalTask({ ...props }) {
 
                     <MenuItem>
                         <ListItemIcon>
-                            <GroupIcon className="font-20" />
-                        </ListItemIcon> Add Contacts
+                            <GroupIcon className="font-20" onClick={handleClickOpen5} />
+                        </ListItemIcon> Add Contacts ssssssss
                     </MenuItem>
 
                     <MenuItem onClick={handleClose4}>
@@ -3687,6 +3692,55 @@ function CreateNewModalTask({ ...props }) {
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
+
+
+
+            {/*  */}
+
+            <Dialog
+                open={open5}
+                onClose={handleClose5}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                {/* <DialogTitle id="alert-dialog-title">
+                    {"Use Google's location service?"}
+                </DialogTitle> */}
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Let Google help apps determine location. This means sending anonymous
+                        location data to Google, even when no apps are running.
+                    </DialogContentText>
+                </DialogContent>
+                {/* <DialogActions>
+                    <Button onClick={handleClose5}>Disagree</Button>
+                    <Button onClick={handleClose5} autoFocus>
+                        Agree
+                    </Button>
+                </DialogActions> */}
+            </Dialog>
+
+
+            {/* <Dialog
+                open={Referance}
+                onClose={AddContactHandleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Let Google help apps determine location. This means sending anonymous
+                        location data to Google, even when no apps are running.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={AddContactHandleClose}>Disagree</Button>
+                    <Button onClick={AddContactHandleClose} autoFocus>
+                        Agree
+                    </Button>
+                </DialogActions>
+            </Dialog> */}
+
         </React.Fragment >
     );
 }
