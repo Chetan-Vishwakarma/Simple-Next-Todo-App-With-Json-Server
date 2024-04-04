@@ -40,10 +40,11 @@ function AddContacts() {
   const [value, setValue] = React.useState(tabValue ? tabValue : '1');
   const [clientDetails, setClientDetails] = useState({});
   const [folders, setFolders] = useState([]);
-  const [Importdata, setImportdata] = useState("");
+  const [Importdata, setImportdata] = useState([]);
+  const [Importcontactdata, setImportcontactdata] = useState({});
   const [clientNames, setclientNames] = useState("");
   const [clientIddata, setClientIddata] = useState(-1);
-  const [ImportContact, setImportContact] = useState("");
+  const [ImportContact, setImportContact] = useState([]);
   const [contactlistdata, setContactlistdata] = useState([]);
   const [bussiness, setBussiness] = useState([]); // State to hold folders data
   const [selectedFolderID, setSelectedFolderID] = useState(null);
@@ -522,14 +523,34 @@ function AddContacts() {
     } else {
     }
   };
+  // const onChangeImportData = (e) => {
+
+  //   e.preventDefault();
+  //   console.log(e.target.value, "onChangeImportData");
+  //   setImportdata(e.target.value);
+
+  // };
   const onChangeImportData = (e) => {
 
     e.preventDefault();
-    console.log(e.target.value, "onChangeImportData");
-    setImportdata(e.target.value);
+    const inputValue = e.target.value;
+    console.log(inputValue,"import_data");
+    setImportdata(inputValue);
+    Json_CompanyHouseDetails(inputValue);
+};
+const [txtValue,setTxtValue]=useState(null);
+const [open, setOpen] = useState(false);
+const handleOptionClick = (item) => {
+  console.log(item, "onSelectData");
+      setTxtValue(item);
+    setOpen(false); 
+    setImportcontactdata(item);
+  // Perform actions with the id
+  // let data = id.company_number;
+  // Json_CompanyHouseDetails();
+  // console.log(data, "onSelectDatacnnumbr");
 
-  };
-
+};
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -537,7 +558,7 @@ function AddContacts() {
       Json_CompanyHouseDetails();
     }
   }
-  console.log(contact, "contactcontact");
+  console.log(contact, "contactcontact",ImportContact);
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
@@ -639,7 +660,7 @@ function AddContacts() {
                       />
                     </Grid>
                     <Grid item xs={6} md={6}>
-                      <TextField
+                      {/* <TextField
                         // {...params}wid
                         fullWidth
                         variant="outlined"
@@ -648,7 +669,57 @@ function AddContacts() {
                         onKeyDown={handleKeyDown}
                         onChange={onChangeImportData}
                         label="Import List"
-                      />
+                      /> */}
+                       <Autocomplete
+      fullWidth
+      // options={ImportContact.map((option) => option.title)}
+      options={ImportContact} // Pass the entire ImportContact array
+      getOptionLabel={(option) => option.FirstName + " " + option.LastName}
+      onChange={(e, value) => setImportdata(value)}
+      onKeyDown={handleKeyDown}
+      // inputValue={ImportContact}
+      noOptionsText="No matches found"
+      filterOptions={(x) => x}
+      autoComplete
+      includeInputInList
+    value={txtValue}
+    open={open} // Controlled by state
+    onOpen={() => setOpen(true)} // Open the Autocomplete dropdown
+    onClose={() => setOpen(false)} // Close the Autocomplete dropdown
+      renderOption={(props, option) => {
+        // Custom rendering for each option
+        console.log(option,"rendwered dynamic from apifff",props);
+        return (
+          !option.resigned_on && (
+            <div>
+                <li
+                    {...props}
+                    onClick={() => {
+                        handleOptionClick(option); // Pass the id directly
+                    }}
+                >
+                    <Grid container alignItems="center">
+                        <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                            {option.FirstName + " " + option.LastName}
+                        </Grid>
+                    </Grid>
+                </li>
+            </div>
+        )
+        
+        );
+      }}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          fullWidth
+          variant="outlined"
+          name="importclient"
+          onChange={onChangeImportData}
+          label="Enter Company Name or Number"
+        />
+      )}
+    />
                     </Grid>
                     <Grid item xs={12} md={12}>
                       <ContactMainform
@@ -657,6 +728,7 @@ function AddContacts() {
                         contactlistdata={contactlistdata}
                         userContactDetails={userContactDetails}
                         setContactDetails={setContactDetails}
+                        Importcontactdata={Importcontactdata}
                       />
                     </Grid>
 
@@ -678,31 +750,6 @@ function AddContacts() {
                 </Grid>
               </Box>
 
-
-
-              <Box className="mb-3">
-                <Grid container spacing={3}>
-                  <Grid item xs={6} md={6}>
-                    {ImportContact && ImportContact.length > 0 && (
-                      <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }} component="nav">
-                        {ImportContact.map((item, index) => (
-                          !item.resigned_on && ( // Add this condition
-                            <ListItem key={index} button
-                              onClick={() => handleListItemClick(item)}
-                            >
-                              <ListItemIcon>
-                                <SendIcon />
-                              </ListItemIcon>
-                              <ListItemText primary={item.FirstName} />
-                              {/* Add additional secondary text or information as needed */}
-                            </ListItem>
-                          )
-                        ))}
-                      </List>
-                    )}
-                  </Grid>
-                </Grid>
-              </Box>
               <Box className='text-end'>
                 <Button
                   style={{ marginTop: "5px" }}

@@ -13,8 +13,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { toast } from 'react-toastify';
 const ContactMainform = React.memo(
-  ({ contact, clientNames, userContactDetails, setContactDetails, contactlistdata }) => {
-    console.log(contactlistdata, "contactlistdata");
+  ({ contact, clientNames, userContactDetails, setContactDetails, contactlistdata,Importcontactdata }) => {
+    console.log(contactlistdata, "contactlistdata",Importcontactdata);
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -263,7 +263,36 @@ const ContactMainform = React.memo(
         ["BirthDate"]: Dataset
       };
       setContactDetails(data);
-    }, [contact]);
+      if(Importcontactdata){
+        let data = { ...userContactDetails };
+      data = {
+        ...data,
+        ["Title"]: Importcontactdata.Salutation,
+        ["FirstName"]: Importcontactdata.FirstName,
+        ["LastName"]: Importcontactdata.LastName,
+        ["ReferenceName"]: "",
+        ["MainContact"]: Importcontactdata.MainContact,
+        ["Inactive"]: Importcontactdata.CActive,
+        ["GreetingName"]: Importcontactdata.Greeting,
+        ["EmailName"]: Importcontactdata.EMailId,
+        ["MainUserId"]: -1,
+        ["MainLine1Name"]: Importcontactdata.address_line_1,
+        ["MainLine2Name"]: Importcontactdata.address_line_2,
+        ["MainLine3Name"]: Importcontactdata.Add3,
+        ["MainTownName"]: Importcontactdata.locality,
+        ["MainPostcodeName"]: Importcontactdata.postal_code,
+        ["Maincontactcountry"]: "",
+        ["MainTelephoneName"]: Importcontactdata.Tel,
+        ["MainMobileName"]: Importcontactdata.Mobile,
+        ["mainCountry"]: "",
+        ["billingsCountry"]: "",
+        ["ragistersCountry"]: "",
+        ["ReferenceID"]: clientNames,
+        ["BirthDate"]: Dataset
+      };
+      setContactDetails(data);
+      }
+    }, [contact,Importcontactdata]);
     return (
       <div>
         {" "}
@@ -525,7 +554,7 @@ const ContactMainform = React.memo(
             <TextField
               fullWidth
               key={`Postcodekey`}
-              type="number"
+              // type="number"
               id="Postcodeid"
               label="Postcode"
               variant="outlined"
