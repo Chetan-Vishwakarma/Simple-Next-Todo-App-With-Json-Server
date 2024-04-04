@@ -171,11 +171,6 @@ function TodoList() {
             setIsLoading(false);
             return;
         }
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
-        };
         try {
             Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
                 if (sts) {
@@ -981,7 +976,22 @@ function TodoList() {
 
                                                     <Box className='mt-2'>
                                                         <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)} >Mark Complete</Button>
-                                                        <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
+                                                        <DateRangePicker initialSettings={{
+                                                    singleDatePicker: true,
+                                                    showDropdowns: true,
+                                                    startDate: item["EndDateTime"],
+                                                    minYear: 1901,
+                                                    maxYear: 2100,
+                                                }}
+                                                onCallback={(start) => {
+                                                    const date = start.format('YYYY/MM/DD');
+                                                    Json_UpdateTaskField("EndDateTime",date,item);
+                                                }}
+                                                >
+                                                    <Button variant="outlined" className='btn-outlin-2'>
+                                                        Defer
+                                                    </Button>
+                                                </DateRangePicker>
                                                     </Box>
 
                                                 </Box>
@@ -991,7 +1001,6 @@ function TodoList() {
                                 })}
                             </>) : (allTask.length > 0 ?
                                 (allTask.slice(0, loadMore).map((item, index) => {
-                                    console.log("userList212121111", FilterAgs(item))
                                     const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
                                     return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                         <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
@@ -1055,9 +1064,26 @@ function TodoList() {
                                                 </Typography>
                                             </Box>
 
+                                            
+
                                             <Box className='mt-2'>
                                                 <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)} >Mark Complete</Button>
-                                                <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
+                                                <DateRangePicker initialSettings={{
+                                                    singleDatePicker: true,
+                                                    showDropdowns: true,
+                                                    startDate: item["EndDateTime"],
+                                                    minYear: 1901,
+                                                    maxYear: 2100,
+                                                }}
+                                                onCallback={(start) => {
+                                                    const date = start.format('YYYY/MM/DD');
+                                                    Json_UpdateTaskField("EndDateTime",date,item);
+                                                }}
+                                                >
+                                                    <Button variant="outlined" className='btn-outlin-2'>
+                                                        Defer
+                                                    </Button>
+                                                </DateRangePicker>
                                             </Box>
 
                                         </Box>
@@ -1132,154 +1158,155 @@ function TodoList() {
                         {/* col end */}
                     </Box>)}
                 </Box>
-            </Box>
+            </Box >
 
             {/* modal */}
 
-            <Dialog
+            <Dialog Dialog
                 open={openPortal}
                 onClose={handleClosePortal}
                 aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                className='custom-modal'
-                sx={{
-                    // maxWidth: 640,
-                    margin: '0 auto'
-                }}
+            aria-describedby="alert-dialog-description"
+            className = 'custom-modal'
+            sx = {{
+                // maxWidth: 640,
+                margin: '0 auto'
+            }
+            }
             >
-                <Box className="d-flex align-items-center justify-content-between modal-head">
-                    <Box className="align-items-center d-flex">
-                        <Checkbox
-                            {...label}
-                            icon={<PanoramaFishEyeIcon />}
-                            // onChange={handleChangeStatus}
-                            checkedIcon={<CheckCircleIcon />}
-                            className="ps-0"
-                        />
-                        <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                            Portal Task
-                        </Typography>
-                    </Box>
-
-                    {/*  */}
-
-                    <Box className='d-flex'>
-
-
-                        <Box className='pe-2'>
-                            <Button
-                                id="basic-button"
-                                aria-controls={open4 ? 'basic-menu' : undefined}
-                                aria-haspopup="true"
-                                aria-expanded={open4 ? 'true' : undefined}
-                                onClick={handleClick4}
-                                className="min-width-auto px-0 text-danger"
-                            >
-
-                                <ListItemIcon className="min-width-auto  me-2 text-secondary">
-                                    <PublishedWithChangesIcon fontSize="medium" />
-                                </ListItemIcon>
-                                <span className="text-secondary">Profile</span>
-
-                            </Button>
-                            <Menu
-                                id="basic-menu"
-                                anchorEl={anchorEl4}
-                                open={open4}
-                                onClose={handleClose4}
-                                MenuListProps={{
-                                    'aria-labelledby': 'basic-button',
-                                }}
-                            >
-                                <MenuItem onClick={handleClose4} className="text-secondary">
-                                    <ListItemIcon>
-                                        <DoNotDisturbAltIcon fontSize="medium" className="text-secondary" />
-                                    </ListItemIcon>
-                                    Not Started
-                                </MenuItem>
-                                <MenuItem onClick={handleClose4} className="text-primary">
-                                    <ListItemIcon>
-                                        <PublishedWithChangesIcon fontSize="medium" className="text-primary" />
-                                    </ListItemIcon>
-                                    In Progress
-                                </MenuItem>
-
-                                <MenuItem onClick={handleClose4} className="text-primary">
-                                    <ListItemIcon>
-                                        <HourglassBottomIcon fontSize="medium" className="text-primary" />
-                                    </ListItemIcon>
-                                    On Hold
-                                </MenuItem>
-
-                                <MenuItem onClick={handleClose4} className="text-success"><ListItemIcon>
-                                    <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
-                                </ListItemIcon>
-                                    Completed
-                                </MenuItem>
-                            </Menu>
-                        </Box>
-
-                        <Box className='clearfix'>
-                            <Button
-                                id="basic-button"
-                                aria-controls={open3 ? 'basic-menu' : undefined}
-                                aria-haspopup="true"
-                                aria-expanded={open3 ? 'true' : undefined}
-                                onClick={handleClick3}
-                                className="min-width-auto px-0 text-gray"
-                            >
-                                <MoreVertIcon />
-                            </Button>
-                            <Menu
-                                id="basic-menu"
-                                anchorEl={anchorEl3}
-                                open={open3}
-                                onClose={handleClose3}
-                                className='custom-dropdown'
-                                MenuListProps={{
-                                    'aria-labelledby': 'basic-button',
-                                }}
-                            >
-                                <MenuItem onClick={handleClose3} className='ps-1'>
-                                    <ListItemIcon>
-                                        <ContentCopyIcon fontSize="medium" />
-                                    </ListItemIcon> Copy Link</MenuItem>
-
-                                <MenuItem onClick={handleClose3} className='ps-1'>
-                                    <ListItemIcon>
-                                        <MergeIcon fontSize="medium" />
-                                    </ListItemIcon> Merge</MenuItem>
-
-                                <MenuItem onClick={handleClose3} className='ps-1'>
-                                    <ListItemIcon>
-                                        <AttachEmailIcon fontSize="medium" />
-                                    </ListItemIcon> Retract Message (s)</MenuItem>
-
-                                <MenuItem onClick={handleClose3} className='ps-1'>
-                                    <ListItemIcon>
-                                        <DeleteIcon fontSize="medium" />
-                                    </ListItemIcon> Delete Message (s)</MenuItem>
-                            </Menu>
-                        </Box>
-
-                        <Button onClick={handleClosePortal} className='p-0'>
-                            <span className="material-symbols-outlined text-black">
-                                cancel
-                            </span>
-                        </Button>
-                    </Box>
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="align-items-center d-flex">
+                    <Checkbox
+                        {...label}
+                        icon={<PanoramaFishEyeIcon />}
+                        // onChange={handleChangeStatus}
+                        checkedIcon={<CheckCircleIcon />}
+                        className="ps-0"
+                    />
+                    <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                        Portal Task
+                    </Typography>
                 </Box>
 
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
+                {/*  */}
+
+                <Box className='d-flex'>
 
 
-                        <PortalDetails></PortalDetails>
+                    <Box className='pe-2'>
+                        <Button
+                            id="basic-button"
+                            aria-controls={open4 ? 'basic-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={open4 ? 'true' : undefined}
+                            onClick={handleClick4}
+                            className="min-width-auto px-0 text-danger"
+                        >
 
-                    </DialogContentText>
-                </DialogContent>
+                            <ListItemIcon className="min-width-auto  me-2 text-secondary">
+                                <PublishedWithChangesIcon fontSize="medium" />
+                            </ListItemIcon>
+                            <span className="text-secondary">Profile</span>
 
-            </Dialog>
+                        </Button>
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorEl4}
+                            open={open4}
+                            onClose={handleClose4}
+                            MenuListProps={{
+                                'aria-labelledby': 'basic-button',
+                            }}
+                        >
+                            <MenuItem onClick={handleClose4} className="text-secondary">
+                                <ListItemIcon>
+                                    <DoNotDisturbAltIcon fontSize="medium" className="text-secondary" />
+                                </ListItemIcon>
+                                Not Started
+                            </MenuItem>
+                            <MenuItem onClick={handleClose4} className="text-primary">
+                                <ListItemIcon>
+                                    <PublishedWithChangesIcon fontSize="medium" className="text-primary" />
+                                </ListItemIcon>
+                                In Progress
+                            </MenuItem>
+
+                            <MenuItem onClick={handleClose4} className="text-primary">
+                                <ListItemIcon>
+                                    <HourglassBottomIcon fontSize="medium" className="text-primary" />
+                                </ListItemIcon>
+                                On Hold
+                            </MenuItem>
+
+                            <MenuItem onClick={handleClose4} className="text-success"><ListItemIcon>
+                                <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
+                            </ListItemIcon>
+                                Completed
+                            </MenuItem>
+                        </Menu>
+                    </Box>
+
+                    <Box className='clearfix'>
+                        <Button
+                            id="basic-button"
+                            aria-controls={open3 ? 'basic-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={open3 ? 'true' : undefined}
+                            onClick={handleClick3}
+                            className="min-width-auto px-0 text-gray"
+                        >
+                            <MoreVertIcon />
+                        </Button>
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorEl3}
+                            open={open3}
+                            onClose={handleClose3}
+                            className='custom-dropdown'
+                            MenuListProps={{
+                                'aria-labelledby': 'basic-button',
+                            }}
+                        >
+                            <MenuItem onClick={handleClose3} className='ps-1'>
+                                <ListItemIcon>
+                                    <ContentCopyIcon fontSize="medium" />
+                                </ListItemIcon> Copy Link</MenuItem>
+
+                            <MenuItem onClick={handleClose3} className='ps-1'>
+                                <ListItemIcon>
+                                    <MergeIcon fontSize="medium" />
+                                </ListItemIcon> Merge</MenuItem>
+
+                            <MenuItem onClick={handleClose3} className='ps-1'>
+                                <ListItemIcon>
+                                    <AttachEmailIcon fontSize="medium" />
+                                </ListItemIcon> Retract Message (s)</MenuItem>
+
+                            <MenuItem onClick={handleClose3} className='ps-1'>
+                                <ListItemIcon>
+                                    <DeleteIcon fontSize="medium" />
+                                </ListItemIcon> Delete Message (s)</MenuItem>
+                        </Menu>
+                    </Box>
+
+                    <Button onClick={handleClosePortal} className='p-0'>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+            </Box>
+
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+
+
+                    <PortalDetails></PortalDetails>
+
+                </DialogContentText>
+            </DialogContent>
+
+        </Dialog >
         </>
     )
 }
