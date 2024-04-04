@@ -336,7 +336,8 @@ export default function SidebarNav() {
   }
 
   const [tabs, setTabs] = useState([{
-    tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon: <DashboardIcon />}, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon: <AccountBoxIcon /> }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false, tabIcon: <AssignmentIcon /> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon: <GroupIcon /> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon: <ViewCarouselIcon /> }, { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false, tabIcon: <ContentPasteSearchIcon /> },
+    tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon: <DashboardIcon />}, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon: <AccountBoxIcon /> }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false, tabIcon: <AssignmentIcon /> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon: <GroupIcon /> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon: <ViewCarouselIcon /> }, 
+    // { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false, tabIcon: <ContentPasteSearchIcon /> },
   // { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false, tabIcon: <PersonAddIcon /> },
 ]);
   const [searchInputForGlobalSearch, setSearchInputForGlobalSearch] = useState("");
@@ -420,6 +421,10 @@ export default function SidebarNav() {
                           <span className="material-symbols-outlined search-icon">search</span>
 
                           <form onSubmit={(e) => {
+                            const isAlready = tabs.map(itm=>itm.tabName).some(item=>item==="Search Result");
+                            if(!isAlready){
+                              setTabs([...tabs,{ tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
+                            }
                             e.preventDefault();
                             navigate(`/dashboard/SearchResult?str=${forDocuments}&folder=${selectedFolder}`);
                             setIsSearch(false);
