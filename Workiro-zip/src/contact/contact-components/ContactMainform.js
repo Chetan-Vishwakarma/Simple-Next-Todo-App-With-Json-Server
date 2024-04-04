@@ -13,7 +13,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { toast } from 'react-toastify';
 const ContactMainform = React.memo(
-  ({ contact, clientNames, userContactDetails, setContactDetails, contactlistdata,Importcontactdata }) => {
+  ({ setContact,contact, clientNames, userContactDetails, setContactDetails, contactlistdata,Importcontactdata,setImportcontactdata }) => {
     console.log(contactlistdata, "contactlistdata",Importcontactdata);
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -25,6 +25,7 @@ const ContactMainform = React.memo(
     const [advancedSettingChecked, setAdvancedSettingChecked] = useState(false);
     const [advancedInactive, setAdvancedInactive] = useState(false);
     const [createPortal, setCreatePortal] = useState(false);
+    const [contactFilled, setContactFilled] = useState(false);
     const [mainCountry, setMainCountry] = useState(
       countries.find((country) => country.label === "United Kingdom")?.label
     );
@@ -236,63 +237,72 @@ const ContactMainform = React.memo(
       setEmail(localStorage.getItem("Email"));
       setFolderId(localStorage.getItem("FolderId"));
       Json_GetConfiguration();
-      let data = { ...userContactDetails };
-      data = {
-        ...data,
-        ["Title"]: contact.Salutation,
-        ["FirstName"]: contact.FirstName,
-        ["LastName"]: contact.LastName,
-        ["ReferenceName"]: "",
-        ["MainContact"]: contact.MainContact,
-        ["Inactive"]: contact.CActive,
-        ["GreetingName"]: contact.Greeting,
-        ["EmailName"]: contact.EMailId,
-        ["MainUserId"]: -1,
-        ["MainLine1Name"]: contact.Add1,
-        ["MainLine2Name"]: contact.Add2,
-        ["MainLine3Name"]: contact.Add3,
-        ["MainTownName"]: contact.Town,
-        ["MainPostcodeName"]: contact.PostCode,
-        ["Maincontactcountry"]: "",
-        ["MainTelephoneName"]: contact.Tel,
-        ["MainMobileName"]: contact.Mobile,
-        ["mainCountry"]: "",
-        ["billingsCountry"]: "",
-        ["ragistersCountry"]: "",
-        ["ReferenceID"]: clientNames,
-        ["BirthDate"]: Dataset
-      };
-      setContactDetails(data);
-      if(Importcontactdata){
-        let data = { ...userContactDetails };
-      data = {
-        ...data,
-        ["Title"]: Importcontactdata.Salutation,
-        ["FirstName"]: Importcontactdata.FirstName,
-        ["LastName"]: Importcontactdata.LastName,
-        ["ReferenceName"]: "",
-        ["MainContact"]: Importcontactdata.MainContact,
-        ["Inactive"]: Importcontactdata.CActive,
-        ["GreetingName"]: Importcontactdata.Greeting,
-        ["EmailName"]: Importcontactdata.EMailId,
-        ["MainUserId"]: -1,
-        ["MainLine1Name"]: Importcontactdata.address_line_1,
-        ["MainLine2Name"]: Importcontactdata.address_line_2,
-        ["MainLine3Name"]: Importcontactdata.Add3,
-        ["MainTownName"]: Importcontactdata.locality,
-        ["MainPostcodeName"]: Importcontactdata.postal_code,
-        ["Maincontactcountry"]: "",
-        ["MainTelephoneName"]: Importcontactdata.Tel,
-        ["MainMobileName"]: Importcontactdata.Mobile,
-        ["mainCountry"]: "",
-        ["billingsCountry"]: "",
-        ["ragistersCountry"]: "",
-        ["ReferenceID"]: clientNames,
-        ["BirthDate"]: Dataset
-      };
-      setContactDetails(data);
+      console.log(contact, "contactlistsona");
+  
+      if (contact) {
+        // setContactDetails(null);
+        setImportcontactdata(null)
+          let data2 = { ...userContactDetails };
+          data2 = {
+              ...data2,
+              ["Title"]: contact.Salutation,
+              ["FirstName"]: contact.FirstName,
+              ["LastName"]: contact.LastName,
+              ["ReferenceName"]: "",
+              ["MainContact"]: contact.MainContact,
+              ["Inactive"]: contact.CActive,
+              ["GreetingName"]: contact.Greeting,
+              ["EmailName"]: contact.EMailId,
+              ["MainUserId"]: -1,
+              ["MainLine1Name"]: contact.Add1,
+              ["MainLine2Name"]: contact.Add2,
+              ["MainLine3Name"]: contact.Add3,
+              ["MainTownName"]: contact.Town,
+              ["MainPostcodeName"]: contact.PostCode,
+              ["Maincontactcountry"]: "",
+              ["MainTelephoneName"]: contact.Tel,
+              ["MainMobileName"]: contact.Mobile,
+              ["mainCountry"]: "",
+              ["billingsCountry"]: "",
+              ["ragistersCountry"]: "",
+              ["ReferenceID"]: clientNames,
+              ["BirthDate"]: Dataset
+          };
+          setContactDetails(data2);
+          // setContactFilled(true);
+      } 
+       if (Importcontactdata) {
+        setContact(null);
+          let data = { ...userContactDetails };
+          data = {
+              ...data,
+              ["Title"]: Importcontactdata.Salutation,
+              ["FirstName"]: Importcontactdata.FirstName,
+              ["LastName"]: Importcontactdata.LastName,
+              ["ReferenceName"]: "",
+              ["MainContact"]: Importcontactdata.MainContact,
+              ["Inactive"]: Importcontactdata.CActive,
+              ["GreetingName"]: Importcontactdata.Greeting,
+              ["EmailName"]: Importcontactdata.EMailId,
+              ["MainUserId"]: -1,
+              ["MainLine1Name"]: Importcontactdata.address_line_1,
+              ["MainLine2Name"]: Importcontactdata.address_line_2,
+              ["MainLine3Name"]: Importcontactdata.Add3,
+              ["MainTownName"]: Importcontactdata.locality,
+              ["MainPostcodeName"]: Importcontactdata.postal_code,
+              ["Maincontactcountry"]: "",
+              ["MainTelephoneName"]: Importcontactdata.Tel,
+              ["MainMobileName"]: Importcontactdata.Mobile,
+              ["mainCountry"]: "",
+              ["billingsCountry"]: "",
+              ["ragistersCountry"]: "",
+              ["ReferenceID"]: clientNames,
+              ["BirthDate"]: Dataset
+          };
+          setContactDetails(data);
       }
-    }, [contact,Importcontactdata]);
+  }, [contact, Importcontactdata]);
+  
     return (
       <div>
         {" "}
