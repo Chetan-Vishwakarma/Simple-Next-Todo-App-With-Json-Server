@@ -117,6 +117,7 @@ function CreateNewModalTask({ ...props }) {
         // passButtonHide,
         // setPassButtonHide,
         openModal,
+        setOpenModal
 
 
     } = props;
@@ -251,7 +252,7 @@ function CreateNewModalTask({ ...props }) {
     };
     //
 
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = React.useState(openModal?openModal:false);
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -272,8 +273,14 @@ function CreateNewModalTask({ ...props }) {
 
     const handleClose = () => {
         setOpen(false);
+        if(Object.keys(props).length>0){
+            setOpenModal(false);
+        }
     };
 
+    useEffect(()=>{
+        setOpen(openModal);
+    },[openModal]);
     // dropdown add
 
     //
@@ -776,6 +783,7 @@ function CreateNewModalTask({ ...props }) {
         console.log("get folder list112222", selectedDate);
         setSelectedDate(null); // Set the selected date to null to clear it
     }, [currentDate]);
+    
 
     useEffect(() => {
         setLoading(false);
@@ -2204,7 +2212,7 @@ function CreateNewModalTask({ ...props }) {
             </Button> */}
             <UploadDocument openUploadDocument={openUploadDocument} setOpenUploadDocument={setOpenUploadDocument}></UploadDocument>
             
-            <div className="select-border">
+            {!Object.keys(props).length>0&&<div className="select-border">
                 <Button
                     id="basic-button"
                     aria-controls={open4 ? 'basic-menu' : undefined}
@@ -2285,7 +2293,7 @@ function CreateNewModalTask({ ...props }) {
                         </ListItemIcon>
                         Document</MenuItem>
                 </Menu>
-            </div>
+            </div>}
 
             <Dialog
                 fullScreen={fullScreen}

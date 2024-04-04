@@ -865,6 +865,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                 // setPassButtonHide={setPassButtonHide}
                                 // passButtonHide={passButtonHide}
                                 openModal={openModal}
+                                setOpenModal={setOpenModal}
                             ></CreateNewModalTask>}
 
 
