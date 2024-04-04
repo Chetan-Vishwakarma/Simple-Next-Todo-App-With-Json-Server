@@ -26,7 +26,7 @@ function Reference() {
   const [selectedFolderID, setSelectedFolderID] = useState(null);
   const [dataFromChild, setDataFromChild] = useState([]);
   const [dataCompanyHouse, setDataCompanyHouse] = useState([]);
-  const [activeStep, setActiveStep] = React.useState(0);
+  // const [activeStep, setActiveStep] = React.useState(0);
 
   const [userDetail, setUserDetail] = useState({
     Clientname: "",
@@ -188,6 +188,63 @@ function Reference() {
 
     Json_SetClientAddress(obj);
   };
+  const [activeStep, setActiveStep] = React.useState(0);
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    if (activeStep === steps.length - 1) {
+      function todayDate() {
+        var today = new Date().toJSON().slice(0, 10);
+        return today;
+      }
+      let clientdata = {
+        agrno: agrno,
+        Email: Email,
+        password: password,
+        ProjectIdList: userDetail.folderId ? userDetail.folderId : -1,
+        OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
+        OriginatorName: userDetail.Clientname ? userDetail.Clientname : "",
+        Address: userDetail.fullAddress ? userDetail.fullAddress : "",
+        TelNo: userDetail.Telephone ? userDetail.Telephone : "",
+        AlteTelNo: userDetail.Mobile ? userDetail.Mobile : "",
+        Faxno: "",
+        ContactName: "",
+        UDF1: "",
+        UDF2: "",
+        UDF3: "",
+        StickyNote: "",
+        ContactEmail: userDetail.Email ? userDetail.Email : "",
+        MParameter: "",
+        CDate: todayDate(),
+        BussId: userDetail.BussId ? userDetail.BussId : -1,
+        SourceId: userDetail.SourceId ? userDetail.SourceId : -1,
+        StatusId: userDetail.StatusId ? userDetail.StatusId : -1,
+        Description: "",
+        OrgPassword: "",
+        ManagerId: userDetail.UserId ? userDetail.UserId : parseInt(intUserid),
+        OrgActive: "Yes",
+      };
+      // toast.success("Reference Added Successfully !");
+      // Json_InsertContact();
+      console.log(clientdata, "clientdata");
+      Cls.Json_AddClient(clientdata, (sts, data) => {
+        console.log(sts, data, "newclientdata");
+        let jsonparse = JSON.parse(data);
+        if (sts) {
+          if (jsonparse.Status == "Success") {
+            console.log("Response", data);
+            toast.success("Reference Added Successfully !");
+            // Json_InsertContact(); Main contact not need
+            saveUDF();
+            mainAddress();
+            billingAddress();
+            ragisterAddress();
+          } else {
+            toast.success("Reference ID Already Exists!");
+          }
+        }
+      });
+    }
+  };
   const handleSubmit = (event) => {
     event.preventDefault();
     function todayDate() {
@@ -318,9 +375,7 @@ function Reference() {
   }, []);
 
   // stepper
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
+ 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
@@ -433,7 +488,9 @@ function Reference() {
                         className="btn-blue-2"
                         size="small"
                       >
-                        {index === steps.length - 1 ? "Finish" : "Continue"}
+                       {activeStep === steps.length - 1
+                                ? "Add Client"
+                                : "Continue"}
                       </Button>
                     </Box>
                   </Box>
@@ -444,20 +501,18 @@ function Reference() {
           {activeStep === steps.length && (
             <Paper square elevation={0} sx={{ p: 3 }}>
               <Typography>
-                All steps completed - you&apos;re finished
+                Reference Added Successfully!!!
               </Typography>
               <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-                Reset
+                Add Another
               </Button>
             </Paper>
           )}
         </Box>
         {/* Stepper end  */}
 
-        <Box className="main-accordian">
-          {/* <UDFClientcard data={clientDetails} setDataFromChild={setDataFromChild} /> */}
-
-          <div style={{ marginBottom: "20px" }}>
+        {/* <Box className="main-accordian">
+            <div style={{ marginBottom: "20px" }}>
             <Button
               style={{ marginTop: "20px" }}
               variant="contained"
@@ -470,7 +525,7 @@ function Reference() {
               Add Client
             </Button>{" "}
           </div>
-        </Box>
+        </Box> */}
       </Box>
     </Box>
   );
