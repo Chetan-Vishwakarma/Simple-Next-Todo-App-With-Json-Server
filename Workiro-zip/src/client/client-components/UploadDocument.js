@@ -28,10 +28,11 @@ let originatorNo;
 function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     //console.log("location state",localtion.state)
     const localtion = useLocation();
-    try { 
-          originatorNo  = localtion.state; } 
+    try {
+        originatorNo = localtion.state;
+    }
 
-    catch (e) { 
+    catch (e) {
 
     }
 
@@ -230,18 +231,24 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
                     setGetAllFolderData(js);
                     let clientList = js.Table1;
-                    console.log("Json_GetFolderData", js);
+
                     if (clientList.length > 0) {
 
-                        setClientList(clientList);
-if(originatorNo){
-    let res = clientList.filter((c) => c.ClientID === originatorNo.originatorNo);
-    if (res.length > 0) {
-        setTxtClientData(res[0])
+                        // let res = clientList.map((el) => {
+                        //     el.Client = el.Client.toLowerCase(); // Modify ClientID property to lowercase
+                        //     return el; // Return the modified object
+                        // });
 
-    }
-}
-                        
+                        // console.log("Json_GetFolderData", res);
+                        setClientList(clientList);
+                        if (originatorNo) {
+                            let res = clientList.filter((c) => c.ClientID === originatorNo.originatorNo);
+                            if (res.length > 0) {
+                                setTxtClientData(res[0])
+
+                            }
+                        }
+
 
 
                     }
@@ -269,8 +276,8 @@ if(originatorNo){
         Json_GetFolderData();
         setDocumentDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
         setReceivedDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
-        console.log("GetCurrentDayDate", dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD"));
-        console.log("GetNextDayDate", cls.GetNextDayDate());
+        // console.log("GetCurrentDayDate", dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD"));
+        // console.log("GetNextDayDate", cls.GetNextDayDate());
         setOpenModal(false);
         setshowModalCreateTask(false)
     }, [])
@@ -287,9 +294,12 @@ if(originatorNo){
     }
 
     const handleClientChange = (data) => {
-        console.log("Get Clietn On click", data);
-        setTxtClientId(data.ClientID);
-        setTxtClientData(data);
+        if (data !== null) {
+            console.log("Get Clietn On click", data);
+            setTxtClientId(data.ClientID);
+            setTxtClientData(data);
+        }
+
     }
 
 
@@ -397,18 +407,16 @@ if(originatorNo){
 
     const [createPublishChk, setCreatePublishChk] = useState(false);
 
+    const [typeTaskBool, setTypeTaskBool] = useState(false);
+
     const [buttonNameText, setButtonNameText] = useState("Submit");
 
 
     const handleCheckboxChangeCreateTask = (event) => {
 
-     
-        
-
         const isChecked = event.target.checked;
         setCreateTaskChk(isChecked);
-      
-
+        setTypeTaskBool(isChecked)
         setTaskType(isChecked ? "CRM" : "Portal");
         if (isChecked) {
             setButtonNameText(createPublishChk === "Portal" ? "Submit & Create Portal Task" : "Submit & Create Task");
@@ -416,15 +424,12 @@ if(originatorNo){
             setButtonNameText(createPublishChk === "Portal" ? "Submit" : "Submit");
         }
         setCreatePublishChk(false);
-
     };
 
     const handleCheckboxChangeCreatePublish = (event) => {
-
-
         const isChecked = event.target.checked;
         setCreatePublishChk(isChecked);
-       
+        setTypeTaskBool(isChecked)
         setTaskType(isChecked ? "Portal" : "CRM");
         if (isChecked) {
             setButtonNameText(createTaskChk === "CRM" ? "Submit & Create Task" : "Submit & Create Portal Task");
@@ -433,8 +438,6 @@ if(originatorNo){
         }
         setCreateTaskChk(false);
     };
-
-
 
 
     const [step, setStep] = useState(1);
@@ -447,17 +450,17 @@ if(originatorNo){
         setStep(step - 1);
     };
 
-
-
     const UploadDocumentCreattTask = async () => {
         if (selectedFiles.length > 0) {
             for (let i of selectedFiles) {
                 await Json_RegisterItem(i)
             }
             // setOpenUploadDocument(false);
+
         }
         else {
             Json_RegisterItem()
+            // toast.success("Document Uploaded!");
         }
     }
 
@@ -534,12 +537,19 @@ if(originatorNo){
                 if (sts && data) {
                     let js = JSON.parse(data)
                     console.log("Json_RegisterItem", js)
-                    if (js.Status=="true") {
-                        toast.success("Created Task !");
+                    if (js.Status == "true") {
+
                         if (fileData) {
                             fileData.DocId = js.ItemId;
                         }
-                       // setOpenUploadDocument(false);
+
+                        if (!typeTaskBool) {
+                          //  setOpenUploadDocument(false);
+                        }
+
+                        setTimeout(() => {
+                            toast.success(selectedFiles.length + "Document(s) Uploaded!");
+                        }, 4000);
 
                     }
                     else {
@@ -618,26 +628,23 @@ if(originatorNo){
                 aria-describedby="alert-dialog-description"
                 className='custom-modal'
             >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold text-black'>
+                            Upload Document <span className='bold text-blue'>({fileLangth})</span>
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={handleCloseDocumentUpload} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
                 <DialogContent className='pb-0'>
                     <DialogContentText id="alert-dialog-description">
-
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="dropdown-box">
-                                <Typography variant="h4" className='font-18 bold text-black'>
-                                    Upload Document <span className='bold text-blue'>({fileLangth})</span>
-                                </Typography>
-                            </Box>
-
-                            {/*  */}
-                            <Button onClick={handleCloseDocumentUpload} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-
-                        <hr />
-
                         {/* file upload */}
                         {step === 1 && (<>
                             <Box className="">
@@ -692,7 +699,7 @@ if(originatorNo){
                             <Box className='row'>
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                     <Autocomplete
-                                        
+
                                         id="combo-box-demo"
                                         options={folderList}
                                         value={txtFolderData}
@@ -704,28 +711,19 @@ if(originatorNo){
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                     <Autocomplete
-                                        
+                                        disablePortal
                                         id="combo-box-demo"
                                         options={clientList}
-                                        getOptionLabel={(option) => option.Client}
-                                        getOptionSelected={(option, value) => option.ClientID === value.ClientID}
-                                        value={txtClientData || null}
+                                        getOptionLabel={(option) => option.Client} // assuming "Client" is the property you want to display
+
                                         onChange={(event, newValue) => handleClientChange(newValue)}
-                                        filterOptions={(options, { inputValue }) =>
-                                            options.filter(option =>
-                                                option.Client.toLowerCase().includes(inputValue.toLowerCase()) ||
-                                                option.Client.includes(inputValue)
-                                            )
-                                        }
-                                        renderInput={(params) => (
-                                            <TextField {...params} label="Reference" />
-                                        )}
+                                        renderInput={(params) => <TextField {...params} label="Reference1" />}
                                     />
                                 </Box>
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 d-flex align-items-end'>
                                     <Autocomplete
-                                        
+
                                         id="combo-box-demo"
                                         options={sectionList}
 
@@ -867,6 +865,7 @@ if(originatorNo){
                                 // setPassButtonHide={setPassButtonHide}
                                 // passButtonHide={passButtonHide}
                                 openModal={openModal}
+                                setOpenModal={setOpenModal}
                             ></CreateNewModalTask>}
 
 

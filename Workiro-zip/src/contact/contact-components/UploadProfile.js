@@ -141,7 +141,8 @@ export default function UploadButtons({ userContactDetails, setContactDetails })
           onChange={handleFileChange}
         />
       </label>
-      <div >
+
+      <div className='m-auto'>
         {images.map((image, index) => (
           <div
             key={index}
@@ -161,7 +162,7 @@ export default function UploadButtons({ userContactDetails, setContactDetails })
               />
             )}
             <IconButton
-              style={{ position: 'absolute', top: '5px', right: '5px' }}
+              className='btn-remove'
               onClick={() => removeImage(index)}
             >
               <ClearIcon />
@@ -184,7 +185,7 @@ export default function UploadButtons({ userContactDetails, setContactDetails })
         />
         <Button variant="contained" component="span"
           size='small'
-          className='btn-blue-2'>
+          className='btn-blue-2 text-nowrap'>
           <IconButton
 
             // color="primary"

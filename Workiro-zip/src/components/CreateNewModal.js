@@ -77,6 +77,9 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { data } from "jquery";
 import EditReference from "../client/client-components/EditReference";
 import UploadDocument from "../client/client-components/UploadDocument";
+import AddContacts from "./AddContacts";
+import { setMyTasks } from "../redux/reducers/counterSlice";
+import { useDispatch } from "react-redux";
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -96,12 +99,14 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-20'/>,<PublishedWithChangesIcon color='primary' className='font-20'/>,<HourglassBottomIcon color='primary' className='font-20'/>,<CheckCircleOutlineIcon color='success' className='font-20'/>];
+const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-20' />, <PublishedWithChangesIcon color='primary' className='font-20' />, <HourglassBottomIcon color='primary' className='font-20' />, <CheckCircleOutlineIcon color='success' className='font-20' />];
+
+const userId = localStorage.getItem("UserId");
 
 function CreateNewModalTask({ ...props }) {
-
+    const dispatch = useDispatch();
     let {
-       
+
         documentDate,
         receivedDate,
         createNewFileObj,
@@ -112,7 +117,8 @@ function CreateNewModalTask({ ...props }) {
         // passButtonHide,
         // setPassButtonHide,
         openModal,
-       
+        setOpenModal
+
 
     } = props;
 
@@ -246,7 +252,7 @@ function CreateNewModalTask({ ...props }) {
     };
     //
 
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = React.useState(openModal ? openModal : false);
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -267,8 +273,14 @@ function CreateNewModalTask({ ...props }) {
 
     const handleClose = () => {
         setOpen(false);
+        if (Object.keys(props).length > 0) {
+            setOpenModal(false);
+        }
     };
 
+    useEffect(() => {
+        setOpen(openModal);
+    }, [openModal]);
     // dropdown add
 
     //
@@ -447,7 +459,7 @@ function CreateNewModalTask({ ...props }) {
                         setUserListData(removeuser);
                         setUserFilter(removeuser);
 
-                        let commanuser = result.filter((e) => e.ID === localStorage.getItem("UserId"));
+                        let commanuser = result.filter((e) => e.ID === parseInt(localStorage.getItem("UserId")));
                         console.log("Json_GetForwardUserList11", removeuser);
                         setSelectedUSer(commanuser[0]);
 
@@ -713,6 +725,7 @@ function CreateNewModalTask({ ...props }) {
         if (txtClientData) {
             settxtClient(txtClientData.Client);
             setTextClientId(txtClientData.ClientID);
+            Json_GetClientCardDetails(txtClientData.ClientID)
         }
 
         if (txtSectionData) {
@@ -770,6 +783,7 @@ function CreateNewModalTask({ ...props }) {
         console.log("get folder list112222", selectedDate);
         setSelectedDate(null); // Set the selected date to null to clear it
     }, [currentDate]);
+
 
     useEffect(() => {
         setLoading(false);
@@ -911,8 +925,6 @@ function CreateNewModalTask({ ...props }) {
                     UploadAttachment(fileData)
                 }
 
-
-
                 // Check if this is the last file
                 if (index === selectedFilesArray.length - 1) {
                     // Add new files to the uploadedFiles array
@@ -938,7 +950,6 @@ function CreateNewModalTask({ ...props }) {
             }
         }, 3000);
     };
-
 
     function PrepareDocumentsForPublish_Json(filedata, ids) {
         try {
@@ -1102,12 +1113,59 @@ function CreateNewModalTask({ ...props }) {
 
     // }
 
+    function Json_CRM_GetOutlookTask_ForTask() {
+        try {
+            cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_CRM_GetOutlookTask111", json);
+                        let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
+                        const formattedTasks = result.map((task) => {
+                            let timestamp;
+                            if (task.EndDateTime) {
+                                timestamp = parseInt(task.EndDateTime.slice(6, -2));
+                            }
+
+                            const date = new Date(timestamp);
+
+                            return { ...task, EndDateTime: date };
+                        });
+
+                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
+
+                        let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
+                            let timestamp;
+                            if (task.CreationDate) {
+                                timestamp = parseInt(task.CreationDate.slice(6, -2));
+                            }
+
+                            const date = new Date(timestamp);
+
+                            return { ...task, CreationDate: date };
+                        }).sort((a, b) => b.CreationDate - a.CreationDate);
+
+                        dispatch(setMyTasks([...hasCreationDate]));
+                        // setActualData([...hasCreationDate]);
+                        // setAllTask([...hasCreationDate]);
+
+                        // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
+                        // setIsLoading(false);
+                        // Json_GetFolders();
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_CRM_GetOutlookTask", err);
+        }
+    }
+
     async function Json_CRM_Task_Save() {
         setLoading(true);
-        if(txtSection){
+        if (txtSection) {
             setLoading(false);
         }
-        else{
+        else {
             toast.error("Please Select a Section !")
         }
         const isaddUser = addUser.map(obj => obj.ID).join(',');
@@ -1167,6 +1225,7 @@ function CreateNewModalTask({ ...props }) {
                     console.log("save task rerurn value", js);
 
                     if (js.Status === "success") {
+                        Json_CRM_GetOutlookTask_ForTask();
                         setLoading(false);
                         toast.success("Created Task !");
                         setMessageId(js.Message);
@@ -1175,7 +1234,7 @@ function CreateNewModalTask({ ...props }) {
                             Json_CRM_TaskDMSAttachmentInsert(js.Message);
                         }
                         setOpen(false);
-                       // setIsApi(!isApi);
+                        // setIsApi(!isApi);
 
                         // Inside your function or event handler where you want to show the success message
                         //handleSuccess(js.Message);
@@ -1341,6 +1400,7 @@ function CreateNewModalTask({ ...props }) {
     const TastkType = Boolean(anchorElTastkType);
     const handleClickTastkType = (event) => {
         setAnchorElTastkType(event.currentTarget);
+
     };
 
     const handleCloseTastkType = (e) => {
@@ -1565,7 +1625,7 @@ function CreateNewModalTask({ ...props }) {
 
         // You can perform further actions with the selectedRows array
         console.log("Seleted Template", txtTemplateId); // Log the selected rows data
-        if (selectedEmail.length > 0) {
+        if (selectedItems.selectedRowsData.length > 0) {
             Json_GetStandardLetterData(selectedItems.selectedRowsData)
         }
         else {
@@ -1654,29 +1714,40 @@ function CreateNewModalTask({ ...props }) {
 
     function Json_GetStandardLetterData(data) {
         try {
-            let obj = {};
-            obj.agrno = agrno;
-            obj.UserEmail = Email;
-            obj.password = password;
-            obj.strFolderId = data[0].ProjectID;
-            obj.strClientId = textClientId;
-            obj.strSectionId = data[0].ItemTypeId;
-            obj.strTemplateId = data[0].TemplateID;
-            obj.ContactEmail = selectedEmail[0]["E-Mail"];
-            var urlLetter = "https://docusms.uk/dsdesktopwebservice.asmx/";
-            let cls = new CommanCLS(urlLetter, agrno, Email, password);
-            cls.Json_GetStandardLetterData(obj, function (sts, data) {
-                if (sts && data) {
-                    //console.log("Json_GetStandardLetterData", data)
-                    if (data.includes("File Not Found")) {
-                        console.log("Json_GetStandardLetterData", data)
-                    }
-                    else {
-                        Json_GetHtmlFromRtf(data);
-                    }
+            if (selectedEmail) {
 
-                }
-            })
+                let obj = {};
+                obj.agrno = agrno;
+                obj.UserEmail = Email;
+                obj.password = password;
+                obj.strFolderId = data[0].ProjectID;
+                obj.strClientId = textClientId;
+                obj.strSectionId = data[0].ItemTypeId;
+                obj.strTemplateId = data[0].TemplateID;
+                obj.ContactEmail = selectedEmail ? selectedEmail[0]["E-Mail"] : toast.error("Please Select Email In To!");
+
+                clsSms.Json_GetStandardLetterData(obj, function (sts, data) {
+                    if (sts && data) {
+                        console.log("Json_GetStandardLetterData", data)
+                        if (data.includes("File Not Found")) {
+                            console.log("Json_GetStandardLetterData", data)
+                        }
+                        else {
+                            Json_GetHtmlFromRtf(data);
+                        }
+
+                    }
+                })
+
+
+
+            }
+            else {
+
+                toast.error("Please Select a Email in To")
+
+            }
+
         } catch (error) {
             console.log("Error for Tempalte", error)
         }
@@ -1770,9 +1841,9 @@ function CreateNewModalTask({ ...props }) {
                         if (js.Status === "success") {
                             setMessageId(js.Message);
                             CreatePortalMessage(js.Message)
-                            //toast.success("Created Task");
+                            toast.success("Created Task");
                             setOpen(false);
-                           // setIsApi(!isApi);
+                            // setIsApi(!isApi);
                         }
                         else {
                             toast.error("Task Not Created Please Try Again");
@@ -2033,11 +2104,7 @@ function CreateNewModalTask({ ...props }) {
                 error: error,
             });
         }
-
-
     }
-
-
 
     // Function to get file extension from file name
     const getFileName = (fileName) => {
@@ -2046,8 +2113,6 @@ function CreateNewModalTask({ ...props }) {
         // Return the last part, which is the extension
         return parts[0];
     };
-
-
 
     function ConvertToPdf_Json(d) {
         setAnchorElDoc(null);
@@ -2108,8 +2173,6 @@ function CreateNewModalTask({ ...props }) {
         setOpenUploadDocument(true)
     };
 
-
-
     // Referance modal
     const [Referance, setReferance] = React.useState(false);
     const [ReferanceEdit, setReferanceEdit] = React.useState(false);
@@ -2122,9 +2185,22 @@ function CreateNewModalTask({ ...props }) {
     const handleClickEditReferance = () => {
         setReferanceEdit(true);
     };
-    const EditDocumentHandleClose = () => {   
+    const EditDocumentHandleClose = () => {
         setReferanceEdit(false);
     };
+
+
+    // 
+    const [open5, setOpen5] = React.useState(false);
+
+    const handleClickOpen5 = () => {
+        setOpen5(true);
+    };
+
+    const handleClose5 = () => {
+        setOpen5(false);
+    };
+
     return (
         <React.Fragment>
             {/* <Button
@@ -2135,19 +2211,19 @@ function CreateNewModalTask({ ...props }) {
                 <span className="ps-2 create-text">Create New  </span>
             </Button> */}
             <UploadDocument openUploadDocument={openUploadDocument} setOpenUploadDocument={setOpenUploadDocument}></UploadDocument>
-            <div className="select-border my-0 m-auto">
+
+            {!Object.keys(props).length > 0 && <div className="select-border">
                 <Button
                     id="basic-button"
                     aria-controls={open4 ? 'basic-menu' : undefined}
                     aria-haspopup="true"
                     aria-expanded={open4 ? 'true' : undefined}
                     onClick={handleClick4}
-                    className="btn-blue-2 btn-round btn-block add-new-btn"
+                    className="btn-blue btn-round btn-block add-new-btn"
                     variant="text"
-                    size="small"
                 >
                     <span className="material-symbols-outlined font-18">edit_square</span>{" "}
-                    <span className="ps-2 font-13 create-text">Add New  </span>
+                    <span className="ps-2 font-13 create-text">Add New </span>
 
                 </Button>
                 <Menu
@@ -2160,15 +2236,16 @@ function CreateNewModalTask({ ...props }) {
                     }}
                     className="custom-dropdown"
                 >
-                    <MenuItem onClick={handleClickOpen}>CRM Task</MenuItem>
+                    {/* <MenuItem onClick={handleClickOpen}>CRM Task</MenuItem>
                     <MenuItem onClick={handleClickOpen}>Portal Task</MenuItem>
                     <MenuItem onClick={handleClickReferance}>Reference</MenuItem>
                     <MenuItem onClick={handleClose4}>Note</MenuItem>
-                    <MenuItem onClick={handleClose4}>Document</MenuItem>
+                    <MenuItem onClick={handleClose4}>Document</MenuItem> */}
                     {/* <MenuItem 
                     onClick={handleClickEditReferance}
                     >Edit Reference</MenuItem> */}
-                    <MenuItem onClick={() => handleClickOpen("CRM")}>
+                    <MenuItem onClick={() => handleClickOpen("CRM")
+                    }>
                         {/* <ListItemIcon>
                             <EjectIcon fontSize="medium" className="text-red rotate-180" />
                         </ListItemIcon> */}
@@ -2182,13 +2259,19 @@ function CreateNewModalTask({ ...props }) {
                     </ListItemIcon>
                         Portal Task</MenuItem>
 
-                    <MenuItem onClick={handleClickReferance}>
+                    <MenuItem onClick={() => {
+                        handleClickReferance()
+                        handleClose4()
+                    }}>
                         <ListItemIcon>
                             <GroupIcon className="font-20" />
                         </ListItemIcon> Reference
                     </MenuItem>
 
-                    <MenuItem>
+                    <MenuItem onClick={() => {
+                        handleClickOpen5()
+                        handleClose4()
+                    }}>
                         <ListItemIcon>
                             <GroupIcon className="font-20" />
                         </ListItemIcon> Add Contacts
@@ -2201,14 +2284,16 @@ function CreateNewModalTask({ ...props }) {
                         Note
                     </MenuItem>
 
-
-                    <MenuItem onClick={handleUploadDocument}>
+                    <MenuItem onClick={() => {
+                        handleUploadDocument()
+                        handleClose4()
+                    }}>
                         <ListItemIcon>
                             <DescriptionIcon className="font-20" />
                         </ListItemIcon>
                         Document</MenuItem>
                 </Menu>
-            </div>
+            </div>}
 
             <Dialog
                 fullScreen={fullScreen}
@@ -2217,73 +2302,72 @@ function CreateNewModalTask({ ...props }) {
                 aria-labelledby="responsive-dialog-title"
                 className="custom-modal custom-modal-1200"
             >
-                <DialogContent>
-                    <DialogContentText>
-                        <Box className="d-flex align-items-center justify-content-between">
 
-                            <Box>
-                                <Button
-                                    id="basic-button"
-                                    aria-controls={TastkType ? 'basic-menu' : undefined}
-                                    aria-haspopup="true"
-                                    aria-expanded={TastkType ? 'true' : undefined}
-                                    onClick={handleClickTastkType}
-                                    className="btn-select min-width-auto"
-                                >
-                                    {txtTaskType}
-                                </Button>
-                                <Menu
-                                    id="basic-menu"
-                                    anchorEl={anchorElTastkType}
-                                    open={TastkType}
-                                    onClose={handleCloseTastkType}
-                                    MenuListProps={{
-                                        'aria-labelledby': 'basic-button',
-                                    }}
-                                    className="custom-dropdown"
-                                >
-                                    <MenuItem onClick={handleCloseTastkType}>
-                                        <ListItemIcon>
-                                            <DvrIcon className="font-20" />
-                                        </ListItemIcon>
-                                        CRM</MenuItem>
+                <Box className="d-flex align-items-center justify-content-between modal-head">
 
-                                    <MenuItem onClick={handleCloseTastkType}>
-                                        <ListItemIcon>
-                                            <LanguageIcon className="font-20" />
-                                        </ListItemIcon>
-                                        Portal
-                                    </MenuItem>
-                                </Menu>
-                            </Box>
+                    <Box>
+                        <Button
+                            id="basic-button"
+                            aria-controls={TastkType ? 'basic-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={TastkType ? 'true' : undefined}
+                            onClick={handleClickTastkType}
+                            className="btn-select min-width-auto"
+                        >
+                            {txtTaskType}
+                        </Button>
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorElTastkType}
+                            open={TastkType}
+                            onClose={handleCloseTastkType}
+                            MenuListProps={{
+                                'aria-labelledby': 'basic-button',
+                            }}
+                            className="custom-dropdown"
+                        >
+                            <MenuItem onClick={handleCloseTastkType}>
+                                <ListItemIcon>
+                                    <DvrIcon className="font-20" />
+                                </ListItemIcon>
+                                CRM</MenuItem>
 
+                            <MenuItem onClick={handleCloseTastkType}>
+                                <ListItemIcon>
+                                    <LanguageIcon className="font-20" />
+                                </ListItemIcon>
+                                Portal
+                            </MenuItem>
+                        </Menu>
+                    </Box>
 
-                            {/* <Box className="dropdown-box">
-                                <Button className="btn-select">
-                                    Select Type
-                                    <span className="material-symbols-outlined ps-2">
-                                        keyboard_arrow_down
-                                    </span>
-                                </Button>
-                                <Box className="btn-Select">
-                                    <Button className='btn-white'>Action</Button>
-                                    <Button className='btn-white'>Ser</Button>
-                                    <Button className='btn-white'>Custom</Button>
-
-                                    <hr />
-
-                                    <Button className='btn-blue-2' size="small">Apply Now</Button>
-                                </Box>
-                            </Box> */}
-
-                            <Button onClick={handleClose} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
+                    {/* <Box className="dropdown-box">
+                    <Button className="btn-select">
+                        Select Type
+                        <span className="material-symbols-outlined ps-2">
+                            keyboard_arrow_down
+                        </span>
+                    </Button>
+                    <Box className="btn-Select">
+                        <Button className='btn-white'>Action</Button>
+                        <Button className='btn-white'>Ser</Button>
+                        <Button className='btn-white'>Custom</Button>
 
                         <hr />
+
+                        <Button className='btn-blue-2' size="small">Apply Now</Button>
+                    </Box>
+                </Box> */}
+
+                    <Button onClick={handleClose} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                <DialogContent>
+                    <DialogContentText>
 
                         <Box className="row full-height-modal">
                             <Box className="col-lg-8 border-end">
@@ -2452,6 +2536,7 @@ function CreateNewModalTask({ ...props }) {
                                                                 <Column
                                                                     dataField="Description"
                                                                     caption="Description"
+                                                                    width={400}
                                                                 />
 
                                                                 <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
@@ -2459,12 +2544,10 @@ function CreateNewModalTask({ ...props }) {
                                                             </DataGrid>
                                                         </Menu>
                                                     </Box>
-                                                    <Box className='text-editor-box-name'>
-                                                        {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
-                                                    </Box>
+
                                                 </>
                                             )}
-
+                                            {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
                                         </Box>
 
                                         {!isVisibleByTypeCRM && (<>
@@ -2874,7 +2957,7 @@ function CreateNewModalTask({ ...props }) {
                                     </Button>
                                 )}
 
-                                <ToastContainer></ToastContainer>
+
                             </Box>
                             {/* col end */}
 
@@ -3546,29 +3629,27 @@ function CreateNewModalTask({ ...props }) {
                 {/* <DialogTitle id="alert-dialog-title">
                         {"Use Google's location service?"}
                     </DialogTitle> */}
+
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+
+                    <div>
+                        <Button
+                            id="basic-button"
+                        >
+                            Document List
+                        </Button>
+
+                    </div>
+
+                    <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-
-                        <Box className="d-flex align-items-center justify-content-between">
-
-                            <div>
-                                <Button
-                                    id="basic-button"
-                                >
-                                    Document List
-                                </Button>
-
-                            </div>
-
-                            <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-
-                        <hr />
-
                         <DataGrid
                             dataSource={dmsDocumentList}
                             allowColumnReordering={true}
@@ -3630,30 +3711,28 @@ function CreateNewModalTask({ ...props }) {
                 aria-describedby="alert-dialog-description"
                 className="custom-modal full-modal"
             >
-
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <div>
+                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                            Reference
+                        </Typography>
+                    </div>
+                    <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <div>
-                                <Button
-                                    id="basic-button"
-                                >
-                                    Document List
-                                </Button>
-                            </div>
-                            <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-                        <hr />
 
                         <Reference />
 
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
+
+
 
 
             <Dialog
@@ -3663,31 +3742,80 @@ function CreateNewModalTask({ ...props }) {
                 aria-describedby="alert-dialog-description"
                 className="custom-modal full-modal"
             >
-
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <div>
+                        <Button
+                            id="basic-button"
+                        >
+                            Document List
+                        </Button>
+                    </div>
+                    <Button onClick={EditDocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <div>
-                                <Button
-                                    id="basic-button"
-                                >
-                                    Document List
-                                </Button>
-                            </div>
-                            <Button onClick={EditDocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-                        <hr />
 
                         <EditReference />
 
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
+
+            {/*  */}
+
+            <Dialog
+                open={open5}
+                onClose={handleClose5}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className="custom-modal full-modal"
+            >
+                {/* <DialogTitle id="alert-dialog-title">
+                    {"Use Google's location service?"}
+                </DialogTitle> */}
+
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                            Add Client
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={handleClose5}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                {/* <hr /> */}
+
+                <DialogContent className="pt-0">
+                    <DialogContentText id="alert-dialog-description">
+
+                        <AddContacts />
+
+                    </DialogContentText>
+                </DialogContent>
+                {/* <DialogActions>
+                    <Button onClick={handleClose5}>Disagree</Button>
+                    <Button onClick={handleClose5} autoFocus>
+                        Agree
+                    </Button>
+                </DialogActions> */}
+            </Dialog>
+
+
+            <ToastContainer></ToastContainer>
+
         </React.Fragment >
+
+
     );
 }
 

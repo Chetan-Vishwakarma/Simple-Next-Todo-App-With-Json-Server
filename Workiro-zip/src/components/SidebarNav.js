@@ -35,7 +35,7 @@ import ContactDetails from '../contact/contact-components/ContactDetails';
 import TodoList from './TodoList';
 import CommanCLS from '../services/CommanService';
 import Logout from './Logout';
-import AddContacts from './AddContacts';
+// import AddContacts from './AddContacts';
 import NewTodoList from './NewTodoList';
 import FormatListNumberedRtlIcon from '@mui/icons-material/FormatListNumberedRtl';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -168,22 +168,18 @@ export default function SidebarNav() {
     setOpen(true);
   };
 
-
   const [value, setValue] = React.useState(options[0]);
   const [inputValue, setInputValue] = React.useState('');
-
   const [documentsDescription, setDocumentsDescription] = useState([]);
   const [myDocuments, setMyDocuments] = useState([]);
   const [isSearch, setIsSearch] = useState(false);
   const [forDocuments, setForDocuments] = useState("");
-
   const [myTotalTasks, setMyTotalTasks] = useState([]);
   const [taskSubjects, setTasksSubjects] = useState([]);
   const [filteredTaskSubjects, setFilteredTaskSubjects] = useState([]);
   const [folders, setFolders] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState(folderId);
   const [anchorEl4, setAnchorEl4] = React.useState(null);
-
 
   const {
     getRootProps,
@@ -200,7 +196,6 @@ export default function SidebarNav() {
     inputValue,
     onInputChange: (event, newInputValue) => setInputValue(newInputValue),
   });
-
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const opens = Boolean(anchorEl);
@@ -292,12 +287,12 @@ export default function SidebarNav() {
       password: password
     };
     try {
-      Cls.Json_CRM_GetOutlookTask(obj, (sts, data) => {
+      practiceCls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
         if (sts) {
           if (data) {
             console.log("Json_CRM_GetOutlookTask", JSON.parse(data));
             let tasks = JSON.parse(data).Table;
-            let myTasks = tasks.filter((item) => item.AssignedToID.split(",").includes(userId) && (item.Source === "CRM" || item.Source === "Portal"));
+            let myTasks = tasks.filter((item) => item.AssignedToID.split(",").includes(userId) && (item.Source === "CRM" || item.Source === "Portal") && item.mstatus!=="Completed");
             let fltDouble = [];
             [...myTasks].map(itm => itm.Subject).filter(subject => {
               if (!fltDouble.includes(subject)) {
@@ -342,11 +337,8 @@ export default function SidebarNav() {
 
   const [tabs, setTabs] = useState([{
     tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon: <DashboardIcon />}, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon: <AccountBoxIcon /> }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false, tabIcon: <AssignmentIcon /> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon: <GroupIcon /> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon: <ViewCarouselIcon /> }, { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false, tabIcon: <ContentPasteSearchIcon /> },
-
-  { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false, tabIcon: <PersonAddIcon /> },
-
+  // { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false, tabIcon: <PersonAddIcon /> },
   { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active: false, tabIcon: <LogoutIcon /> }]);
-
   const [searchInputForGlobalSearch, setSearchInputForGlobalSearch] = useState("");
 
   React.useEffect(() => {
@@ -800,7 +792,7 @@ export default function SidebarNav() {
             <Route path="/ContactDetails" element={<ContactDetails />} />
             <Route path="/MyTask" element={<TodoList />} />
             <Route path="/TodoList" element={<NewTodoList />} />
-            <Route path="/AddContacts" element={<AddContacts />} />
+            {/* <Route path="/AddContacts" element={<AddContacts />} /> */}
             <Route path="/SmartViews" element={<></>} />
             <Route path="/SearchResult" element={<SearchResult myTotalTasks={myTotalTasks} myDocuments={myDocuments} />} />
             <Route path="/DocumentList" element={<DocumentList clientId="" />} />

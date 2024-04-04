@@ -19,6 +19,7 @@ import { toast } from 'react-toastify';
 import DocDetails from './DocDetails';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+const userId = localStorage.getItem("UserId");
 
 function NewTodoList() {
 
@@ -64,7 +65,8 @@ function NewTodoList() {
     const handleClose = () => {
         setAnchorEl(null);
     };
-
+    console.log("fgfgljglj innerHeight",window.innerHeight);
+    console.log("fgfgljglj offsetHeight",document.documentElement.offsetHeight);
     const Json_Get_CRM_UserByProjectId = () => {
         let obj = {
             agrno: agrno,
@@ -113,8 +115,10 @@ function NewTodoList() {
                         // Sorting by EndDateTime
                         formattedTasks.sort((a, b) => b.EndDateTime - a.EndDateTime);
 
-                        console.log("Json_CRM_GetOutlookTask", formattedTasks);
-                        setAllTask(formattedTasks);
+                        const filtredTask = formattedTasks.filter(itm=>itm.AssignedToID.split(",").includes(userId) && itm.mstatus!=="Completed" && ["Portal","CRM"].includes(itm.Source));
+                        
+                        // console.log("Json_CRM_GetOutlookTask", filtredTask);
+                        setAllTask(filtredTask);
                     }
                 }
             });
@@ -240,7 +244,23 @@ function NewTodoList() {
 
     }, [isApi])
 
-
+    const handleScroll = () => {
+        console.log("fgfgljglj useEffect: ",document.documentElement.scrollTop);
+        if(document.documentElement.scrollTop<924){
+            console.log("fgfgljglj first");
+            handleActiveTab("section1");
+        }else if(document.documentElement.scrollTop>924 && document.documentElement.scrollTop<2211){
+            console.log("fgfgljglj second"); 
+            handleActiveTab("section2");
+        }
+        console.log("fgfgljglj sdfdff",activeSectionList);
+        //     if (
+    //       window.innerHeight + document.documentElement.scrollTop ===
+    //       document.documentElement.offsetHeight
+    //     ) {
+    //       fetchData();
+    //     }
+      };
 
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
@@ -248,6 +268,12 @@ function NewTodoList() {
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
         Json_CRM_GetOutlookTask();
+        window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      // Remove scroll event listener on component unmount
+      window.removeEventListener('scroll', handleScroll);
+    };
     }, []);
 
     function startFormattingDate(dt) {
@@ -444,7 +470,10 @@ function NewTodoList() {
                 activeSectionList[key] = false;
             }
         }
+        setActiveSectionList(activeSectionList);
     }
+
+    
 
     return (
         <Box className="container-fluid p-0">
@@ -483,14 +512,14 @@ function NewTodoList() {
 
             {/*  */}
             <Box className='no-touch'>
-                <nav class="cd-vertical-nav">
+                <nav className="cd-vertical-nav">
                     <ul>
-                        <li onClick={() => handleActiveTab("section1")}><a href="#section1" class={activeSectionList.section1 ? "active" : ""}><span class="label">Task Due <br />Soon</span>
+                        <li onClick={() => handleActiveTab("section1")}><a href="#section1" className={activeSectionList.section1 ? "active" : ""}><span className="label">Task Due <br />Soon</span>
                             <EventNoteIcon className='hover-icon' />
                         </a></li>
-                        <li onClick={() => handleActiveTab("section2")}><a href="#section2" class={activeSectionList.section2 ? "active" : ""}><span class="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
-                        <li onClick={() => handleActiveTab("section3")}><a href="#section3" class={activeSectionList.section3 ? "active" : ""}><span class="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
-                        <li onClick={() => handleActiveTab("section4")}><a href="#section4" class={activeSectionList.section4 ? "active" : ""}><span class="label">Recently Accessed Documents</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section2")}><a href="#section2" className={activeSectionList.section2 ? "active" : ""}><span className="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section3")}><a href="#section3" className={activeSectionList.section3 ? "active" : ""}><span className="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section4")}><a href="#section4" className={activeSectionList.section4 ? "active" : ""}><span className="label">Recently Accessed Documents</span><EventNoteIcon className='hover-icon' /></a></li>
                     </ul>
                 </nav>
             </Box>
@@ -863,9 +892,9 @@ function NewTodoList() {
                     {recentDocument.length > 0 ? recentDocument.map((item, index) => {
                         return <>
 
-                            <Box className='col-xxl-3 col-xl-4 col-md-6' key={index}>
-                                <Box className="file-uploads">
-                                    <label className="file-uploads-label file-uploads-document">
+                            <Box className='col-xxl-3 col-xl-4 col-md-6 d-flex' key={index}>
+                                <Box className="file-uploads d-flex w-100">
+                                    <label className="file-uploads-label file-uploads-document w-100">
                                         <Box className="d-flex align-items-center">
 
                                             <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />

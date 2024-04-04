@@ -172,6 +172,7 @@ input,
 .btn-blue-2 {
   background: #4780FF !important;
   transition: .5s all ease;
+  border: 1px solid #4780FF !important;
 }
 
 .btn-blue-2.Mui-disabled {
@@ -187,8 +188,13 @@ input,
 .btn-blue-2:hover,
 .btn-blue:hover {
   background: #d42027 !important;
+  border-color: #d42027 !important;
 }
-
+.btn-outlin-2:hover {
+  background: #d42027 !important;
+  border-color: #d42027 !important;
+  color: #fff !important;
+}
 button {
   text-transform: capitalize !important;
 }
@@ -222,6 +228,7 @@ button {
 }
 
 .btn-favorite.Mui-selected {
+  background-color: #D41B20 !important;
   color: #fff !important;
 }
 
@@ -754,12 +761,13 @@ span.tox-statusbar__branding {
 }
 
 .activity-timeline ul li .timeline-details .content-time h5 {
-  font-size: 17px;
+  font-size: 14px;
   margin-bottom: 5px;
 }
 
 .activity-timeline ul li .timeline-details .content-time p {
   margin-bottom: 3px;
+  font-size: 14px;
 }
 
 
@@ -1516,8 +1524,21 @@ span.tox-statusbar__branding {
   font-size: 14px;
   padding-top: 4px;
   padding-bottom: 4px;
+  transition: .5s all ease-in;
+  border-radius: 2px;
 }
-
+.MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root:hover {
+  background-color: #D41B20 !important;
+  transition: .5s all ease-in;
+  color: #fff !important;
+}
+.MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root:hover svg {
+  color: #fff;
+  transition: .5s all ease-in;
+}
+.MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root svg {
+  transition: .5s all ease-in;
+}
 .main-filter-box {
   /* max-height: calc(100vh - 230px); */
   overflow-y: auto;
@@ -1537,7 +1558,7 @@ span.tox-statusbar__branding {
 }
 
 .todo-list-box h2 {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
 }
 
@@ -1715,6 +1736,7 @@ span.tox-statusbar__branding {
   display: flex;
   align-items: center;
   justify-content: center;
+  word-break: break-all;
 }
 
 .hover-checkbox {
@@ -1928,18 +1950,22 @@ span.tox-statusbar__branding {
   background: #f1f1f1;
   padding: 10px;
 }
+
 .client-details-filter-btn button {
   /* width: 100%; */
   background: #fff;
   margin: 0 2px;
 }
+
 .client-details-filter-btn button.active {
   background-color: #4780FF !important;
   color: #fff;
 }
+
 .client-details-filter {
   width: 360px;
 }
+
 .client-details-filter .select-border .custom-dropdown .MuiSelect-select {
   border: 0;
   /* font-weight: 400; */
@@ -1948,8 +1974,19 @@ span.tox-statusbar__branding {
   padding-top: 0px !important;
 
 }
+
 .client-details-filter .custom-datepicker-bordered {
   border-bottom: 0px solid;
+}
+
+.custom-chips {
+  overflow-x: auto;
+}
+
+.btn-download {
+  position: absolute;
+  right: 50px;
+  top: 20px;
 }
 
 @media only screen and (max-width: 1366px) {
@@ -2990,9 +3027,24 @@ span.tox-statusbar__branding {
 }
 
 /* hover effect css end */
+.btn-remove {
+  position: absolute !important;
+  top: -5px;
+  right: -5px;
+  /* background: #fff; */
+  padding: 0 !important;
+  color: #D41B20 !important;
+  border: 2px solid #D41B20 !important;
+  background: #fff !important;
+}
 
 .well {
   border: 1px solid #ededed;
   padding: 15px;
   border-radius: 3px;
+}
+
+.modal-head {
+  padding: 15px 15px 15px 25px;
+  border-bottom: 2px solid #f1f1f1;
 }

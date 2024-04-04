@@ -3,7 +3,7 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
 import { FormControl } from "@mui/material";
-import {  Switch } from "@mui/material";
+import { Switch } from "@mui/material";
 import CommanCLS from "../../services/CommanService";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
@@ -13,7 +13,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { toast } from 'react-toastify';
 const ContactMainform = React.memo(
-  ({ contact,clientNames, userContactDetails, setContactDetails,contactlistdata }) => {
+  ({ contact, clientNames, userContactDetails, setContactDetails, contactlistdata }) => {
     console.log(contactlistdata, "contactlistdata");
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -93,33 +93,33 @@ const ContactMainform = React.memo(
       data = { ...data, [name]: val };
       console.log(data, "dataOnchange", e);
       setContactDetails(data);
-    
-     if (name === 'EmailName' && val.trim() !== '') {
-      // Check if the email already exists in contactlistdata.EmailID
-      const emailExists = contactlistdata.some((contact) => contact.EMailId == val.trim());
-      console.log(emailExists,val,"emailExist",contactlistdata);
-      if (emailExists) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          [name]: 'Email already exists',
-        }));
-      } else if (!validateEmail(val)) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          [name]: 'Invalid email address',
-        }));
+
+      if (name === 'EmailName' && val.trim() !== '') {
+        // Check if the email already exists in contactlistdata.EmailID
+        const emailExists = contactlistdata.some((contact) => contact.EMailId == val.trim());
+        console.log(emailExists, val, "emailExist", contactlistdata);
+        if (emailExists) {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: 'Email already exists',
+          }));
+        } else if (!validateEmail(val)) {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: 'Invalid email address',
+          }));
+        } else {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: '', // Clear error message if validation succeeds or if val is empty
+          }));
+        }
       } else {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          [name]: '', // Clear error message if validation succeeds or if val is empty
+          [name]: '', // Clear error message if val is empty
         }));
       }
-    } else {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        [name]: '', // Clear error message if val is empty
-      }));
-    }
     };
     const validateEmail = (email) => {
       // Basic email validation regex
@@ -133,7 +133,7 @@ const ContactMainform = React.memo(
       let val = e.target.checked;
       data = { ...data, [name]: val };
       console.log(data, "dataOnchange", e);
-     
+
       setContactDetails(data);
       setCheckboxfeb(e.target.checked);
     };
@@ -145,8 +145,8 @@ const ContactMainform = React.memo(
         // setSelectedUserId(value.UserId);
         // console.log(value.UserId, "UserId", selectedUserId);
         let data = { ...userContactDetails };
-        data = { ...data, ["MainUserId"]: value.UserId,["MainUserName"]:value.UserName };
-        console.log(defaultUser, "dataOnchange111",value);
+        data = { ...data, ["MainUserId"]: value.UserId, ["MainUserName"]: value.UserName };
+        console.log(defaultUser, "dataOnchange111", value);
         setDefaultUser(value);
         setContactDetails(data);
       } else {
@@ -177,14 +177,14 @@ const ContactMainform = React.memo(
     };
     const handleInputOnDateChage = (event, value) => {
       // event.preventDefault();
-     
-        let date = dayjs(event).format("YYYY/MM/DD");
-        let data = { ...userContactDetails };
-        data = { ...data, ["BirthDate"]: date };
-        console.log(data, "onChangetitle");
-        setDataset(date);
-        setContactDetails(data);
-      
+
+      let date = dayjs(event).format("YYYY/MM/DD");
+      let data = { ...userContactDetails };
+      data = { ...data, ["BirthDate"]: date };
+      console.log(data, "onChangetitle");
+      setDataset(date);
+      setContactDetails(data);
+
     };
     const onChangecountry = (event, value) => {
       event.preventDefault();
@@ -319,7 +319,7 @@ const ContactMainform = React.memo(
                 // options={titleData}
                 key={`uniques-roles`}
                 options={Roles}
-          getOptionLabel={(option) => option.RoleName}
+                getOptionLabel={(option) => option.RoleName}
                 // value={defaultUser || null}
                 onChange={onChangeRoles}
                 clearOnEscape
@@ -337,26 +337,26 @@ const ContactMainform = React.memo(
             </FormControl>
           </Grid>
           <Grid item xs={6} md={6}>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer
-                    components={[
-                      "DatePicker",
-                      "TimePicker",
-                      "DateTimePicker",
-                      "DateRangePicker",
-                    ]}
-                  >
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer
+                components={[
+                  "DatePicker",
+                  "TimePicker",
+                  "DateTimePicker",
+                  "DateRangePicker",
+                ]}
+              >
 
-                    <DatePicker
-                      // dateFormat="DD/MM/YYYY"
-                      // value={currentDate}
-                      
-                      onChange={(e) => handleInputOnDateChage(e)}
-                      label="Birth date"
-                    />
+                <DatePicker
+                  // dateFormat="DD/MM/YYYY"
+                  // value={currentDate}
 
-                  </DemoContainer>
-                </LocalizationProvider>
+                  onChange={(e) => handleInputOnDateChage(e)}
+                  label="Birth date"
+                />
+
+              </DemoContainer>
+            </LocalizationProvider>
           </Grid>
           <Grid item xs={6} md={6}>
             <TextField
@@ -371,20 +371,8 @@ const ContactMainform = React.memo(
               onChange={onChange}
             />
           </Grid>
-          <Grid item xs={6} md={6}>
-            <FormControlLabel
-              key={`maincheckbox`}
-              control={
-                <Switch
-                  name="MainContact"
-                  checked={advancedSettingChecked}
-                  onChange={handleAdvancedSettingChange}
-                />
-              }
-              label="Main Contact"
-            />
-          </Grid>
-          <Grid item xs={6} md={6}>
+
+          <Grid item xs={6} md={6} className="d-flex flex-wrap align-items-center">
             <FormControlLabel
               key={`inactive`}
               control={
@@ -396,8 +384,7 @@ const ContactMainform = React.memo(
               }
               label="In Active"
             />
-          </Grid>
-          <Grid item xs={6} md={6}>
+
             <FormControlLabel
               key={`createportal`}
               control={
@@ -409,7 +396,21 @@ const ContactMainform = React.memo(
               }
               label="Create Portal"
             />
+
+            <FormControlLabel
+              key={`maincheckbox`}
+              control={
+                <Switch
+                  name="MainContact"
+                  checked={advancedSettingChecked}
+                  onChange={handleAdvancedSettingChange}
+                />
+              }
+              label="Main Contact"
+            />
+
           </Grid>
+
           <Grid item xs={6} md={6}>
             <TextField
               fullWidth
@@ -449,26 +450,26 @@ const ContactMainform = React.memo(
                 value={defaultUser}
                 onChange={onChangeUser}
               /> */}
-               <Autocomplete
-          key={`maincontact-manager`}
-          options={mangers}
-          getOptionLabel={(option) => option.UserName}
-          value={defaultUser || null}
-          onChange={onChangeUser}
-          clearOnEscape
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              key={`Managermain`}
-              name="Manager"
-              // onChange={onChangeUser}
-              label="Manager"
-              variant="outlined"
-            />
-          )}
-        />
+              <Autocomplete
+                key={`maincontact-manager`}
+                options={mangers}
+                getOptionLabel={(option) => option.UserName}
+                value={defaultUser || null}
+                onChange={onChangeUser}
+                clearOnEscape
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    key={`Managermain`}
+                    name="Manager"
+                    // onChange={onChangeUser}
+                    label="Manager"
+                    variant="outlined"
+                  />
+                )}
+              />
 
-             
+
             </FormControl>
           </Grid>
 

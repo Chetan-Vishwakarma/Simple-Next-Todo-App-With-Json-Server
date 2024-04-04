@@ -61,6 +61,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem }) => {
     const [filterAttachments, setFilterAttachments] = React.useState([]);
     const [totalAttachment, setTotalAttachment] = React.useState([]);
     const [allPortalAttachments, setAllPortalAttachments] = React.useState([]);
+    const [selectedEmail, setSelectedEmail] = React.useState({});
 
     const [txtRecipient, settxtRecipient] = React.useState(0);
 
@@ -99,21 +100,21 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem }) => {
         ClsPortal.GetMessageHtml_Json(o, function (sts, data) {
             if (sts) {
                 console.log("GetMessageHtml_Json", data);
-                
+
                 setTemplateDataMarkup(HtmlToText(data))
             }
         })
     }
-function HtmlToText(data){
-    if(data){
-        const textContent = data.replace(/<[^>]*>/g, '');
-        return textContent;
+    function HtmlToText(data) {
+        if (data) {
+            const textContent = data.replace(/<[^>]*>/g, '');
+            return textContent;
+        }
+        else {
+            return "";
+        }
+
     }
-    else {
-        return ""; 
-    }
-   
-}
     const GetCertificate_Json = (mgsId) => {
         let o = {
             accid: agrno,
@@ -147,25 +148,22 @@ function HtmlToText(data){
                         let js = JSON.parse(data);
                         // console.log("GetDocumentStatus_Json", js);
                         let res = js.filter((e) => e.Emailid === m.emailid);
-                        console.log("GetDocumentStatus_Json", res);
                         if (res.length > 0) {
                             const formattedActivity = res.map((el) => {
-                                let ActivityDate;
-                                if (el["Actioned On"]) {
-                                    ActivityDate = parseInt(el["Actioned On"].slice(6, -2));
+                                let ActivityDate; // Declare ActivityDate variable
+                                if (el["Actioned On"]) { // Check if "Actioned On" property exists
+                                    ActivityDate = el["Actioned On"].slice(6, -2); // If exists, slice the string
                                 }
-                                const date = new Date(ActivityDate);
-                                return { ...el, ["Actioned On"]: date };
+                                const date = new Date(ActivityDate); // Create Date object using ActivityDate
+                                return { ...el, ["Actioned On"]: date }; // Return new object with formatted date
                             });
-                           
-                            
 
-                            setDocumentStatus(formattedActivity)
+                            setDocumentStatus(formattedActivity[0])
+                            console.log("GetDocumentStatus_Json", formattedActivity);
+
                         }
 
                     }
-
-
                 }
             })
         } catch (error) {
@@ -271,19 +269,19 @@ function HtmlToText(data){
         setAnchorElMgs(null);
         console.log("GetMessageHtml_Json11", e);
         //console.log("GetMessageHtml_Json11", e);
+       
         if (e.PortalDocId) {
-         
+            setSelectedEmail(e);
+            GetDocumentStatus_Json(e);
             GetMessageHtml_Json(e.PortalDocId);
             GetCertificate_Json(e.PortalDocId);
             GetCommentsHtml_Json(e);
             GetComments_Json(e);
-            GetDocumentStatus_Json(e);
             setMessageEmail(e.emailid);
             setPortalEmailOpbject(e);
             GetMessageViewHistory_Json(e);
             GetSignedAttachment_Json(e);
             ApprovalStatusChanged_Json(e);
-
             //handleClickOpenPortalAtt(true);
             let res = allPortalAttachments.length > 0 ? allPortalAttachments.filter((p) => p.emailid === e.emailid) : null;
 
@@ -628,6 +626,28 @@ function HtmlToText(data){
         setOpenCertificate(false);
     };
 
+ const HandalChangeSendReminder =()=>{
+    //setSelectedEmail
+    try {
+        let o={
+            accid:agrno,
+            email:Email,
+            password:password,
+            messageID:selectedEmail.PortalDocId,
+            contactEmail:selectedEmail.emailid
+        };
+        ClsPortal.SendReminder_Json(o,function(sts, data){
+            if(sts){
+                if(data){
+                    toast.success(data);
+                    console.log("SendReminder_Json",data)
+                }
+            }
+        })
+    } catch (error) {
+        console.log({message:false,Error:error})
+    }
+ }
     // document modal
     const [DocumentSent, setDocumentSent] = React.useState(false);
     const handleClickDocumentSent = () => {
@@ -761,7 +781,7 @@ function HtmlToText(data){
                         </Box>
                     </Box>
 
-                    <Box className='d-flex'>
+                    <Box className='d-flex align-items-center'>
 
                         {/* <NewReleasesIcon className='text-warning' /> */}
 
@@ -773,18 +793,18 @@ function HtmlToText(data){
                                         <>
                                             <Box className='ps-3'>
                                                 <VerifiedIcon className='text-green' />
-                           <h5 className='font-14 text-black mb-1'>Message approved </h5>
-                  <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"]}</p>
+                                                <h5 className='font-14 text-black mb-1'>Message approved </h5>
+                                                <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"]}</p>
                                                 <Button className='btn-blue-2' size="small" onClick={handleClickOpenCertificate} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
                                             </Box>
                                         </>
                                     ) : (
                                         <>
-                                            <Box className='ps-3'>
+                                            <Box className='ps-2'>
                                                 {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
                                                 <HourglassEmptyIcon className='text-gray' />
                                                 <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
-                                                <Button className='btn-blue-2' size="small" onClick={""} startIcon={<ScheduleIcon />}>Send Reminder</Button>
+                                                <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
                                             </Box>
                                         </>
                                     )}
@@ -793,7 +813,7 @@ function HtmlToText(data){
                                 <>
                                     <DoDisturbIcon className='text-gray' />
                                     <Box className='ps-3'>
-                                        <h5 className='font-14 text-black mb-1'>Not sent for approval </h5>
+                                        <h5 className='font-14 text-black mb-0'>Not sent for approval </h5>
                                     </Box>
                                 </>
                             )
@@ -828,10 +848,6 @@ function HtmlToText(data){
             </Box>
         </>)}
 
-
-
-
-
         {/* history modal start */}
         <Dialog
             open={open}
@@ -840,28 +856,26 @@ function HtmlToText(data){
             aria-describedby="alert-dialog-description"
             className='custom-modal'
         >
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="align-items-center d-flex">
+                    <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                        View History
+                    </Typography>
+                </Box>
+
+                {/*  */}
+
+                <Box className='d-flex'>
+                    <Button onClick={handleClose} className='p-0'>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+            </Box>
+
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    <Box className="d-flex align-items-center justify-content-between">
-                        <Box className="align-items-center d-flex">
-                            <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                                View History
-                            </Typography>
-                        </Box>
-
-                        {/*  */}
-
-                        <Box className='d-flex'>
-                            <Button onClick={handleClose} className='p-0'>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-                    </Box>
-
-                    <hr />
-
                     <Box class="ml-auto mr-auto">
                         <Box class="activity-timeline">
                             <ul class="timeline-ul">
@@ -909,27 +923,25 @@ function HtmlToText(data){
             aria-describedby="alert-dialog-description"
             className='custom-modal'
         >
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="align-items-center d-flex">
+                    <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                        Certificate
+                    </Typography>
+                </Box>
+
+                {/*  */}
+
+                <Box className='d-flex'>
+                    <Button onClick={handleCloseCertificate} className='p-0'>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+            </Box>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    <Box className="d-flex align-items-center justify-content-between">
-                        <Box className="align-items-center d-flex">
-                            <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                                Certificate
-                            </Typography>
-                        </Box>
-
-                        {/*  */}
-
-                        <Box className='d-flex'>
-                            <Button onClick={handleCloseCertificate} className='p-0'>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-                    </Box>
-
-                    <hr />
 
                     <Box class="ml-auto mr-auto">
                         <Box class="activity-timeline">
@@ -957,25 +969,22 @@ function HtmlToText(data){
             aria-describedby="alert-dialog-description"
             className='custom-modal full-modal'
         >
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="align-items-center d-flex">
+                    <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                        Attachments
+                    </Typography>
+                </Box>
+                <Box className='d-flex'>
+                    <Button onClick={DocumentHandleClose} className='p-0 min-width-auto'>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+            </Box>
             <DialogContent>
                 <DialogContentText>
-
-                    <Box className="d-flex align-items-center justify-content-between">
-                        <Box className="align-items-center d-flex">
-                            <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                                Attachments
-                            </Typography>
-                        </Box>
-                        <Box className='d-flex'>
-                            <Button onClick={DocumentHandleClose} className='p-0 min-width-auto'>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-                    </Box>
-
-                    <hr />
                     <Box className='row'>
 
                         {filterAttachments.map((item, index) => {
@@ -1082,18 +1091,12 @@ function HtmlToText(data){
                 margin: '0 auto'
             }}
         >
-            {/* <DialogTitle id="alert-dialog-title">
-                        {"Use Google's location service?"}
-                    </DialogTitle> */}
-            <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-
-                    <Box className="d-flex align-items-center justify-content-between">
-                        <Box className="dropdown-box">
-                            <Typography variant="h4" className='font-18 bold mb-2 text-black'>
-                                Attachments
-                            </Typography>
-                            {/* <Box className="btn-Select">
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="dropdown-box">
+                    <Typography variant="h4" className='font-18 bold mb-2 text-black'>
+                        Attachments
+                    </Typography>
+                    {/* <Box className="btn-Select">
                                     <Button className='btn-white'>Action</Button>
                                     <Button className='btn-white'>Ser</Button>
                                     <Button className='btn-white'>Custom</Button>
@@ -1102,15 +1105,23 @@ function HtmlToText(data){
 
                                     <Button className='btn-blue-2' size="small">Apply Now</Button>
                                 </Box> */}
-                        </Box>
+                </Box>
 
-                        {/*  */}
-                        <Button onClick={handleClosePortalAtt} autoFocus sx={{ minWidth: 30 }}>
-                            <span className="material-symbols-outlined text-black">
-                                cancel
-                            </span>
-                        </Button>
-                    </Box>
+                {/*  */}
+                <Button onClick={handleClosePortalAtt} autoFocus sx={{ minWidth: 30 }}>
+                    <span className="material-symbols-outlined text-black">
+                        cancel
+                    </span>
+                </Button>
+            </Box>
+            {/* <DialogTitle id="alert-dialog-title">
+                        {"Use Google's location service?"}
+                    </DialogTitle> */}
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+
+
+
                     <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
                         <Box sx={{ flexGrow: 1 }}>
                             <Grid container spacing={2}>

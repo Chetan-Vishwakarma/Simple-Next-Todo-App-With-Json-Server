@@ -20,7 +20,7 @@ const selectMR = [
 
 function AMLVerification({ verificationModal, setVerificationModalOpen, contactDetails, amlDetails, agrno, Email, Password, Cls }) {
     const [currentDate, setCurrentDate] = useState("");
-    const Json_VerifyDrivingLicence=()=>{
+    const Json_VerifyDrivingLicence = () => {
         // setIsViewerModalOpen(!isViewerModalOpen);
         let obj = {
             agrno: agrno,
@@ -32,20 +32,20 @@ function AMLVerification({ verificationModal, setVerificationModalOpen, contactD
             strLastName: "",
             dtDateOfBirth: "",
             strGender: "",
-            strAddress1:"",
+            strAddress1: "",
             strAddress2: "",
             strAddress3: "",
             strAddress4: "",
             strPostTown: "",
             strCounty: "",
-            strPostCode:"",
+            strPostCode: "",
             strCountry: "",
             strLicenseNo: amlDetails.drivingLicNo
         }
         try {
             Cls.Json_VerifyDrivingLicence(obj, (sts, data) => {
                 if (sts) {
-                    console.log("Json_VerifyDrivingLicence",data);
+                    console.log("Json_VerifyDrivingLicence", data);
                 }
             });
         } catch (err) {
@@ -61,25 +61,20 @@ function AMLVerification({ verificationModal, setVerificationModalOpen, contactD
             className="custom-modal"
 
         >
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="dropdown-box">
+                    <Typography variant="h4" className='font-18 text-black'>Driving License Verification</Typography>
+                </Box>
+
+                <Button onClick={() => setVerificationModalOpen(false)} autoFocus sx={{ minWidth: 30 }} className='p-0'>
+                    <span className="material-symbols-outlined text-black">
+                        cancel
+                    </span>
+                </Button>
+            </Box>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    <Box className="d-flex align-items-center justify-content-between">
-                        <Box className="dropdown-box">
-                            <Typography variant="h4" className='font-18 text-black'>Driving License Verification</Typography>
-                        </Box>
-
-                        <Button onClick={() => setVerificationModalOpen(false)} autoFocus sx={{ minWidth: 30 }} className='p-0'>
-                            <span className="material-symbols-outlined text-black">
-                                cancel
-                            </span>
-                        </Button>
-                    </Box>
-
-                    <hr />
-
                     <Box className='row'>
-
-
                         <Box className='col-xl-6 col-md-6'>
                             <Box class="input-group mb-3">
                                 <Autocomplete
