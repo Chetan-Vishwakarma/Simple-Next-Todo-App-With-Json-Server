@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
-import { FormControl, List, ListItem, ListItemText } from "@mui/material";
+import { FormControl, FormControlLabel, List, ListItem, ListItemText, Switch } from "@mui/material";
 import Box from "@mui/material/Box";
 import CommanCLS from "../../services/CommanService";
 import { memo } from 'react';
@@ -33,6 +33,8 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
   const [Importdata, setImportdata] = useState("");
   const [errors, setErrors] = useState({});
   const [intUserid, setIntUserid] = useState(localStorage.getItem("UserId"));
+  const [advancedSettingChecked, setAdvancedSettingChecked] = useState(false);
+  const [advancedInactive, setAdvancedInactive] = useState(false);
   const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
   let Cls = new CommanCLS(baseUrl, agrno, Email, password);
   let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
@@ -281,7 +283,24 @@ const clearDataCard = () => {
     setDataCompanyHouse(null);
   console.log("clearDataCard");
 }
-
+const handleAdvancedSettingChange = (event) => {
+    setAdvancedSettingChecked(event.target.checked);
+    let data = { ...userDetail };
+    let name = event.target.name;
+    let val = event.target.checked;
+    data = { ...data, [name]: val };
+    console.log(data, "dataOnchange", event);
+    setUserDetail(data);
+  };
+  const handleAdvancedInactive = (event) => {
+    setAdvancedInactive(event.target.checked);
+    let data = { ...userDetail };
+    let name = event.target.name;
+    let val = event.target.checked;
+    data = { ...data, [name]: val };
+    console.log(data, "dataOnchange", event);
+    setUserDetail(data);
+  };
   console.log(Importdata,"Importdata",ImportCompanyDetails)
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
@@ -586,6 +605,32 @@ const clearDataCard = () => {
        
           />
         </Grid>
+        <Grid item lg={4} xs={6} md={6}>
+            <FormControlLabel
+              key={`maincheckbox`}
+              control={
+                <Switch
+                  name="Assgined"
+                  checked={advancedSettingChecked}
+                  onChange={handleAdvancedSettingChange}
+                />
+              }
+              label="Assigned"
+            />
+          </Grid>
+          <Grid item lg={4} xs={6} md={6}>
+            <FormControlLabel
+              key={`inactive`}
+              control={
+                <Switch
+                  name="Unassigned"
+                  checked={advancedInactive}
+                  onChange={handleAdvancedInactive}
+                />
+              }
+              label="Unassigned"
+            />
+          </Grid>
       </Grid>
     </div>
   );
