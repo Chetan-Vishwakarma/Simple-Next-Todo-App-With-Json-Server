@@ -79,6 +79,17 @@ Json_GetContactListByFolder(obj,callBack) {
             }
         })
     }
+    AddTaskComment_Json(obj,callBack) {
+        super.CreateNewServiceParamObject("AddTaskComment_Json",obj,false);
+        super.CallNewService("AddTaskComment_Json", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
     SendReminder_Json(obj,callBack) {
         super.CreateNewServiceParamObject("SendReminder_Json",obj,false);
         super.CallNewService("SendReminder_Json", function (status, Data) {

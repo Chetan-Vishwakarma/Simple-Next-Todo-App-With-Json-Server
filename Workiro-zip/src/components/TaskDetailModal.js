@@ -85,9 +85,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     /////////////////////////////////////////Task Activity
     const [anchorEl4, setAnchorEl4] = React.useState(null);
+    const [selectedEmailForComment, setSelectedEmailForComment] = React.useState({});
     const [NumPriority, setNumPriority] = React.useState(selectedTask.Priority);
 
     const [folderList, setFolderList] = useState([]);
+    const [portalComments, setPortalComments] = useState([]);
 
     const [txtFolder, settxtFolder] = useState(selectedTask.Folder);
     const [txtFolderId, setTxtFolderId] = useState(selectedTask.FolderID);
@@ -230,12 +232,13 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                 ActivityDate = parseInt(activity.ActivityDate.slice(6, -2));
                             }
                             const date = new Date(ActivityDate);
-                            return { ...activity, ActivityDate: date };
+                            return { ...activity, ActivityDate: date,comDate:date,comNotes:activity.Notes };
                         });
                         // console.log(
                         //     "Json_Get_CRM_Task_ActivityByTaskId",
                         //     formattedActivity
                         // );
+                        
                         setCRMTaskAcivity(
                             formattedActivity.sort((a, b) => a.ActivityDate - b.ActivityDate)
                         );
@@ -249,6 +252,14 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         };
                         // setCRMTaskAcivity((el) => [...el, obj]);
                         // setAllTask(json.Table);
+
+                        if(selectedTask.Source==="Portal"){
+                            
+                            let margeArr= mergeAndSortByDate(portalComments,formattedActivity,"comDate")
+                  console.log("GetComments_Json111", margeArr);
+                  setPortalComments(margeArr);
+                        }
+
                     }
                 }
             });
@@ -562,6 +573,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         }
     }
 
+   
+
 
 
     useEffect(() => {
@@ -782,6 +795,95 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
             Json_CRM_Task_Update();
         }
     };
+
+    const addActivitySaveForPortal = () => {
+        if (notesMessage) {
+            AddTaskComment_Json(notesMessage)
+        }
+       
+    };
+
+    useEffect(()=>{
+        GetComments_Json(selectedEmailForComment.PortalDocId);
+    },[selectedEmailForComment])
+
+    const AddTaskComment_Json = (notesMessage) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageID: selectedEmailForComment.PortalDocId,
+            response: notesMessage,
+            ConatctEmail: selectedEmailForComment.emailid,
+        };
+
+        ClsPortal.AddTaskComment_Json(o, function (sts, data) {
+            if (sts) {
+
+                console.log("AddTaskComment_Json", data);
+                if (data) {
+                    GetComments_Json(selectedEmailForComment.PortalDocId);
+                    setNotesMessage("");
+                }
+                // setTemplateDataMarkup(data)
+            }
+        })
+    }
+    const GetComments_Json = (mgsid) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageId: mgsid,
+        };
+
+        ClsPortal.GetComments_Json(o, function (sts, data) {
+            if (sts) {
+                let js = JSON.parse(data);               
+                if (data) {
+                    const formattedActivity = js.map((activity) => {
+                        let DateOfRemark;
+                        if (activity.DateOfRemark) {
+                            DateOfRemark = parseInt(activity.DateOfRemark.slice(6, -2));
+                        }
+                        const date = new Date(DateOfRemark);
+
+                        // let ReadDate;
+                        // if (activity.ReadDate) {
+                        //     ReadDate = parseInt(activity.ReadDate.slice(6, -2));
+                        // }
+                        // const ReadDate1 = new Date(ReadDate);
+                        return { ...activity, DateOfRemark: date,comDate: date,comNotes:activity.Remark};
+                    }); 
+                    console.log("GetComments_Json", formattedActivity);
+
+                 // let arr1 =  formattedActivity.sort((a, b) => a.DateOfRemark - b.DateOfRemark);
+
+                  let margeArr= mergeAndSortByDate(formattedActivity,crmTaskAcivity,"comDate");
+
+                  console.log("GetComments_Json", margeArr);
+                  setPortalComments(margeArr);
+                   
+                }
+                // setTemplateDataMarkup(data)
+            }
+        })
+    }
+
+    function mergeAndSortByDate(array1, array2, dateField) {
+        // Concatenate the two arrays
+        var mergedArray = array2.concat(array1);
+        
+        // Sort the merged array by date field
+        mergedArray.sort(function(a, b) {
+            return new Date(a[dateField]) - new Date(b[dateField]);
+        });
+        
+        return mergedArray;
+    }
+    
+
+
     const Json_AddSupplierActivity = (mgs, sts) => {
         let obj = {};
         obj.OriginatorNo = selectedTask.ClientNo;
@@ -1561,7 +1663,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
                                 {
-                                    <PortalMessage selectedTask={selectedTask} Json_RegisterItem={Json_RegisterItem}></PortalMessage>
+                                    <PortalMessage selectedTask={selectedTask} Json_RegisterItem={Json_RegisterItem} setPortalComments={setPortalComments} setSelectedEmailForComment={setSelectedEmailForComment}></PortalMessage>
                                 }
 
                             </Box>
@@ -1736,6 +1838,166 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                         <Box className="pb-0 mb-0">
                             <Box className="main-chatbox">
+                            {selectedTask.Source === "Portal" ? (<>
+                                {portalComments
+                                    ? portalComments.map((item, index) => {
+                                     
+                                        // console.log("forwardUser22",forwardUser.ForwardTo)
+                                        if (item.status === "sys") {
+                                            return (
+                                                <>
+                                                    <Box
+                                                        className="text-center py-2 file-uploaded"
+                                                        style={{
+                                                            backgroundColor: "#e5e5e5",
+                                                            marginBottom: "10px",
+                                                            "border-radius": "3px",
+                                                        }}
+                                                    >
+                                                        <Typography key={index} variant="body1" className="font-14 semibold">
+                                                                {item.Notes} {/* Display each note */}
+                                                            </Typography>
+                                                        <Typography variant="body1" className="font-12">
+                                                            {dateAndTime(item.ActivityDate)}
+                                                        </Typography>
+                                                    </Box>
+                                                </>
+                                            );
+                                        }
+                                        else if (item.Type === "response") {
+                                            return (
+                                                <>
+                                                    <Box
+                                                        className="chat-box d-flex align-items-end mb-2 sender"
+                                                        justifyContent="flex-end"
+                                                    >
+                                                        <Box class="chat-message">
+                                                            <Box class="inner-chat-message ms-auto">
+                                                                <Typography variant="body1" className="font-14">
+                                                                    {item.Remark}
+                                                                </Typography>
+                                                                <Box className="d-flex align-items-center justify-content-end">
+                                                                    <Typography variant="body1" className="font-12">
+                                                                        {dateAndTime(item.DateOfRemark)}
+                                                                    </Typography>
+
+                                                                    <Box className="">
+                                                                        <Button
+                                                                            id={`fade-button-${index}`} // Use unique IDs for each button
+                                                                            aria-controls={
+                                                                                anchorEl1
+                                                                                    ? `fade-menu-${index}`
+                                                                                    : undefined
+                                                                            }
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded={
+                                                                                anchorEl1 ? "true" : undefined
+                                                                            }
+                                                                            onClick={(event) =>
+                                                                                handleClick2(event, index)
+                                                                            } // Pass index to handleClick
+                                                                            className="min-width-auto px-0 text-gray"
+                                                                        >
+                                                                            <MoreVertIcon />
+                                                                        </Button>
+                                                                        <Menu
+                                                                            id={`fade-menu-${index}`} // Use unique IDs for each menu
+                                                                            MenuListProps={{
+                                                                                "aria-labelledby": `fade-button-${index}`,
+                                                                            }}
+                                                                            anchorEl={anchorEl1}
+                                                                            open={
+                                                                                selectedIndex === index &&
+                                                                                Boolean(anchorEl1)
+                                                                            } // Open menu if selectedIndex matches
+                                                                            onClose={handleClose2}
+                                                                        >
+                                                                            <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                                <ListItemIcon>
+                                                                                    <EditIcon fontSize="medium" />
+                                                                                </ListItemIcon> Edit</MenuItem>
+
+                                                                            <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                                <ListItemIcon>
+                                                                                    <DeleteIcon fontSize="medium" />
+                                                                                </ListItemIcon> Delete Message</MenuItem>
+                                                                        </Menu>
+                                                                    </Box>
+                                                                </Box>
+                                                            </Box>
+                                                        </Box>
+                                                    </Box>
+                                                </>
+                                            );
+                                        }
+                                        else {
+                                            return (
+                                                <Box
+                                                    className="chat-box d-flex align-items-end mb-2 reciever"
+                                                    key={index}
+                                                >
+                                                    <Box className="client-img me-3 mb-0 ms-0">
+                                                        <img src={user} alt="User" />
+                                                    </Box>
+                                                    <Box className="chat-message me-2">
+                                                        <Box className="inner-chat-message me-2">
+                                                            <Typography variant="body1" className="font-14">
+                                                                {item.Remark}
+                                                            </Typography>
+                                                            <Box className="d-flex align-items-center justify-content-end">
+                                                                <Typography variant="body1" className="font-12">
+                                                                    {dateAndTime(item.DateOfRemark)}
+                                                                </Typography>
+
+                                                                <Box className="">
+                                                                    <Button
+                                                                        id={`fade-button-${index}`} // Use unique IDs for each button
+                                                                        aria-controls={
+                                                                            anchorEl1
+                                                                                ? `fade-menu-${index}`
+                                                                                : undefined
+                                                                        }
+                                                                        aria-haspopup="true"
+                                                                        aria-expanded={
+                                                                            anchorEl1 ? "true" : undefined
+                                                                        }
+                                                                        onClick={(event) =>
+                                                                            handleClick2(event, index)
+                                                                        } // Pass index to handleClick
+                                                                        className="min-width-auto px-0 text-gray"
+                                                                    >
+                                                                        <MoreVertIcon />
+                                                                    </Button>
+                                                                    <Menu
+                                                                        id={`fade-menu-${index}`} // Use unique IDs for each menu
+                                                                        MenuListProps={{
+                                                                            "aria-labelledby": `fade-button-${index}`,
+                                                                        }}
+                                                                        anchorEl={anchorEl1}
+                                                                        open={
+                                                                            selectedIndex === index &&
+                                                                            Boolean(anchorEl1)
+                                                                        } // Open menu if selectedIndex matches
+                                                                        onClose={handleClose2}
+                                                                    >
+                                                                        <MenuItem onClick={handleClose2}>
+                                                                            Edit
+                                                                        </MenuItem>
+                                                                        <MenuItem onClick={handleClose2}>
+                                                                            Delete
+                                                                        </MenuItem>
+                                                                    </Menu>
+                                                                </Box>
+                                                            </Box>
+                                                        </Box>
+                                                    </Box>
+                                                </Box>
+                                            );
+
+                                        }
+                                    })
+                                    : null}
+                            </>):(<>
                                 {crmTaskAcivity
                                     ? crmTaskAcivity.map((item, index) => {
                                         const notesArray = item.Notes.split(',');
@@ -1896,6 +2158,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                         }
                                     })
                                     : null}
+                            </>)}
+                                
 
                                 {/* Reciever Start */}
 
@@ -1973,7 +2237,18 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                                 </Box>
 
-                                <Box className="d-flex d-flex align-items-center ms-3">
+                                {selectedTask.Source === "Portal" ?(<Box className="d-flex d-flex align-items-center ms-3">
+                                    <Button
+                                        className="btn-blue-2 ms-0 mb-2"
+                                        size="small"
+                                        onClick={addActivitySaveForPortal}
+                                        startIcon={<SendIcon />}
+                                    >
+                                        Send
+                                    </Button>
+                                    <ToastContainer></ToastContainer>
+                                </Box>):(
+                                    <Box className="d-flex d-flex align-items-center ms-3">
                                     <Button
                                         className="btn-blue-2 ms-0 mb-2"
                                         size="small"
@@ -1984,6 +2259,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     </Button>
                                     <ToastContainer></ToastContainer>
                                 </Box>
+                                )}
+                                
                             </Box>
                         </Box>
                     </DialogContentText>
