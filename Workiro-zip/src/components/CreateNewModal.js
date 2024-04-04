@@ -3780,11 +3780,10 @@ function CreateNewModalTask({ ...props }) {
                     {"Use Google's location service?"}
                 </DialogTitle> */}
 
-
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                            Edit Client
+                            Add Client
                         </Typography>
                     </Box>
 

@@ -11,7 +11,8 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 const UserDetailContext = createContext();
 // const UserDetailContext = createContext();
 
-const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse}) => {
+const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse,companyEditDetails}) => {
+    console.log(companyEditDetails,"EditcompanyEditDetails");
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -23,6 +24,9 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
   const [mangers, setMangers] = useState([]);
   const [defaultUser, setDefaultUser] = useState(null);
   const [defaultStatus, setDefaultStatus] = useState(null);
+  const [defaultSource, setDefaultSource] = useState(null);
+  const [defaultFolder, setDefaultFolder] = useState(null);
+  const [defaultBussiness, setDefaultBussiness] = useState(null);
   const [status, setStatus] = useState([]);
   const [ImportContact, setImportContact] = useState([]);
   const [ImportCompanyDetails, setImportCompanyDetails] = useState([]);
@@ -58,6 +62,8 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
     if (value) {
       let data = { ...userDetail };
       data = { ...data, ["FolderId"]: value.FolderID };
+      console.log(value,"clientlist");
+      setDefaultFolder(value);
       setUserDetail(data);
     }
   };
@@ -66,6 +72,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
     if (value) {
       let data = { ...userDetail };
       data = { ...data, ["BussId"]: value.BussId };
+      setDefaultBussiness(value);
       setUserDetail(data);
     } else {
     }
@@ -85,6 +92,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
     if (value) {
       let data = { ...userDetail };
       data = { ...data, ["SourceId"]: value.SourceId };
+      setDefaultSource(value);
       setUserDetail(data);
     } else {
     }
@@ -281,12 +289,43 @@ const clearDataCard = () => {
     setEmail(localStorage.getItem("Email"));
     setFolderId(localStorage.getItem("FolderId"));
     setIntUserid(localStorage.getItem("UserId"));
-    //   Json_GetClientCardDetails();
+    // Json_GetClientCardDetails();
     Json_GetFolders();
     Json_GetConfiguration();
-   
-    // setUserDetail(data);
-  }, []);
+
+    if (companyEditDetails.length > 0) {
+        const statusObject = status.find((item) => item.StatusId === companyEditDetails[0].StatusId);
+        const sourceObj = sources.find((item) => item.SourceId === companyEditDetails[0].SourceId);
+        const bussineObj = bussiness.find((item) => item.BussId === companyEditDetails[0].BussID);
+        const folderObj = folders.find((item) => item.FolderID === localStorage.getItem("FolderId"));
+        console.log(companyEditDetails, "testsourceObj",folderObj);
+
+        // Set default status and source if found
+        if (statusObject) {
+            setDefaultStatus(statusObject);
+        }
+        if (sourceObj) {
+            setDefaultSource(sourceObj);
+        }
+        if(bussineObj){
+            setDefaultBussiness(bussineObj);
+        }
+
+        const updatedUserDetail = {
+            ...userDetail,
+            CHNumber: "",
+            Clientname: companyEditDetails[0].OriginatorName,
+            Clientid: companyEditDetails[0].OriginatorNo,
+            StatusId: statusObject ? statusObject.StatusName : "", // Set default status name
+            UserId: "",
+            Mobile: companyEditDetails[0].AltTelNo,
+            Telephone: companyEditDetails[0].TelNo,
+            Email: companyEditDetails[0].Email
+        };
+        setUserDetail(updatedUserDetail);
+    }
+}, [companyEditDetails, status, sources]);
+
   return (
     <div>
 
@@ -399,7 +438,10 @@ const clearDataCard = () => {
 
         <Grid item lg={4} xs={6} md={6}>
           <Autocomplete
-            {...clientlist}
+            // {...clientlist}
+            options={folders}
+            getOptionLabel={(option) => option.Folder}
+            value={defaultFolder || null}
             id="clientlist"
             clearOnEscape
             onChange={onChangeclientlist}
@@ -418,7 +460,10 @@ const clearDataCard = () => {
         <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
             <Autocomplete
-              {...bussinesslist}
+            //   {...bussinesslist}
+            options={bussiness}
+            getOptionLabel={(option) => option.BussName}
+            value={defaultBussiness || null}
               id="clear-on-escape-bussiness"
               clearOnEscape
               onChange={onChangebussines}
@@ -461,7 +506,10 @@ const clearDataCard = () => {
         <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
             <Autocomplete
-              {...sourcelist}
+            //   {...sourcelist}
+            options={sources}
+            getOptionLabel={(option) => option.SourceName}
+            value={defaultSource || null}
               id="clear-on-escape-source"
               clearOnEscape
               onChange={onChangesource}
