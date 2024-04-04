@@ -292,12 +292,12 @@ export default function SidebarNav() {
       password: password
     };
     try {
-      Cls.Json_CRM_GetOutlookTask(obj, (sts, data) => {
+      practiceCls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
         if (sts) {
           if (data) {
             console.log("Json_CRM_GetOutlookTask", JSON.parse(data));
             let tasks = JSON.parse(data).Table;
-            let myTasks = tasks.filter((item) => item.AssignedToID.split(",").includes(userId) && (item.Source === "CRM" || item.Source === "Portal"));
+            let myTasks = tasks.filter((item) => item.AssignedToID.split(",").includes(userId) && (item.Source === "CRM" || item.Source === "Portal") && item.mstatus!=="Completed");
             let fltDouble = [];
             [...myTasks].map(itm => itm.Subject).filter(subject => {
               if (!fltDouble.includes(subject)) {

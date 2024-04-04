@@ -65,7 +65,8 @@ function NewTodoList() {
     const handleClose = () => {
         setAnchorEl(null);
     };
-
+    console.log("fgfgljglj innerHeight",window.innerHeight);
+    console.log("fgfgljglj offsetHeight",document.documentElement.offsetHeight);
     const Json_Get_CRM_UserByProjectId = () => {
         let obj = {
             agrno: agrno,
@@ -243,7 +244,23 @@ function NewTodoList() {
 
     }, [isApi])
 
-
+    const handleScroll = () => {
+        console.log("fgfgljglj useEffect: ",document.documentElement.scrollTop);
+        if(document.documentElement.scrollTop<924){
+            console.log("fgfgljglj first");
+            handleActiveTab("section1");
+        }else if(document.documentElement.scrollTop>924 && document.documentElement.scrollTop<2211){
+            console.log("fgfgljglj second"); 
+            handleActiveTab("section2");
+        }
+        console.log("fgfgljglj sdfdff",activeSectionList);
+        //     if (
+    //       window.innerHeight + document.documentElement.scrollTop ===
+    //       document.documentElement.offsetHeight
+    //     ) {
+    //       fetchData();
+    //     }
+      };
 
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
@@ -251,6 +268,12 @@ function NewTodoList() {
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
         Json_CRM_GetOutlookTask();
+        window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      // Remove scroll event listener on component unmount
+      window.removeEventListener('scroll', handleScroll);
+    };
     }, []);
 
     function startFormattingDate(dt) {
@@ -447,6 +470,7 @@ function NewTodoList() {
                 activeSectionList[key] = false;
             }
         }
+        setActiveSectionList(activeSectionList);
     }
 
     
@@ -488,14 +512,14 @@ function NewTodoList() {
 
             {/*  */}
             <Box className='no-touch'>
-                <nav class="cd-vertical-nav">
+                <nav className="cd-vertical-nav">
                     <ul>
-                        <li onClick={() => handleActiveTab("section1")}><a href="#section1" class={activeSectionList.section1 ? "active" : ""}><span class="label">Task Due <br />Soon</span>
+                        <li onClick={() => handleActiveTab("section1")}><a href="#section1" className={activeSectionList.section1 ? "active" : ""}><span className="label">Task Due <br />Soon</span>
                             <EventNoteIcon className='hover-icon' />
                         </a></li>
-                        <li onClick={() => handleActiveTab("section2")}><a href="#section2" class={activeSectionList.section2 ? "active" : ""}><span class="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
-                        <li onClick={() => handleActiveTab("section3")}><a href="#section3" class={activeSectionList.section3 ? "active" : ""}><span class="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
-                        <li onClick={() => handleActiveTab("section4")}><a href="#section4" class={activeSectionList.section4 ? "active" : ""}><span class="label">Recently Accessed Documents</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section2")}><a href="#section2" className={activeSectionList.section2 ? "active" : ""}><span className="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section3")}><a href="#section3" className={activeSectionList.section3 ? "active" : ""}><span className="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section4")}><a href="#section4" className={activeSectionList.section4 ? "active" : ""}><span className="label">Recently Accessed Documents</span><EventNoteIcon className='hover-icon' /></a></li>
                     </ul>
                 </nav>
             </Box>
