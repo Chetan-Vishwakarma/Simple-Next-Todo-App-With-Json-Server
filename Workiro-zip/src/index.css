@@ -934,6 +934,12 @@ span.tox-statusbar__branding {
   box-shadow: none !important;
 }
 
+.search-box ul li {
+  word-break: break-all;
+  display: flex;
+  align-items: center;
+}
+
 .client-img {
   width: 110px;
   min-width: 110px;
