@@ -734,10 +734,12 @@ function AddContacts() {
                       <ContactMainform
                         clientNames={clientNames}
                         contact={contact}
+                        setContact={setContact}
                         contactlistdata={contactlistdata}
                         userContactDetails={userContactDetails}
                         setContactDetails={setContactDetails}
                         Importcontactdata={Importcontactdata}
+                        setImportcontactdata={setImportcontactdata}
                       />
                     </Grid>
 
