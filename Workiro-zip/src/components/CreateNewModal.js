@@ -3705,11 +3705,9 @@ function CreateNewModalTask({ ...props }) {
             >
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <div>
-                        <Button
-                            id="basic-button"
-                        >
-                            Document List
-                        </Button>
+                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                            Reference
+                        </Typography>
                     </div>
                     <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
                         <span className="material-symbols-outlined text-black">
@@ -3772,11 +3770,10 @@ function CreateNewModalTask({ ...props }) {
                     {"Use Google's location service?"}
                 </DialogTitle> */}
 
-
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                            Edit Client
+                            Add Client
                         </Typography>
                     </Box>
 

@@ -27,6 +27,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import docuicon from "../images/docu-icon.svg";
 import DoDisturbIcon from '@mui/icons-material/DoDisturb';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
 }));
@@ -34,7 +35,7 @@ const Demo = styled('div')(({ theme }) => ({
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
-const PortalMessage = ({ selectedTask, Json_RegisterItem }) => {
+const PortalMessage = ({ selectedTask, Json_RegisterItem,setPortalComments,setSelectedEmailForComment }) => {
     console.log("selectedTask portal message", selectedTask)
 
     const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
@@ -209,74 +210,25 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem }) => {
     }
 
 
-    const GetCommentsHtml_Json = (m) => {
-        let o = {
-            accid: agrno,
-            email: Email,
-            password: password,
-            messageId: m.PortalDocId,
-        };
+   
+    
 
-        ClsPortal.GetCommentsHtml_Json(o, function (sts, data) {
-            if (sts) {
+   
 
-                console.log("GetCommentsHtml_Json", data);
-                if (data) {
-                }
-                // setTemplateDataMarkup(data)
-            }
-        })
-    }
-    const GetComments_Json = (m) => {
-        let o = {
-            accid: agrno,
-            email: Email,
-            password: password,
-            messageId: m.PortalDocId,
-        };
 
-        ClsPortal.GetComments_Json(o, function (sts, data) {
-            if (sts) {
 
-                console.log("GetComments_Json", data);
-                if (data) {
-                }
-                // setTemplateDataMarkup(data)
-            }
-        })
-    }
 
-    const SendReminder_Json = (m) => {
-        let o = {
-            accid: agrno,
-            email: Email,
-            password: password,
-            messageId: m.PortalDocId,
-        };
-
-        ClsPortal.SendReminder_Json(o, function (sts, data) {
-            if (sts) {
-
-                console.log("SendReminder_Json", data);
-                if (data) {
-                }
-                // setTemplateDataMarkup(data)
-            }
-        })
-    }
 
     const handleCloseMgs = (e) => {
         setAnchorElMgs(null);
         console.log("GetMessageHtml_Json11", e);
         //console.log("GetMessageHtml_Json11", e);
-       
+
         if (e.PortalDocId) {
             setSelectedEmail(e);
-            GetDocumentStatus_Json(e);
-            GetMessageHtml_Json(e.PortalDocId);
+            setSelectedEmailForComment(e);
+            GetDocumentStatus_Json(e);          
             GetCertificate_Json(e.PortalDocId);
-            GetCommentsHtml_Json(e);
-            GetComments_Json(e);
             setMessageEmail(e.emailid);
             setPortalEmailOpbject(e);
             GetMessageViewHistory_Json(e);
@@ -626,28 +578,28 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem }) => {
         setOpenCertificate(false);
     };
 
- const HandalChangeSendReminder =()=>{
-    //setSelectedEmail
-    try {
-        let o={
-            accid:agrno,
-            email:Email,
-            password:password,
-            messageID:selectedEmail.PortalDocId,
-            contactEmail:selectedEmail.emailid
-        };
-        ClsPortal.SendReminder_Json(o,function(sts, data){
-            if(sts){
-                if(data){
-                    toast.success(data);
-                    console.log("SendReminder_Json",data)
+    const HandalChangeSendReminder = () => {
+        //setSelectedEmail
+        try {
+            let o = {
+                accid: agrno,
+                email: Email,
+                password: password,
+                messageID: selectedEmail.PortalDocId,
+                contactEmail: selectedEmail.emailid
+            };
+            ClsPortal.SendReminder_Json(o, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        toast.success(data);
+                        console.log("SendReminder_Json", data)
+                    }
                 }
-            }
-        })
-    } catch (error) {
-        console.log({message:false,Error:error})
+            })
+        } catch (error) {
+            console.log({ message: false, Error: error })
+        }
     }
- }
     // document modal
     const [DocumentSent, setDocumentSent] = React.useState(false);
     const handleClickDocumentSent = () => {

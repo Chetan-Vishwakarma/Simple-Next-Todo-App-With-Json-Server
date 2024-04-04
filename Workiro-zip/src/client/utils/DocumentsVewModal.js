@@ -70,6 +70,14 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
     const [editorContentValue, setEditorContentValue] = React.useState([]);
     const [getAssociatedTaskList, setGetAssociatedTaskList] = React.useState([]);
 
+
+    const [documentdata,setDocumentData]=useState();
+const [openModal,setopenModal]=useState(false);
+const [TaskType,setTaskType]=useState("CRM");
+
+const [createNewFileObj, setCreateNewFileObj] = useState([]);
+
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
@@ -382,9 +390,10 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
 
     }
 
-    const createTask = () => {
-        console.log("Create New Task")
-    }
+const createTask=()=>{
+    setopenModal(true)
+console.log("Create New Task")
+}
 
 
     return (
@@ -479,6 +488,20 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
                                         allowFullScreen // Allow fullscreen mode
                                         title="Embedded Content" // Set the title for accessibility
                                     />
+
+                             <CreateNewModalTask
+                                // documentDate={documentDate}
+                                // receivedDate={receivedDate}
+                                // createNewFileObj={createNewFileObj}
+                                // txtFolderData={txtFolderData}
+                                // txtClientData={txtClientData}
+                                // txtSectionData={txtSectionData}
+                                // TaskType={TaskType}
+                                // // setPassButtonHide={setPassButtonHide}
+                                // // passButtonHide={passButtonHide}
+                                // openModal={openModal}
+                            ></CreateNewModalTask>
+
                                 </Box>
                             </TabPanel>
 
