@@ -252,7 +252,7 @@ function CreateNewModalTask({ ...props }) {
     };
     //
 
-    const [open, setOpen] = React.useState(openModal?openModal:false);
+    const [open, setOpen] = React.useState(openModal ? openModal : false);
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -273,14 +273,14 @@ function CreateNewModalTask({ ...props }) {
 
     const handleClose = () => {
         setOpen(false);
-        if(Object.keys(props).length>0){
+        if (Object.keys(props).length > 0) {
             setOpenModal(false);
         }
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         setOpen(openModal);
-    },[openModal]);
+    }, [openModal]);
     // dropdown add
 
     //
@@ -783,7 +783,7 @@ function CreateNewModalTask({ ...props }) {
         console.log("get folder list112222", selectedDate);
         setSelectedDate(null); // Set the selected date to null to clear it
     }, [currentDate]);
-    
+
 
     useEffect(() => {
         setLoading(false);
@@ -2211,8 +2211,8 @@ function CreateNewModalTask({ ...props }) {
                 <span className="ps-2 create-text">Create New  </span>
             </Button> */}
             <UploadDocument openUploadDocument={openUploadDocument} setOpenUploadDocument={setOpenUploadDocument}></UploadDocument>
-            
-            {!Object.keys(props).length>0&&<div className="select-border">
+
+            {!Object.keys(props).length > 0 && <div className="select-border">
                 <Button
                     id="basic-button"
                     aria-controls={open4 ? 'basic-menu' : undefined}
@@ -3713,11 +3713,9 @@ function CreateNewModalTask({ ...props }) {
             >
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <div>
-                        <Button
-                            id="basic-button"
-                        >
-                            Document List
-                        </Button>
+                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                            Reference
+                        </Typography>
                     </div>
                     <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
                         <span className="material-symbols-outlined text-black">
