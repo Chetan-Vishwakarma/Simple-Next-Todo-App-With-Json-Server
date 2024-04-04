@@ -638,18 +638,6 @@ function AddContacts() {
                         )}
                       />
                     </Grid>
-
-                    <Grid item xs={12} md={12}>
-                      <ContactMainform
-                        clientNames={clientNames}
-                        contact={contact}
-                        contactlistdata={contactlistdata}
-                        userContactDetails={userContactDetails}
-                        setContactDetails={setContactDetails}
-                      />
-                    </Grid>
-
-
                     <Grid item xs={6} md={6}>
                       <TextField
                         // {...params}wid
@@ -662,6 +650,18 @@ function AddContacts() {
                         label="Import List"
                       />
                     </Grid>
+                    <Grid item xs={12} md={12}>
+                      <ContactMainform
+                        clientNames={clientNames}
+                        contact={contact}
+                        contactlistdata={contactlistdata}
+                        userContactDetails={userContactDetails}
+                        setContactDetails={setContactDetails}
+                      />
+                    </Grid>
+
+
+                    
 
                   </Grid>
 
