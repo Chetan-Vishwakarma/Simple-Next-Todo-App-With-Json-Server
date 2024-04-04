@@ -70,6 +70,14 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
     const [editorContentValue, setEditorContentValue] = React.useState([]);
     const [getAssociatedTaskList, setGetAssociatedTaskList] = React.useState([]);
 
+
+    const [documentdata,setDocumentData]=useState();
+const [openModal,setopenModal]=useState(false);
+const [TaskType,setTaskType]=useState("CRM");
+
+const [createNewFileObj, setCreateNewFileObj] = useState([]);
+
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
@@ -382,7 +390,12 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
 
     }
 
+
+
+   
+
 const createTask=()=>{
+    setopenModal(true)
 console.log("Create New Task")
 }
 
@@ -402,14 +415,14 @@ console.log("Create New Task")
                 <Box className="d-flex align-items-center justify-content-between">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                            Document List 
+                            Document List
                         </Typography>
                     </Box>
 
                     {/*  */}
 
                     <Box className="d-flex align-items-center justify-content-between flex-wrap">
-                        
+
                         <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTask} >Create Task</Button>
                         <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
                         {/* <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button> */}
@@ -481,9 +494,23 @@ console.log("Create New Task")
                                         allowFullScreen // Allow fullscreen mode
                                         title="Embedded Content" // Set the title for accessibility
                                     />
+
+                             <CreateNewModalTask
+                                // documentDate={documentDate}
+                                // receivedDate={receivedDate}
+                                // createNewFileObj={createNewFileObj}
+                                // txtFolderData={txtFolderData}
+                                // txtClientData={txtClientData}
+                                // txtSectionData={txtSectionData}
+                                // TaskType={TaskType}
+                                // // setPassButtonHide={setPassButtonHide}
+                                // // passButtonHide={passButtonHide}
+                                // openModal={openModal}
+                            ></CreateNewModalTask>
+
                                 </Box>
                             </TabPanel>
-                            
+
                             <TabPanel value="2">
                                 <Box className='row'>
                                     {Array(12).fill("").map(() => {
