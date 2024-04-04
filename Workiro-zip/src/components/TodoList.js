@@ -1240,22 +1240,22 @@ function TodoList() {
                                     'aria-labelledby': 'basic-button',
                                 }}
                             >
-                                <MenuItem onClick={handleClose3} className='ps-2'>
+                                <MenuItem onClick={handleClose3} className='ps-1'>
                                     <ListItemIcon>
                                         <ContentCopyIcon fontSize="medium" />
                                     </ListItemIcon> Copy Link</MenuItem>
 
-                                <MenuItem onClick={handleClose3} className='ps-2'>
+                                <MenuItem onClick={handleClose3} className='ps-1'>
                                     <ListItemIcon>
                                         <MergeIcon fontSize="medium" />
                                     </ListItemIcon> Merge</MenuItem>
 
-                                <MenuItem onClick={handleClose3} className='ps-2'>
+                                <MenuItem onClick={handleClose3} className='ps-1'>
                                     <ListItemIcon>
                                         <AttachEmailIcon fontSize="medium" />
                                     </ListItemIcon> Retract Message (s)</MenuItem>
 
-                                <MenuItem onClick={handleClose3} className='ps-2'>
+                                <MenuItem onClick={handleClose3} className='ps-1'>
                                     <ListItemIcon>
                                         <DeleteIcon fontSize="medium" />
                                     </ListItemIcon> Delete Message (s)</MenuItem>

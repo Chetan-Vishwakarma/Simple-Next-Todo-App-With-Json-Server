@@ -24,19 +24,9 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import DocumentDetails from "./DocumentDetails";
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import ArticleIcon from '@mui/icons-material/Article';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
-import ImageIcon from '@mui/icons-material/Image';
-import WorkIcon from '@mui/icons-material/Work';
-import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
-import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
-import IconButton from '@mui/material/IconButton';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
@@ -49,10 +39,6 @@ import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import EditIcon from '@mui/icons-material/Edit';
 import EjectIcon from '@mui/icons-material/Eject';
 import Checkbox from '@mui/material/Checkbox';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
 import Fade from '@mui/material/Fade';
 import GetClientList from "./GetClientList";
 import {
@@ -72,7 +58,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DocumentList from "../client/client-components/DocumentList";
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import Activity from "../client/utils/Activity";
-
+import FolderSharedIcon from '@mui/icons-material/FolderShared';
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -1491,9 +1477,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                             >
                                 {folderList ? folderList.map((item) => {
                                     return (<>
-                                        <MenuItem onClick={() => handleCloseProfile(item)}>
+                                        <MenuItem onClick={() => handleCloseProfile(item)} className='ps-1'>
                                             <ListItemIcon>
-                                                <DoNotDisturbAltIcon fontSize="medium" />
+                                                <FolderSharedIcon fontSize="medium" />
                                             </ListItemIcon>
 
                                             {item.Folder}
@@ -1502,22 +1488,22 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                 }) : ""}
 
                                 {/* only for portal */}
-                                <MenuItem className='ps-2'>
+                                <MenuItem className='ps-1'>
                                     <ListItemIcon>
                                         <ContentCopyIcon fontSize="medium" />
                                     </ListItemIcon> Copy Link</MenuItem>
 
-                                <MenuItem className='ps-2'>
+                                <MenuItem className='ps-1'>
                                     <ListItemIcon>
                                         <MergeIcon fontSize="medium" />
                                     </ListItemIcon> Merge</MenuItem>
 
-                                <MenuItem className='ps-2'>
+                                <MenuItem className='ps-1'>
                                     <ListItemIcon>
                                         <AttachEmailIcon fontSize="medium" />
                                     </ListItemIcon> Retract Message (s)</MenuItem>
 
-                                <MenuItem className='ps-2'>
+                                <MenuItem className='ps-1'>
                                     <ListItemIcon>
                                         <DeleteIcon fontSize="medium" />
                                     </ListItemIcon> Delete Message (s)</MenuItem>

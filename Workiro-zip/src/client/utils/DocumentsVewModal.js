@@ -419,7 +419,7 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
                             aria-haspopup="true"
                             aria-expanded={ChangeIndex ? 'true' : undefined}
                             onClick={handleClickChangeIndex}
-                            className='btn-blue-2 me-2'
+                            className='btn-blue-2 me-2 mb-1'
                         >
                             Category
                             {/* <KeyboardArrowDownIcon className='ms-1' /> */}
@@ -454,21 +454,21 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
             <DialogContent className='full-height-modal'>
 
                 <DialogContentText id="alert-dialog-description">
-                    <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
+                    <Box sx={{ width: '100%', typography: 'body1' }}>
                         <TabContext value={value}>
                             <Box>
-                                <Tabs onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
+                                <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
                                     <Tab label="Documents" value="1" />
                                     <Tab label="Versions" value="2" />
                                     <Tab label="Notes" value="3" />
                                     <Tab label="Associated Tasks" value="4" />
                                     <Tab label="Activity" value="5" />
                                     <Tab label="Attachments" value="6" />
-                                </Tabs>
+                                </TabList>
                             </Box>
                             <TabPanel value="1" className='p-0'>
-                                <Box className='white-box'>
-                                    <Box className='text-end mb-3'>
+                                <Box className='white-box relative'>
+                                    <Box className='text-end mb-3 btn-download'>
                                         <DownloadForOfflineIcon className='text-red pointer font-32' />
                                     </Box>
                                     <iframe

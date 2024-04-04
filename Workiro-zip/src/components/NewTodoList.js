@@ -868,9 +868,9 @@ function NewTodoList() {
                     {recentDocument.length > 0 ? recentDocument.map((item, index) => {
                         return <>
 
-                            <Box className='col-xxl-3 col-xl-4 col-md-6' key={index}>
-                                <Box className="file-uploads">
-                                    <label className="file-uploads-label file-uploads-document">
+                            <Box className='col-xxl-3 col-xl-4 col-md-6 d-flex' key={index}>
+                                <Box className="file-uploads d-flex w-100">
+                                    <label className="file-uploads-label file-uploads-document w-100">
                                         <Box className="d-flex align-items-center">
 
                                             <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
