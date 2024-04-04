@@ -452,7 +452,7 @@ function CreateNewModalTask({ ...props }) {
                         setUserListData(removeuser);
                         setUserFilter(removeuser);
 
-                        let commanuser = result.filter((e) => e.ID ===parseInt(localStorage.getItem("UserId")));
+                        let commanuser = result.filter((e) => e.ID === parseInt(localStorage.getItem("UserId")));
                         console.log("Json_GetForwardUserList11", removeuser);
                         setSelectedUSer(commanuser[0]);
 
@@ -1706,40 +1706,40 @@ function CreateNewModalTask({ ...props }) {
 
     function Json_GetStandardLetterData(data) {
         try {
-            if(selectedEmail){
+            if (selectedEmail) {
 
                 let obj = {};
-            obj.agrno = agrno;
-            obj.UserEmail = Email;
-            obj.password = password;
-            obj.strFolderId = data[0].ProjectID;
-            obj.strClientId = textClientId;
-            obj.strSectionId = data[0].ItemTypeId;
-            obj.strTemplateId = data[0].TemplateID;
-            obj.ContactEmail =selectedEmail?selectedEmail[0]["E-Mail"]:toast.error("Please Select Email In To!");
-           
-            clsSms.Json_GetStandardLetterData(obj, function (sts, data) {
-                if (sts && data) {
-                    console.log("Json_GetStandardLetterData", data)
-                    if (data.includes("File Not Found")) {
+                obj.agrno = agrno;
+                obj.UserEmail = Email;
+                obj.password = password;
+                obj.strFolderId = data[0].ProjectID;
+                obj.strClientId = textClientId;
+                obj.strSectionId = data[0].ItemTypeId;
+                obj.strTemplateId = data[0].TemplateID;
+                obj.ContactEmail = selectedEmail ? selectedEmail[0]["E-Mail"] : toast.error("Please Select Email In To!");
+
+                clsSms.Json_GetStandardLetterData(obj, function (sts, data) {
+                    if (sts && data) {
                         console.log("Json_GetStandardLetterData", data)
-                    }
-                    else {
-                        Json_GetHtmlFromRtf(data);
-                    }
+                        if (data.includes("File Not Found")) {
+                            console.log("Json_GetStandardLetterData", data)
+                        }
+                        else {
+                            Json_GetHtmlFromRtf(data);
+                        }
 
-                }
-            })
+                    }
+                })
 
-               
-              
+
+
             }
-            else{
-                
+            else {
+
                 toast.error("Please Select a Email in To")
-               
+
             }
-            
+
         } catch (error) {
             console.log("Error for Tempalte", error)
         }
@@ -2203,6 +2203,7 @@ function CreateNewModalTask({ ...props }) {
                 <span className="ps-2 create-text">Create New  </span>
             </Button> */}
             <UploadDocument openUploadDocument={openUploadDocument} setOpenUploadDocument={setOpenUploadDocument}></UploadDocument>
+            
             <div className="select-border">
                 <Button
                     id="basic-button"
@@ -2214,7 +2215,7 @@ function CreateNewModalTask({ ...props }) {
                     variant="text"
                 >
                     <span className="material-symbols-outlined font-18">edit_square</span>{" "}
-                    <span className="ps-2 font-13 create-text">Add New  </span>
+                    <span className="ps-2 font-13 create-text">Add New </span>
 
                 </Button>
                 <Menu
@@ -2535,10 +2536,10 @@ function CreateNewModalTask({ ...props }) {
                                                             </DataGrid>
                                                         </Menu>
                                                     </Box>
-                                                   
+
                                                 </>
                                             )}
- {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+                                            {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
                                         </Box>
 
                                         {!isVisibleByTypeCRM && (<>
@@ -2948,7 +2949,7 @@ function CreateNewModalTask({ ...props }) {
                                     </Button>
                                 )}
 
-                               
+
                             </Box>
                             {/* col end */}
 
@@ -3564,7 +3565,7 @@ function CreateNewModalTask({ ...props }) {
 
 
 
-                           
+
 
                         </Box>
                     </DialogContentText>
@@ -3725,8 +3726,8 @@ function CreateNewModalTask({ ...props }) {
                 </DialogContent>
             </Dialog>
 
-          
-            
+
+
 
             <Dialog
                 open={ReferanceEdit}
@@ -3806,7 +3807,7 @@ function CreateNewModalTask({ ...props }) {
 
 
             <ToastContainer></ToastContainer>
-            
+
         </React.Fragment >
 
 

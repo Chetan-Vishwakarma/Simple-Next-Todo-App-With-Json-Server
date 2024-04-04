@@ -172,6 +172,7 @@ input,
 .btn-blue-2 {
   background: #4780FF !important;
   transition: .5s all ease;
+  border: 1px solid #4780FF !important;
 }
 
 .btn-blue-2.Mui-disabled {
@@ -187,8 +188,13 @@ input,
 .btn-blue-2:hover,
 .btn-blue:hover {
   background: #d42027 !important;
+  border-color: #d42027 !important;
 }
-
+.btn-outlin-2:hover {
+  background: #d42027 !important;
+  border-color: #d42027 !important;
+  color: #fff !important;
+}
 button {
   text-transform: capitalize !important;
 }
@@ -222,6 +228,7 @@ button {
 }
 
 .btn-favorite.Mui-selected {
+  background-color: #D41B20 !important;
   color: #fff !important;
 }
 
@@ -1517,8 +1524,21 @@ span.tox-statusbar__branding {
   font-size: 14px;
   padding-top: 4px;
   padding-bottom: 4px;
+  transition: .5s all ease-in;
+  border-radius: 2px;
 }
-
+.MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root:hover {
+  background-color: #D41B20 !important;
+  transition: .5s all ease-in;
+  color: #fff !important;
+}
+.MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root:hover svg {
+  color: #fff;
+  transition: .5s all ease-in;
+}
+.MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root svg {
+  transition: .5s all ease-in;
+}
 .main-filter-box {
   /* max-height: calc(100vh - 230px); */
   overflow-y: auto;

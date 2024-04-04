@@ -168,22 +168,18 @@ export default function SidebarNav() {
     setOpen(true);
   };
 
-
   const [value, setValue] = React.useState(options[0]);
   const [inputValue, setInputValue] = React.useState('');
-
   const [documentsDescription, setDocumentsDescription] = useState([]);
   const [myDocuments, setMyDocuments] = useState([]);
   const [isSearch, setIsSearch] = useState(false);
   const [forDocuments, setForDocuments] = useState("");
-
   const [myTotalTasks, setMyTotalTasks] = useState([]);
   const [taskSubjects, setTasksSubjects] = useState([]);
   const [filteredTaskSubjects, setFilteredTaskSubjects] = useState([]);
   const [folders, setFolders] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState(folderId);
   const [anchorEl4, setAnchorEl4] = React.useState(null);
-
 
   const {
     getRootProps,
@@ -200,7 +196,6 @@ export default function SidebarNav() {
     inputValue,
     onInputChange: (event, newInputValue) => setInputValue(newInputValue),
   });
-
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const opens = Boolean(anchorEl);
@@ -342,11 +337,8 @@ export default function SidebarNav() {
 
   const [tabs, setTabs] = useState([{
     tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon: <DashboardIcon />}, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon: <AccountBoxIcon /> }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false, tabIcon: <AssignmentIcon /> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon: <GroupIcon /> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon: <ViewCarouselIcon /> }, { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false, tabIcon: <ContentPasteSearchIcon /> },
-
   // { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false, tabIcon: <PersonAddIcon /> },
-
   { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active: false, tabIcon: <LogoutIcon /> }]);
-
   const [searchInputForGlobalSearch, setSearchInputForGlobalSearch] = useState("");
 
   React.useEffect(() => {
