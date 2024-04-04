@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 const UserDetailContext = createContext();
 // const UserDetailContext = createContext();
-
+let folderArray;
 const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse,companyEditDetails}) => {
     console.log(companyEditDetails,"EditcompanyEditDetails");
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -157,6 +157,37 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
             console.log(defaultUser1,"defaulttManager");
             setDefaultUser(defaultUser1);
             setStatus(json.Table);
+            if (companyEditDetails) {
+                const statusObject = json.Table.find((item) => item.StatusId === companyEditDetails[0].StatusId);
+                const sourceObj = json.Table2.find((item) => item.SourceId === companyEditDetails[0].SourceId);
+                const bussineObj = json.Table1.find((item) => item.BussId === companyEditDetails[0].BussID);
+                const folderObj = folderArray.find((item) => item.FolderID === localStorage.getItem("FolderId"));
+                console.log(companyEditDetails, "testsourceObj",folderArray);
+        
+                // Set default status and source if found
+                if (statusObject) {
+                    setDefaultStatus(statusObject);
+                }
+                if (sourceObj) {
+                    setDefaultSource(sourceObj);
+                }
+                if(bussineObj){
+                    setDefaultBussiness(bussineObj);
+                }
+        
+                const updatedUserDetail = {
+                    ...userDetail,
+                    CHNumber: "",
+                    Clientname: companyEditDetails[0].OriginatorName,
+                    Clientid: companyEditDetails[0].OriginatorNo,
+                    StatusId: statusObject ? statusObject.StatusName : "", // Set default status name
+                    UserId: "",
+                    Mobile: companyEditDetails[0].AltTelNo,
+                    Telephone: companyEditDetails[0].TelNo,
+                    Email: companyEditDetails[0].Email
+                };
+                setUserDetail(updatedUserDetail);
+            }
           }
         }
       });
@@ -176,6 +207,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
         if (sts) {
           if (data) {
             let json = JSON.parse(data);
+            folderArray = json.Table;
             setFolders(json.Table);
           }
         }
@@ -275,11 +307,12 @@ const clearDataCard = () => {
     CHNumber:"",
     Clientname: "",
     StatusId:setDefaultStatus(null),
+    // SourceId:setDefaultSourceId(null),
+    // UserId:setDefaultUser(null),
     Line1: "",
     Line2:""
-  
   };
-    setUserDetail(updatedUserDetail);
+    // setUserDetail(updatedUserDetail);
     setDataCompanyHouse(null);
   console.log("clearDataCard");
 }
@@ -301,7 +334,7 @@ const handleAdvancedSettingChange = (event) => {
     console.log(data, "dataOnchange", event);
     setUserDetail(data);
   };
-  console.log(Importdata,"Importdata",ImportCompanyDetails)
+  console.log(Importdata,"Importdata",ImportCompanyDetails);
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
@@ -312,38 +345,8 @@ const handleAdvancedSettingChange = (event) => {
     Json_GetFolders();
     Json_GetConfiguration();
 
-    if (companyEditDetails.length > 0) {
-        const statusObject = status.find((item) => item.StatusId === companyEditDetails[0].StatusId);
-        const sourceObj = sources.find((item) => item.SourceId === companyEditDetails[0].SourceId);
-        const bussineObj = bussiness.find((item) => item.BussId === companyEditDetails[0].BussID);
-        const folderObj = folders.find((item) => item.FolderID === localStorage.getItem("FolderId"));
-        console.log(companyEditDetails, "testsourceObj",folderObj);
-
-        // Set default status and source if found
-        if (statusObject) {
-            setDefaultStatus(statusObject);
-        }
-        if (sourceObj) {
-            setDefaultSource(sourceObj);
-        }
-        if(bussineObj){
-            setDefaultBussiness(bussineObj);
-        }
-
-        const updatedUserDetail = {
-            ...userDetail,
-            CHNumber: "",
-            Clientname: companyEditDetails[0].OriginatorName,
-            Clientid: companyEditDetails[0].OriginatorNo,
-            StatusId: statusObject ? statusObject.StatusName : "", // Set default status name
-            UserId: "",
-            Mobile: companyEditDetails[0].AltTelNo,
-            Telephone: companyEditDetails[0].TelNo,
-            Email: companyEditDetails[0].Email
-        };
-        setUserDetail(updatedUserDetail);
-    }
-}, [companyEditDetails, status, sources]);
+   
+}, []);
 
   return (
     <div>

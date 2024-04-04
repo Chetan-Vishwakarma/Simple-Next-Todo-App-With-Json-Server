@@ -1130,4 +1130,18 @@ console.log("formattedDate",formattedDate)
             }
         })
     }
+
+    Json_GetClientAddresses(obj,callback) {
+        super.CreateNewServiceParamObject("Json_GetClientAddresses",obj,false);
+        super.CallNewService("Json_GetClientAddresses", function (status, Data) {
+            if (status) {
+                if (Data != "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
 }
