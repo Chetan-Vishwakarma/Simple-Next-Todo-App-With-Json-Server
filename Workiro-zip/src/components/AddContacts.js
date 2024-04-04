@@ -534,23 +534,23 @@ function AddContacts() {
 
     e.preventDefault();
     const inputValue = e.target.value;
-    console.log(inputValue,"import_data");
+    console.log(inputValue, "import_data");
     setImportdata(inputValue);
     Json_CompanyHouseDetails(inputValue);
-};
-const [txtValue,setTxtValue]=useState(null);
-const [open, setOpen] = useState(false);
-const handleOptionClick = (item) => {
-  console.log(item, "onSelectData");
-      setTxtValue(item);
-    setOpen(false); 
+  };
+  const [txtValue, setTxtValue] = useState(null);
+  const [open, setOpen] = useState(false);
+  const handleOptionClick = (item) => {
+    console.log(item, "onSelectData");
+    setTxtValue(item);
+    setOpen(false);
     setImportcontactdata(item);
-  // Perform actions with the id
-  // let data = id.company_number;
-  // Json_CompanyHouseDetails();
-  // console.log(data, "onSelectDatacnnumbr");
+    // Perform actions with the id
+    // let data = id.company_number;
+    // Json_CompanyHouseDetails();
+    // console.log(data, "onSelectDatacnnumbr");
 
-};
+  };
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -558,7 +558,7 @@ const handleOptionClick = (item) => {
       Json_CompanyHouseDetails();
     }
   }
-  console.log(contact, "contactcontact",ImportContact);
+  console.log(contact, "contactcontact", ImportContact);
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
@@ -602,6 +602,93 @@ const handleOptionClick = (item) => {
 
                 <Box className="mb-3 w-100">
 
+                  <Box className='well mb-4'>
+                    <h2 className='font-14 bold mb-2 text-black'>Import from Companies House</h2>
+                    <Grid container spacing={2}>
+                      <Grid item xs={6} md={6}>
+                        <Autocomplete
+                          {...contactlist}
+                          id="contactlist"
+                          clearOnEscape
+                          onChange={onChangecontactlist}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              variant="outlined"
+                              name="contactlist"
+                              value={""}
+                              //   onChange={onChange}
+                              label="Contact List"
+                            />
+                          )}
+                        />
+                      </Grid>
+
+                      <Grid item xs={6} md={6}>
+                        {/* <TextField
+                        // {...params}wid
+                        fullWidth
+                        variant="outlined"
+                        name="importclient"
+                        // value={Importdata}
+                        onKeyDown={handleKeyDown}
+                        onChange={onChangeImportData}
+                        label="Import List"
+                      /> */}
+                        <Autocomplete
+                          fullWidth
+                          // options={ImportContact.map((option) => option.title)}
+                          options={ImportContact} // Pass the entire ImportContact array
+                          getOptionLabel={(option) => option.FirstName + " " + option.LastName}
+                          onChange={(e, value) => setImportdata(value)}
+                          onKeyDown={handleKeyDown}
+                          // inputValue={ImportContact}
+                          noOptionsText="No matches found"
+                          filterOptions={(x) => x}
+                          autoComplete
+                          includeInputInList
+                          value={txtValue}
+                          open={open} // Controlled by state
+                          onOpen={() => setOpen(true)} // Open the Autocomplete dropdown
+                          onClose={() => setOpen(false)} // Close the Autocomplete dropdown
+                          renderOption={(props, option) => {
+                            // Custom rendering for each option
+                            console.log(option, "rendwered dynamic from apifff", props);
+                            return (
+                              !option.resigned_on && (
+                                <div>
+                                  <li
+                                    {...props}
+                                    onClick={() => {
+                                      handleOptionClick(option); // Pass the id directly
+                                    }}
+                                  >
+                                    <Grid container alignItems="center">
+                                      <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                                        {option.FirstName + " " + option.LastName}
+                                      </Grid>
+                                    </Grid>
+                                  </li>
+                                </div>
+                              )
+
+                            );
+                          }}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              fullWidth
+                              variant="outlined"
+                              name="importclient"
+                              onChange={onChangeImportData}
+                              label="Enter Company Name"
+                            />
+                          )}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Box>
+
                   <Grid container spacing={2}>
                     <Grid item xs={6} md={6}>
                       <Autocomplete
@@ -641,86 +728,8 @@ const handleOptionClick = (item) => {
                       />
                     </Grid>
 
-                    <Grid item xs={6} md={6}>
-                      <Autocomplete
-                        {...contactlist}
-                        id="contactlist"
-                        clearOnEscape
-                        onChange={onChangecontactlist}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            variant="outlined"
-                            name="contactlist"
-                            value={""}
-                            //   onChange={onChange}
-                            label="Contact List"
-                          />
-                        )}
-                      />
-                    </Grid>
-                    <Grid item xs={6} md={6}>
-                      {/* <TextField
-                        // {...params}wid
-                        fullWidth
-                        variant="outlined"
-                        name="importclient"
-                        // value={Importdata}
-                        onKeyDown={handleKeyDown}
-                        onChange={onChangeImportData}
-                        label="Import List"
-                      /> */}
-                       <Autocomplete
-      fullWidth
-      // options={ImportContact.map((option) => option.title)}
-      options={ImportContact} // Pass the entire ImportContact array
-      getOptionLabel={(option) => option.FirstName + " " + option.LastName}
-      onChange={(e, value) => setImportdata(value)}
-      onKeyDown={handleKeyDown}
-      // inputValue={ImportContact}
-      noOptionsText="No matches found"
-      filterOptions={(x) => x}
-      autoComplete
-      includeInputInList
-    value={txtValue}
-    open={open} // Controlled by state
-    onOpen={() => setOpen(true)} // Open the Autocomplete dropdown
-    onClose={() => setOpen(false)} // Close the Autocomplete dropdown
-      renderOption={(props, option) => {
-        // Custom rendering for each option
-        console.log(option,"rendwered dynamic from apifff",props);
-        return (
-          !option.resigned_on && (
-            <div>
-                <li
-                    {...props}
-                    onClick={() => {
-                        handleOptionClick(option); // Pass the id directly
-                    }}
-                >
-                    <Grid container alignItems="center">
-                        <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                            {option.FirstName + " " + option.LastName}
-                        </Grid>
-                    </Grid>
-                </li>
-            </div>
-        )
-        
-        );
-      }}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          fullWidth
-          variant="outlined"
-          name="importclient"
-          onChange={onChangeImportData}
-          label="Enter Company Name or Number"
-        />
-      )}
-    />
-                    </Grid>
+
+
                     <Grid item xs={12} md={12}>
                       <ContactMainform
                         clientNames={clientNames}
@@ -733,7 +742,7 @@ const handleOptionClick = (item) => {
                     </Grid>
 
 
-                    
+
 
                   </Grid>
 

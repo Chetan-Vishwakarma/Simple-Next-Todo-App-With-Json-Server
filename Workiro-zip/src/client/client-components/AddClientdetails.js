@@ -16,8 +16,8 @@ const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const UserDetailContext = createContext();
 // const UserDetailContext = createContext();
-let folderData=[];
-const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse}) => {
+let folderData = [];
+const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompanyHouse, dataCompanyHouse }) => {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [defaultClient, setDefaultClient] = useState([]);
   const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -64,7 +64,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
     event.preventDefault();
     if (value) {
       const folderIds = value.map((folder) => folder.FolderID).join(",");
-      console.log(value,"foldergetdata",folderIds);
+      console.log(value, "foldergetdata", folderIds);
       let data = { ...userDetail };
       data = { ...data, ["FolderId"]: value.FolderID };
       setUserDetail(data);
@@ -153,7 +153,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
             let defaultUser1 = json.Table3.find(
               (manager) => manager.UserId == localStorage.getItem("UserId")
             );
-            console.log(defaultUser1,"defaulttManager");
+            console.log(defaultUser1, "defaulttManager");
             setDefaultUser(defaultUser1);
             setStatus(json.Table);
           }
@@ -175,29 +175,29 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
         if (sts) {
           if (data) {
             let json = JSON.parse(data);
-            folderData= json.Table;
+            folderData = json.Table;
             console.log(folderData, "sourceobjector111122222");
-              
+
 
             setFolders(json.Table);
 
 
             const sourceObj = folderData.find((item) => item.FolderID == localStorage.getItem("FolderId"));
-            const index = folderData.indexOf(sourceObj); 
-            console.log(sourceObj,index, "sourceobjector", folderData);
+            const index = folderData.indexOf(sourceObj);
+            console.log(sourceObj, index, "sourceobjector", folderData);
             if (sourceObj) {
               const index = folderData.indexOf(sourceObj);
               if (index > -1) {
                 let data = [folderData[index]]
-                console.log(index, "sourceobjector1111",folders[defaultClient]);
-              
-                  setDefaultClient(index);
+                console.log(index, "sourceobjector1111", folders[defaultClient]);
+
+                setDefaultClient(index);
               } else {
-                  console.error("Index not found in folderData:", index);
+                console.error("Index not found in folderData:", index);
               }
-          } else {
+            } else {
               console.error("Folder ID not found in folderData:", localStorage.getItem("FolderId"));
-          }
+            }
 
           }
         }
@@ -207,106 +207,107 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
     }
   };
 
-  const 
-  Json_CompanyHouseDetails = (inputValue) => {
-    let requestBody = {
-      CompanyName_Number:inputValue
-    };
-    try {
-       Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
-        if (sts) {
-          if (data) {
-            let json = JSON.parse(data);
-            console.log(json,"Json_CompanyHouseDetails");
-            let jdata = json.CompanyBasicDetails;
-            console.log("Json_CompanyHouseDetails1", jdata);
-            let singledata = json.CompanyDetails;
-            console.log(singledata,"singledatasingledata");
-            // setImportCompanyDetails(singledata[0]);
-            // setContactlistdata(json.Table);
-            if(jdata.length > 0){
-              setImportContact(jdata);
+  const
+    Json_CompanyHouseDetails = (inputValue) => {
+      let requestBody = {
+        CompanyName_Number: inputValue
+      };
+      try {
+        Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
+          if (sts) {
+            if (data) {
+              let json = JSON.parse(data);
+              console.log(json, "Json_CompanyHouseDetails");
+              let jdata = json.CompanyBasicDetails;
+              console.log("Json_CompanyHouseDetails1", jdata);
+              let singledata = json.CompanyDetails;
+              console.log(singledata, "singledatasingledata");
+              // setImportCompanyDetails(singledata[0]);
+              // setContactlistdata(json.Table);
+              if (jdata.length > 0) {
+                setImportContact(jdata);
+              }
             }
           }
-        }
-      });
-    } catch (err) {
-      console.log("Error while calling Json_GetToFavourites", err);
-    }
-  };
-  const 
-  Json_CompanyDetails = (inputValue) => {
-    let requestBody = {
-      CompanyName_Number:inputValue
+        });
+      } catch (err) {
+        console.log("Error while calling Json_GetToFavourites", err);
+      }
     };
-    try {
-       Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
-        if (sts) {
-          if (data) {
-            let json = JSON.parse(data);
-            console.log(json,"Json_CompanyDetails");
-let singledata = json.CompanyDetails[0];
-const defaultCompanyStatus = singledata.company_status;
-const defaultStatusObject = status.find(status => status.StatusName.toLowerCase() === defaultCompanyStatus.toLowerCase());
-const defaultStatus = defaultStatusObject || null;
-console.log(defaultStatus,"defaultStatus22222",singledata);
-    let data1 = {...userDetail };
-    data1 = { 
-      ...data1,
-      CHNumber: singledata.company_number,
-      Clientname:singledata.company_name,
-      StatusId:setDefaultStatus(defaultStatus)
-      
-    };
-    setUserDetail(data1);
-            // setImportCompanyDetails(singledata[0]);
-            setDataCompanyHouse(singledata);
-            
+  const
+    Json_CompanyDetails = (inputValue) => {
+      let requestBody = {
+        CompanyName_Number: inputValue
+      };
+      try {
+        Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
+          if (sts) {
+            if (data) {
+              let json = JSON.parse(data);
+              console.log(json, "Json_CompanyDetails");
+              let singledata = json.CompanyDetails[0];
+              const defaultCompanyStatus = singledata.company_status;
+              const defaultStatusObject = status.find(status => status.StatusName.toLowerCase() === defaultCompanyStatus.toLowerCase());
+              const defaultStatus = defaultStatusObject || null;
+              console.log(defaultStatus, "defaultStatus22222", singledata);
+              let data1 = { ...userDetail };
+              data1 = {
+                ...data1,
+                CHNumber: singledata.company_number,
+                Clientname: singledata.company_name,
+                StatusId: setDefaultStatus(defaultStatus)
+
+              };
+              setUserDetail(data1);
+              // setImportCompanyDetails(singledata[0]);
+              setDataCompanyHouse(singledata);
+
+            }
           }
-        }
-      });
-    } catch (err) {
-      console.log("Error while calling Json_GetToFavourites", err);
-    }
-  };
+        });
+      } catch (err) {
+        console.log("Error while calling Json_GetToFavourites", err);
+      }
+    };
   const onChangeImportData = (e) => {
 
     e.preventDefault();
     const inputValue = e.target.value;
-    console.log(inputValue,"import_data");
+    console.log(inputValue, "import_data");
     setImportdata(inputValue);
     Json_CompanyHouseDetails(inputValue);
-};
-
-const [txtValue,setTxtValue]=useState(null);
-const [open, setOpen] = useState(false);
-
-const handleOptionClick = (id) => {
-  console.log(id, "onSelectData");
-      setTxtValue(id);
-    setOpen(false); 
-  // Perform actions with the id
-  let data = id.company_number;
-  Json_CompanyDetails(id.company_number);
-  console.log(data, "onSelectDatacnnumbr");
-
-};
-const clearDataCard = () => {
-  console.log(userDetail, "onClearDatacnnumbr",dataCompanyHouse);
-  const updatedUserDetail = { ...userDetail, 
-    CHNumber:"",
-    Clientname: "",
-    StatusId:setDefaultStatus(null),
-    Line1: "",
-    Line2:""
-  
   };
+
+  const [txtValue, setTxtValue] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  const handleOptionClick = (id) => {
+    console.log(id, "onSelectData");
+    setTxtValue(id);
+    setOpen(false);
+    // Perform actions with the id
+    let data = id.company_number;
+    Json_CompanyDetails(id.company_number);
+    console.log(data, "onSelectDatacnnumbr");
+
+  };
+  const clearDataCard = () => {
+    console.log(userDetail, "onClearDatacnnumbr", dataCompanyHouse);
+    const updatedUserDetail = {
+      ...userDetail,
+      CHNumber: "",
+      Clientname: "",
+      StatusId: setDefaultStatus(null),
+      Line1: "",
+      Line2: ""
+
+    };
     setUserDetail(updatedUserDetail);
     setDataCompanyHouse(null);
-  console.log("clearDataCard");
-}
+    console.log("clearDataCard");
+  }
 
-  console.log(Importdata,"Importdata",ImportCompanyDetails)
+  console.log(Importdata, "Importdata", ImportCompanyDetails)
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
@@ -316,10 +317,10 @@ const clearDataCard = () => {
     //   Json_GetClientCardDetails();
     Json_GetFolders();
     Json_GetConfiguration();
-   
+
     // setUserDetail(data);
   }, []);
-  console.log(defaultClient,"defaultClient")
+  console.log(defaultClient, "defaultClient")
   return (
     <div>
 
@@ -334,67 +335,67 @@ const clearDataCard = () => {
                           onChange={onChangeImportData}
                           label="Enter Company Name or Number"
                         /> */}
-                        <Autocomplete
-      fullWidth
-      // options={ImportContact.map((option) => option.title)}
-      options={ImportContact} // Pass the entire ImportContact array
-      getOptionLabel={(option) => option.title}
-      onChange={(e, value) => setImportdata(value)}
-      // inputValue={ImportContact}
-      noOptionsText="No matches found"
-      filterOptions={(x) => x}
-      autoComplete
-      includeInputInList
-    value={txtValue}
-    open={open} // Controlled by state
-    onOpen={() => setOpen(true)} // Open the Autocomplete dropdown
-    onClose={() => setOpen(false)} // Close the Autocomplete dropdown
-      renderOption={(props, option) => {
-        // Custom rendering for each option
-        console.log(option,"rendwered dynamic from apifff",props);
-        return (
-          <li {...props} 
-          onClick={() => {
-            
-            handleOptionClick(option); // Pass the id directly
-          }}
-  >
-            {/* Your custom rendering */}
-            <Grid container alignItems="center">
-            
-              <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                {option.title}          
-              </Grid>
-              <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                {option.date_of_creation}
-              </Grid>
-            </Grid>
-          </li>
-        );
-      }}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          fullWidth
-          variant="outlined"
-          name="importclient"
-          onChange={onChangeImportData}
-          label="Enter Company Name or Number"
-        />
-      )}
-    />
+            <Autocomplete
+              fullWidth
+              // options={ImportContact.map((option) => option.title)}
+              options={ImportContact} // Pass the entire ImportContact array
+              getOptionLabel={(option) => option.title}
+              onChange={(e, value) => setImportdata(value)}
+              // inputValue={ImportContact}
+              noOptionsText="No matches found"
+              filterOptions={(x) => x}
+              autoComplete
+              includeInputInList
+              value={txtValue}
+              open={open} // Controlled by state
+              onOpen={() => setOpen(true)} // Open the Autocomplete dropdown
+              onClose={() => setOpen(false)} // Close the Autocomplete dropdown
+              renderOption={(props, option) => {
+                // Custom rendering for each option
+                console.log(option, "rendwered dynamic from apifff", props);
+                return (
+                  <li {...props}
+                    onClick={() => {
+
+                      handleOptionClick(option); // Pass the id directly
+                    }}
+                  >
+                    {/* Your custom rendering */}
+                    <Grid container alignItems="center">
+
+                      <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                        {option.title}
+                      </Grid>
+                      <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                        {option.date_of_creation}
+                      </Grid>
+                    </Grid>
+                  </li>
+                );
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  fullWidth
+                  variant="outlined"
+                  name="importclient"
+                  onChange={onChangeImportData}
+                  label="Enter Company Name "
+                />
+              )}
+            />
           </Grid>
           <Grid item lg={6} xs={6} md={6} className="d-flex align-items-center">
             <Button className="min-width-auto text-danger">
-              <HighlightOffIcon className="font-32" onClick={clearDataCard}/>
+              <HighlightOffIcon className="font-32" onClick={clearDataCard} />
             </Button>
           </Grid>
-          
+
         </Grid>
       </Box>
 
       <Grid container spacing={3} className="mt-2">
-      <Grid item lg={4} xs={6} md={6}>
+        <Grid item lg={4} xs={6} md={6}>
           <TextField
             fullWidth
             id="CHNumber"
@@ -403,7 +404,7 @@ const clearDataCard = () => {
             name="CHNumber"
             value={userDetail.CHNumber}
             disabled={true}
-            // onChange={onChange}
+          // onChange={onChange}
           />
         </Grid>
         <Grid item lg={4} xs={6} md={6}>
@@ -431,31 +432,31 @@ const clearDataCard = () => {
         </Grid>
 
         <Grid item lg={4} xs={6} md={6}>
-        
+
           <Autocomplete
             multiple
             // {...clientlist}
             options={folders}
-              getOptionLabel={(option) => option.Folder ? option.Folder: ""}
+            getOptionLabel={(option) => option.Folder ? option.Folder : ""}
             //  defaultValue={[def]}
-              // value={[defaultClient] || []}
+            // value={[defaultClient] || []}
             //  defaultValue={defaultClient}
             // defaultValue={defaultClient !== null ? [folders[defaultClient]] : []}
             id="clientlist"
             clearOnEscape
             onChange={onChangeclientlist}
-             renderOption={(props, option, { selected }) => (
-        <li {...props}>
-          <Checkbox
-            icon={icon}
-            checkedIcon={checkedIcon}
-            style={{ marginRight: 8 }}
-            checked={selected}
-          />
-          {option.Folder}
-        </li>
-      )}
-      
+            renderOption={(props, option, { selected }) => (
+              <li {...props}>
+                <Checkbox
+                  icon={icon}
+                  checkedIcon={checkedIcon}
+                  style={{ marginRight: 8 }}
+                  checked={selected}
+                />
+                {option.Folder}
+              </li>
+            )}
+
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -587,8 +588,8 @@ const clearDataCard = () => {
             value={userDetail.Email}
             onChange={onChange}
             error={!!errors['Email']} // Set error state based on whether there is an error message
-          helperText={errors['Email']} // Display error message if there is one
-       
+            helperText={errors['Email']} // Display error message if there is one
+
           />
         </Grid>
       </Grid>
