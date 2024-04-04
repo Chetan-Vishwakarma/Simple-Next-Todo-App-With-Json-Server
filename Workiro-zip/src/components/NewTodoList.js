@@ -16,8 +16,11 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import moment from 'moment';
 import DocumentsVewModal from '../client/utils/DocumentsVewModal';
 import { toast } from 'react-toastify';
+import DocDetails from './DocDetails';
+import DateRangePicker from 'react-bootstrap-daterangepicker';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+const userId = localStorage.getItem("UserId");
 
 function NewTodoList() {
 
@@ -38,10 +41,20 @@ function NewTodoList() {
 
     const [allTask, setAllTask] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
+    const [recentTaskList, setRecentTaskList] = useState([]);
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [userName, setUserName] = React.useState(null);
     const [recentDocument, setRecentDocument] = React.useState([]);
+
+    const [expanded, setExpanded] = React.useState('panel1');
+
+    const [activeSectionList, setActiveSectionList] = useState({
+        section1: true,
+        section2: false,
+        section3: false,
+        section4: false,
+    });
 
 
     const [loadMore, setLoadMore] = useState(9);
@@ -53,7 +66,8 @@ function NewTodoList() {
     const handleClose = () => {
         setAnchorEl(null);
     };
-
+    console.log("fgfgljglj innerHeight",window.innerHeight);
+    console.log("fgfgljglj offsetHeight",document.documentElement.offsetHeight);
     const Json_Get_CRM_UserByProjectId = () => {
         let obj = {
             agrno: agrno,
@@ -102,8 +116,10 @@ function NewTodoList() {
                         // Sorting by EndDateTime
                         formattedTasks.sort((a, b) => b.EndDateTime - a.EndDateTime);
 
-                        console.log("Json_CRM_GetOutlookTask", formattedTasks);
-                        setAllTask(formattedTasks);
+                        const filtredTask = formattedTasks.filter(itm=>itm.AssignedToID.split(",").includes(userId) && itm.mstatus!=="Completed" && ["Portal","CRM"].includes(itm.Source));
+                        
+                        // console.log("Json_CRM_GetOutlookTask", filtredTask);
+                        setAllTask(filtredTask);
                     }
                 }
             });
@@ -122,7 +138,11 @@ function NewTodoList() {
                     if (data) {
                         let json = JSON.parse(data);
                         console.log("Json_getRecentTaskList", json);
+                        let tbl = json.Table;
+                        if (tbl.length > 0) {
 
+                            setRecentTaskList(tbl)
+                        }
                         // const formattedTasks = json.Table.map((task) => {
                         //     let timestamp;
                         //     if (task.EndDateTime) {
@@ -210,6 +230,10 @@ function NewTodoList() {
         // Increase the number of items to display by, for example, 5 when the button is clicked
         setLoadMore(prevLoadMore => prevLoadMore + 9);
     };
+    const handleLoadMoreRecentTask = () => {
+        // Increase the number of items to display by, for example, 5 when the button is clicked
+        setLoadMore(prevLoadMore => prevLoadMore + 9);
+    };
 
     useEffect(() => {
         Json_getRecentDocumentList();
@@ -221,7 +245,23 @@ function NewTodoList() {
 
     }, [isApi])
 
-
+    const handleScroll = () => {
+        console.log("fgfgljglj useEffect: ",document.documentElement.scrollTop);
+        if(document.documentElement.scrollTop<924){
+            console.log("fgfgljglj first");
+            handleActiveTab("section1");
+        }else if(document.documentElement.scrollTop>924 && document.documentElement.scrollTop<2211){
+            console.log("fgfgljglj second"); 
+            handleActiveTab("section2");
+        }
+        console.log("fgfgljglj sdfdff",activeSectionList);
+        //     if (
+    //       window.innerHeight + document.documentElement.scrollTop ===
+    //       document.documentElement.offsetHeight
+    //     ) {
+    //       fetchData();
+    //     }
+      };
 
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
@@ -229,6 +269,12 @@ function NewTodoList() {
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
         Json_CRM_GetOutlookTask();
+        window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      // Remove scroll event listener on component unmount
+      window.removeEventListener('scroll', handleScroll);
+    };
     }, []);
 
     function startFormattingDate(dt) {
@@ -246,12 +292,12 @@ function NewTodoList() {
     // modal
     const [openModal, setOpen] = React.useState(false);
 
-    const handleClickOpen = (task = selectedTask) => { 
+    const handleClickOpen = (task = selectedTask) => {
         setSelectedTask(task);
         setOpen(true);
     };
 
-   
+
 
     function returnMessageStatus(status) {
         if (status === "Completed") {
@@ -260,15 +306,15 @@ function NewTodoList() {
             return `Task status set to ${status}.`;
         }
     }
-    const MarkComplete=(e)=>{
-        console.log("MarkComplete",e)
-        Cls.ConfirmMessage("Are you sure you want to complete task",function(res){
-            if(res){
-                Json_UpdateTaskField("Status", "Completed",e);
+    const MarkComplete = (e) => {
+        console.log("MarkComplete", e)
+        Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
+            if (res) {
+                Json_UpdateTaskField("Status", "Completed", e);
             }
         })
     }
-    function Json_UpdateTaskField(FieldName, FieldValue,e) {
+    function Json_UpdateTaskField(FieldName, FieldValue, e) {
         let o = {
             agrno: agrno,
             strEmail: Email,
@@ -276,8 +322,8 @@ function NewTodoList() {
             TaskId: e.ID,
             FieldName: FieldName,
             FieldValue: FieldValue
-        }      
-        
+        }
+
         ClsSms.Json_UpdateTaskField(o, function (sts, data) {
             if (sts && data) {
                 if (data === "Success") {
@@ -293,7 +339,7 @@ function NewTodoList() {
         let obj = {};
         obj.OriginatorNo = e.ClientNo;
         obj.ActionReminder = "";
-        obj.Notes = "Completed by "+ e["Forwarded By"];
+        obj.Notes = "Completed by " + e["Forwarded By"];
         obj.Status = "sys"; //selectedTask.Status;
         obj.TaskId = e.ID;
         obj.TaskName = "";
@@ -303,8 +349,8 @@ function NewTodoList() {
         try {
             ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
                 if (sts && data) {
-                    console.log({ status: true, messages: "Success",res:data }); 
-                    Json_CRM_GetOutlookTask()                  
+                    console.log({ status: true, messages: "Success", res: data });
+                    Json_CRM_GetOutlookTask()
                 }
             });
         } catch (error) {
@@ -314,19 +360,38 @@ function NewTodoList() {
 
     // details dropdown
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState(null);
-    const DocumentList = Boolean(anchorElDocumentList);
-    const handleClickDocumentList = (event) => {
-        console.log(event.currentTarget);
-        event.stopPropagation();
-        setAnchorElDocumentList(event.currentTarget);
+    // const DocumentList = Boolean(anchorElDocumentList);
+    // const handleClickDocumentList = (event) => {
+    //     console.log(event.currentTarget);
+    //     event.stopPropagation();
+    //     setAnchorElDocumentList(event.currentTarget);
+    // };
+
+    // const handleCloseDocument = () => {
+    //     setAnchorElDocumentList(null);
+    // };
+
+
+    const [openMenus, setOpenMenus] = React.useState({});
+
+    const handleClickDocumentList = (event, index) => {
+        setOpenMenus(prevState => ({
+            ...prevState,
+            [index]: event.currentTarget
+        }));
     };
 
-    const handleCloseDocument = () => {
-        setAnchorElDocumentList(null);
+    const handleCloseDocument = (index) => {
+        setOpenMenus(prevState => ({
+            ...prevState,
+            [index]: null
+        }));
     };
 
-    const handleDowloadDocument = (e) => {
-        setAnchorElDocumentList(null);
+
+    const handleDowloadDocument = (e,index) => {
+        handleCloseDocument(index);
+        // setAnchorElDocumentList(null);
         console.log("document object", e);
         let o = { ItemId: e["Registration No."] };
         ClsSms.Json_GetItemBase64DataById(o, function (sts, data) {
@@ -340,6 +405,24 @@ function NewTodoList() {
         })
     };
 
+    const handleOpenBrower = (e,index) => {
+        handleCloseDocument(index);
+        //setAnchorElDocumentList(null);
+        console.log("document object", e);
+        var IsApproved = e["IsApproved"];
+        var PortalDocId = e["PortalDocId"];
+        let IsApp = "";
+        let PortalID = "";
+
+        if (IsApproved === "SIG" && PortalDocId !== "") {
+            IsApp = IsApproved;
+            PortalID = PortalDocId;
+        }
+
+        let url = `https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${e["Registration No."]}&ext=${e.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
+        window.open(url);
+    };
+
     const [selectedDocument, setSelectedDocument] = React.useState(null);
     const [openPDFView, setOpenPDFView] = React.useState(false);
 
@@ -347,18 +430,21 @@ function NewTodoList() {
         setAnchorElDocumentList(null);
         console.log("document object", e);
         setSelectedDocument(e);
-        setOpenPDFView(true); 
-    //    let url =`https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=1002909&filetype=txt&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=&PortalID=`;
-    // window.open(url);
-       
+        setOpenPDFView(true);
+        //    let url =`https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=1002909&filetype=txt&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=&PortalID=`;
+        // window.open(url);
+
     };
 
-   
+
 
 
     // Document details List
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
-    const handleClickOpenDocumentDetailsList = () => {
+    const [docForDetails, setDocForDetails] = useState({});
+    const handleClickOpenDocumentDetailsList = (sDoc) => {
+        setDocForDetails(sDoc);
+        setExpanded("panel1");
         setOpenDocumentDetailsList(true);
     };
     const handleCloseDocumentDetailsList = () => {
@@ -377,10 +463,25 @@ function NewTodoList() {
         return formattedDate === "Invalid Date" ? " " : formattedDate;
     }
 
+    const handleActiveTab = (target) => {
+        for (let key in activeSectionList) {
+            if (key === target) {
+                activeSectionList[key] = true;
+            } else {
+                activeSectionList[key] = false;
+            }
+        }
+        setActiveSectionList(activeSectionList);
+    }
+
+    
+
     return (
         <Box className="container-fluid p-0">
             <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
             <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
+
+            <DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList }/>
 
             <Box className='d-flex flex-wrap align-items-end justify-content-end'>
                 {/* <Box className='clearfix'>
@@ -412,20 +513,20 @@ function NewTodoList() {
 
             {/*  */}
             <Box className='no-touch'>
-                <nav class="cd-vertical-nav">
+                <nav className="cd-vertical-nav">
                     <ul>
-                        <li><a href="#section1" class="active"><span class="label">Task Due <br />Soon</span>
+                        <li onClick={() => handleActiveTab("section1")}><a href="#section1" className={activeSectionList.section1 ? "active" : ""}><span className="label">Task Due <br />Soon</span>
                             <EventNoteIcon className='hover-icon' />
                         </a></li>
-                        <li><a href="#section2" class=""><span class="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
-                        <li><a href="#section3" class=""><span class="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
-                        <li><a href="#section4" class=""><span class="label">Recently Accessed Documents</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section2")}><a href="#section2" className={activeSectionList.section2 ? "active" : ""}><span className="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section3")}><a href="#section3" className={activeSectionList.section3 ? "active" : ""}><span className="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section4")}><a href="#section4" className={activeSectionList.section4 ? "active" : ""}><span className="label">Recently Accessed Documents</span><EventNoteIcon className='hover-icon' /></a></li>
                     </ul>
                 </nav>
             </Box>
             {/*  */}
 
-            <Box className='pe-5'>
+            <Box className='pe-5' id="section1">
 
                 <Typography variant='subtitle1' className='font-20 bold mb-0'>Welcome {userName}</Typography>
                 <Typography variant='subtitle1' className='font-16 bold mb-2'>The following tasks are due soon:</Typography>
@@ -501,7 +602,7 @@ function NewTodoList() {
 
 
                     {allTask.length > 0 ? allTask.slice(0, loadMore).map((item, index) => {
-                        const arr = item.AssignedToID.split(",").map(Number);
+                        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
 
                         const priority = item.Priority === 1 ? "High" :
                             item.Priority === 2 ? "Normal" :
@@ -519,7 +620,7 @@ function NewTodoList() {
                                         checked
                                         sx={{
                                             '&.Mui-checked': {
-                                                color: item.Priority === 1 ? "red" : item.Priority === 2?"secondary":item.Priority === 3?"green":"primary"
+                                                color: item.Priority === 1 ? "red" : item.Priority === 2 ? "secondary" : item.Priority === 3 ? "green" : "primary"
                                             }
                                         }}
                                     />
@@ -574,8 +675,23 @@ function NewTodoList() {
                                     </Box>
 
                                     <Box className='mt-2'>
-                                        <Button variant="text" className='btn-blue-2 me-2' onClick={()=>MarkComplete(item)}>Mark Complete</Button>
-                                        <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
+                                        <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)}>Mark Complete</Button>
+                                        <DateRangePicker initialSettings={{
+                                                    singleDatePicker: true,
+                                                    showDropdowns: true,
+                                                    startDate: item["EndDateTime"],
+                                                    minYear: 1901,
+                                                    maxYear: 2100,
+                                                }}
+                                                onCallback={(start) => {
+                                                    const date = start.format('YYYY/MM/DD');
+                                                    Json_UpdateTaskField("EndDateTime",date,item);
+                                                }}
+                                                >
+                                                    <Button variant="outlined" className='btn-outlin-2'>
+                                                        Defer
+                                                    </Button>
+                                                </DateRangePicker>
                                     </Box>
 
                                 </Box>
@@ -586,7 +702,7 @@ function NewTodoList() {
                     }) : ""}
                 </Box>
 
-                <Box className='py-4 text-center'>
+                <Box id="section2" className='py-4 text-center'>
                     <Button variant="outlined" onClick={handleLoadMore}>View More</Button>
                 </Box>
 
@@ -600,10 +716,10 @@ function NewTodoList() {
                 <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>The following tasks were recently updated: </Typography>
 
                 <Box className='row'>
-                    {Array(9).fill("").map(() => {
+                    {recentTaskList.length > 0 ? recentTaskList.slice(0, loadMore).map((item, index) => {
                         return <>
 
-                            <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                            <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                 <Box className='todo-list-box white-box relative w-100'
                                     onClick={() => handleClickOpen()}>
 
@@ -621,7 +737,7 @@ function NewTodoList() {
 
                                     <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> Signature Tast</Typography>
 
-                                    <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography>
+                                    <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
 
                                     <Box className='d-flex align-items-center justify-content-between'>
                                         <Typography variant='subtitle1' ><pan className='text-gray'>
@@ -684,9 +800,11 @@ function NewTodoList() {
                             {/* col end */}
 
                         </>
-                    })}
+                    }) : ""}
                 </Box>
-
+                <Box id="section3" className='py-4 text-center'>
+                    <Button variant="outlined" onClick={handleLoadMoreRecentTask}>View More</Button>
+                </Box>
 
 
                 {/* row end */}
@@ -782,7 +900,7 @@ function NewTodoList() {
 
                 {/* row end */}
                 <hr />
-                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>You accessed the following documents recently:</Typography>
+                <Typography id="section4" variant='subtitle1' className='font-18 bold mb-2 mt-4'>You accessed the following documents recently:</Typography>
 
                 {/* <DocumentDetails></DocumentDetails> */}
 
@@ -790,9 +908,9 @@ function NewTodoList() {
                     {recentDocument.length > 0 ? recentDocument.map((item, index) => {
                         return <>
 
-                            <Box className='col-xxl-3 col-xl-4 col-md-6' key={index}>
-                                <Box className="file-uploads">
-                                    <label className="file-uploads-label file-uploads-document">
+                            <Box className='col-xxl-3 col-xl-4 col-md-6 d-flex' key={index}>
+                                <Box className="file-uploads d-flex w-100">
+                                    <label className="file-uploads-label file-uploads-document w-100">
                                         <Box className="d-flex align-items-center">
 
                                             <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
@@ -809,57 +927,57 @@ function NewTodoList() {
                                                 </Typography>
                                                 <Typography variant="body1">
                                                     {/* Size:  <span className='sembold'>{item.FileSize}</span> |   */}
-                                                    <span className='sembold'>{moment(item["Item Date"]).format("DD/MM/YYYY")}</span>
-                                                    | Uploaded by <span className='sembold'>Patrick</span>
+                                                    <span className='sembold'>{moment(item["Item Date"]).format("DD/MM/YYYY")!=="Invalid date"?moment(item["Item Date"]).format("DD/MM/YYYY"):"01/01/2000"}</span>
+                                                    | Uploaded by <span className='sembold'>{item.Client!==""&&item.Client!==null&&item.Client!=="undefined"&&item.Client!==undefined? item.Client: ""}</span>
                                                 </Typography>
                                             </Box>
                                         </Box>
                                         <Box>
                                             <Button
-                                                id="basic-button"
-                                                aria-controls={DocumentList ? 'basic-menu' : undefined}
+                                                id={`basic-button-${index}`}
+                                                aria-controls={openMenus[index] ? `basic-menu-${index}` : undefined}
                                                 aria-haspopup="true"
-                                                aria-expanded={DocumentList ? 'true' : undefined}
-                                                onClick={handleClickDocumentList}
+                                                aria-expanded={openMenus[index] ? 'true' : undefined}
+                                                onClick={(event) => handleClickDocumentList(event, index)}
                                                 className='min-width-auto'
                                             >
                                                 <MoreVertIcon />
                                             </Button>
                                             <Menu
-                                                id="basic-menu"
-                                                anchorEl={anchorElDocumentList}
-                                                open={DocumentList}
-                                                onClose={handleCloseDocument}
+                                                id={`basic-menu-${index}`}
+                                                anchorEl={openMenus[index]}
+                                                open={Boolean(openMenus[index])}
+                                                onClose={() => handleCloseDocument(index)}
                                                 MenuListProps={{
-                                                    'aria-labelledby': 'basic-button',
+                                                    'aria-labelledby': `basic-button-${index}`,
                                                 }}
                                                 className='custom-dropdown'
                                             >
                                                 <MenuItem onClick={() => {
-                                                    handleCloseDocument()
-                                                    handleClickOpenDocumentDetailsList()
+                                                    handleCloseDocument(index)
+                                                    handleClickOpenDocumentDetailsList(item)
                                                 }}>
                                                     <ListItemIcon>
                                                         <ArticleIcon fontSize="medium" />
                                                     </ListItemIcon>
                                                     Document Details</MenuItem>
 
-                                                <MenuItem onClick={handleCloseDocument}>
+                                                <MenuItem onClick={()=>handleCloseDocument(index)}>
                                                     <ListItemIcon>
                                                         <CloudUploadIcon fontSize="medium" />
                                                     </ListItemIcon>
                                                     Upload New Version</MenuItem>
-                                                <MenuItem onClick={handleCloseDocument}>
+                                                <MenuItem onClick={()=>handleCloseDocument(index)}>
                                                     <ListItemIcon>
                                                         <DriveFileRenameOutlineIcon fontSize="medium" />
                                                     </ListItemIcon>
                                                     Rename Document</MenuItem>
-                                                <MenuItem onClick={handleCloseDocument} >
+                                                <MenuItem onClick={() => handleOpenBrower(item,index)} >
                                                     <ListItemIcon>
                                                         <TravelExploreIcon fontSize="medium" />
                                                     </ListItemIcon>
                                                     Open in Browser</MenuItem>
-                                                <MenuItem onClick={(e) => handleDowloadDocument(item)}>
+                                                <MenuItem onClick={(e) => handleDowloadDocument(item,index)}>
                                                     <ListItemIcon>
                                                         <CloudDownloadIcon fontSize="medium" />
                                                     </ListItemIcon>

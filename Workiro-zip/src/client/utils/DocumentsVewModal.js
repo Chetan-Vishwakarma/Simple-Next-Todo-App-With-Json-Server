@@ -70,6 +70,14 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
     const [editorContentValue, setEditorContentValue] = React.useState([]);
     const [getAssociatedTaskList, setGetAssociatedTaskList] = React.useState([]);
 
+
+    const [documentdata,setDocumentData]=useState();
+const [openModal,setopenModal]=useState(false);
+const [TaskType,setTaskType]=useState("CRM");
+
+const [createNewFileObj, setCreateNewFileObj] = useState([]);
+
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
@@ -383,6 +391,7 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
     }
 
 const createTask=()=>{
+    setopenModal(true)
 console.log("Create New Task")
 }
 
@@ -397,36 +406,34 @@ console.log("Create New Task")
             className='custom-modal full-modal'
             sx={{ width: '100%', maxWidth: '100%' }}
         >
-            <DialogContent>
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="dropdown-box">
+                    <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                        Document List
+                    </Typography>
+                </Box>
 
-                <Box className="d-flex align-items-center justify-content-between">
-                    <Box className="dropdown-box">
-                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                            Document List 
-                        </Typography>
-                    </Box>
+                {/*  */}
 
-                    {/*  */}
+                <Box className="d-flex align-items-center justify-content-between flex-wrap">
 
-                    <Box className="d-flex align-items-center justify-content-between flex-wrap">
-                        
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTask} >Create Task</Button>
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
-                        {/* <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button> */}
+                    <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTask} >Create Task</Button>
+                    <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
+                    {/* <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button> */}
 
-                        <Box>
-                            <Button
-                                id="basic-button"
-                                aria-controls={ChangeIndex ? 'basic-menu' : undefined}
-                                aria-haspopup="true"
-                                aria-expanded={ChangeIndex ? 'true' : undefined}
-                                onClick={handleClickChangeIndex}
-                                className='btn-blue-2'
-                            >
-                                Category
-                                {/* <KeyboardArrowDownIcon className='ms-1' /> */}
-                            </Button>
-                            {/* <Menu
+                    <Box>
+                        <Button
+                            id="basic-button"
+                            aria-controls={ChangeIndex ? 'basic-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={ChangeIndex ? 'true' : undefined}
+                            onClick={handleClickChangeIndex}
+                            className='btn-blue-2 me-2 mb-1'
+                        >
+                            Category
+                            {/* <KeyboardArrowDownIcon className='ms-1' /> */}
+                        </Button>
+                        {/* <Menu
                                 id="basic-menu"
                                 className='custom-dropdown'
                                 anchorEl={anchorElChangeIndex}
@@ -442,35 +449,35 @@ console.log("Create New Task")
                                 <MenuItem onClick={handleCloseChangeIndex}> <AddIcon className='me-2' /> </MenuItem>
                                 <MenuItem onClick={handleCloseChangeIndex}> <AlarmOnIcon className='me-2' /> Add Activity </MenuItem>
                             </Menu> */}
-                        </Box>
-
-                        <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
-                            <span className="material-symbols-outlined text-black">
-                                cancel
-                            </span>
-                        </Button>
-
                     </Box>
-                </Box>
 
-                <hr />
+                    <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+
+                </Box>
+            </Box>
+
+            <DialogContent className='full-height-modal'>
 
                 <DialogContentText id="alert-dialog-description">
-                    <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
+                    <Box sx={{ width: '100%', typography: 'body1' }}>
                         <TabContext value={value}>
                             <Box>
-                                <Tabs onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
+                                <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
                                     <Tab label="Documents" value="1" />
                                     <Tab label="Versions" value="2" />
                                     <Tab label="Notes" value="3" />
                                     <Tab label="Associated Tasks" value="4" />
                                     <Tab label="Activity" value="5" />
                                     <Tab label="Attachments" value="6" />
-                                </Tabs>
+                                </TabList>
                             </Box>
                             <TabPanel value="1" className='p-0'>
-                                <Box className='white-box'>
-                                    <Box className='text-end mb-3'>
+                                <Box className='white-box relative'>
+                                    <Box className='text-end mb-3 btn-download'>
                                         <DownloadForOfflineIcon className='text-red pointer font-32' />
                                     </Box>
                                     <iframe
@@ -481,9 +488,23 @@ console.log("Create New Task")
                                         allowFullScreen // Allow fullscreen mode
                                         title="Embedded Content" // Set the title for accessibility
                                     />
+
+                             <CreateNewModalTask
+                                // documentDate={documentDate}
+                                // receivedDate={receivedDate}
+                                // createNewFileObj={createNewFileObj}
+                                // txtFolderData={txtFolderData}
+                                // txtClientData={txtClientData}
+                                // txtSectionData={txtSectionData}
+                                // TaskType={TaskType}
+                                // // setPassButtonHide={setPassButtonHide}
+                                // // passButtonHide={passButtonHide}
+                                // openModal={openModal}
+                            ></CreateNewModalTask>
+
                                 </Box>
                             </TabPanel>
-                            
+
                             <TabPanel value="2">
                                 <Box className='row'>
                                     {Array(12).fill("").map(() => {
@@ -530,9 +551,9 @@ console.log("Create New Task")
 
                                 <Box className='text-center'>
                                     {getAssociatedTaskList && getAssociatedTaskList.map((item, index) => {
-                                        let str = item.AssignedToID;
-                                        let arr = str.split(',').map(Number);
-                                        let isUserAssigned = arr.includes(parseInt(localStorage.getItem('UserId')));
+                                        let str = item?.AssignedToID;
+                                        let arr = str?.split(',').map(Number);
+                                        let isUserAssigned = arr?.includes(parseInt(localStorage.getItem('UserId')));
                                         console.log("isUserAssigned", isUserAssigned)
                                         return (
                                             <label key={index} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex">
@@ -541,8 +562,6 @@ console.log("Create New Task")
                                             </label>
                                         );
                                     })}
-
-
 
                                 </Box>
 
@@ -606,14 +625,10 @@ console.log("Create New Task")
                                         </>)
                                     }) : ""}
 
-
                                 </Box>
 
                             </TabPanel>
                         </TabContext>
-
-
-
 
                     </Box>
                 </DialogContentText>

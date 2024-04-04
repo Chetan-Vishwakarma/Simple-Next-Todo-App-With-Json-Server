@@ -4,22 +4,29 @@ import axios from "axios";
 const counterSlices = createSlice({
     name: "counter",
     initialState: {
-        value: 0,
+        userDetail: null,
+        dataCompanyHouse: null,
+        selectedFolderID: null,
+        myTasks:[]   
     },
     reducers: {
-        increment: (state,action)=>{
-            state.value+=1;
-        },
-        decrement: (state,action)=>{
-            state.value-=1;
-        },
-        // users: (state, action)=>{
-        //     console.log(action.payload);
-        // }
+        //sonam state
+        setUserDetail: (state, action) => {
+            state.userDetail = action.payload;
+          },
+          setDataCompanyHouse: (state, action) => {
+            state.dataCompanyHouse = action.payload;
+          },
+          setSelectedFolderID: (state, action) => {
+            state.selectedFolderID = action.payload;
+          },
+          setMyTasks: (state, action) => {
+            state.myTasks = action.payload;
+          }
     }
 });
 
-export const {increment, decrement } = counterSlices.actions;
+export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks } = counterSlices.actions;
 
 // export const getUsers = () => async(dispatch) => {
 //     const response = await axios.get("https://jsonplaceholder.typicode.com/users");

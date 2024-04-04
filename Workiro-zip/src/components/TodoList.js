@@ -38,11 +38,24 @@ import PersonIcon from '@mui/icons-material/Person';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
 import SubjectIcon from '@mui/icons-material/Subject';
-
 import { toast } from 'react-toastify';
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
+import PeopleIcon from '@mui/icons-material/People';
+import ShareIcon from '@mui/icons-material/Share';
+import FolderSharedIcon from '@mui/icons-material/FolderShared';
+import CreateNewModalTask from './CreateNewModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { setMyTasks } from '../redux/reducers/counterSlice';
+
+
+const foldersIconList = [<PersonIcon className='me-1 font-20' />, <TipsAndUpdatesIcon className='me-1 font-20' />, <PeopleIcon className='me-1 font-20' />, <ShareIcon className='me-1 font-20' />, <FolderSharedIcon className='me-1 font-20' />, <FolderSharedIcon className='me-1 font-20' />];
+const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20' />, <PublishedWithChangesIcon color='primary' className='me-1 font-20' />, <HourglassBottomIcon color='primary' className='me-1 font-20' />, <CheckCircleOutlineIcon color='success' className='me-1 font-20' />];
 
 function TodoList() {
     const location = useLocation();
+    const reduxData = useSelector((data) => data.counter.myTasks);
+    console.log("fdjkfhfhsf", reduxData);
+    const dispatch = useDispatch();
     let dddd = location.state !== null ? location.state : { globalSearchTask: [] };
     const { globalSearchTask, strGlobal } = dddd;
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -61,8 +74,8 @@ function TodoList() {
     let ClsSms = new CommanCLS(baseUrl, agrno, Email, password);
 
 
-    const [allTask, setAllTask] = useState([]);
-    const [actualData, setActualData] = useState([]);
+    const [allTask, setAllTask] = useState([...reduxData]);
+    const [actualData, setActualData] = useState([...reduxData]);
     const [selectedTask, setSelectedTask] = useState({});
 
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -80,8 +93,11 @@ function TodoList() {
 
     const [dataInGroup, setDataInGroup] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isSearch, setIsSearch] = useState(false);
 
     const [suggestionList, setSuggestionList] = useState([]);
+
+
 
     // for date datepicker
     const [state, setState] = useState({
@@ -132,7 +148,7 @@ function TodoList() {
                 return { ...task, EndDateTime: date };
             });
 
-            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
+            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
 
             let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                 let timestamp;
@@ -145,20 +161,16 @@ function TodoList() {
                 return { ...task, CreationDate: date };
             }).sort((a, b) => b.CreationDate - a.CreationDate);
 
-
+            // dispatch(setMyTasks([...hasCreationDate]));
             setActualData([...hasCreationDate]);
             setAllTask([...hasCreationDate]);
+
             // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
             Json_GetFolders();
             setIsApi(true);
             setIsLoading(false);
             return;
         }
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
-        };
         try {
             Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
                 if (sts) {
@@ -177,13 +189,7 @@ function TodoList() {
                             return { ...task, EndDateTime: date };
                         });
 
-                        // setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
-
-                        // let tasks = formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime);
-                        // let myTasks = tasks.filter((item)=>item.AssignedToID.split(",").includes(userId));
-                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
-
-
+                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
 
                         let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                             let timestamp;
@@ -196,11 +202,10 @@ function TodoList() {
                             return { ...task, CreationDate: date };
                         }).sort((a, b) => b.CreationDate - a.CreationDate);
 
+                        dispatch(setMyTasks([...hasCreationDate]));
+                        // setActualData([...hasCreationDate]);
+                        // setAllTask([...hasCreationDate]);
 
-
-                        // setActualData([...myTasks]);
-                        setActualData([...hasCreationDate]);
-                        setAllTask([...hasCreationDate]);
                         // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
                         setIsLoading(false);
                         Json_GetFolders();
@@ -226,7 +231,10 @@ function TodoList() {
 
     const loaderRef = useRef(null);
 
+
+
     useEffect(() => {
+
         const handleScroll = () => {
             if (
                 window.innerHeight + document.documentElement.scrollTop >=
@@ -242,6 +250,7 @@ function TodoList() {
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
+
     }, []);
 
 
@@ -286,12 +295,45 @@ function TodoList() {
         return type;
     }
 
+    const [userList, setUserList] = React.useState([]);
+
+    function Json_GetForwardUserList() {
+        try {
+
+            let o = {};
+            o.ProjectId = localStorage.getItem("FolderId");
+            o.SectionId = "-1";
+            ClsSms.Json_GetForwardUserList(o, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        let dt = js.Table;
+                        console.log("Json_GetForwardUserList111", dt)
+                        if (dt.length > 0) {
+                            let result = dt.filter((el) => {
+                                return el.CGroup !== "Yes";
+                            });
+
+                            setUserList(result);
+
+                        }
+                    }
+
+                }
+            });
+        } catch (error) {
+            console.log("error", error);
+        }
+    }
+
     useEffect(() => {
+        Json_GetForwardUserList();
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
         Json_CRM_GetOutlookTask();
+
     }, []);
 
     function startFormattingDate(dt) {
@@ -510,15 +552,15 @@ function TodoList() {
     };
 
 
-    const MarkComplete=(e)=>{
-        console.log("MarkComplete",e)
-        Cls.ConfirmMessage("Are you sure you want to complete task",function(res){
-            if(res){
-                Json_UpdateTaskField("Status", "Completed",e);
+    const MarkComplete = (e) => {
+        console.log("MarkComplete", e)
+        Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
+            if (res) {
+                Json_UpdateTaskField("Status", "Completed", e);
             }
         })
     }
-    function Json_UpdateTaskField(FieldName, FieldValue,e) {
+    function Json_UpdateTaskField(FieldName, FieldValue, e) {
         let o = {
             agrno: agrno,
             strEmail: Email,
@@ -526,8 +568,8 @@ function TodoList() {
             TaskId: e.ID,
             FieldName: FieldName,
             FieldValue: FieldValue
-        }      
-        
+        }
+
         ClsSms.Json_UpdateTaskField(o, function (sts, data) {
             if (sts && data) {
                 if (data === "Success") {
@@ -543,7 +585,7 @@ function TodoList() {
         let obj = {};
         obj.OriginatorNo = e.ClientNo;
         obj.ActionReminder = "";
-        obj.Notes = "Completed by "+ e["Forwarded By"];
+        obj.Notes = "Completed by " + e["Forwarded By"];
         obj.Status = "sys"; //selectedTask.Status;
         obj.TaskId = e.ID;
         obj.TaskName = "";
@@ -553,14 +595,51 @@ function TodoList() {
         try {
             ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
                 if (sts && data) {
-                    console.log({ status: true, messages: "Success",res:data }); 
-                    Json_CRM_GetOutlookTask()                  
+                    console.log({ status: true, messages: "Success", res: data });
+                    Json_CRM_GetOutlookTask()
                 }
             });
         } catch (error) {
             console.log({ status: false, messages: "Faild Please Try again" });
         }
     };
+
+
+
+
+    const FiterAssinee = (ownerid) => {
+
+        let res = userList.filter((e) => e.ID === ownerid);
+        // console.log("userList212121",res);
+        if (res.length > 0) {
+            return res[0].ForwardTo;
+        }
+
+    }
+
+    const FilterAgs = (item) => {
+        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
+
+        const userId = parseInt(localStorage.getItem("UserId"));
+
+        const filteredIds = arr.filter((k) => k !== item.OwnerID);
+
+        const user = filteredIds.find((u) => u === userId);
+
+
+        const userToFind = user ? user : filteredIds[0];
+
+
+
+        const res = userToFind ? userList.find((e) => e.ID === userToFind) : null;
+
+        return res ? res.ForwardTo : "";
+    }
+
+    useEffect(() => {
+        setAllTask([...reduxData]);
+        setActualData([...reduxData]);
+    }, [reduxData]);
 
     return (
         <>
@@ -569,7 +648,7 @@ function TodoList() {
                 {globalSearchTask.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/MyTask", tabName: "My Task" }]} />}
 
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
-
+                {/* <CreateNewModalTask setIsApi={setIsApi} isApi={isApi}></CreateNewModalTask> */}
                 <Box className='d-flex main-search-box mb-3 align-items-center justify-content-between'>
                     <Box className='d-flex align-items-center'>
                         <Layout>
@@ -584,13 +663,19 @@ function TodoList() {
                                     <span className="material-symbols-outlined search-icon">search</span>
 
                                     <Input
-                                        // onClick={(e) => handleDialogsOpen(e, "Search")}
+                                        onClick={(e) => {
+                                            if (e.target.value !== "") {
+                                                setIsSearch(true);
+                                            }
+                                        }}
+                                        onBlur={(e) => setIsSearch(false)}
                                         onChange={(e) => {
                                             if (e.target.value === "") {
                                                 setSuggestionList([]);
                                                 handleFilterDeletion("Subject");
                                                 return;
                                             }
+                                            setIsSearch(true);
                                             let fltData = allTask.filter(itm => itm.Subject.toLowerCase().includes(e.target.value.toLowerCase()));
                                             setSuggestionList(fltData);
                                             setTaskFilter({ ...taskFilter, Subject: [e.target.value] });
@@ -599,7 +684,7 @@ function TodoList() {
                                         className='ps-0' />
                                 </AutocompleteRoot>
 
-                                {suggestionList.length > 0 && <Listbox sx={{ zIndex: 1 }}>
+                                {isSearch && suggestionList.length > 0 && <Listbox sx={{ zIndex: 1 }}>
                                     {suggestionList.map((itm, i) => {
                                         return <Option key={i}>
                                             {/* <ApartmentIcon className='me-1' /> */}
@@ -634,7 +719,7 @@ function TodoList() {
                             >
                                 <MenuItem value="Folder" style={{ display: "none" }}>Folders</MenuItem>
                                 <MenuItem value="" className='text-danger ps-1'><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
-                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'><LanguageIcon className="font-20 me-2" /> {fld.Folder}</MenuItem>)}
+                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'>{foldersIconList[i]} {fld.Folder}</MenuItem>)}
                             </Select>
                         </FormControl>
 
@@ -696,8 +781,8 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value={"Status"} style={{ display: "none" }}> Status</MenuItem>
-                                <MenuItem value={""} ><WatchLaterIcon className='text-danger ps-1 me-1' /> Clear Filter</MenuItem>
-                                {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm}>  <WatchLaterIcon className="font-20 me-2" />{itm}</MenuItem>)}
+                                <MenuItem className='text-danger ps-1' value={""} ><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
+                                {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm} className='ps-1'> {statusIconList[i]} {itm}</MenuItem>)}
                             </Select>
                         </FormControl>
                     </Box>
@@ -767,11 +852,11 @@ function TodoList() {
                             >
                                 <MenuItem className='ps-2' value="Sort By" style={{ display: "none" }}><SortIcon />Sort By</MenuItem>
                                 <MenuItem className='ps-2 text-red' value="" onClick={() => setAllTask([...actualData])}><ClearIcon />Clear Sortby</MenuItem>
-                                <MenuItem className='ps-2' value="Client"><PersonIcon className='font-18 me-1' />Client Name</MenuItem>
-                                <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-18 me-1' />Due Date</MenuItem>
-                                <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-18 me-1' />Priority</MenuItem>
-                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-18 me-1' />Section</MenuItem>
-                                <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-18 me-1' />Start Date</MenuItem>
+                                <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
+                                <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
+                                <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-20 me-1' />Priority</MenuItem>
+                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-20 me-1' />Section</MenuItem>
+                                <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-20 me-1' />Start Date</MenuItem>
                             </Select>
                         </FormControl>
                         {selectedSortBy !== "Sort By" && <Checkbox onClick={(e) => handleSortBy(e.target.checked)} className='p-0' {...label} icon={<UpgradeIcon />} checkedIcon={<VerticalAlignBottomIcon />} />}
@@ -791,20 +876,17 @@ function TodoList() {
                                     handleGrouping(e.target.value)
                                 }}
                                 className='custom-dropdown'
-
                             >
                                 <MenuItem className='ps-2' value="Group By" style={{ display: "none" }}>Group By</MenuItem>
-                                <MenuItem className='ps-2' value=""><ClearIcon className='font-18 me-1' />Clear Groupby</MenuItem>
-                                <MenuItem className='ps-2' value="Client"><PersonIcon className='font-18 me-1' />Client Name</MenuItem>
-                                <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-18 me-1' />Due Date</MenuItem>
-                                <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-18 me-1' />Priority</MenuItem>
-                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-18 me-1' />Section</MenuItem>
-                                <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-18 me-1' />Start Date</MenuItem>
-                                <MenuItem className='ps-2' value="Subject"><SubjectIcon className='font-18 me-1' />Subject</MenuItem>
+                                <MenuItem className='ps-2' value=""><ClearIcon className='font-20 me-1' />Clear Groupby</MenuItem>
+                                <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
+                                <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
+                                <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-20 me-1' />Priority</MenuItem>
+                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-20 me-1' />Section</MenuItem>
+                                <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-20 me-1' />Start Date</MenuItem>
+                                <MenuItem className='ps-2' value="Subject"><SubjectIcon className='font-20 me-1' />Subject</MenuItem>
                             </Select>
-
                         </FormControl>
-
 
                         <ToggleButtonGroup className='ms-3' size='small'>
                             <ToggleButton value="left" aria-label="left aligned">
@@ -829,8 +911,8 @@ function TodoList() {
                                         <h4>{key == 1 ? "High" : key == 2 ? "Medium" : key}</h4>
 
                                         {dataInGroup[key].length > 0 && dataInGroup[key].map((item, index) => {
-                                          const arr = item.AssignedToID.split(",").map(Number);
-                                         return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
+                                            const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
+                                            return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                                 <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
                                                     <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
@@ -847,9 +929,11 @@ function TodoList() {
 
                                                     <Box className='d-flex align-items-center justify-content-between'>
                                                         <Typography variant='subtitle1'><pan className='text-gray'>
-                                                            {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
+                                                            {FiterAssinee(item.OwnerID)} <ArrowForwardIosIcon className='font-14' /> </pan>
                                                             {/* <a href='#'>Patrick</a>, */}
-                                                            <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +{arr.length}</a></Typography>
+                                                            <a href='#'>{FilterAgs(item)}</a> <a href='#'> {arr.length > 2 && (<>
+                                                                + {arr.length - 2}
+                                                            </>)}</a></Typography>
                                                         <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                                     </Box>
 
@@ -891,8 +975,23 @@ function TodoList() {
                                                     </Box>
 
                                                     <Box className='mt-2'>
-                                                        <Button variant="text" className='btn-blue-2 me-2' onClick={()=>MarkComplete(item)} >Mark Complete</Button>
-                                                        <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
+                                                        <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)} >Mark Complete</Button>
+                                                        <DateRangePicker initialSettings={{
+                                                    singleDatePicker: true,
+                                                    showDropdowns: true,
+                                                    startDate: item["EndDateTime"],
+                                                    minYear: 1901,
+                                                    maxYear: 2100,
+                                                }}
+                                                onCallback={(start) => {
+                                                    const date = start.format('YYYY/MM/DD');
+                                                    Json_UpdateTaskField("EndDateTime",date,item);
+                                                }}
+                                                >
+                                                    <Button variant="outlined" className='btn-outlin-2'>
+                                                        Defer
+                                                    </Button>
+                                                </DateRangePicker>
                                                     </Box>
 
                                                 </Box>
@@ -902,7 +1001,7 @@ function TodoList() {
                                 })}
                             </>) : (allTask.length > 0 ?
                                 (allTask.slice(0, loadMore).map((item, index) => {
-                                    const arr = item.AssignedToID.split(",").map(Number);
+                                    const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
                                     return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                         <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
@@ -920,9 +1019,11 @@ function TodoList() {
 
                                             <Box className='d-flex align-items-center justify-content-between'>
                                                 <Typography variant='subtitle1'><pan className='text-gray'>
-                                                    {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
+                                                    {FiterAssinee(item.OwnerID)} <ArrowForwardIosIcon className='font-14' /> </pan>
                                                     {/* <a href='#'>Patrick</a>, */}
-                                                    <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +{arr.length}</a></Typography>
+                                                    <a href='#'>{FilterAgs(item)}</a> <a href='#'> {arr.length > 2 && (<>
+                                                        +{arr.length - 2}
+                                                    </>)}</a></Typography>
                                                 <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                             </Box>
 
@@ -963,9 +1064,26 @@ function TodoList() {
                                                 </Typography>
                                             </Box>
 
+                                            
+
                                             <Box className='mt-2'>
-                                                <Button variant="text" className='btn-blue-2 me-2' onClick={()=>MarkComplete(item)} >Mark Complete</Button>
-                                                <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
+                                                <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)} >Mark Complete</Button>
+                                                <DateRangePicker initialSettings={{
+                                                    singleDatePicker: true,
+                                                    showDropdowns: true,
+                                                    startDate: item["EndDateTime"],
+                                                    minYear: 1901,
+                                                    maxYear: 2100,
+                                                }}
+                                                onCallback={(start) => {
+                                                    const date = start.format('YYYY/MM/DD');
+                                                    Json_UpdateTaskField("EndDateTime",date,item);
+                                                }}
+                                                >
+                                                    <Button variant="outlined" className='btn-outlin-2'>
+                                                        Defer
+                                                    </Button>
+                                                </DateRangePicker>
                                             </Box>
 
                                         </Box>
@@ -974,7 +1092,7 @@ function TodoList() {
                         }
 
                         {/* statick box */}
-                        <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex' onClick={handleClickOpenPortal}>
+                        {/* <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex' onClick={handleClickOpenPortal}>
                             <Box className='todo-list-box white-box relative w-100'>
 
                                 <Radio className='text-red check-todo' checked
@@ -1036,157 +1154,159 @@ function TodoList() {
                                 </Box>
 
                             </Box>
-                        </Box>
+                        </Box> */}
                         {/* col end */}
                     </Box>)}
                 </Box>
-            </Box>
+            </Box >
 
             {/* modal */}
 
-            <Dialog
+            <Dialog Dialog
                 open={openPortal}
                 onClose={handleClosePortal}
                 aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                className='custom-modal'
-                sx={{
-                    // maxWidth: 640,
-                    margin: '0 auto'
-                }}
+            aria-describedby="alert-dialog-description"
+            className = 'custom-modal'
+            sx = {{
+                // maxWidth: 640,
+                margin: '0 auto'
+            }
+            }
             >
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="align-items-center d-flex">
+                    <Checkbox
+                        {...label}
+                        icon={<PanoramaFishEyeIcon />}
+                        // onChange={handleChangeStatus}
+                        checkedIcon={<CheckCircleIcon />}
+                        className="ps-0"
+                    />
+                    <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                        Portal Task
+                    </Typography>
+                </Box>
 
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="align-items-center d-flex">
-                                <Checkbox
-                                    {...label}
-                                    icon={<PanoramaFishEyeIcon />}
-                                    // onChange={handleChangeStatus}
-                                    checkedIcon={<CheckCircleIcon />}
-                                    className="ps-0"
-                                />
-                                <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                                    Portal Task
-                                </Typography>
-                            </Box>
+                {/*  */}
 
-                            {/*  */}
-
-                            <Box className='d-flex'>
+                <Box className='d-flex'>
 
 
-                                <Box className='pe-2'>
-                                    <Button
-                                        id="basic-button"
-                                        aria-controls={open4 ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={open4 ? 'true' : undefined}
-                                        onClick={handleClick4}
-                                        className="min-width-auto px-0 text-danger"
-                                    >
+                    <Box className='pe-2'>
+                        <Button
+                            id="basic-button"
+                            aria-controls={open4 ? 'basic-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={open4 ? 'true' : undefined}
+                            onClick={handleClick4}
+                            className="min-width-auto px-0 text-danger"
+                        >
 
-                                        <ListItemIcon className="min-width-auto  me-2 text-secondary">
-                                            <PublishedWithChangesIcon fontSize="medium" />
-                                        </ListItemIcon>
-                                        <span className="text-secondary">Profile</span>
+                            <ListItemIcon className="min-width-auto  me-2 text-secondary">
+                                <PublishedWithChangesIcon fontSize="medium" />
+                            </ListItemIcon>
+                            <span className="text-secondary">Profile</span>
 
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={anchorEl4}
-                                        open={open4}
-                                        onClose={handleClose4}
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                    >
-                                        <MenuItem onClick={handleClose4} className="text-secondary">
-                                            <ListItemIcon>
-                                                <DoNotDisturbAltIcon fontSize="medium" className="text-secondary" />
-                                            </ListItemIcon>
-                                            Not Started
-                                        </MenuItem>
-                                        <MenuItem onClick={handleClose4} className="text-primary">
-                                            <ListItemIcon>
-                                                <PublishedWithChangesIcon fontSize="medium" className="text-primary" />
-                                            </ListItemIcon>
-                                            In Progress
-                                        </MenuItem>
+                        </Button>
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorEl4}
+                            open={open4}
+                            onClose={handleClose4}
+                            MenuListProps={{
+                                'aria-labelledby': 'basic-button',
+                            }}
+                        >
+                            <MenuItem onClick={handleClose4} className="text-secondary">
+                                <ListItemIcon>
+                                    <DoNotDisturbAltIcon fontSize="medium" className="text-secondary" />
+                                </ListItemIcon>
+                                Not Started
+                            </MenuItem>
+                            <MenuItem onClick={handleClose4} className="text-primary">
+                                <ListItemIcon>
+                                    <PublishedWithChangesIcon fontSize="medium" className="text-primary" />
+                                </ListItemIcon>
+                                In Progress
+                            </MenuItem>
 
-                                        <MenuItem onClick={handleClose4} className="text-primary">
-                                            <ListItemIcon>
-                                                <HourglassBottomIcon fontSize="medium" className="text-primary" />
-                                            </ListItemIcon>
-                                            On Hold
-                                        </MenuItem>
+                            <MenuItem onClick={handleClose4} className="text-primary">
+                                <ListItemIcon>
+                                    <HourglassBottomIcon fontSize="medium" className="text-primary" />
+                                </ListItemIcon>
+                                On Hold
+                            </MenuItem>
 
-                                        <MenuItem onClick={handleClose4} className="text-success"><ListItemIcon>
-                                            <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
-                                        </ListItemIcon>
-                                            Completed
-                                        </MenuItem>
-                                    </Menu>
-                                </Box>
+                            <MenuItem onClick={handleClose4} className="text-success"><ListItemIcon>
+                                <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
+                            </ListItemIcon>
+                                Completed
+                            </MenuItem>
+                        </Menu>
+                    </Box>
 
-                                <Box className='clearfix'>
-                                    <Button
-                                        id="basic-button"
-                                        aria-controls={open3 ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={open3 ? 'true' : undefined}
-                                        onClick={handleClick3}
-                                        className="min-width-auto px-0 text-gray"
-                                    >
-                                        <MoreVertIcon />
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={anchorEl3}
-                                        open={open3}
-                                        onClose={handleClose3}
-                                        className='custom-dropdown'
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                    >
-                                        <MenuItem onClick={handleClose3} className='ps-2'>
-                                            <ListItemIcon>
-                                                <ContentCopyIcon fontSize="medium" />
-                                            </ListItemIcon> Copy Link</MenuItem>
+                    <Box className='clearfix'>
+                        <Button
+                            id="basic-button"
+                            aria-controls={open3 ? 'basic-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={open3 ? 'true' : undefined}
+                            onClick={handleClick3}
+                            className="min-width-auto px-0 text-gray"
+                        >
+                            <MoreVertIcon />
+                        </Button>
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorEl3}
+                            open={open3}
+                            onClose={handleClose3}
+                            className='custom-dropdown'
+                            MenuListProps={{
+                                'aria-labelledby': 'basic-button',
+                            }}
+                        >
+                            <MenuItem onClick={handleClose3} className='ps-1'>
+                                <ListItemIcon>
+                                    <ContentCopyIcon fontSize="medium" />
+                                </ListItemIcon> Copy Link</MenuItem>
 
-                                        <MenuItem onClick={handleClose3} className='ps-2'>
-                                            <ListItemIcon>
-                                                <MergeIcon fontSize="medium" />
-                                            </ListItemIcon> Merge</MenuItem>
+                            <MenuItem onClick={handleClose3} className='ps-1'>
+                                <ListItemIcon>
+                                    <MergeIcon fontSize="medium" />
+                                </ListItemIcon> Merge</MenuItem>
 
-                                        <MenuItem onClick={handleClose3} className='ps-2'>
-                                            <ListItemIcon>
-                                                <AttachEmailIcon fontSize="medium" />
-                                            </ListItemIcon> Retract Message (s)</MenuItem>
+                            <MenuItem onClick={handleClose3} className='ps-1'>
+                                <ListItemIcon>
+                                    <AttachEmailIcon fontSize="medium" />
+                                </ListItemIcon> Retract Message (s)</MenuItem>
 
-                                        <MenuItem onClick={handleClose3} className='ps-2'>
-                                            <ListItemIcon>
-                                                <DeleteIcon fontSize="medium" />
-                                            </ListItemIcon> Delete Message (s)</MenuItem>
-                                    </Menu>
-                                </Box>
+                            <MenuItem onClick={handleClose3} className='ps-1'>
+                                <ListItemIcon>
+                                    <DeleteIcon fontSize="medium" />
+                                </ListItemIcon> Delete Message (s)</MenuItem>
+                        </Menu>
+                    </Box>
 
-                                <Button onClick={handleClosePortal} className='p-0'>
-                                    <span className="material-symbols-outlined text-black">
-                                        cancel
-                                    </span>
-                                </Button>
-                            </Box>
-                        </Box>
-                        <hr />
-                        <PortalDetails></PortalDetails>
+                    <Button onClick={handleClosePortal} className='p-0'>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+            </Box>
 
-                    </DialogContentText>
-                </DialogContent>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
 
-            </Dialog>
+
+                    <PortalDetails></PortalDetails>
+
+                </DialogContentText>
+            </DialogContent>
+
+        </Dialog >
         </>
     )
 }

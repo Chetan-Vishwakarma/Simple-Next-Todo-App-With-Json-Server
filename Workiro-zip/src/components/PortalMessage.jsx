@@ -25,7 +25,8 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import DownloadIcon from '@mui/icons-material/Download';
 import docuicon from "../images/docu-icon.svg";
-
+import DoDisturbIcon from '@mui/icons-material/DoDisturb';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -34,7 +35,7 @@ const Demo = styled('div')(({ theme }) => ({
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
-const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
+const PortalMessage = ({ selectedTask, Json_RegisterItem,setPortalComments,setSelectedEmailForComment }) => {
     console.log("selectedTask portal message", selectedTask)
 
     const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
@@ -61,6 +62,9 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
     const [filterAttachments, setFilterAttachments] = React.useState([]);
     const [totalAttachment, setTotalAttachment] = React.useState([]);
     const [allPortalAttachments, setAllPortalAttachments] = React.useState([]);
+    const [selectedEmail, setSelectedEmail] = React.useState({});
+
+    const [txtRecipient, settxtRecipient] = React.useState(0);
 
     const [iframeViewDocument, setIframeViewDocument] = React.useState(null);
     const [OpenPortalAttachmnet, setOpenPortalAttachmnet] = React.useState(false);
@@ -97,11 +101,21 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
         ClsPortal.GetMessageHtml_Json(o, function (sts, data) {
             if (sts) {
                 console.log("GetMessageHtml_Json", data);
-                setTemplateDataMarkup(data)
+
+                setTemplateDataMarkup(HtmlToText(data))
             }
         })
     }
+    function HtmlToText(data) {
+        if (data) {
+            const textContent = data.replace(/<[^>]*>/g, '');
+            return textContent;
+        }
+        else {
+            return "";
+        }
 
+    }
     const GetCertificate_Json = (mgsId) => {
         let o = {
             accid: agrno,
@@ -112,7 +126,7 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
 
         ClsPortal.GetCertificate_Json(o, function (sts, data) {
             if (sts) {
-                console.log("GetCertificate_Json", data);
+                // console.log("GetCertificate_Json", data);
                 // setTemplateDataMarkup(data)
             }
         })
@@ -135,14 +149,22 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
                         let js = JSON.parse(data);
                         // console.log("GetDocumentStatus_Json", js);
                         let res = js.filter((e) => e.Emailid === m.emailid);
-                        console.log("GetDocumentStatus_Json", res);
                         if (res.length > 0) {
-                            setDocumentStatus(js[0])
+                            const formattedActivity = res.map((el) => {
+                                let ActivityDate; // Declare ActivityDate variable
+                                if (el["Actioned On"]) { // Check if "Actioned On" property exists
+                                    ActivityDate = el["Actioned On"].slice(6, -2); // If exists, slice the string
+                                }
+                                const date = new Date(ActivityDate); // Create Date object using ActivityDate
+                                return { ...el, ["Actioned On"]: date }; // Return new object with formatted date
+                            });
+
+                            setDocumentStatus(formattedActivity[0])
+                            console.log("GetDocumentStatus_Json", formattedActivity);
+
                         }
 
                     }
-
-
                 }
             })
         } catch (error) {
@@ -187,14 +209,26 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
         }
     }
 
+
+   
+    
+
+   
+
+
+
+
+
     const handleCloseMgs = (e) => {
         setAnchorElMgs(null);
         console.log("GetMessageHtml_Json11", e);
         //console.log("GetMessageHtml_Json11", e);
+
         if (e.PortalDocId) {
-            GetMessageHtml_Json(e.PortalDocId);
+            setSelectedEmail(e);
+            setSelectedEmailForComment(e);
+            GetDocumentStatus_Json(e);          
             GetCertificate_Json(e.PortalDocId);
-            GetDocumentStatus_Json(e);
             setMessageEmail(e.emailid);
             setPortalEmailOpbject(e);
             GetMessageViewHistory_Json(e);
@@ -364,7 +398,18 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
 
 
                     if (data) {
-                        setPortalEmail(uniqueObjectsArray)
+
+                        if (uniqueObjectsArray.length === 1) {
+                            handleCloseMgs(uniqueObjectsArray[0]);
+                            console.log("GetMessageAttachments_Json22", arrayOfObjects);
+                            setFilterAttachments(uniqueObjectsArray);
+                            setTotalAttachment(uniqueObjectsArray.length);
+                            settxtRecipient(uniqueObjectsArray.length)
+                        }
+                        else {
+                            setPortalEmail(uniqueObjectsArray)
+                            settxtRecipient(uniqueObjectsArray.length)
+                        }
                     }
                 }
 
@@ -463,7 +508,7 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
     }
 
     function Json_GetForwardUserList(fid) {
-        
+
         try {
             let o = {};
             o.ProjectId = fid;
@@ -476,20 +521,20 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
                         let result = dt.filter((el) => {
                             return el.CGroup !== "Yes";
                         });
-                        
+
                         if (result.length > 0) {
                             let assinee = selectedTask.AssignedToID.split(",");
                             let filteredArray = result.filter(obj1 => {
                                 // Find corresponding object in array2 with the same 'id'
-                                let matchingObj = assinee.find(obj2 => obj2 ==obj1.ID);
+                                let matchingObj = assinee.find(obj2 => obj2 == obj1.ID);
                                 // If a matching object is found in array2, include it in the result
                                 return matchingObj !== undefined;
                             });
-                            console.log("filteredArray",filteredArray);
-                            let user = result.filter((el)=>el.ID===parseInt(localStorage.getItem("UserId")));
-                           if(user.length>0){
-                             setAsgUser(user[0].ForwardTo);
-                           }
+                            console.log("filteredArray", filteredArray);
+                            let user = result.filter((el) => el.ID === parseInt(localStorage.getItem("UserId")));
+                            if (user.length > 0) {
+                                setAsgUser(user[0].ForwardTo);
+                            }
                             setAssigneeUser(filteredArray)
                         }
                     }
@@ -500,7 +545,7 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
         }
     }
 
-    
+
     useEffect(() => {
         setAllPortalAttachments([]);
         setPortalEmail([]);
@@ -510,7 +555,7 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
             GetMessageAttachments_Json(selectedTask.PubMessageId);
             setStartDate(startFormattingDate(selectedTask.CreationDate));
             setEndDate(startFormattingDate(selectedTask.EndDateTime));
-           
+
             Json_GetForwardUserList(selectedTask.FolderID)
         }
     }, [selectedTask]);
@@ -533,10 +578,33 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
         setOpenCertificate(false);
     };
 
+    const HandalChangeSendReminder = () => {
+        //setSelectedEmail
+        try {
+            let o = {
+                accid: agrno,
+                email: Email,
+                password: password,
+                messageID: selectedEmail.PortalDocId,
+                contactEmail: selectedEmail.emailid
+            };
+            ClsPortal.SendReminder_Json(o, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        toast.success(data);
+                        console.log("SendReminder_Json", data)
+                    }
+                }
+            })
+        } catch (error) {
+            console.log({ message: false, Error: error })
+        }
+    }
     // document modal
     const [DocumentSent, setDocumentSent] = React.useState(false);
     const handleClickDocumentSent = () => {
         setDocumentSent(true);
+
     };
     const DocumentHandleClose = () => {
         setDocumentSent(false);
@@ -545,14 +613,14 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
     const UploadToDocuSoft = (data) => {
         ClsPortal.ConfirmMessage("Are you sure you want to upload to docusoft?", function (res) {
             try {
-               // console.log("ConfirmMessage", res,data)
+                // console.log("ConfirmMessage", res,data)
                 if (res) {
                     GetDocumentBase64(data);
                 }
             } catch (error) {
                 console.log({ Status: false, mgs: "Faild Please Try Again", Error: error });
             }
-            
+
         })
     }
 
@@ -571,11 +639,11 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
             if (sts) {
                 // console.log("GetAttachment_Json", data);
                 if (data) {
-                  let obj={
-                    Base64:data,
-                    Details:m
-                  }
-                  Json_RegisterItem(obj)
+                    let obj = {
+                        Base64: data,
+                        Details: m
+                    }
+                    Json_RegisterItem(obj)
                 }
                 // setTemplateDataMarkup(data)
             }
@@ -584,9 +652,9 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
 
     const [anchorElAsg, setAnchorElAsg] = React.useState(null);
     const openAsg = Boolean(anchorElAsg);
-    const handleClickAsg = (event,vl) => {
+    const handleClickAsg = (event, vl) => {
         setAnchorElAsg(event.currentTarget);
-        
+
     };
     const handleCloseAsg = (vl) => {
         setAnchorElAsg(null);
@@ -595,64 +663,41 @@ const PortalMessage = ({ selectedTask,Json_RegisterItem}) => {
 
     return (<React.Fragment>
         {selectedTask.Source === "Portal" && (<>
-            <Box className='d-flex align-items-center  mb-3'>
-                <p className="mb-0 font-14 text-black me-3">{`This message was sent to ${assigneeUser.length} recipients. Viewing as`}  
-                  <Button
-        id="basic-button"
-        aria-controls={openAsg ? 'basic-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={openAsg ? 'true' : undefined}
-        onClick={handleClickAsg}
-      >
-        {asgUser}
-      </Button>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorElAsg}
-        open={openAsg}
-        onClose={handleCloseAsg}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        {
-            assigneeUser.length>0?assigneeUser.map((item, index)=>
-            {
-return (<>
-<MenuItem key={index} onClick={()=>handleCloseAsg(item)}>{item.ForwardTo}</MenuItem>
-</>)
-            }):""
-        }
-        
-       
-      </Menu>  </p>
-                <Box>
-                    <Button
-                        id="basic-button"
-                        aria-controls={openMgsMail ? 'basic-menu' : undefined}
-                        aria-haspopup="true"
-                        aria-expanded={openMgsMail ? 'true' : undefined}
-                        onClick={handleClickMgsMail}
-                        className="btn-blue-2"
-                        startIcon={<KeyboardArrowDownIcon />}
-                    >
-                        {messageEmail ? messageEmail : "Select Message"}
-                    </Button>
-                    <Menu
-                        id="basic-menu"
-                        anchorEl={anchorElMgs}
-                        open={openMgsMail}
-                        onClose={handleCloseMgs}
-                        MenuListProps={{
-                            'aria-labelledby': 'basic-button',
-                        }}
-                    >
-                        {portalEmail ? portalEmail.map((item, index) => {
-                            return <MenuItem key={index} onClick={() => handleCloseMgs(item)}>{item.emailid}</MenuItem>
-                        }) : ""}
-                    </Menu>
+            {txtRecipient > 1 && (<>
+                <Box className='d-flex align-items-center  mb-3'>
+
+                    <p className="mb-0 font-14 text-black me-3">{`This message was sent to ${portalEmail.length} recipients. Viewing as`}
+                        <Button
+                            id="basic-button"
+                            aria-controls={openMgsMail ? 'basic-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={openMgsMail ? 'true' : undefined}
+                            onClick={handleClickMgsMail}
+                        >
+                            {messageEmail ? messageEmail : "Select Message"}
+                        </Button>
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorElMgs}
+                            open={openMgsMail}
+                            onClose={handleCloseMgs}
+                            MenuListProps={{
+                                'aria-labelledby': 'basic-button',
+                            }}
+                        >
+                            {
+                                portalEmail.length > 0 ? portalEmail.map((item, index) => {
+                                    return (<>
+                                        <MenuItem key={index} onClick={() => handleCloseMgs(item)}>{item.emailid}</MenuItem>
+                                    </>)
+                                }) : ""
+                            }
+
+
+                        </Menu>  </p>
                 </Box>
-            </Box>
+            </>)}
+
 
             <Box className='mb-3'>
                 {/* <Box className='d-flex align-items-center mb-2'>
@@ -672,6 +717,8 @@ return (<>
                         setTemplateDataMarkup={setTemplateDataMarkup}
                         setEditorContentValue={setEditorContentValue}
                         className="form-control textarea"
+                        disabled={selectedTask.Source === "Portal"}
+                        value={templateDataMarkup}
                     ></textarea>
                 </Box>
 
@@ -680,28 +727,52 @@ return (<>
                         <MarkunreadIcon className='text-blue' />
                         {/* <DraftsIcon /> */}
                         <Box className='ps-3'>
-                            <h5 className='font-14 text-black mb-1'>{messageViewHistory?.length>0?"Last Viewed On":"he message has not yet been viewed"} </h5>
-                            <p className='font-12 text-gray sembold mb-2'>{messageViewHistory?.length>0?messageViewHistory[messageViewHistory.length-1].ViewDateTime:""}</p>
+                            <h5 className='font-14 text-black mb-1'>{messageViewHistory?.length > 0 ? "Last Viewed On" : "he message has not yet been viewed"} </h5>
+                            <p className='font-12 text-gray sembold mb-2'>{messageViewHistory?.length > 0 ? messageViewHistory[messageViewHistory.length - 1].ViewDateTime : ""}</p>
                             <Button className='btn-blue-2' size="small" startIcon={<ScheduleIcon />} onClick={handleClickOpen}>View History</Button>
                         </Box>
                     </Box>
 
-                    <Box className='d-flex'>
-                        <VerifiedIcon className='text-green' />
+                    <Box className='d-flex align-items-center'>
+
                         {/* <NewReleasesIcon className='text-warning' /> */}
 
                         {/* <DraftsIcon /> */}
-                        <Box className='ps-3'>
-                            <h5 className='font-14 text-black mb-1'>Message approved </h5>
-                            <p className='font-12 text-gray sembold mb-2'>10/11/24 09:50PM</p>
-                            <Button className='btn-blue-2' size="small" onClick={handleClickOpenCertificate} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
+                        {
+                            documentStatus.ForApproval === "Yes" ? (
+                                <>
+                                    {documentStatus.Approved === "Yes" ? (
+                                        <>
+                                            <Box className='ps-3'>
+                                                <VerifiedIcon className='text-green' />
+                                                <h5 className='font-14 text-black mb-1'>Message approved </h5>
+                                                <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"]}</p>
+                                                <Button className='btn-blue-2' size="small" onClick={handleClickOpenCertificate} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
+                                            </Box>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Box className='ps-2'>
+                                                {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
+                                                <HourglassEmptyIcon className='text-gray' />
+                                                <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
+                                                <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
+                                            </Box>
+                                        </>
+                                    )}
+                                </>
+                            ) : (
+                                <>
+                                    <DoDisturbIcon className='text-gray' />
+                                    <Box className='ps-3'>
+                                        <h5 className='font-14 text-black mb-0'>Not sent for approval </h5>
+                                    </Box>
+                                </>
+                            )
+                        }
 
-                            {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
 
-                            {/* <Button className='btn-blue-2 btn btn-warning' size="small" sx={{
-                                            background: '#ffc107 !important'
-                                        }} startIcon={<NewReleasesIcon />}>Pending Approval</Button> */}
-                        </Box>
+
                     </Box>
 
                     <Box className=''>
@@ -729,10 +800,6 @@ return (<>
             </Box>
         </>)}
 
-
-
-
-
         {/* history modal start */}
         <Dialog
             open={open}
@@ -741,28 +808,26 @@ return (<>
             aria-describedby="alert-dialog-description"
             className='custom-modal'
         >
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="align-items-center d-flex">
+                    <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                        View History
+                    </Typography>
+                </Box>
+
+                {/*  */}
+
+                <Box className='d-flex'>
+                    <Button onClick={handleClose} className='p-0'>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+            </Box>
+
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    <Box className="d-flex align-items-center justify-content-between">
-                        <Box className="align-items-center d-flex">
-                            <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                                View History
-                            </Typography>
-                        </Box>
-
-                        {/*  */}
-
-                        <Box className='d-flex'>
-                            <Button onClick={handleClose} className='p-0'>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-                    </Box>
-
-                    <hr />
-
                     <Box class="ml-auto mr-auto">
                         <Box class="activity-timeline">
                             <ul class="timeline-ul">
@@ -810,27 +875,25 @@ return (<>
             aria-describedby="alert-dialog-description"
             className='custom-modal'
         >
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="align-items-center d-flex">
+                    <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                        Certificate
+                    </Typography>
+                </Box>
+
+                {/*  */}
+
+                <Box className='d-flex'>
+                    <Button onClick={handleCloseCertificate} className='p-0'>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+            </Box>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    <Box className="d-flex align-items-center justify-content-between">
-                        <Box className="align-items-center d-flex">
-                            <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                                Certificate
-                            </Typography>
-                        </Box>
-
-                        {/*  */}
-
-                        <Box className='d-flex'>
-                            <Button onClick={handleCloseCertificate} className='p-0'>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-                    </Box>
-
-                    <hr />
 
                     <Box class="ml-auto mr-auto">
                         <Box class="activity-timeline">
@@ -858,35 +921,33 @@ return (<>
             aria-describedby="alert-dialog-description"
             className='custom-modal full-modal'
         >
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="align-items-center d-flex">
+                    <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                        Attachments
+                    </Typography>
+                </Box>
+                <Box className='d-flex'>
+                    <Button onClick={DocumentHandleClose} className='p-0 min-width-auto'>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+            </Box>
             <DialogContent>
                 <DialogContentText>
-
-                    <Box className="d-flex align-items-center justify-content-between">
-                        <Box className="align-items-center d-flex">
-                            <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                                Attachments
-                            </Typography>
-                        </Box>
-                        <Box className='d-flex'>
-                            <Button onClick={DocumentHandleClose} className='p-0 min-width-auto'>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-                    </Box>
-
-                    <hr />
                     <Box className='row'>
 
-                        {filterAttachments.length > 0 ? filterAttachments.map((item, index) => {
+                        {filterAttachments.map((item, index) => {
+
                             return <>
 
                                 <Box key={index} className='col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 d-flex'>
                                     <Box className='todo-list-box white-box relative w-100'>
 
                                         <Box className='download-btn-box'>
-                                            <Button onClick={()=>UploadToDocuSoft(item)} size="small" className="min-width-auto me-1">
+                                            <Button onClick={() => UploadToDocuSoft(item)} size="small" className="min-width-auto me-1">
                                                 <img src={docuicon} width='18' />
                                             </Button>
                                             <Button size="small" className="min-width-auto" onClick={() => handleDownloadPortalAtt(item)} ><DownloadIcon /></Button>
@@ -922,11 +983,13 @@ return (<>
                                             {documentStatus.ForApproval === "Yes" && (<>
                                                 <Box className='approval-box'>
                                                     <Box className='d-flex'>
-                                                        <NotificationImportantIcon className="me-2" />
+
                                                         <Typography variant='subtitle1' className='text-center'>
-                                                            {
-                                                                documentStatus.Approved === "Yes" ? "Pending Approval" : "Send Reminder"
-                                                            }
+                                                            {documentStatus.Approved === "Yes" ? "Pending Approval" : (<>
+
+                                                                <Button variant="contained"><NotificationImportantIcon className="me-2" /> Send Reminder</Button>
+                                                            </>)}
+
                                                         </Typography>
                                                     </Box>
 
@@ -959,7 +1022,7 @@ return (<>
                                     {/* col end */}
                                 </Box>
                             </>
-                        }) : ""}
+                        })}
                     </Box>
 
                 </DialogContentText>
@@ -980,18 +1043,12 @@ return (<>
                 margin: '0 auto'
             }}
         >
-            {/* <DialogTitle id="alert-dialog-title">
-                        {"Use Google's location service?"}
-                    </DialogTitle> */}
-            <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-
-                    <Box className="d-flex align-items-center justify-content-between">
-                        <Box className="dropdown-box">
-                            <Typography variant="h4" className='font-18 bold mb-2 text-black'>
-                                Attachments
-                            </Typography>
-                            {/* <Box className="btn-Select">
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="dropdown-box">
+                    <Typography variant="h4" className='font-18 bold mb-2 text-black'>
+                        Attachments
+                    </Typography>
+                    {/* <Box className="btn-Select">
                                     <Button className='btn-white'>Action</Button>
                                     <Button className='btn-white'>Ser</Button>
                                     <Button className='btn-white'>Custom</Button>
@@ -1000,15 +1057,23 @@ return (<>
 
                                     <Button className='btn-blue-2' size="small">Apply Now</Button>
                                 </Box> */}
-                        </Box>
+                </Box>
 
-                        {/*  */}
-                        <Button onClick={handleClosePortalAtt} autoFocus sx={{ minWidth: 30 }}>
-                            <span className="material-symbols-outlined text-black">
-                                cancel
-                            </span>
-                        </Button>
-                    </Box>
+                {/*  */}
+                <Button onClick={handleClosePortalAtt} autoFocus sx={{ minWidth: 30 }}>
+                    <span className="material-symbols-outlined text-black">
+                        cancel
+                    </span>
+                </Button>
+            </Box>
+            {/* <DialogTitle id="alert-dialog-title">
+                        {"Use Google's location service?"}
+                    </DialogTitle> */}
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+
+
+
                     <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
                         <Box sx={{ flexGrow: 1 }}>
                             <Grid container spacing={2}>

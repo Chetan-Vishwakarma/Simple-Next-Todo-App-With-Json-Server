@@ -414,7 +414,7 @@ export default function AssigneeUsers({selectedTask,setAddUser,addUser,setOwnerI
                 </Box>
 
                 <Box className="inner-user-list-dropdown">
-                    <p className="sembold">My Team</p>
+                    <p className="sembold mb-0">My Team</p>
 
                     <Box className="box-user-list-dropdown" style={{ maxHeight: "200px", overflowY: "auto" }}>
                         <Box className="mb-1 mt-3 px-3">

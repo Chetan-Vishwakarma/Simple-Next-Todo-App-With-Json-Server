@@ -42,7 +42,6 @@ import CommanCLS from "../../services/CommanService"
 import { useLocation } from 'react-router-dom';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -58,6 +57,7 @@ import FormLabel from '@mui/material/FormLabel';
 import Autocomplete from '@mui/material/Autocomplete';
 import TestPDF from '../TestPDF';
 import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
+import AMLCheck from '../AMLCheck';
 
 
 
@@ -96,9 +96,10 @@ function ContactDetails() {
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
+    let Cls = new CommanCLS(baseUrl, agrno, Email, password);
+
     const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
 
-    let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
     let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
 
@@ -199,7 +200,7 @@ function ContactDetails() {
         }
     }
 
-    const Json_VerifyDrivingLicence=()=>{
+    const Json_VerifyDrivingLicence = () => {
         setIsViewerModalOpen(!isViewerModalOpen);
         let obj = {
             agrno: agrno,
@@ -211,20 +212,20 @@ function ContactDetails() {
             strLastName: "",
             dtDateOfBirth: "",
             strGender: "",
-            strAddress1:"",
+            strAddress1: "",
             strAddress2: "",
             strAddress3: "",
             strAddress4: "",
             strPostTown: "",
             strCounty: "",
-            strPostCode:"",
+            strPostCode: "",
             strCountry: "",
             strLicenseNo: amlDetails.drivingLicNo
         }
         try {
             Cls.Json_VerifyDrivingLicence(obj, (sts, data) => {
                 if (sts) {
-                    console.log("Json_VerifyDrivingLicence",data);
+                    console.log("Json_VerifyDrivingLicence", data);
                 }
             });
         } catch (err) {
@@ -234,8 +235,8 @@ function ContactDetails() {
 
     return (
         <Box className="container-fluid p-0">
-            
-            <CustomBreadCrumbs tabs={[{tabLink:"/dashboard/Connections",tabName:"Connections"},{tabLink:"/dashboard/ContactDetails",tabName:"Contact Details"}]}/>
+
+            <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/Connections", tabName: "Connections" }, { tabLink: "/dashboard/ContactDetails", tabName: "Contact Details" }]} />
 
             <Box className="d-flex align-items-center justify-content-between flex-wrap">
                 <Box className='d-flex flex-wrap align-items-center'>
@@ -323,7 +324,7 @@ function ContactDetails() {
                                 <Box className="col-xl-4 col-lg-4 col-md-12 d-flex">
                                     {
                                         contactDetails.length > 0 ?
-                                            contactDetails.slice(0,1).map((item) => {
+                                            contactDetails.slice(0, 1).map((item) => {
                                                 return <Box className='white-box w-100'>
 
                                                     <Box className='d-flex align-items-center'>
@@ -816,7 +817,8 @@ function ContactDetails() {
 
 
             {/* AML check modal Start */}
-            <Dialog
+            <AMLCheck isAMLChkOpen={isAMLChkOpen} setisAMLChkOpen={setisAMLChkOpen} contactDetails={contactDetails} />
+            {/* <Dialog
                 open={isAMLChkOpen}
                 onClose={() => setisAMLChkOpen(false)}
                 aria-labelledby="alert-dialog-title"
@@ -888,19 +890,13 @@ function ContactDetails() {
 
                     </DialogContentText>
                 </DialogContent>
-                {/* <DialogActions>
-                        <Button onClick={handleClose}>Disagree</Button>
-                        <Button onClick={handleClose} autoFocus>
-                            Agree
-                        </Button>
-                    </DialogActions> */}
-            </Dialog>
+            </Dialog> */}
 
             {/* AML check modal End */}
 
 
             {/* Checkmodal modal Start */}
-            <Dialog
+            {/* <Dialog
                 open={verificationModal}
                 onClose={() => setVerificationModalOpen(false)}
                 aria-labelledby="alert-dialog-title"
@@ -969,24 +965,10 @@ function ContactDetails() {
                                             inputFormat="DD/MM/YYYY" // Set the input format to "dd/mm/yyyy"
                                         />
                                     </LocalizationProvider>
-
-                                    {/* <LocalizationProvider
-                                        className="pe-0"
-                                        dateAdapter={AdapterDayjs}
-                                    >
-                                        <DatePicker className="datepicker w-100"
-                                            defaultValue={nextDate}
-                                            onChange={(e) => setNextDate(e)}                      
-                                            inputFormat="DD/MM/YYYY"
-                                        />
-                                    </LocalizationProvider> */}
                                 </Box>
                             </Box>
 
                             <Box className='col-xl-6 col-md-6'>
-                                {/* <Box class="input-group mb-3">
-                                    <TextField label="Gender" variant="outlined" className='form-control' />
-                                </Box> */}
 
                                 <FormControl>
                                     <FormLabel id="demo-row-radio-buttons-group-label" className='sembold'>Gender</FormLabel>
@@ -1095,13 +1077,7 @@ function ContactDetails() {
 
                     </DialogContentText>
                 </DialogContent>
-                {/* <DialogActions>
-                        <Button onClick={handleClose}>Disagree</Button>
-                        <Button onClick={handleClose} autoFocus>
-                            Agree
-                        </Button>
-                    </DialogActions> */}
-            </Dialog>
+            </Dialog> */}
 
             {/* Checkmodal check modal End */}
 
@@ -1114,23 +1090,21 @@ function ContactDetails() {
                 className="custom-modal"
 
             >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 text-black'>Driving License Verification</Typography>
+                    </Box>
+
+                    <Button onClick={() => setIsViewerModalOpen(false)} autoFocus sx={{ minWidth: 30 }} className='p-0'>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="dropdown-box">
-                                <Typography variant="h4" className='font-18 text-black'>Driving License Verification</Typography>
-                            </Box>
 
-                            <Button onClick={() => setIsViewerModalOpen(false)} autoFocus sx={{ minWidth: 30 }} className='p-0'>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-
-                        <hr />
-
-                        <TestPDF/>
+                        <TestPDF />
 
                     </DialogContentText>
                 </DialogContent>

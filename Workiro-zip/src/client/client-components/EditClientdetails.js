@@ -1,25 +1,19 @@
 import React, { createContext, useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
-import Checkbox from '@mui/material/Checkbox';
 import Autocomplete from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
-import { FormControl, List, ListItem, ListItemText } from "@mui/material";
+import { FormControl, FormControlLabel, List, ListItem, ListItemText, Switch } from "@mui/material";
 import Box from "@mui/material/Box";
 import CommanCLS from "../../services/CommanService";
 import { memo } from 'react';
 import Button from '@mui/material/Button';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const UserDetailContext = createContext();
 // const UserDetailContext = createContext();
-let folderData = [];
-const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompanyHouse, dataCompanyHouse }) => {
+
+const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompanyHouse, dataCompanyHouse, companyEditDetails }) => {
+  console.log(companyEditDetails, "EditcompanyEditDetails");
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
-  const [defaultClient, setDefaultClient] = useState([]);
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
   const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
@@ -30,12 +24,17 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
   const [mangers, setMangers] = useState([]);
   const [defaultUser, setDefaultUser] = useState(null);
   const [defaultStatus, setDefaultStatus] = useState(null);
+  const [defaultSource, setDefaultSource] = useState(null);
+  const [defaultFolder, setDefaultFolder] = useState(null);
+  const [defaultBussiness, setDefaultBussiness] = useState(null);
   const [status, setStatus] = useState([]);
   const [ImportContact, setImportContact] = useState([]);
   const [ImportCompanyDetails, setImportCompanyDetails] = useState([]);
   const [Importdata, setImportdata] = useState("");
   const [errors, setErrors] = useState({});
   const [intUserid, setIntUserid] = useState(localStorage.getItem("UserId"));
+  const [advancedSettingChecked, setAdvancedSettingChecked] = useState(false);
+  const [advancedInactive, setAdvancedInactive] = useState(false);
   const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
   let Cls = new CommanCLS(baseUrl, agrno, Email, password);
   let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
@@ -63,10 +62,10 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
   const onChangeclientlist = (event, value) => {
     event.preventDefault();
     if (value) {
-      const folderIds = value.map((folder) => folder.FolderID).join(",");
-      console.log(value, "foldergetdata", folderIds);
       let data = { ...userDetail };
       data = { ...data, ["FolderId"]: value.FolderID };
+      console.log(value, "clientlist");
+      setDefaultFolder(value);
       setUserDetail(data);
     }
   };
@@ -75,6 +74,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
     if (value) {
       let data = { ...userDetail };
       data = { ...data, ["BussId"]: value.BussId };
+      setDefaultBussiness(value);
       setUserDetail(data);
     } else {
     }
@@ -94,6 +94,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
     if (value) {
       let data = { ...userDetail };
       data = { ...data, ["SourceId"]: value.SourceId };
+      setDefaultSource(value);
       setUserDetail(data);
     } else {
     }
@@ -175,30 +176,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
         if (sts) {
           if (data) {
             let json = JSON.parse(data);
-            folderData = json.Table;
-            console.log(folderData, "sourceobjector111122222");
-
-
             setFolders(json.Table);
-
-
-            const sourceObj = folderData.find((item) => item.FolderID == localStorage.getItem("FolderId"));
-            const index = folderData.indexOf(sourceObj);
-            console.log(sourceObj, index, "sourceobjector", folderData);
-            if (sourceObj) {
-              const index = folderData.indexOf(sourceObj);
-              if (index > -1) {
-                let data = [folderData[index]]
-                console.log(index, "sourceobjector1111", folders[defaultClient]);
-
-                setDefaultClient(index);
-              } else {
-                console.error("Index not found in folderData:", index);
-              }
-            } else {
-              console.error("Folder ID not found in folderData:", localStorage.getItem("FolderId"));
-            }
-
           }
         }
       });
@@ -306,7 +284,24 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
     setDataCompanyHouse(null);
     console.log("clearDataCard");
   }
-
+  const handleAdvancedSettingChange = (event) => {
+    setAdvancedSettingChecked(event.target.checked);
+    let data = { ...userDetail };
+    let name = event.target.name;
+    let val = event.target.checked;
+    data = { ...data, [name]: val };
+    console.log(data, "dataOnchange", event);
+    setUserDetail(data);
+  };
+  const handleAdvancedInactive = (event) => {
+    setAdvancedInactive(event.target.checked);
+    let data = { ...userDetail };
+    let name = event.target.name;
+    let val = event.target.checked;
+    data = { ...data, [name]: val };
+    console.log(data, "dataOnchange", event);
+    setUserDetail(data);
+  };
   console.log(Importdata, "Importdata", ImportCompanyDetails)
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
@@ -314,17 +309,47 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
     setEmail(localStorage.getItem("Email"));
     setFolderId(localStorage.getItem("FolderId"));
     setIntUserid(localStorage.getItem("UserId"));
-    //   Json_GetClientCardDetails();
+    // Json_GetClientCardDetails();
     Json_GetFolders();
     Json_GetConfiguration();
 
-    // setUserDetail(data);
-  }, []);
-  console.log(defaultClient, "defaultClient")
+    if (companyEditDetails.length > 0) {
+      const statusObject = status.find((item) => item.StatusId === companyEditDetails[0].StatusId);
+      const sourceObj = sources.find((item) => item.SourceId === companyEditDetails[0].SourceId);
+      const bussineObj = bussiness.find((item) => item.BussId === companyEditDetails[0].BussID);
+      const folderObj = folders.find((item) => item.FolderID === localStorage.getItem("FolderId"));
+      console.log(companyEditDetails, "testsourceObj", folderObj);
+
+      // Set default status and source if found
+      if (statusObject) {
+        setDefaultStatus(statusObject);
+      }
+      if (sourceObj) {
+        setDefaultSource(sourceObj);
+      }
+      if (bussineObj) {
+        setDefaultBussiness(bussineObj);
+      }
+
+      const updatedUserDetail = {
+        ...userDetail,
+        CHNumber: "",
+        Clientname: companyEditDetails[0].OriginatorName,
+        Clientid: companyEditDetails[0].OriginatorNo,
+        StatusId: statusObject ? statusObject.StatusName : "", // Set default status name
+        UserId: "",
+        Mobile: companyEditDetails[0].AltTelNo,
+        Telephone: companyEditDetails[0].TelNo,
+        Email: companyEditDetails[0].Email
+      };
+      setUserDetail(updatedUserDetail);
+    }
+  }, [companyEditDetails, status, sources]);
+
   return (
     <div>
 
-      <Box className='well'>
+      <Box className='well' style={{ "display": "none" }}>
         <h2 className="font-14 bold mb-2 text-black">Import from Companies House</h2>
         <Grid container spacing={3} className="mb-">
           <Grid item lg={6} xs={6} md={6}>
@@ -432,37 +457,20 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
         </Grid>
 
         <Grid item lg={4} xs={6} md={6}>
-
           <Autocomplete
-            multiple
             // {...clientlist}
             options={folders}
-            getOptionLabel={(option) => option.Folder ? option.Folder : ""}
-            //  defaultValue={[def]}
-            // value={[defaultClient] || []}
-            //  defaultValue={defaultClient}
-            // defaultValue={defaultClient !== null ? [folders[defaultClient]] : []}
+            getOptionLabel={(option) => option.Folder}
+            value={defaultFolder || null}
             id="clientlist"
             clearOnEscape
             onChange={onChangeclientlist}
-            renderOption={(props, option, { selected }) => (
-              <li {...props}>
-                <Checkbox
-                  icon={icon}
-                  checkedIcon={checkedIcon}
-                  style={{ marginRight: 8 }}
-                  checked={selected}
-                />
-                {option.Folder}
-              </li>
-            )}
-
             renderInput={(params) => (
               <TextField
                 {...params}
                 variant="outlined"
                 name="Selectclient"
-                // value={folders[defaultClient] || []}
+                value={userDetail.Selectclient}
                 onChange={onChange}
                 label="Client List"
               />
@@ -472,7 +480,10 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
         <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
             <Autocomplete
-              {...bussinesslist}
+              //   {...bussinesslist}
+              options={bussiness}
+              getOptionLabel={(option) => option.BussName}
+              value={defaultBussiness || null}
               id="clear-on-escape-bussiness"
               clearOnEscape
               onChange={onChangebussines}
@@ -515,7 +526,10 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
         <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
             <Autocomplete
-              {...sourcelist}
+              //   {...sourcelist}
+              options={sources}
+              getOptionLabel={(option) => option.SourceName}
+              value={defaultSource || null}
               id="clear-on-escape-source"
               clearOnEscape
               onChange={onChangesource}
@@ -592,9 +606,35 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
 
           />
         </Grid>
+        <Grid item lg={4} xs={6} md={6}>
+          <FormControlLabel
+            key={`maincheckbox`}
+            control={
+              <Switch
+                name="Assgined"
+                checked={advancedSettingChecked}
+                onChange={handleAdvancedSettingChange}
+              />
+            }
+            label="Assigned"
+          />
+        </Grid>
+        <Grid item lg={4} xs={6} md={6}>
+          <FormControlLabel
+            key={`inactive`}
+            control={
+              <Switch
+                name="Unassigned"
+                checked={advancedInactive}
+                onChange={handleAdvancedInactive}
+              />
+            }
+            label="Unassigned"
+          />
+        </Grid>
       </Grid>
     </div>
   );
 });
-export default memo(AddClientdetails);
+export default memo(EditClientdetails);
 

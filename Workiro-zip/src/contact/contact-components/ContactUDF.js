@@ -9,8 +9,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Unstable_NumberInput as NumberInput } from '@mui/base/Unstable_NumberInput';
 import dayjs from "dayjs";
-const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
-  console.log(data?.Table, "sdfsd", data.Table3);
+const ContactUDF = React.memo(({ data, setDataFromChild }) => {
+  console.log(data?.Table, "sdfsdTEST", data.Table1);
   const [selectManager, setselectManagers] = useState([]);
   const [selectedDatetest, setSelectedDatetest] = useState([]);
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -87,46 +87,46 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
         switch (data?.TextControlValue) {
           case "Integer":
             if (data && data.UdfValue) {
-              renderedContent = (
-            <TextField
-              fullWidth
-              label={data.Name}
-              variant="outlined"
-              type="number"
-              name="regLine1"
-              id={
-                data.UserDefFieldID +
-                "_" +
-                data.UserDefFieldTypeID +
-                "_" +
-                data.TextControlValue +
-                "_UDF"
-              }
-              // value={data.UdfValue}
-              onChange={handleInputChange}
-            />
-              );
-          } else {
-              renderedContent = (
-            <TextField
-              fullWidth
-              label={data.Name}
-              variant="outlined"
-              type="number"
-              name="regLine1"
-              id={
-                data.UserDefFieldID +
-                "_" +
-                data.UserDefFieldTypeID +
-                "_" +
-                data.TextControlValue +
-                "_UDF"
-              }
-              //   value={data.UdfValue}
-              onChange={handleInputChange}
-            />
-              )
-          }
+                renderedContent = (
+              <TextField
+                fullWidth
+                label={data.Name}
+                variant="outlined"
+                type="number"
+                name="regLine1"
+                id={
+                  data.UserDefFieldID +
+                  "_" +
+                  data.UserDefFieldTypeID +
+                  "_" +
+                  data.TextControlValue +
+                  "_UDF"
+                }
+                // value={data.UdfValue}
+                onChange={handleInputChange}
+              />
+                );
+            } else {
+                renderedContent = (
+              <TextField
+                fullWidth
+                label={data.Name}
+                variant="outlined"
+                type="number"
+                name="regLine1"
+                id={
+                  data.UserDefFieldID +
+                  "_" +
+                  data.UserDefFieldTypeID +
+                  "_" +
+                  data.TextControlValue +
+                  "_UDF"
+                }
+                //   value={data.UdfValue}
+                onChange={handleInputChange}
+              />
+                )
+            }
             break;
           case "String":
             if (data && data.UdfValue) {
@@ -514,8 +514,8 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
               <h5 className="mb-0 boold  text-black font-16">{item.TagName}</h5>
 
               <Grid className='mt-0 date-padding-0' container spacing={2}>
-                {data?.Table3.map((udf, i) => {
-                  if (item.TagId === udf.Tag) {
+                {data?.Table1.map((udf, i) => {
+                //   if (item.TagId === udf.Tag) {
                     return (
                       <>
                         <Grid item xs={6} md={4}>
@@ -523,7 +523,7 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
                         </Grid>
                       </>
                     );
-                  }
+                //   }
                 })}
               </Grid>
             </Box>
@@ -533,4 +533,4 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
   );
 });
 
-export default UDFClientcard;
+export default ContactUDF;

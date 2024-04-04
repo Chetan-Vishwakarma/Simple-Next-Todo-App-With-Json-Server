@@ -39,6 +39,7 @@ import {
     ListItem,
     ListItemText,
     TextField,
+    responsiveFontSizes,
 } from "@mui/material";
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
@@ -69,7 +70,16 @@ import moment from "moment";
 import { Toast } from "devextreme-react";
 import Reference from "../client/client-components/Reference";
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
+import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { data } from "jquery";
+import EditReference from "../client/client-components/EditReference";
+import UploadDocument from "../client/client-components/UploadDocument";
+import AddContacts from "./AddContacts";
+import { setMyTasks } from "../redux/reducers/counterSlice";
+import { useDispatch } from "react-redux";
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -89,9 +99,14 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
- function CreateNewModalTask({ ...props }) {
+const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-20' />, <PublishedWithChangesIcon color='primary' className='font-20' />, <HourglassBottomIcon color='primary' className='font-20' />, <CheckCircleOutlineIcon color='success' className='font-20' />];
 
+const userId = localStorage.getItem("UserId");
+
+function CreateNewModalTask({ ...props }) {
+    const dispatch = useDispatch();
     let {
+
         documentDate,
         receivedDate,
         createNewFileObj,
@@ -101,7 +116,9 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
         TaskType,
         // passButtonHide,
         // setPassButtonHide,
-        openModal
+        openModal,
+
+
     } = props;
 
     console.log("documentDate txtSectionId1", documentDate,
@@ -120,6 +137,12 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
     //   let dt = new LoginDetails();
 
     let cls = new CommanCLS(baseUrl, agrno, Email, password);
+
+    const baseurlSMs = "https://docusms.uk/dsdesktopwebservice.asmx/"; // base url for api
+    //   let dt = new LoginDetails();
+
+    let clsSms = new CommanCLS(baseurlSMs, agrno, Email, password);
+
 
     const [filterText, setFilterText] = React.useState("");
 
@@ -232,12 +255,23 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-    const handleClickOpen = () => {
+    const handleClickOpen = (vl) => {
+        console.log("Type show 1111", vl)
+        if (vl === "Portal") {
+            settxtTaskType(vl)
+            setIsVisibleByTypeCRM(true);
+        }
+        else {
+            settxtTaskType(vl)
+            setIsVisibleByTypeCRM(false);
+        }
+
         setOpen(true);
+
     };
 
     const handleClose = () => {
-        setOpen(false);       
+        setOpen(false);
     };
 
     // dropdown add
@@ -413,8 +447,14 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
                         setUserList(result);
                         let removeuser = result.filter((e) => e.ID !== localStorage.getItem("UserId"));
+
+
                         setUserListData(removeuser);
                         setUserFilter(removeuser);
+
+                        let commanuser = result.filter((e) => e.ID === parseInt(localStorage.getItem("UserId")));
+                        console.log("Json_GetForwardUserList11", removeuser);
+                        setSelectedUSer(commanuser[0]);
 
                     }
                 }
@@ -575,7 +615,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
         setFolderAnchorEl(null);
     };
 
-    
+
 
     useEffect(() => {
 
@@ -678,6 +718,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
         if (txtClientData) {
             settxtClient(txtClientData.Client);
             setTextClientId(txtClientData.ClientID);
+            Json_GetClientCardDetails(txtClientData.ClientID)
         }
 
         if (txtSectionData) {
@@ -724,28 +765,26 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
     const CurrentDateChange = (e) => {
         setCurrentDate(e);
-       // setNextDate(formattedDate);
+        // setNextDate(formattedDate);
     }
+
+    const [selectedDate, setSelectedDate] = useState(null); // State for selected date
+
+
+
     useEffect(() => {
-        const currentDate1 = new Date(currentDate);
-        const nextDate = new Date(currentDate1); // Copy the current date        
-        nextDate.setDate(currentDate1.getDate() + 1); // Increment the day by 1 to get the next day's date    
-        // Get the day, month, and year
-        const day = nextDate.getDate().toString().padStart(2, '0');
-        const month = (nextDate.getMonth() + 1).toString().padStart(2, '0');
-        const year = nextDate.getFullYear();    
-        // Construct the date string in "yyyy/mm/dd" format
-        const formattedDate = `${day}/${month}/${year}`;
-        console.log("formattedDate", formattedDate);    
-        setNextDate(formattedDate); // Set nextDate with formatted date
+        console.log("get folder list112222", selectedDate);
+        setSelectedDate(null); // Set the selected date to null to clear it
     }, [currentDate]);
 
     useEffect(() => {
-
+        setLoading(false);
         let strGuid = uuidv4().replace(/-/g, '');
         localStorage.setItem("GUID", strGuid)
         setAnchorSelectFileEl(null);
-        setOpen(openModal);
+        if(openModal){
+            setOpen(openModal);
+        }
 
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
@@ -778,7 +817,17 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
         // };
 
 
-
+        const currentDate1 = new Date(currentDate);
+        const nextDate = new Date(currentDate1); // Copy the current date        
+        nextDate.setDate(currentDate1.getDate() + 1); // Increment the day by 1 to get the next day's date    
+        // Get the day, month, and year
+        const day = nextDate.getDate().toString().padStart(2, '0');
+        const month = (nextDate.getMonth() + 1).toString().padStart(2, '0');
+        const year = nextDate.getFullYear();
+        // Construct the date string in "yyyy/mm/dd" format
+        const formattedDate = `${day}/${month}/${year}`;
+        // console.log("formattedDate", formattedDate);
+        setNextDate(formattedDate); // Set nextDate with formatted date
 
 
     }, []);
@@ -870,8 +919,6 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                     UploadAttachment(fileData)
                 }
 
-
-
                 // Check if this is the last file
                 if (index === selectedFilesArray.length - 1) {
                     // Add new files to the uploadedFiles array
@@ -898,16 +945,14 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
         }, 3000);
     };
 
-
     function PrepareDocumentsForPublish_Json(filedata, ids) {
         try {
             // let myNewArr = [...selectedFilesFromBrower, ...selectedDocumentFile];
             // console.log("myNewArr", myNewArr)
-
+            console.log("PrepareDocumentsForPublish_Json22", filedata);
             const ItemId = filedata.map(obj => obj.DocId);
             const fileNames = filedata.map(obj => obj["FileName"]);
             const fileDataBase64 = filedata.filter(obj => obj["Base64"] !== "").map(obj => obj["Base64"]);
-
 
             let o = {};
             o.accid = agrno;
@@ -971,7 +1016,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
     async function UploadAttachment(filedata) {
 
-        setLoading(true);
+        // setLoading(true);
         // Your form submission logic, for example, making an API call
         try {
             let o = {};
@@ -1062,24 +1107,77 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
     // }
 
-    async function Json_CRM_Task_Save() {
+    function Json_CRM_GetOutlookTask_ForTask() {
+        try {
+            cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_CRM_GetOutlookTask111", json);
+                        let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
+                        const formattedTasks = result.map((task) => {
+                            let timestamp;
+                            if (task.EndDateTime) {
+                                timestamp = parseInt(task.EndDateTime.slice(6, -2));
+                            }
 
+                            const date = new Date(timestamp);
+
+                            return { ...task, EndDateTime: date };
+                        });
+
+                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
+
+                        let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
+                            let timestamp;
+                            if (task.CreationDate) {
+                                timestamp = parseInt(task.CreationDate.slice(6, -2));
+                            }
+
+                            const date = new Date(timestamp);
+
+                            return { ...task, CreationDate: date };
+                        }).sort((a, b) => b.CreationDate - a.CreationDate);
+
+                        dispatch(setMyTasks([...hasCreationDate]));
+                        // setActualData([...hasCreationDate]);
+                        // setAllTask([...hasCreationDate]);
+
+                        // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
+                        // setIsLoading(false);
+                        // Json_GetFolders();
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_CRM_GetOutlookTask", err);
+        }
+    }
+
+    async function Json_CRM_Task_Save() {
+        setLoading(true);
+        if (txtSection) {
+            setLoading(false);
+        }
+        else {
+            toast.error("Please Select a Section !")
+        }
         const isaddUser = addUser.map(obj => obj.ID).join(',');
         const attString = attachmentPath.map(obj => obj.Path).join('|');
 
         //console.log("nextDate1", currentDate)
-       let nxtdd =dayjs(nextDate).format("YYYY/MM/DD");
-    if(nxtdd==="Invalid Date"){
-        let dd = nextDate.split("/");//30/03/2024
-        nxtdd= dd[2]+"/"+dd[1]+"/"+dd[0];
-    }
-       
+        let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
+        if (nxtdd === "Invalid Date") {
+            let dd = nextDate.split("/");//30/03/2024
+            nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
+        }
+
         //console.log("nextDate",dayjs(nxtdd).format("YYYY/MM/DD"))
         let ooo = {
 
             "ClientIsRecurrence": false,
             "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-            "ClientEnd": dayjs(nxtdd).format("YYYY/MM/DD"),
+            "ClientEnd": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
             "ClientDayNumber": "1",
             "ClientMonth": "1",
             "ClientOccurrenceCount": "1",
@@ -1094,7 +1192,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
             "FolderId": txtFolderId.toString(),
             "Subject": textSubject,
             "TypeofTaskID": txtSectionId.toString(),
-            "EndDateTime": dayjs(nxtdd).format("YYYY/MM/DD"),
+            "EndDateTime": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
             "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
             "Status": txtStatus,
             "Priority": txtPriorityId.toString(),
@@ -1115,28 +1213,37 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
         console.log("final save data obj", ooo);
         cls.Json_CRM_Task_Save(ooo, function (sts, data) {
             if (sts) {
-                let js = JSON.parse(data);
+                if (data) {
+                    let js = JSON.parse(data);
 
-                console.log("save task rerurn value", js);
+                    console.log("save task rerurn value", js);
 
-                if (js.Status === "success") {
-                    toast.success("Created Task !");
-                    setMessageId(js.Message);
-                    console.log("selectedDocumentFile", selectedDocumentFile)
-                    if (selectedDocumentFile.length > 0) {
-                        Json_CRM_TaskDMSAttachmentInsert(js.Message);
+                    if (js.Status === "success") {
+                        Json_CRM_GetOutlookTask_ForTask();
+                        setLoading(false);
+                        toast.success("Created Task !");
+                        setMessageId(js.Message);
+                        console.log("selectedDocumentFile", selectedDocumentFile)
+                        if (selectedDocumentFile.length > 0) {
+                            Json_CRM_TaskDMSAttachmentInsert(js.Message);
+                        }
+                        setOpen(false);
+                        // setIsApi(!isApi);
+
+                        // Inside your function or event handler where you want to show the success message
+                        //handleSuccess(js.Message);
+                        // setOpen(false);
                     }
-
-
-                    //setLoading(false);
-                    // Inside your function or event handler where you want to show the success message
-                    //handleSuccess(js.Message);
-                    // setOpen(false);
+                    else {
+                        toast.error("Task Not Created Please Try Again");
+                        console.log("Response final", data)
+                    }
                 }
                 else {
-                    toast.error("Task Not Created Please Try Again");
-                    console.log("Response final", data)
+                    toast.error("Faild Created Task Try again !");
+                    setLoading(false);
                 }
+
 
                 // setLoading(false);
             }
@@ -1274,8 +1381,10 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
     const [anchorElTastkType, setAnchorElTastkType] = React.useState(null);
 
     const [portalUser, setPortalUser] = React.useState([]);
+    const [portalUserCC, setPortalUserCC] = React.useState([]);
+    const [portalUserTo, setPortalUserTo] = React.useState([]);
 
-    const [txtTaskType, settxtTaskType] = React.useState("CRM");
+    const [txtTaskType, settxtTaskType] = React.useState("");
 
     const [isVisibleByTypeCRM, setIsVisibleByTypeCRM] = React.useState(false);
 
@@ -1285,6 +1394,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
     const TastkType = Boolean(anchorElTastkType);
     const handleClickTastkType = (event) => {
         setAnchorElTastkType(event.currentTarget);
+
     };
 
     const handleCloseTastkType = (e) => {
@@ -1343,6 +1453,8 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                             let filteredUsers = tble6.filter(el => el["Portal User"] === true && el["Portal User"] !== null);
                             if (filteredUsers.length > 0) {
                                 setPortalUser(filteredUsers.length > 0 ? filteredUsers : null);
+                                setPortalUserCC(filteredUsers.length > 0 ? filteredUsers : null);
+                                setPortalUserTo(filteredUsers.length > 0 ? filteredUsers : null);
                             }
                             console.log("Json_GetClientCardDetails", filteredUsers);
                         }
@@ -1379,17 +1491,41 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
     const [selectedEmail, setSelectedEmail] = useState([]);
 
     const handleAutocompleteChange = (event, newValue) => {
-        
+
         setSelectedEmail(newValue ? newValue : null);
 
+        if (newValue) {
+            let res = portalUser.filter((user) => {
+                let unk = newValue.find((u) => u.ContactNo === user.ContactNo);
+                // console.log("selected email", unk);
+                return unk === undefined; // If unk is undefined, it means there's no matching ContactNo in newValue
+            });
+            setPortalUserCC(res)
+            // console.log("selected email11", res);
+        } else {
+            console.log("selected email11", portalUser); // If newValue is null, log the entire portalUser
+        }
 
-        //console.log("handleAutocompleteChange", newValue,event);
+        //console.log("handleAutocompleteChange", newValue, event);
     };
+
 
     const [selectedEmailCC, setSelectedEmailCC] = useState(null);
     const handleAutocompleteChangeOnCC = (event, newValue) => {
 
         setSelectedEmailCC(newValue ? newValue : null);
+
+        if (newValue) {
+            let res = portalUser.filter((user) => {
+                let unk = newValue.find((u) => u.ContactNo === user.ContactNo);
+                // console.log("selected email", unk);
+                return unk === undefined; // If unk is undefined, it means there's no matching ContactNo in newValue
+            });
+            setPortalUserTo(res)
+            // console.log("selected email11", res);
+        } else {
+            console.log("selected email11", portalUser); // If newValue is null, log the entire portalUser
+        }
     };
 
     //const filteredOptions = portalUser ? portalUser.filter(option => option["E-Mail"] !== selectedEmail) : [];
@@ -1399,7 +1535,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
         let filesData = [];
         selectedRows.forEach((row, index) => {
 
-            Json_GetItemBase64DataById(row["Registration No."], function (base64data) {
+            Json_GetItemBase64DataById(row, function (base64data) {
                 const fileData = {
                     FileName: row.Description + "." + row.Type,
                     Base64: base64data ? base64data : "", // Base64 data of the file
@@ -1439,18 +1575,24 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
     }
 
-    function Json_GetItemBase64DataById(ItemId, callBack) {
+    function Json_GetItemBase64DataById(item, callBack) {
         try {
             let obj = {};
-            obj.ItemId = ItemId
+            obj.ItemId = item["Registration No."]
             const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/"; // base url for api
             //   let dt = new LoginDetails();
 
             let cls = new CommanCLS(baseUrl, agrno, Email, password);
             cls.Json_GetItemBase64DataById(obj, function (sts, data) {
-                if (sts && data) {
-                    // console.log("Json_GetItemBase64DataById data", data)
-                    return callBack(data);
+                if (sts) {
+                    if (data !== "No Data Exist") {
+                        // console.log("Json_GetItemBase64DataById data", data)
+                        return callBack(data);
+                    }
+                    else {
+                        toast.error(item.Description + "was not uploaded as it had no data")
+                    }
+
                 }
 
             })
@@ -1477,7 +1619,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
         // You can perform further actions with the selectedRows array
         console.log("Seleted Template", txtTemplateId); // Log the selected rows data
-        if (selectedEmail.length > 0) {
+        if (selectedItems.selectedRowsData.length > 0) {
             Json_GetStandardLetterData(selectedItems.selectedRowsData)
         }
         else {
@@ -1566,29 +1708,40 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
     function Json_GetStandardLetterData(data) {
         try {
-            let obj = {};
-            obj.agrno = agrno;
-            obj.UserEmail = Email;
-            obj.password = password;
-            obj.strFolderId = data[0].ProjectID;
-            obj.strClientId = textClientId;
-            obj.strSectionId = data[0].ItemTypeId;
-            obj.strTemplateId = data[0].TemplateID;
-            obj.ContactEmail = selectedEmail[0]["E-Mail"];
-            var urlLetter = "https://docusms.uk/dsdesktopwebservice.asmx/";
-            let cls = new CommanCLS(urlLetter, agrno, Email, password);
-            cls.Json_GetStandardLetterData(obj, function (sts, data) {
-                if (sts && data) {
-                    //console.log("Json_GetStandardLetterData", data)
-                    if (data.includes("File Not Found")) {
-                        console.log("Json_GetStandardLetterData", data)
-                    }
-                    else {
-                        Json_GetHtmlFromRtf(data);
-                    }
+            if (selectedEmail) {
 
-                }
-            })
+                let obj = {};
+                obj.agrno = agrno;
+                obj.UserEmail = Email;
+                obj.password = password;
+                obj.strFolderId = data[0].ProjectID;
+                obj.strClientId = textClientId;
+                obj.strSectionId = data[0].ItemTypeId;
+                obj.strTemplateId = data[0].TemplateID;
+                obj.ContactEmail = selectedEmail ? selectedEmail[0]["E-Mail"] : toast.error("Please Select Email In To!");
+
+                clsSms.Json_GetStandardLetterData(obj, function (sts, data) {
+                    if (sts && data) {
+                        console.log("Json_GetStandardLetterData", data)
+                        if (data.includes("File Not Found")) {
+                            console.log("Json_GetStandardLetterData", data)
+                        }
+                        else {
+                            Json_GetHtmlFromRtf(data);
+                        }
+
+                    }
+                })
+
+
+
+            }
+            else {
+
+                toast.error("Please Select a Email in To")
+
+            }
+
         } catch (error) {
             console.log("Error for Tempalte", error)
         }
@@ -1623,22 +1776,23 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 
     function CreatePortalTask() {
-       // console.log("nextDate1", currentDate)
+        setLoading(true);
+        // console.log("nextDate1", currentDate)
         ////console.log("nextDate", nextDate)
 
-        let nxtdd =dayjs(nextDate).format("YYYY/MM/DD");
-        if(nxtdd==="Invalid Date"){
+        let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
+        if (nxtdd === "Invalid Date") {
             let dd = nextDate.split("/");//30/03/2024
-            nxtdd= dd[2]+"/"+dd[1]+"/"+dd[0];
+            nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
         }
-        
+
 
         try {
             const isaddUser = addUser.map(obj => obj.ID).join(',');
             let ooo = {
                 "ClientIsRecurrence": false,
                 "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-                "ClientEnd": dayjs(nxtdd).format("YYYY/MM/DD"),
+                "ClientEnd": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
                 "ClientDayNumber": "1",
                 "ClientMonth": "1",
                 "ClientOccurrenceCount": "1",
@@ -1653,7 +1807,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                 "FolderId": txtFolderId.toString(),
                 "Subject": textSubject,
                 "TypeofTaskID": txtSectionId.toString(),
-                "EndDateTime": dayjs(nxtdd).format("YYYY/MM/DD"),
+                "EndDateTime": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
                 "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
                 "Status": txtStatus,
                 "Priority": txtPriorityId.toString(),
@@ -1672,19 +1826,29 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                 "TaskSource": txtTaskType
             }
             console.log("final save data obj", ooo);
-            cls.Json_CRM_Task_Save(ooo, function (sts, data) {
+            clsSms.Json_CRM_Task_Save(ooo, function (sts, data) {
                 if (sts) {
-                    let js = JSON.parse(data);
-                    console.log("Json_CRM_Task_Save ", js);
-                    if (js.Status === "success") {
-                        setMessageId(js.Message);
-                        CreatePortalMessage(js.Message)
-                        //toast.success("Created Task");
+                    if (data) {
+                        setLoading(false);
+                        let js = JSON.parse(data);
+                        console.log("Json_CRM_Task_Save ", js);
+                        if (js.Status === "success") {
+                            setMessageId(js.Message);
+                            CreatePortalMessage(js.Message)
+                            toast.success("Created Task");
+                            setOpen(false);
+                            // setIsApi(!isApi);
+                        }
+                        else {
+                            toast.error("Task Not Created Please Try Again");
+                            console.log("Response final", data)
+                        }
+                    } else {
+                        setLoading(false);
+                        toast.error("Faild Created Task Try again !");
                     }
-                    else {
-                        toast.error("Task Not Created Please Try Again");
-                        console.log("Response final", data)
-                    }
+
+
 
                     // setLoading(false);
                 }
@@ -1752,11 +1916,11 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                 cls.MessagePublishedPortalTask_Json(obj, function (sts, data) {
                     if (sts) {
                         console.log("MessagePublished_Json", data)
-                        if (data === "") {
+                        if (!data) {
                             toast.success("Task Created");
                         }
                         setOpen(false);
-                       
+
                         // let js = JSON.parse(data);
 
                         // if (js.Status == "success") {
@@ -1934,11 +2098,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                 error: error,
             });
         }
-
-
     }
-
-
 
     // Function to get file extension from file name
     const getFileName = (fileName) => {
@@ -1947,8 +2107,6 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
         // Return the last part, which is the extension
         return parts[0];
     };
-
-
 
     function ConvertToPdf_Json(d) {
         setAnchorElDoc(null);
@@ -1995,6 +2153,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
     // dropdown
     const [anchorEl4, setAnchorEl4] = React.useState(null);
+    const [openUploadDocument, setOpenUploadDocument] = React.useState(false);
     const open4 = Boolean(anchorEl4);
     const handleClick4 = (event) => {
         setAnchorEl4(event.currentTarget);
@@ -2003,16 +2162,37 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
         setAnchorEl4(null);
     };
 
-
+    const handleUploadDocument = () => {
+        setAnchorEl4(null);
+        setOpenUploadDocument(true)
+    };
 
     // Referance modal
     const [Referance, setReferance] = React.useState(false);
-
+    const [ReferanceEdit, setReferanceEdit] = React.useState(false);
     const handleClickReferance = () => {
         setReferance(true);
     };
     const DocumentHandleClose = () => {
         setReferance(false);
+    };
+    const handleClickEditReferance = () => {
+        setReferanceEdit(true);
+    };
+    const EditDocumentHandleClose = () => {
+        setReferanceEdit(false);
+    };
+
+
+    // 
+    const [open5, setOpen5] = React.useState(false);
+
+    const handleClickOpen5 = () => {
+        setOpen5(true);
+    };
+
+    const handleClose5 = () => {
+        setOpen5(false);
     };
 
     return (
@@ -2024,19 +2204,20 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                 <span className="material-symbols-outlined">edit_square</span>{" "}
                 <span className="ps-2 create-text">Create New  </span>
             </Button> */}
-
-            <div className="select-border my-0 m-auto">
+            <UploadDocument openUploadDocument={openUploadDocument} setOpenUploadDocument={setOpenUploadDocument}></UploadDocument>
+            
+            <div className="select-border">
                 <Button
                     id="basic-button"
                     aria-controls={open4 ? 'basic-menu' : undefined}
                     aria-haspopup="true"
                     aria-expanded={open4 ? 'true' : undefined}
                     onClick={handleClick4}
-                    className="btn-outlin-2"
-                    variant="outlined"
+                    className="btn-blue btn-round btn-block add-new-btn"
+                    variant="text"
                 >
                     <span className="material-symbols-outlined font-18">edit_square</span>{" "}
-                    <span className="ps-2 font-13">Add New  </span>
+                    <span className="ps-2 font-13 create-text">Add New </span>
 
                 </Button>
                 <Menu
@@ -2049,7 +2230,16 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                     }}
                     className="custom-dropdown"
                 >
-                    <MenuItem onClick={handleClickOpen}>
+                    {/* <MenuItem onClick={handleClickOpen}>CRM Task</MenuItem>
+                    <MenuItem onClick={handleClickOpen}>Portal Task</MenuItem>
+                    <MenuItem onClick={handleClickReferance}>Reference</MenuItem>
+                    <MenuItem onClick={handleClose4}>Note</MenuItem>
+                    <MenuItem onClick={handleClose4}>Document</MenuItem> */}
+                    {/* <MenuItem 
+                    onClick={handleClickEditReferance}
+                    >Edit Reference</MenuItem> */}
+                    <MenuItem onClick={() => handleClickOpen("CRM")
+                    }>
                         {/* <ListItemIcon>
                             <EjectIcon fontSize="medium" className="text-red rotate-180" />
                         </ListItemIcon> */}
@@ -2058,15 +2248,27 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                         </ListItemIcon> CRM Task
                     </MenuItem>
 
-                    <MenuItem onClick={handleClickOpen}><ListItemIcon>
+                    <MenuItem onClick={() => handleClickOpen("Portal")}><ListItemIcon>
                         <LanguageIcon className="font-20" />
                     </ListItemIcon>
                         Portal Task</MenuItem>
 
-                    <MenuItem onClick={handleClickReferance}>
+                    <MenuItem onClick={() => {
+                        handleClickReferance()
+                        handleClose4()
+                    }}>
                         <ListItemIcon>
                             <GroupIcon className="font-20" />
                         </ListItemIcon> Reference
+                    </MenuItem>
+
+                    <MenuItem onClick={() => {
+                        handleClickOpen5()
+                        handleClose4()
+                    }}>
+                        <ListItemIcon>
+                            <GroupIcon className="font-20" />
+                        </ListItemIcon> Add Contacts
                     </MenuItem>
 
                     <MenuItem onClick={handleClose4}>
@@ -2076,8 +2278,10 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                         Note
                     </MenuItem>
 
-
-                    <MenuItem onClick={handleClose4}>
+                    <MenuItem onClick={() => {
+                        handleUploadDocument()
+                        handleClose4()
+                    }}>
                         <ListItemIcon>
                             <DescriptionIcon className="font-20" />
                         </ListItemIcon>
@@ -2092,73 +2296,72 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                 aria-labelledby="responsive-dialog-title"
                 className="custom-modal custom-modal-1200"
             >
-                <DialogContent>
-                    <DialogContentText>
-                        <Box className="d-flex align-items-center justify-content-between">
 
-                            <Box>
-                                <Button
-                                    id="basic-button"
-                                    aria-controls={TastkType ? 'basic-menu' : undefined}
-                                    aria-haspopup="true"
-                                    aria-expanded={TastkType ? 'true' : undefined}
-                                    onClick={handleClickTastkType}
-                                    className="btn-select min-width-auto"
-                                >
-                                    {txtTaskType}
-                                </Button>
-                                <Menu
-                                    id="basic-menu"
-                                    anchorEl={anchorElTastkType}
-                                    open={TastkType}
-                                    onClose={handleCloseTastkType}
-                                    MenuListProps={{
-                                        'aria-labelledby': 'basic-button',
-                                    }}
-                                    className="custom-dropdown"
-                                >
-                                    <MenuItem onClick={handleCloseTastkType}>
-                                        <ListItemIcon>
-                                            <DvrIcon className="font-20" />
-                                        </ListItemIcon>
-                                        CRM</MenuItem>
+                <Box className="d-flex align-items-center justify-content-between modal-head">
 
-                                    <MenuItem onClick={handleCloseTastkType}>
-                                        <ListItemIcon>
-                                            <LanguageIcon className="font-20" />
-                                        </ListItemIcon>
-                                        Portal
-                                    </MenuItem>
-                                </Menu>
-                            </Box>
+                    <Box>
+                        <Button
+                            id="basic-button"
+                            aria-controls={TastkType ? 'basic-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={TastkType ? 'true' : undefined}
+                            onClick={handleClickTastkType}
+                            className="btn-select min-width-auto"
+                        >
+                            {txtTaskType}
+                        </Button>
+                        <Menu
+                            id="basic-menu"
+                            anchorEl={anchorElTastkType}
+                            open={TastkType}
+                            onClose={handleCloseTastkType}
+                            MenuListProps={{
+                                'aria-labelledby': 'basic-button',
+                            }}
+                            className="custom-dropdown"
+                        >
+                            <MenuItem onClick={handleCloseTastkType}>
+                                <ListItemIcon>
+                                    <DvrIcon className="font-20" />
+                                </ListItemIcon>
+                                CRM</MenuItem>
 
+                            <MenuItem onClick={handleCloseTastkType}>
+                                <ListItemIcon>
+                                    <LanguageIcon className="font-20" />
+                                </ListItemIcon>
+                                Portal
+                            </MenuItem>
+                        </Menu>
+                    </Box>
 
-                            {/* <Box className="dropdown-box">
-                                <Button className="btn-select">
-                                    Select Type
-                                    <span className="material-symbols-outlined ps-2">
-                                        keyboard_arrow_down
-                                    </span>
-                                </Button>
-                                <Box className="btn-Select">
-                                    <Button className='btn-white'>Action</Button>
-                                    <Button className='btn-white'>Ser</Button>
-                                    <Button className='btn-white'>Custom</Button>
-
-                                    <hr />
-
-                                    <Button className='btn-blue-2' size="small">Apply Now</Button>
-                                </Box>
-                            </Box> */}
-
-                            <Button onClick={handleClose} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
+                    {/* <Box className="dropdown-box">
+                    <Button className="btn-select">
+                        Select Type
+                        <span className="material-symbols-outlined ps-2">
+                            keyboard_arrow_down
+                        </span>
+                    </Button>
+                    <Box className="btn-Select">
+                        <Button className='btn-white'>Action</Button>
+                        <Button className='btn-white'>Ser</Button>
+                        <Button className='btn-white'>Custom</Button>
 
                         <hr />
+
+                        <Button className='btn-blue-2' size="small">Apply Now</Button>
+                    </Box>
+                </Box> */}
+
+                    <Button onClick={handleClose} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                <DialogContent>
+                    <DialogContentText>
 
                         <Box className="row full-height-modal">
                             <Box className="col-lg-8 border-end">
@@ -2203,9 +2406,6 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                             </Box>
                                         </Box> */}
 
-
-
-
                                         {/* attached to start */}
                                         <Box className='mt-3'>
 
@@ -2222,6 +2422,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                                             getOptionLabel={(option) => option.ForwardTo}
                                                             renderInput={(params) => <TextField {...params} label="From" />}
                                                             className="w-100"
+                                                            size="small"
                                                             value={selectedUSer}
                                                             onChange={handleOptionChangeFromUser}
                                                         />
@@ -2231,12 +2432,14 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                                         <Autocomplete
                                                             multiple
                                                             id="checkboxes-tags-demo"
-                                                            options={portalUser}
+                                                            options={portalUserTo}
                                                             disableCloseOnSelect
                                                             getOptionLabel={(option) => option["E-Mail"]}
+                                                            size="small"
                                                             renderOption={(props, option, { selected }) => (
                                                                 <li {...props}>
                                                                     <Checkbox
+
                                                                         icon={icon}
                                                                         checkedIcon={checkedIcon}
                                                                         style={{ marginRight: 8 }}
@@ -2257,9 +2460,10 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                                         <Autocomplete
                                                             multiple
                                                             id="checkboxes-tags-demo"
-                                                            options={portalUser}
+                                                            options={portalUserCC}
                                                             disableCloseOnSelect
                                                             getOptionLabel={(option) => option["E-Mail"]}
+                                                            size="small"
                                                             renderOption={(props, option, { selected }) => (
                                                                 <li {...props}>
                                                                     <Checkbox
@@ -2326,6 +2530,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                                                 <Column
                                                                     dataField="Description"
                                                                     caption="Description"
+                                                                    width={400}
                                                                 />
 
                                                                 <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
@@ -2333,12 +2538,10 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                                             </DataGrid>
                                                         </Menu>
                                                     </Box>
-                                                    <Box className='text-editor-box-name'>
-                                                        {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
-                                                    </Box>
+
                                                 </>
                                             )}
-
+                                            {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
                                         </Box>
 
                                         {!isVisibleByTypeCRM && (<>
@@ -2363,10 +2566,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                                 onClick={handleUserClick}
                                                 onContextMenu={handleRightClick}
                                                 className="p-0 w-auto d-inline-block"
-
-
                                             >
-
 
                                                 <Box className="d-flex align-items-center">
                                                     {ownerRighClick && (<>
@@ -2545,7 +2745,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                                 </Box>
 
                                                 <Box className="inner-user-list-dropdown">
-                                                    <p className="sembold">My Team</p>
+                                                    <p className="sembold mb-0">My Team</p>
 
                                                     <Box className="box-user-list-dropdown" style={{ maxHeight: "200px", overflowY: "auto" }}>
                                                         <Box className="mb-1 mt-3 px-3">
@@ -2731,8 +2931,9 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                     <Button
                                         variant="contained"
                                         onClick={Json_CRM_Task_Save}
-                                        disabled={!textSubject ? true : false}
+                                        disabled={!textSubject || loading}
                                         className="btn-blue-2 mt-3"
+
                                     >
                                         {'CRM Task'}
                                     </Button>
@@ -2742,15 +2943,15 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                     <Button
                                         variant="contained"
                                         onClick={CreatePortalTask}
-                                        disabled={!textSubject ? true : false}
-                                        // disabled={loading}
+                                        disabled={!textSubject || loading}
+
                                         className="btn-blue-2 mt-1"
                                     >
                                         {'Portal Task'}
                                     </Button>
                                 )}
 
-                                <ToastContainer></ToastContainer>
+
                             </Box>
                             {/* col end */}
 
@@ -3154,6 +3355,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                         >
                                             <CalendarMonthIcon />
                                             <DatePicker className=" w-100"
+                                                selected={selectedDate}
                                                 showIcon
                                                 dateFormat="DD/MM/YYYY"
                                                 value={nextDate}
@@ -3162,6 +3364,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                                 isValidDate={disableDueDate}
                                                 closeOnSelect={true}
                                                 icon="fa fa-calendar"
+                                                isClearable
                                             />
                                         </LocalizationProvider>
 
@@ -3236,7 +3439,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                 </Box>
 
                                 <Box className="select-dropdown">
-                                    <BootstrapTooltip title="Select Priority" arrow
+                                    <BootstrapTooltip title="Priority" arrow
                                         placement="bottom-start"
                                         slotProps={{
                                             popper: {
@@ -3297,7 +3500,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                 </Box>
 
                                 <Box className="select-dropdown">
-                                    <BootstrapTooltip title="Select Status" arrow
+                                    <BootstrapTooltip title="Status" arrow
                                         placement="bottom-start"
                                         slotProps={{
                                             popper: {
@@ -3343,7 +3546,8 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                                                     }}>
 
                                                         <ListItemIcon>
-                                                            <RadioButtonUncheckedIcon fontSize="medium" className="text-success" />
+                                                            {/* <RadioButtonUncheckedIcon fontSize="medium" className="text-success" /> */}
+                                                            {statusIconList[index]}
                                                         </ListItemIcon>
 
                                                         {item.name}</MenuItem>
@@ -3419,29 +3623,27 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                 {/* <DialogTitle id="alert-dialog-title">
                         {"Use Google's location service?"}
                     </DialogTitle> */}
+
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+
+                    <div>
+                        <Button
+                            id="basic-button"
+                        >
+                            Document List
+                        </Button>
+
+                    </div>
+
+                    <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-
-                        <Box className="d-flex align-items-center justify-content-between">
-
-                            <div>
-                                <Button
-                                    id="basic-button"
-                                >
-                                    Document List
-                                </Button>
-
-                            </div>
-
-                            <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-
-                        <hr />
-
                         <DataGrid
                             dataSource={dmsDocumentList}
                             allowColumnReordering={true}
@@ -3451,6 +3653,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                             selectedRowKeys={selectedRows}
                             selection={{ mode: 'multiple' }}
                             onSelectionChanged={handleSelectionChanged} // Handle selection change event
+                            className="table-grid"
                         >
                             <FilterRow visible={true} />
                             <SearchPanel visible={true} highlightCaseSensitive={true} />
@@ -3502,31 +3705,111 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
                 aria-describedby="alert-dialog-description"
                 className="custom-modal full-modal"
             >
-
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <div>
+                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                            Reference
+                        </Typography>
+                    </div>
+                    <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <div>
-                                <Button
-                                    id="basic-button"
-                                >
-                                    Document List
-                                </Button>
-                            </div>
-                            <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-                        <hr />
 
                         <Reference />
 
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
+
+
+
+
+            <Dialog
+                open={ReferanceEdit}
+                onClose={EditDocumentHandleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className="custom-modal full-modal"
+            >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <div>
+                        <Button
+                            id="basic-button"
+                        >
+                            Document List
+                        </Button>
+                    </div>
+                    <Button onClick={EditDocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+
+                        <EditReference />
+
+                    </DialogContentText>
+                </DialogContent>
+            </Dialog>
+
+            {/*  */}
+
+            <Dialog
+                open={open5}
+                onClose={handleClose5}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className="custom-modal full-modal"
+            >
+                {/* <DialogTitle id="alert-dialog-title">
+                    {"Use Google's location service?"}
+                </DialogTitle> */}
+
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                            Add Client
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={handleClose5}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                {/* <hr /> */}
+
+                <DialogContent className="pt-0">
+                    <DialogContentText id="alert-dialog-description">
+
+                        <AddContacts />
+
+                    </DialogContentText>
+                </DialogContent>
+                {/* <DialogActions>
+                    <Button onClick={handleClose5}>Disagree</Button>
+                    <Button onClick={handleClose5} autoFocus>
+                        Agree
+                    </Button>
+                </DialogActions> */}
+            </Dialog>
+
+
+            <ToastContainer></ToastContainer>
+
         </React.Fragment >
+
+
     );
 }
 

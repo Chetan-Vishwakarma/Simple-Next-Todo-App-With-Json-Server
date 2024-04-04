@@ -24,19 +24,9 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import DocumentDetails from "./DocumentDetails";
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import ArticleIcon from '@mui/icons-material/Article';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
-import ImageIcon from '@mui/icons-material/Image';
-import WorkIcon from '@mui/icons-material/Work';
-import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
-import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
-import IconButton from '@mui/material/IconButton';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
@@ -49,10 +39,6 @@ import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import EditIcon from '@mui/icons-material/Edit';
 import EjectIcon from '@mui/icons-material/Eject';
 import Checkbox from '@mui/material/Checkbox';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
 import Fade from '@mui/material/Fade';
 import GetClientList from "./GetClientList";
 import {
@@ -72,7 +58,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DocumentList from "../client/client-components/DocumentList";
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import Activity from "../client/utils/Activity";
-
+import FolderSharedIcon from '@mui/icons-material/FolderShared';
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -82,10 +68,11 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 
-function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) {
+function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) {
     console.log("TaskDetailModal2222", selectedTask);
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
     const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
+    const baseUrlSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -94,10 +81,15 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
 
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
     let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
+    let ClsSms = new CommanCLS(baseUrlSms, agrno, Email, password);
 
     /////////////////////////////////////////Task Activity
+    const [anchorEl4, setAnchorEl4] = React.useState(null);
+    const [selectedEmailForComment, setSelectedEmailForComment] = React.useState({});
+    const [NumPriority, setNumPriority] = React.useState(selectedTask.Priority);
 
     const [folderList, setFolderList] = useState([]);
+    const [portalComments, setPortalComments] = useState([]);
 
     const [txtFolder, settxtFolder] = useState(selectedTask.Folder);
     const [txtFolderId, setTxtFolderId] = useState(selectedTask.FolderID);
@@ -240,12 +232,13 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                                 ActivityDate = parseInt(activity.ActivityDate.slice(6, -2));
                             }
                             const date = new Date(ActivityDate);
-                            return { ...activity, ActivityDate: date };
+                            return { ...activity, ActivityDate: date,comDate:date,comNotes:activity.Notes };
                         });
                         // console.log(
                         //     "Json_Get_CRM_Task_ActivityByTaskId",
                         //     formattedActivity
                         // );
+                        
                         setCRMTaskAcivity(
                             formattedActivity.sort((a, b) => a.ActivityDate - b.ActivityDate)
                         );
@@ -259,6 +252,14 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                         };
                         // setCRMTaskAcivity((el) => [...el, obj]);
                         // setAllTask(json.Table);
+
+                        if(selectedTask.Source==="Portal"){
+                            
+                            let margeArr= mergeAndSortByDate(portalComments,formattedActivity,"comDate")
+                  console.log("GetComments_Json111", margeArr);
+                  setPortalComments(margeArr);
+                        }
+
                     }
                 }
             });
@@ -374,6 +375,17 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                     for (let item of table6) {
                         let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };
                         setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+
+                        // if(item.DestinationPath && !item.ItemId){
+                        //     let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };                        
+                        //     setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+                        // }
+                        // else{
+                        //     if(item.ItemId){
+                        //         SetFileataByItemId(item.ItemId);
+                        //     }
+
+                        // }
                     }
 
 
@@ -383,6 +395,26 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 }
             }
         });
+    }
+
+    function SetFileataByItemId(itemid) {
+        try {
+            let o = { ItemId: itemid.toString() }
+            ClsSms.Json_SearchDocById(o, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        //let js =JSON.parse(data);
+
+                        console.log("Json_SearchDocById", data)
+                        // let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };                        
+                        // setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+                    }
+                }
+            })
+        } catch (error) {
+            console.log("datanot found Json_SearchDocById", error)
+        }
+
     }
 
     function GetFileNamebyPath(path) {
@@ -406,7 +438,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         if (dt) {
             // let fullDate = new Date(parseInt(dt.substr(6)));
             let fullDate = new Date(dt);
-           
+
             // if(dt.includes("/Date")){
             //     let fullDate = new Date(parseInt(dt.substr(6)));
             //     console.log("date formet111", fullDate);
@@ -416,7 +448,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
             //     return fullDate;
             // }
             return fullDate;
-            
+
         }
         else {
             return "";
@@ -541,6 +573,8 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
         }
     }
 
+   
+
 
 
     useEffect(() => {
@@ -589,6 +623,8 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
             // console.log("Hello 1s")
             Json_Get_CRM_Task_ActivityByTaskId(selectedTask.ID);
         }, 2500);
+
+        setIsVisible(false)
 
     }, [selectedTask]);
 
@@ -759,6 +795,95 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
             Json_CRM_Task_Update();
         }
     };
+
+    const addActivitySaveForPortal = () => {
+        if (notesMessage) {
+            AddTaskComment_Json(notesMessage)
+        }
+       
+    };
+
+    useEffect(()=>{
+        GetComments_Json(selectedEmailForComment.PortalDocId);
+    },[selectedEmailForComment])
+
+    const AddTaskComment_Json = (notesMessage) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageID: selectedEmailForComment.PortalDocId,
+            response: notesMessage,
+            ConatctEmail: selectedEmailForComment.emailid,
+        };
+
+        ClsPortal.AddTaskComment_Json(o, function (sts, data) {
+            if (sts) {
+
+                console.log("AddTaskComment_Json", data);
+                if (data) {
+                    GetComments_Json(selectedEmailForComment.PortalDocId);
+                    setNotesMessage("");
+                }
+                // setTemplateDataMarkup(data)
+            }
+        })
+    }
+    const GetComments_Json = (mgsid) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageId: mgsid,
+        };
+
+        ClsPortal.GetComments_Json(o, function (sts, data) {
+            if (sts) {
+                let js = JSON.parse(data);               
+                if (data) {
+                    const formattedActivity = js.map((activity) => {
+                        let DateOfRemark;
+                        if (activity.DateOfRemark) {
+                            DateOfRemark = parseInt(activity.DateOfRemark.slice(6, -2));
+                        }
+                        const date = new Date(DateOfRemark);
+
+                        // let ReadDate;
+                        // if (activity.ReadDate) {
+                        //     ReadDate = parseInt(activity.ReadDate.slice(6, -2));
+                        // }
+                        // const ReadDate1 = new Date(ReadDate);
+                        return { ...activity, DateOfRemark: date,comDate: date,comNotes:activity.Remark};
+                    }); 
+                    console.log("GetComments_Json", formattedActivity);
+
+                 // let arr1 =  formattedActivity.sort((a, b) => a.DateOfRemark - b.DateOfRemark);
+
+                  let margeArr= mergeAndSortByDate(formattedActivity,crmTaskAcivity,"comDate");
+
+                  console.log("GetComments_Json", margeArr);
+                  setPortalComments(margeArr);
+                   
+                }
+                // setTemplateDataMarkup(data)
+            }
+        })
+    }
+
+    function mergeAndSortByDate(array1, array2, dateField) {
+        // Concatenate the two arrays
+        var mergedArray = array2.concat(array1);
+        
+        // Sort the merged array by date field
+        mergedArray.sort(function(a, b) {
+            return new Date(a[dateField]) - new Date(b[dateField]);
+        });
+        
+        return mergedArray;
+    }
+    
+
+
     const Json_AddSupplierActivity = (mgs, sts) => {
         let obj = {};
         obj.OriginatorNo = selectedTask.ClientNo;
@@ -904,6 +1029,7 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
                 if (data === "Success") {
                     toast.success(mgsd)
                     Json_AddSupplierActivity(mgsd + " by " + forwardUser.ForwardTo, "sys");
+                    setIsApi(!isApi);
                 }
                 console.log("Json_UpdateTaskField", data)
             }
@@ -1136,28 +1262,28 @@ function TaskDetailModal({ isApi, setIsApi, selectedTask, openModal, setOpen }) 
     const handleCloseDocumentDetailsList = () => {
         setOpenDocumentDetailsList(false);
     };
-// sadik code start
-function createData(document, details) {
-    return { document, details };
-}
+    // sadik code start
+    function createData(document, details) {
+        return { document, details };
+    }
 
-const rows = [
-    createData('Folder', 'Client'),
-    createData('Client', '212121Test'),
-    createData('Section', '01. General Correspondence'),
-    createData('Received Date', '02/03/2024'),
-    createData('Doc. Date', '02/03/2024'),
-    createData('Description', 'General Letter'),
-    createData('Notes', 'Yes'),
-    createData('Category', '1. Received'),
-    createData('DocDirection', 'Incoming'),
-    createData('ItemId', 998301),
-    createData('Tax Year', '18/19'),
-    createData('Financial Year', '2020'),
-    createData('From Email', 'test@gmail.com'),
-    createData('to Email', 'test@gmail.com'),
-    createData('CC', 'test@gmail.com')
-];
+    const rows = [
+        createData('Folder', 'Client'),
+        createData('Client', '212121Test'),
+        createData('Section', '01. General Correspondence'),
+        createData('Received Date', '02/03/2024'),
+        createData('Doc. Date', '02/03/2024'),
+        createData('Description', 'General Letter'),
+        createData('Notes', 'Yes'),
+        createData('Category', '1. Received'),
+        createData('DocDirection', 'Incoming'),
+        createData('ItemId', 998301),
+        createData('Tax Year', '18/19'),
+        createData('Financial Year', '2020'),
+        createData('From Email', 'test@gmail.com'),
+        createData('to Email', 'test@gmail.com'),
+        createData('CC', 'test@gmail.com')
+    ];
     // accordian
     const [expanded, setExpanded] = React.useState('panel1');
 
@@ -1166,13 +1292,24 @@ const rows = [
     };
 
     // CRM & Portal Dropdown
-    const [anchorEl4, setAnchorEl4] = React.useState(null);
+
     const open4 = Boolean(anchorEl4);
     const handleClick4 = (event) => {
         setAnchorEl4(event.currentTarget);
     };
-    const handleClose4 = () => {
+    const handleClose4 = (e) => {
+
         setAnchorEl4(null);
+        console.log("Priority", e.target.innerText)
+
+
+
+        let pri = e.target.innerText;
+        let res = pri === "High" ? 1 : pri === "Medium" ? 2 : pri === "Low" ? 3 : null;
+        Json_UpdateTaskField("Priority", res, "Priority updated!");
+
+        setNumPriority(res)
+
     };
 
 
@@ -1188,58 +1325,75 @@ const rows = [
                 aria-labelledby="scroll-dialog-title"
                 aria-describedby="scroll-dialog-description"
             >
-                <DialogContent>
-                    <DialogContentText>
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="d-flex align-items-center">
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="d-flex align-items-center">
+                        <div>
+                            <Button
+                                id="basic-button"
+                                aria-controls={open4 ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open4 ? 'true' : undefined}
+                                onClick={handleClick4}
+                                className="min-width-auto"
+                            >
+                                {NumPriority === 1 && (
 
+                                    <PanoramaFishEyeIcon className="text-red" fontSize="medium" />
 
-                                <div>
-                                    <Button
-                                        id="basic-button"
-                                        aria-controls={open4 ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={open4 ? 'true' : undefined}
-                                        onClick={handleClick4}
-                                        className="min-width-auto"
-                                    >
-                                        <CheckCircleIcon />
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={anchorEl4}
-                                        open={open4}
-                                        onClose={handleClose4}
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                        className="custom-dropdown"
-                                    >
-                                        <MenuItem onClick={handleClose4} className="text-red pe-4">
-                                            <EjectIcon>
-                                                <PanoramaFishEyeIcon className="text-red" fontSize="medium" />
-                                            </EjectIcon>
-                                            High
-                                        </MenuItem>
+                                )}
+                                {NumPriority === 2 && (
 
-                                        <MenuItem onClick={handleClose4} className="text-warning pe-4">
-                                            <ListItemIcon>
-                                                <RadioButtonUncheckedIcon fontSize="medium" className="text-warning" />
-                                            </ListItemIcon>
-                                            Medium
-                                        </MenuItem>
+                                    <RadioButtonUncheckedIcon fontSize="medium" className="text-warning" />
 
-                                        <MenuItem onClick={handleClose4} className="text-success pe-4">
-                                            <ListItemIcon>
-                                                <EjectIcon fontSize="medium" className="text-success rotate-180" />
-                                            </ListItemIcon>
-                                            Low
-                                        </MenuItem>
+                                )}
+                                {NumPriority === 3 && (
 
-                                    </Menu>
-                                </div>
+                                    <EjectIcon fontSize="medium" className="text-success rotate-180" />
 
-                                {/* <div>
+                                )}
+                                {NumPriority !== 1 && NumPriority !== 2 && NumPriority !== 3 && (
+                                    <CheckCircleIcon />
+                                )}
+
+                            </Button>
+                            {selectedTask.Source === "CRM" && (<>
+                                <Menu
+                                    id="basic-menu"
+                                    anchorEl={anchorEl4}
+                                    open={open4}
+                                    onClose={handleClose4}
+                                    MenuListProps={{
+                                        'aria-labelledby': 'basic-button',
+                                    }}
+                                    className="custom-dropdown"
+                                >
+                                    <MenuItem onClick={handleClose4} className="text-red pe-4">
+                                        <EjectIcon>
+                                            <PanoramaFishEyeIcon className="text-red" fontSize="medium" />
+                                        </EjectIcon>
+                                        High
+                                    </MenuItem>
+
+                                    <MenuItem onClick={handleClose4} className="text-warning pe-4">
+                                        <ListItemIcon>
+                                            <RadioButtonUncheckedIcon fontSize="medium" className="text-warning" />
+                                        </ListItemIcon>
+                                        Medium
+                                    </MenuItem>
+
+                                    <MenuItem onClick={handleClose4} className="text-success pe-4">
+                                        <ListItemIcon>
+                                            <EjectIcon fontSize="medium" className="text-success rotate-180" />
+                                        </ListItemIcon>
+                                        Low
+                                    </MenuItem>
+
+                                </Menu>
+                            </>)}
+
+                        </div>
+
+                        {/* <div>
                             <Button
                                 id="basic-button-status"
                                 aria-controls={open ? 'basic-menu' : undefined}
@@ -1266,118 +1420,118 @@ const rows = [
                             </Menu>
                         </div> */}
 
-                                <Typography
-                                    variant="subtitle1"
-                                    className="font-16 sembold mb-0"
-                                >
-                                    {selectedTask.Source}
-                                </Typography>
-                            </Box>
+                        <Typography
+                            variant="subtitle1"
+                            className="font-16 sembold mb-0"
+                        >
+                            {selectedTask.Source}
+                        </Typography>
+                    </Box>
 
-                            <Box className="d-flex">
-                                <Box>
-                                    <Button
-                                        id={`fade-button-${selectedTask.ID}`} // Use unique IDs for each button
-                                        aria-controls={
-                                            anchorElStatus
-                                                ? `fade-menu-${selectedTask.ID}`
-                                                : undefined
-                                        }
-                                        aria-haspopup="true"
-                                        aria-expanded={anchorElStatus ? "true" : undefined}
-                                        onClick={(event) =>
-                                            handleClickStatus(event, selectedTask.ID)
-                                        } // Pass index to handleClick
-                                        className="min-width-auto px-0 text-danger"
-                                    >
+                    <Box className="d-flex">
+                        <Box>
+                            <Button
+                                id={`fade-button-${selectedTask.ID}`} // Use unique IDs for each button
+                                aria-controls={
+                                    anchorElStatus
+                                        ? `fade-menu-${selectedTask.ID}`
+                                        : undefined
+                                }
+                                aria-haspopup="true"
+                                aria-expanded={anchorElStatus ? "true" : undefined}
+                                onClick={(event) =>
+                                    handleClickStatus(event, selectedTask.ID)
+                                } // Pass index to handleClick
+                                className="min-width-auto px-0 text-danger"
+                            >
 
-                                        {status === "Not Started" && (
-                                            <>
-                                                <ListItemIcon className="min-width-auto  me-2 text-secondary">
-                                                    <PublishedWithChangesIcon fontSize="medium" />
-                                                </ListItemIcon>
-                                                <span className="text-secondary">{status}</span>
-                                            </>
-
-                                        )}
-                                        {status === "In Progress" && (<>
-                                            <ListItemIcon className="min-width-auto  me-2 text-primary">
-                                                <PublishedWithChangesIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            <span className="text-primary">{status}</span>
-                                        </>
-
-                                        )}
-                                        {status === "On Hold" && (<>
-                                            <ListItemIcon className="min-width-auto  me-2 text-primary">
-                                                <PublishedWithChangesIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            <span className="text-primary">{status ? status : selectedTask.mstatus}</span>
-                                        </>
-
-                                        )}
-                                        {status === "Completed" && (<>
-
-                                            <ListItemIcon className="min-width-auto me-2 text-success">
-                                                <PublishedWithChangesIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            <span className="text-success">{status}</span>
-                                        </>
-
-                                        )}
-
-                                        {status === "" && (<>
-
-                                            <ListItemIcon className="min-width-auto me-2">
-                                                <PublishedWithChangesIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            <span className="text-success">{selectedTask.mstatus}</span>
-                                        </>
-
-                                        )}
-
-                                    </Button>
-                                    <Menu
-                                        id={`fade-menu-${selectedTask.ID}`} // Use unique IDs for each menu
-                                        MenuListProps={{
-                                            "aria-labelledby": `fade-button-${selectedTask.ID}`,
-                                        }}
-                                        anchorEl={anchorElStatus}
-                                        open={
-                                            selectedIndexStatus === selectedTask.ID &&
-                                            Boolean(anchorElStatus)
-                                        } // Open menu if selectedIndex matches
-                                        onClose={handleCloseStatus}
-                                    >
-
-                                        {/*  */}
-                                        <MenuItem onClick={handleCloseStatus} className="text-secondary">
-                                            <ListItemIcon>
-                                                <DoNotDisturbAltIcon fontSize="medium" className="text-secondary" />
-                                            </ListItemIcon>
-                                            Not Started
-                                        </MenuItem>
-                                        <MenuItem onClick={handleCloseStatus} className="text-primary">
-                                            <ListItemIcon>
-                                                <PublishedWithChangesIcon fontSize="medium" className="text-primary" />
-                                            </ListItemIcon>
-                                            In Progress
-                                        </MenuItem>
-
-                                        <MenuItem onClick={handleCloseStatus} className="text-primary">
-                                            <ListItemIcon>
-                                                <HourglassBottomIcon fontSize="medium" className="text-primary" />
-                                            </ListItemIcon>
-                                            On Hold
-                                        </MenuItem>
-
-                                        <MenuItem onClick={handleCloseStatus} className="text-success"><ListItemIcon>
-                                            <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
+                                {status === "Not Started" && (
+                                    <>
+                                        <ListItemIcon className="min-width-auto  me-2 text-secondary">
+                                            <PublishedWithChangesIcon fontSize="medium" />
                                         </ListItemIcon>
-                                            Completed
-                                        </MenuItem>
+                                        <span className="text-secondary">{status}</span>
+                                    </>
 
-                                        {/* <MenuItem onClick={handleCloseStatus} className="text-warning">
+                                )}
+                                {status === "In Progress" && (<>
+                                    <ListItemIcon className="min-width-auto  me-2 text-primary">
+                                        <PublishedWithChangesIcon fontSize="medium" />
+                                    </ListItemIcon>
+                                    <span className="text-primary">{status}</span>
+                                </>
+
+                                )}
+                                {status === "On Hold" && (<>
+                                    <ListItemIcon className="min-width-auto  me-2 text-primary">
+                                        <PublishedWithChangesIcon fontSize="medium" />
+                                    </ListItemIcon>
+                                    <span className="text-primary">{status ? status : selectedTask.mstatus}</span>
+                                </>
+
+                                )}
+                                {status === "Completed" && (<>
+
+                                    <ListItemIcon className="min-width-auto me-2 text-success">
+                                        <PublishedWithChangesIcon fontSize="medium" />
+                                    </ListItemIcon>
+                                    <span className="text-success">{status}</span>
+                                </>
+
+                                )}
+
+                                {status === "" && (<>
+
+                                    <ListItemIcon className="min-width-auto me-2">
+                                        <PublishedWithChangesIcon fontSize="medium" />
+                                    </ListItemIcon>
+                                    <span className="text-success">{selectedTask.mstatus}</span>
+                                </>
+
+                                )}
+
+                            </Button>
+                            <Menu
+                                id={`fade-menu-${selectedTask.ID}`} // Use unique IDs for each menu
+                                MenuListProps={{
+                                    "aria-labelledby": `fade-button-${selectedTask.ID}`,
+                                }}
+                                anchorEl={anchorElStatus}
+                                open={
+                                    selectedIndexStatus === selectedTask.ID &&
+                                    Boolean(anchorElStatus)
+                                } // Open menu if selectedIndex matches
+                                onClose={handleCloseStatus}
+                            >
+
+                                {/*  */}
+                                <MenuItem onClick={handleCloseStatus} className="text-secondary">
+                                    <ListItemIcon>
+                                        <DoNotDisturbAltIcon fontSize="medium" className="text-secondary" />
+                                    </ListItemIcon>
+                                    Not Started
+                                </MenuItem>
+                                <MenuItem onClick={handleCloseStatus} className="text-primary">
+                                    <ListItemIcon>
+                                        <PublishedWithChangesIcon fontSize="medium" className="text-primary" />
+                                    </ListItemIcon>
+                                    In Progress
+                                </MenuItem>
+
+                                <MenuItem onClick={handleCloseStatus} className="text-primary">
+                                    <ListItemIcon>
+                                        <HourglassBottomIcon fontSize="medium" className="text-primary" />
+                                    </ListItemIcon>
+                                    On Hold
+                                </MenuItem>
+
+                                <MenuItem onClick={handleCloseStatus} className="text-success"><ListItemIcon>
+                                    <CheckCircleOutlineIcon fontSize="medium" className="text-success" />
+                                </ListItemIcon>
+                                    Completed
+                                </MenuItem>
+
+                                {/* <MenuItem onClick={handleCloseStatus} className="text-warning">
                                             <ListItemIcon>
                                                 <ErrorOutlineIcon fontSize="medium" className="text-warning" />
                                             </ListItemIcon>
@@ -1389,89 +1543,87 @@ const rows = [
                                             </ListItemIcon>
                                             Done</MenuItem> */}
 
-                                        {/*  */}
+                                {/*  */}
 
-                                    </Menu>
-                                </Box>
-
-                                <div className="ps-2">
-                                    <Button
-                                        id={`fade-button-${selectedTask.ID}`} // Use unique IDs for each button
-                                        aria-controls={
-                                            anchorElProfile
-                                                ? `fade-menu-${selectedTask.ID}`
-                                                : undefined
-                                        }
-                                        aria-haspopup="true"
-                                        aria-expanded={anchorElProfile ? "true" : undefined}
-                                        onClick={(event) =>
-                                            handleClickProfile(event, selectedTask.ID)
-                                        } // Pass index to handleClick
-                                        className="min-width-auto px-0 text-gray"
-                                    >
-                                        <MoreVertIcon />
-                                    </Button>
-                                    <Menu
-                                        id={`fade-menu-${selectedTask.ID}`} // Use unique IDs for each menu
-                                        MenuListProps={{
-                                            "aria-labelledby": `fade-button-${selectedTask.ID}`,
-                                        }}
-                                        anchorEl={anchorElProfile}
-                                        open={
-                                            selectedIndexProfile === selectedTask.ID &&
-                                            Boolean(anchorElProfile)
-                                        } // Open menu if selectedIndex matches
-                                        onClose={handleCloseProfile}
-                                    >
-                                        {folderList ? folderList.map((item) => {
-                                            return (<>
-                                                <MenuItem onClick={() => handleCloseProfile(item)}>
-                                                    <ListItemIcon>
-                                                        <DoNotDisturbAltIcon fontSize="medium" />
-                                                    </ListItemIcon>
-
-                                                    {item.Folder}
-                                                </MenuItem>
-                                            </>)
-                                        }) : ""}
-
-                                        {/* only for portal */}
-                                        <MenuItem className='ps-2'>
-                                            <ListItemIcon>
-                                                <ContentCopyIcon fontSize="medium" />
-                                            </ListItemIcon> Copy Link</MenuItem>
-
-                                        <MenuItem className='ps-2'>
-                                            <ListItemIcon>
-                                                <MergeIcon fontSize="medium" />
-                                            </ListItemIcon> Merge</MenuItem>
-
-                                        <MenuItem className='ps-2'>
-                                            <ListItemIcon>
-                                                <AttachEmailIcon fontSize="medium" />
-                                            </ListItemIcon> Retract Message (s)</MenuItem>
-
-                                        <MenuItem className='ps-2'>
-                                            <ListItemIcon>
-                                                <DeleteIcon fontSize="medium" />
-                                            </ListItemIcon> Delete Message (s)</MenuItem>
-                                    </Menu>
-                                </div>
-
-                                <Button onClick={handleClose} autoFocus sx={{ minWidth: 30 }}>
-                                    <span className="material-symbols-outlined text-black">
-                                        cancel
-                                    </span>
-                                </Button>
-                            </Box>
+                            </Menu>
                         </Box>
 
-                        <hr />
+                        <div className="ps-2">
+                            <Button
+                                id={`fade-button-${selectedTask.ID}`} // Use unique IDs for each button
+                                aria-controls={
+                                    anchorElProfile
+                                        ? `fade-menu-${selectedTask.ID}`
+                                        : undefined
+                                }
+                                aria-haspopup="true"
+                                aria-expanded={anchorElProfile ? "true" : undefined}
+                                onClick={(event) =>
+                                    handleClickProfile(event, selectedTask.ID)
+                                } // Pass index to handleClick
+                                className="min-width-auto px-0 text-gray"
+                            >
+                                <MoreVertIcon />
+                            </Button>
+                            <Menu
+                                id={`fade-menu-${selectedTask.ID}`} // Use unique IDs for each menu
+                                MenuListProps={{
+                                    "aria-labelledby": `fade-button-${selectedTask.ID}`,
+                                }}
+                                anchorEl={anchorElProfile}
+                                open={
+                                    selectedIndexProfile === selectedTask.ID &&
+                                    Boolean(anchorElProfile)
+                                } // Open menu if selectedIndex matches
+                                onClose={handleCloseProfile}
+                            >
+                                {folderList ? folderList.map((item) => {
+                                    return (<>
+                                        <MenuItem onClick={() => handleCloseProfile(item)} className='ps-1'>
+                                            <ListItemIcon>
+                                                <FolderSharedIcon fontSize="medium" />
+                                            </ListItemIcon>
+
+                                            {item.Folder}
+                                        </MenuItem>
+                                    </>)
+                                }) : ""}
+
+                                {/* only for portal */}
+                                <MenuItem className='ps-1'>
+                                    <ListItemIcon>
+                                        <ContentCopyIcon fontSize="medium" />
+                                    </ListItemIcon> Copy Link</MenuItem>
+
+                                <MenuItem className='ps-1'>
+                                    <ListItemIcon>
+                                        <MergeIcon fontSize="medium" />
+                                    </ListItemIcon> Merge</MenuItem>
+
+                                <MenuItem className='ps-1'>
+                                    <ListItemIcon>
+                                        <AttachEmailIcon fontSize="medium" />
+                                    </ListItemIcon> Retract Message (s)</MenuItem>
+
+                                <MenuItem className='ps-1'>
+                                    <ListItemIcon>
+                                        <DeleteIcon fontSize="medium" />
+                                    </ListItemIcon> Delete Message (s)</MenuItem>
+                            </Menu>
+                        </div>
+
+                        <Button onClick={handleClose} autoFocus sx={{ minWidth: 30 }}>
+                            <span className="material-symbols-outlined text-black">
+                                cancel
+                            </span>
+                        </Button>
+                    </Box>
+                </Box>
+
+                <DialogContent>
+                    <DialogContentText>
 
                         <Box className='mb-2'>
-
-
-
 
                             {/* <FormControlLabel
                                 control={<Checkbox checked={checked} onChange={handleChangeStatus} />}
@@ -1480,10 +1632,11 @@ const rows = [
                             <Box className='d-flex'>
                                 <Checkbox
                                     {...label}
-                                    icon={<PanoramaFishEyeIcon />}
+                                    icon={<PanoramaFishEyeIcon className={status === "Completed" ? "text-success" : "text-gray"} />}
                                     onChange={handleChangeStatus}
-                                    checkedIcon={<CheckCircleIcon />}
+                                    checkedIcon={<CheckCircleIcon className={status === "Completed" ? "text-success" : "text-gray"} />}
                                     className="ps-0"
+                                    checked={status === "Completed"}
                                 />
                                 <input
                                     ariant="h4"
@@ -1492,6 +1645,7 @@ const rows = [
                                     onChange={handalChangeSetSubject}
                                     onClick={handalClickEditeSubject}
                                     value={tSubject}
+                                    disabled={selectedTask.Source === "Portal"}
                                 />
                             </Box>
 
@@ -1503,12 +1657,13 @@ const rows = [
                                         value={txtdescription} // Bind the value to the state
                                         onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
                                         onClick={handalClickEditeSubject}
+
                                     ></textarea>
                                 </>)}
 
 
                                 {
-                                    <PortalMessage selectedTask={selectedTask} Json_RegisterItem={Json_RegisterItem}></PortalMessage>
+                                    <PortalMessage selectedTask={selectedTask} Json_RegisterItem={Json_RegisterItem} setPortalComments={setPortalComments} setSelectedEmailForComment={setSelectedEmailForComment}></PortalMessage>
                                 }
 
                             </Box>
@@ -1516,7 +1671,7 @@ const rows = [
 
 
 
-                            {isVisible && ( // Show the box if isVisible is true
+                            {isVisible && selectedTask.Source === "CRM" && ( // Show the box if isVisible is true
                                 <Box className='mb-3 mt-2'>
                                     <Stack spacing={2} direction="row">
                                         <Button variant="outlined" onClick={toggleVisibilityCancle}>Cancel</Button>
@@ -1625,50 +1780,23 @@ const rows = [
                             {/* dropdown end */}
                         </Box>
                         {/*  */}
-
-                        <Box className="d-flex flex-wrap">
-                            <label className='text-decoration-none d-flex'
-                                onClick={handleClickOpen}
-                            ><BallotIcon className='me-1' /> {attachmentFile.length} Documents</label>
-                            {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
-                        </Box>
-                        <Box className="d-flex mt-3">
-                            <Box className="mb-2 me-3">
-                                <label className="font-14 text-black mb-1">Start Date</label>
-                                <Box className='custom-datepicker'>
-                                    <CalendarMonthIcon />
-                                    <DatePicker
-                                        showIcon
-                                        dateFormat="DD/MM/YYYY"
-                                        value={currentDate}
-                                        onChange={(e) => setCurrentDate(e)} // Handle date changes
-                                        timeFormat={false}
-                                        isValidDate={disablePastDt}
-                                        closeOnSelect={true}
-                                        icon="fa fa-calendar"
-                                    />
-                                </Box>
+                        {selectedTask.Source === "CRM" && (<>
+                            <Box className="d-flex flex-wrap">
+                                <label className='text-decoration-none d-flex'
+                                    onClick={handleClickOpen}
+                                ><BallotIcon className='me-1' /> {attachmentFile.length} Documents</label>
+                                {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
                             </Box>
-
-                            <Box className="mb-2" sx={{ float: "right" }}>
-                                <Box className="mb-2 ">
-                                    <label className="font-14 semibold text-black mb-1">
-                                        Due By
-                                    </label>
+                            <Box className="d-flex mt-3">
+                                <Box className="mb-2 me-3">
+                                    <label className="font-14 text-black mb-1">Start Date</label>
                                     <Box className='custom-datepicker'>
                                         <CalendarMonthIcon />
                                         <DatePicker
                                             showIcon
                                             dateFormat="DD/MM/YYYY"
-                                            value={nextDate}
-                                            onChange={(e) => {
-                                                setNextDate(e);
-                                                let enddatetime = dayjs(remiderDate).format("YYYY/MM/DD");
-                                                if (enddatetime) {
-                                                    Json_UpdateTaskField("EndDateTime", enddatetime, "Due date updated!")
-                                                }
-
-                                            }} // Handle date changes
+                                            value={currentDate}
+                                            onChange={(e) => setCurrentDate(e)} // Handle date changes
                                             timeFormat={false}
                                             isValidDate={disablePastDt}
                                             closeOnSelect={true}
@@ -1676,13 +1804,44 @@ const rows = [
                                         />
                                     </Box>
                                 </Box>
+
+                                <Box className="mb-2" sx={{ float: "right" }}>
+                                    <Box className="mb-2 ">
+                                        <label className="font-14 semibold text-black mb-1">
+                                            Due By
+                                        </label>
+                                        <Box className='custom-datepicker'>
+                                            <CalendarMonthIcon />
+                                            <DatePicker
+                                                showIcon
+                                                dateFormat="DD/MM/YYYY"
+                                                value={nextDate}
+                                                onChange={(e) => {
+                                                    setNextDate(e);
+                                                    let enddatetime = dayjs(e).format("YYYY/MM/DD");
+                                                    if (enddatetime) {
+                                                        Json_UpdateTaskField("EndDateTime", enddatetime, "Due date updated!")
+                                                    }
+
+                                                }} // Handle date changes
+                                                timeFormat={false}
+                                                isValidDate={disablePastDt}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
+                                            />
+                                        </Box>
+                                    </Box>
+                                </Box>
                             </Box>
-                        </Box>
+                        </>)}
+
 
                         <Box className="pb-0 mb-0">
                             <Box className="main-chatbox">
-                                {crmTaskAcivity
-                                    ? crmTaskAcivity.map((item, index) => {
+                            {selectedTask.Source === "Portal" ? (<>
+                                {portalComments
+                                    ? portalComments.map((item, index) => {
+                                     
                                         // console.log("forwardUser22",forwardUser.ForwardTo)
                                         if (item.status === "sys") {
                                             return (
@@ -1695,12 +1854,170 @@ const rows = [
                                                             "border-radius": "3px",
                                                         }}
                                                     >
-                                                        <Typography
-                                                            variant="body1"
-                                                            className="font-14 sembold"
-                                                        >
-                                                            {item.Notes}
+                                                        <Typography key={index} variant="body1" className="font-14 semibold">
+                                                                {item.Notes} {/* Display each note */}
+                                                            </Typography>
+                                                        <Typography variant="body1" className="font-12">
+                                                            {dateAndTime(item.ActivityDate)}
                                                         </Typography>
+                                                    </Box>
+                                                </>
+                                            );
+                                        }
+                                        else if (item.Type === "response") {
+                                            return (
+                                                <>
+                                                    <Box
+                                                        className="chat-box d-flex align-items-end mb-2 sender"
+                                                        justifyContent="flex-end"
+                                                    >
+                                                        <Box class="chat-message">
+                                                            <Box class="inner-chat-message ms-auto">
+                                                                <Typography variant="body1" className="font-14">
+                                                                    {item.Remark}
+                                                                </Typography>
+                                                                <Box className="d-flex align-items-center justify-content-end">
+                                                                    <Typography variant="body1" className="font-12">
+                                                                        {dateAndTime(item.DateOfRemark)}
+                                                                    </Typography>
+
+                                                                    <Box className="">
+                                                                        <Button
+                                                                            id={`fade-button-${index}`} // Use unique IDs for each button
+                                                                            aria-controls={
+                                                                                anchorEl1
+                                                                                    ? `fade-menu-${index}`
+                                                                                    : undefined
+                                                                            }
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded={
+                                                                                anchorEl1 ? "true" : undefined
+                                                                            }
+                                                                            onClick={(event) =>
+                                                                                handleClick2(event, index)
+                                                                            } // Pass index to handleClick
+                                                                            className="min-width-auto px-0 text-gray"
+                                                                        >
+                                                                            <MoreVertIcon />
+                                                                        </Button>
+                                                                        <Menu
+                                                                            id={`fade-menu-${index}`} // Use unique IDs for each menu
+                                                                            MenuListProps={{
+                                                                                "aria-labelledby": `fade-button-${index}`,
+                                                                            }}
+                                                                            anchorEl={anchorEl1}
+                                                                            open={
+                                                                                selectedIndex === index &&
+                                                                                Boolean(anchorEl1)
+                                                                            } // Open menu if selectedIndex matches
+                                                                            onClose={handleClose2}
+                                                                        >
+                                                                            <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                                <ListItemIcon>
+                                                                                    <EditIcon fontSize="medium" />
+                                                                                </ListItemIcon> Edit</MenuItem>
+
+                                                                            <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                                <ListItemIcon>
+                                                                                    <DeleteIcon fontSize="medium" />
+                                                                                </ListItemIcon> Delete Message</MenuItem>
+                                                                        </Menu>
+                                                                    </Box>
+                                                                </Box>
+                                                            </Box>
+                                                        </Box>
+                                                    </Box>
+                                                </>
+                                            );
+                                        }
+                                        else {
+                                            return (
+                                                <Box
+                                                    className="chat-box d-flex align-items-end mb-2 reciever"
+                                                    key={index}
+                                                >
+                                                    <Box className="client-img me-3 mb-0 ms-0">
+                                                        <img src={user} alt="User" />
+                                                    </Box>
+                                                    <Box className="chat-message me-2">
+                                                        <Box className="inner-chat-message me-2">
+                                                            <Typography variant="body1" className="font-14">
+                                                                {item.Remark}
+                                                            </Typography>
+                                                            <Box className="d-flex align-items-center justify-content-end">
+                                                                <Typography variant="body1" className="font-12">
+                                                                    {dateAndTime(item.DateOfRemark)}
+                                                                </Typography>
+
+                                                                <Box className="">
+                                                                    <Button
+                                                                        id={`fade-button-${index}`} // Use unique IDs for each button
+                                                                        aria-controls={
+                                                                            anchorEl1
+                                                                                ? `fade-menu-${index}`
+                                                                                : undefined
+                                                                        }
+                                                                        aria-haspopup="true"
+                                                                        aria-expanded={
+                                                                            anchorEl1 ? "true" : undefined
+                                                                        }
+                                                                        onClick={(event) =>
+                                                                            handleClick2(event, index)
+                                                                        } // Pass index to handleClick
+                                                                        className="min-width-auto px-0 text-gray"
+                                                                    >
+                                                                        <MoreVertIcon />
+                                                                    </Button>
+                                                                    <Menu
+                                                                        id={`fade-menu-${index}`} // Use unique IDs for each menu
+                                                                        MenuListProps={{
+                                                                            "aria-labelledby": `fade-button-${index}`,
+                                                                        }}
+                                                                        anchorEl={anchorEl1}
+                                                                        open={
+                                                                            selectedIndex === index &&
+                                                                            Boolean(anchorEl1)
+                                                                        } // Open menu if selectedIndex matches
+                                                                        onClose={handleClose2}
+                                                                    >
+                                                                        <MenuItem onClick={handleClose2}>
+                                                                            Edit
+                                                                        </MenuItem>
+                                                                        <MenuItem onClick={handleClose2}>
+                                                                            Delete
+                                                                        </MenuItem>
+                                                                    </Menu>
+                                                                </Box>
+                                                            </Box>
+                                                        </Box>
+                                                    </Box>
+                                                </Box>
+                                            );
+
+                                        }
+                                    })
+                                    : null}
+                            </>):(<>
+                                {crmTaskAcivity
+                                    ? crmTaskAcivity.map((item, index) => {
+                                        const notesArray = item.Notes.split(',');
+                                        // console.log("forwardUser22",forwardUser.ForwardTo)
+                                        if (item.status === "sys") {
+                                            return (
+                                                <>
+                                                    <Box
+                                                        className="text-center py-2 file-uploaded"
+                                                        style={{
+                                                            backgroundColor: "#e5e5e5",
+                                                            marginBottom: "10px",
+                                                            "border-radius": "3px",
+                                                        }}
+                                                    >
+                                                        {notesArray.map((note, index) => (
+                                                            <Typography key={index} variant="body1" className="font-14 semibold">
+                                                                {note.trim()} {/* Display each note */}
+                                                            </Typography>
+                                                        ))}
                                                         <Typography variant="body1" className="font-12">
                                                             {dateAndTime(item.ActivityDate)}
                                                         </Typography>
@@ -1841,6 +2158,8 @@ const rows = [
                                         }
                                     })
                                     : null}
+                            </>)}
+                                
 
                                 {/* Reciever Start */}
 
@@ -1883,7 +2202,7 @@ const rows = [
 
                             <Box className="d-flex align-items-end main-file-upload  pt-3">
                                 <Box className="w-100">
-                                    <Stack direction="row" className='pb-3' spacing={1}>
+                                    <Stack direction="row" className='pb-2 custom-chips' spacing={1}>
                                         {selectedFiles ? selectedFiles.map((item, index) => {
 
                                             return (<Chip key={index} label={item.FileName} variant="outlined" onDelete={() => handleDelete(item)} />);
@@ -1893,17 +2212,20 @@ const rows = [
                                     </Stack>
 
                                     <Box className='position-relative'>
-                                        <Box className='upload-chat-file'>
-                                            <input
-                                                type="file"
-                                                id={`file-upload ${selectedTask.ID}`}
-                                                multiple
-                                                onChange={handleFileSelect}
-                                                className="file-input"
-                                            />
-                                            <label for={`file-upload ${selectedTask.ID}`} className="pointer"><AttachFileIcon /></label>
+                                        {selectedTask.Source === "CRM" && (<>
+                                            <Box className='upload-chat-file'>
+                                                <input
+                                                    type="file"
+                                                    id={`file-upload ${selectedTask.ID}`}
+                                                    multiple
+                                                    onChange={handleFileSelect}
+                                                    className="file-input"
+                                                />
+                                                <label for={`file-upload ${selectedTask.ID}`} className="pointer"><AttachFileIcon /></label>
 
-                                        </Box>
+                                            </Box>
+                                        </>)}
+
 
                                         <textarea
                                             className="textarea"
@@ -1915,7 +2237,18 @@ const rows = [
 
                                 </Box>
 
-                                <Box className="d-flex d-flex align-items-center ms-3">
+                                {selectedTask.Source === "Portal" ?(<Box className="d-flex d-flex align-items-center ms-3">
+                                    <Button
+                                        className="btn-blue-2 ms-0 mb-2"
+                                        size="small"
+                                        onClick={addActivitySaveForPortal}
+                                        startIcon={<SendIcon />}
+                                    >
+                                        Send
+                                    </Button>
+                                    <ToastContainer></ToastContainer>
+                                </Box>):(
+                                    <Box className="d-flex d-flex align-items-center ms-3">
                                     <Button
                                         className="btn-blue-2 ms-0 mb-2"
                                         size="small"
@@ -1926,6 +2259,8 @@ const rows = [
                                     </Button>
                                     <ToastContainer></ToastContainer>
                                 </Box>
+                                )}
+                                
                             </Box>
                         </Box>
                     </DialogContentText>
@@ -1954,15 +2289,13 @@ const rows = [
                 {/* <DialogTitle id="alert-dialog-title">
                         {"Use Google's location service?"}
                     </DialogTitle> */}
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
 
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="dropdown-box">
-                                <Typography variant="h4" className='font-18 bold mb-2 text-black'>
-                                    Document List
-                                </Typography>
-                                {/* <Box className="btn-Select">
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold mb-2 text-black'>
+                            Document List
+                        </Typography>
+                        {/* <Box className="btn-Select">
                                     <Button className='btn-white'>Action</Button>
                                     <Button className='btn-white'>Ser</Button>
                                     <Button className='btn-white'>Custom</Button>
@@ -1971,25 +2304,29 @@ const rows = [
 
                                     <Button className='btn-blue-2' size="small">Apply Now</Button>
                                 </Box> */}
-                            </Box>
+                    </Box>
 
-                            {/*  */}
-                            <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
+                    {/*  */}
+                    <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+
                         <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
                             <Grid item xs={12} md={6}>
 
                                 <Box className="search-box">
-                                {attachmentFile.length > 0 ? attachmentFile.map((item, index) => {
-                                    let fileName = "";
-                                    if (item.FileName) {
-                                        let Typest = item.FileName.lastIndexOf("\\");
-                                        fileName = item.FileName.slice(Typest + 1);
-                                    }
+                                    {attachmentFile.length > 0 ? attachmentFile.map((item, index) => {
+                                        let fileName = "";
+                                        if (item.FileName) {
+                                            let Typest = item.FileName.lastIndexOf("\\");
+                                            fileName = item.FileName.slice(Typest + 1);
+                                        }
                                         return <>
                                             <Box className="file-uploads">
                                                 <label className="file-uploads-label file-uploads-document">
@@ -2005,7 +2342,7 @@ const rows = [
                                                         />
                                                         <Box className="upload-content pe-3">
                                                             <Typography variant="h4" >
-                                                              {fileName}
+                                                                {fileName}
                                                             </Typography>
                                                             <Typography variant="body1">
                                                                 Size:  <span className='sembold'>0.00 KB</span> | Date <span className='sembold'>09/03/2024</span>
@@ -2057,7 +2394,7 @@ const rows = [
                                                                     <TravelExploreIcon fontSize="medium" />
                                                                 </ListItemIcon>
                                                                 Open in Browser</MenuItem>
-                                                            <MenuItem onClick={()=>handleDownloadDoc(item)}>
+                                                            <MenuItem onClick={() => handleDownloadDoc(item)}>
                                                                 <ListItemIcon>
                                                                     <CloudDownloadIcon fontSize="medium" />
                                                                 </ListItemIcon>
@@ -2068,7 +2405,7 @@ const rows = [
                                             </Box>
                                             {/* file upload end */}
                                         </>
-                                    }):""}
+                                    }) : ""}
                                 </Box>
 
                                 {/* <Demo>
@@ -2132,25 +2469,22 @@ const rows = [
                     margin: '0 auto'
                 }}
             >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                            Document Details
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={(event) => handleCloseDocumentDetailsList(event)} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
                 <DialogContent>
                     <DialogContentText>
-
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="dropdown-box">
-                                <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                                    Document Details
-                                </Typography>
-                            </Box>
-
-                            {/*  */}
-                            <Button onClick={(event) => handleCloseDocumentDetailsList(event)} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-
-                        <hr />
 
                         <Box className='main-accordian main-accordian-single-row'>
                             <Accordion className='accordian-box' expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>

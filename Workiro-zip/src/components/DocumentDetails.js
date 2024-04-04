@@ -28,6 +28,8 @@ import DataGrid, {
     Sorting
 } from 'devextreme-react/data-grid';
 import DataNotFound from "./DataNotFound";
+import CommanCLS from "../services/CommanService";
+import TaskDetailModal from "./TaskDetailModal";
 
 
 // sadik code start
@@ -55,15 +57,33 @@ const rows = [
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 // sadik code end
+const agrno = localStorage.getItem("agrno");
+const Email = localStorage.getItem("Email");
+const password = localStorage.getItem("password");
+const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+const baseUrlDocuSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
-function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFilteredResult, dataNotFoundBoolean, selectedGroup }) {
+function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, selectedGroup }) {
 
-    // sadik js start
-    console.log("Selected Document", documents)
+    const Cls = new CommanCLS(baseUrl, agrno, Email, password);
+    const ClsDocuSms = new CommanCLS(baseUrlDocuSms, agrno, Email, password);
 
     const [openPDFView, setOpenPDFView] = React.useState(false);
 
     const [selectedDocument, setSelectedDocument] = React.useState(null);
+    const [docForDetails, setDocForDetails] = useState({});
+
+    const [associatedTask, setAssociatedTask] = useState([]);
+    const [selectedTask, setSelectedTask] = useState({});
+    const [isApi, setIsApi] = useState(false);
+
+    // modal
+    const [openModal, setOpen] = React.useState(false);
+
+    const handleClickDetailOpen = () => {
+        setOpen(true);
+    };
+
     const handleClickOpenPDFView = (event, data) => {
         event.preventDefault();
         event.stopPropagation();
@@ -109,10 +129,86 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
         setAnchorElDocumentList(newAnchorElDocumentList);
     };
 
+    // const Json_Get_CRM_Task_ActivityByTaskId=(sTask)=>{
+    //     let obj = {
+    //         Email: localStorage.getItem('Email'),
+    //         TaskID: sTask["Taskid"],
+    //         agrno: localStorage.getItem("agrno"),
+    //         password: localStorage.getItem("Password")
+    //     }
+    //     try{
+    //         Cls.Json_Get_CRM_Task_ActivityByTaskId(obj,(sts,data)=>{
+    //             const res = JSON.parse(data);
+    //             if(res.Table.length>0){
+    //                 console.log("sjdjsfs",res.Table[0]);
+    //             }
+    //         })
+    //     }catch(err){
+    //         console.log("Error while calling Json_Get_CRM_Task_ActivityByTaskId",err);
+    //     }
+    // }
+
+    const Json_CRM_GetOutlookTask = (event, sTask) => {
+        event.preventDefault();
+        let obj = {
+            Email: localStorage.getItem('Email'),
+            agrno: localStorage.getItem("agrno"),
+            password: localStorage.getItem("Password")
+        };
+        try {
+            Cls.Json_CRM_GetOutlookTask(obj, (sts, data) => {
+                const res = JSON.parse(data);
+                if (res.Table) {
+                    const fltTask = res.Table.filter(itm => itm.ID === sTask.Taskid);
+                    const formattedTasks = fltTask.map((task) => {
+                        let timestamp, timestamp2;
+                        if (task.EndDateTime) {
+                            timestamp = parseInt(task.EndDateTime.slice(6, -2));
+                        }
+                        if (task.CreationDate) {
+                            timestamp2 = parseInt(task.CreationDate.slice(6, -2));
+                        }
+
+                        const date = new Date(timestamp);
+                        const date2 = new Date(timestamp2);
+
+                        return { ...task, EndDateTime: date, CreationDate: date2 };
+                    });
+                    setSelectedTask(formattedTasks[0]);
+                    handleClickDetailOpen(formattedTasks[0]);
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_CRM_GetOutlookTask", err);
+        }
+    }
+
+    const Json_getAssociatedTaskListByDocumentId = (sDoc) => {
+        let obj = {
+            Email: localStorage.getItem('Email'),
+            ItemId: sDoc["Registration No."],
+            agrno: localStorage.getItem("agrno"),
+            password: localStorage.getItem("Password")
+        }
+        try {
+            Cls.Json_getAssociatedTaskListByDocumentId(obj, (sts, data) => {
+                const res = JSON.parse(data);
+                if (res.Table.length > 0) {
+                    setAssociatedTask(res.Table);
+                } else {
+                    setAssociatedTask([]);
+                }
+            })
+        } catch (err) {
+            console.log("Error while calling Json_getAssociatedTaskListByDocumentId", err);
+        }
+    }
 
     // Document details List
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
-    const handleClickOpenDocumentDetailsList = (event) => {
+    const handleClickOpenDocumentDetailsList = (event, sDoc) => {
+        Json_getAssociatedTaskListByDocumentId(sDoc);
+        setDocForDetails(sDoc);
         event.stopPropagation();
         setOpenDocumentDetailsList(true);
     };
@@ -136,12 +232,15 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
         return dateA - dateB;
     };
 
+    const startFormattingDate = (timeStamp) => {
+        const dateObject = new Date(timeStamp);
+        return `${dateObject.getDate()}/${dateObject.getMonth() + 1}/${dateObject.getFullYear()}`;
+    }
 
     return (
         <>
-
-
             <Box>
+                <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
                 <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
                 {/* <Box className='d-flex mb-3 mt-2'>
@@ -154,7 +253,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                 </Box> */}
 
                 {dataNotFoundBoolean ? <DataNotFound /> : <DataGrid
-                    dataSource={dataNotFoundBoolean ? [] : advFilteredResult.length > 0 ? advFilteredResult : documents}
+                    dataSource={advFilteredResult.length > 0 ? advFilteredResult : documents}
                     keyExpr="Guid"
                     allowColumnReordering={true}
                     rowAlternationEnabled={true}
@@ -225,7 +324,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                                         >
                                             <MenuItem onClick={(event) => {
                                                 handleCloseDocument(event, data)
-                                                handleClickOpenDocumentDetailsList(event)
+                                                handleClickOpenDocumentDetailsList(event, data.data)
                                             }}>
                                                 <ListItemIcon>
                                                     <ArticleIcon fontSize="medium" />
@@ -738,18 +837,12 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                     margin: '0 auto'
                 }}
             >
-                {/* <DialogTitle id="alert-dialog-title">
-                        {"Use Google's location service?"}
-                    </DialogTitle> */}
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="dropdown-box">
-                                <Typography variant="h4" className='font-18 bold mb-2 text-black'>
-                                    Document List
-                                </Typography>
-                                {/* <Box className="btn-Select">
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold mb-2 text-black'>
+                            Document List
+                        </Typography>
+                        {/* <Box className="btn-Select">
                                     <Button className='btn-white'>Action</Button>
                                     <Button className='btn-white'>Ser</Button>
                                     <Button className='btn-white'>Custom</Button>
@@ -758,15 +851,22 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
 
                                     <Button className='btn-blue-2' size="small">Apply Now</Button>
                                 </Box> */}
-                            </Box>
+                    </Box>
 
-                            {/*  */}
-                            <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
+                    {/*  */}
+                    <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+                {/* <DialogTitle id="alert-dialog-title">
+                        {"Use Google's location service?"}
+                    </DialogTitle> */}
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+
+
 
 
                         {Array(5).fill("").map(() => {
@@ -865,25 +965,22 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                     margin: '0 auto'
                 }}
             >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                            Document Details
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={(event) => handleCloseDocumentDetailsList(event)} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
                 <DialogContent>
                     <DialogContentText>
-
-                        <Box className="d-flex align-items-center justify-content-between">
-                            <Box className="dropdown-box">
-                                <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                                    Document Details
-                                </Typography>
-                            </Box>
-
-                            {/*  */}
-                            <Button onClick={(event) => handleCloseDocumentDetailsList(event)} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-                        </Box>
-
-                        <hr />
 
                         <Box className='main-accordian main-accordian-single-row'>
                             <Accordion className='accordian-box' expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
@@ -904,7 +1001,18 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {rows.map((row) => (
+                                                {Object.keys(docForDetails).length > 0 && Object.keys(docForDetails).map((itm, i) => {
+                                                    if (itm !== "StickyNotes") {
+                                                        return <TableRow
+                                                            key={i}
+                                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                        >
+                                                            <TableCell align="left" className='bold'>{itm}</TableCell>
+                                                            <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
+                                                        </TableRow>
+                                                    }
+                                                })}
+                                                {/* {rows.map((row) => (
                                                     <TableRow
                                                         key={row.name}
                                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -912,7 +1020,7 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                                                         <TableCell align="left" className='bold'>{row.document}</TableCell>
                                                         <TableCell align="left">{row.details}</TableCell>
                                                     </TableRow>
-                                                ))}
+                                                ))} */}
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
@@ -1037,9 +1145,9 @@ function DocumentDetails({ groupByFilterResult, isGroupBy, documents, advFiltere
                                 <AccordionDetails>
                                     <Box className='mt-3'>
 
-                                        {Array(5).fill("").map(() => {
+                                        {associatedTask.length > 0 && associatedTask.map((itm, i) => {
                                             return <>
-                                                <Link href="#" className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />Contact agreement</Link>
+                                                <Link key={i} href="#" onClick={(e) => Json_CRM_GetOutlookTask(e, itm)} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />{itm.Subject}</Link>
                                             </>
                                         })}
                                     </Box>

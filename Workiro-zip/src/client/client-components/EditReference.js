@@ -14,7 +14,12 @@ import StepLabel from "@mui/material/StepLabel";
 import StepContent from "@mui/material/StepContent";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-function Reference() {
+import EditClientdetails from "./EditClientdetails";
+import EditUDFClientcard from "./EditUDFClientcard";
+import EditClientaddress from "./EditClientaddress";
+import { connect } from 'react-redux';
+function EditReference({companyEditDetails}) {
+    console.log(companyEditDetails,"companyEditDetails");
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -26,8 +31,7 @@ function Reference() {
   const [selectedFolderID, setSelectedFolderID] = useState(null);
   const [dataFromChild, setDataFromChild] = useState([]);
   const [dataCompanyHouse, setDataCompanyHouse] = useState([]);
-  // const [activeStep, setActiveStep] = React.useState(0);
-
+  const [activeStep, setActiveStep] = React.useState(0);
   const [userDetail, setUserDetail] = useState({
     Clientname: "",
     Clientid: "",
@@ -188,63 +192,6 @@ function Reference() {
 
     Json_SetClientAddress(obj);
   };
-  const [activeStep, setActiveStep] = React.useState(0);
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    if (activeStep === steps.length - 1) {
-      function todayDate() {
-        var today = new Date().toJSON().slice(0, 10);
-        return today;
-      }
-      let clientdata = {
-        agrno: agrno,
-        Email: Email,
-        password: password,
-        ProjectIdList: userDetail.folderId ? userDetail.folderId : -1,
-        OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
-        OriginatorName: userDetail.Clientname ? userDetail.Clientname : "",
-        Address: userDetail.fullAddress ? userDetail.fullAddress : "",
-        TelNo: userDetail.Telephone ? userDetail.Telephone : "",
-        AlteTelNo: userDetail.Mobile ? userDetail.Mobile : "",
-        Faxno: "",
-        ContactName: "",
-        UDF1: "",
-        UDF2: "",
-        UDF3: "",
-        StickyNote: "",
-        ContactEmail: userDetail.Email ? userDetail.Email : "",
-        MParameter: "",
-        CDate: todayDate(),
-        BussId: userDetail.BussId ? userDetail.BussId : -1,
-        SourceId: userDetail.SourceId ? userDetail.SourceId : -1,
-        StatusId: userDetail.StatusId ? userDetail.StatusId : -1,
-        Description: "",
-        OrgPassword: "",
-        ManagerId: userDetail.UserId ? userDetail.UserId : parseInt(intUserid),
-        OrgActive: "Yes",
-      };
-      // toast.success("Reference Added Successfully !");
-      // Json_InsertContact();
-      console.log(clientdata, "clientdata");
-      Cls.Json_AddClient(clientdata, (sts, data) => {
-        console.log(sts, data, "newclientdata");
-        let jsonparse = JSON.parse(data);
-        if (sts) {
-          if (jsonparse.Status == "Success") {
-            console.log("Response", data);
-            toast.success("Reference Added Successfully !");
-            // Json_InsertContact(); Main contact not need
-            saveUDF();
-            mainAddress();
-            billingAddress();
-            ragisterAddress();
-          } else {
-            toast.success("Reference ID Already Exists!");
-          }
-        }
-      });
-    }
-  };
   const handleSubmit = (event) => {
     event.preventDefault();
     function todayDate() {
@@ -365,6 +312,21 @@ function Reference() {
       });
     } catch (e) {}
   };
+  const mapStateToProps = (state) => ({
+    userDetail: state.userDetail,
+    dataCompanyHouse: state.dataCompanyHouse,
+  });
+  const mapDispatchToProps = {
+    setUserDetail,
+    setDataCompanyHouse,
+    setSelectedFolderID,
+  };
+  const EditClientdetailsContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(EditClientdetails);
+  
+ 
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
@@ -375,7 +337,9 @@ function Reference() {
   }, []);
 
   // stepper
- 
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
@@ -390,17 +354,19 @@ function Reference() {
       description: (
         <Box className="clearfix">
           {
-            <AddClientdetails
+            <EditClientdetails
               userDetail={userDetail}
               //
               dataCompanyHouse={dataCompanyHouse}
               // setDataCompanyHouse={setDataCompanyHouse}
               setUserDetail={setUserDetail}
               //
+              companyEditDetails={companyEditDetails}
               setDataCompanyHouse={setDataCompanyHouse}
               setSelectedFolderID={setSelectedFolderID}
               //
-            ></AddClientdetails>
+            ></EditClientdetails>
+          
           }
         </Box>
       ),
@@ -427,13 +393,13 @@ function Reference() {
       description: (
         <Box className="clearfix">
           {
-            <AddClientaddress
+            <EditClientaddress
               userDetail={userDetail}
               //
               dataCompanyHouse={dataCompanyHouse}
               setUserDetail={setUserDetail}
               //
-            ></AddClientaddress>
+            ></EditClientaddress>
           }
         </Box>
       ),
@@ -443,7 +409,7 @@ function Reference() {
       label: "Details",
       description: (
         <Box className="clearfix">
-          <UDFClientcard
+          <EditUDFClientcard
             data={clientDetails}
             setDataFromChild={setDataFromChild}
           />
@@ -488,9 +454,7 @@ function Reference() {
                         className="btn-blue-2"
                         size="small"
                       >
-                       {activeStep === steps.length - 1
-                                ? "Add Client"
-                                : "Continue"}
+                        {index === steps.length - 1 ? "Finish" : "Continue"}
                       </Button>
                     </Box>
                   </Box>
@@ -501,18 +465,20 @@ function Reference() {
           {activeStep === steps.length && (
             <Paper square elevation={0} sx={{ p: 3 }}>
               <Typography>
-                Reference Added Successfully!!!
+                All steps completed - you&apos;re finished
               </Typography>
               <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-                Add Another
+                Reset
               </Button>
             </Paper>
           )}
         </Box>
         {/* Stepper end  */}
 
-        {/* <Box className="main-accordian">
-            <div style={{ marginBottom: "20px" }}>
+        <Box className="main-accordian">
+          {/* <UDFClientcard data={clientDetails} setDataFromChild={setDataFromChild} /> */}
+
+          <div style={{ marginBottom: "20px" }}>
             <Button
               style={{ marginTop: "20px" }}
               variant="contained"
@@ -525,9 +491,9 @@ function Reference() {
               Add Client
             </Button>{" "}
           </div>
-        </Box> */}
+        </Box>
       </Box>
     </Box>
   );
 }
-export default memo(Reference);
+export default memo(EditReference);

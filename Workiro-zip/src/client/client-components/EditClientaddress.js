@@ -9,7 +9,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 
-const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHouse })=>{
+const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHouse })=>{
   console.log(dataCompanyHouse,"dataCompanyHouse");
   const [mainCountry, setMainCountry] = useState(
     countries.find((country) => country.label === "United Kingdom")?.label
@@ -506,7 +506,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
     </div>
   );
 });
-export default AddClientaddress;
+export default EditClientaddress;
 var countries = [
   { code: "AD", label: "Andorra", phone: "376" },
   {
