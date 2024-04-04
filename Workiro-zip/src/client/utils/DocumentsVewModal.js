@@ -382,9 +382,9 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
 
     }
 
-const createTask=()=>{
-console.log("Create New Task")
-}
+    const createTask = () => {
+        console.log("Create New Task")
+    }
 
 
     return (
@@ -397,36 +397,34 @@ console.log("Create New Task")
             className='custom-modal full-modal'
             sx={{ width: '100%', maxWidth: '100%' }}
         >
-            <DialogContent>
+            <Box className="d-flex align-items-center justify-content-between modal-head">
+                <Box className="dropdown-box">
+                    <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                        Document List
+                    </Typography>
+                </Box>
 
-                <Box className="d-flex align-items-center justify-content-between">
-                    <Box className="dropdown-box">
-                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                            Document List 
-                        </Typography>
-                    </Box>
+                {/*  */}
 
-                    {/*  */}
+                <Box className="d-flex align-items-center justify-content-between flex-wrap">
 
-                    <Box className="d-flex align-items-center justify-content-between flex-wrap">
-                        
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTask} >Create Task</Button>
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
-                        {/* <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button> */}
+                    <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTask} >Create Task</Button>
+                    <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
+                    {/* <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button> */}
 
-                        <Box>
-                            <Button
-                                id="basic-button"
-                                aria-controls={ChangeIndex ? 'basic-menu' : undefined}
-                                aria-haspopup="true"
-                                aria-expanded={ChangeIndex ? 'true' : undefined}
-                                onClick={handleClickChangeIndex}
-                                className='btn-blue-2'
-                            >
-                                Category
-                                {/* <KeyboardArrowDownIcon className='ms-1' /> */}
-                            </Button>
-                            {/* <Menu
+                    <Box>
+                        <Button
+                            id="basic-button"
+                            aria-controls={ChangeIndex ? 'basic-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={ChangeIndex ? 'true' : undefined}
+                            onClick={handleClickChangeIndex}
+                            className='btn-blue-2 me-2'
+                        >
+                            Category
+                            {/* <KeyboardArrowDownIcon className='ms-1' /> */}
+                        </Button>
+                        {/* <Menu
                                 id="basic-menu"
                                 className='custom-dropdown'
                                 anchorEl={anchorElChangeIndex}
@@ -442,18 +440,18 @@ console.log("Create New Task")
                                 <MenuItem onClick={handleCloseChangeIndex}> <AddIcon className='me-2' /> </MenuItem>
                                 <MenuItem onClick={handleCloseChangeIndex}> <AlarmOnIcon className='me-2' /> Add Activity </MenuItem>
                             </Menu> */}
-                        </Box>
-
-                        <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
-                            <span className="material-symbols-outlined text-black">
-                                cancel
-                            </span>
-                        </Button>
-
                     </Box>
-                </Box>
 
-                <hr />
+                    <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+
+                </Box>
+            </Box>
+
+            <DialogContent className='full-height-modal'>
 
                 <DialogContentText id="alert-dialog-description">
                     <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
@@ -483,7 +481,7 @@ console.log("Create New Task")
                                     />
                                 </Box>
                             </TabPanel>
-                            
+
                             <TabPanel value="2">
                                 <Box className='row'>
                                     {Array(12).fill("").map(() => {

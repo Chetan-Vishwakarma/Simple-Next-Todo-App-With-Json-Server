@@ -754,12 +754,13 @@ span.tox-statusbar__branding {
 }
 
 .activity-timeline ul li .timeline-details .content-time h5 {
-  font-size: 17px;
+  font-size: 14px;
   margin-bottom: 5px;
 }
 
 .activity-timeline ul li .timeline-details .content-time p {
   margin-bottom: 3px;
+  font-size: 14px;
 }
 
 

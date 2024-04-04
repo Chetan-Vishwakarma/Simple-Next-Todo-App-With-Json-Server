@@ -2203,16 +2203,15 @@ function CreateNewModalTask({ ...props }) {
                 <span className="ps-2 create-text">Create New  </span>
             </Button> */}
             <UploadDocument openUploadDocument={openUploadDocument} setOpenUploadDocument={setOpenUploadDocument}></UploadDocument>
-            <div className="select-border my-0 m-auto">
+            <div className="select-border">
                 <Button
                     id="basic-button"
                     aria-controls={open4 ? 'basic-menu' : undefined}
                     aria-haspopup="true"
                     aria-expanded={open4 ? 'true' : undefined}
                     onClick={handleClick4}
-                    className="btn-blue-2 btn-round btn-block add-new-btn"
+                    className="btn-blue btn-round btn-block add-new-btn"
                     variant="text"
-                    size="small"
                 >
                     <span className="material-symbols-outlined font-18">edit_square</span>{" "}
                     <span className="ps-2 font-13 create-text">Add New  </span>
