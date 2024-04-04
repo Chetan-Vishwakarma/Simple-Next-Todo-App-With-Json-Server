@@ -18,7 +18,8 @@ import EditClientdetails from "./EditClientdetails";
 import EditUDFClientcard from "./EditUDFClientcard";
 import EditClientaddress from "./EditClientaddress";
 import { connect } from 'react-redux';
-function EditReference() {
+function EditReference({companyEditDetails}) {
+    console.log(companyEditDetails,"companyEditDetails");
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -360,6 +361,7 @@ function EditReference() {
               // setDataCompanyHouse={setDataCompanyHouse}
               setUserDetail={setUserDetail}
               //
+              companyEditDetails={companyEditDetails}
               setDataCompanyHouse={setDataCompanyHouse}
               setSelectedFolderID={setSelectedFolderID}
               //

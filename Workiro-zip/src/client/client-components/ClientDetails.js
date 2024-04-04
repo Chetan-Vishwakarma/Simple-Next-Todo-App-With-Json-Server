@@ -47,7 +47,7 @@ function ClientDetails() {
     const [clientDetails, setClientDetails] = useState({});
 
     const [companyDetails, setCompanyDetails] = useState([]);
-
+    const [companyEditDetails, setCompanyEditDetails] = useState([]);
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
     const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
@@ -165,6 +165,7 @@ function ClientDetails() {
                         console.log("Json_GetClientCardDetails", json);
                         setClientDetails(json);
                         setCompanyDetails(json.Table1);
+                        setCompanyEditDetails(json.Table1);
                         //Json_GetClientsByFolder();
                         Json_GetToFavourites(json.Table1);
                     }
@@ -183,13 +184,14 @@ function ClientDetails() {
     // edit client modal
     const [Referance, setReferance] = React.useState(false);
     const handleClickReferance = (e,originatorNo) => {
-        console.log(originatorNo,"originatorNossss")
+    
+        console.log(originatorNo,"originatorNossss",clientDetails.Table1);
         setReferance(true);
     };
     const EditCLientHandleClose = () => {
         setReferance(false);
     };
-
+    
 
     return (
         <>
@@ -318,7 +320,7 @@ function ClientDetails() {
 
                         <hr />
 
-                        <EditReference></EditReference>
+                        <EditReference companyEditDetails={companyEditDetails}></EditReference>
                     </DialogContentText>
                 </DialogContent>
                 {/* <DialogActions>
