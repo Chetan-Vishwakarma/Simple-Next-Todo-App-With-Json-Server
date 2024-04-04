@@ -43,7 +43,6 @@ function CardView(props) {
     e.stopPropagation();
     navigator.clipboard.writeText(details)
       .then(() => {
-        console.log('Copied details to clipboard:', details);
         toast.success("Copied");
         // Optionally, you can show a toast or alert to indicate successful copying
       })
