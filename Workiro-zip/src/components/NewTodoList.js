@@ -17,6 +17,7 @@ import moment from 'moment';
 import DocumentsVewModal from '../client/utils/DocumentsVewModal';
 import { toast } from 'react-toastify';
 import DocDetails from './DocDetails';
+import DateRangePicker from 'react-bootstrap-daterangepicker';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 const userId = localStorage.getItem("UserId");
@@ -675,7 +676,22 @@ function NewTodoList() {
 
                                     <Box className='mt-2'>
                                         <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)}>Mark Complete</Button>
-                                        <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
+                                        <DateRangePicker initialSettings={{
+                                                    singleDatePicker: true,
+                                                    showDropdowns: true,
+                                                    startDate: item["EndDateTime"],
+                                                    minYear: 1901,
+                                                    maxYear: 2100,
+                                                }}
+                                                onCallback={(start) => {
+                                                    const date = start.format('YYYY/MM/DD');
+                                                    Json_UpdateTaskField("EndDateTime",date,item);
+                                                }}
+                                                >
+                                                    <Button variant="outlined" className='btn-outlin-2'>
+                                                        Defer
+                                                    </Button>
+                                                </DateRangePicker>
                                     </Box>
 
                                 </Box>

@@ -782,7 +782,9 @@ function CreateNewModalTask({ ...props }) {
         let strGuid = uuidv4().replace(/-/g, '');
         localStorage.setItem("GUID", strGuid)
         setAnchorSelectFileEl(null);
-        setOpen(openModal);
+        if(openModal){
+            setOpen(openModal);
+        }
 
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));

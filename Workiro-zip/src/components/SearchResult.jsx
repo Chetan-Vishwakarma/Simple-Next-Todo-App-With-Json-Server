@@ -11,6 +11,8 @@ import CommanCLS from '../services/CommanService';
 import { useDispatch } from 'react-redux';
 import { setMyTasks } from '../redux/reducers/counterSlice';
 import { toast } from 'react-toastify';
+import DateRangePicker from 'react-bootstrap-daterangepicker';
+import moment from 'moment';
 
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
@@ -211,7 +213,22 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                 </Box>
                                 <Box className='mt-2'>
                                     <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)}>Mark Complete</Button>
-                                    <Button variant="outlined" className='btn-outlin-2'>Defer</Button>
+                                    <DateRangePicker initialSettings={{
+                                                    singleDatePicker: true,
+                                                    showDropdowns: true,
+                                                    startDate: new Date(parseInt(/\d+/.exec(item["EndDateTime"]))),
+                                                    minYear: 1901,
+                                                    maxYear: 2100,
+                                                }}
+                                                onCallback={(start) => {
+                                                    const date = start.format('YYYY/MM/DD');
+                                                    Json_UpdateTaskField("EndDateTime",date,item);
+                                                }}
+                                                >
+                                                    <Button variant="outlined" className='btn-outlin-2'>
+                                                        Defer
+                                                    </Button>
+                                                </DateRangePicker>
                                 </Box>
                             </Box>
                         </Grid>

@@ -338,7 +338,7 @@ export default function SidebarNav() {
   const [tabs, setTabs] = useState([{
     tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon: <DashboardIcon />}, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon: <AccountBoxIcon /> }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false, tabIcon: <AssignmentIcon /> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon: <GroupIcon /> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon: <ViewCarouselIcon /> }, { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false, tabIcon: <ContentPasteSearchIcon /> },
   // { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false, tabIcon: <PersonAddIcon /> },
-  { tabLink: "/dashboard/LogOut", tabName: 'Log Out', active: false, tabIcon: <LogoutIcon /> }]);
+]);
   const [searchInputForGlobalSearch, setSearchInputForGlobalSearch] = useState("");
 
   React.useEffect(() => {
@@ -777,6 +777,50 @@ export default function SidebarNav() {
                 </ListItemButton>
               </ListItem>
             ))}
+            <ListItem className={''} disablePadding sx={{ display: 'block' }}>
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? 'initial' : 'center',
+                    px: 2.5,
+                  }}
+                  onClick={() => {
+                    navigate("/dashboard/LogOut");
+                  }}
+                >
+
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 2 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+
+
+                    <BootstrapTooltip title={"Logout"} arrow
+                      placement="bottom-start"
+                      slotProps={{
+                        popper: {
+                          modifiers: [
+                            {
+                              name: 'offset',
+                              options: {
+                                offset: [0, 5],
+                              },
+                            },
+                          ],
+                        },
+                      }}
+                    >
+                      <LogoutIcon />
+                    </BootstrapTooltip>
+
+                  </ListItemIcon>
+
+                  <ListItemText primary={"Log Out"} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
           </List>
         </Drawer>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
