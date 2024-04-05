@@ -17,9 +17,13 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const UserDetailContext = createContext();
 // const UserDetailContext = createContext();
 let folderArray;
+let dynamicArray;
 const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse,companyEditDetails}) => {
     console.log(companyEditDetails,"EditcompanyEditDetails");
     const [defaultClient, setDefaultClient] = useState([]);
+    const [DynamicId, setDynamicId] = useState([]);
+    const [Setaarray, setSetaarray] = useState([]);
+    const [defaultFoldefr, setDefaultFolders] = useState("");
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -245,6 +249,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
       console.log("Error while calling Json_GetToFavourites", err);
     }
   };
+
   const Json_GetClientAssignedUnassignedFolderList = () => {
     let requestBody = {
       agrno: agrno,
@@ -259,9 +264,11 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
       Cls.Json_GetClientAssignedUnassignedFolderList(requestBody, (sts, data) => {
         if (sts) {
           if (data) {
+            // setIsfetchdata(true);
             let json = JSON.parse(data);
-            let assigned = json.Table;
-            console.log(assigned,"getjsondata");
+            setSetaarray(json.Table);
+            
+
           }
         }
       });
@@ -340,6 +347,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
     Json_CompanyHouseDetails(inputValue);
 };
 
+
 const [txtValue,setTxtValue]=useState(null);
 const [open, setOpen] = useState(false);
 
@@ -399,7 +407,21 @@ const clearDataCard = () => {
     Json_GetClientAssignedUnassignedFolderList();
    
 }, []);
+useEffect(() => {
+  if (folders && folders.length > 0) {
+    const filteredFolders = folders.filter(folder => {
+      return Setaarray.some(project => project.ProjectId === folder.FolderID);
+    });
+    setDynamicId(filteredFolders.map(folder => folder.FolderID));
+    const defaultValue = folders.filter(folder => filteredFolders.map(folder => folder.FolderID).includes(folder.FolderID));
+    setDefaultFolders(defaultValue);
 
+    console.log(defaultValue,"foldersSetaarray",Setaarray,"sateerere",filteredFolders,DynamicId);
+  }
+  
+  
+}, [folders, Setaarray]);
+console.log(defaultFoldefr,"dynamicArray",DynamicId,folderArray);
   return (
     <div>
 
@@ -537,7 +559,9 @@ const clearDataCard = () => {
               getOptionLabel={(option) => option.Folder ? option.Folder: ""}
             //  defaultValue={[def]}
               // value={defaultFolder || null}
-            defaultValue={[folders[defaultClient]]}
+            // defaultValue={[folders[defaultClient]]}
+            // defaultValue={folders.filter(folder => DynamicId.includes(folder.FolderID))}
+            value={defaultFoldefr ? defaultFoldefr : []}
             // defaultValue={defaultClient !== null ? [folders[defaultClient]] : []}
             id="clientlist"
             clearOnEscape
