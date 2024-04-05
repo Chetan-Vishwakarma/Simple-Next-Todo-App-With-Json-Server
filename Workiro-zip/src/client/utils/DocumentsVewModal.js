@@ -73,7 +73,7 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
 
     const [documentdata,setDocumentData]=useState();
 const [openModal,setopenModal]=useState(false);
-const [TaskType,setTaskType]=useState("CRM");
+const [TaskType,setTaskType]=useState("");
 
 const [createNewFileObj, setCreateNewFileObj] = useState([]);
 
@@ -395,14 +395,21 @@ const [createNewFileObj, setCreateNewFileObj] = useState([]);
    
 
 const createTask=()=>{
+    setTaskType("CRM")
     setopenModal(true)
-console.log("Create New Task")
+console.log("Create New Task");
+
+
 }
 
 
     return (
+<>
 
-        <Dialog
+
+
+
+<Dialog
             open={openPDFView}
             onClose={handleClosePDFView}
             aria-labelledby="alert-dialog-title"
@@ -411,6 +418,13 @@ console.log("Create New Task")
             sx={{ width: '100%', maxWidth: '100%' }}
         >
             <DialogContent>
+            {TaskType==="CRM" && <CreateNewModalTask
+                               
+                               TaskType={TaskType}
+                               // setPassButtonHide={setPassButtonHide}
+                               // passButtonHide={passButtonHide}
+                               openModal={openModal}
+                           ></CreateNewModalTask>}
 
                 <Box className="d-flex align-items-center justify-content-between">
                     <Box className="dropdown-box">
@@ -647,6 +661,8 @@ console.log("Create New Task")
                 </Button>
             </DialogActions> */}
         </Dialog>
+</>
+       
 
     )
 }

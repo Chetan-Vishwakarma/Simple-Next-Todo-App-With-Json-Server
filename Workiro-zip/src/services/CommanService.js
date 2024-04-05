@@ -21,6 +21,14 @@ Json_GetContactListByFolder(obj,callBack) {
         }
     })
 }
+
+ getFileExtension = (fileName) => {
+    // Split the file name by the dot (.)
+    const parts = fileName.split('.');
+    // Return the last part, which is the extension
+    return parts[parts.length - 1];
+};
+
 ///////////////////end all contact
      ConfirmMessage(txt,callBack) {
         Swal.fire({

@@ -727,7 +727,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem,setPortalComments,setSe
                         <MarkunreadIcon className='text-blue' />
                         {/* <DraftsIcon /> */}
                         <Box className='ps-3'>
-                            <h5 className='font-14 text-black mb-1'>{messageViewHistory?.length > 0 ? "Last Viewed On" : "he message has not yet been viewed"} </h5>
+                            <h5 className='font-14 text-black mb-1'>{messageViewHistory?.length > 0 ? "Last Viewed On" : "The message has not yet been viewed"} </h5>
                             <p className='font-12 text-gray sembold mb-2'>{messageViewHistory?.length > 0 ? messageViewHistory[messageViewHistory.length - 1].ViewDateTime : ""}</p>
                             <Button className='btn-blue-2' size="small" startIcon={<ScheduleIcon />} onClick={handleClickOpen}>View History</Button>
                         </Box>

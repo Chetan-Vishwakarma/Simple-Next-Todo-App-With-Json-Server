@@ -129,7 +129,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                             FileSize: file.size,
                             Preview: reader.result, // Data URL for preview
                             DocId: "",
-                            GUID: generateGUID()
+                            Guid:  localStorage.getItem("GUID"),
+                            FileType: cls.getFileExtension(file.name).toLowerCase()
                         };
                         setSelectedFiles((prevUploadedFiles) => [...prevUploadedFiles, fileData]);
                         resolve();
@@ -148,29 +149,11 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const RemoveFiles = (id) => {
         // Filter out the object with the specified ID
-        const resutl = selectedFiles.filter(guid => guid.GUID !== id);
+        const resutl = selectedFiles.filter(guid => guid.Guid !== id);
         setSelectedFiles(resutl);
     };
 
-    function generateGUID() {
-        const cryptoObj = window.crypto || window.msCrypto; // for IE 11 compatibility
-
-        if (cryptoObj && cryptoObj.getRandomValues) {
-            // Use crypto.getRandomValues to generate a GUID if available
-            const buf = new Uint16Array(8);
-            cryptoObj.getRandomValues(buf);
-
-            // Convert to string format
-            return (
-                pad4(buf[0]) + pad4(buf[1]) + '-' + pad4(buf[2]) + '-' + pad4(buf[3]) + '-' +
-                pad4(buf[4]) + '-' + pad4(buf[5]) + pad4(buf[6]) + pad4(buf[7])
-            );
-        } else {
-            // Fallback if crypto.getRandomValues is not supported
-            console.error("crypto.getRandomValues not supported. GUID generation failed.");
-            return null;
-        }
-    }
+    
 
     function pad4(num) {
         let ret = num.toString(16);
@@ -180,9 +163,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         return ret;
     }
 
-    useEffect(() => {
-        console.log("selectedFiles", selectedFiles);
-    }, [selectedFiles]);
+  
 
 
     //////////////////////////Get Foder Data

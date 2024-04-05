@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
 import { json, useNavigate } from 'react-router-dom';
 import CommanCLS from '../services/CommanService';
 
+import { v4 as uuidv4 } from 'uuid';
 
 function Copyright(props) {
   return (
@@ -82,6 +83,8 @@ function LoginDetail(obj){
         localStorage.setItem("Email",obj.Email);
         localStorage.setItem("Password",obj.password);
         GetAgreementList(obj,tbl[0].vAgreementNo);
+        let strGuid = uuidv4().replace(/-/g, '');
+        localStorage.setItem("GUID", strGuid)
       }
       else{
         Swal.fire({

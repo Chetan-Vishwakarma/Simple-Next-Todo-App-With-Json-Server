@@ -202,7 +202,7 @@ function NewTodoList() {
                         let tbl = json.Table;
 
                         const itemIdSet = new Set(tbl.map(item => item.ItemId));
-                        console.log("Json_getRecentDocumentList", itemIdSet);
+                        console.log("Json_getRecentDocumentList", itemIdSet,exData);
 
                         if (exData.length > 0) {
                             const filteredArray2 = exData.filter(item => itemIdSet.has(item["Registration No."]));
