@@ -1942,7 +1942,7 @@ function CreateNewModalTask({ ...props }) {
         }
     }
 
-    const [isCheckedForApproval, setIsCheckedForApproval] = useState(false);
+    const [isCheckedForApproval, setIsCheckedForApproval] = useState(true);
     const [isDisabledForApproval, setIsDisabledForApproval] = useState(false);
 
     const handleCheckboxChangeForAppoval = (event) => {

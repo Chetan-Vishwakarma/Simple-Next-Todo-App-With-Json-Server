@@ -873,6 +873,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                     });
                     console.log("GetComments_Json", formattedActivity);
 
+                    
                     // let arr1 =  formattedActivity.sort((a, b) => a.DateOfRemark - b.DateOfRemark);
 
                     let margeArr = mergeAndSortByDate(formattedActivity, crmTaskAcivity, "comDate");
