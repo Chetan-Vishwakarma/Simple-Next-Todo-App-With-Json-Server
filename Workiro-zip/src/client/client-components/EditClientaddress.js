@@ -10,7 +10,7 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 
 const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHouse })=>{
-  console.log(dataCompanyHouse,"dataCompanyHouse");
+  console.log(dataCompanyHouse,"dataCompanyHouse",userDetail);
   const [mainCountry, setMainCountry] = useState(
     countries.find((country) => country.label === "United Kingdom")?.label
   );
@@ -22,7 +22,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
   );
   // tabs
   const [value, setValue] = React.useState('1');
-
+  const [ClientAddress, setClientAddress] = useState([]);
   const onChange = (e) => {
     e.preventDefault();
     let data = { ...userDetail };
@@ -72,6 +72,29 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+//   const Json_GetClientAddresses
+//  = () => {
+//     let passdata = localStorage.getItem("Password");
+//     let requestBody = {
+//       agrno: localStorage.getItem("agrno"),
+//       Email: localStorage.getItem("Email"),
+//       password: passdata,
+//       clientId:""
+//     };
+//     try {
+//       Cls.Json_GetClientAddresses(requestBody, (sts, data) => {
+//         if (sts) {
+//           if (data) {
+//             let json = JSON.parse(data);
+//             folderArray = json.Table;
+//             setFolders(json.Table);
+//           }
+//         }
+//       });
+//     } catch (err) {
+//       console.log("Error while calling Json_GetToFavourites", err);
+//     }
+//   };
   useEffect(() => {
     if(dataCompanyHouse){
       let data1 = { ...userDetail };
