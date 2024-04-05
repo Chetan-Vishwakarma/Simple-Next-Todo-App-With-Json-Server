@@ -114,7 +114,8 @@ h6,
 p,
 input,
 button,
-body {
+body,
+a {
   font-family: "Poppins", sans-serif !important;
 }
 
@@ -190,11 +191,13 @@ input,
   background: #d42027 !important;
   border-color: #d42027 !important;
 }
+
 .btn-outlin-2:hover {
   background: #d42027 !important;
   border-color: #d42027 !important;
   color: #fff !important;
 }
+
 button {
   text-transform: capitalize !important;
 }
@@ -599,7 +602,7 @@ button {
 }
 
 .text-blue {
-  color: #557ff7 !important;
+  color: #4780FF !important;
 }
 
 .text-red {
@@ -1533,18 +1536,22 @@ span.tox-statusbar__branding {
   transition: .5s all ease-in;
   border-radius: 2px;
 }
+
 .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root:hover {
   background-color: #D41B20 !important;
   transition: .5s all ease-in;
   color: #fff !important;
 }
+
 .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root:hover svg {
   color: #fff;
   transition: .5s all ease-in;
 }
+
 .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root svg {
   transition: .5s all ease-in;
 }
+
 .main-filter-box {
   /* max-height: calc(100vh - 230px); */
   overflow-y: auto;
@@ -1994,15 +2001,11 @@ span.tox-statusbar__branding {
   right: 50px;
   top: 20px;
 }
+
 .date-unerline {
   font-weight: 600;
   border-bottom: 2px solid;
   padding: 4px 0px 4px 0;
-}
-
-.left-side-login {
-  max-width: 450px;
-  margin: 0 auto;
 }
 
 .left-side-login h2 {
@@ -2011,16 +2014,31 @@ span.tox-statusbar__branding {
   margin-bottom: 30px;
   color: #000;
 }
+
 .left-side-login {
-  max-width: 450px;
+  max-width: 420px;
+  width: 100%;
   margin: 0 auto;
-  min-height: calc(100vh - 100px);
+  min-height: calc(100vh - 200px);
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
 }
 
+.login-head {
+  padding: 50px 15px;
+  width: 100%;
+  max-width: 70%;
+}
+
+.right-side-login {
+  background-color: #191b23;
+  display: flex !important;
+  min-height: 100vh;
+  height: 100vh;
+  gap: 0 !important;
+  justify-content: center;
+}
 
 @media only screen and (max-width: 1366px) {
   .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root {

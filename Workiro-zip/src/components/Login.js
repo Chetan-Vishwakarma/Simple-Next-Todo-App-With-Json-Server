@@ -23,7 +23,7 @@ function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="inherit" href="/">
         Your Website
       </Link>{' '}
       {new Date().getFullYear()}
@@ -126,66 +126,79 @@ export default function Login() {
 
       <Grid container spacing={2}>
         <Grid item xs={6} md={6} className='d-flex align-items-center flex-column'>
-          <img src={logo} />
 
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }} className='left-side-login'>
-            <Typography variant='h2' className='mb-2'>Login to your account</Typography>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" className="text-blue" />}
-              label="Remember me"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
+          <Box className='login-head'>
+            <img src={logo} />
+          </Box>
 
-            <Copyright sx={{ mt: 8, mb: 4 }} />
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+            <Box className='left-side-login'>
+              <Box className='inner-left-side-bar mt-auto'>
+                <Typography variant='h2' className='mb-2'>Login to your account</Typography>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                />
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                />
 
-            <Box className='text-center'>
-              <Link href="#" className='text-gray'>Terms & Condition</Link>
-              <Link href="#" className='text-gray'>Privacy Policy</Link>
-              <Link href="#" className='text-gray'>Help</Link>
+                <Box className='d-flex align-items-center justify-content-between mb-2'>
+                  <FormControlLabel
+                    className='font-12'
+                    control={<Checkbox value="remember" className="text-blue" />}
+                    label="Remember me"
+
+                  />
+                  <Link href="#" variant="body2" className='font-14 text-decoration-none text-black'>
+                    Forgot password?
+                  </Link>
+                </Box>
+
+                <Button
+                  type="submit"
+                  fullWidth
+                  size="small"
+                  sx={{ mt: 3, mb: 2 }}
+                  className='btn-blue-2'
+                >
+                  Sign In
+                </Button>
+
+                <Grid container>
+                  <Grid item>
+                    Don't have an account?
+                    <Link href="#" variant="body2" className='font-14 text-blue ms-2'>
+                      {"Sign Up"}
+                    </Link>
+                  </Grid>
+                </Grid>
+              </Box>
+              <Box className='mt-auto'>
+                <Copyright sx={{ mt: 2, mb: 2 }} />
+                <Box className='text-center'>
+                  <Link href="#" className='text-blue sembold px-3'>Terms & Condition</Link>
+                  <Link href="#" className='text-blue sembold px-3'>Privacy Policy</Link>
+                  <Link href="#" className='text-blue sembold px-3'>Help</Link>
+                </Box>
+              </Box>
             </Box>
-
           </Box>
         </Grid>
-        <Grid item xs={6} md={6}>
+        <Grid item xs={6} md={6} className='right-side-login'>
 
         </Grid>
       </Grid>
