@@ -7,7 +7,7 @@ import { Button } from 'devextreme-react';
 import CopyAllIcon from '@mui/icons-material/CopyAll';
 
 const CopyLinkButton = ({ copyLink }) => {
-  console.log("copyLink",copyLink)
+  console.log("copyLink", copyLink)
   const handleClick = async () => {
     try {
       await navigator.clipboard.writeText(copyLink);
@@ -20,9 +20,7 @@ const CopyLinkButton = ({ copyLink }) => {
 
   return (
     <>
-    
-        <Button   onClick={handleClick}> Copy Link</Button>
-
+      <span onClick={handleClick}> Copy Link</span>
       <ToastContainer />
     </>
   );

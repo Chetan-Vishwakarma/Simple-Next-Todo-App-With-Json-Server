@@ -859,7 +859,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                     });
                     console.log("GetComments_Json", formattedActivity);
 
-                    
+
                     // let arr1 =  formattedActivity.sort((a, b) => a.DateOfRemark - b.DateOfRemark);
 
                     let margeArr = mergeAndSortByDate(formattedActivity, crmTaskAcivity, "comDate");
@@ -875,17 +875,17 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     function mergeAndSortByDate(array1, array2, dateField) {
         // Concatenate the two arrays
-        if(array1 && array2){
+        if (array1 && array2) {
             var mergedArray = array2.concat(array1);
 
             // Sort the merged array by date field
             mergedArray.sort(function (a, b) {
                 return new Date(a[dateField]) - new Date(b[dateField]);
             });
-    
+
             return mergedArray;
         }
-      
+
     }
 
 
@@ -1597,7 +1597,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     setSelectedIndexProfile(null);
                                 }}>
                                     <ListItemIcon >
-                                        <ContentCopyIcon fontSize="medium" />
+                                        <ContentCopyIcon fontSize="medium" className="font-20" />
                                     </ListItemIcon>
                                     {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>}
                                 </MenuItem>
@@ -1609,7 +1609,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                                 <MenuItem className='ps-1'>
                                     <ListItemIcon>
-                                        <AttachEmailIcon fontSize="medium" />
+                                        <AttachEmailIcon className="font-22" />
                                     </ListItemIcon> Retract Message (s)</MenuItem>
 
                                 <MenuItem className='ps-1'>
@@ -1617,50 +1617,50 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                         <DeleteIcon fontSize="medium" />
                                     </ListItemIcon> Delete Message (s)</MenuItem>
 
-
-                                    <MenuItem className='ps-2'>
+                                {/* <MenuItem className='ps-2'>
                                     <ListItemIcon>
                                         <DeleteIcon fontSize="medium" />
-                                    </ListItemIcon> Delete Message (s)</MenuItem>
-                                {selectedTask.Source==="CRM" && (<>
+                                    </ListItemIcon> Delete Message (s)</MenuItem> */}
+                                {selectedTask.Source === "CRM" && (<>
                                     <Button
-                                    id="basic-button"
-                                    aria-controls={openFolder ? 'basic-menu' : undefined}
-                                    aria-haspopup="true"
-                                    aria-expanded={openFolder ? 'true' : undefined}
-                                    onClick={handleClickFolder}
-                                >
-                                      <MenuItem className='ps-2'>
-                                    <ListItemIcon>
-                                        <AttachEmailIcon fontSize="medium" />
-                                    </ListItemIcon>Folder</MenuItem>
-                                </Button>
-                                <Menu
-                                    id="basic-menu"
-                                    anchorEl={anchorElFolder}
-                                    open={openFolder}
-                                    onClose={handleCloseFolder}
-                                    MenuListProps={{
-                                        'aria-labelledby': 'basic-button',
-                                    }}
-                                >
+                                        id="basic-button"
+                                        aria-controls={openFolder ? 'basic-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={openFolder ? 'true' : undefined}
+                                        onClick={handleClickFolder}
+                                        className="ps-0 w-100 text-left text-start"
+                                    >
+                                        <MenuItem className='ps-2 w-100'>
+                                            <ListItemIcon>
+                                                <AttachEmailIcon className="font-22" />
+                                            </ListItemIcon>Folder</MenuItem>
+                                    </Button>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorElFolder}
+                                        open={openFolder}
+                                        onClose={handleCloseFolder}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+                                    >
 
-                                    {folderList ? folderList.map((item) => {
-                                        return (<>
-                                            <MenuItem onClick={() => handleCloseProfile(item)}>
-                                                <ListItemIcon>
-                                                    <DoNotDisturbAltIcon fontSize="medium" />
-                                                </ListItemIcon>
+                                        {folderList ? folderList.map((item) => {
+                                            return (<>
+                                                <MenuItem onClick={() => handleCloseProfile(item)}>
+                                                    <ListItemIcon>
+                                                        <DoNotDisturbAltIcon fontSize="medium" />
+                                                    </ListItemIcon>
 
-                                                {item.Folder}
-                                            </MenuItem>
-                                        </>)
-                                    }) : ""}
+                                                    {item.Folder}
+                                                </MenuItem>
+                                            </>)
+                                        }) : ""}
 
-                                   
-                                </Menu>
+
+                                    </Menu>
                                 </>)}
-                               
+
 
 
                             </Menu>

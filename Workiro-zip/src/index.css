@@ -2019,7 +2019,7 @@ span.tox-statusbar__branding {
   max-width: 420px;
   width: 100%;
   margin: 0 auto;
-  min-height: calc(100vh - 200px);
+  min-height: calc(100vh - 215px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -2032,12 +2032,13 @@ span.tox-statusbar__branding {
 }
 
 .right-side-login {
-  background-color: #191b23;
+  background-color: #fff;
   display: flex !important;
   min-height: 100vh;
   height: 100vh;
-  gap: 0 !important;
+  /* gap: 0 !important; */
   justify-content: center;
+  align-items: center;
 }
 
 @media only screen and (max-width: 1366px) {
