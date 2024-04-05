@@ -392,6 +392,7 @@ function Reference() {
           {
             <AddClientdetails
               userDetail={userDetail}
+              setDataFromChild={setDataFromChild}
               //
               dataCompanyHouse={dataCompanyHouse}
               // setDataCompanyHouse={setDataCompanyHouse}

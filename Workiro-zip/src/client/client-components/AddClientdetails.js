@@ -17,7 +17,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const UserDetailContext = createContext();
 // const UserDetailContext = createContext();
 let folderData=[];
-const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse}) => {
+const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse,setDataFromChild}) => {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [defaultClient, setDefaultClient] = useState([]);
   const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -25,11 +25,15 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
   const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   const [folders, setFolders] = useState([]);
+  const [Isfetchdata, setIsfetchdata] = useState(false);
   const [bussiness, setBussiness] = useState([]);
   const [sources, setSources] = useState([]);
   const [mangers, setMangers] = useState([]);
   const [defaultUser, setDefaultUser] = useState(null);
   const [defaultStatus, setDefaultStatus] = useState(null);
+  const [defaultSources, setDefaultSources] = useState(null);
+  const [defaultFolder, setDefaultFolder] = useState(null);
+  const [defaultBussiness, setDefaultBussiness] = useState(null);
   const [status, setStatus] = useState([]);
   const [ImportContact, setImportContact] = useState([]);
   const [ImportCompanyDetails, setImportCompanyDetails] = useState([]);
@@ -67,6 +71,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
       console.log(value,"foldergetdata",folderIds);
       let data = { ...userDetail };
       data = { ...data, ["FolderId"]: value.FolderID };
+      setDefaultFolder(value);
       setUserDetail(data);
     }
   };
@@ -75,6 +80,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
     if (value) {
       let data = { ...userDetail };
       data = { ...data, ["BussId"]: value.BussId };
+      setDefaultBussiness(value);
       setUserDetail(data);
     } else {
     }
@@ -94,6 +100,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
     if (value) {
       let data = { ...userDetail };
       data = { ...data, ["SourceId"]: value.SourceId };
+      setDefaultSources(value);
       setUserDetail(data);
     } else {
     }
@@ -180,7 +187,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
               
 
             setFolders(json.Table);
-
+            setIsfetchdata(true);
 
             const sourceObj = folderData.find((item) => item.FolderID == localStorage.getItem("FolderId"));
             const index = folderData.indexOf(sourceObj); 
@@ -292,14 +299,40 @@ const handleOptionClick = (id) => {
 
 };
 const clearDataCard = () => {
+  setDefaultClient(null)
+  setDataFromChild(null);
   console.log(userDetail, "onClearDatacnnumbr",dataCompanyHouse);
   const updatedUserDetail = { ...userDetail, 
     CHNumber:"",
     Clientname: "",
+    Clientid: "",
     StatusId:setDefaultStatus(null),
+    BussId:setDefaultBussiness(null),
+    SourceId:setDefaultSources(null),
+    UserId:setDefaultUser(null),
+    FolderId:setDefaultClient(null),
+    Mobile:"",
+    Telephone:"",
+    Email:"",
     Line1: "",
-    Line2:""
-  
+    Line2:"",
+    Line3:"",
+    Town:"",
+    MCounty:"",
+    Postcode:"",
+    BilLine1:"",
+    BilLine2:"",
+    BilLine3:"",
+    BilTown:"",
+    BilCountry:"",
+    BilPostcode:"",
+    regLine1:"",
+    regLine2:"",
+    regLine3:"",
+    regTown:"",
+    regCountry:"",
+    regPostcode:"",
+    fullAddress:""
   };
     setUserDetail(updatedUserDetail);
     setDataCompanyHouse(null);
@@ -431,15 +464,15 @@ const clearDataCard = () => {
         </Grid>
 
         <Grid item lg={4} xs={6} md={6}>
-        
+        {Isfetchdata && (
           <Autocomplete
             multiple
             // {...clientlist}
             options={folders}
               getOptionLabel={(option) => option.Folder ? option.Folder: ""}
             //  defaultValue={[def]}
-              // value={[defaultClient] || []}
-            //  defaultValue={defaultClient}
+              // value={defaultFolder || null}
+            defaultValue={[folders[defaultClient]]}
             // defaultValue={defaultClient !== null ? [folders[defaultClient]] : []}
             id="clientlist"
             clearOnEscape
@@ -467,11 +500,16 @@ const clearDataCard = () => {
               />
             )}
           />
+        )}
+          
         </Grid>
         <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
             <Autocomplete
-              {...bussinesslist}
+              // {...bussinesslist}
+              options={bussiness}
+              getOptionLabel={(option) => option.BussName}
+              value={defaultBussiness || null}
               id="clear-on-escape-bussiness"
               clearOnEscape
               onChange={onChangebussines}
@@ -514,7 +552,10 @@ const clearDataCard = () => {
         <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
             <Autocomplete
-              {...sourcelist}
+              // {...sourcelist}
+              options={sources}
+              getOptionLabel={(option) => option.SourceName}
+              value={defaultSources || null}
               id="clear-on-escape-source"
               clearOnEscape
               onChange={onChangesource}

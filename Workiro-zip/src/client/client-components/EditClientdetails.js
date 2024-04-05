@@ -618,7 +618,7 @@ const handleAdvancedSettingChange = (event) => {
                   onChange={handleAdvancedSettingChange}
                 />
               }
-              label="Assigned"
+              label="In Active"
             />
           </Grid>
           <Grid item lg={4} xs={6} md={6}>
@@ -631,7 +631,7 @@ const handleAdvancedSettingChange = (event) => {
                   onChange={handleAdvancedInactive}
                 />
               }
-              label="Unassigned"
+              label="Hide"
             />
           </Grid>
       </Grid>
