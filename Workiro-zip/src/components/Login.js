@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
 import { json, useNavigate } from 'react-router-dom';
 import CommanCLS from '../services/CommanService';
 import logo from "../images/logo.png";
+import animation from "../images/animation.gif";
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -70,31 +71,31 @@ export default function Login() {
     LoginDetail(obj);
   };
   /////////////////////////end handalSubmit
-function LoginDetail(obj){
-  CLS.Call(JSON.stringify(obj),"Json_GetAgreementList",function(res){
-    if(res.d !=="Invalid"){
-      let str = JSON.parse(res.d);
-      let tbl = str.Table;
-      console.log("response data",tbl);
-      if(tbl.length>0){
-        //let setEmaiPass = JSON.parse(obj);        
-        localStorage.setItem("agrno",tbl[0].vAgreementNo);
-        localStorage.setItem("IsAdmin",tbl[0].strIsAdmin);
-        localStorage.setItem("UserId",tbl[0].intUserId);
-        localStorage.setItem("Email",obj.Email);
-        localStorage.setItem("Password",obj.password);
-        GetAgreementList(obj,tbl[0].vAgreementNo);
-        let strGuid = uuidv4().replace(/-/g, '');
-        localStorage.setItem("GUID", strGuid)
+  function LoginDetail(obj) {
+    CLS.Call(JSON.stringify(obj), "Json_GetAgreementList", function (res) {
+      if (res.d !== "Invalid") {
+        let str = JSON.parse(res.d);
+        let tbl = str.Table;
+        console.log("response data", tbl);
+        if (tbl.length > 0) {
+          //let setEmaiPass = JSON.parse(obj);        
+          localStorage.setItem("agrno", tbl[0].vAgreementNo);
+          localStorage.setItem("IsAdmin", tbl[0].strIsAdmin);
+          localStorage.setItem("UserId", tbl[0].intUserId);
+          localStorage.setItem("Email", obj.Email);
+          localStorage.setItem("Password", obj.password);
+          GetAgreementList(obj, tbl[0].vAgreementNo);
+          let strGuid = uuidv4().replace(/-/g, '');
+          localStorage.setItem("GUID", strGuid)
+        }
+        else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Login Failed',
+            text: 'Invalid username or password!',
+          });
+        }
       }
-      else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Login Failed',
-          text: 'Invalid username or password!',
-        });
-      }
-    }
     })
   }
   const Json_getViewerToken = (obj) => {
@@ -119,7 +120,7 @@ function LoginDetail(obj){
   return (
     <ThemeProvider theme={defaultTheme}>
 
-      <Grid container spacing={2}>
+      <Grid container spacing={2} className='mt-0'>
         <Grid item xs={6} md={6} className='d-flex align-items-center flex-column'>
 
           <Box className='login-head'>
@@ -129,7 +130,7 @@ function LoginDetail(obj){
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <Box className='left-side-login'>
               <Box className='inner-left-side-bar mt-auto'>
-                <Typography variant='h2' className='mb-2'>Login to your account</Typography>
+                <Typography variant='h2' className='mb-3'>Login to your account</Typography>
                 <TextField
                   margin="normal"
                   required
@@ -173,14 +174,6 @@ function LoginDetail(obj){
                   Sign In
                 </Button>
 
-                <Grid container>
-                  <Grid item>
-                    Don't have an account?
-                    <Link href="#" variant="body2" className='font-14 text-blue ms-2'>
-                      {"Sign Up"}
-                    </Link>
-                  </Grid>
-                </Grid>
               </Box>
               <Box className='mt-auto'>
                 <Copyright sx={{ mt: 2, mb: 2 }} />
@@ -194,7 +187,10 @@ function LoginDetail(obj){
           </Box>
         </Grid>
         <Grid item xs={6} md={6} className='right-side-login'>
-
+          <Box className='text-center'>
+          {/* <h4 class="bold d-block">The Easiest Way to Build <br /> your Own Business</h4> */}
+            <img src={animation} className='d-block img-fluid' />
+          </Box>
         </Grid>
       </Grid>
 

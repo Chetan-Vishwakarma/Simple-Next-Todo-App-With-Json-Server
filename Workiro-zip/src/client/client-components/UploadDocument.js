@@ -681,6 +681,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                                 </Box>
                                             </label>
                                         </Box>
+                                        
                                     </Box>
                                 </Box>
 
@@ -689,7 +690,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                         return <>
                                             <Box className='uploaded-box' key={index}>
                                                 <CloseIcon className='close-icon' onClick={() => RemoveFiles(item.GUID)} />
-                                                <DescriptionIcon />
+                                                <DescriptionIcon className='font-32' />
                                                 <Typography variant="body1" className='font-14 uploaded-name'>
                                                     {item.FileName}
                                                 </Typography>
