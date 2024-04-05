@@ -18,6 +18,7 @@ import { json, useNavigate } from 'react-router-dom';
 import CommanCLS from '../services/CommanService';
 import logo from "../images/logo.png";
 
+import { v4 as uuidv4 } from 'uuid';
 
 function Copyright(props) {
   return (
@@ -69,28 +70,22 @@ export default function Login() {
     LoginDetail(obj);
   };
   /////////////////////////end handalSubmit
-  function LoginDetail(obj) {
-    CLS.Call(JSON.stringify(obj), "Json_GetAgreementList", function (res) {
-      if (res.d !== "Invalid") {
-        let str = JSON.parse(res.d);
-        let tbl = str.Table;
-        console.log("response data", tbl);
-        if (tbl.length > 0) {
-          //let setEmaiPass = JSON.parse(obj);        
-          localStorage.setItem("agrno", tbl[0].vAgreementNo);
-          localStorage.setItem("IsAdmin", tbl[0].strIsAdmin);
-          localStorage.setItem("UserId", tbl[0].intUserId);
-          localStorage.setItem("Email", obj.Email);
-          localStorage.setItem("Password", obj.password);
-          GetAgreementList(obj, tbl[0].vAgreementNo);
-        }
-        else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Login Failed',
-            text: 'Invalid username or password!',
-          });
-        }
+function LoginDetail(obj){
+  CLS.Call(JSON.stringify(obj),"Json_GetAgreementList",function(res){
+    if(res.d !=="Invalid"){
+      let str = JSON.parse(res.d);
+      let tbl = str.Table;
+      console.log("response data",tbl);
+      if(tbl.length>0){
+        //let setEmaiPass = JSON.parse(obj);        
+        localStorage.setItem("agrno",tbl[0].vAgreementNo);
+        localStorage.setItem("IsAdmin",tbl[0].strIsAdmin);
+        localStorage.setItem("UserId",tbl[0].intUserId);
+        localStorage.setItem("Email",obj.Email);
+        localStorage.setItem("Password",obj.password);
+        GetAgreementList(obj,tbl[0].vAgreementNo);
+        let strGuid = uuidv4().replace(/-/g, '');
+        localStorage.setItem("GUID", strGuid)
       }
       else {
         Swal.fire({
@@ -99,7 +94,7 @@ export default function Login() {
           text: 'Invalid username or password!',
         });
       }
-
+    }
     })
   }
   const Json_getViewerToken = (obj) => {

@@ -129,7 +129,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                             FileSize: file.size,
                             Preview: reader.result, // Data URL for preview
                             DocId: "",
-                            GUID: generateGUID()
+                            Guid: localStorage.getItem("GUID"),
+                            FileType: cls.getFileExtension(file.name).toLowerCase()
                         };
                         setSelectedFiles((prevUploadedFiles) => [...prevUploadedFiles, fileData]);
                         resolve();
@@ -148,29 +149,11 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const RemoveFiles = (id) => {
         // Filter out the object with the specified ID
-        const resutl = selectedFiles.filter(guid => guid.GUID !== id);
+        const resutl = selectedFiles.filter(guid => guid.Guid !== id);
         setSelectedFiles(resutl);
     };
 
-    function generateGUID() {
-        const cryptoObj = window.crypto || window.msCrypto; // for IE 11 compatibility
 
-        if (cryptoObj && cryptoObj.getRandomValues) {
-            // Use crypto.getRandomValues to generate a GUID if available
-            const buf = new Uint16Array(8);
-            cryptoObj.getRandomValues(buf);
-
-            // Convert to string format
-            return (
-                pad4(buf[0]) + pad4(buf[1]) + '-' + pad4(buf[2]) + '-' + pad4(buf[3]) + '-' +
-                pad4(buf[4]) + '-' + pad4(buf[5]) + pad4(buf[6]) + pad4(buf[7])
-            );
-        } else {
-            // Fallback if crypto.getRandomValues is not supported
-            console.error("crypto.getRandomValues not supported. GUID generation failed.");
-            return null;
-        }
-    }
 
     function pad4(num) {
         let ret = num.toString(16);
@@ -180,9 +163,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         return ret;
     }
 
-    useEffect(() => {
-        console.log("selectedFiles", selectedFiles);
-    }, [selectedFiles]);
+
 
 
     //////////////////////////Get Foder Data
@@ -229,33 +210,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                 if (sts) {
                     let js = JSON.parse(data);
 
-                    setGetAllFolderData(js);
-                    let clientList = js.Table1;
+                    setGetAllFolderData(js);                  
 
-                    if (clientList.length > 0) {
-
-                        // let res = clientList.map((el) => {
-                        //     el.Client = el.Client.toLowerCase(); // Modify ClientID property to lowercase
-                        //     return el; // Return the modified object
-                        // });
-
-                        // console.log("Json_GetFolderData", res);
-                        setClientList(clientList);
-                        if (originatorNo) {
-                            let res = clientList.filter((c) => c.ClientID === originatorNo.originatorNo);
-                            if (res.length > 0) {
-                                setTxtClientData(res[0])
-
-                            }
-                        }
-
-
-
-                    }
-                    let sectionList = js.Table;
-                    if (sectionList.length > 0) {
-                        setSectionList(sectionList);
-                    }
                     let udfTable2 = js.Table2;
                     if (udfTable2.length > 0) {
                         setUDFTable(udfTable2);
@@ -268,10 +224,60 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     }
 
 
+    const Json_GetSections = (pid) => {
+        try {
+            let o = { ProjectId: pid }
+            cls.Json_GetSections(o, function (sts, data) {
+                if (sts) {
+                    if(data){
+                        let js = JSON.parse(data);
+                        let sectionList = js.Table;
+                        console.log("Json_GetSections", sectionList)
+                        if (sectionList.length > 0) {
+                            setSectionList(sectionList);
+                        }
+                    }
+                   
+                }
+            })
+        } catch (error) {
+            console.log("Json_GetSections",error);
+        }
 
+    }
+
+    const Json_GetClientsByFolder = (pid) => {
+        try {
+            let o = { ProjectId: pid }
+            cls.Json_GetClientsByFolder(o, function (sts, data) {
+                if (sts) {
+                    if(data){
+                        let js = JSON.parse(data);
+                        let clientdata = js.Table1;
+                        console.log("Json_GetClientsByFolder", clientdata)
+                        if (clientdata.length > 0) {
+                            setClientList(clientdata);
+                            if (originatorNo) {
+                                let res = clientdata.filter((c) => c.ClientID === originatorNo.originatorNo);
+                                if (res.length > 0) {
+                                    setTxtClientData(res[0])
+                                }
+                            }
+                        }
+                    }
+                   
+                }
+            })
+        } catch (error) {
+            console.log("Json_GetClientsByFolder",error);
+        }
+
+    }
 
 
     useEffect(() => {
+        Json_GetSections(localStorage.getItem("ProjectId"))
+        Json_GetClientsByFolder(localStorage.getItem("ProjectId"))
         Json_GetFolders();
         Json_GetFolderData();
         setDocumentDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
@@ -288,6 +294,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         if (data) {
             setTxtFolderId(data.FolderID)
             setTextFolderData(data)
+            Json_GetSections(data.FolderID)
+            Json_GetClientsByFolder(data.FolderID)
         }
         Json_GetFolderData()
 
@@ -544,7 +552,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                         }
 
                         if (!typeTaskBool) {
-                          //  setOpenUploadDocument(false);
+                            //  setOpenUploadDocument(false);
                         }
 
                         setTimeout(() => {
@@ -717,7 +725,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                         getOptionLabel={(option) => option.Client} // assuming "Client" is the property you want to display
 
                                         onChange={(event, newValue) => handleClientChange(newValue)}
-                                        renderInput={(params) => <TextField {...params} label="Reference1" />}
+                                        renderInput={(params) => <TextField {...params} label="Reference" />}
                                     />
                                 </Box>
 

@@ -7,12 +7,11 @@ import { Button } from 'devextreme-react';
 import CopyAllIcon from '@mui/icons-material/CopyAll';
 
 const CopyLinkButton = ({ copyLink }) => {
+  console.log("copyLink",copyLink)
   const handleClick = async () => {
     try {
       await navigator.clipboard.writeText(copyLink);
-      toast.success('Link copied to clipboard!', {
-        autoClose: 2000
-      });
+      toast.success('Link copied to clipboard!');
     } catch (error) {
       console.error('Failed to copy link:', error);
       toast.error('Failed to copy link to clipboard!');
@@ -22,7 +21,7 @@ const CopyLinkButton = ({ copyLink }) => {
   return (
     <>
     
-        <Button className='btn-blue-2 btn-padding-same ms-2' size="small" onClick={handleClick}><CopyAllIcon /> Copy Link</Button>
+        <Button   onClick={handleClick}> Copy Link</Button>
 
       <ToastContainer />
     </>

@@ -107,16 +107,16 @@ function CreateNewModalTask({ ...props }) {
     const dispatch = useDispatch();
     let {
 
-        documentDate,
-        receivedDate,
-        createNewFileObj,
-        txtFolderData,
-        txtClientData,
-        txtSectionData,
-        TaskType,
+        documentDate=null,
+        receivedDate=null,
+        createNewFileObj=null,
+        txtFolderData=null,
+        txtClientData=null,
+        txtSectionData=null,
+        TaskType=null,
         // passButtonHide,
         // setPassButtonHide,
-        openModal,
+        openModal=null,
 
 
     } = props;
@@ -709,6 +709,11 @@ function CreateNewModalTask({ ...props }) {
             //console.log("createNewFileObj1111", createNewFileObj)
             setSelectedFiles(createNewFileObj);
             setSelectedDocumentFile(createNewFileObj);
+            setTimeout(() => {
+                if (TaskType === "Portal") {
+                    PrepareDocumentsForPublish_Json(createNewFileObj, 2);
+                }
+            }, 3000);
 
         }
         if (txtFolderData) {
@@ -779,8 +784,7 @@ function CreateNewModalTask({ ...props }) {
 
     useEffect(() => {
         setLoading(false);
-        let strGuid = uuidv4().replace(/-/g, '');
-        localStorage.setItem("GUID", strGuid)
+        
         setAnchorSelectFileEl(null);
         if(openModal){
             setOpen(openModal);
@@ -912,7 +916,7 @@ function CreateNewModalTask({ ...props }) {
                     Guid: localStorage.getItem("GUID"),
                     FileType: getFileExtension(file.name).toLowerCase()
                 };
-                console.log("get folder list 2222222222", fileData);
+               // console.log("get folder list 2222222222", fileData);
                 filesData.push(fileData);
 
                 if (txtTaskType === "CRM") {
@@ -1767,12 +1771,7 @@ function CreateNewModalTask({ ...props }) {
         }
     };
 
-    // Function to generate and set the GUID without hyphens
-    const generateGuid = () => {
-        const newGuid = uuidv4().replace(/-/g, ''); // Removing hyphens from the generated GUID
-        setGuid(newGuid);
-    };
-
+    
 
 
     function CreatePortalTask() {
@@ -1945,7 +1944,7 @@ function CreateNewModalTask({ ...props }) {
         }
     }
 
-    const [isCheckedForApproval, setIsCheckedForApproval] = useState(false);
+    const [isCheckedForApproval, setIsCheckedForApproval] = useState(true);
     const [isDisabledForApproval, setIsDisabledForApproval] = useState(false);
 
     const handleCheckboxChangeForAppoval = (event) => {

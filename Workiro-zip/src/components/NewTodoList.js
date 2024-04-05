@@ -42,6 +42,7 @@ function NewTodoList() {
     const [allTask, setAllTask] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
     const [recentTaskList, setRecentTaskList] = useState([]);
+    const [crmTaskAcivity, setCRMTaskAcivity] = useState([]);
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [userName, setUserName] = React.useState(null);
@@ -128,7 +129,36 @@ function NewTodoList() {
         }
     }
 
+    const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
+     
+        let obj = {};
+        obj.TaskID = taskid;
+        try {       
 
+            Cls.Json_Get_CRM_Task_ActivityByTaskId(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_Get_CRM_Task_ActivityByTaskId", json);
+                        const formattedActivity = json.Table.map((activity) => {
+                            let ActivityDate;
+                            if (activity.ActivityDate) {
+                                ActivityDate = parseInt(activity.ActivityDate.slice(6, -2));
+                            }
+                            const date = new Date(ActivityDate);
+                            return { ...activity, ActivityDate: date, comDate: date, comNotes: activity.Notes };
+                        });
+                     let sort =   formattedActivity.sort((a, b) => a.ActivityDate - b.ActivityDate)
+                        setCRMTaskAcivity(sort);
+                        
+                        return callBack(sort);
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_CRM_GetOutlookTask", err);
+        }
+    };
 
     const Json_getRecentTaskList = () => {
 
@@ -204,7 +234,7 @@ function NewTodoList() {
                         let tbl = json.Table;
 
                         const itemIdSet = new Set(tbl.map(item => item.ItemId));
-                        console.log("Json_getRecentDocumentList", itemIdSet);
+                        console.log("Json_getRecentDocumentList", itemIdSet,exData);
 
                         if (exData.length > 0) {
                             const filteredArray2 = exData.filter(item => itemIdSet.has(item["Registration No."]));
