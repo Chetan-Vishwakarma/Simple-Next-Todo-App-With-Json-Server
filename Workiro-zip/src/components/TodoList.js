@@ -53,7 +53,6 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 f
 function TodoList() {
     const location = useLocation();
     const reduxData = useSelector((data) => data.counter.myTasks);
-    console.log("fdjkfhfhsf", reduxData);
     const dispatch = useDispatch();
     let dddd = location.state !== null ? location.state : { globalSearchTask: [] };
     const { globalSearchTask, strGlobal } = dddd;
