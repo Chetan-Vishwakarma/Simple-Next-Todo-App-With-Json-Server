@@ -728,8 +728,6 @@ function AddContacts() {
                       />
                     </Grid>
 
-
-
                     <Grid item xs={12} md={12}>
                       <ContactMainform
                         clientNames={clientNames}
@@ -742,9 +740,6 @@ function AddContacts() {
                         setImportcontactdata={setImportcontactdata}
                       />
                     </Grid>
-
-
-
 
                   </Grid>
 

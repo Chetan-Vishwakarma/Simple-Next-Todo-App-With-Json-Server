@@ -11,6 +11,8 @@ import Button from '@mui/material/Button';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import BootstrapTooltip, { tooltipClasses } from '@mui/material/Tooltip';
+
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -386,27 +388,45 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
             />
           </Grid>
           <Grid item lg={6} xs={6} md={6} className="d-flex align-items-center">
-            <Button className="min-width-auto text-danger">
-              <HighlightOffIcon className="font-32" onClick={clearDataCard} />
-            </Button>
+            <BootstrapTooltip title="Clear" arrow
+              placement="bottom-start"
+              slotProps={{
+                popper: {
+                  modifiers: [
+                    {
+                      name: 'offset',
+                      options: {
+                        offset: [0, -10],
+                      },
+                    },
+                  ],
+                },
+              }}
+            >
+              <Button className="min-width-auto text-danger">
+                <HighlightOffIcon className="font-32" onClick={clearDataCard} />
+              </Button>
+            </BootstrapTooltip>
           </Grid>
 
         </Grid>
       </Box>
 
       <Grid container spacing={3} className="mt-2">
+
         <Grid item lg={4} xs={6} md={6}>
           <TextField
             fullWidth
-            id="CHNumber"
-            label="CH Number"
+            id="standard-basic-id"
+            label="Client ID"
             variant="outlined"
-            name="CHNumber"
-            value={userDetail.CHNumber}
-            disabled={true}
-          // onChange={onChange}
+            name="Clientid"
+            value={userDetail.Clientid}
+            onChange={onChange}
           />
         </Grid>
+
+
         <Grid item lg={4} xs={6} md={6}>
           <TextField
             fullWidth
@@ -419,15 +439,17 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
           />
         </Grid>
 
+
         <Grid item lg={4} xs={6} md={6}>
           <TextField
             fullWidth
-            id="standard-basic-id"
-            label="Client ID"
+            id="CHNumber"
+            label="CH Number"
             variant="outlined"
-            name="Clientid"
-            value={userDetail.Clientid}
-            onChange={onChange}
+            name="CHNumber"
+            value={userDetail.CHNumber}
+            disabled={true}
+          // onChange={onChange}
           />
         </Grid>
 
@@ -464,11 +486,12 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
                 name="Selectclient"
                 // value={folders[defaultClient] || []}
                 onChange={onChange}
-                label="Client List"
+                label="Folder"
               />
             )}
           />
         </Grid>
+
         <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
             <Autocomplete
@@ -482,7 +505,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
                   name="Bussiness"
                   value={userDetail.Bussiness}
                   onChange={onChange}
-                  label="Bussiness"
+                  label="Business Type"
                   variant="outlined"
                 />
               )}
@@ -559,7 +582,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
             fullWidth
             id="standard-basic"
             type="number"
-            label="Mobile"
+            label="Mobile Number"
             variant="outlined"
             name="Mobile"
             value={userDetail.Mobile}

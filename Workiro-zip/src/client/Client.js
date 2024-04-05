@@ -65,7 +65,6 @@ const ClientFilters = [
     { key: "CompanyNo", val: "CompanyNo" }
 ];
 
-
 function Client() {
 
     const navigate = useNavigate();

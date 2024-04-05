@@ -16,6 +16,7 @@ import API from '../services/APIsCall';
 import Swal from 'sweetalert2';
 import { json, useNavigate } from 'react-router-dom';
 import CommanCLS from '../services/CommanService';
+import logo from "../images/logo.png";
 
 
 function Copyright(props) {
@@ -50,7 +51,7 @@ export default function Login() {
     event.preventDefault();
     let strEmail = document.getElementById("email").value;
     let strPassword = document.getElementById("password").value;
-    console.log("kjhsfkj",strEmail,btoa(strPassword));
+    console.log("kjhsfkj", strEmail, btoa(strPassword));
     const data = new FormData(event.currentTarget);
     // let obj = {
     //   Email: data.get('email'),
@@ -68,61 +69,128 @@ export default function Login() {
     LoginDetail(obj);
   };
   /////////////////////////end handalSubmit
-function LoginDetail(obj){
-  CLS.Call(JSON.stringify(obj),"Json_GetAgreementList",function(res){
-    if(res.d !=="Invalid"){
-      let str = JSON.parse(res.d);
-      let tbl = str.Table;
-      console.log("response data",tbl);
-      if(tbl.length>0){
-        //let setEmaiPass = JSON.parse(obj);        
-        localStorage.setItem("agrno",tbl[0].vAgreementNo);
-        localStorage.setItem("IsAdmin",tbl[0].strIsAdmin);
-        localStorage.setItem("UserId",tbl[0].intUserId);
-        localStorage.setItem("Email",obj.Email);
-        localStorage.setItem("Password",obj.password);
-        GetAgreementList(obj,tbl[0].vAgreementNo);
+  function LoginDetail(obj) {
+    CLS.Call(JSON.stringify(obj), "Json_GetAgreementList", function (res) {
+      if (res.d !== "Invalid") {
+        let str = JSON.parse(res.d);
+        let tbl = str.Table;
+        console.log("response data", tbl);
+        if (tbl.length > 0) {
+          //let setEmaiPass = JSON.parse(obj);        
+          localStorage.setItem("agrno", tbl[0].vAgreementNo);
+          localStorage.setItem("IsAdmin", tbl[0].strIsAdmin);
+          localStorage.setItem("UserId", tbl[0].intUserId);
+          localStorage.setItem("Email", obj.Email);
+          localStorage.setItem("Password", obj.password);
+          GetAgreementList(obj, tbl[0].vAgreementNo);
+        }
+        else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Login Failed',
+            text: 'Invalid username or password!',
+          });
+        }
       }
-      else{
+      else {
         Swal.fire({
           icon: 'error',
           title: 'Login Failed',
           text: 'Invalid username or password!',
-      });
+        });
       }
-    }
-    else{
-      Swal.fire({
-        icon: 'error',
-        title: 'Login Failed',
-        text: 'Invalid username or password!',
-    }); 
-    }
-    
-  })
-}
-const Json_getViewerToken=(obj)=>{
-  try{
-    CLS.Call(JSON.stringify(obj),"Json_getViewerToken",function(res){
-      localStorage.setItem("ViewerToken", res.d);
-      navigate("/dashboard/TodoList");
-    });
-  }catch(err){
-    console.log("Error while calling Json_getViewerToken",err);
+
+    })
   }
-}
-const GetAgreementList = (obj,agrno) => {
-obj.agrno = agrno;
-  CLS.Call(JSON.stringify(obj),"Json_GetAccessToken",function(res){
-    localStorage.setItem("FolderId",res.d);
-    localStorage.setItem("ProjectId",res.d);
-    Json_getViewerToken(obj);
-  })
-}
+  const Json_getViewerToken = (obj) => {
+    try {
+      CLS.Call(JSON.stringify(obj), "Json_getViewerToken", function (res) {
+        localStorage.setItem("ViewerToken", res.d);
+        navigate("/dashboard/TodoList");
+      });
+    } catch (err) {
+      console.log("Error while calling Json_getViewerToken", err);
+    }
+  }
+  const GetAgreementList = (obj, agrno) => {
+    obj.agrno = agrno;
+    CLS.Call(JSON.stringify(obj), "Json_GetAccessToken", function (res) {
+      localStorage.setItem("FolderId", res.d);
+      localStorage.setItem("ProjectId", res.d);
+      Json_getViewerToken(obj);
+    })
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
+
+      <Grid container spacing={2}>
+        <Grid item xs={6} md={6} className='d-flex align-items-center flex-column'>
+          <img src={logo} />
+
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }} className='left-side-login'>
+            <Typography variant='h2' className='mb-2'>Login to your account</Typography>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+            />
+            <FormControlLabel
+              control={<Checkbox value="remember" className="text-blue" />}
+              label="Remember me"
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Sign In
+            </Button>
+            <Grid container>
+              <Grid item xs>
+                <Link href="#" variant="body2">
+                  Forgot password?
+                </Link>
+              </Grid>
+              <Grid item>
+                <Link href="#" variant="body2">
+                  {"Don't have an account? Sign Up"}
+                </Link>
+              </Grid>
+            </Grid>
+
+            <Copyright sx={{ mt: 8, mb: 4 }} />
+
+            <Box className='text-center'>
+              <Link href="#" className='text-gray'>Terms & Condition</Link>
+              <Link href="#" className='text-gray'>Privacy Policy</Link>
+              <Link href="#" className='text-gray'>Help</Link>
+            </Box>
+
+          </Box>
+        </Grid>
+        <Grid item xs={6} md={6}>
+
+        </Grid>
+      </Grid>
+
+      {/* <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
           sx={{
@@ -186,7 +254,7 @@ obj.agrno = agrno;
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
-      </Container>
+      </Container> */}
     </ThemeProvider>
   );
 }

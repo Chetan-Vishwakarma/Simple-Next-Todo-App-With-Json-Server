@@ -928,7 +928,9 @@ function NewTodoList() {
                                                 <Typography variant="body1">
                                                     {/* Size:  <span className='sembold'>{item.FileSize}</span> |   */}
                                                     <span className='sembold'>{moment(item["Item Date"]).format("DD/MM/YYYY")!=="Invalid date"?moment(item["Item Date"]).format("DD/MM/YYYY"):"01/01/2000"}</span>
-                                                    | Uploaded by <span className='sembold'>{item.Client!==""&&item.Client!==null&&item.Client!=="undefined"&&item.Client!==undefined? item.Client: ""}</span>
+                                                    | 
+                                                    {/* Uploaded by */}
+                                                     <span className='sembold'>{item.Client!==""&&item.Client!==null&&item.Client!=="undefined"&&item.Client!==undefined? item.Client: ""}</span>
                                                 </Typography>
                                             </Box>
                                         </Box>

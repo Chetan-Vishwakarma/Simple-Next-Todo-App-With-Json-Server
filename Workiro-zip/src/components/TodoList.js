@@ -788,7 +788,7 @@ function TodoList() {
                     </Box>
 
                     <Box className='d-flex align-items-end'>
-                        <Box>
+                        <Box className='date-unerline'>
                             <DateRangePicker
                                 initialSettings={{
                                     startDate: start.toDate(),
