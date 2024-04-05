@@ -23,7 +23,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
     const [defaultClient, setDefaultClient] = useState([]);
     const [DynamicId, setDynamicId] = useState([]);
     const [Setaarray, setSetaarray] = useState([]);
-    const [defaultFoldefr, setDefaultFolders] = useState("");
+    const [defaultFoldefr, setDefaultFolders] = useState([]);
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -82,6 +82,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
       data = { ...data, ["FolderId"]: folderIds };
       console.log(value, "clientlist");
       setDefaultFolder(value);
+      setDefaultFolders(value);
       setUserDetail(data);
     }
   };
@@ -584,7 +585,7 @@ console.log(defaultFoldefr,"dynamicArray",DynamicId,folderArray);
                 variant="outlined"
                 name="Selectclient"
                 // value={folders[defaultClient] || []}
-                onChange={onChange}
+                // onChange={onChange}
                 label="Client List"
               />
             )}
