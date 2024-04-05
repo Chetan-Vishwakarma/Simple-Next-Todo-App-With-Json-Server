@@ -8,6 +8,7 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import CommanCLS from "../../services/CommanService";
 
 const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHouse })=>{
   console.log(dataCompanyHouse,"dataCompanyHouse",userDetail);
@@ -22,7 +23,13 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
   );
   // tabs
   const [value, setValue] = React.useState('1');
+  const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
+  const [password, setPassword] = useState(localStorage.getItem("Password"));
+  const [Email, setEmail] = useState(localStorage.getItem("Email"));
   const [ClientAddress, setClientAddress] = useState([]);
+  const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+  const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
+  let Cls = new CommanCLS(baseUrl, agrno, Email, password);
   const onChange = (e) => {
     e.preventDefault();
     let data = { ...userDetail };
@@ -72,29 +79,58 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-//   const Json_GetClientAddresses
-//  = () => {
-//     let passdata = localStorage.getItem("Password");
-//     let requestBody = {
-//       agrno: localStorage.getItem("agrno"),
-//       Email: localStorage.getItem("Email"),
-//       password: passdata,
-//       clientId:""
-//     };
-//     try {
-//       Cls.Json_GetClientAddresses(requestBody, (sts, data) => {
-//         if (sts) {
-//           if (data) {
-//             let json = JSON.parse(data);
-//             folderArray = json.Table;
-//             setFolders(json.Table);
-//           }
-//         }
-//       });
-//     } catch (err) {
-//       console.log("Error while calling Json_GetToFavourites", err);
-//     }
-//   };
+  
+  const Json_GetClientAddresses
+ = () => {
+    let requestBody = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      clientId:userDetail.Clientid
+    };
+    try {
+      Cls.Json_GetClientAddresses(requestBody, (sts, data) => {
+        if (sts) {
+          if (data) {
+            let json = JSON.parse(data);
+            console.log(json.Table,"Json_GetClientAddresses");
+            setClientAddress(json.Table);
+            if(json.Table){
+              let billing = json.Table[1];
+              let register = json.Table[2];
+              const updatedUserDetail = {
+                ...userDetail,
+                Line1:json.Table[0].Add1,
+                Line2:json.Table[0].Add2,
+                Line3:json.Table[0].Add3,
+                Town:json.Table[0].Town,
+                MCounty:json.Table[0].County,
+                Postcode:json.Table[0].Postcode,
+                BilLine1:billing.Add1,
+                BilLine2:billing.Add2,
+                BilLine3:billing.Add3,
+                BilTown:billing.Town,
+                BilCountry:billing.County,
+                BilPostcode:billing.Postcode,
+                regLine1:register.Add1,
+                regLine2:register.Add2,
+                regLine3:register.Add3,
+                regTown:register.Town,
+                regCountry:register.County,
+                regPostcode:register.Postcode,
+                fullAddress:json.Table[0].Add1+"\r\n"+json.Table[0].Add2+"\r\n"+json.Table[0].Add3+"\r\n"+json.Table[0].Town+"\r\n"+json.Table[0].County+"\r\n"+json.Table[0].Postcode,
+            };
+            setUserDetail(updatedUserDetail);
+            }
+            // folderArray = json.Table;
+             //setFolders(json.Table);
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_GetToFavourites", err);
+    }
+  };
   useEffect(() => {
     if(dataCompanyHouse){
       let data1 = { ...userDetail };
@@ -125,8 +161,14 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
       };
       setUserDetail(data1);
     }
-   
+    setAgrNo(localStorage.getItem("agrno"));
+    setPassword(localStorage.getItem("Password"));
+    setEmail(localStorage.getItem("Email"));
+    // setFolderId(localStorage.getItem("FolderId"));
+    // setIntUserid(localStorage.getItem("UserId"));
+    Json_GetClientAddresses();
   }, [dataCompanyHouse]);
+  console.log(userDetail,"userDetaildata111")
   return (
     
     <div>
