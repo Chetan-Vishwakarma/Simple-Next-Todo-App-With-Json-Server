@@ -28,6 +28,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const target = searchParams.get("str");
+    // const [target,setTarget] = useState(localStorage.getItem("globalSearchKey"));
     const folder = searchParams.get("folder");
     const [filteredTasks, setFilteredTasks] = useState([]);
     const [filteredDocuments, setFilteredDocuments] = useState([]);
@@ -152,6 +153,10 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         setFilteredDocuments(fltDocuments);
         // console.log("fkjhdkjs",fltDocuments);
     }, [target, folder]);
+
+    // useEffect(()=>{
+    //     setTarget(localStorage.getItem("globalSearchKey"));
+    // },[]);
 
     const handleDocumentNavigation = () => {
         navigate("/dashboard/DocumentList", { state: { globalSearchDocs: filteredDocuments, strGlobal: target } });
