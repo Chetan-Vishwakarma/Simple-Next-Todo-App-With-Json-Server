@@ -10,9 +10,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Unstable_NumberInput as NumberInput } from '@mui/base/Unstable_NumberInput';
 import dayjs from "dayjs";
 const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
-  console.log(data?.Table, "sdfsd", data.Table3);
+  console.log(data?.Table, "hhhhhhhhhhhghghgh", data.Table3);
   const [selectManager, setselectManagers] = useState([]);
   const [selectedDatetest, setSelectedDatetest] = useState([]);
+  const [currentDate, setCurrentDate] = useState(new Date());
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   let Cls = new CommanCLS(
     baseUrl,
@@ -20,6 +21,10 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
     localStorage.getItem("Email"),
     localStorage.getItem("Password")
   );
+  const CurrentDateChange = (e) => {
+    setCurrentDate(e);
+    // setNextDate(formattedDate);
+}
   const Json_GetForwardUserList = () => {
     let obj = {
       agrno: localStorage.getItem("agrno"),
@@ -102,7 +107,7 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
                 data.TextControlValue +
                 "_UDF"
               }
-              // value={data.UdfValue}
+              value={data.UdfValue}
               onChange={handleInputChange}
             />
               );
@@ -145,7 +150,7 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  // value={data.UdfValue}
+                  value={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -173,6 +178,10 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
             break;
           case "Date":
             if (data && data.UdfValue) {
+                const defaultDateObject = dayjs(data.UdfValue, "MMM DD YYYY hh:mma");
+const formattedDefaultDate = dayjs(defaultDateObject).format("MM/DD/YYYY");
+console.log(formattedDefaultDate,data.UdfValue,"1formattedDefaultDateformattedDefaultDate",defaultDateObject);
+
               renderedContent = (
 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -186,8 +195,11 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
                   >
 
                     <DatePicker
-                      // dateFormat="DD/MM/YYYY"
+                      dateFormat="DD/MM/YYYY"
                       // value={currentDate}
+                    //   dateFormat="DD/MM/YYYY"
+                    //   value={currentDate}
+                      defaultValue={defaultDateObject}
                       id={
                         data.UserDefFieldID +
                         "_" +
@@ -196,7 +208,7 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
                         data.TextControlValue +
                         "_UDF"
                       }
-                      onChange={handleInputChange}
+                      onChange={(e) => handleInputOnDateChage(e, `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}_UDF`)}
                     />
 
                   </DemoContainer>
@@ -226,7 +238,7 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
                         data.TextControlValue +
                         "_UDF"
                       }
-                      onChange={(e) => handleInputOnDateChage(e, `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}_UDF`)}
+                     
                     />
 
                   </DemoContainer>
@@ -251,7 +263,7 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  // value={data.UdfValue}
+                  value={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -294,7 +306,7 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  // value={data.UdfValue}
+                  value={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -314,7 +326,7 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  //   value={data.UdfValue}
+                    value={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -337,7 +349,7 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  // value={data.UdfValue}
+                  value={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -370,14 +382,20 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
           const optionsArray = data.Options.split("@;");
           console.log(
             data,
-            "optionsArray",
+            "optionsArray11",optionsArray,
             `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`
           );
+          const optionsArray1 = data.Options.split('@;').filter(option => option.trim() !== '');
+
+          // Set default value to the first option in the array
+        //   const defaultValue = optionsArray1.length > 0 ? optionsArray1[0] : null;
+        
           if (optionsArray.length > 0) {
             renderedContent = (
               <Autocomplete
                 id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
                 options={optionsArray} // Pass optionsArray as options
+                defaultValue={data.UdfValue}
                 name={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
                 clearOnEscape
                 onChange={(event, value) => handleInputOnSelect(event, value)}
@@ -467,6 +485,7 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
               <Autocomplete
                 options={selectManager} // Pass optionsArray as options
                 id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
+                defaultValue={data.UdfValue}
                 onChange={(event, value) => handleInputOnSelect(event, value)}
                 clearOnEscape
                 renderInput={(params) => (

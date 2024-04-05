@@ -162,7 +162,7 @@ function ClientDetails() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_GetClientCardDetails", json);
+                        console.log("Json_GetClientCardDetailssssss", json);
                         setClientDetails(json);
                         setCompanyDetails(json.Table1);
                         setCompanyEditDetails(json.Table1);

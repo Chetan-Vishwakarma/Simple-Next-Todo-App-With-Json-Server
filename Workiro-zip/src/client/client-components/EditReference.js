@@ -107,7 +107,7 @@ function EditReference({companyEditDetails}) {
       agrno: agrno,
       intProjectId: folderId,
       password: password,
-      strOrignatorNumber: originatorNo,
+      strOrignatorNumber: companyEditDetails[0].OriginatorNo ? companyEditDetails[0].OriginatorNo : "",
     };
     try {
       webClientCLS.Json_GetClientCardDetails(obj, (sts, data) => {

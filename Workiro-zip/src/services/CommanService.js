@@ -1163,4 +1163,17 @@ console.log("formattedDate",formattedDate)
             }
         })
     }
+    Json_GetClientAssignedUnassignedFolderList(obj,callback) {
+        super.CreateNewServiceParamObject("Json_GetClientAssignedUnassignedFolderList",obj,false);
+        super.CallNewService("Json_GetClientAssignedUnassignedFolderList", function (status, Data) {
+            if (status) {
+                if (Data != "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
 }

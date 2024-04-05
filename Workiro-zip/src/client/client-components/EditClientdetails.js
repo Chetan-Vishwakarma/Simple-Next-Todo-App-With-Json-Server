@@ -70,8 +70,12 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
   const onChangeclientlist = (event, value) => {
     event.preventDefault();
     if (value) {
+      // let data = { ...userDetail };
+      // data = { ...data, ["FolderId"]: value.FolderID };
+      const folderIds = value.map((folder) => folder.FolderID).join(",");
+      console.log(value,"foldergetdata",folderIds);
       let data = { ...userDetail };
-      data = { ...data, ["FolderId"]: value.FolderID };
+      data = { ...data, ["FolderId"]: folderIds };
       console.log(value, "clientlist");
       setDefaultFolder(value);
       setUserDetail(data);
@@ -241,7 +245,30 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
       console.log("Error while calling Json_GetToFavourites", err);
     }
   };
-
+  const Json_GetClientAssignedUnassignedFolderList = () => {
+    let requestBody = {
+      agrno: agrno,
+      UserEmail: Email,
+      password: password,
+      strOrignatorno:companyEditDetails[0].OriginatorNo ? companyEditDetails[0].OriginatorNo :
+      "",
+      intuserId:localStorage.getItem("UserId")
+    };
+    console.log(requestBody,"requestBodydata",userDetail);
+    try {
+      Cls.Json_GetClientAssignedUnassignedFolderList(requestBody, (sts, data) => {
+        if (sts) {
+          if (data) {
+            let json = JSON.parse(data);
+            let assigned = json.Table;
+            console.log(assigned,"getjsondata");
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_GetToFavourites", err);
+    }
+  };
   const
     Json_CompanyHouseDetails = (inputValue) => {
       let requestBody = {
@@ -369,7 +396,7 @@ const clearDataCard = () => {
     // Json_GetClientCardDetails();
     Json_GetFolders();
     Json_GetConfiguration();
-
+    Json_GetClientAssignedUnassignedFolderList();
    
 }, []);
 
