@@ -659,13 +659,13 @@ export default function DocumentList({ clientId }) {
                             </Typography>
 
                             <div className='text-center mb-2 client-details-filter-btn d-flex'>
-                                <ToggleButton className='w-100 active' value="left" aria-label="left aligned" onClick={() => setToggleScreen({ singleCardView: true, multipleCardView: false, tableGridView: false })}>
+                                <ToggleButton className={toggleScreen.singleCardView?'w-100 active':'w-100'} value="left" aria-label="left aligned" onClick={() => setToggleScreen({ singleCardView: true, multipleCardView: false, tableGridView: false })}>
                                     <DnsIcon />
                                 </ToggleButton>
-                                <ToggleButton className='w-100' value="center" aria-label="centered" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: true, tableGridView: false })}>
+                                <ToggleButton className={toggleScreen.multipleCardView?'w-100 active':'w-100'} value="center" aria-label="centered" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: true, tableGridView: false })}>
                                     <AppsIcon />
                                 </ToggleButton>
-                                <ToggleButton className='w-100' value="right" aria-label="right aligned" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: false, tableGridView: true })}>
+                                <ToggleButton className={toggleScreen.tableGridView?'w-100 active':'w-100'} value="right" aria-label="right aligned" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: false, tableGridView: true })}>
                                     <TableRowsIcon />
                                 </ToggleButton>
                             </div>

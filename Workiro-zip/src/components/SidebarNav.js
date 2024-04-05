@@ -148,6 +148,7 @@ export default function SidebarNav() {
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
   const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
   const [userId, setUserId] = useState(localStorage.getItem("UserId"));
+  const [globalSearch,setGlobalSearch] = useState(localStorage.getItem("globalSearchKey"));
 
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -390,6 +391,10 @@ export default function SidebarNav() {
     setAnchorEl4(null);
   };
 
+  useEffect(()=>{
+    setGlobalSearch(localStorage.getItem("globalSearchKey"));
+  },[globalSearch]);
+
   return (
     <>
       <Box className='d-block d-md-flex' onClick={() => setIsSearch(false)}>
@@ -421,9 +426,10 @@ export default function SidebarNav() {
                           <span className="material-symbols-outlined search-icon">search</span>
 
                           <form onSubmit={(e) => {
+                            localStorage.setItem("globalSearchKey",searchInputForGlobalSearch);
                             const isAlready = tabs.map(itm=>itm.tabName).some(item=>item==="Search Result");
                             if(!isAlready){
-                              setTabs([...tabs,{ tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
+                              setTabs([...tabs,{ tabLink: `/dashboard/SearchResult?str=${globalSearch}&folder=${folderId}`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
                             }
                             e.preventDefault();
                             navigate(`/dashboard/SearchResult?str=${forDocuments}&folder=${selectedFolder}`);
@@ -435,6 +441,7 @@ export default function SidebarNav() {
                                 itm.active = false;
                               }
                             });
+                            setSearchInputForGlobalSearch("");
                           }} >
                             <Input
                               onChange={(e) => handleGlobalSearch(e.target.value)}

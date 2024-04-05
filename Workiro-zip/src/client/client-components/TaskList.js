@@ -124,6 +124,13 @@ function TaskList() {
             let json = JSON.parse(data);
             console.log("Json_CRM_GetOutlookTask", json?.Table);
             if (json?.Table.length > 0) {
+              let filteredData = json.Table.filter(itm=>itm["EndDateTime"]!==null && !itm["EndDateTime"].split("").includes("-") && itm["Start"]!==null && !itm["Start"].split("").includes("-"));
+              filteredData.map(itm=>{
+                const timeStamp1 = parseInt(itm["EndDateTime"].match(/\d+/)[0]);
+                itm["EndDateTime"] = new Date(timeStamp1);
+                const timeStamp2 = parseInt(itm["Start"].match(/\d+/)[0]);
+                itm["Start"] = new Date(timeStamp2);
+              })
               setOutlookTaskList(json.Table)
             }
 
@@ -194,11 +201,11 @@ function TaskList() {
         <Column
           dataField="Start"
           dataType="date"
-          format="M/d/yyyy"
+          format="d/M/yyyy"
         />
         <Column dataField="EndDateTime"
           dataType="date"
-          format="M/d/yyyy"
+          format="d/M/yyyy"
         />
         <Column dataField="Subject" />
         <Column

@@ -322,6 +322,13 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             }}
                                             className='custom-dropdown'
                                         >
+                                            <MenuItem
+                                                onClick={(event) => handleCloseDocument(event, data)}
+                                            >
+                                                <ListItemIcon>
+                                                    <CloudUploadIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Create Task</MenuItem>
                                             <MenuItem onClick={(event) => {
                                                 handleCloseDocument(event, data)
                                                 handleClickOpenDocumentDetailsList(event, data.data)
