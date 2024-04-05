@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
+import Checkbox from '@mui/material/Checkbox';
 import Autocomplete from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
 import { FormControl, FormControlLabel, List, ListItem, ListItemText, Switch } from "@mui/material";
@@ -8,11 +9,17 @@ import CommanCLS from "../../services/CommanService";
 import { memo } from 'react';
 import Button from '@mui/material/Button';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const UserDetailContext = createContext();
 // const UserDetailContext = createContext();
 let folderArray;
 const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse,companyEditDetails}) => {
     console.log(companyEditDetails,"EditcompanyEditDetails");
+    const [defaultClient, setDefaultClient] = useState([]);
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -20,6 +27,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   const [folders, setFolders] = useState([]);
   const [bussiness, setBussiness] = useState([]);
+  const [Isfetchdata, setIsfetchdata] = useState(false);
   const [sources, setSources] = useState([]);
   const [mangers, setMangers] = useState([]);
   const [defaultUser, setDefaultUser] = useState(null);
@@ -209,6 +217,23 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
             let json = JSON.parse(data);
             folderArray = json.Table;
             setFolders(json.Table);
+            setIsfetchdata(true);
+            const sourceObj = folderArray.find((item) => item.FolderID == localStorage.getItem("FolderId"));
+            const index = folderArray.indexOf(sourceObj); 
+            console.log(sourceObj,index, "sourceobjector", folderArray);
+            if (sourceObj) {
+              const index = folderArray.indexOf(sourceObj);
+              if (index > -1) {
+                let data = [folderArray[index]]
+                console.log(index, "sourceobjector1111",folders[defaultClient]);
+              
+                  setDefaultClient(index);
+              } else {
+                  console.error("Index not found in folderData:", index);
+              }
+          } else {
+              console.error("Folder ID not found in folderData:", localStorage.getItem("FolderId"));
+          }
           }
         }
       });
@@ -459,8 +484,7 @@ const handleAdvancedSettingChange = (event) => {
         </Grid>
 
         <Grid item lg={4} xs={6} md={6}>
-          <Autocomplete
-            // {...clientlist}
+          {/* <Autocomplete
             options={folders}
             getOptionLabel={(option) => option.Folder}
             value={defaultFolder || null}
@@ -477,7 +501,44 @@ const handleAdvancedSettingChange = (event) => {
                 label="Client List"
               />
             )}
+          /> */}
+           {Isfetchdata && (
+          <Autocomplete
+            multiple
+            // {...clientlist}
+            options={folders}
+              getOptionLabel={(option) => option.Folder ? option.Folder: ""}
+            //  defaultValue={[def]}
+              // value={defaultFolder || null}
+            defaultValue={[folders[defaultClient]]}
+            // defaultValue={defaultClient !== null ? [folders[defaultClient]] : []}
+            id="clientlist"
+            clearOnEscape
+            onChange={onChangeclientlist}
+             renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
           />
+          {option.Folder}
+        </li>
+      )}
+      
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                name="Selectclient"
+                // value={folders[defaultClient] || []}
+                onChange={onChange}
+                label="Client List"
+              />
+            )}
+          />
+        )}
         </Grid>
         <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
