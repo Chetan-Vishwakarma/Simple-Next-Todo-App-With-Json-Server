@@ -146,7 +146,8 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
                   fullWidth
                   label={data.Name}
                   variant="outlined"
-                  name="regLine1"
+                  name="stringtype"
+                  key={`stringtype`}
                   id={
                     data.UserDefFieldID +
                     "_" +
@@ -155,7 +156,7 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  value={data.UdfValue}
+                  defaultValue={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -166,7 +167,8 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
                   fullWidth
                   label={data.Name}
                   variant="outlined"
-                  name="regLine1"
+                  name="stringtype"
+                  key={`stringtype`}
                   id={
                     data.UserDefFieldID +
                     "_" +
@@ -258,6 +260,7 @@ if (defaultDateObject.isValid()) {
                         data.TextControlValue +
                         "_UDF"
                       }
+                      onChange={(e) => handleInputOnDateChage(e, `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}_UDF`)}
                      
                     />
 
@@ -346,7 +349,7 @@ if (defaultDateObject.isValid()) {
                     data.TextControlValue +
                     "_UDF"
                   }
-                    value={data.UdfValue}
+                    // value={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
