@@ -1215,4 +1215,17 @@ console.log("formattedDate",formattedDate)
             }
         })
     }
+    Json_AssignProjectsToClient(obj,callback) {
+        super.CreateNewServiceParamObject("Json_AssignProjectsToClient",obj,false);
+        super.CallNewService("Json_AssignProjectsToClient", function (status, Data) {
+            if (status) {
+                if (Data != "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
 }

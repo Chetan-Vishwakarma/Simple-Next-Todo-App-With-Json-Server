@@ -385,6 +385,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
     let val = event.target.checked;
     data = { ...data, [name]: val };
     console.log(data, "dataOnchange", event);
+
     setUserDetail(data);
   };
   const handleAdvancedInactive = (event) => {
@@ -727,7 +728,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
             key={`maincheckbox`}
             control={
               <Switch
-                name="Assgined"
+                name="InActiveData"
                 checked={advancedSettingChecked}
                 onChange={handleAdvancedSettingChange}
               />
@@ -739,7 +740,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
             key={`inactive`}
             control={
               <Switch
-                name="Unassigned"
+                name="HideData"
                 checked={advancedInactive}
                 onChange={handleAdvancedInactive}
               />

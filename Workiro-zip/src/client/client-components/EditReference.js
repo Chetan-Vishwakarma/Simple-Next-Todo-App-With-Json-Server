@@ -68,10 +68,10 @@ function EditReference({ companyEditDetails }) {
     Manager: "",
     Email: "",
     folderId: localStorage.getItem("FolderId"),
-    BussId: -1,
+    BussId: companyEditDetails[0].BussID,
     UserId: -1,
-    SourceId: -1,
-    StatusId: -1,
+    SourceId: companyEditDetails[0].SourceId,
+    StatusId: companyEditDetails[0].StatusId,
     Title: "",
     FirstName: "",
     LastName: "",
@@ -92,7 +92,9 @@ function EditReference({ companyEditDetails }) {
     mainCountry: "",
     billingsCountry: "",
     ragistersCountry: "",
-    CHNumber: ""
+    CHNumber: "",
+    InActiveData:false,
+    HideData:false
   });
   console.log("userDetailuserDetail", userDetail);
   const [originatorNo, setoriginatorNo] = useState("");
@@ -147,9 +149,9 @@ function EditReference({ companyEditDetails }) {
       Town: userDetail.Town ? userDetail.Town : "",
       County: userDetail.MCounty ? userDetail.MCounty : "",
       Postcode: userDetail.Postcode ? userDetail.Postcode : "",
-      Country: userDetail.mainCountry,
+      Country: userDetail.mainCountry ? userDetail.mainCountry : "United Kingdom",
     };
-    console.log(obj, "mainaddress");
+    console.log(obj, "mainaddress",userDetail.mainCountry);
     Json_SetClientAddress(obj);
   };
 
@@ -167,7 +169,7 @@ function EditReference({ companyEditDetails }) {
       Town: userDetail.BilTown ? userDetail.BilTown : "",
       County: userDetail.BilCountry ? userDetail.BilCountry : "",
       Postcode: userDetail.BilPostcode ? userDetail.BilPostcode : "",
-      Country: userDetail.billingsCountry,
+      Country: userDetail.billingsCountry ? userDetail.billingsCountry : "United Kingdom",
     };
     console.log(obj, "mainaddress11");
     Json_SetClientAddress(obj);
@@ -178,7 +180,7 @@ function EditReference({ companyEditDetails }) {
       Email: Email,
       password: password,
       OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
-      AddressId: 1,
+      AddressId: 3,
       AddressType: "Registered Address",
       Add1: userDetail.regLine1 ? userDetail.regLine1 : "",
       Add2: userDetail.regLine2 ? userDetail.regLine2 : "",
@@ -186,7 +188,7 @@ function EditReference({ companyEditDetails }) {
       Town: userDetail.regTown ? userDetail.regTown : "",
       County: userDetail.regCountry ? userDetail.regCountry : "",
       Postcode: userDetail.regPostcode ? userDetail.regPostcode : "",
-      Country: userDetail.ragistersCountry,
+      Country: userDetail.ragistersCountry ? userDetail.ragtersCountry : "United Kingdom",
     };
     console.log(obj, "mainaddress22");
 
@@ -248,6 +250,7 @@ function EditReference({ companyEditDetails }) {
       });
     }
   };
+
   const Json_ChangeClientID = () => {
     let changeidObj = {
       "agrno": agrno,
@@ -271,12 +274,36 @@ function EditReference({ companyEditDetails }) {
 
     });
   }
+
+  const Json_AssignProjectsToClient = () => {
+    let changeidObj = {
+      "agrno": agrno,
+      "Email": Email,
+      "password": password,
+      "OriginatorNo": userDetail.Clientid ? userDetail.Clientid : "",
+      "ProjectIdList": folderId ? folderId : -1
+    }
+
+    Cls.Json_AssignProjectsToClient(changeidObj, (sts, data) => {
+      if (sts) {
+        console.log(sts, data, "Json_AssignProjectsToClient");
+        // let jsonparse = JSON.parse(data);
+        // if (jsonparse) {
+        //     console.log(jsonparse,"successcontact");
+
+
+        // }
+      }
+
+    });
+  }
   const handleSubmit = (event) => {
     event.preventDefault();
     function todayDate() {
       var today = new Date().toJSON().slice(0, 10);
       return today;
     }
+    
     let clientdata = {
       agrno: agrno,
       Email: Email,
@@ -289,7 +316,7 @@ function EditReference({ companyEditDetails }) {
       AlteTelNo: userDetail.Mobile ? userDetail.Mobile : "",
       Faxno: "",
       ContactName: "",
-      OrgActive: "Yes",
+      OrgActive: userDetail.InActiveData==true ? "No" : userDetail.HideData==true ? "HID" : "Yes",
       StickyNote: "",
       ContactEmail: userDetail.Email ? userDetail.Email : "",
       // MParameter: "",
@@ -316,6 +343,7 @@ function EditReference({ companyEditDetails }) {
             // Json_InsertContact(); Main contact not need
             Json_ChangeClientID();
             Json_UpdateClientField();
+            Json_AssignProjectsToClient();
             saveUDF();
             mainAddress();
             billingAddress();
