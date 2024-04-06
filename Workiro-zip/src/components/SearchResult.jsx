@@ -13,6 +13,7 @@ import { setMyTasks } from '../redux/reducers/counterSlice';
 import { toast } from 'react-toastify';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import moment from 'moment';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
@@ -219,21 +220,21 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                 <Box className='mt-2'>
                                     <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)}>Mark Complete</Button>
                                     <DateRangePicker initialSettings={{
-                                                    singleDatePicker: true,
-                                                    showDropdowns: true,
-                                                    startDate: new Date(parseInt(/\d+/.exec(item["EndDateTime"]))),
-                                                    minYear: 1901,
-                                                    maxYear: 2100,
-                                                }}
-                                                onCallback={(start) => {
-                                                    const date = start.format('YYYY/MM/DD');
-                                                    Json_UpdateTaskField("EndDateTime",date,item);
-                                                }}
-                                                >
-                                                    <Button variant="outlined" className='btn-outlin-2'>
-                                                        Defer
-                                                    </Button>
-                                                </DateRangePicker>
+                                        singleDatePicker: true,
+                                        showDropdowns: true,
+                                        startDate: new Date(parseInt(/\d+/.exec(item["EndDateTime"]))),
+                                        minYear: 1901,
+                                        maxYear: 2100,
+                                    }}
+                                        onCallback={(start) => {
+                                            const date = start.format('YYYY/MM/DD');
+                                            Json_UpdateTaskField("EndDateTime", date, item);
+                                        }}
+                                    >
+                                        <Button variant="outlined" className='btn-outlin-2'>
+                                            Defer
+                                        </Button>
+                                    </DateRangePicker>
                                 </Box>
                             </Box>
                         </Grid>
@@ -253,6 +254,12 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                         return <Grid className='pt-0' item xs={12} lg={4} md={4} sm={12}><Box className="file-uploads">
                             <label className="file-uploads-label file-uploads-document">
                                 <Box className="d-flex align-items-center">
+                                    <DescriptionIcon
+                                        sx={{
+                                            fontSize: 32,
+                                        }}
+                                        className='me-2 ms-0'
+                                    />
                                     <Box className="upload-content pe-3">
                                         <Typography variant="h4" >
                                             {item.Description ? item.Description : ""}
@@ -260,10 +267,11 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                         <Typography variant="body1">
                                             {/* Size:  <span className='sembold'>{item.FileSize? item.FileSize: ""}</span> |  */}
                                             Date <span className='sembold'>{item["Item Date"] !== "NaN/NaN/NaN" ? item["Item Date"] : "01/01/2000"}</span>
-                                            | Uploaded by <span className='sembold'>Patrick</span>
+                                            | <span className='sembold'>{item.Client}</span>
                                         </Typography>
                                     </Box>
                                 </Box>
+                                
                             </label>
                         </Box></Grid>
                     }) : <DataNotFound />}</Grid>
