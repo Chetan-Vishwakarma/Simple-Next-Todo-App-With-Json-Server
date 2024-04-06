@@ -9,6 +9,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import CommanCLS from "../../services/CommanService";
+import { Height } from "@mui/icons-material";
 
 const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHouse })=>{
   console.log(dataCompanyHouse,"dataCompanyHouse",userDetail);
@@ -573,8 +574,9 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                   name="fullAddress"
                   value={userDetail.fullAddress}
                   onChange={onChange}
-                  className="form-control textarea"
+                  className="form-control textarea textarea-2"
                   placeholder="Full Address"
+                  // xl={{ minHeight: '400px', Height: '600px', }}
                 />
               </Box>
             </TabPanel>

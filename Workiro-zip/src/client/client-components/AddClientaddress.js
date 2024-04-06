@@ -479,9 +479,12 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                             value={userDetail.regAddress}
                             onChange={onChange}
                             variant="outlined"
+                            sx={{ height: '500px;' }}
                           />
+                          
                         )}
                       />
+                      
                     </FormControl>
                   </Grid>
                 </Grid>
@@ -495,8 +498,9 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                   name="fullAddress"
                   value={userDetail.fullAddress}
                   onChange={onChange}
-                  className="form-control textarea"
+                  className="form-control textarea textarea-2"
                   placeholder="Full Address"
+                  sx={{ minHeight: '400px' }}                  
                 />
               </Box>
             </TabPanel>
