@@ -35,7 +35,7 @@ const Demo = styled('div')(({ theme }) => ({
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
-const PortalMessage = ({ selectedTask, Json_RegisterItem,setPortalComments,setSelectedEmailForComment }) => {
+const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, setSelectedEmailForComment }) => {
     console.log("selectedTask portal message", selectedTask)
 
     const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
@@ -210,10 +210,10 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem,setPortalComments,setSe
     }
 
 
-   
-    
 
-   
+
+
+
 
 
 
@@ -221,14 +221,14 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem,setPortalComments,setSe
 
     const handleCloseMgs = (e) => {
         setAnchorElMgs(null);
-       // console.log("GetMessageHtml_Json11", e);
+        // console.log("GetMessageHtml_Json11", e);
         //console.log("GetMessageHtml_Json11", e);
 
         if (e.PortalDocId) {
             setSelectedEmail(e);
             setSelectedEmailForComment(e);
             GetMessageHtml_Json(e);
-            GetDocumentStatus_Json(e);          
+            GetDocumentStatus_Json(e);
             GetCertificate_Json(e.PortalDocId);
             setMessageEmail(e.emailid);
             setPortalEmailOpbject(e);
@@ -240,7 +240,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem,setPortalComments,setSe
 
             if (res && res.length > 0) {
                 setFilterAttachments(res);
-              //  console.log("GetMessageHtml_Json11", res);
+                //  console.log("GetMessageHtml_Json11", res);
                 setTotalAttachment(res.length);
 
             }
@@ -720,7 +720,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem,setPortalComments,setSe
                         templateDataMarkup={templateDataMarkup}
                         setTemplateDataMarkup={setTemplateDataMarkup}
                         setEditorContentValue={setEditorContentValue}
-                        className="form-control textarea"
+                        className="form-control textarea textarea-2"
                         disabled={selectedTask.Source === "Portal"}
                         value={templateDataMarkup}
                     ></textarea>
@@ -758,8 +758,10 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem,setPortalComments,setSe
                                         <>
                                             <Box className='ps-2'>
                                                 {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
-                                                <HourglassEmptyIcon className='text-gray' />
-                                                <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
+                                                <Box className='d-flex align-items-center mb-2'>
+                                                    <HourglassEmptyIcon className='text-gray me-1' />
+                                                    <h5 className='font-14 text-black mb-0'>Pending Approval</h5>
+                                                </Box>
                                                 <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
                                             </Box>
                                         </>
@@ -774,12 +776,9 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem,setPortalComments,setSe
                                 </>
                             )
                         }
-
-
-
                     </Box>
 
-                    <Box className=''>
+                    <Box className='pe-3'>
                         {/* <MarkunreadIcon /> */}
                         {/* <DraftsIcon /> */}
                         <Box className='ps-3'>

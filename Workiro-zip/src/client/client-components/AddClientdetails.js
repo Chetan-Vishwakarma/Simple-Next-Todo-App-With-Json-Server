@@ -70,7 +70,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
       const folderIds = value.map((folder) => folder.FolderID).join(",");
       console.log(value,"foldergetdata",folderIds);
       let data = { ...userDetail };
-      data = { ...data, ["FolderId"]: value.FolderID };
+      data = { ...data, ["FolderId"]: folderIds };
       setDefaultFolder(value);
       setUserDetail(data);
     }

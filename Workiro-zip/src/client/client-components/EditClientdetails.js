@@ -17,9 +17,13 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const UserDetailContext = createContext();
 // const UserDetailContext = createContext();
 let folderArray;
-const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse,companyEditDetails}) => {
-    console.log(companyEditDetails,"EditcompanyEditDetails");
-    const [defaultClient, setDefaultClient] = useState([]);
+let dynamicArray;
+const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompanyHouse, dataCompanyHouse, companyEditDetails }) => {
+  console.log(companyEditDetails, "EditcompanyEditDetails");
+  const [defaultClient, setDefaultClient] = useState([]);
+  const [DynamicId, setDynamicId] = useState([]);
+  const [Setaarray, setSetaarray] = useState([]);
+  const [defaultFoldefr, setDefaultFolders] = useState([]);
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -70,10 +74,15 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
   const onChangeclientlist = (event, value) => {
     event.preventDefault();
     if (value) {
+      // let data = { ...userDetail };
+      // data = { ...data, ["FolderId"]: value.FolderID };
+      const folderIds = value.map((folder) => folder.FolderID).join(",");
+      console.log(value, "foldergetdata", folderIds);
       let data = { ...userDetail };
-      data = { ...data, ["FolderId"]: value.FolderID };
+      data = { ...data, ["FolderId"]: folderIds };
       console.log(value, "clientlist");
       setDefaultFolder(value);
+      setDefaultFolders(value);
       setUserDetail(data);
     }
   };
@@ -166,35 +175,35 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
             setDefaultUser(defaultUser1);
             setStatus(json.Table);
             if (companyEditDetails) {
-                const statusObject = json.Table.find((item) => item.StatusId === companyEditDetails[0].StatusId);
-                const sourceObj = json.Table2.find((item) => item.SourceId === companyEditDetails[0].SourceId);
-                const bussineObj = json.Table1.find((item) => item.BussId === companyEditDetails[0].BussID);
-                const folderObj = folderArray.find((item) => item.FolderID === localStorage.getItem("FolderId"));
-                console.log(companyEditDetails, "testsourceObj",folderArray);
-        
-                // Set default status and source if found
-                if (statusObject) {
-                    setDefaultStatus(statusObject);
-                }
-                if (sourceObj) {
-                    setDefaultSource(sourceObj);
-                }
-                if(bussineObj){
-                    setDefaultBussiness(bussineObj);
-                }
-        
-                const updatedUserDetail = {
-                    ...userDetail,
-                    CHNumber: "",
-                    Clientname: companyEditDetails[0].OriginatorName,
-                    Clientid: companyEditDetails[0].OriginatorNo,
-                    StatusId: statusObject ? statusObject.StatusName : "", // Set default status name
-                    UserId: "",
-                    Mobile: companyEditDetails[0].AltTelNo,
-                    Telephone: companyEditDetails[0].TelNo,
-                    Email: companyEditDetails[0].Email
-                };
-                setUserDetail(updatedUserDetail);
+              const statusObject = json.Table.find((item) => item.StatusId === companyEditDetails[0].StatusId);
+              const sourceObj = json.Table2.find((item) => item.SourceId === companyEditDetails[0].SourceId);
+              const bussineObj = json.Table1.find((item) => item.BussId === companyEditDetails[0].BussID);
+              const folderObj = folderArray.find((item) => item.FolderID === localStorage.getItem("FolderId"));
+              console.log(companyEditDetails, "testsourceObj", folderArray);
+
+              // Set default status and source if found
+              if (statusObject) {
+                setDefaultStatus(statusObject);
+              }
+              if (sourceObj) {
+                setDefaultSource(sourceObj);
+              }
+              if (bussineObj) {
+                setDefaultBussiness(bussineObj);
+              }
+
+              const updatedUserDetail = {
+                ...userDetail,
+                CHNumber: "",
+                Clientname: companyEditDetails[0].OriginatorName,
+                Clientid: companyEditDetails[0].OriginatorNo,
+                StatusId: statusObject.StatusId, // Set default status name
+                UserId: "",
+                Mobile: companyEditDetails[0].AltTelNo,
+                Telephone: companyEditDetails[0].TelNo,
+                Email: companyEditDetails[0].Email
+              };
+              setUserDetail(updatedUserDetail);
             }
           }
         }
@@ -219,21 +228,21 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
             setFolders(json.Table);
             setIsfetchdata(true);
             const sourceObj = folderArray.find((item) => item.FolderID == localStorage.getItem("FolderId"));
-            const index = folderArray.indexOf(sourceObj); 
-            console.log(sourceObj,index, "sourceobjector", folderArray);
+            const index = folderArray.indexOf(sourceObj);
+            console.log(sourceObj, index, "sourceobjector", folderArray);
             if (sourceObj) {
               const index = folderArray.indexOf(sourceObj);
               if (index > -1) {
                 let data = [folderArray[index]]
-                console.log(index, "sourceobjector1111",folders[defaultClient]);
-              
-                  setDefaultClient(index);
+                console.log(index, "sourceobjector1111", folders[defaultClient]);
+
+                setDefaultClient(index);
               } else {
-                  console.error("Index not found in folderData:", index);
+                console.error("Index not found in folderData:", index);
               }
-          } else {
+            } else {
               console.error("Folder ID not found in folderData:", localStorage.getItem("FolderId"));
-          }
+            }
           }
         }
       });
@@ -242,6 +251,32 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
     }
   };
 
+  const Json_GetClientAssignedUnassignedFolderList = () => {
+    let requestBody = {
+      agrno: agrno,
+      UserEmail: Email,
+      password: password,
+      strOrignatorno: companyEditDetails[0].OriginatorNo ? companyEditDetails[0].OriginatorNo :
+        "",
+      intuserId: localStorage.getItem("UserId")
+    };
+    console.log(requestBody, "requestBodydata", userDetail);
+    try {
+      Cls.Json_GetClientAssignedUnassignedFolderList(requestBody, (sts, data) => {
+        if (sts) {
+          if (data) {
+            // setIsfetchdata(true);
+            let json = JSON.parse(data);
+            setSetaarray(json.Table);
+
+
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_GetToFavourites", err);
+    }
+  };
   const
     Json_CompanyHouseDetails = (inputValue) => {
       let requestBody = {
@@ -311,32 +346,34 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
     console.log(inputValue, "import_data");
     setImportdata(inputValue);
     Json_CompanyHouseDetails(inputValue);
-};
-
-const [txtValue,setTxtValue]=useState(null);
-const [open, setOpen] = useState(false);
-
-const handleOptionClick = (id) => {
-  console.log(id, "onSelectData");
-      setTxtValue(id);
-    setOpen(false); 
-  // Perform actions with the id
-  let data = id.company_number;
-  Json_CompanyDetails(id.company_number);
-  console.log(data, "onSelectDatacnnumbr");
-
-};
-const clearDataCard = () => {
-  console.log(userDetail, "onClearDatacnnumbr",dataCompanyHouse);
-  const updatedUserDetail = { ...userDetail, 
-    CHNumber:"",
-    Clientname: "",
-    StatusId:setDefaultStatus(null),
-    // SourceId:setDefaultSourceId(null),
-    // UserId:setDefaultUser(null),
-    Line1: "",
-    Line2:""
   };
+
+
+  const [txtValue, setTxtValue] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  const handleOptionClick = (id) => {
+    console.log(id, "onSelectData");
+    setTxtValue(id);
+    setOpen(false);
+    // Perform actions with the id
+    let data = id.company_number;
+    Json_CompanyDetails(id.company_number);
+    console.log(data, "onSelectDatacnnumbr");
+
+  };
+  const clearDataCard = () => {
+    console.log(userDetail, "onClearDatacnnumbr", dataCompanyHouse);
+    const updatedUserDetail = {
+      ...userDetail,
+      CHNumber: "",
+      Clientname: "",
+      StatusId: setDefaultStatus(null),
+      // SourceId:setDefaultSourceId(null),
+      // UserId:setDefaultUser(null),
+      Line1: "",
+      Line2: ""
+    };
     // setUserDetail(updatedUserDetail);
     setDataCompanyHouse(null);
     console.log("clearDataCard");
@@ -359,7 +396,7 @@ const clearDataCard = () => {
     console.log(data, "dataOnchange", event);
     setUserDetail(data);
   };
-  console.log(Importdata,"Importdata",ImportCompanyDetails);
+  console.log(Importdata, "Importdata", ImportCompanyDetails);
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
@@ -369,10 +406,24 @@ const clearDataCard = () => {
     // Json_GetClientCardDetails();
     Json_GetFolders();
     Json_GetConfiguration();
+    Json_GetClientAssignedUnassignedFolderList();
 
-   
-}, []);
+  }, []);
+  useEffect(() => {
+    if (folders && folders.length > 0) {
+      const filteredFolders = folders.filter(folder => {
+        return Setaarray.some(project => project.ProjectId === folder.FolderID);
+      });
+      setDynamicId(filteredFolders.map(folder => folder.FolderID));
+      const defaultValue = folders.filter(folder => filteredFolders.map(folder => folder.FolderID).includes(folder.FolderID));
+      setDefaultFolders(defaultValue);
 
+      console.log(defaultValue, "foldersSetaarray", Setaarray, "sateerere", filteredFolders, DynamicId);
+    }
+
+
+  }, [folders, Setaarray]);
+  console.log(defaultFoldefr, "dynamicArray", DynamicId, folderArray);
   return (
     <div>
 
@@ -502,43 +553,45 @@ const clearDataCard = () => {
               />
             )}
           /> */}
-           {Isfetchdata && (
-          <Autocomplete
-            multiple
-            // {...clientlist}
-            options={folders}
-              getOptionLabel={(option) => option.Folder ? option.Folder: ""}
-            //  defaultValue={[def]}
+          {Isfetchdata && (
+            <Autocomplete
+              multiple
+              // {...clientlist}
+              options={folders}
+              getOptionLabel={(option) => option.Folder ? option.Folder : ""}
+              //  defaultValue={[def]}
               // value={defaultFolder || null}
-            defaultValue={[folders[defaultClient]]}
-            // defaultValue={defaultClient !== null ? [folders[defaultClient]] : []}
-            id="clientlist"
-            clearOnEscape
-            onChange={onChangeclientlist}
-             renderOption={(props, option, { selected }) => (
-        <li {...props}>
-          <Checkbox
-            icon={icon}
-            checkedIcon={checkedIcon}
-            style={{ marginRight: 8 }}
-            checked={selected}
-          />
-          {option.Folder}
-        </li>
-      )}
-      
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="outlined"
-                name="Selectclient"
-                // value={folders[defaultClient] || []}
-                onChange={onChange}
-                label="Client List"
-              />
-            )}
-          />
-        )}
+              // defaultValue={[folders[defaultClient]]}
+              // defaultValue={folders.filter(folder => DynamicId.includes(folder.FolderID))}
+              value={defaultFoldefr ? defaultFoldefr : []}
+              // defaultValue={defaultClient !== null ? [folders[defaultClient]] : []}
+              id="clientlist"
+              clearOnEscape
+              onChange={onChangeclientlist}
+              renderOption={(props, option, { selected }) => (
+                <li {...props}>
+                  <Checkbox
+                    icon={icon}
+                    checkedIcon={checkedIcon}
+                    style={{ marginRight: 8 }}
+                    checked={selected}
+                  />
+                  {option.Folder}
+                </li>
+              )}
+
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  name="Selectclient"
+                  // value={folders[defaultClient] || []}
+                  // onChange={onChange}
+                  label="Client List"
+                />
+              )}
+            />
+          )}
         </Grid>
         <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
@@ -670,34 +723,33 @@ const clearDataCard = () => {
           />
         </Grid>
         <Grid item lg={4} xs={6} md={6}>
-            <FormControlLabel
-              key={`maincheckbox`}
-              control={
-                <Switch
-                  name="Assgined"
-                  checked={advancedSettingChecked}
-                  onChange={handleAdvancedSettingChange}
-                />
-              }
-              label="In Active"
-            />
-          </Grid>
-          <Grid item lg={4} xs={6} md={6}>
-            <FormControlLabel
-              key={`inactive`}
-              control={
-                <Switch
-                  name="Unassigned"
-                  checked={advancedInactive}
-                  onChange={handleAdvancedInactive}
-                />
-              }
-              label="Hide"
-            />
-          </Grid>
+          <FormControlLabel
+            key={`maincheckbox`}
+            control={
+              <Switch
+                name="Assgined"
+                checked={advancedSettingChecked}
+                onChange={handleAdvancedSettingChange}
+              />
+            }
+            label="In Active"
+          />
+
+          <FormControlLabel
+            key={`inactive`}
+            control={
+              <Switch
+                name="Unassigned"
+                checked={advancedInactive}
+                onChange={handleAdvancedInactive}
+              />
+            }
+            label="Hide"
+          />
+
+        </Grid>
       </Grid>
     </div>
   );
 });
 export default memo(EditClientdetails);
-

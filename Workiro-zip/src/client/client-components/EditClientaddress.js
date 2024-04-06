@@ -9,6 +9,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import CommanCLS from "../../services/CommanService";
+import { Height } from "@mui/icons-material";
 
 const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHouse })=>{
   console.log(dataCompanyHouse,"dataCompanyHouse",userDetail);
@@ -95,35 +96,48 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
             let json = JSON.parse(data);
             console.log(json.Table,"Json_GetClientAddresses");
             setClientAddress(json.Table);
-            if(json.Table){
-              let billing = json.Table[1];
-              let register = json.Table[2];
-              const updatedUserDetail = {
+            let mainAddress, billingAddress, registeredAddress;
+
+            // Iterate through the Table data to find Main, Billing, and Registered addresses
+            json.Table.forEach(element => {
+                if (element.AddressType == "Main Address") {
+                    mainAddress = element;
+                } else if (element.AddressType == "Billing Address") {
+                    billingAddress = element;
+                } else if (element.AddressType == "Registered Address") {
+                    registeredAddress = element;
+                }
+            });
+            
+            // Create an updatedUserDetail object with the values from the respective addresses
+            const updatedUserDetail = {
                 ...userDetail,
-                Line1:json.Table[0].Add1,
-                Line2:json.Table[0].Add2,
-                Line3:json.Table[0].Add3,
-                Town:json.Table[0].Town,
-                MCounty:json.Table[0].County,
-                Postcode:json.Table[0].Postcode,
-                BilLine1:billing.Add1,
-                BilLine2:billing.Add2,
-                BilLine3:billing.Add3,
-                BilTown:billing.Town,
-                BilCountry:billing.County,
-                BilPostcode:billing.Postcode,
-                regLine1:register.Add1,
-                regLine2:register.Add2,
-                regLine3:register.Add3,
-                regTown:register.Town,
-                regCountry:register.County,
-                regPostcode:register.Postcode,
-                fullAddress:json.Table[0].Add1+"\r\n"+json.Table[0].Add2+"\r\n"+json.Table[0].Add3+"\r\n"+json.Table[0].Town+"\r\n"+json.Table[0].County+"\r\n"+json.Table[0].Postcode,
+                Line1: mainAddress ? mainAddress.Add1 : "",
+                Line2: mainAddress ? mainAddress.Add2 : "",
+                Line3: mainAddress ? mainAddress.Add3 : "",
+                Town: mainAddress ? mainAddress.Town : "",
+                MCounty: mainAddress ? mainAddress.County : "",
+                Postcode: mainAddress ? mainAddress.Postcode : "",
+                BilLine1: billingAddress ? billingAddress.Add1 : "",
+                BilLine2: billingAddress ? billingAddress.Add2 : "",
+                BilLine3: billingAddress ? billingAddress.Add3 : "",
+                BilTown: billingAddress ? billingAddress.Town : "",
+                BilCountry: billingAddress ? billingAddress.County : "",
+                BilPostcode: billingAddress ? billingAddress.Postcode : "",
+                regLine1: registeredAddress ? registeredAddress.Add1 : "",
+                regLine2: registeredAddress ? registeredAddress.Add2 : "",
+                regLine3: registeredAddress ? registeredAddress.Add3 : "",
+                regTown: registeredAddress ? registeredAddress.Town : "",
+                regCountry: registeredAddress ? registeredAddress.County : "",
+                regPostcode: registeredAddress ? registeredAddress.Postcode : "",
+                fullAddress: mainAddress 
+                    ? `${mainAddress.Add1}\n${mainAddress.Add2}\n${mainAddress.Add3}\n${mainAddress.Town}\n${mainAddress.County}\n${mainAddress.Postcode}`
+                    : ""
             };
+            
+            // Set the updatedUserDetail to state
             setUserDetail(updatedUserDetail);
-            }
-            // folderArray = json.Table;
-             //setFolders(json.Table);
+            
           }
         }
       });
@@ -252,7 +266,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                     <TextField
                       fullWidth
                       id="standard-basic"
-                      type="number"
+                      // type="number"
                       label="Postcode"
                       variant="outlined"
                       name="Postcode"
@@ -375,7 +389,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                     <TextField
                       fullWidth
                       id="standard-basic"
-                      type="number"
+                      // type="number"
                       label="Postcode"
                       variant="outlined"
                       name="BilPostcode"
@@ -497,7 +511,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                     <TextField
                       fullWidth
                       id="standard-basic"
-                      type="number"
+                      // type="number"
                       label="Postcode"
                       variant="outlined"
                       name="regPostcode"
@@ -560,8 +574,9 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                   name="fullAddress"
                   value={userDetail.fullAddress}
                   onChange={onChange}
-                  className="form-control textarea"
+                  className="form-control textarea textarea-2"
                   placeholder="Full Address"
+                  // xl={{ minHeight: '400px', Height: '600px', }}
                 />
               </Box>
             </TabPanel>

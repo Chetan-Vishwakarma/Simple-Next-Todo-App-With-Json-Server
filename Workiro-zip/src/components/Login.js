@@ -8,9 +8,7 @@ import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import API from '../services/APIsCall';
 import Swal from 'sweetalert2';
@@ -18,15 +16,21 @@ import { json, useNavigate } from 'react-router-dom';
 import CommanCLS from '../services/CommanService';
 import logo from "../images/logo.png";
 import animation from "../images/animation.gif";
+import envelope from "../images/envelopepsd.gif";
 
 import { v4 as uuidv4 } from 'uuid';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="/">
-        Your Website
+      <Link color="inherit" href="https://www.docusoft.net/" target="_blank">
+        docusoft.net
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -117,6 +121,16 @@ export default function Login() {
     })
   }
 
+
+  // fotgot pass
+  const [openForgotPassord, setOpenForgotPassord] = React.useState(false);
+  const handleClickOpenForgotPassord = () => {
+    setOpenForgotPassord(true);
+  };
+  const handleCloseForgotPassord = () => {
+    setOpenForgotPassord(false);
+  };
+
   return (
     <ThemeProvider theme={defaultTheme}>
 
@@ -159,7 +173,7 @@ export default function Login() {
                     label="Remember me"
 
                   />
-                  <Link href="#" variant="body2" className='font-14 text-decoration-none text-black'>
+                  <Link onClick={handleClickOpenForgotPassord} variant="body2" className='pointer font-14 text-decoration-none text-black'>
                     Forgot password?
                   </Link>
                 </Box>
@@ -178,9 +192,9 @@ export default function Login() {
               <Box className='mt-auto'>
                 <Copyright sx={{ mt: 2, mb: 2 }} />
                 <Box className='text-center'>
-                  <Link href="#" className='text-blue sembold px-3'>Terms & Condition</Link>
-                  <Link href="#" className='text-blue sembold px-3'>Privacy Policy</Link>
-                  <Link href="#" className='text-blue sembold px-3'>Help</Link>
+                  <Link href="https://www.docusoft.net/terms/" target="_blank" className='text-blue sembold px-3'>Terms & Condition</Link>
+                  <Link href="https://www.docusoft.net/privacy-policy/" target="_blank" className='text-blue sembold px-3' >Privacy Policy</Link>
+                  <Link href="#" className='text-blue sembold px-3' target="_blank">Help</Link>
                 </Box>
               </Box>
             </Box>
@@ -188,7 +202,7 @@ export default function Login() {
         </Grid>
         <Grid item xs={6} md={6} className='right-side-login'>
           <Box className='text-center'>
-          {/* <h4 class="bold d-block">The Easiest Way to Build <br /> your Own Business</h4> */}
+            {/* <h4 class="bold d-block">The Easiest Way to Build <br /> your Own Business</h4> */}
             <img src={animation} className='d-block img-fluid' />
           </Box>
         </Grid>
@@ -259,6 +273,45 @@ export default function Login() {
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container> */}
+
+      <Dialog
+        open={openForgotPassord}
+        onClose={handleCloseForgotPassord}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      // className='custom-modal'
+      >
+        <Box className="d-flex align-items-center justify-content-between modal-head">
+          <Box className="dropdown-box">
+            <Typography variant="h4" className='font-18 bold text-black'>
+              Fogot Password?
+            </Typography>
+          </Box>
+          {/*  */}
+          <Button onClick={handleCloseForgotPassord} className='min-width-auto'>
+            <span className="material-symbols-outlined text-black">
+              cancel
+            </span>
+          </Button>
+        </Box>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <Box className='text-center mb-4'>
+              <img src={envelope} width={160} />
+            </Box>
+
+            <div class="alert alert-success" role="alert">
+              <p className='font-14 mb-0'>Enter your email and instructions will be sent to you!</p>
+            </div>
+
+            <Box className='d-fle mb-4'>
+              <TextField label="Email" variant="outlined" className='w-100 mb-3 form-control' />
+              <Button variant="contained" size='small' className='btn-blue w-100'>Send Reset Link</Button>
+            </Box>
+
+          </DialogContentText>
+        </DialogContent>
+      </Dialog>
     </ThemeProvider>
   );
 }
