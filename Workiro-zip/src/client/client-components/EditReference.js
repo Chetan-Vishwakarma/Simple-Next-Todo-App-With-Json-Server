@@ -18,8 +18,8 @@ import EditClientdetails from "./EditClientdetails";
 import EditUDFClientcard from "./EditUDFClientcard";
 import EditClientaddress from "./EditClientaddress";
 import { connect } from 'react-redux';
-function EditReference({companyEditDetails}) {
-    console.log(companyEditDetails,"companyEditDetails");
+function EditReference({ companyEditDetails }) {
+  console.log(companyEditDetails, "companyEditDetails");
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -256,7 +256,7 @@ function EditReference({companyEditDetails}) {
       "oldID": companyEditDetails[0].OriginatorNo ? companyEditDetails[0].OriginatorNo : "",
       "NewId": userDetail.Clientid ? userDetail.Clientid : "",
       "ClientName": userDetail.Clientname ? userDetail.Clientname : ""
-  }
+    }
 
     Cls.Json_ChangeClientID(changeidObj, (sts, data) => {
       if (sts) {
@@ -300,7 +300,7 @@ function EditReference({companyEditDetails}) {
       Description: "",
       OrgPassword: "",
       ManagerId: userDetail.UserId ? userDetail.UserId : parseInt(intUserid),
-      CCode:userDetail.Clientid ? userDetail.Clientid : ""
+      CCode: userDetail.Clientid ? userDetail.Clientid : ""
     };
     // toast.success("Reference Added Successfully !");
     // Json_InsertContact();
@@ -319,7 +319,7 @@ function EditReference({companyEditDetails}) {
           mainAddress();
           billingAddress();
           ragisterAddress();
-        } 
+        }
         else {
           // toast.success("Reference ID Already Exists!");
           console.log("Faild Json_UpdateClient");
@@ -365,14 +365,14 @@ function EditReference({companyEditDetails}) {
       }
     });
   };
-  
-  
+
+
   const saveUDF = () => {
     const result = Object.entries(dataFromChild)
       .map(([key, value]) => `${key}: ${value}`)
       .join(", ");
 
-    
+
     let requestBody = {
       agrno: agrno,
       Email: Email,
@@ -383,7 +383,7 @@ function EditReference({companyEditDetails}) {
       ContactUDFString: "",
       ContactNo: "",
     };
-    console.log(result, "resultresult_requestBody",requestBody);
+    console.log(result, "resultresult_requestBody", requestBody);
     try {
       Cls.Json_CRMSaveUDFValues(requestBody, (sts, data) => {
         if (sts) {
@@ -393,7 +393,7 @@ function EditReference({companyEditDetails}) {
           }
         }
       });
-    } catch (e) {}
+    } catch (e) { }
   };
   const mapStateToProps = (state) => ({
     userDetail: state.userDetail,
@@ -408,8 +408,8 @@ function EditReference({companyEditDetails}) {
     mapStateToProps,
     mapDispatchToProps
   )(EditClientdetails);
-  
- 
+
+
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
@@ -447,9 +447,8 @@ function EditReference({companyEditDetails}) {
               companyEditDetails={companyEditDetails}
               setDataCompanyHouse={setDataCompanyHouse}
               setSelectedFolderID={setSelectedFolderID}
-              //
+            //
             ></EditClientdetails>
-          
           }
         </Box>
       ),
@@ -481,7 +480,7 @@ function EditReference({companyEditDetails}) {
               //
               dataCompanyHouse={dataCompanyHouse}
               setUserDetail={setUserDetail}
-              //
+            //
             ></EditClientaddress>
           }
         </Box>
@@ -503,9 +502,56 @@ function EditReference({companyEditDetails}) {
 
   return (
     <Box className="container-fluid p-0">
-       <ToastContainer></ToastContainer>
+      <ToastContainer></ToastContainer>
       <Box sx={{ width: "100%", typography: "body1" }} className="">
-        <Box sx={{ maxWidth: "100%" }}>
+
+        <Box className="clearfix">
+          <h2 className="font-20 bold text-black mb-0">Client Details</h2>
+          {
+            <EditClientdetails
+              userDetail={userDetail}
+              //
+              dataCompanyHouse={dataCompanyHouse}
+              // setDataCompanyHouse={setDataCompanyHouse}
+              setUserDetail={setUserDetail}
+              //
+              companyEditDetails={companyEditDetails}
+              setDataCompanyHouse={setDataCompanyHouse}
+              setSelectedFolderID={setSelectedFolderID}
+            //
+            ></EditClientdetails>
+          }
+        </Box>
+
+        <hr />
+
+        <Box className="mt-4">
+          <h2 className="font-20 bold text-black mb-4">Address</h2>
+          {
+            <EditClientaddress
+              userDetail={userDetail}
+              //
+              dataCompanyHouse={dataCompanyHouse}
+              setUserDetail={setUserDetail}
+            //
+            ></EditClientaddress>
+          }
+        </Box>
+
+        <hr />
+
+        <Box className="mt-3">
+          {/* <h2 className="font-20 bold text-black mb-4">Details</h2> */}
+          <EditUDFClientcard
+            data={clientDetails}
+            setDataFromChild={setDataFromChild}
+          />
+        </Box>
+
+
+
+
+        <Box sx={{ maxWidth: "100%" }} className='d-none'>
           <Stepper activeStep={activeStep} orientation="vertical">
             {steps.map((step, index) => (
               <Step key={step.label}>
@@ -558,6 +604,8 @@ function EditReference({companyEditDetails}) {
         </Box>
         {/* Stepper end  */}
 
+
+
         <Box className="main-accordian">
           {/* <UDFClientcard data={clientDetails} setDataFromChild={setDataFromChild} /> */}
 
@@ -570,6 +618,7 @@ function EditReference({companyEditDetails}) {
                 !userDetail.Clientname || !userDetail.Clientid
                 // !folderData
               }
+              className="btn-blue-2"
             >
               Update Client
             </Button>{" "}
