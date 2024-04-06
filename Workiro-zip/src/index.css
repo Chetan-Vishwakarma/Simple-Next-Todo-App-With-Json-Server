@@ -100,7 +100,7 @@ select:focus,
   border-radius: 5px;
 }
 .textarea-2 {
-  min-height: 150px !important;
+  min-height: 130px !important;
 }
 .textarea-text {
   padding: 0;
