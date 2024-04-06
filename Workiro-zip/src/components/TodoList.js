@@ -48,13 +48,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setMyTasks } from '../redux/reducers/counterSlice';
 
 
-const foldersIconList = [<PersonIcon className='me-1 font-20' />, <TipsAndUpdatesIcon className='me-1 font-20' />, <PeopleIcon className='me-1 font-20' />, <ShareIcon className='me-1 font-20' />, <FolderSharedIcon className='me-1 font-20' />, <FolderSharedIcon className='me-1 font-20' />];
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20' />, <PublishedWithChangesIcon color='primary' className='me-1 font-20' />, <HourglassBottomIcon color='primary' className='me-1 font-20' />, <CheckCircleOutlineIcon color='success' className='me-1 font-20' />];
 
 function TodoList() {
     const location = useLocation();
     const reduxData = useSelector((data) => data.counter.myTasks);
-    console.log("fdjkfhfhsf", reduxData);
     const dispatch = useDispatch();
     let dddd = location.state !== null ? location.state : { globalSearchTask: [] };
     const { globalSearchTask, strGlobal } = dddd;
@@ -719,7 +717,7 @@ function TodoList() {
                             >
                                 <MenuItem value="Folder" style={{ display: "none" }}>Folders</MenuItem>
                                 <MenuItem value="" className='text-danger ps-1'><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
-                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'>{foldersIconList[i]} {fld.Folder}</MenuItem>)}
+                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'><FolderSharedIcon className="font-20 me-1" /> {fld.Folder}</MenuItem>)}
                             </Select>
                         </FormControl>
 

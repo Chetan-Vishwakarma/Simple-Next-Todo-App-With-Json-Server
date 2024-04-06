@@ -42,7 +42,7 @@ function NewTodoList() {
     const [allTask, setAllTask] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
     const [recentTaskList, setRecentTaskList] = useState([]);
-    const [crmTaskAcivity, setCRMTaskAcivity] = useState([]);
+const [crmTaskAcivity, setCRMTaskAcivity] = useState([]);
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [userName, setUserName] = React.useState(null);
@@ -50,12 +50,7 @@ function NewTodoList() {
 
     const [expanded, setExpanded] = React.useState('panel1');
 
-    const [activeSectionList, setActiveSectionList] = useState({
-        section1: true,
-        section2: false,
-        section3: false,
-        section4: false,
-    });
+    const [activeSectionList, setActiveSectionList] = useState("section1");
 
 
     const [loadMore, setLoadMore] = useState(9);
@@ -67,8 +62,6 @@ function NewTodoList() {
     const handleClose = () => {
         setAnchorEl(null);
     };
-    console.log("fgfgljglj innerHeight",window.innerHeight);
-    console.log("fgfgljglj offsetHeight",document.documentElement.offsetHeight);
     const Json_Get_CRM_UserByProjectId = () => {
         let obj = {
             agrno: agrno,
@@ -129,7 +122,7 @@ function NewTodoList() {
         }
     }
 
-    const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
+const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
      
         let obj = {};
         obj.TaskID = taskid;
@@ -276,22 +269,18 @@ function NewTodoList() {
     }, [isApi])
 
     const handleScroll = () => {
-        console.log("fgfgljglj useEffect: ",document.documentElement.scrollTop);
-        if(document.documentElement.scrollTop<924){
-            console.log("fgfgljglj first");
-            handleActiveTab("section1");
-        }else if(document.documentElement.scrollTop>924 && document.documentElement.scrollTop<2211){
-            console.log("fgfgljglj second"); 
-            handleActiveTab("section2");
-        }
-        console.log("fgfgljglj sdfdff",activeSectionList);
-        //     if (
-    //       window.innerHeight + document.documentElement.scrollTop ===
-    //       document.documentElement.offsetHeight
-    //     ) {
-    //       fetchData();
-    //     }
-      };
+        const sections = document.querySelectorAll('div[id^="section"]');
+        const scrollPosition = window.scrollY;
+
+        sections.forEach(section => {
+            const sectionId = section.getAttribute('id');
+            const sectionOffset = section.offsetTop;
+            const sectionHeight = section.offsetHeight;
+            if (scrollPosition >= sectionOffset && scrollPosition < sectionOffset + sectionHeight) {
+              setActiveSectionList(sectionId);
+            }
+          });
+    };
 
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
@@ -494,14 +483,15 @@ function NewTodoList() {
     }
 
     const handleActiveTab = (target) => {
-        for (let key in activeSectionList) {
-            if (key === target) {
-                activeSectionList[key] = true;
-            } else {
-                activeSectionList[key] = false;
-            }
-        }
-        setActiveSectionList(activeSectionList);
+        // for (let key in activeSectionList) {
+        //     if (key === target) {
+        //         activeSectionList[key] = true;
+        //     } else {
+        //         activeSectionList[key] = false;
+        //     }
+        // }
+        setActiveSectionList(target);
+        
     }
 
     
@@ -545,23 +535,23 @@ function NewTodoList() {
             <Box className='no-touch'>
                 <nav className="cd-vertical-nav">
                     <ul>
-                        <li onClick={() => handleActiveTab("section1")}><a href="#section1" className={activeSectionList.section1 ? "active" : ""}><span className="label">Task Due <br />Soon</span>
+                        <li onClick={() => handleActiveTab("section1")}><a href="#section1" className={activeSectionList==="section1" ? "active" : ""}><span className="label">Task Due <br />Soon</span>
                             <EventNoteIcon className='hover-icon' />
                         </a></li>
-                        <li onClick={() => handleActiveTab("section2")}><a href="#section2" className={activeSectionList.section2 ? "active" : ""}><span className="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
-                        <li onClick={() => handleActiveTab("section3")}><a href="#section3" className={activeSectionList.section3 ? "active" : ""}><span className="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
-                        <li onClick={() => handleActiveTab("section4")}><a href="#section4" className={activeSectionList.section4 ? "active" : ""}><span className="label">Recently Accessed Documents</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section2")}><a href="#section2" className={activeSectionList==="section2" ? "active" : ""}><span className="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section3")}><a href="#section3" className={activeSectionList==="section3" ? "active" : ""}><span className="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section4")}><a href="#section4" className={activeSectionList==="section4" ? "active" : ""}><span className="label">Recently Accessed Documents</span><EventNoteIcon className='hover-icon' /></a></li>
                     </ul>
                 </nav>
             </Box>
             {/*  */}
 
-            <Box className='pe-5' id="section1">
+            <Box className='pe-5'>
 
-                <Typography variant='subtitle1' className='font-20 bold mb-0'>Welcome {userName}</Typography>
+                <Typography id="section1" variant='subtitle1' className='font-20 bold mb-0'>Welcome {userName}</Typography>
                 <Typography variant='subtitle1' className='font-16 bold mb-2'>The following tasks are due soon:</Typography>
 
-                <Box className='row'>
+                <Box className='row' id="section1">
                     {/* {
                         allTask.length > 0 &&
                         allTask.slice(0, loadMore).map((item, index) => {
@@ -930,7 +920,8 @@ function NewTodoList() {
 
                 {/* row end */}
                 <hr />
-                <Typography id="section4" variant='subtitle1' className='font-18 bold mb-2 mt-4'>You accessed the following documents recently:</Typography>
+                <div id="section4">
+                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>You accessed the following documents recently:</Typography>
 
                 {/* <DocumentDetails></DocumentDetails> */}
 
@@ -1022,7 +1013,7 @@ function NewTodoList() {
                     }) : ""}
 
                 </Box>
-
+                </div>
 
 
 
