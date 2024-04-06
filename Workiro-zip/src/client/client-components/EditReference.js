@@ -307,22 +307,24 @@ function EditReference({ companyEditDetails }) {
     console.log(clientdata, "updateclientdata");
     Cls.Json_UpdateClient(clientdata, (sts, data) => {
       console.log(sts, data, "Json_UpdateClient");
-      let jsonparse = JSON.parse(data);
+      // let jsonparse = JSON.parse(data);
       if (sts) {
-        if (jsonparse.Status == "Success") {
-          console.log("Response", data);
-          toast.success("Client Updated Successfully !");
-          // Json_InsertContact(); Main contact not need
-          Json_ChangeClientID();
-          Json_UpdateClientField();
-          saveUDF();
-          mainAddress();
-          billingAddress();
-          ragisterAddress();
-        }
-        else {
-          // toast.success("Reference ID Already Exists!");
-          console.log("Faild Json_UpdateClient");
+        if(data){
+          if (data == "Success") {
+            console.log("Response", data);
+            toast.success("Client Updated Successfully !");
+            // Json_InsertContact(); Main contact not need
+            Json_ChangeClientID();
+            Json_UpdateClientField();
+            saveUDF();
+            mainAddress();
+            billingAddress();
+            ragisterAddress();
+          }
+          else {
+            // toast.success("Reference ID Already Exists!");
+            console.log("Faild Json_UpdateClient");
+          }
         }
       }
     });
