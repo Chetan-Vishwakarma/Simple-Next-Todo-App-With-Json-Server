@@ -668,7 +668,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
     return (<React.Fragment>
         {selectedTask.Source === "Portal" && (<>
             {txtRecipient > 1 && (<>
-                <Box className='d-flex align-items-center  mb-3'>
+                <Box className='d-flex align-items-center  mb-2'>
 
                     <p className="mb-0 font-14 text-black me-3">{`This message was sent to ${portalEmail.length} recipients. Viewing as`}
                         <Button
@@ -702,8 +702,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                 </Box>
             </>)}
 
-
-            <Box className='mb-3'>
+            <Box className='mb-2'>
                 {/* <Box className='d-flex align-items-center mb-2'>
                 <Checkbox
                     {...label}
@@ -712,7 +711,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                 />
                 <h5 className='mb-0 text-black'>{selectedTask.Subject}</h5>
             </Box> */}
-                <Box className='mb-3'>
+                <Box className='mb-2'>
                     {/* <p className='mb-0'>
                         <HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
                     </p> */}
@@ -759,7 +758,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                             <Box className='ps-2'>
                                                 {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
                                                 <Box className='d-flex align-items-center mb-2'>
-                                                    <HourglassEmptyIcon className='text-gray me-1' />
+                                                    <HourglassEmptyIcon className='text-warning me-1' />
                                                     <h5 className='font-14 text-black mb-0'>Pending Approval</h5>
                                                 </Box>
                                                 <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
@@ -1074,8 +1073,6 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                     </DialogTitle> */}
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-
-
 
                     <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
                         <Box sx={{ flexGrow: 1 }}>

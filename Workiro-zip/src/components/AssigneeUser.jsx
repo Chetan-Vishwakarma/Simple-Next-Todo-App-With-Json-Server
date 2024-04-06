@@ -217,7 +217,7 @@ export default function AssigneeUsers({selectedTask,setAddUser,addUser,setOwnerI
 
 
     return (<>
-        <div className="mt-2">
+        <div className="mt-2 mb-2">
             <Button
                 id="basic-button5"
                 aria-controls={

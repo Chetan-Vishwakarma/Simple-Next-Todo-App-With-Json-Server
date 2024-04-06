@@ -15,15 +15,12 @@ import Swal from 'sweetalert2';
 import { json, useNavigate } from 'react-router-dom';
 import CommanCLS from '../services/CommanService';
 import logo from "../images/logo.png";
-import animation from "../images/animation.gif";
+import animation from "../images/login.svg";
 import envelope from "../images/envelopepsd.gif";
-
 import { v4 as uuidv4 } from 'uuid';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 
 function Copyright(props) {
   return (

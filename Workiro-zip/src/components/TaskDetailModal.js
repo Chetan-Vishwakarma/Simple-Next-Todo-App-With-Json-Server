@@ -1948,7 +1948,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                                         {item.Remark}
                                                                     </Typography>
                                                                     <Box className="d-flex align-items-center justify-content-end">
-                                                                        <Typography variant="body1" className="font-12">
+                                                                        <Typography variant="body1" className="font-10">
                                                                             {dateAndTime(item.DateOfRemark)}
                                                                         </Typography>
 
@@ -2052,10 +2052,14 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                                             onClose={handleClose2}
                                                                         >
                                                                             <MenuItem onClick={handleClose2}>
-                                                                                Edit
+                                                                                <ListItemIcon>
+                                                                                    <EditIcon className="font-18" />
+                                                                                </ListItemIcon> Edit
                                                                             </MenuItem>
                                                                             <MenuItem onClick={handleClose2}>
-                                                                                Delete
+                                                                            <ListItemIcon>
+                                                                                        <DeleteIcon className="font-18" />
+                                                                                    </ListItemIcon> Delete 
                                                                             </MenuItem>
                                                                         </Menu>
                                                                     </Box>
@@ -2109,7 +2113,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                                         {item.Notes}
                                                                     </Typography>
                                                                     <Box className="d-flex align-items-center justify-content-end">
-                                                                        <Typography variant="body1" className="font-12">
+                                                                        <Typography variant="body1" className="font-10">
                                                                             {dateAndTime(item.ActivityDate)}
                                                                         </Typography>
 
@@ -2213,10 +2217,14 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                                             onClose={handleClose2}
                                                                         >
                                                                             <MenuItem onClick={handleClose2}>
-                                                                                Edit
+                                                                                <ListItemIcon>
+                                                                                    <EditIcon className="font-18" />
+                                                                                </ListItemIcon> Edit
                                                                             </MenuItem>
                                                                             <MenuItem onClick={handleClose2}>
-                                                                                Delete
+                                                                            <ListItemIcon>
+                                                                                        <DeleteIcon className="font-18" />
+                                                                                    </ListItemIcon> Delete
                                                                             </MenuItem>
                                                                         </Menu>
                                                                     </Box>

@@ -49,6 +49,9 @@ nav.navbar.navbar-dark.bg-dark .container {
 .font-12 {
   font-size: 12px !important;
 }
+.font-10 {
+  font-size: 10px !important;
+}
 
 .font-18 {
   font-size: 18px !important;
@@ -2255,6 +2258,7 @@ span.tox-statusbar__branding {
 
 .address-list li .add-heading svg {
   margin-right: 5px;
+  font-size: 10px;
 }
 
 .address-list li .add-heading-client {
