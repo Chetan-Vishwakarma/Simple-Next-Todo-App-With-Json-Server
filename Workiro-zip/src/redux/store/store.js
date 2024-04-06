@@ -6,5 +6,9 @@ export default configureStore({
     reducer: {
         counter: counterReducer,
         users: crudReducer
-    }
+    },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: false,
+        }),
 });
