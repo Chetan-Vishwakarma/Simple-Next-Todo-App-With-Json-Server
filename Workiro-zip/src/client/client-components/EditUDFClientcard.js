@@ -10,7 +10,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Unstable_NumberInput as NumberInput } from '@mui/base/Unstable_NumberInput';
 
-import localizedFormat from 'dayjs/plugin/localizedFormat';
+// import localizedFormat from 'dayjs/plugin/localizedFormat';
 
 const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
   console.log(data?.Table, "hhhhhhhhhhhghghgh", data.Table3);
@@ -88,7 +88,7 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
   }, [selectedDatetest]);
   console.log("selectedDatetestsonamoutside", selectedDatetest);
   // Extend dayjs with the localizedFormat plugin
-dayjs.extend(localizedFormat);
+// dayjs.extend(localizedFormat);
   const renderDynamicInput = (data) => {
     console.log(selectManager, "selectManagerselectManager",data);
     let renderedContent;
@@ -183,42 +183,57 @@ dayjs.extend(localizedFormat);
             break;
           case "Date":
             if (data && data.UdfValue) {
-                const defaultDateObject = dayjs(data.UdfValue, "MMM DD YYYY hh:mma");
-const formattedDefaultDate = dayjs(defaultDateObject).format("MM/DD/YYYY");
+                let datatest = data.UdfValue;
+                const defaultDateObject = dayjs(datatest, "MMM D YYYY h:mma");
+// const formattedDefaultDate = dayjs(defaultDateObject).format("MM/DD/YYYY");
+const formattedDefaultDate = defaultDateObject.format("YYYY-MM-DD");
+
 console.log(formattedDefaultDate,data.UdfValue,"1formattedDefaultDateformattedDefaultDate",defaultDateObject);
+// Check if the date is valid
+if (defaultDateObject.isValid()) {
+  // The date is valid, you can format it to any desired format
+  const formattedDate = defaultDateObject.format('YYYY-MM-DD'); // Format as 'YYYY-MM-DD' or any other format you prefer
+  console.log(formattedDate); // Output: 2024-02-08
+  renderedContent = (
 
-              renderedContent = (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DemoContainer
+        components={[
+          "DatePicker",
+          "TimePicker",
+          "DateTimePicker",
+          "DateRangePicker",
+        ]}
+      >
 
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer
-                    components={[
-                      "DatePicker",
-                      "TimePicker",
-                      "DateTimePicker",
-                      "DateRangePicker",
-                    ]}
-                  >
+        <DatePicker
+          // dateFormat="DD/MM/YYYY"
+          // value={currentDate}
+        //   dateFormat="DD/MM/YYYY"
+        //   value={currentDate}
+          defaultValue={defaultDateObject}
+          // defaultValue={formattedDefaultDate}
 
-                    <DatePicker
-                      // dateFormat="DD/MM/YYYY"
-                      // value={currentDate}
-                    //   dateFormat="DD/MM/YYYY"
-                    //   value={currentDate}
-                      defaultValue={defaultDateObject}
-                      id={
-                        data.UserDefFieldID +
-                        "_" +
-                        data.UserDefFieldTypeID +
-                        "_" +
-                        data.TextControlValue +
-                        "_UDF"
-                      }
-                      onChange={(e) => handleInputOnDateChage(e, `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}_UDF`)}
-                    />
+          id={
+            data.UserDefFieldID +
+            "_" +
+            data.UserDefFieldTypeID +
+            "_" +
+            data.TextControlValue +
+            "_UDF"
+          }
+          onChange={(e) => handleInputOnDateChage(e, `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}_UDF`)}
+        />
 
-                  </DemoContainer>
-                </LocalizationProvider>
-              );
+      </DemoContainer>
+    </LocalizationProvider>
+  );
+} else {
+  // The date is invalid
+  console.log('Invalid date');
+}
+
+             
             } else {
               renderedContent = (
 
