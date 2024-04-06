@@ -3,12 +3,15 @@ import { Box, Grid, TextField, Autocomplete, Switch } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import CommanCLS from "../../services/CommanService";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import dayjs from "dayjs";
 import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Unstable_NumberInput as NumberInput } from '@mui/base/Unstable_NumberInput';
-import dayjs from "dayjs";
+
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+
 const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
   console.log(data?.Table, "hhhhhhhhhhhghghgh", data.Table3);
   const [selectManager, setselectManagers] = useState([]);
@@ -84,6 +87,8 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
     setDataFromChild(selectedDatetest);
   }, [selectedDatetest]);
   console.log("selectedDatetestsonamoutside", selectedDatetest);
+  // Extend dayjs with the localizedFormat plugin
+dayjs.extend(localizedFormat);
   const renderDynamicInput = (data) => {
     console.log(selectManager, "selectManagerselectManager",data);
     let renderedContent;
@@ -195,7 +200,7 @@ console.log(formattedDefaultDate,data.UdfValue,"1formattedDefaultDateformattedDe
                   >
 
                     <DatePicker
-                      dateFormat="DD/MM/YYYY"
+                      // dateFormat="DD/MM/YYYY"
                       // value={currentDate}
                     //   dateFormat="DD/MM/YYYY"
                     //   value={currentDate}
