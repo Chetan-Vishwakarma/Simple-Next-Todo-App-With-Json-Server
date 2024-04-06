@@ -107,7 +107,7 @@ function EditReference({companyEditDetails}) {
       agrno: agrno,
       intProjectId: folderId,
       password: password,
-      strOrignatorNumber: originatorNo,
+      strOrignatorNumber: companyEditDetails[0].OriginatorNo ? companyEditDetails[0].OriginatorNo : "",
     };
     try {
       webClientCLS.Json_GetClientCardDetails(obj, (sts, data) => {
@@ -192,6 +192,85 @@ function EditReference({companyEditDetails}) {
 
     Json_SetClientAddress(obj);
   };
+
+  const Json_UpdateClientField = () => {
+    let contactData =
+    {
+      "fieldName": "CompanyNo",
+      "fieldFile": "Email"
+    }
+    console.log(contactData, "contactData");
+    if (contactData.fieldName == "CompanyNo") {
+      let birthdayObj = {
+        "agrno": agrno,
+        "Email": Email,
+        "password": password,
+        "ClientId": userDetail.Clientid ? userDetail.Clientid : "",
+        "projectid": folderId,
+        "fieldName": "CompanyNo",
+        "fieldValue": userDetail.CHNumber ? userDetail.CHNumber : ""
+      }
+      Cls.Json_UpdateClientField(birthdayObj, (sts, data) => {
+        if (sts) {
+          console.log(sts, data, "Json_UpdateClientFieldcompanyno");
+          // let jsonparse = JSON.parse(data);
+          // if (jsonparse) {
+          //     console.log(jsonparse,"successcontact");
+
+
+          // }
+        }
+
+      });
+    }
+    if (contactData.fieldFile == "Email") {
+      let profileObj = {
+        "agrno": agrno,
+        "Email": Email,
+        "password": password,
+        "ClientId": userDetail.Clientid ? userDetail.Clientid : "",
+        "projectid": folderId,
+        "fieldName": "Email",
+        "fieldValue": userDetail.Email ? userDetail.Email : ""
+      }
+
+      Cls.Json_UpdateClientField(profileObj, (sts, data) => {
+        if (sts) {
+          console.log(sts, data, "Json_UpdateClientFieldEmail");
+          // let jsonparse = JSON.parse(data);
+          // if (jsonparse) {
+          //     console.log(jsonparse,"successcontact");
+
+
+          // }
+        }
+
+      });
+    }
+  };
+  const Json_ChangeClientID = () => {
+    let changeidObj = {
+      "agrno": agrno,
+      "Email": Email,
+      "password": password,
+      "oldID": companyEditDetails[0].OriginatorNo ? companyEditDetails[0].OriginatorNo : "",
+      "NewId": userDetail.Clientid ? userDetail.Clientid : "",
+      "ClientName": userDetail.Clientname ? userDetail.Clientname : ""
+  }
+
+    Cls.Json_ChangeClientID(changeidObj, (sts, data) => {
+      if (sts) {
+        console.log(sts, data, "Json_ChangeClientID");
+        // let jsonparse = JSON.parse(data);
+        // if (jsonparse) {
+        //     console.log(jsonparse,"successcontact");
+
+
+        // }
+      }
+
+    });
+  }
   const handleSubmit = (event) => {
     event.preventDefault();
     function todayDate() {
@@ -202,7 +281,7 @@ function EditReference({companyEditDetails}) {
       agrno: agrno,
       Email: Email,
       password: password,
-      ProjectIdList: userDetail.folderId ? userDetail.folderId : -1,
+      // ProjectIdList: userDetail.folderId ? userDetail.folderId : -1,
       OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
       OriginatorName: userDetail.Clientname ? userDetail.Clientname : "",
       Address: userDetail.fullAddress ? userDetail.fullAddress : "",
@@ -210,38 +289,40 @@ function EditReference({companyEditDetails}) {
       AlteTelNo: userDetail.Mobile ? userDetail.Mobile : "",
       Faxno: "",
       ContactName: "",
-      UDF1: "",
-      UDF2: "",
-      UDF3: "",
+      OrgActive: "Yes",
       StickyNote: "",
       ContactEmail: userDetail.Email ? userDetail.Email : "",
-      MParameter: "",
-      CDate: todayDate(),
+      // MParameter: "",
+      // CDate: todayDate(),
       BussId: userDetail.BussId ? userDetail.BussId : -1,
       SourceId: userDetail.SourceId ? userDetail.SourceId : -1,
       StatusId: userDetail.StatusId ? userDetail.StatusId : -1,
       Description: "",
       OrgPassword: "",
       ManagerId: userDetail.UserId ? userDetail.UserId : parseInt(intUserid),
-      OrgActive: "Yes",
+      CCode:userDetail.Clientid ? userDetail.Clientid : ""
     };
     // toast.success("Reference Added Successfully !");
     // Json_InsertContact();
-    console.log(clientdata, "clientdata");
-    Cls.Json_AddClient(clientdata, (sts, data) => {
-      console.log(sts, data, "newclientdata");
+    console.log(clientdata, "updateclientdata");
+    Cls.Json_UpdateClient(clientdata, (sts, data) => {
+      console.log(sts, data, "Json_UpdateClient");
       let jsonparse = JSON.parse(data);
       if (sts) {
         if (jsonparse.Status == "Success") {
           console.log("Response", data);
-          toast.success("Reference Added Successfully !");
+          toast.success("Client Updated Successfully !");
           // Json_InsertContact(); Main contact not need
+          Json_ChangeClientID();
+          Json_UpdateClientField();
           saveUDF();
           mainAddress();
           billingAddress();
           ragisterAddress();
-        } else {
-          toast.success("Reference ID Already Exists!");
+        } 
+        else {
+          // toast.success("Reference ID Already Exists!");
+          console.log("Faild Json_UpdateClient");
         }
       }
     });
@@ -284,6 +365,8 @@ function EditReference({companyEditDetails}) {
       }
     });
   };
+  
+  
   const saveUDF = () => {
     const result = Object.entries(dataFromChild)
       .map(([key, value]) => `${key}: ${value}`)
@@ -488,7 +571,7 @@ function EditReference({companyEditDetails}) {
                 // !folderData
               }
             >
-              Add Client
+              Update Client
             </Button>{" "}
           </div>
         </Box>

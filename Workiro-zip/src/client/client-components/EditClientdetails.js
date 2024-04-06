@@ -17,9 +17,13 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const UserDetailContext = createContext();
 // const UserDetailContext = createContext();
 let folderArray;
+let dynamicArray;
 const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse,companyEditDetails}) => {
     console.log(companyEditDetails,"EditcompanyEditDetails");
     const [defaultClient, setDefaultClient] = useState([]);
+    const [DynamicId, setDynamicId] = useState([]);
+    const [Setaarray, setSetaarray] = useState([]);
+    const [defaultFoldefr, setDefaultFolders] = useState([]);
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -70,10 +74,15 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
   const onChangeclientlist = (event, value) => {
     event.preventDefault();
     if (value) {
+      // let data = { ...userDetail };
+      // data = { ...data, ["FolderId"]: value.FolderID };
+      const folderIds = value.map((folder) => folder.FolderID).join(",");
+      console.log(value,"foldergetdata",folderIds);
       let data = { ...userDetail };
-      data = { ...data, ["FolderId"]: value.FolderID };
+      data = { ...data, ["FolderId"]: folderIds };
       console.log(value, "clientlist");
       setDefaultFolder(value);
+      setDefaultFolders(value);
       setUserDetail(data);
     }
   };
@@ -242,6 +251,32 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
     }
   };
 
+  const Json_GetClientAssignedUnassignedFolderList = () => {
+    let requestBody = {
+      agrno: agrno,
+      UserEmail: Email,
+      password: password,
+      strOrignatorno:companyEditDetails[0].OriginatorNo ? companyEditDetails[0].OriginatorNo :
+      "",
+      intuserId:localStorage.getItem("UserId")
+    };
+    console.log(requestBody,"requestBodydata",userDetail);
+    try {
+      Cls.Json_GetClientAssignedUnassignedFolderList(requestBody, (sts, data) => {
+        if (sts) {
+          if (data) {
+            // setIsfetchdata(true);
+            let json = JSON.parse(data);
+            setSetaarray(json.Table);
+            
+
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_GetToFavourites", err);
+    }
+  };
   const
     Json_CompanyHouseDetails = (inputValue) => {
       let requestBody = {
@@ -313,6 +348,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompany
     Json_CompanyHouseDetails(inputValue);
 };
 
+
 const [txtValue,setTxtValue]=useState(null);
 const [open, setOpen] = useState(false);
 
@@ -369,10 +405,24 @@ const clearDataCard = () => {
     // Json_GetClientCardDetails();
     Json_GetFolders();
     Json_GetConfiguration();
-
+    Json_GetClientAssignedUnassignedFolderList();
    
 }, []);
+useEffect(() => {
+  if (folders && folders.length > 0) {
+    const filteredFolders = folders.filter(folder => {
+      return Setaarray.some(project => project.ProjectId === folder.FolderID);
+    });
+    setDynamicId(filteredFolders.map(folder => folder.FolderID));
+    const defaultValue = folders.filter(folder => filteredFolders.map(folder => folder.FolderID).includes(folder.FolderID));
+    setDefaultFolders(defaultValue);
 
+    console.log(defaultValue,"foldersSetaarray",Setaarray,"sateerere",filteredFolders,DynamicId);
+  }
+  
+  
+}, [folders, Setaarray]);
+console.log(defaultFoldefr,"dynamicArray",DynamicId,folderArray);
   return (
     <div>
 
@@ -510,7 +560,9 @@ const clearDataCard = () => {
               getOptionLabel={(option) => option.Folder ? option.Folder: ""}
             //  defaultValue={[def]}
               // value={defaultFolder || null}
-            defaultValue={[folders[defaultClient]]}
+            // defaultValue={[folders[defaultClient]]}
+            // defaultValue={folders.filter(folder => DynamicId.includes(folder.FolderID))}
+            value={defaultFoldefr ? defaultFoldefr : []}
             // defaultValue={defaultClient !== null ? [folders[defaultClient]] : []}
             id="clientlist"
             clearOnEscape
@@ -533,7 +585,7 @@ const clearDataCard = () => {
                 variant="outlined"
                 name="Selectclient"
                 // value={folders[defaultClient] || []}
-                onChange={onChange}
+                // onChange={onChange}
                 label="Client List"
               />
             )}
