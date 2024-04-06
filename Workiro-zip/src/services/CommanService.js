@@ -1176,4 +1176,43 @@ console.log("formattedDate",formattedDate)
             }
         })
     }
+    Json_UpdateClient(obj,callback) {
+        super.CreateNewServiceParamObject("Json_UpdateClient",obj,false);
+        super.CallNewService("Json_UpdateClient", function (status, Data) {
+            if (status) {
+                if (Data != "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+    Json_UpdateClientField(obj,callback) {
+        super.CreateNewServiceParamObject("Json_UpdateClientField",obj,false);
+        super.CallNewService("Json_UpdateClientField", function (status, Data) {
+            if (status) {
+                if (Data != "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+    Json_ChangeClientID(obj,callback) {
+        super.CreateNewServiceParamObject("Json_ChangeClientID",obj,false);
+        super.CallNewService("Json_ChangeClientID", function (status, Data) {
+            if (status) {
+                if (Data != "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
 }
