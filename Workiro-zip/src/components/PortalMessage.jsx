@@ -382,7 +382,6 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
         };
 
         ClsPortal.GetMessageAttachments_Json(o, function (sts, data) {
-            console.log("dfhldsjlfjf",data);
             if (sts && data) {
                 let arrayOfObjects = JSON.parse(data);
                 console.log("GetMessageAttachments_Json", arrayOfObjects);
