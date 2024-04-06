@@ -33,6 +33,7 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
     const [associatedTask, setAssociatedTask] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
     const [openModal, setOpen] = React.useState(false);
+    const [getAudit, setGetAudit] = useState([]);
     const handleClickDetailOpen = () => {
         setOpen(true);
     };
@@ -107,6 +108,30 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
         const dateObject = new Date(timeStamp);
         return `${dateObject.getDate()}/${dateObject.getMonth() + 1}/${dateObject.getFullYear()}`;
     }
+    const Json_GetAudit = (sDoc=docForDetails) => {
+        try {
+            let obj = {
+                itemid: sDoc["Registration No."],
+                password: localStorage.getItem("Password"),
+            }
+            ClsSms.Json_GetAudit(obj, function (sts, data) {
+                if (sts && data) {
+                    let parse = JSON.parse(data);
+                    let table = parse.Table;
+                    if (table.length > 0) {
+                        setGetAudit(table);
+                    }
+                    console.log("Json_GetAudit", table)
+                }
+            })
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
+        }
+
+    }
+    useEffect(()=>{
+        Json_GetAudit(docForDetails);
+    },[]);
 
     return (
         <>
@@ -321,7 +346,7 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                 </AccordionSummary>
                                 <AccordionDetails>
 
-                                    <Activity></Activity>
+                                    <Activity getAudit={getAudit}></Activity>
 
 
                                     {/* {Array(5).fill("").map(() => {

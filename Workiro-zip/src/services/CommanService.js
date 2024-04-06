@@ -21,6 +21,14 @@ Json_GetContactListByFolder(obj,callBack) {
         }
     })
 }
+
+ getFileExtension = (fileName) => {
+    // Split the file name by the dot (.)
+    const parts = fileName.split('.');
+    // Return the last part, which is the extension
+    return parts[parts.length - 1];
+};
+
 ///////////////////end all contact
      ConfirmMessage(txt,callBack) {
         Swal.fire({
@@ -1131,6 +1139,20 @@ console.log("formattedDate",formattedDate)
     Json_CompanyHouseDetails(obj,callback) {
         super.CreateNewServiceParamObject("Json_CompanyHouseDetails",obj,false);
         super.CallNewService("Json_CompanyHouseDetails", function (status, Data) {
+            if (status) {
+                if (Data != "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+
+    Json_GetClientAddresses(obj,callback) {
+        super.CreateNewServiceParamObject("Json_GetClientAddresses",obj,false);
+        super.CallNewService("Json_GetClientAddresses", function (status, Data) {
             if (status) {
                 if (Data != "") {
                     return callback(true, Data);

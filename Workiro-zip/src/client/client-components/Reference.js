@@ -392,6 +392,7 @@ function Reference() {
           {
             <AddClientdetails
               userDetail={userDetail}
+              setDataFromChild={setDataFromChild}
               //
               dataCompanyHouse={dataCompanyHouse}
               // setDataCompanyHouse={setDataCompanyHouse}
@@ -489,7 +490,7 @@ function Reference() {
                         size="small"
                       >
                        {activeStep === steps.length - 1
-                                ? "Add Client"
+                                ? "Add Contact(s)"
                                 : "Continue"}
                       </Button>
                     </Box>
@@ -500,11 +501,11 @@ function Reference() {
           </Stepper>
           {activeStep === steps.length && (
             <Paper square elevation={0} sx={{ p: 3 }}>
-              <Typography>
-                Reference Added Successfully!!!
+              <Typography className="text-green">
+                References Added Successfully!
               </Typography>
-              <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-                Add Another
+              <Button className="btn-blue-2 mt-4" onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
+              Add more reference
               </Button>
             </Paper>
           )}

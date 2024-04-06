@@ -48,13 +48,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setMyTasks } from '../redux/reducers/counterSlice';
 
 
-const foldersIconList = [<PersonIcon className='me-1 font-20' />, <TipsAndUpdatesIcon className='me-1 font-20' />, <PeopleIcon className='me-1 font-20' />, <ShareIcon className='me-1 font-20' />, <FolderSharedIcon className='me-1 font-20' />, <FolderSharedIcon className='me-1 font-20' />];
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20' />, <PublishedWithChangesIcon color='primary' className='me-1 font-20' />, <HourglassBottomIcon color='primary' className='me-1 font-20' />, <CheckCircleOutlineIcon color='success' className='me-1 font-20' />];
 
 function TodoList() {
     const location = useLocation();
     const reduxData = useSelector((data) => data.counter.myTasks);
-    console.log("fdjkfhfhsf", reduxData);
     const dispatch = useDispatch();
     let dddd = location.state !== null ? location.state : { globalSearchTask: [] };
     const { globalSearchTask, strGlobal } = dddd;
@@ -719,7 +717,7 @@ function TodoList() {
                             >
                                 <MenuItem value="Folder" style={{ display: "none" }}>Folders</MenuItem>
                                 <MenuItem value="" className='text-danger ps-1'><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
-                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'>{foldersIconList[i]} {fld.Folder}</MenuItem>)}
+                                {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'><FolderSharedIcon className="font-20 me-1" /> {fld.Folder}</MenuItem>)}
                             </Select>
                         </FormControl>
 
@@ -788,7 +786,7 @@ function TodoList() {
                     </Box>
 
                     <Box className='d-flex align-items-end'>
-                        <Box>
+                        <Box className='date-unerline'>
                             <DateRangePicker
                                 initialSettings={{
                                     startDate: start.toDate(),
@@ -929,7 +927,7 @@ function TodoList() {
 
                                                     <Box className='d-flex align-items-center justify-content-between'>
                                                         <Typography variant='subtitle1'><pan className='text-gray'>
-                                                            {FiterAssinee(item.OwnerID)} <ArrowForwardIosIcon className='font-14' /> </pan>
+                                                            {FiterAssinee(item.OwnerID)} {arr.length > 2 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
                                                             {/* <a href='#'>Patrick</a>, */}
                                                             <a href='#'>{FilterAgs(item)}</a> <a href='#'> {arr.length > 2 && (<>
                                                                 + {arr.length - 2}
@@ -1019,7 +1017,7 @@ function TodoList() {
 
                                             <Box className='d-flex align-items-center justify-content-between'>
                                                 <Typography variant='subtitle1'><pan className='text-gray'>
-                                                    {FiterAssinee(item.OwnerID)} <ArrowForwardIosIcon className='font-14' /> </pan>
+                                                    {FiterAssinee(item.OwnerID)} {arr.length > 2 && (<ArrowForwardIosIcon className='font-14' />)} </pan>
                                                     {/* <a href='#'>Patrick</a>, */}
                                                     <a href='#'>{FilterAgs(item)}</a> <a href='#'> {arr.length > 2 && (<>
                                                         +{arr.length - 2}

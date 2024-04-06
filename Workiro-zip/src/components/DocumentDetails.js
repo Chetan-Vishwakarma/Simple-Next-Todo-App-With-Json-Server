@@ -77,6 +77,8 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     const [selectedTask, setSelectedTask] = useState({});
     const [isApi, setIsApi] = useState(false);
 
+    const [getAudit, setGetAudit] = useState([]);
+
     // modal
     const [openModal, setOpen] = React.useState(false);
 
@@ -204,6 +206,29 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         }
     }
 
+    const Json_GetAudit = (sDoc) => {
+        console.log("Json_GetAudit",sDoc);
+        try {
+            let obj = {
+                itemid: sDoc["Registration No."],
+                password:localStorage.getItem("Password")
+            }
+            Cls.Json_GetAudit(obj, function (sts, data) {
+                if (sts && data) {
+                    let parse = JSON.parse(data);
+                    let table = parse.Table;
+                    if (table.length > 0) {
+                        setGetAudit(table);
+                    }
+                    console.log("Json_GetAudit", table)
+                }
+            })
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
+        }
+
+    }
+
     // Document details List
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
     const handleClickOpenDocumentDetailsList = (event, sDoc) => {
@@ -211,6 +236,8 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         setDocForDetails(sDoc);
         event.stopPropagation();
         setOpenDocumentDetailsList(true);
+        Json_GetAudit(sDoc);
+
     };
     const handleCloseDocumentDetailsList = (event) => {
         event.stopPropagation();
@@ -322,6 +349,13 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             }}
                                             className='custom-dropdown'
                                         >
+                                            <MenuItem
+                                                onClick={(event) => handleCloseDocument(event, data)}
+                                            >
+                                                <ListItemIcon>
+                                                    <CloudUploadIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Create Task</MenuItem>
                                             <MenuItem onClick={(event) => {
                                                 handleCloseDocument(event, data)
                                                 handleClickOpenDocumentDetailsList(event, data.data)
@@ -1164,7 +1198,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                 </AccordionSummary>
                                 <AccordionDetails>
 
-                                    <Activity></Activity>
+                                    <Activity getAudit={getAudit}></Activity>
 
 
                                     {/* {Array(5).fill("").map(() => {

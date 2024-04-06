@@ -90,6 +90,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     const [folderList, setFolderList] = useState([]);
     const [portalComments, setPortalComments] = useState([]);
+    const [copyLink, setCopyLink] = useState("");
 
     const [txtFolder, settxtFolder] = useState(selectedTask.Folder);
     const [txtFolderId, setTxtFolderId] = useState(selectedTask.FolderID);
@@ -232,13 +233,13 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                 ActivityDate = parseInt(activity.ActivityDate.slice(6, -2));
                             }
                             const date = new Date(ActivityDate);
-                            return { ...activity, ActivityDate: date,comDate:date,comNotes:activity.Notes };
+                            return { ...activity, ActivityDate: date, comDate: date, comNotes: activity.Notes };
                         });
                         // console.log(
                         //     "Json_Get_CRM_Task_ActivityByTaskId",
                         //     formattedActivity
                         // );
-                        
+
                         setCRMTaskAcivity(
                             formattedActivity.sort((a, b) => a.ActivityDate - b.ActivityDate)
                         );
@@ -253,11 +254,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         // setCRMTaskAcivity((el) => [...el, obj]);
                         // setAllTask(json.Table);
 
-                        if(selectedTask.Source==="Portal"){
-                            
-                            let margeArr= mergeAndSortByDate(portalComments,formattedActivity,"comDate")
-                  console.log("GetComments_Json111", margeArr);
-                  setPortalComments(margeArr);
+                        if (selectedTask.Source === "Portal") {
+
+                            let margeArr = mergeAndSortByDate(portalComments, formattedActivity, "comDate")
+                            console.log("GetComments_Json111", margeArr);
+                            setPortalComments(margeArr);
                         }
 
                     }
@@ -573,7 +574,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         }
     }
 
-   
+
 
 
 
@@ -729,7 +730,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         // console.log("folder data",e)
         setanchorElStatus(null);
         setSelectedIndexProfile(null); // Reset the selected index after closing the menu
-
+        setAnchorElFolder(null);
 
         if (e.FolderID) {
             Json_UpdateTaskField("FolderID", e.FolderID, "Folder updated. Please review Reference and Section");
@@ -800,12 +801,13 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         if (notesMessage) {
             AddTaskComment_Json(notesMessage)
         }
-       
+
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         GetComments_Json(selectedEmailForComment.PortalDocId);
-    },[selectedEmailForComment])
+        setCopyLink(`https://www.sharedocuments.co.uk/login.aspx?Code=${agrno}&message=${selectedEmailForComment.PortalDocId}`);
+    }, [selectedEmailForComment])
 
     const AddTaskComment_Json = (notesMessage) => {
         let o = {
@@ -839,7 +841,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
         ClsPortal.GetComments_Json(o, function (sts, data) {
             if (sts) {
-                let js = JSON.parse(data);               
+                let js = JSON.parse(data);
                 if (data) {
                     const formattedActivity = js.map((activity) => {
                         let DateOfRemark;
@@ -853,17 +855,18 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         //     ReadDate = parseInt(activity.ReadDate.slice(6, -2));
                         // }
                         // const ReadDate1 = new Date(ReadDate);
-                        return { ...activity, DateOfRemark: date,comDate: date,comNotes:activity.Remark};
-                    }); 
+                        return { ...activity, DateOfRemark: date, comDate: date, comNotes: activity.Remark };
+                    });
                     console.log("GetComments_Json", formattedActivity);
 
-                 // let arr1 =  formattedActivity.sort((a, b) => a.DateOfRemark - b.DateOfRemark);
 
-                  let margeArr= mergeAndSortByDate(formattedActivity,crmTaskAcivity,"comDate");
+                    // let arr1 =  formattedActivity.sort((a, b) => a.DateOfRemark - b.DateOfRemark);
 
-                  console.log("GetComments_Json", margeArr);
-                  setPortalComments(margeArr);
-                   
+                    let margeArr = mergeAndSortByDate(formattedActivity, crmTaskAcivity, "comDate");
+
+                    console.log("GetComments_Json", margeArr);
+                    setPortalComments(margeArr);
+
                 }
                 // setTemplateDataMarkup(data)
             }
@@ -872,16 +875,19 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     function mergeAndSortByDate(array1, array2, dateField) {
         // Concatenate the two arrays
-        var mergedArray = array2.concat(array1);
-        
-        // Sort the merged array by date field
-        mergedArray.sort(function(a, b) {
-            return new Date(a[dateField]) - new Date(b[dateField]);
-        });
-        
-        return mergedArray;
+        if (array1 && array2) {
+            var mergedArray = array2.concat(array1);
+
+            // Sort the merged array by date field
+            mergedArray.sort(function (a, b) {
+                return new Date(a[dateField]) - new Date(b[dateField]);
+            });
+
+            return mergedArray;
+        }
+
     }
-    
+
 
 
     const Json_AddSupplierActivity = (mgs, sts) => {
@@ -1312,6 +1318,14 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     };
 
+    const [anchorElFolder, setAnchorElFolder] = React.useState(null);
+    const openFolder = Boolean(anchorElFolder);
+    const handleClickFolder = (event) => {
+        setAnchorElFolder(event.currentTarget);
+    };
+    const handleCloseFolder = () => {
+        setAnchorElFolder(null);
+    };
 
     return (
         <React.Fragment>
@@ -1577,23 +1591,16 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                 } // Open menu if selectedIndex matches
                                 onClose={handleCloseProfile}
                             >
-                                {folderList ? folderList.map((item) => {
-                                    return (<>
-                                        <MenuItem onClick={() => handleCloseProfile(item)} className='ps-1'>
-                                            <ListItemIcon>
-                                                <FolderSharedIcon fontSize="medium" />
-                                            </ListItemIcon>
-
-                                            {item.Folder}
-                                        </MenuItem>
-                                    </>)
-                                }) : ""}
 
                                 {/* only for portal */}
-                                <MenuItem className='ps-1'>
-                                    <ListItemIcon>
-                                        <ContentCopyIcon fontSize="medium" />
-                                    </ListItemIcon> Copy Link</MenuItem>
+                                <MenuItem className='ps-2' onClick={() => {
+                                    setSelectedIndexProfile(null);
+                                }}>
+                                    <ListItemIcon >
+                                        <ContentCopyIcon fontSize="medium" className="font-20" />
+                                    </ListItemIcon>
+                                    {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>}
+                                </MenuItem>
 
                                 <MenuItem className='ps-1'>
                                     <ListItemIcon>
@@ -1602,13 +1609,60 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                                 <MenuItem className='ps-1'>
                                     <ListItemIcon>
-                                        <AttachEmailIcon fontSize="medium" />
+                                        <AttachEmailIcon className="font-22" />
                                     </ListItemIcon> Retract Message (s)</MenuItem>
 
                                 <MenuItem className='ps-1'>
                                     <ListItemIcon>
                                         <DeleteIcon fontSize="medium" />
                                     </ListItemIcon> Delete Message (s)</MenuItem>
+
+                                {/* <MenuItem className='ps-2'>
+                                    <ListItemIcon>
+                                        <DeleteIcon fontSize="medium" />
+                                    </ListItemIcon> Delete Message (s)</MenuItem> */}
+                                {selectedTask.Source === "CRM" && (<>
+                                    <Button
+                                        id="basic-button"
+                                        aria-controls={openFolder ? 'basic-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={openFolder ? 'true' : undefined}
+                                        onClick={handleClickFolder}
+                                        className="ps-0 w-100 text-left text-start"
+                                    >
+                                        <MenuItem className='ps-2 w-100'>
+                                            <ListItemIcon>
+                                                <AttachEmailIcon className="font-22" />
+                                            </ListItemIcon>Folder</MenuItem>
+                                    </Button>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorElFolder}
+                                        open={openFolder}
+                                        onClose={handleCloseFolder}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+                                    >
+
+                                        {folderList ? folderList.map((item) => {
+                                            return (<>
+                                                <MenuItem onClick={() => handleCloseProfile(item)}>
+                                                    <ListItemIcon>
+                                                        <DoNotDisturbAltIcon fontSize="medium" />
+                                                    </ListItemIcon>
+
+                                                    {item.Folder}
+                                                </MenuItem>
+                                            </>)
+                                        }) : ""}
+
+
+                                    </Menu>
+                                </>)}
+
+
+
                             </Menu>
                         </div>
 
@@ -1693,7 +1747,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                 >
                                     {txtClient ? txtClient : selectedTask.Client}
                                 </Button>
-                                <Menu
+                                {selectedTask.Source === "CRM" && (<Menu
                                     id="fade-menu11"
                                     MenuListProps={{
                                         'aria-labelledby': 'fade-button',
@@ -1715,10 +1769,18 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     />
 
                                     {filtereClient ? filtereClient.map((item, index) => {
-                                        return <MenuItem key={index} onClick={() => handleCloseClient(item)}>{item.Client}</MenuItem>
-                                    }) : ""}
+                                        if (selectedTask.Source === "Portal") {
+                                            return <MenuItem key={index} onClick={() => {
+                                                setAnchorClsEl(null);
+                                            }}>{item.Client}</MenuItem>
+                                        }
+                                        else {
+                                            return <MenuItem key={index} onClick={() => handleCloseClient(item)}>{item.Client}</MenuItem>
+                                        }
 
-                                </Menu>
+                                    }) : ""}
+                                </Menu>)}
+
 
 
                                 Section:-
@@ -1731,7 +1793,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                 >
                                     {txtSection ? txtSection : selectedTask.Section}
                                 </Button>
-                                <Menu
+                                {selectedTask.Source === "CRM" && (<Menu
                                     id="fade-menu"
                                     MenuListProps={{
                                         'aria-labelledby': 'fade-button',
@@ -1753,11 +1815,20 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     />
 
                                     {filtereSectionList ? filtereSectionList.map((item, index) => {
-                                        return <MenuItem key={index} onClick={() => handleCloseSection(item)}>{item.Sec}</MenuItem>
+                                        if (selectedTask.Source === "Portal") {
+                                            return <MenuItem key={index} onClick={() => {
+                                                setAnchorSectionEl(null);
+                                            }}>{item.Sec}</MenuItem>
+                                        }
+                                        else {
+                                            return <MenuItem key={index} onClick={() => handleCloseSection(item)}>{item.Sec}</MenuItem>
+                                        }
+
                                     }) : ""}
 
 
-                                </Menu>
+                                </Menu>)}
+
 
 
                             </Box>
@@ -1838,41 +1909,109 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                         <Box className="pb-0 mb-0">
                             <Box className="main-chatbox">
-                            {selectedTask.Source === "Portal" ? (<>
-                                {portalComments
-                                    ? portalComments.map((item, index) => {
-                                     
-                                        // console.log("forwardUser22",forwardUser.ForwardTo)
-                                        if (item.status === "sys") {
-                                            return (
-                                                <>
-                                                    <Box
-                                                        className="text-center py-2 file-uploaded"
-                                                        style={{
-                                                            backgroundColor: "#e5e5e5",
-                                                            marginBottom: "10px",
-                                                            "border-radius": "3px",
-                                                        }}
-                                                    >
-                                                        <Typography key={index} variant="body1" className="font-14 semibold">
+                                {selectedTask.Source === "Portal" ? (<>
+                                    {portalComments
+                                        ? portalComments.map((item, index) => {
+
+                                            // console.log("forwardUser22",forwardUser.ForwardTo)
+                                            if (item.status === "sys") {
+                                                return (
+                                                    <>
+                                                        <Box
+                                                            className="text-center py-2 file-uploaded"
+                                                            style={{
+                                                                backgroundColor: "#e5e5e5",
+                                                                marginBottom: "10px",
+                                                                "border-radius": "3px",
+                                                            }}
+                                                        >
+                                                            <Typography key={index} variant="body1" className="font-14 semibold">
                                                                 {item.Notes} {/* Display each note */}
                                                             </Typography>
-                                                        <Typography variant="body1" className="font-12">
-                                                            {dateAndTime(item.ActivityDate)}
-                                                        </Typography>
-                                                    </Box>
-                                                </>
-                                            );
-                                        }
-                                        else if (item.Type === "response") {
-                                            return (
-                                                <>
+                                                            <Typography variant="body1" className="font-12">
+                                                                {dateAndTime(item.ActivityDate)}
+                                                            </Typography>
+                                                        </Box>
+                                                    </>
+                                                );
+                                            }
+                                            else if (item.Type === "response") {
+                                                return (
+                                                    <>
+                                                        <Box
+                                                            className="chat-box d-flex align-items-end mb-2 sender"
+                                                            justifyContent="flex-end"
+                                                        >
+                                                            <Box class="chat-message">
+                                                                <Box class="inner-chat-message ms-auto">
+                                                                    <Typography variant="body1" className="font-14">
+                                                                        {item.Remark}
+                                                                    </Typography>
+                                                                    <Box className="d-flex align-items-center justify-content-end">
+                                                                        <Typography variant="body1" className="font-12">
+                                                                            {dateAndTime(item.DateOfRemark)}
+                                                                        </Typography>
+
+                                                                        <Box className="">
+                                                                            <Button
+                                                                                id={`fade-button-${index}`} // Use unique IDs for each button
+                                                                                aria-controls={
+                                                                                    anchorEl1
+                                                                                        ? `fade-menu-${index}`
+                                                                                        : undefined
+                                                                                }
+                                                                                aria-haspopup="true"
+                                                                                aria-expanded={
+                                                                                    anchorEl1 ? "true" : undefined
+                                                                                }
+                                                                                onClick={(event) =>
+                                                                                    handleClick2(event, index)
+                                                                                } // Pass index to handleClick
+                                                                                className="min-width-auto px-0 text-gray"
+                                                                            >
+                                                                                <MoreVertIcon />
+                                                                            </Button>
+                                                                            <Menu
+                                                                                id={`fade-menu-${index}`} // Use unique IDs for each menu
+                                                                                MenuListProps={{
+                                                                                    "aria-labelledby": `fade-button-${index}`,
+                                                                                }}
+                                                                                anchorEl={anchorEl1}
+                                                                                open={
+                                                                                    selectedIndex === index &&
+                                                                                    Boolean(anchorEl1)
+                                                                                } // Open menu if selectedIndex matches
+                                                                                onClose={handleClose2}
+                                                                            >
+                                                                                <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                                    <ListItemIcon>
+                                                                                        <EditIcon fontSize="medium" />
+                                                                                    </ListItemIcon> Edit</MenuItem>
+
+                                                                                <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                                    <ListItemIcon>
+                                                                                        <DeleteIcon fontSize="medium" />
+                                                                                    </ListItemIcon> Delete Message</MenuItem>
+                                                                            </Menu>
+                                                                        </Box>
+                                                                    </Box>
+                                                                </Box>
+                                                            </Box>
+                                                        </Box>
+                                                    </>
+                                                );
+                                            }
+                                            else {
+                                                return (
                                                     <Box
-                                                        className="chat-box d-flex align-items-end mb-2 sender"
-                                                        justifyContent="flex-end"
+                                                        className="chat-box d-flex align-items-end mb-2 reciever"
+                                                        key={index}
                                                     >
-                                                        <Box class="chat-message">
-                                                            <Box class="inner-chat-message ms-auto">
+                                                        <Box className="client-img me-3 mb-0 ms-0">
+                                                            <img src={user} alt="User" />
+                                                        </Box>
+                                                        <Box className="chat-message me-2">
+                                                            <Box className="inner-chat-message me-2">
                                                                 <Typography variant="body1" className="font-14">
                                                                     {item.Remark}
                                                                 </Typography>
@@ -1912,128 +2051,128 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                                             } // Open menu if selectedIndex matches
                                                                             onClose={handleClose2}
                                                                         >
-                                                                            <MenuItem className='ps-1' onClick={handleClose2}>
-                                                                                <ListItemIcon>
-                                                                                    <EditIcon fontSize="medium" />
-                                                                                </ListItemIcon> Edit</MenuItem>
-
-                                                                            <MenuItem className='ps-1' onClick={handleClose2}>
-                                                                                <ListItemIcon>
-                                                                                    <DeleteIcon fontSize="medium" />
-                                                                                </ListItemIcon> Delete Message</MenuItem>
+                                                                            <MenuItem onClick={handleClose2}>
+                                                                                Edit
+                                                                            </MenuItem>
+                                                                            <MenuItem onClick={handleClose2}>
+                                                                                Delete
+                                                                            </MenuItem>
                                                                         </Menu>
                                                                     </Box>
                                                                 </Box>
                                                             </Box>
                                                         </Box>
                                                     </Box>
-                                                </>
-                                            );
-                                        }
-                                        else {
-                                            return (
-                                                <Box
-                                                    className="chat-box d-flex align-items-end mb-2 reciever"
-                                                    key={index}
-                                                >
-                                                    <Box className="client-img me-3 mb-0 ms-0">
-                                                        <img src={user} alt="User" />
-                                                    </Box>
-                                                    <Box className="chat-message me-2">
-                                                        <Box className="inner-chat-message me-2">
-                                                            <Typography variant="body1" className="font-14">
-                                                                {item.Remark}
-                                                            </Typography>
-                                                            <Box className="d-flex align-items-center justify-content-end">
-                                                                <Typography variant="body1" className="font-12">
-                                                                    {dateAndTime(item.DateOfRemark)}
-                                                                </Typography>
+                                                );
 
-                                                                <Box className="">
-                                                                    <Button
-                                                                        id={`fade-button-${index}`} // Use unique IDs for each button
-                                                                        aria-controls={
-                                                                            anchorEl1
-                                                                                ? `fade-menu-${index}`
-                                                                                : undefined
-                                                                        }
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded={
-                                                                            anchorEl1 ? "true" : undefined
-                                                                        }
-                                                                        onClick={(event) =>
-                                                                            handleClick2(event, index)
-                                                                        } // Pass index to handleClick
-                                                                        className="min-width-auto px-0 text-gray"
-                                                                    >
-                                                                        <MoreVertIcon />
-                                                                    </Button>
-                                                                    <Menu
-                                                                        id={`fade-menu-${index}`} // Use unique IDs for each menu
-                                                                        MenuListProps={{
-                                                                            "aria-labelledby": `fade-button-${index}`,
-                                                                        }}
-                                                                        anchorEl={anchorEl1}
-                                                                        open={
-                                                                            selectedIndex === index &&
-                                                                            Boolean(anchorEl1)
-                                                                        } // Open menu if selectedIndex matches
-                                                                        onClose={handleClose2}
-                                                                    >
-                                                                        <MenuItem onClick={handleClose2}>
-                                                                            Edit
-                                                                        </MenuItem>
-                                                                        <MenuItem onClick={handleClose2}>
-                                                                            Delete
-                                                                        </MenuItem>
-                                                                    </Menu>
+                                            }
+                                        })
+                                        : null}
+                                </>) : (<>
+                                    {crmTaskAcivity
+                                        ? crmTaskAcivity.map((item, index) => {
+                                            const notesArray = item.Notes.split(',');
+                                            // console.log("forwardUser22",forwardUser.ForwardTo)
+                                            if (item.status === "sys") {
+                                                return (
+                                                    <>
+                                                        <Box
+                                                            className="text-center py-2 file-uploaded"
+                                                            style={{
+                                                                backgroundColor: "#e5e5e5",
+                                                                marginBottom: "10px",
+                                                                "border-radius": "3px",
+                                                            }}
+                                                        >
+                                                            {notesArray.map((note, index) => (
+                                                                <Typography key={index} variant="body1" className="font-14 semibold">
+                                                                    {note.trim()} {/* Display each note */}
+                                                                </Typography>
+                                                            ))}
+                                                            <Typography variant="body1" className="font-12">
+                                                                {dateAndTime(item.ActivityDate)}
+                                                            </Typography>
+                                                        </Box>
+                                                    </>
+                                                );
+                                            }
+                                            else if (item.username === forwardUser.ForwardTo) {
+                                                return (
+                                                    <>
+                                                        <Box
+                                                            className="chat-box d-flex align-items-end mb-2 sender"
+                                                            justifyContent="flex-end"
+                                                        >
+                                                            <Box class="chat-message">
+                                                                <Box class="inner-chat-message ms-auto">
+                                                                    <Typography variant="body1" className="font-14">
+                                                                        {item.Notes}
+                                                                    </Typography>
+                                                                    <Box className="d-flex align-items-center justify-content-end">
+                                                                        <Typography variant="body1" className="font-12">
+                                                                            {dateAndTime(item.ActivityDate)}
+                                                                        </Typography>
+
+                                                                        <Box className="">
+                                                                            <Button
+                                                                                id={`fade-button-${index}`} // Use unique IDs for each button
+                                                                                aria-controls={
+                                                                                    anchorEl1
+                                                                                        ? `fade-menu-${index}`
+                                                                                        : undefined
+                                                                                }
+                                                                                aria-haspopup="true"
+                                                                                aria-expanded={
+                                                                                    anchorEl1 ? "true" : undefined
+                                                                                }
+                                                                                onClick={(event) =>
+                                                                                    handleClick2(event, index)
+                                                                                } // Pass index to handleClick
+                                                                                className="min-width-auto px-0 text-gray"
+                                                                            >
+                                                                                <MoreVertIcon />
+                                                                            </Button>
+                                                                            <Menu
+                                                                                id={`fade-menu-${index}`} // Use unique IDs for each menu
+                                                                                MenuListProps={{
+                                                                                    "aria-labelledby": `fade-button-${index}`,
+                                                                                }}
+                                                                                anchorEl={anchorEl1}
+                                                                                open={
+                                                                                    selectedIndex === index &&
+                                                                                    Boolean(anchorEl1)
+                                                                                } // Open menu if selectedIndex matches
+                                                                                onClose={handleClose2}
+                                                                            >
+                                                                                <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                                    <ListItemIcon>
+                                                                                        <EditIcon fontSize="medium" />
+                                                                                    </ListItemIcon> Edit</MenuItem>
+
+                                                                                <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                                    <ListItemIcon>
+                                                                                        <DeleteIcon fontSize="medium" />
+                                                                                    </ListItemIcon> Delete Message</MenuItem>
+                                                                            </Menu>
+                                                                        </Box>
+                                                                    </Box>
                                                                 </Box>
                                                             </Box>
                                                         </Box>
-                                                    </Box>
-                                                </Box>
-                                            );
-
-                                        }
-                                    })
-                                    : null}
-                            </>):(<>
-                                {crmTaskAcivity
-                                    ? crmTaskAcivity.map((item, index) => {
-                                        const notesArray = item.Notes.split(',');
-                                        // console.log("forwardUser22",forwardUser.ForwardTo)
-                                        if (item.status === "sys") {
-                                            return (
-                                                <>
+                                                    </>
+                                                );
+                                            }
+                                            else {
+                                                return (
                                                     <Box
-                                                        className="text-center py-2 file-uploaded"
-                                                        style={{
-                                                            backgroundColor: "#e5e5e5",
-                                                            marginBottom: "10px",
-                                                            "border-radius": "3px",
-                                                        }}
+                                                        className="chat-box d-flex align-items-end mb-2 reciever"
+                                                        key={index}
                                                     >
-                                                        {notesArray.map((note, index) => (
-                                                            <Typography key={index} variant="body1" className="font-14 semibold">
-                                                                {note.trim()} {/* Display each note */}
-                                                            </Typography>
-                                                        ))}
-                                                        <Typography variant="body1" className="font-12">
-                                                            {dateAndTime(item.ActivityDate)}
-                                                        </Typography>
-                                                    </Box>
-                                                </>
-                                            );
-                                        }
-                                        else if (item.username === forwardUser.ForwardTo) {
-                                            return (
-                                                <>
-                                                    <Box
-                                                        className="chat-box d-flex align-items-end mb-2 sender"
-                                                        justifyContent="flex-end"
-                                                    >
-                                                        <Box class="chat-message">
-                                                            <Box class="inner-chat-message ms-auto">
+                                                        <Box className="client-img me-3 mb-0 ms-0">
+                                                            <img src={user} alt="User" />
+                                                        </Box>
+                                                        <Box className="chat-message me-2">
+                                                            <Box className="inner-chat-message me-2">
                                                                 <Typography variant="body1" className="font-14">
                                                                     {item.Notes}
                                                                 </Typography>
@@ -2073,93 +2212,25 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                                             } // Open menu if selectedIndex matches
                                                                             onClose={handleClose2}
                                                                         >
-                                                                            <MenuItem className='ps-1' onClick={handleClose2}>
-                                                                                <ListItemIcon>
-                                                                                    <EditIcon fontSize="medium" />
-                                                                                </ListItemIcon> Edit</MenuItem>
-
-                                                                            <MenuItem className='ps-1' onClick={handleClose2}>
-                                                                                <ListItemIcon>
-                                                                                    <DeleteIcon fontSize="medium" />
-                                                                                </ListItemIcon> Delete Message</MenuItem>
+                                                                            <MenuItem onClick={handleClose2}>
+                                                                                Edit
+                                                                            </MenuItem>
+                                                                            <MenuItem onClick={handleClose2}>
+                                                                                Delete
+                                                                            </MenuItem>
                                                                         </Menu>
                                                                     </Box>
                                                                 </Box>
                                                             </Box>
                                                         </Box>
                                                     </Box>
-                                                </>
-                                            );
-                                        }
-                                        else {
-                                            return (
-                                                <Box
-                                                    className="chat-box d-flex align-items-end mb-2 reciever"
-                                                    key={index}
-                                                >
-                                                    <Box className="client-img me-3 mb-0 ms-0">
-                                                        <img src={user} alt="User" />
-                                                    </Box>
-                                                    <Box className="chat-message me-2">
-                                                        <Box className="inner-chat-message me-2">
-                                                            <Typography variant="body1" className="font-14">
-                                                                {item.Notes}
-                                                            </Typography>
-                                                            <Box className="d-flex align-items-center justify-content-end">
-                                                                <Typography variant="body1" className="font-12">
-                                                                    {dateAndTime(item.ActivityDate)}
-                                                                </Typography>
+                                                );
 
-                                                                <Box className="">
-                                                                    <Button
-                                                                        id={`fade-button-${index}`} // Use unique IDs for each button
-                                                                        aria-controls={
-                                                                            anchorEl1
-                                                                                ? `fade-menu-${index}`
-                                                                                : undefined
-                                                                        }
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded={
-                                                                            anchorEl1 ? "true" : undefined
-                                                                        }
-                                                                        onClick={(event) =>
-                                                                            handleClick2(event, index)
-                                                                        } // Pass index to handleClick
-                                                                        className="min-width-auto px-0 text-gray"
-                                                                    >
-                                                                        <MoreVertIcon />
-                                                                    </Button>
-                                                                    <Menu
-                                                                        id={`fade-menu-${index}`} // Use unique IDs for each menu
-                                                                        MenuListProps={{
-                                                                            "aria-labelledby": `fade-button-${index}`,
-                                                                        }}
-                                                                        anchorEl={anchorEl1}
-                                                                        open={
-                                                                            selectedIndex === index &&
-                                                                            Boolean(anchorEl1)
-                                                                        } // Open menu if selectedIndex matches
-                                                                        onClose={handleClose2}
-                                                                    >
-                                                                        <MenuItem onClick={handleClose2}>
-                                                                            Edit
-                                                                        </MenuItem>
-                                                                        <MenuItem onClick={handleClose2}>
-                                                                            Delete
-                                                                        </MenuItem>
-                                                                    </Menu>
-                                                                </Box>
-                                                            </Box>
-                                                        </Box>
-                                                    </Box>
-                                                </Box>
-                                            );
+                                            }
+                                        })
+                                        : null}
+                                </>)}
 
-                                        }
-                                    })
-                                    : null}
-                            </>)}
-                                
 
                                 {/* Reciever Start */}
 
@@ -2237,7 +2308,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                                 </Box>
 
-                                {selectedTask.Source === "Portal" ?(<Box className="d-flex d-flex align-items-center ms-3">
+                                {selectedTask.Source === "Portal" ? (<Box className="d-flex d-flex align-items-center ms-3">
                                     <Button
                                         className="btn-blue-2 ms-0 mb-2"
                                         size="small"
@@ -2247,20 +2318,20 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                         Send
                                     </Button>
                                     <ToastContainer></ToastContainer>
-                                </Box>):(
+                                </Box>) : (
                                     <Box className="d-flex d-flex align-items-center ms-3">
-                                    <Button
-                                        className="btn-blue-2 ms-0 mb-2"
-                                        size="small"
-                                        onClick={addActivitySave}
-                                        startIcon={<SendIcon />}
-                                    >
-                                        Send
-                                    </Button>
-                                    <ToastContainer></ToastContainer>
-                                </Box>
+                                        <Button
+                                            className="btn-blue-2 ms-0 mb-2"
+                                            size="small"
+                                            onClick={addActivitySave}
+                                            startIcon={<SendIcon />}
+                                        >
+                                            Send
+                                        </Button>
+                                        <ToastContainer></ToastContainer>
+                                    </Box>
                                 )}
-                                
+
                             </Box>
                         </Box>
                     </DialogContentText>
