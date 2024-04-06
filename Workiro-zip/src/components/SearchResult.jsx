@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Box, Button, Typography, Radio, } from '@mui/material';
+import { Box, Button, Typography, Radio, Menu, MenuItem, ListItemIcon } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -14,6 +14,13 @@ import { toast } from 'react-toastify';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import moment from 'moment';
 import DescriptionIcon from '@mui/icons-material/Description';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import ArticleIcon from '@mui/icons-material/Article';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import TravelExploreIcon from '@mui/icons-material/TravelExplore';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import DocDetails from './DocDetails';
 
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
@@ -33,6 +40,30 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     const folder = searchParams.get("folder");
     const [filteredTasks, setFilteredTasks] = useState([]);
     const [filteredDocuments, setFilteredDocuments] = useState([]);
+    const [anchorElDocumentList, setAnchorElDocumentList] = React.useState({});
+    const [expanded, setExpanded] = React.useState('panel1');
+
+    const handleClickDocumentList = (event, index) => {
+        setAnchorElDocumentList(prevState => ({
+            ...prevState,
+            [index]: event.currentTarget
+        }));
+    };
+
+    const handleCloseDocument = (event, index) => {
+        setAnchorElDocumentList(prevState => ({
+            ...prevState,
+            [index]: null
+        }));
+    };
+
+    const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
+    const [docForDetails, setDocForDetails] = useState({});
+    const handleClickOpenDocumentDetailsList = (sDoc) => {
+        setDocForDetails(sDoc);
+        setExpanded("panel1");
+        setOpenDocumentDetailsList(true);
+    };
 
     function formatDate(inputDate) {
         const date = new Date(inputDate);
@@ -179,7 +210,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     }
     return (
         <>
-
+            <DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList} />
             <Box className='mb-5'>
                 <h3 className='font-20 mt-1'><SearchIcon /> We found the following Tasks matching <span className='text-blue bold'>"{target}"</span></h3>
                 <Grid className='mt-0' container spacing={2} >
@@ -250,8 +281,8 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                 <h3 className='font-20'><SearchIcon />  We found the following Documents matching <span className='text-blue bold'>"{target}"</span></h3>
 
                 <Grid className='mt-0' container spacing={2}>
-                    {filteredDocuments.length > 0 ? filteredDocuments.slice(0, 9).map(item => {
-                        return <Grid className='pt-0' item xs={12} lg={4} md={4} sm={12}><Box className="file-uploads">
+                    {filteredDocuments.length > 0 ? filteredDocuments.slice(0, 9).map((item, index) => {
+                        return <Grid key={index} className='pt-0' item xs={12} lg={4} md={4} sm={12}><Box className="file-uploads">
                             <label className="file-uploads-label file-uploads-document">
                                 <Box className="d-flex align-items-center">
                                     <DescriptionIcon
@@ -271,7 +302,73 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                         </Typography>
                                     </Box>
                                 </Box>
-                                
+                                <Box>
+                                    <Button
+                                        id={`basic-button-${index}`}
+                                        aria-controls={anchorElDocumentList[index] ? `basic-menu-${index}` : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={Boolean(anchorElDocumentList[index])}
+                                        onClick={(event) => handleClickDocumentList(event, index)}
+                                        className='min-width-auto'
+                                    >
+                                        <MoreVertIcon />
+                                    </Button>
+                                    <Menu
+                                        id={`basic-menu-${index}`}
+                                        anchorEl={anchorElDocumentList[index]}
+                                        open={Boolean(anchorElDocumentList[index])}
+                                        onClose={(event) => handleCloseDocument(event, index)}
+                                        MenuListProps={{
+                                            'aria-labelledby': `basic-button-${index}`,
+                                        }}
+                                        className='custom-dropdown'
+                                    >
+                                        <MenuItem
+                                            onClick={(event) => handleCloseDocument(event, index)}
+                                        >
+                                            <ListItemIcon>
+                                                <CloudUploadIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Create Task</MenuItem>
+                                        <MenuItem onClick={(event) => {
+                                            handleCloseDocument(event, index)
+                                            handleClickOpenDocumentDetailsList(item)
+                                        }}>
+                                            <ListItemIcon>
+                                                <ArticleIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Document Details</MenuItem>
+
+                                        <MenuItem
+                                            onClick={(event) => handleCloseDocument(event, index)}
+                                        >
+                                            <ListItemIcon>
+                                                <CloudUploadIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Upload New Version</MenuItem>
+                                        <MenuItem
+                                            onClick={(event) => handleCloseDocument(event, index)}
+                                        >
+                                            <ListItemIcon>
+                                                <DriveFileRenameOutlineIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Rename Document</MenuItem>
+                                        <MenuItem
+                                            onClick={(event) => handleCloseDocument(event, index)}
+                                        >
+                                            <ListItemIcon>
+                                                <TravelExploreIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Open in Browser</MenuItem>
+                                        <MenuItem
+                                            onClick={(event) => handleCloseDocument(event, index)}
+                                        >
+                                            <ListItemIcon>
+                                                <CloudDownloadIcon fontSize="medium" />
+                                            </ListItemIcon>
+                                            Download</MenuItem>
+                                    </Menu>
+                                </Box>
                             </label>
                         </Box></Grid>
                     }) : <DataNotFound />}</Grid>
