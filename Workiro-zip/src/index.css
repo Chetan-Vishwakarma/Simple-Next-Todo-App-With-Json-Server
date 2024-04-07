@@ -427,9 +427,9 @@ button {
 
 .user-dropdown .user-img,
 .user-img-list {
-  min-width: 40px;
-  width: 40px;
-  height: 40px;
+  min-width: 30px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   /* justify-content: center; */
@@ -444,8 +444,8 @@ button {
 }
 
 .user-img-list.admin {
-  width: 46px;
-  height: 46px;
+  width: 40px;
+  height: 40px;
 }
 
 .user-img-list.user-total-list {
@@ -491,8 +491,8 @@ button {
 
 .user-dropdown .user-img img,
 .user-img-list img {
-  max-height: 40px;
-  min-height: 40px;
+  max-height: 30px;
+  min-height: 30px;
 }
 
 .user-dropdown .user-content h2 {
@@ -2270,7 +2270,7 @@ span.tox-statusbar__branding {
 
 .address-list li .add-heading svg {
   margin-right: 5px;
-  font-size: 10px;
+  font-size: 20px;
 }
 
 .address-list li .add-heading-client {
