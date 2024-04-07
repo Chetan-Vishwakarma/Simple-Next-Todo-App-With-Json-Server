@@ -85,8 +85,8 @@ export default function Login() {
           localStorage.setItem("Email", obj.Email);
           localStorage.setItem("Password", obj.password);
           GetAgreementList(obj, tbl[0].vAgreementNo);
-          let strGuid = uuidv4().replace(/-/g, '');
-          localStorage.setItem("GUID", strGuid)
+          //let strGuid = uuidv4().replace(/-/g, '');
+          //localStorage.setItem("GUID", strGuid)
         }
         else {
           Swal.fire({

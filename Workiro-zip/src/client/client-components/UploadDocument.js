@@ -210,7 +210,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                 if (sts) {
                     let js = JSON.parse(data);
 
-                    setGetAllFolderData(js);                  
+                    setGetAllFolderData(js);
 
                     let udfTable2 = js.Table2;
                     if (udfTable2.length > 0) {
@@ -229,7 +229,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
             let o = { ProjectId: pid }
             cls.Json_GetSections(o, function (sts, data) {
                 if (sts) {
-                    if(data){
+                    if (data) {
                         let js = JSON.parse(data);
                         let sectionList = js.Table;
                         console.log("Json_GetSections", sectionList)
@@ -237,11 +237,11 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                             setSectionList(sectionList);
                         }
                     }
-                   
+
                 }
             })
         } catch (error) {
-            console.log("Json_GetSections",error);
+            console.log("Json_GetSections", error);
         }
 
     }
@@ -251,7 +251,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
             let o = { ProjectId: pid }
             cls.Json_GetClientsByFolder(o, function (sts, data) {
                 if (sts) {
-                    if(data){
+                    if (data) {
                         let js = JSON.parse(data);
                         let clientdata = js.Table1;
                         console.log("Json_GetClientsByFolder", clientdata)
@@ -265,11 +265,11 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                             }
                         }
                     }
-                   
+
                 }
             })
         } catch (error) {
-            console.log("Json_GetClientsByFolder",error);
+            console.log("Json_GetClientsByFolder", error);
         }
 
     }
@@ -290,8 +290,9 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const handleOnFolderClick = (data) => {
         setInputValue('');
-        console.log("Get Folder On click", data);
+       
         if (data) {
+            console.log("Get Folder On click", data);
             setTxtFolderId(data.FolderID)
             setTextFolderData(data)
             Json_GetSections(data.FolderID)
@@ -315,23 +316,32 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
 
     const handleSectionChange = (data) => {
-        console.log("Get Clietn On click", data);
-        setTxtSectionId(data.SecID)
-        setTxtSectionData(data)
-        Json_GetCategory(data.SecID)
-        Json_GetSubSections(data.SecID)
+        if(data !==null){
+            console.log("Get Clietn On click", data);
+            setTxtSectionId(data.SecID)
+            setTxtSectionData(data)
+            Json_GetCategory(data.SecID)
+            Json_GetSubSections(data.SecID)
+        }
+        
     }
 
 
 
 
     const handleCategoryChange = (data) => {
-        console.log("Get Clietn On click", data);
-        setCategoryId(data.CatId)
+        if(data){
+            console.log("Get Clietn On click", data);
+            setCategoryId(data.CatId)
+        }
+      
     }
     const handleStandarDescriptionChange = (data) => {
-        console.log("Get Clietn On click", data);
-        settxtStandarDescription(data.Description)
+        if(data){
+            console.log("Get Clietn On click", data);
+            settxtStandarDescription(data.Description)
+        }
+       
     }
 
     const handleDescriptionChange = (e) => {
@@ -366,8 +376,11 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     }
 
     const handleSubSectionChange = (data) => {
-        console.log("Get Clietn On click", data);
-        setTxtSubSectionData(data);
+        if(data){
+            console.log("Get Clietn On click", data);
+            setTxtSubSectionData(data);
+        }
+      
     }
 
     function Json_GetCategory(SectionId) {
@@ -681,7 +694,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                                 </Box>
                                             </label>
                                         </Box>
-                                        
+
                                     </Box>
                                 </Box>
 
@@ -708,10 +721,10 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                             <Box className='row'>
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                     <Autocomplete
-
+                                        disablePortal
                                         id="combo-box-demo"
                                         options={folderList}
-                                        value={txtFolderData}
+                                        // value={txtFolderData}
                                         getOptionLabel={(option) => option.Folder} // Provide a function to extract the label from each option
                                         onChange={(event, newValue) => handleOnFolderClick(newValue)} // Handle the onChange event
                                         renderInput={(params) => <TextField {...params} label="Folder" />}
@@ -732,7 +745,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 d-flex align-items-end'>
                                     <Autocomplete
-
+                                        disablePortal
                                         id="combo-box-demo"
                                         options={sectionList}
 

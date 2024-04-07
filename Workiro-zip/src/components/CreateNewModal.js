@@ -177,7 +177,7 @@ function CreateNewModalTask({ ...props }) {
     ////////////////////////////////////////Folder list
     const [folderList, setFolderList] = useState([]);
     const [searchFolderQuery, setSearchFolderQuery] = useState("");
-    const [txtFolder, settxtFolder] = useState("Select Folder");
+   
     const [txtFolderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
     const [folderAnchorEl, setFolderAnchorEl] = React.useState(null);
@@ -188,6 +188,8 @@ function CreateNewModalTask({ ...props }) {
 
     //////////////////////////////////////////////////Section data
     const [txtSection, settxtSection] = useState("Select Section");
+    const [txtFolder, settxtFolder] = useState("Select Folder");
+
     const [txtSectionId, setTxtSectionId] = useState("");
     const [sectionAnchorEl, setSectionAnchorEl] = React.useState(null);
     const [selectedSectionMenu, setSelectedSectionMenu] = useState(null);
@@ -267,6 +269,9 @@ function CreateNewModalTask({ ...props }) {
         }
 
         setOpen(true);
+       
+            ClearForm();
+        
 
     };
 
@@ -705,7 +710,6 @@ function CreateNewModalTask({ ...props }) {
         // }
 
         if (createNewFileObj) {
-
             //console.log("createNewFileObj1111", createNewFileObj)
             setSelectedFiles(createNewFileObj);
             setSelectedDocumentFile(createNewFileObj);
@@ -714,7 +718,8 @@ function CreateNewModalTask({ ...props }) {
                     PrepareDocumentsForPublish_Json(createNewFileObj, 2);
                 }
             }, 3000);
-
+        }else{
+            ClearForm();
         }
         if (txtFolderData) {
             settxtFolder(txtFolderData.Folder);
@@ -783,6 +788,10 @@ function CreateNewModalTask({ ...props }) {
     }, [currentDate]);
 
     useEffect(() => {
+
+        let strGuid = uuidv4().replace(/-/g, '');
+        localStorage.setItem("GUID", strGuid)
+        
         setLoading(false);
         
         setAnchorSelectFileEl(null);
@@ -1252,6 +1261,38 @@ function CreateNewModalTask({ ...props }) {
                 // setLoading(false);
             }
         })
+
+    }
+
+  
+    function ClearForm(){
+        setCurrentDate(new Date())
+        setTextSubject("");
+        settxtClient("Select Client");
+       // settxtFolder("Select Folder");
+        setFolderId(localStorage.getItem("FolderId"));
+        settxtSection("Select Section");
+        setTxtSectionId("");
+        setTxtDescriptin(""); 
+        setAddUser([]);   
+        setSelectedFiles([]); 
+        
+        setTxtPriority("Normal");
+        setTxtStatus("Not Started");
+
+        
+        const currentDate1 = new Date(currentDate);
+        const nextDate = new Date(currentDate1); // Copy the current date        
+        nextDate.setDate(currentDate1.getDate() + 1); // Increment the day by 1 to get the next day's date    
+        // Get the day, month, and year
+        const day = nextDate.getDate().toString().padStart(2, '0');
+        const month = (nextDate.getMonth() + 1).toString().padStart(2, '0');
+        const year = nextDate.getFullYear();
+        // Construct the date string in "yyyy/mm/dd" format
+        const formattedDate = `${day}/${month}/${year}`;
+        // console.log("formattedDate", formattedDate);
+        setNextDate(formattedDate); // Set nextDate with formatted date
+
 
     }
 
@@ -2074,7 +2115,7 @@ function CreateNewModalTask({ ...props }) {
                 accid: agrno,
                 email: Email,
                 password: password,
-                uploadID: d.Guid,
+                uploadID: localStorage.getItem("GUID"),
                 filename: d.FileName
             }
             var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
@@ -2115,7 +2156,7 @@ function CreateNewModalTask({ ...props }) {
                 accid: agrno,
                 email: Email,
                 password: password,
-                Guid: d.Guid,
+                Guid:localStorage.getItem("GUID"),
                 FileName: d.FileName
             }
             var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
@@ -2309,7 +2350,7 @@ function CreateNewModalTask({ ...props }) {
                         >
                             {txtTaskType}
                         </Button>
-                        <Menu
+                        {/* <Menu
                             id="basic-menu"
                             anchorEl={anchorElTastkType}
                             open={TastkType}
@@ -2331,7 +2372,7 @@ function CreateNewModalTask({ ...props }) {
                                 </ListItemIcon>
                                 Portal
                             </MenuItem>
-                        </Menu>
+                        </Menu> */}
                     </Box>
 
                     {/* <Box className="dropdown-box">
@@ -2540,7 +2581,10 @@ function CreateNewModalTask({ ...props }) {
 
                                                 </>
                                             )}
-                                            {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+                                            {TaskType==="Portal" && (
+<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
+                                            )}
+                                            
                                         </Box>
 
                                         {!isVisibleByTypeCRM && (<>
