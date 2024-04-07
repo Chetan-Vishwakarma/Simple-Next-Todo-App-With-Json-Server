@@ -27,6 +27,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import docuicon from "../images/docu-icon.svg";
 import DoDisturbIcon from '@mui/icons-material/DoDisturb';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import CloseIcon from '@mui/icons-material/Close';
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -756,13 +757,20 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                     ) : (
                                         <>
                                             <Box className='ps-2 d-flex'>
-                                                {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
                                                 <HourglassEmptyIcon className='text-warning me-1' />
                                                 <Box className='align-items-center'>
                                                     <h5 className='font-14 text-black mb-2'>Pending Approval</h5>
                                                     <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
                                                 </Box>
                                             </Box>
+
+                                            {/*  */}
+                                            {/* <Box className='ps-2 d-flex'>
+                                                <CloseIcon className='text-red me-1' />
+                                                <Box className='d-flex align-items-center'>
+                                                    <h5 className='font-14 text-black mb-0'>Message Disapproved</h5>
+                                                </Box>
+                                            </Box> */}
                                         </>
                                     )}
                                 </>

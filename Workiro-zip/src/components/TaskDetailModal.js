@@ -1851,18 +1851,14 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         </Box>
                         {/*  */}
                         {selectedTask.Source === "CRM" && (<>
-
                             <Box className='d-flex align-items-center justify-content-between flex-wrap'>
-                                <Box className="d-flex flex-wrap">
-                                    <label className='text-decoration-none d-flex'
-                                        onClick={handleClickOpen}
-                                    ><BallotIcon className='me-1' /> {attachmentFile.length} Documents</label>
-                                    {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
-                                </Box>
-                                <Box className="d-flex mt-2">
+                                <Box className="d-flex mt-0">
                                     <Box className="mb-2 me-1">
                                         <label className="font-14 text-black mb-1">Start Date</label>
-                                        <Box className='custom-datepicker'>
+                                        <Box className='custom-datepicker'
+                                        sx={{
+                                            width: '140px',
+                                        }}>
                                             <CalendarMonthIcon />
                                             <DatePicker
                                                 showIcon
@@ -1885,13 +1881,15 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                             <label className="font-14 semibold text-black mb-1">
                                                 Due By
                                             </label>
-                                            <Box className='custom-datepicker'>
+                                            <Box className='custom-datepicker'
+                                            sx={{
+                                                width: '140px',
+                                            }}>
                                                 <CalendarMonthIcon />
                                                 <DatePicker
                                                     showIcon
                                                     dateFormat="DD/MM/YYYY"
                                                     value={nextDate}
-                                                   
                                                     onChange={(e) => {
                                                         setNextDate(e);
                                                         let enddatetime = dayjs(e).format("YYYY/MM/DD");
@@ -1913,11 +1911,15 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                         </Box>
                                     </Box>
                                 </Box>
+
+                                <Box className="d-flex flex-wrap">
+                                    <label className='text-decoration-none d-flex pointer'
+                                        onClick={handleClickOpen}
+                                    ><BallotIcon className='me-1' /> {attachmentFile.length} Documents</label>
+                                    {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
+                                </Box>
                             </Box>
-
-
                         </>)}
-
 
                         <Box className="pb-0 mb-0">
                             <Box className="main-chatbox">
