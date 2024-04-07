@@ -72,6 +72,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
       let data = { ...userDetail };
       data = { ...data, ["FolderId"]: folderIds };
       setDefaultFolder(value);
+      setDefaultClient(value);
       setUserDetail(data);
     }
   };
@@ -196,9 +197,9 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
               const index = folderData.indexOf(sourceObj);
               if (index > -1) {
                 let data = [folderData[index]]
-                console.log(index, "sourceobjector1111",folders[defaultClient]);
+                console.log(data, "sourceobjector1111",folders[defaultClient]);
               
-                  setDefaultClient(index);
+                  setDefaultClient(data);
               } else {
                   console.error("Index not found in folderData:", index);
               }
@@ -301,6 +302,7 @@ const handleOptionClick = (id) => {
 const clearDataCard = () => {
   setDefaultClient(null)
   setDataFromChild(null);
+  
   console.log(userDetail, "onClearDatacnnumbr",dataCompanyHouse);
   const updatedUserDetail = { ...userDetail, 
     CHNumber:"",
@@ -472,7 +474,8 @@ const clearDataCard = () => {
               getOptionLabel={(option) => option.Folder ? option.Folder: ""}
             //  defaultValue={[def]}
               // value={defaultFolder || null}
-            defaultValue={[folders[defaultClient]]}
+            // defaultValue={[folders[defaultClient]]}
+            value={defaultClient ? defaultClient : []}
             // defaultValue={defaultClient !== null ? [folders[defaultClient]] : []}
             id="clientlist"
             clearOnEscape
