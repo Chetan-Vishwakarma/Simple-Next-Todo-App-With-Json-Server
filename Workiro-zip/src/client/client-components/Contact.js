@@ -129,7 +129,6 @@ function Contact() {
               })
               setAllContactList(res)
             }
-
           }
 
         }
