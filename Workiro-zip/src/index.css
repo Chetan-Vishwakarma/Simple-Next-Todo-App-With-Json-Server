@@ -1311,16 +1311,20 @@ span.tox-statusbar__branding {
 
 .company-details-box p {
   font-size: 14px;
+  word-break: break-all;
 }
 
 .company-details-box svg {
   color: #c3322c;
 }
-
+.main-dashboard-box {
+  padding-right: 5px;
+  padding-left: 5px;
+}
 .main-dashboard-box .dashboard-box {
   background: #E5E4FF;
-  margin-top: 20px;
-  padding: 20px 15px;
+  margin-top: 10px;
+  padding: 20px 10px;
   border-radius: 6px;
   color: #444A78;
 }

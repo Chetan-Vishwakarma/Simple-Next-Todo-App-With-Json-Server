@@ -723,7 +723,7 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
                 </Box>
 
                 <Box id="section2" className='py-4 text-center'>
-                    <Button variant="outlined" onClick={handleLoadMore}>View More</Button>
+                    <Button variant="outlined" onClick={handleLoadMore} className='btn-outlin-2'>View More</Button>
                 </Box>
 
                 {/* row end */}
@@ -823,9 +823,8 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
                     }) : ""}
                 </Box>
                 <Box id="section3" className='py-4 text-center'>
-                    <Button variant="outlined" onClick={handleLoadMoreRecentTask}>View More</Button>
+                    <Button variant="outlined" onClick={handleLoadMoreRecentTask} className='btn-outlin-2'>View More</Button>
                 </Box>
-
 
                 {/* row end */}
                 <hr />
