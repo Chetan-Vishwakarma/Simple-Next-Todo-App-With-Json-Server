@@ -153,6 +153,30 @@ function TaskList({clientName}) {
 
   }, [])
 
+  const cellRender = (data) => {
+    if (data) {
+        let dt = data.data;
+        let statusClass = '';
+        switch (dt.mstatus) {
+            case "Not Started":
+                statusClass = 'badge text-bg-danger';
+                break;
+            case "Completed":
+                statusClass = 'badge text-bg-success';
+                break;
+            case "On Hold":
+                statusClass = 'badge text-bg-warning';
+                break;
+            case "In Progress":
+                statusClass = 'badge text-bg-primary';
+                break;
+            default:
+                statusClass = 'badge text-bg-info';
+        }
+        return <span className={statusClass}>{dt.mstatus}</span>;
+    }
+};
+
   return (
     <div className='table-responsive table-grid table-grid-2'>
       {dataNotFound?<DataNotFound/>:(outlookTaskList.length>0?<DataGrid
@@ -217,6 +241,7 @@ function TaskList({clientName}) {
         <Column dataField="Subject" />
         <Column
           dataField="mstatus"
+          cellRender={cellRender}
         />
         <Column
           dataField="Source"
