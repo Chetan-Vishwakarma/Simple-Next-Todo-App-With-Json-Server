@@ -28,12 +28,13 @@ import Swal from 'sweetalert2';
 import CreateNewModalTask from '../../components/CreateNewModal';
 
 import $ from 'jquery';
+import CustomLoader from '../../components/CustomLoader';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 
-function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
+function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument }) {
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -74,6 +75,8 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
     const [documentdata, setDocumentData] = useState();
     const [openModal, setopenModal] = useState(false);
     const [TaskType, setTaskType] = useState("");
+
+    const [isLoading, setIsLoading] = useState(true);
 
     const [createNewFileObj, setCreateNewFileObj] = useState([]);
 
@@ -491,12 +494,15 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
                                     </TabList>
                                 </Box>
                                 <TabPanel value="1" className='p-0'>
-                                    <Box className='white-box relative'>
+<Box className='white-box relative'>
                                         <Box className='text-end mb-3 btn-download'>
                                             <DownloadForOfflineIcon className='text-red pointer font-32' />
                                         </Box>
                                         <iframe
-                                            src={viewerUrl} // Specify the URL of the iframe
+                                            src={isLoadingDoc?"https://wpamelia.com/wp-content/uploads/2018/11/ezgif-2-6d0b072c3d3f.gif":viewerUrl} // Specify the URL of the iframe
+                                            onLoad={()=>{
+                                                setIsLoadingDoc(false);
+                                            }}
                                             width="100%" // Set the width
                                             height="700px" // Set the height
                                             frameBorder="0" // Set frameborder to 0

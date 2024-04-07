@@ -12,6 +12,7 @@ import 'devextreme/dist/css/dx.light.css';
 import SelectBox, { SelectBoxTypes } from 'devextreme-react/select-box';
 import CheckBox, { CheckBoxTypes } from 'devextreme-react/check-box';
 import CommanCLS from '../../services/CommanService';
+import CustomLoader from '../../components/CustomLoader';
 
 const saleAmountEditorOptions = { format: 'currency', showClearButton: true };
 const filterLabel = { 'aria-label': 'Filter' };
@@ -149,8 +150,9 @@ function TaskList() {
 
   return (
     <div className='table-responsive table-grid table-grid-2'>
-      <DataGrid
+      {outlookTaskList.length>0?<DataGrid
         id="gridContainer"
+        className='client-card-task-grid'
         ref={dataGridRef}
         dataSource={outlookTaskList}
         keyExpr="ID"
@@ -215,7 +217,7 @@ function TaskList() {
           dataField="Source"
         />
 
-      </DataGrid>
+      </DataGrid>:<CustomLoader/>}
 
     </div>
   )
