@@ -83,6 +83,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
 
     // modal
     const [openModal, setOpen] = React.useState(false);
+    const [isLoadingDoc, setIsLoadingDoc] = useState(true);
 
     const handleClickDetailOpen = () => {
         setOpen(true);
@@ -93,6 +94,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         event.stopPropagation();
         setSelectedDocument(data);
         setOpenPDFView(true);
+        setIsLoadingDoc(true);
     };
 
 
@@ -426,7 +428,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
 
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
-                <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
+                <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
                 {/* <Box className='d-flex mb-3 mt-2'>
                     {/* <FormControlLabel control={<Checkbox />} className="p-0 m-0 ms-2 ps-1" size="small"/> 
 

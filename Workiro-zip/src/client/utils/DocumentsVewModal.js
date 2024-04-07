@@ -28,12 +28,13 @@ import Swal from 'sweetalert2';
 import CreateNewModalTask from '../../components/CreateNewModal';
 
 import $ from 'jquery';
+import CustomLoader from '../../components/CustomLoader';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 
-function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
+function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument }) {
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -75,14 +76,16 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
     const [templateDataMarkup, setTemplateDataMarkup] = React.useState([]);
     const [editorContentValue, setEditorContentValue] = React.useState([]);
     const [getAssociatedTaskList, setGetAssociatedTaskList] = React.useState([]);
-   
 
 
-    const [documentdata,setDocumentData]=useState();
-const [openModal,setopenModal]=useState(false);
-const [TaskType,setTaskType]=useState("");
 
-const [createNewFileObj, setCreateNewFileObj] = useState([]);
+    const [documentdata, setDocumentData] = useState();
+    const [openModal, setopenModal] = useState(false);
+    const [TaskType, setTaskType] = useState("");
+
+    const [isLoading, setIsLoading] = useState(true);
+
+    const [createNewFileObj, setCreateNewFileObj] = useState([]);
 
 
     const handleChange = (event, newValue) => {
@@ -188,14 +191,14 @@ const [createNewFileObj, setCreateNewFileObj] = useState([]);
         setViewerToken(localStorage.getItem("ViewerToken"));
 
         if (selectedDocument) {
-            console.log("selectedDocument",selectedDocument)
+            console.log("selectedDocument", selectedDocument)
 
-            setTxtClientData({Client:selectedDocument.Client,ClientID:selectedDocument.SenderId})
-            setTxtSectionData({Sec:selectedDocument.Section,SecID:selectedDocument.PostItemTypeID})
-            setTxtFolderData({Folder:selectedDocument.Folder,FolderID:selectedDocument.ProjectId})
-           
+            setTxtClientData({ Client: selectedDocument.Client, ClientID: selectedDocument.SenderId })
+            setTxtSectionData({ Sec: selectedDocument.Section, SecID: selectedDocument.PostItemTypeID })
+            setTxtFolderData({ Folder: selectedDocument.Folder, FolderID: selectedDocument.ProjectId })
+
             Json_GetItemBase64DataById(selectedDocument)
-            
+
             var IsApproved = selectedDocument["IsApproved"];
             var PortalDocId = selectedDocument["PortalDocId"];
             let IsApp = "";
@@ -205,31 +208,31 @@ const [createNewFileObj, setCreateNewFileObj] = useState([]);
                 PortalID = PortalDocId;
             }
             setViwerUrl(`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${selectedDocument["Registration No."]}&ext=${selectedDocument.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`);
-          
+
 
             Json_GetAudit();
             Json_GetAttachmentsByItemId();
             Json_GetItemStickyNotes();
             Json_getAssociatedTaskListByDocumentId();
             setSeletedFileData([]);
-        setopenModal(false)
+            setopenModal(false)
         }
-        
+
 
 
     }, [selectedDocument])
 
-    const handeleAttachmentChange = (el) => {        
+    const handeleAttachmentChange = (el) => {
         setSeletedFileData((pre) => [...pre, el]);
 
     }
 
-    
+
     function Json_GetItemBase64DataById(item) {
         try {
             let filesData = [];
             let obj = {};
-            obj.ItemId = item["Registration No."]           
+            obj.ItemId = item["Registration No."]
             cls.Json_GetItemBase64DataById(obj, function (sts, base64data) {
                 if (sts) {
                     if (base64data !== "No Data Exist") {
@@ -242,7 +245,7 @@ const [createNewFileObj, setCreateNewFileObj] = useState([]);
                             Guid: "",
                             FileType: item["Type"].toLowerCase(),
                             Description: item.Description
-            
+
                         };
                         console.log("handle change fileData", fileData)
                         filesData.push(fileData);
@@ -445,66 +448,66 @@ const [createNewFileObj, setCreateNewFileObj] = useState([]);
 
 
 
-   
 
-const createTask=()=>{
-    setTaskType("CRM")
-    setopenModal(true)
 
-}
+    const createTask = () => {
+        setTaskType("CRM")
+        setopenModal(true)
 
-const createTaskForPublish=()=>{
-    setTaskType("Portal")
-    setopenModal(true)
-}
+    }
+
+    const createTaskForPublish = () => {
+        setTaskType("Portal")
+        setopenModal(true)
+    }
 
 
     return (
-<>
+        <>
 
 
 
 
-<Dialog
-            open={openPDFView}
-            onClose={handleClosePDFView}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-            className='custom-modal full-modal'
-            sx={{ width: '100%', maxWidth: '100%' }}
-        >
-            <DialogContent>
-            
+            <Dialog
+                open={openPDFView}
+                onClose={handleClosePDFView}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal full-modal'
+                sx={{ width: '100%', maxWidth: '100%' }}
+            >
+                <DialogContent>
 
-                <Box className="d-flex align-items-center justify-content-between">
-                    <Box className="dropdown-box">
-                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                            Document List
-                        </Typography>
-                    </Box>
 
-                    {/*  */}
+                    <Box className="d-flex align-items-center justify-content-between">
+                        <Box className="dropdown-box">
+                            <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                                Document List
+                            </Typography>
+                        </Box>
 
-                    <Box className="d-flex align-items-center justify-content-between flex-wrap">
+                        {/*  */}
 
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTask} >Create Task</Button>
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTaskForPublish} >Publish</Button>
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
-                        {/* <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button> */}
+                        <Box className="d-flex align-items-center justify-content-between flex-wrap">
 
-                        <Box>
-                            <Button
-                                id="basic-button"
-                                aria-controls={ChangeIndex ? 'basic-menu' : undefined}
-                                aria-haspopup="true"
-                                aria-expanded={ChangeIndex ? 'true' : undefined}
-                                onClick={handleClickChangeIndex}
-                                className='btn-blue-2'
-                            >
-                                Category
-                                {/* <KeyboardArrowDownIcon className='ms-1' /> */}
-                            </Button>
-                            {/* <Menu
+                            <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTask} >Create Task</Button>
+                            <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTaskForPublish} >Publish</Button>
+                            <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
+                            {/* <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button> */}
+
+                            <Box>
+                                <Button
+                                    id="basic-button"
+                                    aria-controls={ChangeIndex ? 'basic-menu' : undefined}
+                                    aria-haspopup="true"
+                                    aria-expanded={ChangeIndex ? 'true' : undefined}
+                                    onClick={handleClickChangeIndex}
+                                    className='btn-blue-2'
+                                >
+                                    Category
+                                    {/* <KeyboardArrowDownIcon className='ms-1' /> */}
+                                </Button>
+                                {/* <Menu
                                 id="basic-menu"
                                 className='custom-dropdown'
                                 anchorEl={anchorElChangeIndex}
@@ -520,198 +523,199 @@ const createTaskForPublish=()=>{
                                 <MenuItem onClick={handleCloseChangeIndex}> <AddIcon className='me-2' /> </MenuItem>
                                 <MenuItem onClick={handleCloseChangeIndex}> <AlarmOnIcon className='me-2' /> Add Activity </MenuItem>
                             </Menu> */}
-                        </Box>
-
-                        <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
-                            <span className="material-symbols-outlined text-black">
-                                cancel
-                            </span>
-                        </Button>
-
-                    </Box>
-                </Box>
-
-                <hr />
-
-                <DialogContentText id="alert-dialog-description">
-                    <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
-                        <TabContext value={value}>
-                            <Box>
-                                <Tabs onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
-                                    <Tab label="Documents" value="1" />
-                                    <Tab label="Versions" value="2" />
-                                    <Tab label="Notes" value="3" />
-                                    <Tab label="Associated Tasks" value="4" />
-                                    <Tab label="Activity" value="5" />
-                                    <Tab label="Attachments" value="6" />
-                                </Tabs>
                             </Box>
-                            <TabPanel value="1" className='p-0'>
-                                <Box className='white-box'>
-                                    <Box className='text-end mb-3'>
-                                        <DownloadForOfflineIcon className='text-red pointer font-32' />
+
+                            <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+
+                        </Box>
+                    </Box>
+
+                    <hr />
+
+                    <DialogContentText id="alert-dialog-description">
+                        <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
+                            <TabContext value={value}>
+                                <Box>
+                                    <Tabs onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
+                                        <Tab label="Documents" value="1" />
+                                        <Tab label="Versions" value="2" />
+                                        <Tab label="Notes" value="3" />
+                                        <Tab label="Associated Tasks" value="4" />
+                                        <Tab label="Activity" value="5" />
+                                        <Tab label="Attachments" value="6" />
+                                    </Tabs>
+                                </Box>
+                                <TabPanel value="1" className='p-0'>
+                                    <Box className='white-box'>
+                                        <Box className='text-end mb-3'>
+                                            <DownloadForOfflineIcon className='text-red pointer font-32  btn-download' />
+                                        </Box>
+                                        <iframe
+                                            src={isLoadingDoc ? "https://wpamelia.com/wp-content/uploads/2018/11/ezgif-2-6d0b072c3d3f.gif" : viewerUrl} // Specify the URL of the iframe
+                                            onLoad={() => {
+                                                setIsLoadingDoc(false);
+                                            }}
+                                            width="100%" // Set the width
+                                            height="700px" // Set the height
+                                            frameBorder="0" // Set frameborder to 0
+                                            allowFullScreen // Allow fullscreen mode
+                                            title="Embedded Content" // Set the title for accessibility
+                                        />
+
                                     </Box>
-                                    <iframe
-                                        src={viewerUrl} // Specify the URL of the iframe
-                                        width="100%" // Set the width
-                                        height="700px" // Set the height
-                                        frameBorder="0" // Set frameborder to 0
-                                        allowFullScreen // Allow fullscreen mode
-                                        title="Embedded Content" // Set the title for accessibility
-                                    />
+                                </TabPanel>
 
-                             
-
-                                </Box>
-                            </TabPanel>
-
-                            <TabPanel value="2">
-                                <Box className='row'>
-                                    {Array(12).fill("").map(() => {
-                                        return <>
-                                            <Box className='col-lg-3'>
-                                                <Box className="file-uploads">
-                                                    <label className="file-uploads-label file-uploads-document">
-                                                        <Box className="d-flex align-items-center">
-                                                            <DescriptionIcon
-                                                                sx={{
-                                                                    fontSize: 32,
-                                                                }}
-                                                                className='me-2'
-                                                            />
-                                                            <Box className="upload-content pe-3">
-                                                                <Typography variant="h4" >
-                                                                    This File is Test Files.pdf 2
-                                                                </Typography>
-                                                                <Typography variant="body1">
-                                                                    12:36PM 28/12/2023 | File uploaded by Patrick
-                                                                </Typography>
+                                <TabPanel value="2">
+                                    <Box className='row'>
+                                        {Array(12).fill("").map(() => {
+                                            return <>
+                                                <Box className='col-lg-3'>
+                                                    <Box className="file-uploads">
+                                                        <label className="file-uploads-label file-uploads-document">
+                                                            <Box className="d-flex align-items-center">
+                                                                <DescriptionIcon
+                                                                    sx={{
+                                                                        fontSize: 32,
+                                                                    }}
+                                                                    className='me-2'
+                                                                />
+                                                                <Box className="upload-content pe-3">
+                                                                    <Typography variant="h4" >
+                                                                        This File is Test Files.pdf 2
+                                                                    </Typography>
+                                                                    <Typography variant="body1">
+                                                                        12:36PM 28/12/2023 | File uploaded by Patrick
+                                                                    </Typography>
+                                                                </Box>
                                                             </Box>
-                                                        </Box>
-                                                    </label>
+                                                        </label>
+                                                    </Box>
+                                                    {/* file upload end */}
                                                 </Box>
-                                                {/* file upload end */}
-                                            </Box>
-                                        </>
-                                    })}
-                                </Box>
-                            </TabPanel>
+                                            </>
+                                        })}
+                                    </Box>
+                                </TabPanel>
 
-                            <TabPanel value="3" className='p-0'>
-                                {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
-                                <Box className='text-end'>
-                                    <Button onClick={SaveStickyNotes} variant="contained" className='mt-3'>Save Notes</Button>
+                                <TabPanel value="3" className='p-0'>
+                                    {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+                                    <Box className='text-end'>
+                                        <Button onClick={SaveStickyNotes} variant="contained" className='mt-3'>Save Notes</Button>
 
-                                    <ToastContainer></ToastContainer>
+                                        <ToastContainer></ToastContainer>
 
-                                </Box>
-                            </TabPanel>
+                                    </Box>
+                                </TabPanel>
 
-                            <TabPanel value="4">
+                                <TabPanel value="4">
 
-                                <Box className='text-center'>
-                                    {getAssociatedTaskList && getAssociatedTaskList.map((item, index) => {
-                                        let str = item?.AssignedToID;
-                                        let arr = str?.split(',').map(Number);
-                                        let isUserAssigned = arr?.includes(parseInt(localStorage.getItem('UserId')));
-                                        console.log("isUserAssigned", isUserAssigned)
-                                        return (
-                                            <label key={index} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex">
-                                                <RadioButtonUncheckedIcon className={`me-1 ${isUserAssigned ? 'green' : 'disabled'}`} />
-                                                {item.Subject}
-                                            </label>
-                                        );
-                                    })}
+                                    <Box className='text-center'>
+                                        {getAssociatedTaskList && getAssociatedTaskList.map((item, index) => {
+                                            let str = item?.AssignedToID;
+                                            let arr = str?.split(',').map(Number);
+                                            let isUserAssigned = arr?.includes(parseInt(localStorage.getItem('UserId')));
+                                            console.log("isUserAssigned", isUserAssigned)
+                                            return (
+                                                <label key={index} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex">
+                                                    <RadioButtonUncheckedIcon className={`me-1 ${isUserAssigned ? 'green' : 'disabled'}`} />
+                                                    {item.Subject}
+                                                </label>
+                                            );
+                                        })}
 
-                                </Box>
+                                    </Box>
 
-                            </TabPanel>
+                                </TabPanel>
 
-                            <TabPanel value="5" className='p-0'>
-                                <Activity getAudit={getAudit}></Activity>
-                            </TabPanel>
+                                <TabPanel value="5" className='p-0'>
+                                    <Activity getAudit={getAudit}></Activity>
+                                </TabPanel>
 
-                            {/* <TabPanel value="5">
+                                {/* <TabPanel value="5">
                         <DocumentList/>
                     </TabPanel> */}
-                            <TabPanel value="6">
+                                <TabPanel value="6">
 
-                                <Box className='d-flex mb-3 mt-2'>
-                                    {/* <FormControlLabel control={<Checkbox />} className="p-0 m-0 ms-2 ps-1" size="small"/> */}
-                                    <Checkbox {...label} defaultChecked size="small" />
+                                    <Box className='d-flex mb-3 mt-2'>
+                                        {/* <FormControlLabel control={<Checkbox />} className="p-0 m-0 ms-2 ps-1" size="small"/> */}
+                                        <Checkbox {...label} defaultChecked size="small" />
 
-                                    <Button className='btn-blue-2 me-2 mb-1 pointer' for='file-upload' startIcon={<AttachFileIcon />}>
-                                        <input type='file' id='file-upload' multiple onChange={handleFileSelect} className='file-input' />
-                                        <label for='file-upload' className='pointer '>Upload Your File</label>
-                                    </Button>
+                                        <Button className='btn-blue-2 me-2 mb-1 pointer' for='file-upload' startIcon={<AttachFileIcon />}>
+                                            <input type='file' id='file-upload' multiple onChange={handleFileSelect} className='file-input' />
+                                            <label for='file-upload' className='pointer '>Upload Your File</label>
+                                        </Button>
 
-                                    <Button className='btn-red me-2 mb-1' onClick={DeleteDocumentAttachment} startIcon={<AttachFileIcon />}>Delete</Button>
+                                        <Button className='btn-red me-2 mb-1' onClick={DeleteDocumentAttachment} startIcon={<AttachFileIcon />}>Delete</Button>
 
-                                    <Button className='btn-blue-2 me-2 mb-1' onClick={DowloadSingleFileOnClick} startIcon={<AttachFileIcon />}>Download</Button>
+                                        <Button className='btn-blue-2 me-2 mb-1' onClick={DowloadSingleFileOnClick} startIcon={<AttachFileIcon />}>Download</Button>
 
-                                </Box>
+                                    </Box>
 
-                                <hr />
+                                    <hr />
 
-                                <Box className='row'>
+                                    <Box className='row'>
 
-                                    {getAttachment ? getAttachment.map((el, index) => {
-                                        return (<>
-                                            <Box className='col-xxl-3 col-xl-4 col-md-6'>
-                                                <Box className="file-uploads">
-                                                    <label className="file-uploads-label file-uploads-document">
-                                                        <Box className="d-flex align-items-center">
-                                                            <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" onChange={() => handeleAttachmentChange(el)} />
+                                        {getAttachment ? getAttachment.map((el, index) => {
+                                            return (<>
+                                                <Box className='col-xxl-3 col-xl-4 col-md-6'>
+                                                    <Box className="file-uploads">
+                                                        <label className="file-uploads-label file-uploads-document">
+                                                            <Box className="d-flex align-items-center">
+                                                                <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" onChange={() => handeleAttachmentChange(el)} />
 
-                                                            <DescriptionIcon
-                                                                sx={{
-                                                                    fontSize: 32,
-                                                                }}
-                                                                className='me-2'
-                                                            />
-                                                            <Box className="upload-content pe-3">
-                                                                <Typography variant="h4" >
-                                                                    {el.Description}
-                                                                </Typography>
-                                                                <Typography variant="body1">
-                                                                    {cls.DateForMate(el.DateAssigned)}
-                                                                </Typography>
+                                                                <DescriptionIcon
+                                                                    sx={{
+                                                                        fontSize: 32,
+                                                                    }}
+                                                                    className='me-2'
+                                                                />
+                                                                <Box className="upload-content pe-3">
+                                                                    <Typography variant="h4" >
+                                                                        {el.Description}
+                                                                    </Typography>
+                                                                    <Typography variant="body1">
+                                                                        {cls.DateForMate(el.DateAssigned)}
+                                                                    </Typography>
+                                                                </Box>
                                                             </Box>
-                                                        </Box>
-                                                    </label>
+                                                        </label>
+                                                    </Box>
+                                                    {/* file upload end */}
                                                 </Box>
-                                                {/* file upload end */}
-                                            </Box>
-                                        </>)
-                                    }) : ""}
+                                            </>)
+                                        }) : ""}
 
-                                </Box>
+                                    </Box>
 
-                            </TabPanel>
-                        </TabContext>
+                                </TabPanel>
+                            </TabContext>
 
 
-                        {openModal && <CreateNewModalTask                               
-                               TaskType={TaskType}
-                               createNewFileObj={createNewFileObj}
-                               txtClientData={txtClientData}
-                               txtSectionData={txtSectionData}
-                               txtFolderData={txtFolderData}
-                               openModal={openModal}
-                           ></CreateNewModalTask>}
-                    </Box>
-                </DialogContentText>
-            </DialogContent>
+                            {openModal && <CreateNewModalTask
+                                TaskType={TaskType}
+                                createNewFileObj={createNewFileObj}
+                                txtClientData={txtClientData}
+                                txtSectionData={txtSectionData}
+                                txtFolderData={txtFolderData}
+                                openModal={openModal}
+                            ></CreateNewModalTask>}
+                        </Box>
+                    </DialogContentText>
+                </DialogContent>
 
-            {/* <DialogActions>
+                {/* <DialogActions>
                 <Button onClick={handleClosePDFView}>Disagree</Button>
                 <Button onClick={handleClosePDFView} autoFocus>
                     Agree
                 </Button>
             </DialogActions> */}
-        </Dialog>
-</>
-       
+            </Dialog>
+        </>
+
 
     )
 }

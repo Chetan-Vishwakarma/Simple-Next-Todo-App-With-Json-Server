@@ -12,6 +12,7 @@ import 'devextreme/dist/css/dx.light.css';
 import SelectBox, { SelectBoxTypes } from 'devextreme-react/select-box';
 import CheckBox, { CheckBoxTypes } from 'devextreme-react/check-box';
 import CommanCLS from '../../services/CommanService';
+import CustomLoader from '../../components/CustomLoader';
 
 const saleAmountEditorOptions = { format: 'currency', showClearButton: true };
 const filterLabel = { 'aria-label': 'Filter' };
@@ -145,8 +146,9 @@ function Contact() {
 
   return (
     <div className='table-responsive table-grid table-grid-2'>
-      <DataGrid
+      {allContactList.length>0?<DataGrid
         id="gridContainer"
+        className='client-card-contact-grid'
         ref={dataGridRef}
         dataSource={allContactList}
         keyExpr="E-Mail"
@@ -204,8 +206,7 @@ function Contact() {
         caption="Date Of Birth"
            format="M/d/yyyy, HH:mm"
          />
-      </DataGrid>
-
+      </DataGrid>:<CustomLoader/>}
     </div>
   )
 }

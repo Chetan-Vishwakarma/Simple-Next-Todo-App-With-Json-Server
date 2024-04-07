@@ -2050,6 +2050,14 @@ span.tox-statusbar__branding {
   align-items: center;
 }
 
+.client-card-contact-grid .dx-bordered-bottom-view,.dx-datagrid-filter-panel{
+  display: none;
+}
+
+.client-card-task-grid .dx-bordered-bottom-view,.dx-datagrid-filter-panel{
+  display: none;
+}
+
 @media only screen and (max-width: 1366px) {
   .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root {
     font-size: 12px;
