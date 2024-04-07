@@ -14,6 +14,7 @@ import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import DocumentsVewModal from "../client/utils/DocumentsVewModal";
 import Activity from "../client/utils/Activity";
+import { ToastContainer, toast } from 'react-toastify';
 import DataGrid, {
     Column,
     Grouping,
@@ -30,6 +31,7 @@ import DataGrid, {
 import DataNotFound from "./DataNotFound";
 import CommanCLS from "../services/CommanService";
 import TaskDetailModal from "./TaskDetailModal";
+import CreateNewModalTask from "./CreateNewModal";
 
 
 // sadik code start
@@ -59,7 +61,7 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 // sadik code end
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
-const password = localStorage.getItem("password");
+const password = localStorage.getItem("Password");
 const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 const baseUrlDocuSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
@@ -207,11 +209,11 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     }
 
     const Json_GetAudit = (sDoc) => {
-        console.log("Json_GetAudit",sDoc);
+        console.log("Json_GetAudit", sDoc);
         try {
             let obj = {
                 itemid: sDoc["Registration No."],
-                password:localStorage.getItem("Password")
+                password: localStorage.getItem("Password")
             }
             Cls.Json_GetAudit(obj, function (sts, data) {
                 if (sts && data) {
@@ -253,7 +255,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
 
     // end
     const customSortingMethod = (a, b) => {
-        console.log("dffdsf", a, b);
+        //console.log("dffdsf", a, b);
         const dateA = new Date(a);
         const dateB = new Date(b);
         return dateA - dateB;
@@ -263,10 +265,165 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         const dateObject = new Date(timeStamp);
         return `${dateObject.getDate()}/${dateObject.getMonth() + 1}/${dateObject.getFullYear()}`;
     }
+    const [createNewFileObj, setCreateNewFileObj] = useState([]);
+
+    const [TaskType, setTaskType] = useState("");
+    const [txtClientData, setTxtClientData] = useState({});
+    const [txtSectionData, setTxtSectionData] = useState({});
+    const [txtFolderData, setTxtFolderData] = useState({});
+    const [openModals,setopenModal]=useState(false);
+
+    useEffect(()=>{
+        setopenModal(false)
+    },[])
+    function Json_GetItemBase64DataById(item) {
+        try {
+            let filesData = [];
+            let obj = {};
+            obj.ItemId = item["Registration No."]
+            console.log("handle change fileData1", obj)
+
+            Cls.Json_GetItemBase64DataById(obj, function (sts, base64data) {
+                if (sts) {
+                    if (base64data !== "No Data Exist") {
+                        const fileData = {
+                            FileName: item.Description + "." + item.Type,
+                            Base64: base64data ? base64data : "", // Base64 data of the file
+                            FileSize: "",
+                            Preview: "", // Data URL for preview
+                            DocId: item["Registration No."],
+                            Guid: "",
+                            FileType: item["Type"].toLowerCase(),
+                            Description: item.Description
+
+                        };
+                        console.log("handle change fileData", fileData)
+                        filesData.push(fileData);
+                        setCreateNewFileObj(filesData);
+
+                        setTxtClientData({ Client: item.Client, ClientID: item.SenderId })
+                        setTxtSectionData({ Sec: item.Section, SecID: item.PostItemTypeID })
+                        setTxtFolderData({ Folder: item.Folder, FolderID: item.ProjectId })
+
+                    }
+                    else {
+                        toast.error(item.Description + "was not uploaded as it had no data")
+                    }
+
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetItemBase64DataById error", error)
+        }
+
+    }
+
+    const handleCloseDocumentPublish = (event, rowData) => {
+        if (rowData) {
+            setopenModal(true);
+            setTaskType("Portal")
+            console.log("row selected data", rowData)
+            event.stopPropagation();
+            const newAnchorElDocumentList = { ...anchorElDocumentList };
+            delete newAnchorElDocumentList[rowData.key];
+            setAnchorElDocumentList(newAnchorElDocumentList);
+            Json_GetItemBase64DataById(rowData.data)
+        }
+    };
+
+
+    const handleCloseDocumentCreateTask = (event, rowData) => {
+        if (rowData) {
+            setopenModal(true);
+            setTaskType("CRM")
+           // console.log("row selected data", rowData)
+            event.stopPropagation();
+            const newAnchorElDocumentList = { ...anchorElDocumentList };
+            delete newAnchorElDocumentList[rowData.key];
+            setAnchorElDocumentList(newAnchorElDocumentList);
+            Json_GetItemBase64DataById(rowData.data)
+        }
+    };
+
+    const handleCloseDocumentDownload = (event, rowData) => {
+        if (rowData) {
+           
+            console.log("row selected data", rowData)
+            event.stopPropagation();
+            const newAnchorElDocumentList = { ...anchorElDocumentList };
+            delete newAnchorElDocumentList[rowData.key];
+            setAnchorElDocumentList(newAnchorElDocumentList);
+            downloadFile(rowData.data)
+        }
+    };
+
+    function downloadFile(item){
+
+        try {           
+            let obj = {};
+            obj.ItemId = item["Registration No."]
+            console.log("handle change fileData1", obj)
+
+            Cls.Json_GetItemBase64DataById(obj, function (sts, base64data) {
+                if (sts) {
+                    if (base64data !== "No Data Exist") {  
+                        let ankr = document.createElement("a");
+                        ankr.href = `data:application/octet-stream;base64,${base64data}`;
+                        ankr.download = item.Path;
+                        ankr.click();
+                    }
+                    else {
+                        toast.error(item.Description + "was not uploaded as it had no data")
+                    }
+
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetItemBase64DataById error", error)
+        }
+
+
+        
+    }
+
+    const handleCloseDocumentOpenDocumentBrowers = (event, rowData) => {
+        if (rowData) {
+             event.stopPropagation();
+             let selectedDocument=rowData.data;
+            const newAnchorElDocumentList = { ...anchorElDocumentList };
+            delete newAnchorElDocumentList[rowData.key];
+            setAnchorElDocumentList(newAnchorElDocumentList);
+            var IsApproved = selectedDocument["IsApproved"];
+            var PortalDocId = selectedDocument["PortalDocId"];
+            let IsApp = "";
+            let PortalID = "";
+            if (IsApproved === "SIG" && PortalDocId !== "") {
+                IsApp = IsApproved;
+                PortalID = PortalDocId;
+            }
+         let ViwerUrl = `https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${selectedDocument["Registration No."]}&ext=${selectedDocument.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
+          window.open(ViwerUrl)
+
+            
+        }
+    };
+
+
 
     return (
         <>
             <Box>
+            {openModals && <CreateNewModalTask                              
+                               TaskType={TaskType}
+                               createNewFileObj={createNewFileObj}
+                               txtClientData={txtClientData}
+                               txtSectionData={txtSectionData}
+                               txtFolderData={txtFolderData}
+                               openModal={openModals}
+                           ></CreateNewModalTask>}
+
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
                 <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
@@ -306,7 +463,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                         dataType="string"  // Set the data type to "string" for proper grouping
                         cellRender={(data) => {
                             return <Box className="file-uploads">
-                                <label className="file-uploads-label file-uploads-document" onClick={(event) => handleClickOpenPDFView(event, data.data)}>
+                                <label className="file-uploads-label file-uploads-document" onDoubleClick={(event) => handleClickOpenPDFView(event, data.data)}>
                                     <Box className="d-flex align-items-center">
 
                                         {/* <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" />  */}
@@ -350,12 +507,20 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             className='custom-dropdown'
                                         >
                                             <MenuItem
-                                                onClick={(event) => handleCloseDocument(event, data)}
+                                                onClick={(event) => handleCloseDocumentCreateTask(event, data)}
                                             >
                                                 <ListItemIcon>
                                                     <CloudUploadIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Create Task</MenuItem>
+                                            <MenuItem
+                                                onClick={(event) => handleCloseDocumentPublish(event, data)}
+                                            >
+                                                <ListItemIcon>
+                                                    <CloudUploadIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Publish</MenuItem>
+
                                             <MenuItem onClick={(event) => {
                                                 handleCloseDocument(event, data)
                                                 handleClickOpenDocumentDetailsList(event, data.data)
@@ -380,14 +545,14 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                                 </ListItemIcon>
                                                 Rename Document</MenuItem>
                                             <MenuItem
-                                                onClick={(event) => handleCloseDocument(event, data)}
+                                                onClick={(event) => handleCloseDocumentOpenDocumentBrowers(event, data)}
                                             >
                                                 <ListItemIcon>
                                                     <TravelExploreIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Open in Browser</MenuItem>
                                             <MenuItem
-                                                onClick={(event) => handleCloseDocument(event, data)}
+                                                onClick={(event) => handleCloseDocumentDownload(event, data)}
                                             >
                                                 <ListItemIcon>
                                                     <CloudDownloadIcon fontSize="medium" />

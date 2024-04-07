@@ -272,8 +272,8 @@ function TodoList() {
                     var fileName = dencodedData;
                     var Typest = fileName.lastIndexOf("\\");
                     fileName = fileName.slice(Typest + 1);
-                    console.log('FileName', fileName);
-                    console.log("jsonObj.Status", jsonObj.Message);
+                   // console.log('FileName', fileName);
+                   // console.log("jsonObj.Status", jsonObj.Message);
                     var a = document.createElement("a"); //Create <a>
                     a.href = "data:" + FileType(fileName) + ";base64," + jsonObj.Message; //Image Base64 Goes here
                     a.download = fileName; //File name Here
