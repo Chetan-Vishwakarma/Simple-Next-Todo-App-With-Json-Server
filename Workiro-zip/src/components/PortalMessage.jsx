@@ -755,13 +755,13 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                         </>
                                     ) : (
                                         <>
-                                            <Box className='ps-2'>
+                                            <Box className='ps-2 d-flex'>
                                                 {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
-                                                <Box className='d-flex align-items-center mb-2'>
-                                                    <HourglassEmptyIcon className='text-warning me-1' />
-                                                    <h5 className='font-14 text-black mb-0'>Pending Approval</h5>
+                                                <HourglassEmptyIcon className='text-warning me-1' />
+                                                <Box className='align-items-center'>
+                                                    <h5 className='font-14 text-black mb-2'>Pending Approval</h5>
+                                                    <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
                                                 </Box>
-                                                <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
                                             </Box>
                                         </>
                                     )}
