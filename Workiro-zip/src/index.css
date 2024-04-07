@@ -248,6 +248,7 @@ button {
 .table-grid-2 {
   width: calc(100vw - 278px);
   overflow-y: auto;
+  position: relative;
 }
 
 .table-grid .dx-datagrid .dx-column-lines>td {
