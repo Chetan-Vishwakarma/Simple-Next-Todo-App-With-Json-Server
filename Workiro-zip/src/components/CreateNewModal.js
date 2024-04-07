@@ -119,7 +119,7 @@ function CreateNewModalTask({ ...props }) {
         openModal=null,
 
 
-    } = props;
+    } = props?props:null;
 
     console.log("documentDate txtSectionId1", documentDate,
         receivedDate, createNewFileObj)
@@ -445,7 +445,6 @@ function CreateNewModalTask({ ...props }) {
                                     setOwnerID(el.ID);
                                     setOwnerRighClick(el);
                                     setAddUser((pre) => [...pre, el])
-
                                 }
                             })
                         }
@@ -718,8 +717,6 @@ function CreateNewModalTask({ ...props }) {
                     PrepareDocumentsForPublish_Json(createNewFileObj, 2);
                 }
             }, 3000);
-        }else{
-            ClearForm();
         }
         if (txtFolderData) {
             settxtFolder(txtFolderData.Folder);
@@ -1168,12 +1165,14 @@ function CreateNewModalTask({ ...props }) {
     }
 
     async function Json_CRM_Task_Save() {
-        setLoading(true);
+       
         if (txtSection) {
-            setLoading(false);
+            setLoading(true);
         }
         else {
-            toast.error("Please Select a Section !")
+            toast.error("Please Select a Section !");
+            setLoading(false);
+            return false
         }
         const isaddUser = addUser.map(obj => obj.ID).join(',');
         const attString = attachmentPath.map(obj => obj.Path).join('|');
@@ -1232,7 +1231,7 @@ function CreateNewModalTask({ ...props }) {
                     console.log("save task rerurn value", js);
 
                     if (js.Status === "success") {
-                        Json_CRM_GetOutlookTask_ForTask();
+                        //Json_CRM_GetOutlookTask_ForTask();
                         setLoading(false);
                         toast.success("Created Task !");
                         setMessageId(js.Message);
@@ -1274,7 +1273,8 @@ function CreateNewModalTask({ ...props }) {
         settxtSection("Select Section");
         setTxtSectionId("");
         setTxtDescriptin(""); 
-        setAddUser([]);   
+        setTextClientId("")
+       
         setSelectedFiles([]); 
         
         setTxtPriority("Normal");
@@ -1292,6 +1292,17 @@ function CreateNewModalTask({ ...props }) {
         const formattedDate = `${day}/${month}/${year}`;
         // console.log("formattedDate", formattedDate);
         setNextDate(formattedDate); // Set nextDate with formatted date
+
+        // if (userList.length > 0) {
+        //     userList.map((el) => {
+        //         if (el.ID === parseInt(localStorage.getItem("UserId"))) {
+        //             // console.log("Json_GetForwardUserList11", addUser);
+        //             setOwnerID(el.ID);
+        //             setOwnerRighClick(el);
+        //             setAddUser((pre) => [...pre, el])
+        //         }
+        //     })
+        // }
 
 
     }
@@ -1816,9 +1827,15 @@ function CreateNewModalTask({ ...props }) {
 
 
     function CreatePortalTask() {
-        setLoading(true);
-        // console.log("nextDate1", currentDate)
-        ////console.log("nextDate", nextDate)
+        if (txtSection) {
+            setLoading(true);
+        }
+        else {
+            toast.error("Please Select a Section !");
+            setLoading(false);
+            return false
+        }
+
 
         let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
         if (nxtdd === "Invalid Date") {
@@ -1875,7 +1892,7 @@ function CreateNewModalTask({ ...props }) {
                         if (js.Status === "success") {
                             setMessageId(js.Message);
                             CreatePortalMessage(js.Message)
-                            toast.success("Created Task");
+                           // toast.success("Created Task");
                             setOpen(false);
                             // setIsApi(!isApi);
                         }
@@ -2581,7 +2598,7 @@ function CreateNewModalTask({ ...props }) {
 
                                                 </>
                                             )}
-                                            {TaskType==="Portal" && (
+                                            {txtTaskType==="Portal" && (
 <HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
                                             )}
                                             
@@ -2974,7 +2991,7 @@ function CreateNewModalTask({ ...props }) {
                                     <Button
                                         variant="contained"
                                         onClick={Json_CRM_Task_Save}
-                                        disabled={!textSubject || loading}
+                                        disabled={loading || !textSubject}
                                         className="btn-blue-2 mt-3"
 
                                     >
@@ -2986,7 +3003,7 @@ function CreateNewModalTask({ ...props }) {
                                     <Button
                                         variant="contained"
                                         onClick={CreatePortalTask}
-                                        disabled={!textSubject || loading}
+                                        disabled={loading || !textSubject}
 
                                         className="btn-blue-2 mt-1"
                                     >
@@ -3199,6 +3216,7 @@ function CreateNewModalTask({ ...props }) {
                                                                 setClientAnchorEl(null);
                                                                 Json_GetClientCardDetails(item.ClientID)
                                                                 setTxtColor({ color: "#1976d2" });
+                                                                setLoading(false)
 
                                                             }}
                                                             className="search-list"
@@ -3309,6 +3327,7 @@ function CreateNewModalTask({ ...props }) {
                                                                     settxtSection(item.Sec); // Assuming item.Client holds the value you want
                                                                     setTxtSectionId(item.SecID); // Assuming item.Client holds the value you want
                                                                     setSectionAnchorEl(null);
+                                                                    setLoading(false)
                                                                 }}
                                                                 className="search-list"
                                                                 ref={sectionListRef}

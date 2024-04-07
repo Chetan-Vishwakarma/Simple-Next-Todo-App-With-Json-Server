@@ -147,6 +147,30 @@ function TaskList() {
 
   }, [])
 
+  const cellRender = (data) => {
+    if (data) {
+        let dt = data.data;
+        let statusClass = '';
+        switch (dt.mstatus) {
+            case "Not Started":
+                statusClass = 'text-danger';
+                break;
+            case "Completed":
+                statusClass = 'text-success';
+                break;
+            case "On Hold":
+                statusClass = 'text-default';
+                break;
+            case "In Progress":
+                statusClass = 'text-primary';
+                break;
+            default:
+                statusClass = 'text-info';
+        }
+        return <span className={statusClass}>{dt.mstatus}</span>;
+    }
+};
+
   return (
     <div className='table-responsive table-grid table-grid-2'>
       <DataGrid
@@ -210,6 +234,7 @@ function TaskList() {
         <Column dataField="Subject" />
         <Column
           dataField="mstatus"
+          cellRender={cellRender}
         />
         <Column
           dataField="Source"

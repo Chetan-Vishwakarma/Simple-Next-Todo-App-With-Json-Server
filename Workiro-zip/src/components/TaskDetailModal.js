@@ -374,8 +374,12 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                     // }, 3000);
 
                     for (let item of table6) {
-                        let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };
-                        setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+
+                        if(item.DestinationPath){
+                            let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };
+                            setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+                        }
+                       
 
                         // if(item.DestinationPath && !item.ItemId){
                         //     let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };                        
@@ -579,6 +583,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
     useEffect(() => {
+
+        setNumPriority(selectedTask.Priority);
 
         //End PortMethods
 
@@ -1365,9 +1371,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     <EjectIcon fontSize="medium" className="text-success rotate-180" />
 
                                 )}
-                                {NumPriority !== 1 && NumPriority !== 2 && NumPriority !== 3 && (
+                                {/* {NumPriority !== 1 && NumPriority !== 2 && NumPriority !== 3 && (
                                     <CheckCircleIcon />
-                                )}
+                                )} */}
 
                             </Button>
                             {selectedTask.Source === "CRM" && (<>
@@ -2397,6 +2403,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                         if (item.FileName) {
                                             let Typest = item.FileName.lastIndexOf("\\");
                                             fileName = item.FileName.slice(Typest + 1);
+                                        }
+                                        else{
+                                            fileName = item.ItemId?item.ItemId:""; 
                                         }
                                         return <>
                                             <Box className="file-uploads">
