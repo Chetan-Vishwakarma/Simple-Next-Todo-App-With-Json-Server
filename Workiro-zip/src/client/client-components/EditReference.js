@@ -281,7 +281,7 @@ function EditReference({ companyEditDetails }) {
       "Email": Email,
       "password": password,
       "OriginatorNo": userDetail.Clientid ? userDetail.Clientid : "",
-      "ProjectIdList": folderId ? folderId : -1
+      "ProjectIdList": userDetail.FolderId ? userDetail.FolderId : -1
     }
 
     Cls.Json_AssignProjectsToClient(changeidObj, (sts, data) => {
