@@ -1847,63 +1847,75 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                             <AssigneeUsers selectedTask={selectedTask} setAddUser={setAddUser} addUser={addUser} setOwnerID={setOwnerID} ownerID={ownerID} Json_UpdateTaskField={Json_UpdateTaskField} ></AssigneeUsers>
 
-
                             {/* dropdown end */}
                         </Box>
                         {/*  */}
                         {selectedTask.Source === "CRM" && (<>
-                            <Box className="d-flex flex-wrap">
-                                <label className='text-decoration-none d-flex'
-                                    onClick={handleClickOpen}
-                                ><BallotIcon className='me-1' /> {attachmentFile.length} Documents</label>
-                                {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
-                            </Box>
-                            <Box className="d-flex mt-3">
-                                <Box className="mb-2 me-3">
-                                    <label className="font-14 text-black mb-1">Start Date</label>
-                                    <Box className='custom-datepicker'>
-                                        <CalendarMonthIcon />
-                                        <DatePicker
-                                            showIcon
-                                            dateFormat="DD/MM/YYYY"
-                                            value={currentDate}
-                                            onChange={(e) => setCurrentDate(e)} // Handle date changes
-                                            timeFormat={false}
-                                            isValidDate={disablePastDt}
-                                            closeOnSelect={true}
-                                            icon="fa fa-calendar"
-                                        />
-                                    </Box>
-                                </Box>
 
-                                <Box className="mb-2" sx={{ float: "right" }}>
-                                    <Box className="mb-2 ">
-                                        <label className="font-14 semibold text-black mb-1">
-                                            Due By
-                                        </label>
+                            <Box className='d-flex align-items-center justify-content-between flex-wrap'>
+                                <Box className="d-flex flex-wrap">
+                                    <label className='text-decoration-none d-flex'
+                                        onClick={handleClickOpen}
+                                    ><BallotIcon className='me-1' /> {attachmentFile.length} Documents</label>
+                                    {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
+                                </Box>
+                                <Box className="d-flex mt-2">
+                                    <Box className="mb-2 me-1">
+                                        <label className="font-14 text-black mb-1">Start Date</label>
                                         <Box className='custom-datepicker'>
                                             <CalendarMonthIcon />
                                             <DatePicker
                                                 showIcon
                                                 dateFormat="DD/MM/YYYY"
-                                                value={nextDate}
-                                                onChange={(e) => {
-                                                    setNextDate(e);
-                                                    let enddatetime = dayjs(e).format("YYYY/MM/DD");
-                                                    if (enddatetime) {
-                                                        Json_UpdateTaskField("EndDateTime", enddatetime, "Due date updated!")
-                                                    }
-
-                                                }} // Handle date changes
+                                                value={currentDate}
+                                                onChange={(e) => setCurrentDate(e)} // Handle date changes
                                                 timeFormat={false}
                                                 isValidDate={disablePastDt}
                                                 closeOnSelect={true}
                                                 icon="fa fa-calendar"
+                                                // sx={{
+                                                //     width: '140px'
+                                                // }}
                                             />
+                                        </Box>
+                                    </Box>
+
+                                    <Box className="mb-2" sx={{ float: "right" }}>
+                                        <Box className="mb-2 ">
+                                            <label className="font-14 semibold text-black mb-1">
+                                                Due By
+                                            </label>
+                                            <Box className='custom-datepicker'>
+                                                <CalendarMonthIcon />
+                                                <DatePicker
+                                                    showIcon
+                                                    dateFormat="DD/MM/YYYY"
+                                                    value={nextDate}
+                                                   
+                                                    onChange={(e) => {
+                                                        setNextDate(e);
+                                                        let enddatetime = dayjs(e).format("YYYY/MM/DD");
+                                                        if (enddatetime) {
+                                                            Json_UpdateTaskField("EndDateTime", enddatetime, "Due date updated!")
+                                                        }
+
+                                                    }} // Handle date changes
+                                                    timeFormat={false}
+                                                    isValidDate={disablePastDt}
+                                                    closeOnSelect={true}
+                                                    icon="fa fa-calendar"
+                                                    // sx={{
+                                                    //     width: '140px'
+                                                    // }}
+                                                    
+                                                />
+                                            </Box>
                                         </Box>
                                     </Box>
                                 </Box>
                             </Box>
+
+
                         </>)}
 
 
@@ -2057,9 +2069,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                                                 </ListItemIcon> Edit
                                                                             </MenuItem>
                                                                             <MenuItem onClick={handleClose2}>
-                                                                            <ListItemIcon>
-                                                                                        <DeleteIcon className="font-18" />
-                                                                                    </ListItemIcon> Delete 
+                                                                                <ListItemIcon>
+                                                                                    <DeleteIcon className="font-18" />
+                                                                                </ListItemIcon> Delete
                                                                             </MenuItem>
                                                                         </Menu>
                                                                     </Box>
@@ -2222,9 +2234,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                                                 </ListItemIcon> Edit
                                                                             </MenuItem>
                                                                             <MenuItem onClick={handleClose2}>
-                                                                            <ListItemIcon>
-                                                                                        <DeleteIcon className="font-18" />
-                                                                                    </ListItemIcon> Delete
+                                                                                <ListItemIcon>
+                                                                                    <DeleteIcon className="font-18" />
+                                                                                </ListItemIcon> Delete
                                                                             </MenuItem>
                                                                         </Menu>
                                                                     </Box>
