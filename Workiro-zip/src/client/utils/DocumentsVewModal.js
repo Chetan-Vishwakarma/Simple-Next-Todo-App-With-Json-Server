@@ -555,8 +555,9 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                             <DownloadForOfflineIcon className='text-red pointer font-32  btn-download' />
                                         </Box>
                                         <iframe
-                                            src={isLoadingDoc ? "https://wpamelia.com/wp-content/uploads/2018/11/ezgif-2-6d0b072c3d3f.gif" : viewerUrl} // Specify the URL of the iframe
-                                            onLoad={() => {
+                                            src={isLoadingDoc?"http://127.0.0.1:5501/src/client/utils/test/test.html":viewerUrl} // Specify the URL of the iframe
+                                            // src={"http://127.0.0.1:5501/src/client/utils/test/test.html"}
+                                            onLoad={()=>{
                                                 setIsLoadingDoc(false);
                                             }}
                                             width="100%" // Set the width
