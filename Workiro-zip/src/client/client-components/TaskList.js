@@ -13,6 +13,7 @@ import SelectBox, { SelectBoxTypes } from 'devextreme-react/select-box';
 import CheckBox, { CheckBoxTypes } from 'devextreme-react/check-box';
 import CommanCLS from '../../services/CommanService';
 import CustomLoader from '../../components/CustomLoader';
+import DataNotFound from '../../components/DataNotFound';
 
 const saleAmountEditorOptions = { format: 'currency', showClearButton: true };
 const filterLabel = { 'aria-label': 'Filter' };
@@ -78,7 +79,7 @@ const orderHeaderFilter = (data) => {
 };
 
 
-function TaskList() {
+function TaskList({clientName}) {
 
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -95,6 +96,7 @@ function TaskList() {
 
 
   const [outlookTaskList, setOutlookTaskList] = useState([]);
+  const [dataNotFound, setDataNotFound] = useState(false);
 
   const dataGridRef = useRef(null);
 
@@ -125,14 +127,17 @@ function TaskList() {
             let json = JSON.parse(data);
             console.log("Json_CRM_GetOutlookTask", json?.Table);
             if (json?.Table.length > 0) {
-              let filteredData = json.Table.filter(itm=>itm["EndDateTime"]!==null && !itm["EndDateTime"].split("").includes("-") && itm["Start"]!==null && !itm["Start"].split("").includes("-"));
+              let filteredData = json.Table.filter(itm=>itm["EndDateTime"]!==null && !itm["EndDateTime"].split("").includes("-") && itm["Start"]!==null && !itm["Start"].split("").includes("-") && itm.Client===clientName);
               filteredData.map(itm=>{
                 const timeStamp1 = parseInt(itm["EndDateTime"].match(/\d+/)[0]);
                 itm["EndDateTime"] = new Date(timeStamp1);
                 const timeStamp2 = parseInt(itm["Start"].match(/\d+/)[0]);
                 itm["Start"] = new Date(timeStamp2);
               })
-              setOutlookTaskList(json.Table)
+              if(filteredData.length===0){
+                setDataNotFound(true);
+              }
+              setOutlookTaskList(filteredData);
             }
 
           }
@@ -150,7 +155,7 @@ function TaskList() {
 
   return (
     <div className='table-responsive table-grid table-grid-2'>
-      {outlookTaskList.length>0?<DataGrid
+      {dataNotFound?<DataNotFound/>:(outlookTaskList.length>0?<DataGrid
         id="gridContainer"
         className='client-card-task-grid'
         ref={dataGridRef}
@@ -217,8 +222,7 @@ function TaskList() {
           dataField="Source"
         />
 
-      </DataGrid>:<CustomLoader/>}
-
+      </DataGrid>:<CustomLoader/>)}
     </div>
   )
 }

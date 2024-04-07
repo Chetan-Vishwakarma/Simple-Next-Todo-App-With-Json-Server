@@ -272,7 +272,7 @@ function ClientDetails() {
                             <Contact></Contact>
                         </TabPanel>
                         <TabPanel value="4" className='p-0'>
-                            <TaskList></TaskList>
+                            <TaskList clientName={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}></TaskList>
                         </TabPanel>
 
                         <TabPanel value="5" className='p-0 relative'>
