@@ -148,20 +148,16 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                 if (sts) {
                     if (data) {
                         let js = JSON.parse(data);
-                        // console.log("GetDocumentStatus_Json", js);
+                       // console.log("GetDocumentStatus_Json", js);
                         let res = js.filter((e) => e.Emailid === m.emailid);
                         if (res.length > 0) {
-                            const formattedActivity = res.map((el) => {
-                                let ActivityDate; // Declare ActivityDate variable
-                                if (el["Actioned On"]) { // Check if "Actioned On" property exists
-                                    ActivityDate = el["Actioned On"].slice(6, -2); // If exists, slice the string
-                                }
-                                const date = new Date(ActivityDate); // Create Date object using ActivityDate
-                                return { ...el, ["Actioned On"]: date }; // Return new object with formatted date
+                            const formattedActivity = res.map(el => {
+                                const date = el["Actioned On"] ? new Date(el["Actioned On"].slice(6, -2)) : el["Actioned On"];
+                                return { ...el, ["Actioned On"]: date };
                             });
 
                             setDocumentStatus(formattedActivity[0])
-                            console.log("GetDocumentStatus_Json", formattedActivity);
+                         console.log("GetDocumentStatus_Json", formattedActivity);
 
                         }
 
@@ -745,7 +741,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                         {
                             documentStatus.ForApproval === "Yes" ? (
                                 <>
-                                {documentStatus.Actioned?(<>
+                                {documentStatus["Actioned On"] !== null ?(<>
                                 {documentStatus.Approved === "Yes" ? (
                                     <>
                                         <Box className='ps-3'>
