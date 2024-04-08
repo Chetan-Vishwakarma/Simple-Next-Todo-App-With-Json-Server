@@ -305,7 +305,7 @@ function AddContacts() {
   };
   const PortalUserAccountCreated_Json = () => {
     let obj = {
-      "accid": clientIddata ? clientIddata : "",
+      "accid": agrno,
       "email": Email,
       "password": password,
       "PresetMemorableData": true,

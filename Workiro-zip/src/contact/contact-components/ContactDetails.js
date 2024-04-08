@@ -302,18 +302,22 @@ function ContactDetails() {
   };
   const PortalUserAccountCreated_Json = () => {
     console.log("PortalUserAccountCreated", contactDetails);
+    if(contactDetails && contactDetails.length > 0) {
+        if (contactDetails[0]["E-Mail"].includes("@NoEmail")) {
+            toast.error("Please use a valid email address");
+        }
+        
+    }
     let obj = {
-      accid: contactDetails[0].OriginatorNo
-        ? contactDetails[0].OriginatorNo
-        : "",
+      accid: agrno,
       email: Email,
       password: password,
       PresetMemorableData: true,
       IssueReminders: false,
-      ExcludeMessageLink: false,
-      KeepSignedIn: false,
-      AllowUpload: false,
-      ChangeProfile: false,
+      ExcludeMessageLink: true,
+      KeepSignedIn: true,
+      AllowUpload: true,
+      ChangeProfile: true,
       LoggedIn: false,
       Blocked: false,
       emailAddress: contactDetails[0]["E-Mail"]
@@ -330,10 +334,13 @@ function ContactDetails() {
     try {
       portlCls.PortalUserAccountCreated_Json(obj, (sts, data) => {
         if (sts) {
+            toast.success("Portal Account Created Successfully !");
+            // setIsPortalUser(true);
+            setIsPortalUser(true);
           if (data) {
             // let json = JSON.parse(data);
             console.log("PortalUserAccountCreated_Json", data);
-            setIsPortalUser(true);
+           
 
             toast.success("Portal Account Created Successfully !");
           }

@@ -191,7 +191,7 @@ function Reference() {
   const [activeStep, setActiveStep] = React.useState(0);
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    if (activeStep === steps.length - 1) {
+    if (activeStep == steps.length - 1) {
       function todayDate() {
         var today = new Date().toJSON().slice(0, 10);
         return today;
@@ -200,7 +200,7 @@ function Reference() {
         agrno: agrno,
         Email: Email,
         password: password,
-        ProjectIdList: userDetail.FolderId ? userDetail.FolderId : -1,
+        ProjectIdList: userDetail.FolderId ? userDetail.FolderId : localStorage.getItem('ProjectId'),
         OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
         OriginatorName: userDetail.Clientname ? userDetail.Clientname : "",
         Address: userDetail.fullAddress ? userDetail.fullAddress : "",
@@ -381,6 +381,7 @@ function Reference() {
   };
   const handleReset = () => {
     setActiveStep(0);
+   
   };
 
   // Stepper form
@@ -485,12 +486,16 @@ function Reference() {
                       <Button
                         variant="contained"
                         onClick={handleNext}
+                        disabled={
+                          !userDetail.Clientname || !userDetail.Clientid
+                          
+                        }
                         sx={{ mt: 1, mr: 1 }}
                         className="btn-blue-2"
                         size="small"
                       >
                        {activeStep === steps.length - 1
-                                ? "Add Contact(s)"
+                                ? "Add Client"
                                 : "Continue"}
                       </Button>
                     </Box>
@@ -505,7 +510,10 @@ function Reference() {
                 References Added Successfully!
               </Typography>
               <Button className="btn-blue-2 mt-4" onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-              Add more reference
+              Add Another Client
+              </Button>
+              <Button className="btn-blue-2 mt-4" sx={{ mt: 1, mr: 1 }}>
+              Add Contact
               </Button>
             </Paper>
           )}
