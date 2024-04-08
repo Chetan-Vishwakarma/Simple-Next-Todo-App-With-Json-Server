@@ -80,6 +80,7 @@ function ContactDetails() {
     // AML check modal
     const [isAMLChkOpen, setisAMLChkOpen] = React.useState(false);
     const [isPortalUser, setIsPortalUser] = useState(false);
+    const [isInactive, setIsInactive] = useState(false);
 
     const [amlDetails, setAmlDetails] = useState({
         bankAccNo: "",
@@ -131,10 +132,16 @@ function ContactDetails() {
                             if(contactdata[0]['Portal User']){
                                 console.log(contactdata[0]['Portal User'],"portaluser");
                                 setIsPortalUser(true);
-                            } else {
+                            } 
+                            else {
                                 console.log("Not Portal User")
                                 setIsPortalUser(false);
                             }
+                            if (contactdata[0].Active === "") {
+                                setIsInactive(true);
+                              } else {
+                                setIsInactive(false);
+                              }
                         }
                     }
                 }
@@ -234,6 +241,7 @@ function ContactDetails() {
         try {
           portlCls.PortalUserAccountCreated_Json(obj, (sts, data) => {
             if (sts) {
+                toast.success("Portal Account Created Successfully !");
               if (data) {
                 // let json = JSON.parse(data);
                 console.log("PortalUserAccountCreated_Json", data);
@@ -418,24 +426,32 @@ function ContactDetails() {
                                                      
                                                         <Box className='contact-availability-box inactive'>
                                                         
- {isPortalUser ? (
+                                                        {isPortalUser ? (
         <>
           <CheckCircleIcon />
-          <Typography variant="h5" className='mb-0 ' gutterBottom>
+          <Typography variant="h5" className='mb-0' gutterBottom>
             Portal User
           </Typography>
         </>
       ) : (
         <>
-          {/* <CancelIcon /> */}
-          <Typography variant="h5" className='mb-0 ' gutterBottom onClick={PortalUserAccountCreated_Json}>
-            Create Portal
-          </Typography>
-          
-          {/* <Button>Create Portal</Button> */}
+          {isInactive ? (
+            <>
+              {/* <CancelIcon /> */}
+              <Typography variant="h5" className='mb-0' gutterBottom>
+                In Active
+              </Typography>
+            </>
+          ) : (
+            <>
+              {/* <CancelIcon /> */}
+              <Typography variant="h5" className='mb-0' gutterBottom onClick={PortalUserAccountCreated_Json}>
+                Create Portal
+              </Typography>
+            </>
+          )}
         </>
-      )}
-                                                        </Box>
+      )}          </Box>
 
                                                         {/* <Box className='contact-availability-box'>
                                                 <CheckCircleIcon />
