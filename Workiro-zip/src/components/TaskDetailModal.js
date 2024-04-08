@@ -50,6 +50,7 @@ import { HtmlEditor } from "devextreme-react";
 import HtmlEditorDX from "./HtmlEditor";
 import { json } from "react-router-dom";
 import CopyLinkButton from "./CopyLinkButton";
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import PortalMessage from "./PortalMessage";
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import MergeIcon from '@mui/icons-material/Merge';
@@ -135,6 +136,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
     const [txtdescription, setTxtDescriptin] = React.useState("");
+    const [details, setDetails] = React.useState("");
 
     const [clientList, setClientList] = useState([]);
 
@@ -153,13 +155,25 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     const [searchSectionQuery, setSearchSectionQuery] = useState("");
     const [searchClient1Query, setSearchClient1Query] = useState("");
+    const [isvisibleSubject, setisvisibleSubject] = useState(false);
 
     const toggleVisibilityCancle = () => {
         setIsVisible(false); // Toggle visibility
     };
     const handalClickEditeSubject = () => {
-        setIsVisible(true); // Toggle visibility
+        setIsVisible(false); // Toggle visibility
+        setisvisibleSubject(true)
     };
+    const handalClickEditeDescription = () => {
+        setIsVisible(true); // Toggle visibility
+        setisvisibleSubject(false)
+    };
+
+    const toggleVisibilityCancleSubject = () => {
+        setisvisibleSubject(false); // Toggle visibility
+        setIsVisible(false); // Toggle visibility
+    };
+
     const handalChangeSetSubject = (e) => {
         setTSubject(e.target.value); // Toggle visibility
     };
@@ -359,7 +373,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                 let table2 = json.T2;
                 // setGetCRMSaved(table2);
                 if (table2.length > 0) {
-                    setTxtDescriptin(table2[0].Details)
+                    setTxtDescriptin(table2[0].Details);
+                    setDetails(table2[0].Details);
                 }
 
                 let table6 = json.T6;
@@ -375,11 +390,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                     for (let item of table6) {
 
-                        if(item.DestinationPath){
-                            let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };
-                            setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
-                        }
-                       
+                        // if(item.DestinationPath){
+                        //     let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };
+                        //    // setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+                        // }
+
 
                         // if(item.DestinationPath && !item.ItemId){
                         //     let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };                        
@@ -947,7 +962,20 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     };
 
 
+    const HandleChangeSubjectDetails = () => {
+        Json_UpdateTaskField("Details", txtdescription, "Description Changed")
+        setisvisibleSubject(false);
+        setIsVisible(false);
+    }
+    const HandleChangeSubjectSubject = () => {
+        Json_UpdateTaskField("Subject", tSubject, "Subject Changed")
+        setisvisibleSubject(false);
+        setIsVisible(false);
+
+    }
+
     async function Json_CRM_Task_Update() {
+
         if (addUser.length > 0) {
             const idsString = addUser.map(obj => obj.ID).join(',');
             const attString = attachmentPath.map((obj) => obj.Path).join("|");
@@ -966,7 +994,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                 AssociateWithID: txtClientId ? txtClientId : selectedTask.ClientNo,
                 FolderId: txtFolderId ? txtFolderId : selectedTask.FolderID,
                 Subject: tSubject,
-                TypeofTaskID: txtSectionId,
+                TypeofTaskID: txtSectionId ? txtSectionId : selectedTask.SectionId,
                 EndDateTime: dayjs(nextDate).format("YYYY/MM/DD"),
                 Status: status,
                 Priority: selectedTask.Priority,
@@ -1179,7 +1207,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     );
 
     const handleDelete = (e) => {
-        console.info('You clicked the delete icon.');
+        //console.info('You clicked the delete icon.');
         let res = selectedFiles.filter((file) => file.FileName !== e.FileName);
         setSelectedFiles(res)
     };
@@ -1332,6 +1360,17 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     const handleCloseFolder = () => {
         setAnchorElFolder(null);
     };
+
+
+    const [anchorElFiles, setAnchorElFiles] = React.useState(null);
+    const openFiles = Boolean(anchorElFiles);
+    const handleClickFiles = (event) => {
+        setAnchorElFiles(event.currentTarget);
+    };
+    const handleCloseFiles = () => {
+        setAnchorElFiles(null);
+    };
+
 
     return (
         <React.Fragment>
@@ -1716,7 +1755,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                         placeholder="Description"
                                         value={txtdescription} // Bind the value to the state
                                         onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
-                                        onClick={handalClickEditeSubject}
+                                        onClick={handalClickEditeDescription}
 
                                     ></textarea>
                                 </>)}
@@ -1732,13 +1771,24 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
                             {isVisible && selectedTask.Source === "CRM" && ( // Show the box if isVisible is true
+
                                 <Box className='mb-3 mt-2'>
                                     <Stack spacing={2} direction="row">
-                                        <Button variant="outlined" onClick={toggleVisibilityCancle}>Cancel</Button>
-                                        <Button variant="contained" onClick={Json_CRM_Task_Update}>Save</Button>
+                                        <Button variant="outlined" onClick={toggleVisibilityCancleSubject}>Cancel</Button>
+                                        <Button variant="contained" onClick={HandleChangeSubjectDetails}>Save</Button>
                                     </Stack>
                                 </Box>
                             )}
+                            {isvisibleSubject && selectedTask.Source === "CRM" && ( // Show the box if isVisible is true
+
+                                <Box className='mb-3 mt-2'>
+                                    <Stack spacing={2} direction="row">
+                                        <Button variant="outlined" onClick={toggleVisibilityCancleSubject}>Cancel</Button>
+                                        <Button variant="contained" onClick={HandleChangeSubjectSubject}>Save</Button>
+                                    </Stack>
+                                </Box>
+                            )}
+
                         </Box>
 
                         <Box className="d-flex flex-wrap justify-content-between">
@@ -1862,9 +1912,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     <Box className="mb-2 me-1">
                                         <label className="font-14 text-black mb-1">Start Date</label>
                                         <Box className='custom-datepicker'
-                                        sx={{
-                                            width: '140px',
-                                        }}>
+                                            sx={{
+                                                width: '140px',
+                                            }}>
                                             <CalendarMonthIcon />
                                             <DatePicker
                                                 showIcon
@@ -1875,9 +1925,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                 isValidDate={disablePastDt}
                                                 closeOnSelect={true}
                                                 icon="fa fa-calendar"
-                                                // sx={{
-                                                //     width: '140px'
-                                                // }}
+                                            // sx={{
+                                            //     width: '140px'
+                                            // }}
                                             />
                                         </Box>
                                     </Box>
@@ -1888,9 +1938,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                 Due By
                                             </label>
                                             <Box className='custom-datepicker'
-                                            sx={{
-                                                width: '140px',
-                                            }}>
+                                                sx={{
+                                                    width: '140px',
+                                                }}>
                                                 <CalendarMonthIcon />
                                                 <DatePicker
                                                     showIcon
@@ -1908,10 +1958,10 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                     isValidDate={disablePastDt}
                                                     closeOnSelect={true}
                                                     icon="fa fa-calendar"
-                                                    // sx={{
-                                                    //     width: '140px'
-                                                    // }}
-                                                    
+                                                // sx={{
+                                                //     width: '140px'
+                                                // }}
+
                                                 />
                                             </Box>
                                         </Box>
@@ -2302,10 +2352,41 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                             <Box className="d-flex align-items-end main-file-upload  pt-3">
                                 <Box className="w-100">
                                     <Stack direction="row" className='pb-2 custom-chips' spacing={1}>
-                                        {selectedFiles ? selectedFiles.map((item, index) => {
+                                        {
+                                            selectedFiles && selectedFiles.slice(0, 3).map((item, index) => (
+                                                <Chip key={index} label={item.FileName} variant="outlined" onDelete={() => handleDelete(item)} />
+                                            ))
+                                        }
 
-                                            return (<Chip key={index} label={item.FileName} variant="outlined" onDelete={() => handleDelete(item)} />);
-                                        }) : ""}
+                                        {selectedFiles.length > 3 && (<>
+                                            <Button
+                                                id="basic-button"
+                                                aria-controls={openFiles ? 'basic-menu' : undefined}
+                                                aria-haspopup="true"
+                                                aria-expanded={openFiles ? 'true' : undefined}
+                                                onClick={handleClickFiles}
+                                            >
+
+                                              <span>+ {selectedFiles.length-3}</span>  
+
+                                            </Button>
+                                            <Menu
+                                                id="basic-menu"
+                                                anchorEl={anchorElFiles}
+                                                open={openFiles}
+                                                onClose={handleCloseFiles}
+                                                MenuListProps={{
+                                                    'aria-labelledby': 'basic-button',
+                                                }}
+                                            >
+                                                {selectedFiles.length > 3 &&
+                                                    selectedFiles.slice(3, selectedFiles.length).map((item, index) => (
+                                                        <MenuItem key={index} onClick={handleCloseFiles}>{item.FileName}</MenuItem>
+                                                    ))
+                                                }
+                                            </Menu>
+                                        </>)}
+
 
 
                                     </Stack>
@@ -2426,8 +2507,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                             let Typest = item.FileName.lastIndexOf("\\");
                                             fileName = item.FileName.slice(Typest + 1);
                                         }
-                                        else{
-                                            fileName = item.ItemId?item.ItemId:""; 
+                                        else {
+                                            fileName = item.ItemId ? item.ItemId : "";
                                         }
                                         return <>
                                             <Box className="file-uploads">

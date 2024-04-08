@@ -753,21 +753,35 @@ function CreateNewModalTask({ ...props }) {
     }, [createNewFileObj]);
 
 
+
+    let FilderDataList = userFilter.filter((item) => {
+        // Check if item and its properties are defined before accessing them
+        // console.log("filterText", filterText);
+        if (item && item.ForwardTo) {
+            // You can customize the filtering logic here based on your requirements
+            return item.ForwardTo.toLowerCase().includes(filterText.toLowerCase());
+        } else {
+            return false; // Return false if any required property is undefined
+        }
+    });
+
+
+
     useEffect(() => {
         // Filter the userList based on filterText
-        console.log("userFilter", userFilter)
-        let res = userListData.filter((item) => {
-            // Check if item and its properties are defined before accessing them
-            // console.log("filterText", filterText);
-            if (item && item.ForwardTo) {
-                // You can customize the filtering logic here based on your requirements
-                return item.ForwardTo.toLowerCase().includes(filterText.toLowerCase());
-            } else {
-                return false; // Return false if any required property is undefined
-            }
-        });
+        // console.log("userFilter", userFilter)
+        // let res = userListData.filter((item) => {
+        //     // Check if item and its properties are defined before accessing them
+        //     // console.log("filterText", filterText);
+        //     if (item && item.ForwardTo) {
+        //         // You can customize the filtering logic here based on your requirements
+        //         return item.ForwardTo.toLowerCase().includes(filterText.toLowerCase());
+        //     } else {
+        //         return false; // Return false if any required property is undefined
+        //     }
+        // });
 
-        setUserFilter(res);
+       // setUserFilter(res);
     }, [filterText])
 
     const CurrentDateChange = (e) => {
@@ -2820,7 +2834,7 @@ function CreateNewModalTask({ ...props }) {
                                                         </Box>
                                                         <Box className="box-user-list-dropdown">
 
-                                                            {userFilter.map((item, ind) => (
+                                                            {FilderDataList.map((item, ind) => (
                                                                 <React.Fragment key={ind}>
                                                                     <button
                                                                         type="button"

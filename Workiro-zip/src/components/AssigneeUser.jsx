@@ -9,8 +9,9 @@ import Button from "@mui/material/Button";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import Menu from "@mui/material/Menu";
 import user from "../images/user.jpg";
-export default function AssigneeUsers({selectedTask,setAddUser,addUser,setOwnerID,ownerID,Json_UpdateTaskField}) {
-   // console.log("Attachment list11", selectedTask);
+import { MenuItem } from '@mui/material';
+export default function AssigneeUsers({ selectedTask, setAddUser, addUser, setOwnerID, ownerID, Json_UpdateTaskField }) {
+    // console.log("Attachment list11", selectedTask);
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -38,7 +39,7 @@ export default function AssigneeUsers({selectedTask,setAddUser,addUser,setOwnerI
 
 
     function Json_GetForwardUserList() {
-       // setAddUser([])
+        // setAddUser([])
         try {
             let o = {};
             o.ProjectId = txtFolderId;
@@ -51,11 +52,11 @@ export default function AssigneeUsers({selectedTask,setAddUser,addUser,setOwnerI
                         let result = dt.filter((el) => {
                             return el.CGroup !== "Yes";
                         });
-                      
+
                         if (result.length > 0) {
                             result.map((el) => {
                                 if (el.ID === selectedTask.OwnerID) {
-                                     console.log("Json_GetForwardUserList11", addUser);
+                                    console.log("Json_GetForwardUserList11", addUser);
                                     setOwnerID(el.ID);
                                     setOwnerRighClick(el);
                                     setAddUser((pre) => [...pre, el])
@@ -69,26 +70,26 @@ export default function AssigneeUsers({selectedTask,setAddUser,addUser,setOwnerI
                         setUserListData(removeuser);
                         setUserFilter(removeuser);
 
-                      setTimeout(() => {
-                        if (selectedTask) {
-                            let spt = selectedTask.AssignedToID.split(",");
-                            let pushUser = [];
-                            for (let i of spt) {
-                               // console.log("user id print",i,result)
-                                if (i) {
-                                    for (let j of result) {
-                                        if (parseInt(i) === j.ID) {
-                                            pushUser.push(j);
+                        setTimeout(() => {
+                            if (selectedTask) {
+                                let spt = selectedTask.AssignedToID.split(",");
+                                let pushUser = [];
+                                for (let i of spt) {
+                                    // console.log("user id print",i,result)
+                                    if (i) {
+                                        for (let j of result) {
+                                            if (parseInt(i) === j.ID) {
+                                                pushUser.push(j);
+                                            }
                                         }
                                     }
                                 }
+                                //console.log("Json_Get_CRM_SavedTask_ByTaskId22", pushUser);
+                                setAddUser(pushUser);
                             }
-                            //console.log("Json_Get_CRM_SavedTask_ByTaskId22", pushUser);
-                            setAddUser(pushUser);
-                        }
-                      }, 3000);
-                        
-                       
+                        }, 3000);
+
+
 
                     }
                 }
@@ -98,7 +99,7 @@ export default function AssigneeUsers({selectedTask,setAddUser,addUser,setOwnerI
         }
     }
 
- 
+
 
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
@@ -107,9 +108,9 @@ export default function AssigneeUsers({selectedTask,setAddUser,addUser,setOwnerI
         setEmail(localStorage.getItem("Email"));
         Json_GetForwardUserList();
 
-        
 
-       
+
+
 
     }, [selectedTask])
 
@@ -118,15 +119,15 @@ export default function AssigneeUsers({selectedTask,setAddUser,addUser,setOwnerI
         // Check if the object 'e' already exists in the array based on its 'id'
         if (!addUser.some(user => user.ID === e.ID)) {
             // If it doesn't exist, add it to the 'addUser' array
-            let myobj = [...addUser,e];
-            let map = myobj.map((user)=>user.ID).join(', ');
-            Json_UpdateTaskField("AssignedToID",map,`${e.ForwardTo} has been added as an assignee.`)
-           // console.log(map);
+            let myobj = [...addUser, e];
+            let map = myobj.map((user) => user.ID).join(', ');
+            Json_UpdateTaskField("AssignedToID", map, `${e.ForwardTo} has been added as an assignee.`)
+            // console.log(map);
             setAddUser([...addUser, e]);
             let res = userFilter.filter((user) => user.ID !== e.ID);
             setUserListData(res);
             setUserFilter(res);
-            
+
 
         }
 
@@ -148,7 +149,7 @@ export default function AssigneeUsers({selectedTask,setAddUser,addUser,setOwnerI
         }
     });
 
-   
+
 
     const handleUserClick = (event) => {
         setuserDropdownAnchorEl(event.currentTarget);
@@ -176,7 +177,7 @@ export default function AssigneeUsers({selectedTask,setAddUser,addUser,setOwnerI
     }
 
     const handleRightClick = (event) => {
-        console.log("right click",event)
+        console.log("right click", event)
         event.preventDefault(); // Prevents the default context menu from appearing
         setDropdownVisible(true);
         setuserDropdownAnchorElRight(event.currentTarget);
@@ -191,7 +192,7 @@ export default function AssigneeUsers({selectedTask,setAddUser,addUser,setOwnerI
         if (!existingObj) {
             setAddUser((pre) => [...pre, ...e]);
         }
-        Json_UpdateTaskField("OwnerID",e.ID,`${e.ForwardTo} is now the task owner.`);
+        Json_UpdateTaskField("OwnerID", e.ID, `${e.ForwardTo} is now the task owner.`);
     };
 
     /////////////////////////////Remove Assignee
@@ -208,32 +209,51 @@ export default function AssigneeUsers({selectedTask,setAddUser,addUser,setOwnerI
             setUserFilter(prevUsers => [...prevUsers, removedUser]);
         }
 
-        
-        let map = updatedUsers.map((user)=>user.ID).join(', ');
-        Json_UpdateTaskField("AssignedToID",map)
+
+        let map = updatedUsers.map((user) => user.ID).join(', ');
+        Json_UpdateTaskField("AssignedToID", map)
 
 
+    };
+
+    const [anchorElFiles, setAnchorElFiles] = React.useState(null);
+    const openFiles = Boolean(anchorElFiles);
+    const handleClickFiles = (event) => {
+        setAnchorElFiles(event.currentTarget);
+    };
+    const handleCloseFiles = () => {
+        setAnchorElFiles(null);
+    };
+
+
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+
+    const handleUserClickAddUser = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
     };
 
 
     return (<>
         <div className="mt-2 mb-2">
+
             <Button
                 id="basic-button5"
                 aria-controls={
                     UserDropdownopen ? "basic-menu5" : undefined
                 }
                 aria-haspopup="true"
-                aria-expanded={UserDropdownopen ? "true" : undefined}
-                onClick={handleUserClick}
+                aria-expanded={UserDropdownopen ? "true" : undefined}              
                 onContextMenu={handleRightClick}
                 className="p-0 w-auto d-inline-block"
 
 
-            >
-
-
-                <Box className="d-flex align-items-center">
+            >   
+             <Box className="d-flex align-items-center">
                     {ownerRighClick && (<>
                         <Box
                             className="user-img-list me-2 admin"
@@ -244,8 +264,9 @@ export default function AssigneeUsers({selectedTask,setAddUser,addUser,setOwnerI
                         </Box> <ArrowForwardIosIcon className='me-1' />
                     </>)}
 
+
                     {addUser.length > 1
-                        ? addUser.map((item) => {
+                        ? addUser.slice(1, 3).map((item) => {
                             const words = item.ForwardTo.split(" ");
                             // Extract the first letter of each word and concatenate them
                             let result = "";
@@ -276,15 +297,9 @@ export default function AssigneeUsers({selectedTask,setAddUser,addUser,setOwnerI
                         })
                         : null}
 
-                    <Box className="d-flex">
-                        <span class="material-symbols-outlined">
-                            person_add
-                        </span>
-                    </Box>
-
-                </Box>
-
+                </Box>             
             </Button>
+           
 
             {dropdownVisible && (<Menu
                 id="basic-menu5"
@@ -351,6 +366,63 @@ export default function AssigneeUsers({selectedTask,setAddUser,addUser,setOwnerI
                     </Box>
                 </Box>
             </Menu>)}
+
+            {addUser.length > 4 && (<>
+                <Button
+                    id="basic-button"
+                    aria-controls={openFiles ? 'basic-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={openFiles ? 'true' : undefined}
+                    onClick={handleClickFiles}
+                >
+
+                    <Box
+                        className="user-img-list me-2 admin"
+                    >
+                        <p>+ {addUser.length - 3}</p>
+                    </Box>
+
+
+
+                </Button>
+                <Menu
+                    id="basic-menu"
+                    anchorEl={anchorElFiles}
+                    open={openFiles}
+                    onClose={handleCloseFiles}
+                    MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                    }}
+                >
+                    {addUser.length > 3 &&
+                        addUser.slice(3, addUser.length).map((item, index) => (
+                            <MenuItem key={index} onClick={handleCloseFiles}>{item.ForwardTo}</MenuItem>
+                        ))
+                    }
+                </Menu>
+            </>)}
+
+                    <Button
+                id="basic-button5"
+                aria-controls={
+                    UserDropdownopen ? "basic-menu5" : undefined
+                }
+                aria-haspopup="true"
+                aria-expanded={UserDropdownopen ? "true" : undefined}
+                onClick={handleUserClick}              
+                className="p-0 w-auto d-inline-block"
+
+
+            >    
+
+            <Box className="d-flex">
+                        <span class="material-symbols-outlined">
+                            person_add
+                        </span>
+                    </Box>
+
+            </Button>
+
 
             <Menu
                 id="basic-menu5"
