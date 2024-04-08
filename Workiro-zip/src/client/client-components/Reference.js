@@ -239,7 +239,7 @@ function Reference() {
             billingAddress();
             ragisterAddress();
           } else {
-            toast.success("Reference ID Already Exists!");
+            toast.error("Reference ID Already Exists!");
           }
         }
       });
@@ -506,9 +506,9 @@ function Reference() {
           </Stepper>
           {activeStep === steps.length && (
             <Paper square elevation={0} sx={{ p: 3 }}>
-              <Typography className="text-green">
+              {/* <Typography className="text-green">
                 References Added Successfully!
-              </Typography>
+              </Typography> */}
               <Button className="btn-blue-2 mt-4" onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
               Add Another Client
               </Button>
