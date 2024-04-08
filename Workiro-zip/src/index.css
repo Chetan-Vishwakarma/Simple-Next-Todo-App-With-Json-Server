@@ -49,6 +49,7 @@ nav.navbar.navbar-dark.bg-dark .container {
 .font-12 {
   font-size: 12px !important;
 }
+
 .font-10 {
   font-size: 10px !important;
 }
@@ -102,9 +103,11 @@ select:focus,
   resize: none;
   border-radius: 5px;
 }
+
 .textarea-2 {
   min-height: 130px !important;
 }
+
 .textarea-text {
   padding: 0;
   border: 0;
@@ -238,6 +241,10 @@ button {
 .btn-favorite.Mui-selected {
   background-color: #D41B20 !important;
   color: #fff !important;
+}
+
+.Toastify__toast-container--top-right {
+  margin-top: 46px;
 }
 
 .table-grid-2 .dx-datagrid-rowsview .dx-datagrid-content:not(.dx-datagrid-content-fixed) {
@@ -1318,10 +1325,12 @@ span.tox-statusbar__branding {
 .company-details-box svg {
   color: #c3322c;
 }
+
 .main-dashboard-box {
   padding-right: 5px;
   padding-left: 5px;
 }
+
 .main-dashboard-box .dashboard-box {
   background: #E5E4FF;
   margin-top: 10px;
@@ -2051,12 +2060,30 @@ span.tox-statusbar__branding {
   align-items: center;
 }
 
-.client-card-contact-grid .dx-bordered-bottom-view,.dx-datagrid-filter-panel{
+.client-card-contact-grid .dx-bordered-bottom-view,
+.dx-datagrid-filter-panel {
   display: none;
 }
 
-.client-card-task-grid .dx-bordered-bottom-view,.dx-datagrid-filter-panel{
+.client-card-task-grid .dx-bordered-bottom-view,
+.dx-datagrid-filter-panel {
   display: none;
+}
+
+.subscribe-box {
+  position: absolute;
+  right: 0;
+  left: 0;
+  background: rgb(0 0 0 / 70%);
+  height: 100%;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  color: #fff;
+  border-radius: 4px;
 }
 
 @media only screen and (max-width: 1366px) {

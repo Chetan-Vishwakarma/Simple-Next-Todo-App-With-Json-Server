@@ -59,8 +59,12 @@ import TestPDF from '../TestPDF';
 import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
 import AMLCheck from '../AMLCheck';
 import { ToastContainer, toast } from 'react-toastify';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
+import MarkAsUnreadIcon from '@mui/icons-material/MarkAsUnread';
+import Switch from '@mui/material/Switch';
 
-
+const label = { inputProps: { 'aria-label': 'Switch demo' } };
 // const [nextDate, setNextDate] = useState("");
 
 function ContactDetails() {
@@ -103,7 +107,6 @@ function ContactDetails() {
 
     const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
 
-
     let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
 
     const handleChange = (event, newValue) => {
@@ -127,21 +130,21 @@ function ContactDetails() {
                         let details = json.Table;
                         setContactDetails(details.filter((item) => item.ContactNo === contactNo));
                         let contactdata = details.filter((item) => item.ContactNo === contactNo);
-                        console.log("Json_GetAllContactsByClientIDssss",contactdata);
-                        if(contactdata && contactdata.length > 0){
-                            if(contactdata[0]['Portal User']){
-                                console.log(contactdata[0]['Portal User'],"portaluser");
+                        console.log("Json_GetAllContactsByClientIDssss", contactdata);
+                        if (contactdata && contactdata.length > 0) {
+                            if (contactdata[0]['Portal User']) {
+                                console.log(contactdata[0]['Portal User'], "portaluser");
                                 setIsPortalUser(true);
-                            } 
+                            }
                             else {
                                 console.log("Not Portal User")
                                 setIsPortalUser(false);
                             }
                             if (contactdata[0].Active === "") {
                                 setIsInactive(true);
-                              } else {
+                            } else {
                                 setIsInactive(false);
-                              }
+                            }
                         }
                     }
                 }
@@ -220,40 +223,40 @@ function ContactDetails() {
         }
     }
     const PortalUserAccountCreated_Json = () => {
-        console.log('PortalUserAccountCreated',contactDetails);
+        console.log('PortalUserAccountCreated', contactDetails);
         let obj = {
-          "accid": contactDetails[0].OriginatorNo ? contactDetails[0].OriginatorNo : "",
-          "email": Email,
-          "password": password,
-          "PresetMemorableData": true,
-          "IssueReminders": false,
-          "ExcludeMessageLink": false,
-          "KeepSignedIn": false,
-          "AllowUpload": false,
-          "ChangeProfile": false,
-          "LoggedIn": false,
-          "Blocked": false,
-          "emailAddress": contactDetails[0]['E-Mail'] ? contactDetails[0]['E-Mail'] : "",
-          "ccode": contactDetails[0].OriginatorNo ? contactDetails[0].OriginatorNo : "",
-          "clientName":contactDetails[0]['Company Name'] ? contactDetails[0]['Company Name'] : "",
+            "accid": contactDetails[0].OriginatorNo ? contactDetails[0].OriginatorNo : "",
+            "email": Email,
+            "password": password,
+            "PresetMemorableData": true,
+            "IssueReminders": false,
+            "ExcludeMessageLink": false,
+            "KeepSignedIn": false,
+            "AllowUpload": false,
+            "ChangeProfile": false,
+            "LoggedIn": false,
+            "Blocked": false,
+            "emailAddress": contactDetails[0]['E-Mail'] ? contactDetails[0]['E-Mail'] : "",
+            "ccode": contactDetails[0].OriginatorNo ? contactDetails[0].OriginatorNo : "",
+            "clientName": contactDetails[0]['Company Name'] ? contactDetails[0]['Company Name'] : "",
         };
-        console.log(contactDetails,"contactDetails111");
+        console.log(contactDetails, "contactDetails111");
         try {
-          portlCls.PortalUserAccountCreated_Json(obj, (sts, data) => {
-            if (sts) {
-                toast.success("Portal Account Created Successfully !");
-              if (data) {
-                // let json = JSON.parse(data);
-                console.log("PortalUserAccountCreated_Json", data);
-                toast.success("Portal Account Created Successfully !");
-    
-              }
-            }
-          });
+            portlCls.PortalUserAccountCreated_Json(obj, (sts, data) => {
+                if (sts) {
+                    toast.success("Portal Account Created Successfully !");
+                    if (data) {
+                        // let json = JSON.parse(data);
+                        console.log("PortalUserAccountCreated_Json", data);
+                        toast.success("Portal Account Created Successfully !");
+
+                    }
+                }
+            });
         } catch (err) {
-          console.log("Error while calling PortalUserAccountCreated_Json", err)
+            console.log("Error while calling PortalUserAccountCreated_Json", err)
         }
-      }
+    }
     const Json_VerifyDrivingLicence = () => {
         setIsViewerModalOpen(!isViewerModalOpen);
         let obj = {
@@ -340,23 +343,17 @@ function ContactDetails() {
                             onClose={handleClose}
                             TransitionComponent={Fade}
                         >
-                            <MenuItem onClick={handleClose}>
+                            <MenuItem className='ps-1' onClick={handleClose}>
                                 <ListItemIcon>
-                                    <PersonAdd fontSize="small" />
+                                    <MarkEmailReadIcon fontSize="small" />
                                 </ListItemIcon>
-                                My Account
+                                Send Email
                             </MenuItem>
-                            <MenuItem onClick={handleClose}>
+                            <MenuItem className='ps-1' onClick={handleClose}>
                                 <ListItemIcon>
-                                    <PersonAdd fontSize="small" />
+                                    <MarkAsUnreadIcon fontSize="small" />
                                 </ListItemIcon>
-                                My Account
-                            </MenuItem>
-                            <MenuItem onClick={handleClose}>
-                                <ListItemIcon>
-                                    <PersonAdd fontSize="small" />
-                                </ListItemIcon>
-                                My Account
+                                Send Portal Messages
                             </MenuItem>
                         </Menu>
                     </div>
@@ -422,36 +419,36 @@ function ContactDetails() {
                                                 <Typography variant="h5" className='mb-0 ' gutterBottom>
                                                     In Active
                                                 </Typography>
-                                            </Box> */} 
-                                                     
+                                            </Box> */}
+
                                                         <Box className='contact-availability-box inactive'>
-                                                        
-                                                        {isPortalUser ? (
-        <>
-          <CheckCircleIcon />
-          <Typography variant="h5" className='mb-0' gutterBottom>
-            Portal User
-          </Typography>
-        </>
-      ) : (
-        <>
-          {isInactive ? (
-            <>
-              {/* <CancelIcon /> */}
-              <Typography variant="h5" className='mb-0' gutterBottom>
-                In Active
-              </Typography>
-            </>
-          ) : (
-            <>
-              {/* <CancelIcon /> */}
-              <Typography variant="h5" className='mb-0' gutterBottom onClick={PortalUserAccountCreated_Json}>
-                Create Portal
-              </Typography>
-            </>
-          )}
-        </>
-      )}          </Box>
+
+                                                            {isPortalUser ? (
+                                                                <>
+                                                                    <CheckCircleIcon />
+                                                                    <Typography variant="h5" className='mb-0' gutterBottom>
+                                                                        Portal User
+                                                                    </Typography>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    {isInactive ? (
+                                                                        <>
+                                                                            {/* <CancelIcon /> */}
+                                                                            <Typography variant="h5" className='mb-0' gutterBottom>
+                                                                                In Active
+                                                                            </Typography>
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            {/* <CancelIcon /> */}
+                                                                            <Typography variant="h5" className='mb-0' gutterBottom onClick={PortalUserAccountCreated_Json}>
+                                                                                Create Portal
+                                                                            </Typography>
+                                                                        </>
+                                                                    )}
+                                                                </>
+                                                            )}          </Box>
 
                                                         {/* <Box className='contact-availability-box'>
                                                 <CheckCircleIcon />
@@ -466,19 +463,30 @@ function ContactDetails() {
                                                         <FmdGoodIcon className='me-2 text-primary' />
 
                                                         <Box className=''>
-                                                            <p className='font-16 bold mb-1 text-primary'>Address</p>
+                                                            <p className='font-14 bold mb-0 text-primary'>Address</p>
                                                             <p className='mb-0 font-14 text-gray'>{item["Address 1"]}</p>
                                                         </Box>
                                                     </Box>
 
                                                     <Box className='card-box d-flex mt-2'>
-                                                        <FmdGoodIcon className='me-2 text-primary' />
+                                                        <EmailIcon className='me-2 text-primary' />
 
                                                         <Box className=''>
-                                                            <p className='font-16 bold mb-1 text-primary'>Phone</p>
+                                                            <p className='font-14 bold mb-0 text-primary'>Email</p>
+                                                            <p className='mb-0 font-14 text-gray'>test@gmail.com</p>
+                                                        </Box>
+                                                    </Box>
+
+                                                    <Box className='card-box d-flex mt-2'>
+                                                        <LocalPhoneIcon className='me-2 text-primary' />
+
+                                                        <Box className=''>
+                                                            <p className='font-14 bold mb-0 text-primary'>Phone</p>
                                                             <p className='mb-0 font-14 text-gray'>{item.Tel}, {item.Mobile}</p>
                                                         </Box>
                                                     </Box>
+
+                                                    
 
                                                 </Box>
                                             }) : <Box className='white-box w-100'>
@@ -565,44 +573,52 @@ function ContactDetails() {
 
                                 <Box className="col-xl-8 col-lg-8 col-md-12 d-flex">
                                     <Box className='white-box w-100'>
-                                        <Box className='contact-detail-row mb-4'>
-                                            <Box className='contact-detail-box'>
-                                                <KeyIcon />
-                                                <Typography variant="h4" className='mb-0 ' gutterBottom>
-                                                    Key
-                                                </Typography>
+                                        <Box className='contact-detail-row mb-4 relative'>
 
-                                                <Typography variant="Body1" className='mb-0 ' gutterBottom>
-                                                    23156
+                                            <Box className='subscribe-box'>
+                                                <Typography variant="h4" className='mb-3 font-20'>This contact does not have a portal account. Please create one to view the stats.</Typography>
+                                                <Button variant="outlined" className='btn-blue-2'>
+                                                    Create Portal Account
+                                                </Button>
+                                            </Box>
+
+                                            <Box className='contact-detail-box'>
+                                                <HowToRegIcon />
+                                                <Typography variant="h4" className='mb-0 ' gutterBottom>
+                                                    Portal Status
+                                                    <Switch {...label} defaultChecked size="small" />
+                                                </Typography>
+                                                <Typography variant="Body2" className='mb-0 ' gutterBottom>
+                                                    Active
                                                 </Typography>
                                             </Box>
 
                                             <Box className='contact-detail-box'>
                                                 <RequestQuoteIcon />
                                                 <Typography variant="h4" className='mb-0 ' gutterBottom>
-                                                    Amount
+                                                    Messages Pending Approval
                                                 </Typography>
 
                                                 <Typography variant="Body1" className='mb-0 ' gutterBottom>
-                                                    $1012
+                                                    45664
                                                 </Typography>
                                             </Box>
 
                                             <Box className='contact-detail-box'>
                                                 <FactCheckIcon />
                                                 <Typography variant="h4" className='mb-0 ' gutterBottom>
-                                                    Claim Status
+                                                    Total Messages Sent
                                                 </Typography>
 
                                                 <Typography variant="Body1" className='mb-0 ' gutterBottom>
-                                                    Pending
+                                                    516
                                                 </Typography>
                                             </Box>
 
                                             <Box className='contact-detail-box'>
                                                 <FolderSharedIcon />
                                                 <Typography variant="h4" className='mb-0 ' gutterBottom>
-                                                    User ID
+                                                    Total Messages Received
                                                 </Typography>
 
                                                 <Typography variant="Body1" className='mb-0 ' gutterBottom>
@@ -613,7 +629,7 @@ function ContactDetails() {
                                             <Box className='contact-detail-box'>
                                                 <CalendarMonthIcon />
                                                 <Typography variant="h4" className='mb-0 ' gutterBottom>
-                                                    Date Added
+                                                    Last Message sent on
                                                 </Typography>
 
                                                 <Typography variant="Body1" className='mb-0 ' gutterBottom>
