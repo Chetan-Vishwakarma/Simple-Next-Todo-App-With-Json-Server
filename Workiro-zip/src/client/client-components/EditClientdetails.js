@@ -197,7 +197,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
                 CHNumber: "",
                 Clientname: companyEditDetails[0].OriginatorName,
                 Clientid: companyEditDetails[0].OriginatorNo,
-                StatusId: statusObject.StatusId, // Set default status name
+                StatusId: statusObject, // Set default status name
                 UserId: "",
                 Mobile: companyEditDetails[0].AltTelNo,
                 Telephone: companyEditDetails[0].TelNo,

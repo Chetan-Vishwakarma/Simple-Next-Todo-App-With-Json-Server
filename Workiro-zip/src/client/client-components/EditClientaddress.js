@@ -110,9 +110,14 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
             });
             console.log(mainAddress,"Mainaddress");
             // Create an updatedUserDetail object with the values from the respective addresses
+      //       if(mainAddress){
+      //         let data = { ...userDetail };
+      // data = { ...data, ["Line1"]: mainAddress.Add1 };
+      // setUserDetail(data);
+      //       }
             const updatedUserDetail = {
                 ...userDetail,
-                Line1: mainAddress ? mainAddress.Add1 : "",
+                Line1: mainAddress ? mainAddress.Add1 : "test",
                 Line2: mainAddress ? mainAddress.Add2 : "",
                 Line3: mainAddress ? mainAddress.Add3 : "",
                 Town: mainAddress ? mainAddress.Town : "",

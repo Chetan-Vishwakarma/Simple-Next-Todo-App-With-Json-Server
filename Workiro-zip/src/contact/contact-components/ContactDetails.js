@@ -58,7 +58,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import TestPDF from '../TestPDF';
 import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
 import AMLCheck from '../AMLCheck';
-
+import { ToastContainer, toast } from 'react-toastify';
 
 
 // const [nextDate, setNextDate] = useState("");
@@ -79,6 +79,7 @@ function ContactDetails() {
 
     // AML check modal
     const [isAMLChkOpen, setisAMLChkOpen] = React.useState(false);
+    const [isPortalUser, setIsPortalUser] = useState(false);
 
     const [amlDetails, setAmlDetails] = useState({
         bankAccNo: "",
@@ -95,7 +96,8 @@ function ContactDetails() {
     const [isViewerModalOpen, setIsViewerModalOpen] = useState(false);
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
-
+    const portalUrl = "https://portal.docusoftweb.com/clientservices.asmx/";
+    let portlCls = new CommanCLS(portalUrl, agrno, Email, password);
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
     const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
@@ -123,6 +125,17 @@ function ContactDetails() {
                         console.log("Json_GetAllContactsByClientID", json);
                         let details = json.Table;
                         setContactDetails(details.filter((item) => item.ContactNo === contactNo));
+                        let contactdata = details.filter((item) => item.ContactNo === contactNo);
+                        console.log("Json_GetAllContactsByClientIDssss",contactdata);
+                        if(contactdata && contactdata.length > 0){
+                            if(contactdata[0]['Portal User']){
+                                console.log(contactdata[0]['Portal User'],"portaluser");
+                                setIsPortalUser(true);
+                            } else {
+                                console.log("Not Portal User")
+                                setIsPortalUser(false);
+                            }
+                        }
                     }
                 }
             });
@@ -199,7 +212,40 @@ function ContactDetails() {
             return false
         }
     }
-
+    const PortalUserAccountCreated_Json = () => {
+        console.log('PortalUserAccountCreated',contactDetails);
+        let obj = {
+          "accid": contactDetails[0].OriginatorNo ? contactDetails[0].OriginatorNo : "",
+          "email": Email,
+          "password": password,
+          "PresetMemorableData": true,
+          "IssueReminders": false,
+          "ExcludeMessageLink": false,
+          "KeepSignedIn": false,
+          "AllowUpload": false,
+          "ChangeProfile": false,
+          "LoggedIn": false,
+          "Blocked": false,
+          "emailAddress": contactDetails[0]['E-Mail'] ? contactDetails[0]['E-Mail'] : "",
+          "ccode": contactDetails[0].OriginatorNo ? contactDetails[0].OriginatorNo : "",
+          "clientName":contactDetails[0]['Company Name'] ? contactDetails[0]['Company Name'] : "",
+        };
+        console.log(contactDetails,"contactDetails111");
+        try {
+          portlCls.PortalUserAccountCreated_Json(obj, (sts, data) => {
+            if (sts) {
+              if (data) {
+                // let json = JSON.parse(data);
+                console.log("PortalUserAccountCreated_Json", data);
+                toast.success("Portal Account Created Successfully !");
+    
+              }
+            }
+          });
+        } catch (err) {
+          console.log("Error while calling PortalUserAccountCreated_Json", err)
+        }
+      }
     const Json_VerifyDrivingLicence = () => {
         setIsViewerModalOpen(!isViewerModalOpen);
         let obj = {
@@ -368,13 +414,27 @@ function ContactDetails() {
                                                 <Typography variant="h5" className='mb-0 ' gutterBottom>
                                                     In Active
                                                 </Typography>
-                                            </Box> */}
-
+                                            </Box> */} 
+                                                     
                                                         <Box className='contact-availability-box inactive'>
-                                                            <CancelIcon />
-                                                            <Typography variant="h5" className='mb-0 ' gutterBottom>
-                                                                Portal User
-                                                            </Typography>
+                                                        
+ {isPortalUser ? (
+        <>
+          <CheckCircleIcon />
+          <Typography variant="h5" className='mb-0 ' gutterBottom>
+            Portal User
+          </Typography>
+        </>
+      ) : (
+        <>
+          {/* <CancelIcon /> */}
+          <Typography variant="h5" className='mb-0 ' gutterBottom onClick={PortalUserAccountCreated_Json}>
+            Create Portal
+          </Typography>
+          
+          {/* <Button>Create Portal</Button> */}
+        </>
+      )}
                                                         </Box>
 
                                                         {/* <Box className='contact-availability-box'>
