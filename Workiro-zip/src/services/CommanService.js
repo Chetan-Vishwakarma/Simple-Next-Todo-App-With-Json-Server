@@ -1228,4 +1228,33 @@ console.log("formattedDate",formattedDate)
             }
         })
     }
+
+    Json_GetAllSentMessages(obj,callback) {
+        super.CreateNewServiceParamObject("Json_GetAllSentMessages",obj,false);
+        super.CallNewService("Json_GetAllSentMessages", function (status, Data) {
+            if (status) {
+                if (Data != "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+
+    Json_GetAllReceivedMessages(obj,callback) {
+        super.CreateNewServiceParamObject("Json_GetAllReceivedMessages",obj,false);
+        super.CallNewService("Json_GetAllReceivedMessages", function (status, Data) {
+            if (status) {
+                if (Data != "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+
 }

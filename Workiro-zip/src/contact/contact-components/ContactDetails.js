@@ -85,7 +85,10 @@ function ContactDetails() {
   const [isAMLChkOpen, setisAMLChkOpen] = React.useState(false);
   const [isPortalUser, setIsPortalUser] = useState(false);
   const [isInactive, setIsInactive] = useState(false);
-
+  const [TotalSendMsg, setTotalSendMsg] = useState(0);
+  const [TotalRecieveMsg, setTotalRecieveMsg] = useState(0);
+  const [LastMsgSend, setLastMsgSend] = useState("");
+  const [ToBeApproved, setToBeApproved] = useState(0);
   const [amlDetails, setAmlDetails] = useState({
     bankAccNo: "",
     bankSrNo: "",
@@ -112,7 +115,76 @@ function ContactDetails() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  function formatDate(dateString) {
+    // Extract the timestamp from the dateString
+    const timestamp = parseInt(dateString.substring(6, dateString.length - 2));
+  
+    // Create a new Date object using the timestamp
+    const date = new Date(timestamp);
+  
+    // Format the date into a human-readable format (e.g., "MM/DD/YYYY HH:MM:SS")
+    const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} `;
+  
+    return formattedDate;
+  }
+  const Json_GetAllSentMessages = () => {
+    let obj = {
+        agrno: agrno,
+        Email: Email,
+        password: password,
+        emailAddress:"",
+        ccode: originatorNo,
+        folder: folderId,
+      };
+      portlCls.Json_GetAllSentMessages(obj, (sts, data) => {
+        if (sts) {
+          if (data) {
+            let json = JSON.parse(data);
+            console.log("Json_GetAllSentMessages", json);
+            if(json && json.length > 0) {
+                const countToBeApprovedYes = json.filter(item => item["To be Approved"] === "Yes" && item["Approved"] === "No" && item["Date Approved"]==null).length;
+                console.log("To be Approved", countToBeApprovedYes);
+                
+                json.forEach(item => {
+                     if(item.Issued){
+                        
+                        const formattedDate = formatDate(item.Issued);
+                        console.log("formattedDate",formattedDate);
+                        setLastMsgSend(formattedDate);
+                     }
+                 });
+                 
+                   // Output: "12/1/2024 16:41:0"
+                  
+               
+                setTotalSendMsg(json.length);
+                setToBeApproved(countToBeApprovedYes);
+            }
+            
+          }
+        }
+      });
+  }
 
+  const Json_GetAllReceivedMessages = () => {
+    let obj = {
+        agrno: agrno,
+        Email: Email,
+        password: password,
+        emailAddress:"",
+        ccode: originatorNo,
+        folder: folderId,
+      };
+      portlCls.Json_GetAllReceivedMessages(obj, (sts, data) => {
+        if (sts) {
+          if (data) {
+            let json = JSON.parse(data);
+            console.log("Json_GetAllReceivedMessages", json);
+            setTotalRecieveMsg(json.length);
+          }
+        }
+      });
+  }
   useEffect(() => {
     let obj = {
       agrno: agrno,
@@ -155,6 +227,8 @@ function ContactDetails() {
     } catch (err) {
       console.log("Error while calling Json_GetAllContactsByClientID", err);
     }
+    Json_GetAllSentMessages();
+    Json_GetAllReceivedMessages();
   }, []);
 
   const handleClick = (event) => {
@@ -541,7 +615,7 @@ function ContactDetails() {
                                 Email
                               </p>
                               <p className="mb-0 font-14 text-gray">
-                                test@gmail.com
+                               {item["E-Mail"]}
                               </p>
                             </Box>
                           </Box>
@@ -705,7 +779,7 @@ function ContactDetails() {
                           className="mb-0 "
                           gutterBottom
                         >
-                          45664
+                          {ToBeApproved}
                         </Typography>
                       </Box>
 
@@ -720,7 +794,7 @@ function ContactDetails() {
                           className="mb-0 "
                           gutterBottom
                         >
-                          516
+                          {TotalSendMsg}
                         </Typography>
                       </Box>
 
@@ -735,7 +809,7 @@ function ContactDetails() {
                           className="mb-0 "
                           gutterBottom
                         >
-                          23156
+                          {TotalRecieveMsg}
                         </Typography>
                       </Box>
 
@@ -750,7 +824,7 @@ function ContactDetails() {
                           className="mb-0 "
                           gutterBottom
                         >
-                          23/05/23
+                         {LastMsgSend}
                         </Typography>
                       </Box>
                     </Box>
