@@ -666,6 +666,7 @@ function ContactDetails() {
                 <Box className="col-xl-8 col-lg-8 col-md-12 d-flex">
                   <Box className="white-box w-100">
                     <Box className="contact-detail-row mb-4 relative">
+                    {!isPortalUser && (
                       <Box className="subscribe-box">
                         <Typography variant="h4" className="mb-3 font-20">
                           This contact does not have a portal account. Please
@@ -677,7 +678,7 @@ function ContactDetails() {
                           Create Portal Account
                         </Button>
                       </Box>
-
+                    )}
                       <Box className="contact-detail-box">
                         <HowToRegIcon />
                         <Typography variant="h4" className="mb-0 " gutterBottom>
