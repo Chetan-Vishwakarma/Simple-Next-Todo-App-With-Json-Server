@@ -13,6 +13,7 @@ import SelectBox, { SelectBoxTypes } from 'devextreme-react/select-box';
 import CheckBox, { CheckBoxTypes } from 'devextreme-react/check-box';
 import CommanCLS from '../../services/CommanService';
 import CustomLoader from '../../components/CustomLoader';
+import { useNavigate } from 'react-router';
 
 const saleAmountEditorOptions = { format: 'currency', showClearButton: true };
 const filterLabel = { 'aria-label': 'Filter' };
@@ -80,6 +81,8 @@ const orderHeaderFilter = (data) => {
 
 function Contact() {
 
+  const navigate = useNavigate();
+
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -142,6 +145,28 @@ function Contact() {
 
   }, [])
 
+  const handleRowDoubleClick = (e) => {
+    navigate('/dashboard/ContactDetails', {
+      state: {
+          agrno: agrno,
+          Email: Email,
+          password: password,
+          folderId: folderId,
+          originatorNo: e.data.OriginatorNo,
+          contactNo: e.data.ContactNo
+      }
+  })
+    // Handle double click event on the row
+    console.log('Row double-clicked sdaskldjsajlaj:', e.data);
+    // if(selectedChoice==="All" || selectedChoice==="Contacts"){
+    //     let orgNo = e.data.OriginatorNo;
+    //     let contactNo = e.data.ContactNo;
+    //     handleContactNavigattion(orgNo, contactNo);
+    // }else{
+    //     let originatorNo = e.data.OriginatorNo;
+    //     handleClientNavigation(originatorNo);
+    // }
+  };
 
   return (
     <div className='table-responsive table-grid table-grid-2'>
@@ -150,6 +175,7 @@ function Contact() {
         className='client-card-contact-grid'
         ref={dataGridRef}
         dataSource={allContactList}
+        onRowDblClick={handleRowDoubleClick}
         keyExpr="E-Mail"
         showBorders={true}>
           <FilterRow visible={true} />
