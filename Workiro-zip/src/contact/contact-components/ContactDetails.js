@@ -238,8 +238,103 @@ function ContactDetails() {
     };
     const handleClose = () => {
         setAnchorEl(null);
-    };
+    }
+  const handleUpdateContactVerify = (target) => {
+    if (target === "drivingLicNo") {
+      if (isValidate("drivingLicNo")) {
+        Json_UpdateContactVerify();
+      }
+    }
+  };
 
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setAmlDetails((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const isValidate = (str) => {
+    if (amlDetails[str].length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  const PortalUserAccountCreated_Json = () => {
+    console.log("PortalUserAccountCreated", contactDetails);
+    // if(contactDetails && contactDetails.length > 0) {
+    //     if (contactDetails[0]["E-Mail"].includes("@NoEmail")) {
+    //         toast.error("Please use a valid email address");
+    //     }
+        
+    // }
+    let obj = {
+      accid: agrno,
+      email: Email,
+      password: password,
+      PresetMemorableData: true,
+      IssueReminders: false,
+      ExcludeMessageLink: true,
+      KeepSignedIn: true,
+      AllowUpload: true,
+      ChangeProfile: true,
+      LoggedIn: false,
+      Blocked: false,
+      emailAddress: contactDetails[0]["E-Mail"]
+        ? contactDetails[0]["E-Mail"]
+        : "",
+      ccode: contactDetails[0].OriginatorNo
+        ? contactDetails[0].OriginatorNo
+        : "",
+      clientName: contactDetails[0]["Company Name"]
+        ? contactDetails[0]["Company Name"]
+        : "",
+    };
+    console.log(contactDetails, "contactDetails111");
+    try {
+      portlCls.PortalUserAccountCreated_Json(obj, (sts, data) => {
+        if (sts) {
+            toast.success("Portal Account Created Successfully !");
+            // setIsPortalUser(true);
+            setIsPortalUser(true);
+          if (data) {
+            // let json = JSON.parse(data);
+            console.log("PortalUserAccountCreated_Json", data);
+           
+
+            toast.success("Portal Account Created Successfully !");
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling PortalUserAccountCreated_Json", err);
+    }
+  };
+  const Json_VerifyDrivingLicence = () => {
+    setIsViewerModalOpen(!isViewerModalOpen);
+    let obj = {
+      agrno: agrno,
+      strEmail: Email,
+      password: password,
+      strTitle: "",
+      strFirstName: "",
+      strMiddleName: "",
+      strLastName: "",
+      dtDateOfBirth: "",
+      strGender: "",
+      strAddress1: "",
+      strAddress2: "",
+      strAddress3: "",
+      strAddress4: "",
+      strPostTown: "",
+      strCounty: "",
+      strPostCode: "",
+      strCountry: "",
+      strLicenseNo: amlDetails.drivingLicNo,
+    };
+  }
     const handleClickOpen = () => {
         setAmlDetails({
             bankAccNo: "",
@@ -279,104 +374,104 @@ function ContactDetails() {
         }
     };
 
-    const handleUpdateContactVerify = (target) => {
-        if (target === "drivingLicNo") {
-            if (isValidate("drivingLicNo")) {
-                Json_UpdateContactVerify();
-            }
-        }
-    };
+    // const handleUpdateContactVerify = (target) => {
+    //     if (target === "drivingLicNo") {
+    //         if (isValidate("drivingLicNo")) {
+    //             Json_UpdateContactVerify();
+    //         }
+    //     }
+    // };
 
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setAmlDetails((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
-    };
+    // const handleInputChange = (event) => {
+    //     const { name, value } = event.target;
+    //     setAmlDetails((prevState) => ({
+    //         ...prevState,
+    //         [name]: value,
+    //     }));
+    // };
 
-    const isValidate = (str) => {
-        if (amlDetails[str].length > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    };
-    const PortalUserAccountCreated_Json = () => {
-        console.log("PortalUserAccountCreated", contactDetails);
-        let obj = {
-            accid: contactDetails[0].OriginatorNo
-                ? contactDetails[0].OriginatorNo
-                : "",
-            email: Email,
-            password: password,
-            PresetMemorableData: true,
-            IssueReminders: false,
-            ExcludeMessageLink: false,
-            KeepSignedIn: false,
-            AllowUpload: false,
-            ChangeProfile: false,
-            LoggedIn: false,
-            Blocked: false,
-            emailAddress: contactDetails[0]["E-Mail"]
-                ? contactDetails[0]["E-Mail"]
-                : "",
-            ccode: contactDetails[0].OriginatorNo
-                ? contactDetails[0].OriginatorNo
-                : "",
-            clientName: contactDetails[0]["Company Name"]
-                ? contactDetails[0]["Company Name"]
-                : "",
-        };
-        console.log(contactDetails, "contactDetails111");
-        try {
-            portlCls.PortalUserAccountCreated_Json(obj, (sts, data) => {
-                if (sts) {
-                    if (data) {
-                        // let json = JSON.parse(data);
-                        console.log("PortalUserAccountCreated_Json", data);
-                        setIsPortalUser(true);
+    // const isValidate = (str) => {
+    //     if (amlDetails[str].length > 0) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // };
+    // const PortalUserAccountCreated_Json = () => {
+    //     console.log("PortalUserAccountCreated", contactDetails);
+    //     let obj = {
+    //         accid: contactDetails[0].OriginatorNo
+    //             ? contactDetails[0].OriginatorNo
+    //             : "",
+    //         email: Email,
+    //         password: password,
+    //         PresetMemorableData: true,
+    //         IssueReminders: false,
+    //         ExcludeMessageLink: false,
+    //         KeepSignedIn: false,
+    //         AllowUpload: false,
+    //         ChangeProfile: false,
+    //         LoggedIn: false,
+    //         Blocked: false,
+    //         emailAddress: contactDetails[0]["E-Mail"]
+    //             ? contactDetails[0]["E-Mail"]
+    //             : "",
+    //         ccode: contactDetails[0].OriginatorNo
+    //             ? contactDetails[0].OriginatorNo
+    //             : "",
+    //         clientName: contactDetails[0]["Company Name"]
+    //             ? contactDetails[0]["Company Name"]
+    //             : "",
+    //     };
+    //     console.log(contactDetails, "contactDetails111");
+    //     try {
+    //         portlCls.PortalUserAccountCreated_Json(obj, (sts, data) => {
+    //             if (sts) {
+    //                 if (data) {
+    //                     // let json = JSON.parse(data);
+    //                     console.log("PortalUserAccountCreated_Json", data);
+    //                     setIsPortalUser(true);
 
-                        toast.success("Portal Account Created Successfully !");
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling PortalUserAccountCreated_Json", err);
-        }
-    };
-    const Json_VerifyDrivingLicence = () => {
-        setIsViewerModalOpen(!isViewerModalOpen);
-        let obj = {
-            agrno: agrno,
-            strEmail: Email,
-            password: password,
-            strTitle: "",
-            strFirstName: "",
-            strMiddleName: "",
-            strLastName: "",
-            dtDateOfBirth: "",
-            strGender: "",
-            strAddress1: "",
-            strAddress2: "",
-            strAddress3: "",
-            strAddress4: "",
-            strPostTown: "",
-            strCounty: "",
-            strPostCode: "",
-            strCountry: "",
-            strLicenseNo: amlDetails.drivingLicNo,
-        };
-        try {
-            Cls.Json_VerifyDrivingLicence(obj, (sts, data) => {
-                if (sts) {
-                    console.log("Json_VerifyDrivingLicence", data);
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_VerifyDrivingLicence", err);
-        }
-    };
+    //                     toast.success("Portal Account Created Successfully !");
+    //                 }
+    //             }
+    //         });
+    //     } catch (err) {
+    //         console.log("Error while calling PortalUserAccountCreated_Json", err);
+    //     }
+    // };
+    // const Json_VerifyDrivingLicence = () => {
+    //     setIsViewerModalOpen(!isViewerModalOpen);
+    //     let obj = {
+    //         agrno: agrno,
+    //         strEmail: Email,
+    //         password: password,
+    //         strTitle: "",
+    //         strFirstName: "",
+    //         strMiddleName: "",
+    //         strLastName: "",
+    //         dtDateOfBirth: "",
+    //         strGender: "",
+    //         strAddress1: "",
+    //         strAddress2: "",
+    //         strAddress3: "",
+    //         strAddress4: "",
+    //         strPostTown: "",
+    //         strCounty: "",
+    //         strPostCode: "",
+    //         strCountry: "",
+    //         strLicenseNo: amlDetails.drivingLicNo,
+    //     };
+    //     try {
+    //         Cls.Json_VerifyDrivingLicence(obj, (sts, data) => {
+    //             if (sts) {
+    //                 console.log("Json_VerifyDrivingLicence", data);
+    //             }
+    //         });
+    //     } catch (err) {
+    //         console.log("Error while calling Json_VerifyDrivingLicence", err);
+    //     }
+    // };
 
     return (
         <Box className="container-fluid p-0">
@@ -1421,8 +1516,8 @@ function ContactDetails() {
             {/* viewer modal end */}
         </Box>
     );
-}
 
+}
 export default ContactDetails;
 
 // country
