@@ -34,7 +34,7 @@ function EditReference({ companyEditDetails }) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [userDetail, setUserDetail] = useState({
     Clientname: "",
-    Clientid: "",
+    Clientid: companyEditDetails[0].OriginatorNo,
     Mobile: "",
     Telephone: "",
     Line1: "",
