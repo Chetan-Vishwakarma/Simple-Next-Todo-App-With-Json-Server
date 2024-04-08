@@ -565,7 +565,9 @@ function ContactDetails() {
 
                                 <Box className="col-xl-8 col-lg-8 col-md-12 d-flex">
                                     <Box className='white-box w-100'>
+                                    {isPortalUser && (
                                         <Box className='contact-detail-row mb-4'>
+
                                             <Box className='contact-detail-box'>
                                                 <KeyIcon />
                                                 <Typography variant="h4" className='mb-0 ' gutterBottom>
@@ -621,7 +623,7 @@ function ContactDetails() {
                                                 </Typography>
                                             </Box>
                                         </Box>
-
+                                    )}  
 
                                         {/* test */}
                                         <Box className='card-box d-flex'>
@@ -631,17 +633,6 @@ function ContactDetails() {
                                                 <p className='mb-0 font-14 text-gray'>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the when an unknown printer took a galley of type and scrambled it to make simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the when an unknown printer took a galley of type  the industry standard dummy text ever since the when an unknown p and scrambled it to make a type specimen book.</p>
                                             </Box>
                                         </Box>
-
-
-
-
-
-                                        {/* <textarea></textarea> */}
-
-                                        {/*  */}
-
-
-
 
                                     </Box>
                                     {/* white box end */}
