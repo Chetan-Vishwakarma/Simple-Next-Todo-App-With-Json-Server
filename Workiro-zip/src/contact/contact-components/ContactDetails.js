@@ -302,12 +302,12 @@ function ContactDetails() {
   };
   const PortalUserAccountCreated_Json = () => {
     console.log("PortalUserAccountCreated", contactDetails);
-    if(contactDetails && contactDetails.length > 0) {
-        if (contactDetails[0]["E-Mail"].includes("@NoEmail")) {
-            toast.error("Please use a valid email address");
-        }
+    // if(contactDetails && contactDetails.length > 0) {
+    //     if (contactDetails[0]["E-Mail"].includes("@NoEmail")) {
+    //         toast.error("Please use a valid email address");
+    //     }
         
-    }
+    // }
     let obj = {
       accid: agrno,
       email: Email,
