@@ -861,7 +861,7 @@ function ContactDetails() {
                                                     className="mb-0 "
                                                     gutterBottom
                                                 >
-                                                    Active
+                                                    Unblocked
                                                 </Typography>
 
                                                 <Box className='mt-2'>
@@ -928,7 +928,7 @@ function ContactDetails() {
                                             <Box className="contact-detail-box">
                                                 <CalendarMonthIcon />
                                                 <Typography variant="h4" className="mb-0 " gutterBottom>
-                                                    Last Message sent on
+                                                    Last Message <br />sent on
                                                 </Typography>
 
                                                 <Typography
