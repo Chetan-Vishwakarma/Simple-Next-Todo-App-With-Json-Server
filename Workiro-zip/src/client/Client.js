@@ -98,7 +98,7 @@ function Client() {
     const [selectedProperty, setSelectedProperty] = useState("");
     const [selectedPropertyValue, setSelectedPropertyValue] = useState("");
 
-    const [isLoading,setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
     const colorArr = ["#e26124", "#20aedb", "#075adb", "#be1de8", "#00983b", "#ed32b3"];
 
 
@@ -195,7 +195,7 @@ function Client() {
         }
     }
 
-    const Json_GetSupplierListByProject = (folder_id = folderId) => {
+    const Json_GetSupplierListByProject = (folder_id = folderId, favouriteClients = favourites) => {
         let obj = {
             agrno: agrno,
             Email: Email,
@@ -207,8 +207,26 @@ function Client() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
+                        const clients_data = json?.Table;
+                        
+                        // sorting functionality start
+                        const fvClient = favouriteClients.map(itm => itm.OriginatorNo);   // getting favourite clients org number
+                        const filterFvClient = [...new Set(fvClient)];  // filtering duplicate favourite client
+                        const dddd = [...clients_data].filter(itm => itm["Company Name"] !== '').sort((a, b) => a["Company Name"].localeCompare(b["Company Name"]));
+                        let dtaa = [...dddd].sort((a,b)=>{
+                            let cpm = 0;
+                            if(filterFvClient.includes(a.OriginatorNo)){
+                                cpm = -1;
+                            }else{
+                                cpm = 1;
+                            }
+                            return cpm;
+                        });
+                        // sorting functionality completed
+
                         console.log("Json_GetSupplierListByProject", json);
-                        setClients(json?.Table);
+                        // setClients(json?.Table);  // old code 
+                        setClients(dtaa);
                         setClientKeys(Object.keys(json.Table[0]));
                         setIsLoading(false);
                         Json_GetContactListByFolder(folder_id);
@@ -245,12 +263,34 @@ function Client() {
             setLoadMore((preValue) => preValue + 20);
         }
     }
+    const Json_GetToFavourites = () => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password
+        };
+        try {
+            Cls.Json_GetToFavourites(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        Json_GetSupplierListByProject(folderId, json.Table);
+                        setFavourites(json.Table);
+                        console.log("Json_GetToFavourites", json.Table);
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_GetToFavourites", err);
+        }
+    }
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
-        Json_GetSupplierListByProject();
+        // Json_GetSupplierListByProject();
+        Json_GetToFavourites();
         window.addEventListener('scroll', eventHandler)
     }, []);
     const basedOnClientContactAndAll = (target) => {
@@ -601,13 +641,15 @@ function Client() {
                 password: password,
                 folderId: folderId,
                 originatorNo: clientId,
-                globalSearchDocs:[]
+                globalSearchDocs: []
             }
         })
     }
     const [isGridView, setIsGridView] = useState(false);
     const [isCardView, setIsCardView] = useState(true);
     const [suggestionList, setSuggestionList] = useState([]);
+    const [favourites, setFavourites] = useState([]);
+
 
     const createSuggestionList = (value, data) => {
         let fltRepeatData = [];
@@ -676,7 +718,7 @@ function Client() {
     return (
         <Box className='container-fluid p-0' onClick={handleClick}>
 
-            {isLoading? <CustomLoader/> :<Box className='row'>
+            {isLoading ? <CustomLoader /> : <Box className='row'>
                 <Box className='col-lg-12'>
                     <Box className='d-flex main-search-box mb-2 align-items-center justify-content-between'>
                         <Box className='d-flex'>
@@ -691,10 +733,10 @@ function Client() {
                                             className={isSearch ? 'Mui-focused' : ''}>
                                             <span className="material-symbols-outlined search-icon">search</span>
 
-                                            <Input 
-                                                onClick={(e) => handleDialogsOpen(e, "Search")} 
-                                                onChange={(e) => handleSearch(e.target.value)} 
-                                                placeholder='Search' 
+                                            <Input
+                                                onClick={(e) => handleDialogsOpen(e, "Search")}
+                                                onChange={(e) => handleSearch(e.target.value)}
+                                                placeholder='Search'
                                                 className='ps-0' />
                                         </AutocompleteRoot>
 
