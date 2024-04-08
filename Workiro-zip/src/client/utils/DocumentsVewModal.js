@@ -28,12 +28,13 @@ import Swal from 'sweetalert2';
 import CreateNewModalTask from '../../components/CreateNewModal';
 
 import $ from 'jquery';
+import CustomLoader from '../../components/CustomLoader';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 
-function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
+function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument }) {
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -41,7 +42,13 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
     const [txtFolderId, setFolderId] = useState(localStorage.getItem("FolderId"));
     const [ViewerToken, setViewerToken] = useState(localStorage.getItem("ViewerToken"));
     const [getAudit, setGetAudit] = useState([]);
+
     const [getAttachment, setGetAttachment] = useState([]);
+
+    const [txtClientData, setTxtClientData] = useState({});
+    const [txtSectionData, setTxtSectionData] = useState({});
+    const [txtFolderData, setTxtFolderData] = useState({});
+
     //const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/"; // base url for api
@@ -71,9 +78,12 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
     const [getAssociatedTaskList, setGetAssociatedTaskList] = React.useState([]);
 
 
+
     const [documentdata, setDocumentData] = useState();
     const [openModal, setopenModal] = useState(false);
     const [TaskType, setTaskType] = useState("");
+
+    const [isLoading, setIsLoading] = useState(true);
 
     const [createNewFileObj, setCreateNewFileObj] = useState([]);
 
@@ -181,32 +191,78 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
         setViewerToken(localStorage.getItem("ViewerToken"));
 
         if (selectedDocument) {
+            console.log("selectedDocument", selectedDocument)
+
+            setTxtClientData({ Client: selectedDocument.Client, ClientID: selectedDocument.SenderId })
+            setTxtSectionData({ Sec: selectedDocument.Section, SecID: selectedDocument.PostItemTypeID })
+            setTxtFolderData({ Folder: selectedDocument.Folder, FolderID: selectedDocument.ProjectId })
+
+            Json_GetItemBase64DataById(selectedDocument)
+
             var IsApproved = selectedDocument["IsApproved"];
             var PortalDocId = selectedDocument["PortalDocId"];
             let IsApp = "";
             let PortalID = "";
-
             if (IsApproved === "SIG" && PortalDocId !== "") {
                 IsApp = IsApproved;
                 PortalID = PortalDocId;
             }
-
             setViwerUrl(`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${selectedDocument["Registration No."]}&ext=${selectedDocument.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`);
+
+
             Json_GetAudit();
             Json_GetAttachmentsByItemId();
             Json_GetItemStickyNotes();
             Json_getAssociatedTaskListByDocumentId();
+            setSeletedFileData([]);
+            setopenModal(false)
         }
-        setSeletedFileData([]);
+
+
 
     }, [selectedDocument])
 
     const handeleAttachmentChange = (el) => {
-        console.log("handle change", el)
         setSeletedFileData((pre) => [...pre, el]);
 
     }
 
+
+    function Json_GetItemBase64DataById(item) {
+        try {
+            let filesData = [];
+            let obj = {};
+            obj.ItemId = item["Registration No."]
+            cls.Json_GetItemBase64DataById(obj, function (sts, base64data) {
+                if (sts) {
+                    if (base64data !== "No Data Exist") {
+                        const fileData = {
+                            FileName: item.Description + "." + item.Type,
+                            Base64: base64data ? base64data : "", // Base64 data of the file
+                            FileSize: "",
+                            Preview: "", // Data URL for preview
+                            DocId: item["Registration No."],
+                            Guid: "",
+                            FileType: item["Type"].toLowerCase(),
+                            Description: item.Description
+
+                        };
+                        console.log("handle change fileData", fileData)
+                        filesData.push(fileData);
+                        setCreateNewFileObj(filesData);
+                    }
+                    else {
+                        toast.error(item.Description + "was not uploaded as it had no data")
+                    }
+
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetItemBase64DataById error", error)
+        }
+
+    }
 
 
     function DowloadSingleFileOnClick() {
@@ -390,12 +446,19 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
 
     }
 
+
+
+
+
     const createTask = () => {
         setTaskType("CRM")
         setopenModal(true)
-        console.log("Create New Task");
 
+    }
 
+    const createTaskForPublish = () => {
+        setTaskType("Portal")
+        setopenModal(true)
     }
 
 
@@ -413,42 +476,38 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
                 className='custom-modal full-modal'
                 sx={{ width: '100%', maxWidth: '100%' }}
             >
-                <Box className="d-flex align-items-center justify-content-between modal-head">
-                    <Box className="dropdown-box">
-                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                            Document List
-                        </Typography>
-                    </Box>
+                <DialogContent>
 
-                    {/*  */}
 
-                    {TaskType === "CRM" && <CreateNewModalTask
+                    <Box className="d-flex align-items-center justify-content-between">
+                        <Box className="dropdown-box">
+                            <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                                Document List
+                            </Typography>
+                        </Box>
 
-                        TaskType={TaskType}
-                        // setPassButtonHide={setPassButtonHide}
-                        // passButtonHide={passButtonHide}
-                        openModal={openModal}
-                    ></CreateNewModalTask>}
+                        {/*  */}
 
-                    <Box className="d-flex align-items-center justify-content-between flex-wrap">
+                        <Box className="d-flex align-items-center justify-content-between flex-wrap">
 
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTask} >Create Task</Button>
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
-                        {/* <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button> */}
+                            <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTask} >Create Task</Button>
+                            <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTaskForPublish} >Publish</Button>
+                            <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
+                            {/* <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button> */}
 
-                        <Box>
-                            <Button
-                                id="basic-button"
-                                aria-controls={ChangeIndex ? 'basic-menu' : undefined}
-                                aria-haspopup="true"
-                                aria-expanded={ChangeIndex ? 'true' : undefined}
-                                onClick={handleClickChangeIndex}
-                                className='btn-blue-2 me-2 mb-1'
-                            >
-                                Category
-                                {/* <KeyboardArrowDownIcon className='ms-1' /> */}
-                            </Button>
-                            {/* <Menu
+                            <Box>
+                                <Button
+                                    id="basic-button"
+                                    aria-controls={ChangeIndex ? 'basic-menu' : undefined}
+                                    aria-haspopup="true"
+                                    aria-expanded={ChangeIndex ? 'true' : undefined}
+                                    onClick={handleClickChangeIndex}
+                                    className='btn-blue-2'
+                                >
+                                    Category
+                                    {/* <KeyboardArrowDownIcon className='ms-1' /> */}
+                                </Button>
+                                {/* <Menu
                                 id="basic-menu"
                                 className='custom-dropdown'
                                 anchorEl={anchorElChangeIndex}
@@ -464,58 +523,49 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
                                 <MenuItem onClick={handleCloseChangeIndex}> <AddIcon className='me-2' /> </MenuItem>
                                 <MenuItem onClick={handleCloseChangeIndex}> <AlarmOnIcon className='me-2' /> Add Activity </MenuItem>
                             </Menu> */}
+                            </Box>
+
+                            <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
+                                <span className="material-symbols-outlined text-black">
+                                    cancel
+                                </span>
+                            </Button>
+
                         </Box>
-
-                        <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
-                            <span className="material-symbols-outlined text-black">
-                                cancel
-                            </span>
-                        </Button>
-
                     </Box>
-                </Box>
 
-                <DialogContent className='full-height-modal'>
+                    <hr />
 
                     <DialogContentText id="alert-dialog-description">
-                        <Box sx={{ width: '100%', typography: 'body1' }}>
+                        <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
                             <TabContext value={value}>
                                 <Box>
-                                    <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
+                                    <Tabs onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
                                         <Tab label="Documents" value="1" />
                                         <Tab label="Versions" value="2" />
                                         <Tab label="Notes" value="3" />
                                         <Tab label="Associated Tasks" value="4" />
                                         <Tab label="Activity" value="5" />
                                         <Tab label="Attachments" value="6" />
-                                    </TabList>
+                                    </Tabs>
                                 </Box>
                                 <TabPanel value="1" className='p-0'>
-                                    <Box className='white-box relative'>
-                                        <Box className='text-end mb-3 btn-download'>
-                                            <DownloadForOfflineIcon className='text-red pointer font-32' />
+                                    <Box className='white-box'>
+                                        <Box className='text-end mb-3'>
+                                            <DownloadForOfflineIcon className='text-red pointer font-32  btn-download' />
                                         </Box>
                                         <iframe
-                                            src={viewerUrl} // Specify the URL of the iframe
+                                            src={isLoadingDoc?"http://127.0.0.1:5501/src/client/utils/test/test.html":viewerUrl} // Specify the URL of the iframe
+                                            // src={"http://127.0.0.1:5501/src/client/utils/test/test.html"}
+                                            onLoad={()=>{
+                                                setIsLoadingDoc(false);
+                                            }}
                                             width="100%" // Set the width
                                             height="700px" // Set the height
                                             frameBorder="0" // Set frameborder to 0
                                             allowFullScreen // Allow fullscreen mode
                                             title="Embedded Content" // Set the title for accessibility
                                         />
-
-                                        <CreateNewModalTask
-                                        // documentDate={documentDate}
-                                        // receivedDate={receivedDate}
-                                        // createNewFileObj={createNewFileObj}
-                                        // txtFolderData={txtFolderData}
-                                        // txtClientData={txtClientData}
-                                        // txtSectionData={txtSectionData}
-                                        // TaskType={TaskType}
-                                        // // setPassButtonHide={setPassButtonHide}
-                                        // // passButtonHide={passButtonHide}
-                                        // openModal={openModal}
-                                        ></CreateNewModalTask>
 
                                     </Box>
                                 </TabPanel>
@@ -645,6 +695,15 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
                                 </TabPanel>
                             </TabContext>
 
+
+                            {openModal && <CreateNewModalTask
+                                TaskType={TaskType}
+                                createNewFileObj={createNewFileObj}
+                                txtClientData={txtClientData}
+                                txtSectionData={txtSectionData}
+                                txtFolderData={txtFolderData}
+                                openModal={openModal}
+                            ></CreateNewModalTask>}
                         </Box>
                     </DialogContentText>
                 </DialogContent>

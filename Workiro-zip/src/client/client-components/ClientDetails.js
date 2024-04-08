@@ -201,6 +201,7 @@ function ClientDetails() {
 
                 {globalSearchDocs.length === 0 && <Box className="d-flex align-items-center justify-content-between flex-wrap">
                     <Box className='d-flex flex-wrap align-items-center'>
+
                         <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
                             {clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}
                         </Typography>
@@ -272,7 +273,7 @@ function ClientDetails() {
                             <Contact></Contact>
                         </TabPanel>
                         <TabPanel value="4" className='p-0'>
-                            <TaskList></TaskList>
+                            <TaskList clientName={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}></TaskList>
                         </TabPanel>
 
                         <TabPanel value="5" className='p-0 relative'>

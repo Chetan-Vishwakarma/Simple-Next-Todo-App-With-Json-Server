@@ -3,8 +3,8 @@ import React from 'react'
 import PinDropIcon from '@mui/icons-material/PinDrop';
 import PhoneIcon from '@mui/icons-material/Phone';
 
-function CompanyDetails({companyDetails}) {
-    console.log("flljsdfsd",companyDetails[0]);
+function CompanyDetails({ companyDetails }) {
+    console.log("flljsdfsd", companyDetails[0]);
     return (
         <Box className="col-xl-6 col-lg-6 col-md-12 main-company-details">
             <Typography variant="body1" className='mb-4 bold' gutterBottom>
@@ -12,7 +12,7 @@ function CompanyDetails({companyDetails}) {
             </Typography>
 
             <Box className="row">
-                <Box className="col-lg-4 col-md-6 col-sm-12">
+                <Box className="col-lg-4 col-md-6 col-sm-12 pe-2">
                     <Box class="company-details-box d-flex">
                         <Box class="flex-shrink-0">
                             <PinDropIcon />
@@ -26,9 +26,24 @@ function CompanyDetails({companyDetails}) {
                             </Typography>
                         </Box>}
                     </Box>
+
+                    <Box class="company-details-box d-flex">
+                        <Box class="flex-shrink-0">
+                            <PhoneIcon />
+                        </Box>
+                        <Box class="flex-grow-1 ms-2">
+                            <Typography variant="h6" gutterBottom>
+                                Tel
+                            </Typography>
+                            <Typography variant="body1" gutterBottom>
+                                {companyDetails[0]?.TelNo}
+                            </Typography>
+                        </Box>
+                    </Box>
+
                 </Box>
 
-                <Box className="col-lg-8 col-md-6 col-sm-12">
+                <Box className="col-lg-8 col-md-6 col-sm-12 ps-1">
                     <Box className="row">
                         {companyDetails[0]?.StatusName && <Box className="col-xxl-4 col-lg-6 col-md-6">
                             <Box class="company-details-box">
@@ -87,19 +102,7 @@ function CompanyDetails({companyDetails}) {
                     </Box>
                 </Box>
 
-                <Box class="company-details-box d-flex">
-                    <Box class="flex-shrink-0">
-                        <PhoneIcon />
-                    </Box>
-                    <Box class="flex-grow-1 ms-2">
-                    <Typography variant="h6" gutterBottom>
-                                    Tel
-                                </Typography>
-                        <Typography variant="body1" gutterBottom>
-                            {companyDetails[0]?.TelNo}
-                        </Typography>
-                    </Box>
-                </Box>
+
             </Box>
         </Box>
     )

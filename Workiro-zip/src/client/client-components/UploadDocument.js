@@ -256,7 +256,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                         let clientdata = js.Table1;
                         console.log("Json_GetClientsByFolder", clientdata)
                         if (clientdata.length > 0) {
-                            setClientList(clientdata);
+                            let client_list = clientdata.filter((v,i,a)=>a.findIndex(v2=>(v2.Client===v.Client))===i);
+                            setClientList(client_list);
                             if (originatorNo) {
                                 let res = clientdata.filter((c) => c.ClientID === originatorNo.originatorNo);
                                 if (res.length > 0) {
@@ -265,7 +266,6 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                             }
                         }
                     }
-                   
                 }
             })
         } catch (error) {
@@ -290,7 +290,6 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const handleOnFolderClick = (data) => {
         setInputValue('');
-        console.log("Get Folder On click", data);
         if (data) {
             setTxtFolderId(data.FolderID)
             setTextFolderData(data)
@@ -315,23 +314,32 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
 
     const handleSectionChange = (data) => {
-        console.log("Get Clietn On click", data);
-        setTxtSectionId(data.SecID)
-        setTxtSectionData(data)
-        Json_GetCategory(data.SecID)
-        Json_GetSubSections(data.SecID)
+        if (data !== null) {
+            console.log("Get Clietn On click", data);
+            setTxtSectionId(data.SecID)
+            setTxtSectionData(data)
+            Json_GetCategory(data.SecID)
+            Json_GetSubSections(data.SecID)
+        }
+
     }
 
 
 
 
     const handleCategoryChange = (data) => {
-        console.log("Get Clietn On click", data);
-        setCategoryId(data.CatId)
+        if (data) {
+            console.log("Get Clietn On click", data);
+            setCategoryId(data.CatId)
+        }
+
     }
     const handleStandarDescriptionChange = (data) => {
-        console.log("Get Clietn On click", data);
-        settxtStandarDescription(data.Description)
+        if (data) {
+            console.log("Get Clietn On click", data);
+            settxtStandarDescription(data.Description)
+        }
+
     }
 
     const handleDescriptionChange = (e) => {
@@ -366,8 +374,11 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     }
 
     const handleSubSectionChange = (data) => {
-        console.log("Get Clietn On click", data);
-        setTxtSubSectionData(data);
+        if (data) {
+            console.log("Get Clietn On click", data);
+            setTxtSubSectionData(data);
+        }
+
     }
 
     function Json_GetCategory(SectionId) {
@@ -420,6 +431,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     const [buttonNameText, setButtonNameText] = useState("Submit");
 
 
+
     const handleCheckboxChangeCreateTask = (event) => {
 
         const isChecked = event.target.checked;
@@ -458,18 +470,37 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         setStep(step - 1);
     };
 
-    const UploadDocumentCreattTask = async () => {
-        if (selectedFiles.length > 0) {
-            for (let i of selectedFiles) {
-                await Json_RegisterItem(i)
-            }
-            // setOpenUploadDocument(false);
+    const checkAndLog = (value, errorMessage) => {
+        if (value) {
+            console.log(value);
+        } else {
+            toast.error(errorMessage);           
+        }
+    }
 
+    const UploadDocumentCreattTask = async () => {
+        try {
+
+            if (checkAndLog(txtFolderId, "Please Select a Folder")) return false;
+            if (checkAndLog(txtClientId, "Please Select a Client")) return false;
+            if (checkAndLog(txtSectionId, "Please Select a Section")) return false;
+
+            if (selectedFiles.length > 0) {
+                for (let i of selectedFiles) {
+                    await Json_RegisterItem(i)
+                }
+                // setOpenUploadDocument(false);
+
+            }
+            else {
+                Json_RegisterItem()
+                // toast.success("Document Uploaded!");
+            }
+
+        } catch (error) {
+            console.log("Json_RegisterItem", error)
         }
-        else {
-            Json_RegisterItem()
-            // toast.success("Document Uploaded!");
-        }
+
     }
 
     const [createNewFileObj, setCreateNewFileObj] = useState([]);
@@ -723,7 +754,10 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                         disablePortal
                                         id="combo-box-demo"
                                         options={clientList}
-                                        getOptionLabel={(option) => option.Client} // assuming "Client" is the property you want to display
+                                        getOptionLabel={(option) => {
+                                            console.log("ldsfljfd",option.Client);
+                                            return option.Client;
+                                        }} // assuming "Client" is the property you want to display
 
                                         onChange={(event, newValue) => handleClientChange(newValue)}
                                         renderInput={(params) => <TextField {...params} label="Reference" />}

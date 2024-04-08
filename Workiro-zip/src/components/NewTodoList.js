@@ -18,6 +18,7 @@ import DocumentsVewModal from '../client/utils/DocumentsVewModal';
 import { toast } from 'react-toastify';
 import DocDetails from './DocDetails';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
+import Skeleton from '@mui/material/Skeleton';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 const userId = localStorage.getItem("UserId");
@@ -188,7 +189,6 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
     }
 
     const [isApi, setIsApi] = useState(false);
-
 
     const Json_ExplorerSearchDoc = () => {
         try {
@@ -647,7 +647,9 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
 
                                     <Typography variant='subtitle1 mb-3 d-block'><strong>Type: </strong> {item.Source} </Typography>
 
-                                    <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
+                                    <Typography variant='h2' className='mb-2'>{item.Subject}
+                                    {/* <Skeleton /> */}
+                                    </Typography>
 
                                     <Box className='d-flex align-items-center justify-content-between'>
                                         <Typography variant='subtitle1' ><pan className='text-gray'>
@@ -697,7 +699,7 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
                                     <Box className='mt-2'>
                                         <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)}>Mark Complete</Button>
                                         <DateRangePicker initialSettings={{
-                                                    singleDatePicker: true,
+                                                    singleDatePicker: true, 
                                                     showDropdowns: true,
                                                     startDate: item["EndDateTime"],
                                                     minYear: 1901,
@@ -723,7 +725,7 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
                 </Box>
 
                 <Box id="section2" className='py-4 text-center'>
-                    <Button variant="outlined" onClick={handleLoadMore}>View More</Button>
+                    <Button variant="outlined" onClick={handleLoadMore} className='btn-outlin-2'>View More</Button>
                 </Box>
 
                 {/* row end */}
@@ -823,9 +825,8 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
                     }) : ""}
                 </Box>
                 <Box id="section3" className='py-4 text-center'>
-                    <Button variant="outlined" onClick={handleLoadMoreRecentTask}>View More</Button>
+                    <Button variant="outlined" onClick={handleLoadMoreRecentTask} className='btn-outlin-2'>View More</Button>
                 </Box>
-
 
                 {/* row end */}
                 <hr />
@@ -856,7 +857,6 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
                                         <PushPinIcon className='pinicon'></PushPinIcon>
 
                                     </Box>
-
 
                                     <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> Signature Tast</Typography>
 
