@@ -2086,6 +2086,17 @@ span.tox-statusbar__branding {
   border-radius: 4px;
 }
 
+.toggle-btn.Mui-selected {
+  opacity: .4;
+}
+
+.toggle-btn {
+  background: #4780FF !important;
+  color: #fff !important;
+  padding: 3px 14px !important;
+  background: #fff;
+}
+
 @media only screen and (max-width: 1366px) {
   .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root {
     font-size: 12px;
