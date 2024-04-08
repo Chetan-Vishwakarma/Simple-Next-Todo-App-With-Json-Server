@@ -241,6 +241,7 @@ function ContactDetails() {
         try {
           portlCls.PortalUserAccountCreated_Json(obj, (sts, data) => {
             if (sts) {
+                toast.success("Portal Account Created Successfully !");
               if (data) {
                 // let json = JSON.parse(data);
                 console.log("PortalUserAccountCreated_Json", data);
