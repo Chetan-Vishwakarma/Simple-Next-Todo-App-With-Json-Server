@@ -599,7 +599,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     useEffect(() => {
 
-        
+
 
         setNumPriority(selectedTask.Priority);
         //End PortMethods
@@ -616,7 +616,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         setCurrentDate(startFormattingDate(selectedTask.CreationDate));
         setNextDate(DateFormet(selectedTask.EndDateTime));
         setRemiderDate(dayjs(Cls.getCurrentDate()));
-        Json_GetFolderData(selectedTask.FolderID?selectedTask.FolderID:localStorage.getItem("FolderId"));
+        Json_GetFolderData(selectedTask.FolderID ? selectedTask.FolderID : localStorage.getItem("FolderId"));
         setStatus(selectedTask.mstatus);
         // Json_GetTaskAttachmentList();
         setTSubject(selectedTask.Subject)
@@ -635,11 +635,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         // }
 
 
-      
-            if(selectedTask.ID){
-                Json_Get_CRM_Task_ActivityByTaskId(selectedTask.ID);
-            }
-            
+
+        if (selectedTask.ID) {
+            Json_Get_CRM_Task_ActivityByTaskId(selectedTask.ID);
+        }
+
 
         setIsVisible(false)
 
@@ -857,18 +857,18 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
         ClsPortal.GetComments_Json(o, function (sts, data) {
             if (sts) {
-                if(data){
+                if (data) {
                     let js = JSON.parse(data);
                     if (data) {
                         const formattedActivity = js.map((activity) => {
-                           // let DateOfRemark;
+                            // let DateOfRemark;
                             // if (activity.DateOfRemark) {
                             //     DateOfRemark = parseInt(activity.DateOfRemark.slice(6, -2));
                             // }
                             // const date = new Date(DateOfRemark);
-                          let date =  activity.DateOfRemark?parseInt(activity.DateOfRemark.slice(6, -2)):activity.DateOfRemark;
+                            let date = activity.DateOfRemark ? parseInt(activity.DateOfRemark.slice(6, -2)) : activity.DateOfRemark;
 
-    
+
                             // let ReadDate;
                             // if (activity.ReadDate) {
                             //     ReadDate = parseInt(activity.ReadDate.slice(6, -2));
@@ -877,18 +877,18 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                             return { ...activity, DateOfRemark: date, comDate: date, comNotes: activity.Remark };
                         });
                         console.log("GetComments_Json", formattedActivity);
-    
-    
+
+
                         // let arr1 =  formattedActivity.sort((a, b) => a.DateOfRemark - b.DateOfRemark);
-    
+
                         let margeArr = mergeAndSortByDate(formattedActivity, crmTaskAcivity, "comDate");
-    
+
                         //console.log("GetComments_Json", margeArr);
                         setPortalComments(margeArr);
-    
+
                     }
                 }
-               
+
                 // setTemplateDataMarkup(data)
             }
         })
@@ -1296,7 +1296,10 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     // Document details List
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
-    const handleClickOpenDocumentDetailsList = () => {
+    const [docForDetails, setDocForDetails] = useState({});
+    const handleClickOpenDocumentDetailsList = (sDoc) => {
+        setDocForDetails(sDoc);
+        setExpanded("panel1");
         setOpenDocumentDetailsList(true);
     };
     const handleCloseDocumentDetailsList = () => {
@@ -2367,7 +2370,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                 onClick={handleClickFiles}
                                             >
 
-                                              <span>+ {selectedFiles.length-3}</span>  
+                                                <span>+ {selectedFiles.length - 3}</span>
 
                                             </Button>
                                             <Menu
@@ -2555,7 +2558,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                         >
                                                             <MenuItem onClick={() => {
                                                                 handleCloseDocument()
-                                                                handleClickOpenDocumentDetailsList()
+                                                                handleClickOpenDocumentDetailsList(item)
                                                             }}>
                                                                 <ListItemIcon>
                                                                     <ArticleIcon fontSize="medium" />
@@ -2688,15 +2691,17 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {rows.map((row) => (
-                                                    <TableRow
-                                                        key={row.name}
-                                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                    >
-                                                        <TableCell align="left" className='bold'>{row.document}</TableCell>
-                                                        <TableCell align="left">{row.details}</TableCell>
-                                                    </TableRow>
-                                                ))}
+                                                {Object.keys(docForDetails).length > 0 && Object.keys(docForDetails).map((itm, i) => {
+                                                    if (itm !== "StickyNotes") {
+                                                        return <TableRow
+                                                            key={i}
+                                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                        >
+                                                            <TableCell align="left" className='bold'>{itm}</TableCell>
+                                                            <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date", "Item Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
+                                                        </TableRow>
+                                                    }
+                                                })}
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
