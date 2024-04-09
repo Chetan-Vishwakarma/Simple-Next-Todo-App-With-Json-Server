@@ -1063,10 +1063,12 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                                 item.Signed === "Yes" ? (<>
                                                     <Box className='approval-box'>
                                                         <VerifiedIcon className="me-2" />
-                                                        <Typography variant='subtitle1' className='text-center'>
-                                                            Document Signed
+                                                        <Box>
+                                                            <Typography variant='subtitle1' className=''>
+                                                                Document Signed
+                                                            </Typography>
                                                             <Button className='btn-blue-2' size="small" onClick={handleClickOpenCertificate} startIcon={<ScheduleIcon />}> Document Signed</Button>
-                                                        </Typography>
+                                                        </Box>
                                                     </Box>
                                                 </>) : (<>
                                                     <Box className='approval-box'>
