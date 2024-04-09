@@ -63,7 +63,7 @@ import HowToRegIcon from "@mui/icons-material/HowToReg";
 import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
 import MarkAsUnreadIcon from "@mui/icons-material/MarkAsUnread";
 import Switch from "@mui/material/Switch";
-
+import DialogActions from '@mui/material/DialogActions';
 const label = { inputProps: { "aria-label": "Switch demo" } };
 // const [nextDate, setNextDate] = useState("");
 
@@ -90,6 +90,7 @@ function ContactDetails() {
   const [TotalRecieveMsg, setTotalRecieveMsg] = useState(0);
   const [LastMsgSend, setLastMsgSend] = useState("");
   const [ToBeApproved, setToBeApproved] = useState(0);
+  const [open5, setOpen5] = React.useState(false);
   const [amlDetails, setAmlDetails] = useState({
     bankAccNo: "",
     bankSrNo: "",
@@ -116,6 +117,10 @@ function ContactDetails() {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  const handleClose5 = () => {
+    setOpen5(false);
+};
+
   function formatDate(dateString) {
     // Extract the timestamp from the dateString
     const timestamp = parseInt(dateString.substring(6, dateString.length - 2));
@@ -186,6 +191,7 @@ function ContactDetails() {
         }
       });
   }
+
   useEffect(() => {
     let obj = {
       agrno: agrno,
@@ -241,7 +247,10 @@ function ContactDetails() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  
+  const handleChangeBlock = () =>{
+    setOpen5(true);
+  }
   const handleClickOpen = () => {
     setAmlDetails({
       bankAccNo: "",
@@ -359,6 +368,45 @@ function ContactDetails() {
     
    
   };
+  const PortalUserAccountUpdated_Json = () => {
+    console.log(selected,"selectedblock");
+    setOpen5(false);
+    if(selected === true){
+        let obj = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            IssueReminders: false,
+            ExcludeMessageLink: true,
+            KeepSignedIn: true,
+            AllowUpload: true,
+            ChangeProfile: true,
+            LoggedIn: false,
+            Blocked: selected,
+            emailAddress: contactDetails[0]["E-Mail"]
+              ? contactDetails[0]["E-Mail"]
+              : ""
+          };
+          console.log(contactDetails, "contactDetails111",obj);
+          try {
+            portlCls.PortalUserAccountUpdated_Json(obj, (sts, data) => {
+              if (sts) {
+                // setOpen5(false);
+                if (data) {
+                  // let json = JSON.parse(data);
+                  console.log("PortalUserAccountUpdated_Json", data);
+                 
+                  setSelected(true);
+                  toast.success("blocked Successfully !");
+                }
+              }
+            });
+          } catch (err) {
+            console.log("Error while calling PortalUserAccountCreated_Json", err);
+          }
+    }
+    setSelected(!selected);
+  }
   const Json_VerifyDrivingLicence = () => {
     setIsViewerModalOpen(!isViewerModalOpen);
     let obj = {
@@ -512,7 +560,7 @@ function ContactDetails() {
                                 <img src={user} />
                               </Box>
 
-                              <Tooltip title="UK" arrow>
+                              <Tooltip title={contactDetails[0].Country ? contactDetails[0].Country : ""} arrow>
                                 <Box className="country-flage">
                                   <img src={country} className="" />
                                 </Box>
@@ -780,7 +828,8 @@ function ContactDetails() {
                                                     className="mb-0 "
                                                     gutterBottom
                                                 >
-                                                    Unblocked
+                                                     {/* {selected ? "Unblock" : "Block"} */}
+                                                     Unblock
                                                 </Typography>
 
                                                 <Box className='mt-2'>
@@ -789,11 +838,13 @@ function ContactDetails() {
                                                         value="check"
                                                         selected={selected}
                                                         onChange={() => {
-                                                            setSelected(!selected);
+                                                            handleChangeBlock()
                                                         }}
                                                         size="small"
+                                                        
                                                     >
-                                                        Block
+                                                           {/* {selected ? "Unblock" : "Block"} */}
+                                                           Block
                                                     </ToggleButton>
                                                 </Box>
 
@@ -1403,6 +1454,35 @@ function ContactDetails() {
       {/* Checkmodal check modal End */}
 
       {/* viewer modal start */}
+      <Dialog
+                open={open5}
+                onClose={handleClose5}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className="custom-modal full-modal"
+            >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <div>
+                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                        Do You want to block portal access for this portal user ? 
+                        </Typography>
+                    </div>
+                    <Button onClick={handleClose5 } autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            {/* No */}
+                        </span>
+                    </Button>
+                </Box>
+                
+                <DialogActions>
+          <Button autoFocus variant="contained" onClick={PortalUserAccountUpdated_Json}>
+            Yes
+          </Button>
+          <Button autoFocus variant="outlined" onClick={handleClose5 }>
+           No
+          </Button>
+        </DialogActions>
+            </Dialog>
       <Dialog
         open={isViewerModalOpen}
         onClose={() => setIsViewerModalOpen(false)}

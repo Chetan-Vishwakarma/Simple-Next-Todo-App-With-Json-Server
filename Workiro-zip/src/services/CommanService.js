@@ -1039,6 +1039,19 @@ console.log("formattedDate",formattedDate)
             }
         })
      }
+
+     PortalUserAccountUpdated_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("PortalUserAccountUpdated_Json",obj,false);
+        super.CallNewService("PortalUserAccountUpdated_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
      Json_CRMSaveUDFValues(obj,callBack){   
         super.CreateNewServiceParamObject("Json_CRMSaveUDFValues",obj,true);
         super.CallNewService("Json_CRMSaveUDFValues",function(status,Data){
