@@ -170,7 +170,7 @@ export default function UploadButtons({ userContactDetails, setContactDetails })
           </div>
         ))}
         {images.length === 0 && !previewImage && (
-          <img src="https://via.placeholder.com/100" alt="Blank Preview" style={{ maxWidth: '100px', maxHeight: '100px', margin: '5px',  borderRadius: '90px'  }} />
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg" alt="Blank Preview" style={{ maxWidth: '100px', maxHeight: '100px', margin: '5px',  borderRadius: '90px'  }} />
         )}
       </div>
 
