@@ -273,7 +273,7 @@ export default function DocumentList({ clientId }) {
 
     const Json_GetFolderData = () => {
         let obj = {
-            ClientId: "", Email: Email, ProjectId: folderId, SectionId: "-1", agrno: agrno, password: password
+            ClientId: "", Email: Email, ProjectId: folderId?folderId:localStorage.getItem("FolderId"), SectionId: "-1", agrno: agrno, password: password
         };
         try {
             Cls.Json_GetFolderData(obj, function (sts, data) {

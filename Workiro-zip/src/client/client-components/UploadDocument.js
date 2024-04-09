@@ -573,27 +573,33 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
             //     setPassButtonHide(false);
             // }, 3000);
             cls.Json_RegisterItem(obj, function (sts, data) {
-                if (sts && data) {
-                    let js = JSON.parse(data)
-                    console.log("Json_RegisterItem", js)
-                    if (js.Status == "true") {
-
-                        if (fileData) {
-                            fileData.DocId = js.ItemId;
+                if (sts) {
+                    if(data){
+                        let js = JSON.parse(data)
+                        console.log("Json_RegisterItem", js)
+                        if (js.Status == "true") {
+    
+                            if (fileData) {
+                                fileData.DocId = js.ItemId;
+                            }
+    
+                            if (!typeTaskBool) {
+                                //  setOpenUploadDocument(false);
+                            }
+    
+                            setTimeout(() => {
+                                toast.success(selectedFiles.length + "Document(s) Uploaded!");
+                            }, 4000);
+    
                         }
-
-                        if (!typeTaskBool) {
-                            //  setOpenUploadDocument(false);
+                        else {
+                            //toast.success("Faild Please Try Again");
                         }
-
-                        setTimeout(() => {
-                            toast.success(selectedFiles.length + "Document(s) Uploaded!");
-                        }, 4000);
-
                     }
-                    else {
-                        toast.success("Faild Please Try Again");
+                    else{
+                         toast.error("Faild Please Try Again");
                     }
+                    
 
 
 

@@ -599,10 +599,10 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     useEffect(() => {
 
+        
+
         setNumPriority(selectedTask.Priority);
-
         //End PortMethods
-
         Json_GetForwardUserList(selectedTask.FolderID);
         setSelectedFiles([]);
         Json_GetFolders();
@@ -614,16 +614,12 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         setNotesMessage("");
         Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
         setCurrentDate(startFormattingDate(selectedTask.CreationDate));
-
         setNextDate(DateFormet(selectedTask.EndDateTime));
         setRemiderDate(dayjs(Cls.getCurrentDate()));
-
-        Json_GetFolderData(selectedTask.FolderID);
-
+        Json_GetFolderData(selectedTask.FolderID?selectedTask.FolderID:localStorage.getItem("FolderId"));
         setStatus(selectedTask.mstatus);
         // Json_GetTaskAttachmentList();
         setTSubject(selectedTask.Subject)
-
         Json_GetSections(selectedTask.FolderID)
         // const Json_CRM_GetOutlookTask=async()=>{
         //     let res = await axios.post(`${baseUrl}Json_CRM_GetOutlookTask`,{
@@ -639,12 +635,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         // }
 
 
-        setTimeout(() => {
-
-
-            // console.log("Hello 1s")
-            Json_Get_CRM_Task_ActivityByTaskId(selectedTask.ID);
-        }, 2500);
+      
+            if(selectedTask.ID){
+                Json_Get_CRM_Task_ActivityByTaskId(selectedTask.ID);
+            }
+            
 
         setIsVisible(false)
 
@@ -862,33 +857,38 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
         ClsPortal.GetComments_Json(o, function (sts, data) {
             if (sts) {
-                let js = JSON.parse(data);
-                if (data) {
-                    const formattedActivity = js.map((activity) => {
-                        let DateOfRemark;
-                        if (activity.DateOfRemark) {
-                            DateOfRemark = parseInt(activity.DateOfRemark.slice(6, -2));
-                        }
-                        const date = new Date(DateOfRemark);
+                if(data){
+                    let js = JSON.parse(data);
+                    if (data) {
+                        const formattedActivity = js.map((activity) => {
+                           // let DateOfRemark;
+                            // if (activity.DateOfRemark) {
+                            //     DateOfRemark = parseInt(activity.DateOfRemark.slice(6, -2));
+                            // }
+                            // const date = new Date(DateOfRemark);
+                          let date =  activity.DateOfRemark?parseInt(activity.DateOfRemark.slice(6, -2)):activity.DateOfRemark;
 
-                        // let ReadDate;
-                        // if (activity.ReadDate) {
-                        //     ReadDate = parseInt(activity.ReadDate.slice(6, -2));
-                        // }
-                        // const ReadDate1 = new Date(ReadDate);
-                        return { ...activity, DateOfRemark: date, comDate: date, comNotes: activity.Remark };
-                    });
-                    console.log("GetComments_Json", formattedActivity);
-
-
-                    // let arr1 =  formattedActivity.sort((a, b) => a.DateOfRemark - b.DateOfRemark);
-
-                    let margeArr = mergeAndSortByDate(formattedActivity, crmTaskAcivity, "comDate");
-
-                    console.log("GetComments_Json", margeArr);
-                    setPortalComments(margeArr);
-
+    
+                            // let ReadDate;
+                            // if (activity.ReadDate) {
+                            //     ReadDate = parseInt(activity.ReadDate.slice(6, -2));
+                            // }
+                            // const ReadDate1 = new Date(ReadDate);
+                            return { ...activity, DateOfRemark: date, comDate: date, comNotes: activity.Remark };
+                        });
+                        console.log("GetComments_Json", formattedActivity);
+    
+    
+                        // let arr1 =  formattedActivity.sort((a, b) => a.DateOfRemark - b.DateOfRemark);
+    
+                        let margeArr = mergeAndSortByDate(formattedActivity, crmTaskAcivity, "comDate");
+    
+                        //console.log("GetComments_Json", margeArr);
+                        setPortalComments(margeArr);
+    
+                    }
                 }
+               
                 // setTemplateDataMarkup(data)
             }
         })

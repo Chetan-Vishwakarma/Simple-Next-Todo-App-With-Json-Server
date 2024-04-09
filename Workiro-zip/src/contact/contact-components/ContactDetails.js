@@ -1493,7 +1493,7 @@ function ContactDetails() {
                 onClose={handleClose5}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
-                className="custom-modal full-modal"
+                className="custom-modal"
             >
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <div>

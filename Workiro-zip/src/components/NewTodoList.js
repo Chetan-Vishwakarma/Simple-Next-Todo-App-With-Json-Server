@@ -157,7 +157,7 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
     const Json_getRecentTaskList = () => {
 
         try {
-            ClsPortal.Json_getRecentTaskList((sts, data) => {
+            ClsSms.Json_getRecentTaskList((sts, data) => {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
@@ -207,7 +207,7 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
 
                         if (docs?.length > 0) {
                             console.log("ExplorerSearchDoc", docs);
-                            Json_getRecentDocumentList(docs)
+                           // Json_getRecentDocumentList(docs)
                         }
                     }
                 }
@@ -217,26 +217,45 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
         }
     }
 
-    const Json_getRecentDocumentList = (exData = []) => {
+    const Json_getRecentDocumentList = () => {
 
         try {
-            ClsPortal.Json_getRecentDocumentList((sts, data) => {
+            ClsSms.Json_getRecentDocumentList((sts, data) => {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
                         let tbl = json.Table;
+if(tbl.length>0){
+    const mapMethod = tbl.map(el => {
+        let date = "";
+        if (el["RecentDate"]) {
+            const dateString = el["RecentDate"].slice(6, -2); // Extract the date part
+            const timestamp = parseInt(dateString); // Convert to timestamp
+            if (!isNaN(timestamp)) {
+                date = new Date(timestamp); // Create Date object using timestamp
+            } else {
+                console.error("Invalid timestamp:", dateString);
+            }
+        } else {
+            date = el["RecentDate"];
+        }
+        return { ...el, ["RecentDate"]: date,["Registration No."]:el.ItemId,["Description"]:el.Subject };
+    });
+    setRecentDocument(mapMethod);
+    // const itemIdSet = new Set(tbl.map(item => item.ItemId));
+     console.log("Json_getRecentDocumentList", mapMethod);
+}
 
-                        const itemIdSet = new Set(tbl.map(item => item.ItemId));
-                        console.log("Json_getRecentDocumentList", itemIdSet,exData);
+                       
 
-                        if (exData.length > 0) {
-                            const filteredArray2 = exData.filter(item => itemIdSet.has(item["Registration No."]));
-                            console.log("Json_getRecentDocumentList1", filteredArray2);
-                            if (filteredArray2.length > 0) {
-                                setRecentDocument(filteredArray2);
-                            }
+                        // if (exData.length > 0) {
+                        //     const filteredArray2 = exData.filter(item => itemIdSet.has(item["Registration No."]));
+                        //     console.log("Json_getRecentDocumentList1", filteredArray2);
+                        //     if (filteredArray2.length > 0) {
+                        //         setRecentDocument(filteredArray2);
+                        //     }
 
-                        }
+                        // }
 
 
                     }
@@ -260,7 +279,7 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
 
     useEffect(() => {
         Json_getRecentDocumentList();
-        Json_ExplorerSearchDoc();
+       // Json_ExplorerSearchDoc();
         Json_Get_CRM_UserByProjectId();
         Json_CRM_GetOutlookTask();
         Json_getRecentTaskList();
@@ -444,7 +463,7 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
 
     const [selectedDocument, setSelectedDocument] = React.useState(null);
     const [openPDFView, setOpenPDFView] = React.useState(false);
-
+    const [isLoadingDoc, setIsLoadingDoc] = useState(false);
     const ViewerDocument = (e) => {
         setAnchorElDocumentList(null);
         console.log("document object", e);
@@ -452,6 +471,8 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
         setOpenPDFView(true);
         //    let url =`https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=1002909&filetype=txt&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=&PortalID=`;
         // window.open(url);
+        setIsLoadingDoc(true)
+
 
     };
 
@@ -494,11 +515,13 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
         
     }
 
+   
     
 
     return (
         <Box className="container-fluid p-0">
-            <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
+             <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
+            {/* <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal> */}
             <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
             <DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList }/>
@@ -944,12 +967,12 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
                                             />
                                             <Box className="upload-content pe-3" onDoubleClick={(e) => ViewerDocument(item)}>
                                                 <Typography variant="h4" >
-                                                    {item.Description}
+                                                    {item.Subject}
                                                 </Typography>
                                                 <Typography variant="body1">
                                                     {/* Size:  <span className='sembold'>{item.FileSize}</span> |   */}
-                                                    <span className='sembold'>{moment(item["Item Date"]).format("DD/MM/YYYY")!=="Invalid date"?moment(item["Item Date"]).format("DD/MM/YYYY"):"01/01/2000"}</span>
-                                                    | <span className='sembold'>{item.Client!==""&&item.Client!==null&&item.Client!=="undefined"&&item.Client!==undefined? item.Client: ""}</span>
+                                                    <span className='sembold'>{moment(item["RecentDate"]).format("DD/MM/YYYY")!=="Invalid date"?moment(item["RecentDate"]).format("DD/MM/YYYY"):"01/01/2000"}</span>
+                                                    | <span className='sembold'>{item.OriginatorName? item.OriginatorName :""}</span>
                                                 </Typography>
                                             </Box>
                                         </Box>

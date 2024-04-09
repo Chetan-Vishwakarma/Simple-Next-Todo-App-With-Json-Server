@@ -811,8 +811,6 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                                 <Box className='ps-3'>
                                                     <VerifiedIcon className='text-green' />
                                                     <h5 className='font-14 text-black mb-1'>Message Approved </h5>
-                                                    {/* <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"]}</p>
-                                                    <Button className='btn-blue-2' size="small" onClick={handleClickOpenCertificate} startIcon={<ScheduleIcon />}>Certificate of Approval</Button> */}
                                                     <p className='font-12 text-gray sembold mb-2'>{DateFormateDDMMYYYY(documentStatus["Actioned On"])}</p>
                                                     <Button className='btn-blue-2' size="small" onClick={""} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
                                                 </Box>
@@ -830,7 +828,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                     </>) : (<>
                                         <Box className='ps-2'>
                                             {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
-                                            <HourglassEmptyIcon className='text-gray' />
+                                            <HourglassEmptyIcon className='text-warning' />
                                             <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
                                             {/* <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button> */}
                                         </Box>
