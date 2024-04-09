@@ -2095,10 +2095,11 @@ span.tox-statusbar__branding {
 
 .toggle-btn.Mui-selected {
   opacity: .4;
+  background-color: #D41B20 !important;
 }
 
 .toggle-btn {
-  background: #4780FF !important;
+  background: #239500 !important;
   color: #fff !important;
   padding: 3px 14px !important;
   background: #fff;
