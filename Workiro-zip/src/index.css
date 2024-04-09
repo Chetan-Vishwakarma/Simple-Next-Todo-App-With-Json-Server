@@ -1545,10 +1545,10 @@ span.tox-statusbar__branding {
 }
 
 .card-box {
-  border: 2px dashed #bde0f9;
+  /* border: 2px dashed #bde0f9;
   padding: 12px;
   border-radius: 6px;
-  background: #ebf6fe;
+  background: #ebf6fe; */
 }
 
 .text-yellow {
