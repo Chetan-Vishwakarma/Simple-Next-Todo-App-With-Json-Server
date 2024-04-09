@@ -569,6 +569,15 @@ function AddContacts() {
     Json_GetClientCardDetails();
     Json_GetCRMContactUDFValues();
     Json_GetAllContacts();
+    const clientName = localStorage.getItem("ClientName");
+
+    // Update userContactDetails state with the retrieved value
+    if(clientName){
+      setContactDetails(prevState => ({
+        ...prevState,
+        ReferenceID: clientName
+      }));
+    }
   }, []);
 
   return (

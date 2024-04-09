@@ -29,10 +29,9 @@ function Reference({open5,setOpen5,setReferance}) {
   const [dataCompanyHouse, setDataCompanyHouse] = useState([]);
   // const [activeStep, setActiveStep] = React.useState(0);
   const [contactData, setContactData] = useState("");
-  const handleClickOpen5 = (data) => {
+  const handleClickOpen5 = () => {
     setReferance(false);
     setOpen5(true);
-    setContactData(data);
   };
 
   const handleClose5 = () => {
@@ -201,6 +200,11 @@ function Reference({open5,setOpen5,setReferance}) {
   const [activeStep, setActiveStep] = React.useState(0);
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    if(localStorage.getItem("ClientName")){
+      localStorage.removeItem("ClientName");
+    } else {
+      console.log("error");
+    }
     if (activeStep == steps.length - 1) {
       function todayDate() {
         var today = new Date().toJSON().slice(0, 10);
@@ -248,6 +252,7 @@ function Reference({open5,setOpen5,setReferance}) {
             mainAddress();
             billingAddress();
             ragisterAddress();
+            localStorage.setItem("ClientName",userDetail.Clientname);
           } else {
             toast.error("Reference ID Already Exists!");
           }
@@ -297,12 +302,14 @@ function Reference({open5,setOpen5,setReferance}) {
       if (sts) {
         if (jsonparse.Status == "Success") {
           console.log("Response", data);
+         
           toast.success("Reference Added Successfully !");
           // Json_InsertContact(); Main contact not need
           saveUDF();
           mainAddress();
           billingAddress();
           ragisterAddress();
+         
         } else {
           toast.success("Reference ID Already Exists!");
         }
@@ -522,7 +529,7 @@ function Reference({open5,setOpen5,setReferance}) {
               <Button className="btn-blue-2 mt-4" onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
               Add Another Client
               </Button>
-              <Button className="btn-blue-2 mt-4" sx={{ mt: 1, mr: 1 }} onClick={handleClickOpen5(userDetail.Clientname)}>
+              <Button className="btn-blue-2 mt-4" sx={{ mt: 1, mr: 1 }} onClick={handleClickOpen5}>
               Add Contact
               </Button>
             </Paper>
