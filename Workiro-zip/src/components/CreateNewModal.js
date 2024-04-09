@@ -3796,7 +3796,7 @@ function CreateNewModalTask({ ...props }) {
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
 
-                        <Reference />
+                        <Reference open5={open5} setOpen5={setOpen5} setReferance={setReferance}/>
 
                     </DialogContentText>
                 </DialogContent>

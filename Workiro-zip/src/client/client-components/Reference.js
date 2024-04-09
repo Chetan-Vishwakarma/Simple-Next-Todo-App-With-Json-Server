@@ -14,7 +14,8 @@ import StepLabel from "@mui/material/StepLabel";
 import StepContent from "@mui/material/StepContent";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-function Reference() {
+import CreateNewModalTask from "../../components/CreateNewModal";
+function Reference({open5,setOpen5,setReferance}) {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -27,7 +28,14 @@ function Reference() {
   const [dataFromChild, setDataFromChild] = useState([]);
   const [dataCompanyHouse, setDataCompanyHouse] = useState([]);
   // const [activeStep, setActiveStep] = React.useState(0);
+  const handleClickOpen5 = () => {
+    setReferance(false);
+    setOpen5(true);
+  };
 
+  const handleClose5 = () => {
+    setOpen5(false);
+  };
   const [userDetail, setUserDetail] = useState({
     Clientname: "",
     Clientid: "",
@@ -239,7 +247,7 @@ function Reference() {
             billingAddress();
             ragisterAddress();
           } else {
-            toast.success("Reference ID Already Exists!");
+            toast.error("Reference ID Already Exists!");
           }
         }
       });
@@ -506,18 +514,20 @@ function Reference() {
           </Stepper>
           {activeStep === steps.length && (
             <Paper square elevation={0} sx={{ p: 3 }}>
-              <Typography className="text-green">
+              {/* <Typography className="text-green">
                 References Added Successfully!
-              </Typography>
+              </Typography> */}
               <Button className="btn-blue-2 mt-4" onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
               Add Another Client
               </Button>
-              <Button className="btn-blue-2 mt-4" sx={{ mt: 1, mr: 1 }}>
+              <Button className="btn-blue-2 mt-4" sx={{ mt: 1, mr: 1 }} onClick={handleClickOpen5}>
               Add Contact
               </Button>
             </Paper>
           )}
         </Box>
+        {/* <CreateNewModalTask open={open5} handleClose={handleClose5} /> */}
+
         {/* Stepper end  */}
 
         {/* <Box className="main-accordian">

@@ -34,6 +34,7 @@ import EditClientdetails from './EditClientdetails';
 import EditReference from './EditReference';
 import { toast } from 'react-toastify';
 
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 function ClientDetails() {
 
@@ -185,15 +186,15 @@ function ClientDetails() {
 
     // edit client modal
     const [Referance, setReferance] = React.useState(false);
-    const handleClickReferance = (e,originatorNo) => {
-    
-        console.log(originatorNo,"originatorNossss",clientDetails.Table1);
+    const handleClickReferance = (e, originatorNo) => {
+
+        console.log(originatorNo, "originatorNossss", clientDetails.Table1);
         setReferance(true);
     };
     const EditCLientHandleClose = () => {
         setReferance(false);
     };
-    
+
 
     return (
         <>
@@ -203,6 +204,8 @@ function ClientDetails() {
 
                 {globalSearchDocs.length === 0 && <Box className="d-flex align-items-center justify-content-between flex-wrap">
                     <Box className='d-flex flex-wrap align-items-center'>
+
+                        <ArrowBackIosIcon className='mb-2 pointer' />
 
                         <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
                             {clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}

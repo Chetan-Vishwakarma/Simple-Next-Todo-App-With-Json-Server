@@ -34,6 +34,13 @@
   background: #555;
 }
 
+
+.Toastify {
+  position: absolute;
+  z-index: 999999;
+}
+
+
 nav.navbar.navbar-dark.bg-dark .container {
   background: #4780ff !important;
 }
@@ -1493,7 +1500,7 @@ span.tox-statusbar__branding {
 }
 
 .contact-detail-row .contact-detail-box h4 {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
 }
 
@@ -1951,7 +1958,7 @@ span.tox-statusbar__branding {
 }
 
 .table-view-files .dx-datagrid-table tr td {
-  background: #fff;
+  background: #fff !important;
 }
 
 .table-view-files .dx-datagrid-borders .dx-datagrid-headers .dx-datagrid-table tr td {
