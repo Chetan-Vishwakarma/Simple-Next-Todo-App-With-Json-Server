@@ -215,7 +215,7 @@ function ContactDetails() {
                 console.log("Not Portal User");
                 setIsPortalUser(false);
               }
-              if (contactdata[0].Active === "") {
+              if (contactdata[0].Active == "No") {
                 setIsInactive(true);
               } else {
                 setIsInactive(false);
@@ -302,53 +302,58 @@ function ContactDetails() {
   };
   const PortalUserAccountCreated_Json = () => {
     console.log("PortalUserAccountCreated", contactDetails);
-    // if(contactDetails && contactDetails.length > 0) {
-    //     if (contactDetails[0]["E-Mail"].includes("@NoEmail")) {
-    //         toast.error("Please use a valid email address");
-    //     }
-        
-    // }
-    let obj = {
-      accid: agrno,
-      email: Email,
-      password: password,
-      PresetMemorableData: true,
-      IssueReminders: false,
-      ExcludeMessageLink: true,
-      KeepSignedIn: true,
-      AllowUpload: true,
-      ChangeProfile: true,
-      LoggedIn: false,
-      Blocked: false,
-      emailAddress: contactDetails[0]["E-Mail"]
-        ? contactDetails[0]["E-Mail"]
-        : "",
-      ccode: contactDetails[0].OriginatorNo
-        ? contactDetails[0].OriginatorNo
-        : "",
-      clientName: contactDetails[0]["Company Name"]
-        ? contactDetails[0]["Company Name"]
-        : "",
-    };
-    console.log(contactDetails, "contactDetails111");
-    try {
-      portlCls.PortalUserAccountCreated_Json(obj, (sts, data) => {
-        if (sts) {
-            toast.success("Portal Account Created Successfully !");
-            // setIsPortalUser(true);
-            setIsPortalUser(true);
-          if (data) {
-            // let json = JSON.parse(data);
-            console.log("PortalUserAccountCreated_Json", data);
-           
-
-            toast.success("Portal Account Created Successfully !");
-          }
+    if(contactDetails && contactDetails.length > 0) {
+        if (contactDetails[0]["E-Mail"].includes("@NoEmail")) {
+            toast.error("Please use a valid email address");
+        } else if (contactDetails[0].Active =="No") {
+            toast.error("Contact In-Active");
+        } else{
+            let obj = {
+                accid: agrno,
+                email: Email,
+                password: password,
+                PresetMemorableData: true,
+                IssueReminders: false,
+                ExcludeMessageLink: true,
+                KeepSignedIn: true,
+                AllowUpload: true,
+                ChangeProfile: true,
+                LoggedIn: false,
+                Blocked: false,
+                emailAddress: contactDetails[0]["E-Mail"]
+                  ? contactDetails[0]["E-Mail"]
+                  : "",
+                ccode: contactDetails[0].OriginatorNo
+                  ? contactDetails[0].OriginatorNo
+                  : "",
+                clientName: contactDetails[0]["Company Name"]
+                  ? contactDetails[0]["Company Name"]
+                  : "",
+              };
+              console.log(contactDetails, "contactDetails111");
+              try {
+                portlCls.PortalUserAccountCreated_Json(obj, (sts, data) => {
+                  if (sts) {
+                      toast.success("Portal Account Created Successfully !");
+                      // setIsPortalUser(true);
+                      setIsPortalUser(true);
+                    if (data) {
+                      // let json = JSON.parse(data);
+                      console.log("PortalUserAccountCreated_Json", data);
+                     
+          
+                      toast.success("Portal Account Created Successfully !");
+                    }
+                  }
+                });
+              } catch (err) {
+                console.log("Error while calling PortalUserAccountCreated_Json", err);
+              }
         }
-      });
-    } catch (err) {
-      console.log("Error while calling PortalUserAccountCreated_Json", err);
-    }
+        
+    } 
+    
+   
   };
   const Json_VerifyDrivingLicence = () => {
     setIsViewerModalOpen(!isViewerModalOpen);

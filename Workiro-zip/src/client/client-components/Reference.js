@@ -28,9 +28,11 @@ function Reference({open5,setOpen5,setReferance}) {
   const [dataFromChild, setDataFromChild] = useState([]);
   const [dataCompanyHouse, setDataCompanyHouse] = useState([]);
   // const [activeStep, setActiveStep] = React.useState(0);
-  const handleClickOpen5 = () => {
+  const [contactData, setContactData] = useState("");
+  const handleClickOpen5 = (data) => {
     setReferance(false);
     setOpen5(true);
+    setContactData(data);
   };
 
   const handleClose5 = () => {
@@ -520,7 +522,7 @@ function Reference({open5,setOpen5,setReferance}) {
               <Button className="btn-blue-2 mt-4" onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
               Add Another Client
               </Button>
-              <Button className="btn-blue-2 mt-4" sx={{ mt: 1, mr: 1 }} onClick={handleClickOpen5}>
+              <Button className="btn-blue-2 mt-4" sx={{ mt: 1, mr: 1 }} onClick={handleClickOpen5(userDetail.Clientname)}>
               Add Contact
               </Button>
             </Paper>
