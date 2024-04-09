@@ -138,7 +138,7 @@ function AddContacts() {
       agrno: agrno,
       intProjectId: folderId,
       password: password,
-      strOrignatorNumber: originatorNo
+      strOrignatorNumber: clientIddata ? clientIddata : ""
     };
     try {
       webClientCLS.Json_GetClientCardDetails(obj, (sts, data) => {

@@ -85,6 +85,7 @@ function ContactDetails() {
   const [isAMLChkOpen, setisAMLChkOpen] = React.useState(false);
   const [isPortalUser, setIsPortalUser] = useState(false);
   const [isInactive, setIsInactive] = useState(false);
+  const [isVerfy, setIsVerfy] = useState(false);
   const [TotalSendMsg, setTotalSendMsg] = useState(0);
   const [TotalRecieveMsg, setTotalRecieveMsg] = useState(0);
   const [LastMsgSend, setLastMsgSend] = useState("");
@@ -219,6 +220,9 @@ function ContactDetails() {
                 setIsInactive(true);
               } else {
                 setIsInactive(false);
+              }
+              if(contactdata[0]["Bank Check Document ID"] || contactdata[0]["Bank Checked Date"] || contactdata[0]["License Check Document ID"] || contactdata[0]["License Checked Date"] || contactdata[0]["NI Check Document ID"] || contactdata[0]["NI Checked Date"] || contactdata[0]["Passport Check Document ID"] || contactdata[0]["Passport Checked Date"]){
+                setIsVerfy(true);
               }
             }
           }
@@ -513,8 +517,8 @@ function ContactDetails() {
                                   <img src={country} className="" />
                                 </Box>
                               </Tooltip>
-
-                              <VerifiedIcon className="user-register" />
+                             {isVerfy && (<VerifiedIcon className="user-register" />)}
+                              
                             </Box>
                             <Box className="clearfix">
                               <Typography
