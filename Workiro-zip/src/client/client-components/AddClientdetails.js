@@ -432,6 +432,17 @@ const clearDataCard = () => {
       <Grid item lg={4} xs={6} md={6}>
           <TextField
             fullWidth
+            id="standard-basic-id"
+            label="Client ID"
+            variant="outlined"
+            name="Clientid"
+            value={userDetail.Clientid}
+            onChange={onChange}
+          />
+        </Grid>
+      <Grid item lg={4} xs={6} md={6}>
+          <TextField
+            fullWidth
             id="CHNumber"
             label="CH Number"
             variant="outlined"
@@ -453,17 +464,7 @@ const clearDataCard = () => {
           />
         </Grid>
 
-        <Grid item lg={4} xs={6} md={6}>
-          <TextField
-            fullWidth
-            id="standard-basic-id"
-            label="Client ID"
-            variant="outlined"
-            name="Clientid"
-            value={userDetail.Clientid}
-            onChange={onChange}
-          />
-        </Grid>
+       
 
         <Grid item lg={4} xs={6} md={6}>
         {Isfetchdata && (
