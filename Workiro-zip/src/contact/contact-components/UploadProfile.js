@@ -135,10 +135,10 @@ export default function UploadButtons({ userContactDetails, setContactDetails })
 
       <label htmlFor="icon-button-file">
         <Input
-          accept="image/*"
           id="icon-button-file"
           type="file"
           onChange={handleFileChange}
+          accept="image/*"
         />
       </label>
 
@@ -177,7 +177,7 @@ export default function UploadButtons({ userContactDetails, setContactDetails })
 
       <label htmlFor="contained-button-file">
         <Input
-          accept="*"
+          accept="image/*"
           id="contained-button-file"
           multiple
           type="file"
