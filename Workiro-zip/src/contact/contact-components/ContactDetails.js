@@ -611,10 +611,10 @@ function ContactDetails() {
                           </Box>
 
                           <Box className="card-box d-flex mt-2">
-                            <FmdGoodIcon className="me-2 text-primary" />
+                            <FmdGoodIcon className="me-2 text-danger" />
 
                             <Box className="">
-                              <p className="font-14 bold mb-0 text-primary">
+                              <p className="font-14 bold mb-0 text-black">
                                 Address
                               </p>
                               <p className="mb-0 font-14 text-gray">
@@ -624,10 +624,10 @@ function ContactDetails() {
                           </Box>
 
                           <Box className="card-box d-flex mt-2">
-                            <EmailIcon className="me-2 text-primary" />
+                            <EmailIcon className="me-2 text-danger" />
 
                             <Box className="">
-                              <p className="font-14 bold mb-0 text-primary">
+                              <p className="font-14 bold mb-0 text-black">
                                 Email
                               </p>
                               <p className="mb-0 font-14 text-gray">
@@ -637,10 +637,10 @@ function ContactDetails() {
                           </Box>
 
                           <Box className="card-box d-flex mt-2">
-                            <LocalPhoneIcon className="me-2 text-primary" />
+                            <LocalPhoneIcon className="me-2 text-danger" />
 
                             <Box className="">
-                              <p className="font-14 bold mb-0 text-primary">
+                              <p className="font-14 bold mb-0 text-black">
                                 Phone
                               </p>
                               <p className="mb-0 font-14 text-gray">
@@ -863,9 +863,9 @@ function ContactDetails() {
 
                     {/* test */}
                     <Box className="card-box d-flex">
-                      <EditNoteIcon className="me-2 text-primary" />
+                      <EditNoteIcon className="me-2 text-danger" />
                       <Box className="">
-                        <p className="font-16 bold mb-1 text-primary">Notes</p>
+                        <p className="font-16 bold mb-1 text-black">Notes</p>
                         <p className="mb-0 font-14 text-gray">
                           Lorem Ipsum is simply dummy text of the printing and
                           typesetting industry. Lorem Ipsum has been the
