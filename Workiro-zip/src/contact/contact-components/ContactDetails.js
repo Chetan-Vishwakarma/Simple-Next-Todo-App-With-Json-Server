@@ -84,6 +84,7 @@ function ContactDetails() {
   // AML check modal
   const [isAMLChkOpen, setisAMLChkOpen] = React.useState(false);
   const [isPortalUser, setIsPortalUser] = useState(false);
+  const [issetCountry, setIssetCountry] = useState("");
   const [isInactive, setIsInactive] = useState(false);
   const [isVerfy, setIsVerfy] = useState(false);
   const [TotalSendMsg, setTotalSendMsg] = useState(0);
@@ -215,6 +216,10 @@ function ContactDetails() {
             );
             console.log("Json_GetAllContactsByClientIDssss", contactdata);
             if (contactdata && contactdata.length > 0) {
+              if(countries && countries.length > 0) {
+                const matchingCountry = countries.find(country => country.label === contactDetails[0]?.Country);
+                setIssetCountry(matchingCountry);
+              }
               if (contactdata[0]["Portal User"]) {
                 console.log(contactdata[0]["Portal User"], "portaluser");
                 setIsPortalUser(true);
@@ -594,9 +599,15 @@ function ContactDetails() {
                               </Box>
 
                               <Tooltip title={contactDetails[0].Country ? contactDetails[0].Country : ""} arrow>
-                                <Box className="country-flage">
+                              {issetCountry ? (<Box className="country-flage">
+                              <img src={issetCountry.flagUrl} alt={issetCountry.label} className="" />
+
+                                </Box>) : (
+                                  <Box className="country-flage">
                                   <img src={country} className="" />
                                 </Box>
+                                )}
+                                
                               </Tooltip>
                              {isVerfy && (<VerifiedIcon className="user-register" />)}
                               
