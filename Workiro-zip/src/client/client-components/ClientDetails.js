@@ -32,6 +32,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import EditClientdetails from './EditClientdetails';
 import EditReference from './EditReference';
+import { toast } from 'react-toastify';
 
 
 function ClientDetails() {
@@ -115,7 +116,8 @@ function ClientDetails() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_RemoveToFavourite", json);
+                        // console.log("Json_RemoveToFavourite", json);
+                        toast.success("Removed from favourites");
                         setSelected(false);
                     }
                 }
@@ -138,8 +140,8 @@ function ClientDetails() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_AddToFavourite", json);
-                        let details = json.Table;
+                        // console.log("Json_AddToFavourite", json);
+                        toast.success("Added to favourites");
                         setSelected(true);
                     }
                 }
