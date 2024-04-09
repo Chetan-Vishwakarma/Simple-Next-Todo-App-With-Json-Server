@@ -80,7 +80,7 @@ function ContactDetails() {
   // dropdown
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-  const [selected, setSelected] = React.useState(false);
+  const [selected, setSelected] = React.useState(true);
   // AML check modal
   const [isAMLChkOpen, setisAMLChkOpen] = React.useState(false);
   const [isPortalUser, setIsPortalUser] = useState(false);
@@ -396,8 +396,41 @@ function ContactDetails() {
                   // let json = JSON.parse(data);
                   console.log("PortalUserAccountUpdated_Json", data);
                  
-                  setSelected(true);
-                  toast.success("blocked Successfully !");
+                //   setSelected(true);
+                  toast.success("Portal account Blocked successfully!");
+                }
+              }
+            });
+          } catch (err) {
+            console.log("Error while calling PortalUserAccountCreated_Json", err);
+          }
+    } else {
+        let obj = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            IssueReminders: false,
+            ExcludeMessageLink: true,
+            KeepSignedIn: true,
+            AllowUpload: true,
+            ChangeProfile: true,
+            LoggedIn: false,
+            Blocked: selected,
+            emailAddress: contactDetails[0]["E-Mail"]
+              ? contactDetails[0]["E-Mail"]
+              : ""
+          };
+          console.log(contactDetails, "contactDetails111",obj);
+          try {
+            portlCls.PortalUserAccountUpdated_Json(obj, (sts, data) => {
+              if (sts) {
+                // setOpen5(false);
+                if (data) {
+                  // let json = JSON.parse(data);
+                  console.log("PortalUserAccountUpdated_Json", data);
+                 
+                //   setSelected(true);
+                  toast.success("Portal account unblocked successfully !");
                 }
               }
             });
@@ -828,8 +861,8 @@ function ContactDetails() {
                                                     className="mb-0 "
                                                     gutterBottom
                                                 >
-                                                     {/* {selected ? "Unblock" : "Block"} */}
-                                                     Unblock
+                                                     {selected ? "Unblock" : "Block"}
+                                                     {/* Unblock */}
                                                 </Typography>
 
                                                 <Box className='mt-2'>
@@ -843,8 +876,8 @@ function ContactDetails() {
                                                         size="small"
                                                         
                                                     >
-                                                           {/* {selected ? "Unblock" : "Block"} */}
-                                                           Block
+                                                           {selected===true ? "Block" : "Unblock"}
+                                                           {/* Block */}
                                                     </ToggleButton>
                                                 </Box>
 
@@ -1454,7 +1487,8 @@ function ContactDetails() {
       {/* Checkmodal check modal End */}
 
       {/* viewer modal start */}
-      <Dialog
+      {selected===true ? (
+        <Dialog
                 open={open5}
                 onClose={handleClose5}
                 aria-labelledby="alert-dialog-title"
@@ -1483,6 +1517,39 @@ function ContactDetails() {
           </Button>
         </DialogActions>
             </Dialog>
+      ) : (
+        <Dialog
+        open={open5}
+        onClose={handleClose5}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        className="custom-modal full-modal"
+    >
+        <Box className="d-flex align-items-center justify-content-between modal-head">
+            <div>
+                <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                Do You want to Unblock portal access for this portal user ? 
+                </Typography>
+            </div>
+            <Button onClick={handleClose5 } autoFocus sx={{ minWidth: 30 }}>
+                <span className="material-symbols-outlined text-black">
+                    {/* No */}
+                </span>
+            </Button>
+        </Box>
+        
+        <DialogActions>
+  <Button autoFocus variant="contained" onClick={PortalUserAccountUpdated_Json}>
+    Yes
+  </Button>
+  <Button autoFocus variant="outlined" onClick={handleClose5 }>
+   No
+  </Button>
+</DialogActions>
+    </Dialog>
+      )
+    }
+      
       <Dialog
         open={isViewerModalOpen}
         onClose={() => setIsViewerModalOpen(false)}
