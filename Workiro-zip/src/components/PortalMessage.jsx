@@ -151,13 +151,9 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                         // console.log("GetDocumentStatus_Json", js);
                         let res = js.filter((e) => e.Emailid === m.emailid);
                         if (res.length > 0) {
-                            const formattedActivity = res.map((el) => {
-                                let ActivityDate; // Declare ActivityDate variable
-                                if (el["Actioned On"]) { // Check if "Actioned On" property exists
-                                    ActivityDate = el["Actioned On"].slice(6, -2); // If exists, slice the string
-                                }
-                                const date = new Date(ActivityDate); // Create Date object using ActivityDate
-                                return { ...el, ["Actioned On"]: date }; // Return new object with formatted date
+                            const formattedActivity = res.map(el => {
+                                const date = el["Actioned On"] ? new Date(el["Actioned On"].slice(6, -2)) : el["Actioned On"];
+                                return { ...el, ["Actioned On"]: date };
                             });
 
                             setDocumentStatus(formattedActivity[0])
@@ -235,7 +231,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
             setPortalEmailOpbject(e);
             GetMessageViewHistory_Json(e);
             GetSignedAttachment_Json(e);
-           // ApprovalStatusChanged_Json(e);
+            // ApprovalStatusChanged_Json(e);
             //handleClickOpenPortalAtt(true);
             let res = allPortalAttachments.length > 0 ? allPortalAttachments.filter((p) => p.emailid === e.emailid) : null;
 
@@ -745,49 +741,49 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                         {
                             documentStatus.ForApproval === "Yes" ? (
                                 <>
-                                {documentStatus.Actioned?(<>
-                                {documentStatus.Approved === "Yes" ? (
-                                    <>
-                                        <Box className='ps-3'>
-                                            <VerifiedIcon className='text-green' />
-                                            <h5 className='font-14 text-black mb-1'>Message Approved </h5>
-                                            <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"]}</p>
-                                            <Button className='btn-blue-2' size="small" onClick={handleClickOpenCertificate} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
-                                        </Box>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Box className='ps-2'>
+                                    {documentStatus["Actioned On"] !== null ? (<>
+                                        {documentStatus.Approved === "Yes" ? (
+                                            <>
+                                                <Box className='ps-3'>
+                                                    <VerifiedIcon className='text-green' />
+                                                    <h5 className='font-14 text-black mb-1'>Message Approved </h5>
+                                                    <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"]}</p>
+                                                    <Button className='btn-blue-2' size="small" onClick={handleClickOpenCertificate} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
+                                                </Box>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Box className='ps-2'>
+                                                    {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
+                                                    <HourglassEmptyIcon className='text-gray' />
+                                                    <h5 className='font-14 text-black mb-1'>Message Disapproved</h5>
+                                                    <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
+                                                </Box>
+                                            </>
+                                        )}
+                                    </>) : (<>
+                                        <Box className='ps-2 d-flex align-items-center'>
                                             {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
-                                            <HourglassEmptyIcon className='text-gray' />
-                                            <h5 className='font-14 text-black mb-1'>Message Disapproved</h5>
-                                            <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
-                                        </Box>
-                                    </>
-                                )}
-                                </>):(<>
-                                    <Box className='ps-2'>
-                                            {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
-                                            <HourglassEmptyIcon className='text-gray' />
-                                            <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
+                                            <HourglassEmptyIcon className='text-warning' />
+                                            <h5 className='font-14 text-black mb-0'>Pending Approval</h5>
                                             {/* <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button> */}
                                         </Box>
 
                                         {/*  */}
-                                            {/* <Box className='ps-2 d-flex'>
+                                        {/* <Box className='ps-2 d-flex'>
                                                 <CloseIcon className='text-red me-1' />
                                                 <Box className='d-flex align-items-center'>
                                                     <h5 className='font-14 text-black mb-0'>Message Disapproved</h5>
                                                 </Box>
                                             </Box> */}
-                                
-                                </>)}
 
-                                    
+                                    </>)}
+
+
                                 </>
                             ) : (
                                 <>
-                                    <DoDisturbIcon className='text-gray' />
+                                    <DoDisturbIcon className='text-danger' />
                                     <Box className='ps-3'>
                                         <h5 className='font-14 text-black mb-0'>Not sent for approval </h5>
                                     </Box>
@@ -1002,37 +998,39 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                             </Box>
 
                                             {
-                            documentStatus.ForApproval === "Yes" ? (
-                                <>
-                                    {documentStatus.Approved === "Yes" ? (
-                                        <>
-                                            <Box className='ps-3'>
-                                                <VerifiedIcon className='text-green' />
-                                                <h5 className='font-14 text-black mb-1'>Message approved </h5>
-                                                <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"]}</p>
-                                                <Button className='btn-blue-2' size="small" onClick={handleClickOpenCertificate} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
-                                            </Box>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Box className='ps-2'>
-                                                {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
-                                                <HourglassEmptyIcon className='text-gray' />
-                                                <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
-                                                <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
-                                            </Box>
-                                        </>
-                                    )}
-                                </>
-                            ) : (
-                                <>
-                                    <DoDisturbIcon className='text-gray' />
-                                    <Box className='ps-3'>
-                                        <h5 className='font-14 text-black mb-0'>Not sent for approval </h5>
-                                    </Box>
-                                </>
-                            )
-                        }
+                                                documentStatus.ForApproval === "Yes" ? (
+                                                    <>
+                                                        {documentStatus.Approved === "Yes" ? (
+                                                            <>
+                                                                <Box className='ps-3'>
+                                                                    <VerifiedIcon className='text-green' />
+                                                                    <h5 className='font-14 text-black mb-1'>Message approved </h5>
+                                                                    <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"]}</p>
+                                                                    <Button className='btn-blue-2' size="small" onClick={handleClickOpenCertificate} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
+                                                                </Box>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Box className='ps-2 d-flex align-items-center'>
+                                                                    {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
+                                                                    <HourglassEmptyIcon className='text-warning' />
+                                                                    <Box className='clearfix'>
+                                                                        <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
+                                                                        <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
+                                                                    </Box>
+                                                                </Box>
+                                                            </>
+                                                        )}
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <DoDisturbIcon className='text-danger' />
+                                                        <Box className='ps-3'>
+                                                            <h5 className='font-14 text-black mb-0'>Not sent for approval </h5>
+                                                        </Box>
+                                                    </>
+                                                )
+                                            }
 
                                         </Box>
 

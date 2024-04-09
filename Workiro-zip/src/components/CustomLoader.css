@@ -179,11 +179,11 @@
         /*================ preloader css ====================*/
         #preloader {
             background: #fff;
-            height: 100%;
+            height: 80vh;
             bottom: 0;
             left: 0;
             /* position: fixed; */
-            position: absolute;
+            /* position: absolute; */
             right: 0;
             top: 0;
             z-index: 999;
@@ -191,7 +191,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-
+            padding: 90px 0;
             .loading {
                 display: flex;
             }

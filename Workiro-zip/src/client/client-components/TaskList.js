@@ -177,6 +177,19 @@ function TaskList({clientName}) {
     }
 };
 
+const handleRowDoubleClick = (e) => {
+  // Handle double click event on the row
+  console.log('Row double-clicked sdaskldjsajlaj:', e.data);
+  // if(selectedChoice==="All" || selectedChoice==="Contacts"){
+  //     let orgNo = e.data.OriginatorNo;
+  //     let contactNo = e.data.ContactNo;
+  //     handleContactNavigattion(orgNo, contactNo);
+  // }else{
+  //     let originatorNo = e.data.OriginatorNo;
+  //     handleClientNavigation(originatorNo);
+  // }
+};
+
   return (
     <div className='table-responsive table-grid table-grid-2'>
       {dataNotFound?<DataNotFound/>:(outlookTaskList.length>0?<DataGrid
@@ -185,6 +198,7 @@ function TaskList({clientName}) {
         ref={dataGridRef}
         dataSource={outlookTaskList}
         keyExpr="ID"
+        onRowDblClick={handleRowDoubleClick}
         showBorders={true}>
         <FilterRow visible={true} />
         <FilterPanel visible={true} />

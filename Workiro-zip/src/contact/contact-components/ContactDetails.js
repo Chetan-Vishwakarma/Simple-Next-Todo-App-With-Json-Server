@@ -80,7 +80,7 @@ function ContactDetails() {
   // dropdown
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-
+  const [selected, setSelected] = React.useState(false);
   // AML check modal
   const [isAMLChkOpen, setisAMLChkOpen] = React.useState(false);
   const [isPortalUser, setIsPortalUser] = useState(false);
@@ -470,17 +470,17 @@ function ContactDetails() {
               TransitionComponent={Fade}
             >
               <MenuItem className="ps-1" onClick={handleClose}>
-                <ListItemIcon>
-                  <MarkEmailReadIcon fontSize="small" />
-                </ListItemIcon>
-                Send Email
-              </MenuItem>
-              <MenuItem className="ps-1" onClick={handleClose}>
-                <ListItemIcon>
-                  <MarkAsUnreadIcon fontSize="small" />
-                </ListItemIcon>
-                Send Portal Messages
-              </MenuItem>
+                                <ListItemIcon>
+                                    <MarkEmailReadIcon fontSize="small" />
+                                </ListItemIcon>
+                                Send Email
+                            </MenuItem>
+                            <MenuItem className="ps-1" onClick={handleClose}>
+                                <ListItemIcon>
+                                    <MarkAsUnreadIcon fontSize="small" />
+                                </ListItemIcon>
+                                Send Portal Messages
+                            </MenuItem>
             </Menu>
           </div>
         </Box>
@@ -769,20 +769,36 @@ function ContactDetails() {
                         </Button>
                       </Box>
                     )}
-                      <Box className="contact-detail-box">
-                        <HowToRegIcon />
-                        <Typography variant="h4" className="mb-0 " gutterBottom>
-                          Portal Status
-                          <Switch {...label} defaultChecked size="small" />
-                        </Typography>
-                        <Typography
-                          variant="Body2"
-                          className="mb-0 "
-                          gutterBottom
-                        >
-                          Active
-                        </Typography>
-                      </Box>
+                     <Box className="contact-detail-box">
+                                                <HowToRegIcon />
+                                                <Typography variant="h4" className="mb-0 " gutterBottom>
+                                                    Portal Status
+                                                    {/* <Switch {...label} defaultChecked size="small" /> */}
+                                                </Typography>
+                                                <Typography
+                                                    variant="Body2"
+                                                    className="mb-0 "
+                                                    gutterBottom
+                                                >
+                                                    Unblocked
+                                                </Typography>
+
+                                                <Box className='mt-2'>
+                                                    <ToggleButton
+                                                    className="toggle-btn"
+                                                        value="check"
+                                                        selected={selected}
+                                                        onChange={() => {
+                                                            setSelected(!selected);
+                                                        }}
+                                                        size="small"
+                                                    >
+                                                        Block
+                                                    </ToggleButton>
+                                                </Box>
+
+                                            </Box>
+
 
                       <Box className="contact-detail-box">
                         <RequestQuoteIcon />
