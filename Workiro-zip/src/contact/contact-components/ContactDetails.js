@@ -217,8 +217,9 @@ function ContactDetails() {
             console.log("Json_GetAllContactsByClientIDssss", contactdata);
             if (contactdata && contactdata.length > 0) {
               if(countries && countries.length > 0) {
-                const matchingCountry = countries.find(country => country.label === contactDetails[0]?.Country);
+                const matchingCountry = countries.find(country => country.label == contactDetails[0]?.Country);
                 setIssetCountry(matchingCountry);
+                console.log(matchingCountry,"matching country");
               }
               if (contactdata[0]["Portal User"]) {
                 console.log(contactdata[0]["Portal User"], "portaluser");
