@@ -105,21 +105,16 @@ const userId = localStorage.getItem("UserId");
 
 function CreateNewModalTask({ ...props }) {
     const dispatch = useDispatch();
-    let {
-
-        documentDate=null,
-        receivedDate=null,
-        createNewFileObj=null,
-        txtFolderData=null,
-        txtClientData=null,
-        txtSectionData=null,
-        TaskType=null,
-        // passButtonHide,
-        // setPassButtonHide,
-        openModal=null,
-
-
-    } = props?props:null;
+    const {
+        documentDate = null,
+        receivedDate = null,
+        createNewFileObj = null,
+        txtFolderData = null,
+        txtClientData = null,
+        txtSectionData = null,
+        TaskType = null,
+        openModal = null,
+    } = props || {};
 
     console.log("documentDate txtSectionId1", documentDate,
         receivedDate, createNewFileObj)
@@ -716,6 +711,7 @@ function CreateNewModalTask({ ...props }) {
                 if (TaskType === "Portal") {
                     PrepareDocumentsForPublish_Json(createNewFileObj, 2);
                 }
+              
             }, 3000);
         }
         if (txtFolderData) {
@@ -822,9 +818,9 @@ function CreateNewModalTask({ ...props }) {
         setExpireDate(dayjs(getCurrentDate()));
 
         Json_GetFolders();
-        Json_GetForwardUserList(txtFolderId);
+        Json_GetForwardUserList(txtFolderId?txtFolderId:localStorage.getItem("FolderId"));
         Json_GetFolderData();
-        Json_GetSections(txtFolderId);
+        Json_GetSections(txtFolderId?txtFolderId:localStorage.getItem("FolderId"));
         //console.log(nextDate, currentDate)
 
         //document.addEventListener('mousedown', closeFolderList);
@@ -966,7 +962,7 @@ function CreateNewModalTask({ ...props }) {
             if (txtTaskType === "Portal") {
                 PrepareDocumentsForPublish_Json(filesData, 1);
             }
-        }, 3000);
+        }, 4000);
     };
 
     function PrepareDocumentsForPublish_Json(filedata, ids) {
@@ -1635,10 +1631,10 @@ function CreateNewModalTask({ ...props }) {
 
 
         })
-
         setTimeout(() => {
             PrepareDocumentsForPublish_Json(filesData, 2)
-        }, 3000);
+        }, 4000);
+        
 
 
         setOpenDocumentList(false)
@@ -1989,6 +1985,7 @@ function CreateNewModalTask({ ...props }) {
                         console.log("MessagePublished_Json", data)
                         if (!data) {
                             toast.success("Task Created");
+                           // Json_CRM_GetOutlookTask_ForTask();
                         }
                         setOpen(false);
 
@@ -2103,11 +2100,19 @@ function CreateNewModalTask({ ...props }) {
 
 
     const SigningMethods = (e) => {
-        setIsCheckedForApproval(true);
-        setIsDisabledForApproval(true);
-        const ToEmail = selectedEmail.map(obj => obj["E-Mail"]).join(",");
-        let url = `https://signing.docusms.uk/Signing.aspx?accid=${agrno}&email=${Email}&password=${password}&sendclient=${textClientId}&sendemail=&clientname=${txtClient}&option=upload&file=${agrno}-${localStorage.getItem("GUID")}/${e.FileName}&to=${ToEmail}&rwndrnd=0.8166129123678032`;
-        window.open(url);
+        console.log("file name ",e)
+        if(e.FileType==="pdf"){
+            setIsCheckedForApproval(true);
+            setIsDisabledForApproval(true);
+            const ToEmail = selectedEmail.map(obj => obj["E-Mail"]).join(",");
+            let url = `https://signing.docusms.uk/Signing.aspx?accid=${agrno}&email=${Email}&password=${password}&sendclient=${textClientId}&sendemail=&clientname=${txtClient}&option=upload&file=${agrno}-${localStorage.getItem("GUID")}/${e.FileName}&to=${ToEmail}&rwndrnd=0.8166129123678032`;
+            window.open(url);
+        }
+        else{
+            console.log("file name ",e)
+           // toast.error("Please convert to pdf");
+        }
+       
     }
 
     const [anchorElDoc, setAnchorElDoc] = React.useState(null);
@@ -2199,7 +2204,7 @@ function CreateNewModalTask({ ...props }) {
                         let fname = getFileName(data);
                         let res = selectedFiles.map((file) => {
                             if (getFileName(file.FileName) === fname) {
-                                return { ...file, FileName: data };
+                                return { ...file, FileName: data,FileType: cls.FileType(data).toLowerCase() };
                             }
                             else {
                                 return file;
@@ -2936,6 +2941,7 @@ function CreateNewModalTask({ ...props }) {
                                                         </Box>
 
                                                         <Box className="d-flex align-items-center">
+
                                                             {txtTaskType === "Portal" && (<>
                                                                 <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
                                                                     Sign
