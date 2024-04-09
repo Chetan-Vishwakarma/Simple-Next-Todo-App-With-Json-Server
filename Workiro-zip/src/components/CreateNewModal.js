@@ -2706,12 +2706,8 @@ function CreateNewModalTask({ ...props }) {
                                                     className="inner-user-list-dropdown"
                                                     style={{ maxHeight: "200px", overflowY: "auto" }}
                                                 >
-                                                    <p className="sembold">Assigned11</p>
-
+                                                    <p className="sembold">Transfer Ownership To:</p>
                                                     <Box className="box-user-list-dropdown">
-
-
-
                                                         {addUser
                                                             ? addUser.map((item, ind) => {
                                                                 if (item.ID === ownerID) {
@@ -2775,8 +2771,6 @@ function CreateNewModalTask({ ...props }) {
                                                     <p className="sembold">Assigned</p>
 
                                                     <Box className="box-user-list-dropdown">
-
-
 
                                                         {addUser
                                                             ? addUser.map((item, ind) => {
@@ -2909,7 +2903,7 @@ function CreateNewModalTask({ ...props }) {
                                             }}
                                             className="custom-dropdown"
                                         >
-                                            <label onClick={handleSelectFileClose} htmlFor="file-upload">
+                                            <label onClick={handleSelectFileClose} htmlFor="file-upload" className="d-block">
                                                 <MenuItem>Upload File(s)</MenuItem>
                                             </label>
                                             <MenuItem onClick={handleDocumentClickOpen}>Select From DMS</MenuItem>
