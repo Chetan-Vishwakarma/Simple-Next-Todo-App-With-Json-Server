@@ -832,7 +832,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                             </>
                                         )}
                                     </>) : (<>
-                                        <Box className='ps-2 d-flex align-items-center'>
+                                        <Box className='ps-2'>
                                             {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
                                             <HourglassEmptyIcon className='text-warning' />
                                             <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
