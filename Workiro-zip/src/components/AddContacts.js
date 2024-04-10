@@ -190,6 +190,7 @@ function AddContacts({addContactData}) {
           if (data) {
             let json = JSON.parse(data);
             console.log(json,"jsondataget");
+            setBussiness(json.Table);
           }
         }
       });
@@ -213,7 +214,7 @@ function AddContacts({addContactData}) {
     //         const filteredData = json.Table1.filter(obj => obj.ClientID === addContactData.Clientid);
 
     // console.log(filteredData,"filteredData",json.Table1);
-            setBussiness(json.Table1);
+            // setBussiness(json.Table1);
           }
         }
       });
@@ -725,7 +726,7 @@ function AddContacts({addContactData}) {
 
                 <Box className='well well-2 mb-3'>
                   <Grid container spacing={2}>
-                    <Grid item xs={6} md={6}>
+                    {/* <Grid item xs={6} md={6}>
                       <Autocomplete
                         {...clientlist}
                         id="clientlist"
@@ -737,12 +738,12 @@ function AddContacts({addContactData}) {
                             variant="outlined"
                             name="Selectclient"
                             value={""}
-                            //   onChange={onChange}
+                            
                             label="Folder List"
                           />
                         )}
                       />
-                    </Grid>
+                    </Grid> */}
 
                     <Grid item xs={6} md={6}>
                       <Autocomplete
@@ -752,7 +753,7 @@ function AddContacts({addContactData}) {
                         id="clear-on-escape-teams"
                         clearOnEscape
                         // defaultValue={}
-                        value={addContactData.clientName || null}
+                        // value={addContactData.clientName || null}
                         onChange={onChangebussines}
                         renderInput={(params) => (
                           <TextField
