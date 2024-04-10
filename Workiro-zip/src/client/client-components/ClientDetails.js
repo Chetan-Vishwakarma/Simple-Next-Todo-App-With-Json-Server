@@ -36,14 +36,23 @@ import { toast } from 'react-toastify';
 
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
+const agrno = localStorage.getItem("agrno");
+const Email = localStorage.getItem("Email");
+const password = localStorage.getItem("Password");
+const folderId = localStorage.getItem("FolderId");
+
 function ClientDetails() {
 
     const location = useLocation();
-
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams,setSearchParams] = useSearchParams();
     const tabValue = searchParams.get("val");
+    // const test = searchParams.get("OrgNo");
 
-    const { agrno, Email, password, folderId, originatorNo, globalSearchDocs } = location.state;
+    const originatorNo = searchParams.get("OrgNo");
+
+
+    const { globalSearchDocs } = location.state!==null? location.state: {globalSearchDocs:[]};
+
     const [selected, setSelected] = React.useState(false);
     const [value, setValue] = React.useState(tabValue ? tabValue : '1');
     const [clientDetails, setClientDetails] = useState({});
@@ -262,7 +271,7 @@ function ClientDetails() {
                                     {/* For CompanyDetails */}
                                     <CompanyDetails companyDetails={companyDetails} />
                                     {/* For ClientOverview */}
-                                    <ClientOverview Cls={Cls} webClientCLS={webClientCLS} locationState={location.state} />
+                                    <ClientOverview Cls={Cls} webClientCLS={webClientCLS} locationState={{agrno:agrno, Email:Email, password:password, folderId:folderId, originatorNo:originatorNo}} />
                                 </Box>
                             </Box>
                             <Box className='main-accordian'>
