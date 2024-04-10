@@ -417,13 +417,14 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     return (
         <>
             <Box>
-            {openModals && <CreateNewModalTask                              
+            {openModals && openModals && <CreateNewModalTask                              
                                TaskType={TaskType}
                                createNewFileObj={createNewFileObj}
                                txtClientData={txtClientData}
                                txtSectionData={txtSectionData}
                                txtFolderData={txtFolderData}
                                openModal={openModals}
+                               setOpenModal={setopenModal}
                            ></CreateNewModalTask>}
 
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>

@@ -617,17 +617,7 @@ console.log("formattedDate",formattedDate)
         })
     }
 
-    Json_ExplorerSearchDoc(obj, callBack) {
-        super.CreateNewServiceParamObject("Json_ExplorerSearchDoc", obj, true);
-        super.CallNewService("Json_ExplorerSearchDoc", function (status, Data) {
-            if (status) {
-                return callBack(true, Data);
-            }
-            else {
-                return callBack(false, []);
-            }
-        })
-    }
+    
     Json_GetClientCardDetails(obj, callBack) {
         super.CreateNewServiceParamObject("Json_GetClientCardDetails", obj, false);
         super.CallNewService("Json_GetClientCardDetails", function (status, Data) {
@@ -690,17 +680,7 @@ console.log("formattedDate",formattedDate)
         })
     }
 
-    Json_GetContactListByFolder(obj, callBack) {
-        super.CreateNewServiceParamObject("Json_GetContactListByFolder", obj, true);
-        super.CallNewService("Json_GetContactListByFolder", function (status, Data) {
-            if (status) {
-                callBack(true, Data);
-            }
-            else {
-                callBack(false, []);
-            }
-        })
-    }
+    
 
     ListEditableTemplates(obj, callBack) {
         super.CreateNewServiceParamObject("Json_ListEditableTemplates", obj, true);
@@ -1078,7 +1058,7 @@ console.log("formattedDate",formattedDate)
         super.CreateNewServiceParamObject("Json_GetAllContacts",obj,true);
         super.CallNewService("Json_GetAllContacts", function (status, Data) {
             if (status) {
-                if (Data != "") {
+                if (Data !=="") {
                     return callback(true, Data);
                 }
                 else {
@@ -1092,7 +1072,7 @@ console.log("formattedDate",formattedDate)
         super.CreateNewServiceParamObject("Json_CompanyHouseDetails",obj,false);
         super.CallNewService("Json_CompanyHouseDetails", function (status, Data) {
             if (status) {
-                if (Data != "") {
+                if (Data !=="") {
                     return callback(true, Data);
                 }
                 else {
@@ -1136,25 +1116,13 @@ console.log("formattedDate",formattedDate)
             }
         })
      }
-    Json_CompanyHouseDetails(obj,callback) {
-        super.CreateNewServiceParamObject("Json_CompanyHouseDetails",obj,false);
-        super.CallNewService("Json_CompanyHouseDetails", function (status, Data) {
-            if (status) {
-                if (Data != "") {
-                    return callback(true, Data);
-                }
-                else {
-                    return callback(false, []);
-                }
-            }
-        })
-    }
+   
 
     Json_GetClientAddresses(obj,callback) {
         super.CreateNewServiceParamObject("Json_GetClientAddresses",obj,false);
         super.CallNewService("Json_GetClientAddresses", function (status, Data) {
             if (status) {
-                if (Data != "") {
+                if (Data !== "") {
                     return callback(true, Data);
                 }
                 else {
@@ -1167,7 +1135,7 @@ console.log("formattedDate",formattedDate)
         super.CreateNewServiceParamObject("Json_GetClientAssignedUnassignedFolderList",obj,false);
         super.CallNewService("Json_GetClientAssignedUnassignedFolderList", function (status, Data) {
             if (status) {
-                if (Data != "") {
+                if (Data !=="") {
                     return callback(true, Data);
                 }
                 else {
@@ -1180,7 +1148,7 @@ console.log("formattedDate",formattedDate)
         super.CreateNewServiceParamObject("Json_UpdateClient",obj,false);
         super.CallNewService("Json_UpdateClient", function (status, Data) {
             if (status) {
-                if (Data != "") {
+                if (Data !=="") {
                     return callback(true, Data);
                 }
                 else {
@@ -1193,7 +1161,7 @@ console.log("formattedDate",formattedDate)
         super.CreateNewServiceParamObject("Json_UpdateClientField",obj,false);
         super.CallNewService("Json_UpdateClientField", function (status, Data) {
             if (status) {
-                if (Data != "") {
+                if (Data !== "") {
                     return callback(true, Data);
                 }
                 else {
@@ -1206,7 +1174,7 @@ console.log("formattedDate",formattedDate)
         super.CreateNewServiceParamObject("Json_ChangeClientID",obj,false);
         super.CallNewService("Json_ChangeClientID", function (status, Data) {
             if (status) {
-                if (Data != "") {
+                if (Data !=="") {
                     return callback(true, Data);
                 }
                 else {
@@ -1219,7 +1187,7 @@ console.log("formattedDate",formattedDate)
         super.CreateNewServiceParamObject("Json_AssignProjectsToClient",obj,false);
         super.CallNewService("Json_AssignProjectsToClient", function (status, Data) {
             if (status) {
-                if (Data != "") {
+                if (Data !=="") {
                     return callback(true, Data);
                 }
                 else {
@@ -1233,7 +1201,7 @@ console.log("formattedDate",formattedDate)
         super.CreateNewServiceParamObject("Json_GetAllSentMessages",obj,false);
         super.CallNewService("Json_GetAllSentMessages", function (status, Data) {
             if (status) {
-                if (Data != "") {
+                if (Data !=="") {
                     return callback(true, Data);
                 }
                 else {
@@ -1247,7 +1215,7 @@ console.log("formattedDate",formattedDate)
         super.CreateNewServiceParamObject("Json_GetAllReceivedMessages",obj,false);
         super.CallNewService("Json_GetAllReceivedMessages", function (status, Data) {
             if (status) {
-                if (Data != "") {
+                if (Data !== "") {
                     return callback(true, Data);
                 }
                 else {
