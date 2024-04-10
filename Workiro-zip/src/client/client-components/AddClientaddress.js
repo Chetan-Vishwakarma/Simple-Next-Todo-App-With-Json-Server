@@ -187,7 +187,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                     <TextField
                       fullWidth
                       id="standard-basic"
-                      type="number"
+                      // type="number"
                       label="Postcode"
                       variant="outlined"
                       name="Postcode"
@@ -310,7 +310,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                     <TextField
                       fullWidth
                       id="standard-basic"
-                      type="number"
+                      // type="number"
                       label="Postcode"
                       variant="outlined"
                       name="BilPostcode"
@@ -432,7 +432,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                     <TextField
                       fullWidth
                       id="standard-basic"
-                      type="number"
+                      // type="number"
                       label="Postcode"
                       variant="outlined"
                       name="regPostcode"
