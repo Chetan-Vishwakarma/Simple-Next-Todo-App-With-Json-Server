@@ -125,6 +125,7 @@ function CreateNewModalTask({ ...props }) {
 
 
     const [guid, setGuid] = useState('');
+    const [addContactData, setAddContact]=useState({});
 
     //const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
@@ -3796,7 +3797,7 @@ function CreateNewModalTask({ ...props }) {
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
 
-                        <Reference open5={open5} setOpen5={setOpen5} setReferance={setReferance}/>
+                        <Reference open5={open5}  setOpen5={setOpen5} setReferance={setReferance} setAddContact={setAddContact} />
 
                     </DialogContentText>
                 </DialogContent>
@@ -3868,7 +3869,7 @@ function CreateNewModalTask({ ...props }) {
                 <DialogContent className="pt-0">
                     <DialogContentText id="alert-dialog-description">
 
-                        <AddContacts />
+                        <AddContacts addContactData={addContactData} />
 
                     </DialogContentText>
                 </DialogContent>

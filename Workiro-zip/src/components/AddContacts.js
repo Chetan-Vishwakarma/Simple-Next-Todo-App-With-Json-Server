@@ -28,7 +28,8 @@ let originatorNo;
 let folderData;
 let clientData;
 let clientName;
-function AddContacts() {
+function AddContacts({addContactData}) {
+  console.log(addContactData,"addContactData11111")
   const [contact, setContact] = useState([]);
   const [fillcontact, setFillContact] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
@@ -41,6 +42,7 @@ function AddContacts() {
   const [clientDetails, setClientDetails] = useState({});
   const [folders, setFolders] = useState([]);
   const [Importdata, setImportdata] = useState([]);
+  const [GellAllClientList, setGellAllClientList] = useState([]);
   const [Importcontactdata, setImportcontactdata] = useState({});
   const [clientNames, setclientNames] = useState("");
   const [clientIddata, setClientIddata] = useState(-1);
@@ -49,6 +51,7 @@ function AddContacts() {
   const [bussiness, setBussiness] = useState([]); // State to hold folders data
   const [selectedFolderID, setSelectedFolderID] = useState(null);
   const [selectedBussId, setSelectedBussId] = useState(null);
+  const [defaultFoldefr, setDefaultFolders] = useState(null);
   const [dataFromChild, setDataFromChild] = useState([]);
   const [userContactDetails, setContactDetails] = useState({
     Title: "",
@@ -175,6 +178,25 @@ function AddContacts() {
       console.log("Error while calling Json_GetToFavourites", err);
     }
   };
+  const Json_GetAllClientList = () => {
+    let requestBody = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+    };
+    try {
+      Cls.Json_GetAllClientList(requestBody, (sts, data) => {
+        if (sts) {
+          if (data) {
+            let json = JSON.parse(data);
+            console.log(json,"jsondataget");
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_GetToFavourites", err);
+    }
+  };
   const Json_GetClientsByFolder = (projectId) => {
     let requestBody = {
       agrno: agrno,
@@ -187,6 +209,10 @@ function AddContacts() {
         if (sts) {
           if (data) {
             let json = JSON.parse(data);
+            console.log(json,"clientdatalist");
+    //         const filteredData = json.Table1.filter(obj => obj.ClientID === addContactData.Clientid);
+
+    // console.log(filteredData,"filteredData",json.Table1);
             setBussiness(json.Table1);
           }
         }
@@ -433,6 +459,7 @@ function AddContacts() {
       localStorage.setItem("origiNator", clientData);
       clientName = value.Client;
       setclientNames(clientName);
+      setDefaultFolders(value);
       setClientIddata(value.ClientID);
       updateReferenceID(value.Client);
     } else {
@@ -569,8 +596,8 @@ function AddContacts() {
     Json_GetClientCardDetails();
     Json_GetCRMContactUDFValues();
     Json_GetAllContacts();
+    Json_GetAllClientList();
     const clientName = localStorage.getItem("ClientName");
-
     // Update userContactDetails state with the retrieved value
     if (clientName) {
       setContactDetails(prevState => ({
@@ -719,9 +746,13 @@ function AddContacts() {
 
                     <Grid item xs={6} md={6}>
                       <Autocomplete
-                        {...bussinesslist}
+                        // {...bussinesslist}
+                        options={bussiness}
+                        getOptionLabel={(option) => option.Client ? option.Client : ""}
                         id="clear-on-escape-teams"
                         clearOnEscape
+                        // defaultValue={}
+                        value={addContactData.clientName || null}
                         onChange={onChangebussines}
                         renderInput={(params) => (
                           <TextField

@@ -1270,4 +1270,18 @@ console.log("formattedDate",formattedDate)
         })
     }
 
+    Json_GetAllClientList(obj,callback) {
+        super.CreateNewServiceParamObject("Json_GetAllClientList",obj,false);
+        super.CallNewService("Json_GetAllClientList", function (status, Data) {
+            if (status) {
+                if (Data != "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+
 }

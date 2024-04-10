@@ -15,7 +15,7 @@ import StepContent from "@mui/material/StepContent";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import CreateNewModalTask from "../../components/CreateNewModal";
-function Reference({open5,setOpen5,setReferance}) {
+function Reference({open5,setOpen5,setReferance,setAddContact}) {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -32,6 +32,7 @@ function Reference({open5,setOpen5,setReferance}) {
   const handleClickOpen5 = () => {
     setReferance(false);
     setOpen5(true);
+    setAddContact(userDetail)
   };
 
   const handleClose5 = () => {
