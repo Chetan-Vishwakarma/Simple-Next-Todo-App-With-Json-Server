@@ -218,12 +218,12 @@ function ContactDetails() {
             if (contactdata && contactdata.length > 0) {
               try{
                 if(countries && countries.length > 0) {
-                  const matchingCountry = countries.find(country => country.label == contactDetails[0].Country);
+                  const matchingCountry = countries.find(country => country.label == contactdata[0].Country);
                   setIssetCountry(matchingCountry);
-                  console.log(matchingCountry,"matching country");
+                  console.log(matchingCountry,"matching_country");
                 }
               } catch(e){
-             console.log(e,"error");
+             console.log(e,"errorcountries");
               }
               if (contactdata[0]["Portal User"]) {
                 console.log(contactdata[0]["Portal User"], "portaluser");
@@ -605,7 +605,8 @@ function ContactDetails() {
 
                               <Tooltip title={contactDetails[0].Country ? contactDetails[0].Country : ""} arrow>
                               {issetCountry ? (<Box className="country-flage">
-                              <img src={issetCountry.flagUrl} alt={issetCountry.label} className="" />
+                              <img  srcSet={`https://flagcdn.com/w40/${issetCountry.code.toLowerCase()}.png 2x`}
+    src={`https://flagcdn.com/w20/${issetCountry.code.toLowerCase()}.png`} className="" />
 
                                 </Box>) : (
                                   <Box className="country-flage">
