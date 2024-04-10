@@ -45,7 +45,7 @@ export default function UploadButtons({ userContactDetails, setContactDetails })
   };
 
   return (
-    <Stack alignItems="start" spacing={2}>
+    <Stack alignItems="start" spacing={2} className='position-sticky top-0'>
       <label htmlFor="icon-button-file">
         <Input
           id="icon-button-file"

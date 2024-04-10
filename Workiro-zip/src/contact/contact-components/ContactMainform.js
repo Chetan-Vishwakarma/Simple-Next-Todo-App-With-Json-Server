@@ -306,7 +306,7 @@ const ContactMainform = React.memo(
     return (
       <div>
         {" "}
-        <Grid container spacing={3}>
+        <Grid container spacing={2}>
           <Grid item xs={6} md={6}>
             <FormControl fullWidth variant="outlined">
               <Autocomplete
