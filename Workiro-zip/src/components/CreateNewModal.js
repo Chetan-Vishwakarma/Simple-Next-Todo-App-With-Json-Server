@@ -121,12 +121,8 @@ function CreateNewModalTask({ ...props }) {
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
 
 
-<<<<<<< HEAD
     const [guid, setGuid] = useState('');
     const [addContactData, setAddContact]=useState({});
-=======
-
->>>>>>> f443b86b6d08e7d4f4d68ee7159d76da1727edd7
 
     //const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
@@ -3877,11 +3873,7 @@ function CreateNewModalTask({ ...props }) {
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
-<<<<<<< HEAD
                             Add Contact 
-=======
-                            Add Client
->>>>>>> f443b86b6d08e7d4f4d68ee7159d76da1727edd7
                         </Typography>
                     </Box>
 

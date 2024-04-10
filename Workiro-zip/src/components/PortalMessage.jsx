@@ -129,10 +129,6 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
         ClsPortal.GetCertificate_Json(o, function(sts, data) {
             if (sts) {
-<<<<<<< HEAD
-                console.log("GetCertificate_Json", data);
-                // setTemplateDataMarkup(data)
-=======
                // console.log("GetCertificate_Json", data); // Logging for debugging
                 var a = document.createElement("a"); //Create <a>
                 a.href = "data:pdf"+ ";base64," + data; //Image Base64 Goes here
@@ -140,7 +136,6 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                 a.click(); //Downloaded file
                     } else {
                 console.error("Error occurred while fetching certificate."); // Handle error condition
->>>>>>> f443b86b6d08e7d4f4d68ee7159d76da1727edd7
             }
         });
     }
@@ -251,10 +246,6 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
             GetDocumentStatus_Json(e);
 
-<<<<<<< HEAD
-            // GetCertificate_Json(e.PortalDocId);
-=======
->>>>>>> f443b86b6d08e7d4f4d68ee7159d76da1727edd7
 
             setMessageEmail(e.emailid);
 
@@ -262,12 +253,8 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
             GetMessageViewHistory_Json(e);
 
-<<<<<<< HEAD
-            GetSignedAttachment_Json(e);
-=======
             //GetSignedAttachment_Json(e);
 
->>>>>>> f443b86b6d08e7d4f4d68ee7159d76da1727edd7
             // ApprovalStatusChanged_Json(e);
             //handleClickOpenPortalAtt(true);
             // let res = allPortalAttachments.length > 0 ? allPortalAttachments.filter((p) => p.emailid === e.emailid) : null;
@@ -837,19 +824,10 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                             <>
                                                 <Box className='d-flex'>
                                                     <VerifiedIcon className='text-green' />
-<<<<<<< HEAD
-
-                                                    <Box className='ps-3'>
-                                                        <h5 className='font-14 text-black mb-1'>Message Approved </h5>
-                                                        <p className='font-12 text-gray sembold mb-2'>{DateFormateDDMMYYYY(documentStatus["Actioned On"])}</p>
-                                                        <Button className='btn-blue-2' size="small" onClick={""} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
-                                                    </Box>
-=======
                                                     <h5 className='font-14 text-black mb-1'>Message Approved </h5>
                                                     
                                                     <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"] ? moment(documentStatus["Actioned On"]).format("DD/MM/YYYY") : ""}</p>
                                                     <Button className='btn-blue-2' size="small" onClick={()=>GetCertificate_Json()} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
->>>>>>> f443b86b6d08e7d4f4d68ee7159d76da1727edd7
                                                 </Box>
 
                                             </>
@@ -1093,29 +1071,6 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                         <hr />
 
                                         <Box className='d-flex flex-wrap approval-main'>
-<<<<<<< HEAD
-                                            {
-                                                item.Signed === "Yes" ? (<>
-                                                    <Box className='approval-box'>
-                                                        <VerifiedIcon className="me-2" />
-                                                        <Box>
-                                                            <Typography variant='subtitle1' className=''>
-                                                                Document Signed
-                                                            </Typography>
-                                                            <Button className='btn-blue-2' size="small" onClick={handleClickOpenCertificate} startIcon={<ScheduleIcon />}> Document Signed</Button>
-                                                        </Box>
-                                                    </Box>
-                                                </>) : (<>
-                                                    <Box className='approval-box'>
-                                                        <VerifiedIcon className="me-2" />
-                                                        <Typography variant='subtitle1' className='text-center'>
-                                                            Document Pending Signature
-                                                        </Typography>
-                                                    </Box>
-                                                </>)
-                                            }
-
-=======
                                         {
                                           item.Signed==="Yes" ? (<>
                                           <Box className='approval-box'>
@@ -1135,7 +1090,6 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                           </>)
                                         }
                                             
->>>>>>> f443b86b6d08e7d4f4d68ee7159d76da1727edd7
 
                                             {
                                                 item.ForApproval === "Yes" ? (
