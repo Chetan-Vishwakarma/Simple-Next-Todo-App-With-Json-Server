@@ -832,7 +832,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                             </>
                                         )}
                                     </>) : (<>
-                                        <Box className='ps-2'>
+                                        <Box className='d-flex align-items-center'>
                                             {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
                                             <HourglassEmptyIcon className='text-warning' />
                                             <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
@@ -848,7 +848,6 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                             </Box> */}
 
                                     </>)}
-
 
                                 </>
                             ) : (
@@ -888,6 +887,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
         </>)}
 
         {/* history modal start */}
+        
         <Dialog
             open={open}
             onClose={handleClose}

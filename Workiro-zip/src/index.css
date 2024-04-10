@@ -3163,8 +3163,9 @@ span.tox-statusbar__branding {
 }
 
 .well-2 {
-  background: #f0f4ff;
-  border: 2px dashed #bfd3ff;
+  /* background: #f0f4ff;
+  border: 2px dashed #bfd3ff; */
+  background: #f1f5ff;
 }
 
 .modal-head {

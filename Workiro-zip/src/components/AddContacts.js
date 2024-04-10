@@ -606,9 +606,12 @@ function AddContacts() {
               <Box className='well mb-4'>
                 <h2 className='font-20 mb-3 text-black'>Contact Details</h2>
                 <Box className='well well-2 mb-3'>
-                  <h2 className='font-14 bold mb-2 text-black'>Import from Companies House</h2>
+
+
+
                   <Grid container spacing={2}>
                     <Grid item xs={6} md={6}>
+                      <h2 className='font-14 bold mb-4 text-black'>Import Existing DocuSoft Contact</h2>
                       <Autocomplete
                         {...contactlist}
                         id="contactlist"
@@ -621,13 +624,14 @@ function AddContacts() {
                             name="contactlist"
                             value={""}
                             //   onChange={onChange}
-                            label="Contact List"
+                            label="Enter Contact Email"
                           />
                         )}
                       />
                     </Grid>
 
                     <Grid item xs={6} md={6}>
+                      <h2 className='font-14 bold mb-4 text-black'>Import from Companies House</h2>
                       {/* <TextField
                 // {...params}wid
                 fullWidth
@@ -693,7 +697,6 @@ function AddContacts() {
                 </Box>
 
                 <Box className='well well-2 mb-3'>
-                  {/* <h2 className='font-14 bold mb-2 text-black'>Import from Companies House</h2> */}
                   <Grid container spacing={2}>
                     <Grid item xs={6} md={6}>
                       <Autocomplete
@@ -736,43 +739,6 @@ function AddContacts() {
                 </Box>
 
                 <Grid container spacing={2}>
-                  <Grid item xs={6} md={6}>
-                    <Autocomplete
-                      {...clientlist}
-                      id="clientlist"
-                      clearOnEscape
-                      onChange={onChangeclientlist}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          variant="outlined"
-                          name="Selectclient"
-                          value={""}
-                          //   onChange={onChange}
-                          label="Folder List"
-                        />
-                      )}
-                    />
-                  </Grid>
-
-                  <Grid item xs={6} md={6}>
-                    <Autocomplete
-                      {...bussinesslist}
-                      id="clear-on-escape-teams"
-                      clearOnEscape
-                      onChange={onChangebussines}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          name="Selectteamsa"
-                          value={""}
-                          //   onChange={onChangebussines}
-                          label="Reference List"
-                          variant="outlined"
-                        />
-                      )}
-                    />
-                  </Grid>
 
                   <Grid item xs={12} md={12}>
                     <ContactMainform
