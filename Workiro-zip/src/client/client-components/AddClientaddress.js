@@ -479,7 +479,6 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                             value={userDetail.regAddress}
                             onChange={onChange}
                             variant="outlined"
-                            sx={{ height: '500px;' }}
                           />
                           
                         )}

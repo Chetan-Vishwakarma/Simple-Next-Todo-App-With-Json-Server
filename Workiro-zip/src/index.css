@@ -1713,10 +1713,12 @@ span.tox-statusbar__branding {
   min-width: 26px;
   border-radius: 90px !important;
   background: #bebebe !important;
+  border-color: #bebebe !important;
 }
 
 .aml-details-modal .btn-sign.active {
   background: #4780FF !important;
+  border-color: #4780FF !important;
 }
 
 /* .file-uploads-document svg {
