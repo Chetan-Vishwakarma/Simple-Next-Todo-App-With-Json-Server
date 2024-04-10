@@ -376,7 +376,7 @@ function Reference({open5,setOpen5,setReferance}) {
         if (sts) {
           if (data) {
             console.log("Json_CRMSaveUDFValues", data);
-            toast.success("UDF Saved Successfully !");
+           // toast.success("UDF Saved Successfully !");
           }
         }
       });
