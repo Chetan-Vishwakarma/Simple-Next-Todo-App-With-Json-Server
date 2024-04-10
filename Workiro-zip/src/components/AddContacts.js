@@ -49,6 +49,7 @@ function AddContacts({addContactData}) {
   const [ImportContact, setImportContact] = useState([]);
   const [contactlistdata, setContactlistdata] = useState([]);
   const [bussiness, setBussiness] = useState([]); // State to hold folders data
+  const [defaultClient, setdefaultClient] = useState(null);
   const [selectedFolderID, setSelectedFolderID] = useState(null);
   const [selectedBussId, setSelectedBussId] = useState(null);
   const [defaultFoldefr, setDefaultFolders] = useState(null);
@@ -190,7 +191,13 @@ function AddContacts({addContactData}) {
           if (data) {
             let json = JSON.parse(data);
             console.log(json,"jsondataget");
-            setBussiness(json.Table);
+            if(json.Table && json.Table.length > 0) {
+              setBussiness(json.Table);
+              const filteredData = json.Table.find(obj => obj.ClientId === addContactData.Clientid);
+              setdefaultClient(filteredData);
+              console.log(filteredData,"filteredData",json.Table);
+            }
+           
           }
         }
       });
@@ -211,10 +218,7 @@ function AddContacts({addContactData}) {
           if (data) {
             let json = JSON.parse(data);
             console.log(json,"clientdatalist");
-    //         const filteredData = json.Table1.filter(obj => obj.ClientID === addContactData.Clientid);
-
-    // console.log(filteredData,"filteredData",json.Table1);
-            // setBussiness(json.Table1);
+   
           }
         }
       });
@@ -460,7 +464,8 @@ function AddContacts({addContactData}) {
       localStorage.setItem("origiNator", clientData);
       clientName = value.Client;
       setclientNames(clientName);
-      setDefaultFolders(value);
+      // setDefaultFolders(value);
+      setdefaultClient(value);
       setClientIddata(value.ClientID);
       updateReferenceID(value.Client);
     } else {
@@ -607,7 +612,7 @@ function AddContacts({addContactData}) {
       }));
     }
   }, []);
-
+  console.log(defaultClient,"defaultClientfirst");
   return (
     <Box className="container-fluid p-0">
       <ToastContainer></ToastContainer>
@@ -749,12 +754,13 @@ function AddContacts({addContactData}) {
                       <Autocomplete
                         // {...bussinesslist}
                         options={bussiness}
+                        key={"dynamcreferencekey"}
                         getOptionLabel={(option) => option.Client ? option.Client : ""}
                         id="clear-on-escape-teams"
                         clearOnEscape
-                        // defaultValue={}
-                        // value={addContactData.clientName || null}
-                        onChange={onChangebussines}
+                        // defaultValue={defaultClient[0]}
+                        value={defaultClient || null}
+                        // onChange={onChangebussines}
                         renderInput={(params) => (
                           <TextField
                             {...params}
