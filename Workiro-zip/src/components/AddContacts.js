@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -1042,4 +1042,4 @@ function AddContacts({addContactData}) {
     </Box>
   )
 }
-export default AddContacts;
+export default memo(AddContacts);
