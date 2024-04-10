@@ -3162,6 +3162,11 @@ span.tox-statusbar__branding {
   border-radius: 3px;
 }
 
+.well-2 {
+  background: #f0f4ff;
+  border: 2px dashed #bfd3ff;
+}
+
 .modal-head {
   padding: 15px 15px 15px 25px;
   border-bottom: 2px solid #f1f1f1;

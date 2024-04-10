@@ -29,7 +29,7 @@ export default function UploadButtons({ userContactDetails, setContactDetails })
         setContactDetails(data);
         if (base64Images.length === selectedFiles.length) {
           setImages(base64Images);
-          setPreviewImage(base64Images[0]); 
+          setPreviewImage(base64Images[0]);
         }
       };
       reader.readAsDataURL(file);
@@ -41,11 +41,11 @@ export default function UploadButtons({ userContactDetails, setContactDetails })
       (_, index) => index !== indexToRemove
     );
     setImages(filteredImages);
-    setPreviewImage(filteredImages.length > 0 ? filteredImages[0] : null); 
+    setPreviewImage(filteredImages.length > 0 ? filteredImages[0] : null);
   };
 
   return (
-    <Stack alignItems="start" spacing={2} className='position-sticky top-0'>
+    <Stack alignItems="start" spacing={2}>
       <label htmlFor="icon-button-file">
         <Input
           id="icon-button-file"
@@ -83,7 +83,7 @@ export default function UploadButtons({ userContactDetails, setContactDetails })
           </div>
         ))}
         {images.length === 0 && !previewImage && (
-          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg" alt="Blank Preview" style={{ maxWidth: '100px', maxHeight: '100px', margin: '5px',  borderRadius: '90px'  }} />
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg" alt="Blank Preview" style={{ maxWidth: '100px', maxHeight: '100px', margin: '5px', borderRadius: '90px' }} />
         )}
       </div>
       <label htmlFor="contained-button-file">
@@ -107,6 +107,8 @@ export default function UploadButtons({ userContactDetails, setContactDetails })
           Image Upload
         </Button>
       </label>
+
+      
 
     </Stack>
   );

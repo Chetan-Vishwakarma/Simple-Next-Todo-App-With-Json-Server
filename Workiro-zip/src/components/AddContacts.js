@@ -591,19 +591,21 @@ function AddContacts() {
 
         <Box className="general-tab white-box">
           <Box className='d-flex'>
-            <Box className="mb-3 pe-4 border-end me-4">
-              <UploadButtons
-                userContactDetails={userContactDetails}
-                setContactDetails={setContactDetails}
-              />
+            <Box className="mb-3 pe-2 me-2">
+              <Box className='position-sticky top-0'>
+                <UploadButtons
+                  userContactDetails={userContactDetails}
+                  setContactDetails={setContactDetails}
+                />
+                <textarea className='form-control textarea-2 mt-3' placeholder='Type here
+              '></textarea>
+              </Box>
             </Box>
 
             <Box className="mb-3 w-100">
-
               <Box className='well mb-4'>
-
                 <h2 className='font-20 mb-3 text-black'>Contact Details</h2>
-                <Box className='well mb-4'>
+                <Box className='well well-2 mb-3'>
                   <h2 className='font-14 bold mb-2 text-black'>Import from Companies House</h2>
                   <Grid container spacing={2}>
                     <Grid item xs={6} md={6}>
@@ -690,6 +692,49 @@ function AddContacts() {
                   </Grid>
                 </Box>
 
+                <Box className='well well-2 mb-3'>
+                  {/* <h2 className='font-14 bold mb-2 text-black'>Import from Companies House</h2> */}
+                  <Grid container spacing={2}>
+                    <Grid item xs={6} md={6}>
+                      <Autocomplete
+                        {...clientlist}
+                        id="clientlist"
+                        clearOnEscape
+                        onChange={onChangeclientlist}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant="outlined"
+                            name="Selectclient"
+                            value={""}
+                            //   onChange={onChange}
+                            label="Folder List"
+                          />
+                        )}
+                      />
+                    </Grid>
+
+                    <Grid item xs={6} md={6}>
+                      <Autocomplete
+                        {...bussinesslist}
+                        id="clear-on-escape-teams"
+                        clearOnEscape
+                        onChange={onChangebussines}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            name="Selectteamsa"
+                            value={""}
+                            //   onChange={onChangebussines}
+                            label="Reference List"
+                            variant="outlined"
+                          />
+                        )}
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+
                 <Grid container spacing={2}>
                   <Grid item xs={6} md={6}>
                     <Autocomplete
@@ -762,14 +807,14 @@ function AddContacts() {
               </Box>
 
               <Button
-                  style={{ marginTop: "5px" }}
-                  variant="contained"
-                  disabled={!clientData || !selectedFolderID}
-                  onClick={handleSubmit}
-                  className='btn-blue-2'
-                >
-                  Add New Contact
-                </Button>
+                style={{ marginTop: "5px" }}
+                variant="contained"
+                disabled={!clientData || !selectedFolderID}
+                onClick={handleSubmit}
+                className='btn-blue-2'
+              >
+                Add New Contact
+              </Button>
 
 
             </Box>
