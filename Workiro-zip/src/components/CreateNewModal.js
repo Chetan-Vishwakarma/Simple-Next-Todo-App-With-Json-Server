@@ -39,10 +39,8 @@ import {
     ListItem,
     ListItemText,
     TextField,
-    responsiveFontSizes,
 } from "@mui/material";
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
 
 import dayjs from 'dayjs';
@@ -65,16 +63,14 @@ import { styled } from '@mui/material/styles';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { renderTimeViewClock } from "@mui/x-date-pickers";
-import moment from "moment";
-import { Toast } from "devextreme-react";
+
 import Reference from "../client/client-components/Reference";
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { data } from "jquery";
+
 import EditReference from "../client/client-components/EditReference";
 import UploadDocument from "../client/client-components/UploadDocument";
 import AddContacts from "./AddContacts";
@@ -114,6 +110,7 @@ function CreateNewModalTask({ ...props }) {
         txtSectionData = null,
         TaskType = null,
         openModal = null,
+        setOpenModal = null,
     } = props || {};
 
     console.log("documentDate txtSectionId1", documentDate,
@@ -124,8 +121,12 @@ function CreateNewModalTask({ ...props }) {
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
 
 
+<<<<<<< HEAD
     const [guid, setGuid] = useState('');
     const [addContactData, setAddContact]=useState({});
+=======
+
+>>>>>>> f443b86b6d08e7d4f4d68ee7159d76da1727edd7
 
     //const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
@@ -143,7 +144,7 @@ function CreateNewModalTask({ ...props }) {
     const [filterText, setFilterText] = React.useState("");
 
     const [userFilter, setUserFilter] = React.useState([]);
-    const [userListData, setUserListData] = React.useState([]);
+    //const [userListData, setUserListData] = React.useState([]);
 
     const [userList, setUserList] = React.useState([]);
     const [addUser, setAddUser] = useState([]);
@@ -154,10 +155,10 @@ function CreateNewModalTask({ ...props }) {
     const sectionListRef = React.useRef(null);
 
     const [searchQuery, setSearchQuery] = useState("");
-    const [anchorel, setAnchorel] = React.useState(null);
+    //const [anchorel, setAnchorel] = React.useState(null);
 
     const [ownerID, setOwnerID] = React.useState("");
-    const [messageId, setMessageId] = React.useState("");
+    //const [messageId, setMessageId] = React.useState("");
 
     const [txtdescription, setTxtDescriptin] = React.useState("");
     // const [txtcomment, setTxtComment] = React.useState("");
@@ -173,7 +174,7 @@ function CreateNewModalTask({ ...props }) {
     ////////////////////////////////////////Folder list
     const [folderList, setFolderList] = useState([]);
     const [searchFolderQuery, setSearchFolderQuery] = useState("");
-   
+
     const [txtFolderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
     const [folderAnchorEl, setFolderAnchorEl] = React.useState(null);
@@ -200,7 +201,7 @@ function CreateNewModalTask({ ...props }) {
     ////////////////////////////////Attachment files
     const [selectedFiles, setSelectedFiles] = useState([]);
 
-    const [selectedFilesFromBrower, setSelectedFilesFromBrower] = useState([]);
+    //const [selectedFilesFromBrower, setSelectedFilesFromBrower] = useState([]);
 
     const [attachmentPath, setAttachmentPath] = useState([]);
 
@@ -214,7 +215,7 @@ function CreateNewModalTask({ ...props }) {
     const [nextDate, setNextDate] = useState("");
     const [remiderDate, setRemiderDate] = useState("");
     const [expireDate, setExpireDate] = useState("");
-    const [startDate, setStartDate] = useState(new Date());
+
 
 
     ///////////////////////////////////////end date set
@@ -227,26 +228,27 @@ function CreateNewModalTask({ ...props }) {
 
     const [txtPriorityId, setTxtPriorityId] = useState(2);
 
-    const [prioriyAnchorEl, setPrioriyAnchorEl] = React.useState(null);
-    const [selectedPrioriyMenu, setSelectedPrioriyMenu] = useState(null);
-    const boolPriority = Boolean(prioriyAnchorEl);
+    //const [prioriyAnchorEl, setPrioriyAnchorEl] = React.useState(null);
+    //const [selectedPrioriyMenu, setSelectedPrioriyMenu] = useState(null);
 
-    const [statusAnchorEl, setStatusAnchorEl] = React.useState(null);
-    const [selectedStatusMenu, setSelectedStatusMenu] = useState(null);
+    //const boolPriority = Boolean(prioriyAnchorEl);
 
-    const boolStatus = Boolean(statusAnchorEl);
+    // const [statusAnchorEl, setStatusAnchorEl] = React.useState(null);
+    //const [selectedStatusMenu, setSelectedStatusMenu] = useState(null);
+
+    //const boolStatus = Boolean(statusAnchorEl);
 
     //////////////////////End Priority
 
 
 
-    const open2 = Boolean(anchorel);
-    const handleClick = (event) => {
-        //setAnchorel(event.currentTarget);
-    };
-    const handleClose2 = () => {
-        setAnchorel(null);
-    };
+    // const open2 = Boolean(anchorel);
+    // const handleClick = (event) => {
+    //     //setAnchorel(event.currentTarget);
+    // };
+    // const handleClose2 = () => {
+    //     setAnchorel(null);
+    // };
     //
 
     const [open, setOpen] = React.useState(false);
@@ -265,9 +267,9 @@ function CreateNewModalTask({ ...props }) {
         }
 
         setOpen(true);
-       
-            ClearForm();
-        
+
+        ClearForm();
+
 
     };
 
@@ -282,7 +284,7 @@ function CreateNewModalTask({ ...props }) {
     const UserDropdownopen = Boolean(userDropdownanchorEl);
 
 
-    const [selectedMenu, setSelectedMenu] = useState(null);
+    //const [selectedMenu, setSelectedMenu] = useState(null);
 
     const [userDropdownanchorElRight, setuserDropdownAnchorElRight] = React.useState(null);
     const UserDropdownopenRight = Boolean(userDropdownanchorElRight);
@@ -321,7 +323,7 @@ function CreateNewModalTask({ ...props }) {
 
 
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const Select2 = Boolean(anchorEl);
+    //const Select2 = Boolean(anchorEl);
 
     const handleClick3 = (event, menuType) => {
         console.log(menuType);
@@ -336,30 +338,30 @@ function CreateNewModalTask({ ...props }) {
             setSelectedSectionMenu(menuType); // Set the selected menu type for folder
         }
         else if (menuType === "priority") {
-            setPrioriyAnchorEl(event.currentTarget); // Set the anchor element for the folder menu
-            setSelectedPrioriyMenu(menuType); // Set the selected menu type for folder
+            // setPrioriyAnchorEl(event.currentTarget); // Set the anchor element for the folder menu
+            // setSelectedPrioriyMenu(menuType); // Set the selected menu type for folder
         }
         else if (menuType === "status") {
-            setStatusAnchorEl(event.currentTarget); // Set the anchor element for the folder menu
-            setSelectedStatusMenu(menuType); // Set the selected menu type for folder
+            // setStatusAnchorEl(event.currentTarget); // Set the anchor element for the folder menu
+            // setSelectedStatusMenu(menuType); // Set the selected menu type for folder
         }
     };
 
-    const handleClose3 = (menuType) => {
-        if (menuType === "client") {
-            setClientAnchorEl(null); // Close the client menu by setting the anchor element to null
-        }
-        else if (menuType === "folder") {
-            setFolderAnchorEl(null); // Close the folder menu by setting the anchor element to null
-        }
-        else if (menuType === "section") {
-            setSectionAnchorEl(null); // Close the folder menu by setting the anchor element to null
-        }
-        else if (menuType === "priority") {
-            setPrioriyAnchorEl(null); // Close the folder menu by setting the anchor element to null
-        }
+    // const handleClose3 = (menuType) => {
+    //     if (menuType === "client") {
+    //         setClientAnchorEl(null); // Close the client menu by setting the anchor element to null
+    //     }
+    //     else if (menuType === "folder") {
+    //         setFolderAnchorEl(null); // Close the folder menu by setting the anchor element to null
+    //     }
+    //     else if (menuType === "section") {
+    //         setSectionAnchorEl(null); // Close the folder menu by setting the anchor element to null
+    //     }
+    //     else if (menuType === "priority") {
+    //        // setPrioriyAnchorEl(null); // Close the folder menu by setting the anchor element to null
+    //     }
 
-    };
+    // };
 
     const [anchorSelectFileEl, setAnchorSelectFileEl] = React.useState(null);
 
@@ -418,7 +420,7 @@ function CreateNewModalTask({ ...props }) {
     };
 
 
-    const userAdd = Boolean(anchorel);
+    //const userAdd = Boolean(anchorel);
 
     function Json_GetForwardUserList(fid) {
         setAddUser([])
@@ -449,7 +451,7 @@ function CreateNewModalTask({ ...props }) {
                         let removeuser = result.filter((e) => e.ID !== localStorage.getItem("UserId"));
 
 
-                        setUserListData(removeuser);
+                        // setUserListData(removeuser);
                         setUserFilter(removeuser);
 
                         let commanuser = result.filter((e) => e.ID === parseInt(localStorage.getItem("UserId")));
@@ -473,7 +475,7 @@ function CreateNewModalTask({ ...props }) {
             // If it doesn't exist, add it to the 'addUser' array
             setAddUser([...addUser, e]);
             let res = userFilter.filter((user) => user.ID !== e.ID);
-            setUserListData(res);
+            // setUserListData(res);
             setUserFilter(res);
         }
 
@@ -484,9 +486,9 @@ function CreateNewModalTask({ ...props }) {
     };
 
 
-    const handleSaveTask = (e) => {
-        console.error("get user list", addUser);
-    };
+    // const handleSaveTask = (e) => {
+    //     console.error("get user list", addUser);
+    // };
 
     const kbToMb = (kb) => {
         let t = kb / 2024;
@@ -495,9 +497,9 @@ function CreateNewModalTask({ ...props }) {
     };
 
     // Function to handle button click
-    const handleClickClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+    // const handleClickClick = (event) => {
+    //     setAnchorEl(event.currentTarget);
+    // };
 
     // Function to handle menu item click
     const handleCloseClient = () => {
@@ -583,28 +585,28 @@ function CreateNewModalTask({ ...props }) {
         return formattedDate;
     }
 
-    function getNextDate() {
-        let currentDate = new Date();
-        if (receivedDate) {
-            currentDate = new Date(receivedDate);
-        }
+    // function getNextDate() {
+    //     let currentDate = new Date();
+    //     if (receivedDate) {
+    //         currentDate = new Date(receivedDate);
+    //     }
 
 
-        currentDate.setDate(currentDate.getDate() + 1); // Increment the day by 1 to get the next day's date
-        const day = currentDate.getDate().toString().padStart(2, '0'); // Get the day and pad with 0 if needed
-        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Get the month (Note: January is 0)
-        const year = currentDate.getFullYear(); // Get the full year
-        // Construct the date string in "yyyy/mm/dd" format
-        const formattedDate = `${year}-${month}-${day}`;
-        return formattedDate;
-    }
+    //     currentDate.setDate(currentDate.getDate() + 1); // Increment the day by 1 to get the next day's date
+    //     const day = currentDate.getDate().toString().padStart(2, '0'); // Get the day and pad with 0 if needed
+    //     const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Get the month (Note: January is 0)
+    //     const year = currentDate.getFullYear(); // Get the full year
+    //     // Construct the date string in "yyyy/mm/dd" format
+    //     const formattedDate = `${year}-${month}-${day}`;
+    //     return formattedDate;
+    // }
 
     // Function to close the folder list
-    const closeFolderList = (e) => {
-        if (folderListRef.current && !folderListRef.current.contains(e.target)) {
-            setFolderAnchorEl(null);
-        }
-    };
+    // const closeFolderList = (e) => {
+    //     if (folderListRef.current && !folderListRef.current.contains(e.target)) {
+    //         setFolderAnchorEl(null);
+    //     }
+    // };
 
     // Function to close the client list
 
@@ -700,19 +702,25 @@ function CreateNewModalTask({ ...props }) {
 
 
     useEffect(() => {
+        ClearForm();
         // if(passButtonHide){
         //     setPassButtonHide(passButtonHide)
         // }
 
         if (createNewFileObj) {
-            //console.log("createNewFileObj1111", createNewFileObj)
+            console.log("createNewFileObj111122222", createNewFileObj)
             setSelectedFiles(createNewFileObj);
+            // setSelectedDocumentFile((prevUploadedFiles) => [
+            //     ...prevUploadedFiles,
+            //     ...createNewFileObj,
+            // ]);
             setSelectedDocumentFile(createNewFileObj);
+
             setTimeout(() => {
                 if (TaskType === "Portal") {
                     PrepareDocumentsForPublish_Json(createNewFileObj, 2);
                 }
-              
+
             }, 3000);
         }
         if (txtFolderData) {
@@ -778,7 +786,7 @@ function CreateNewModalTask({ ...props }) {
         //     }
         // });
 
-       // setUserFilter(res);
+        // setUserFilter(res);
     }, [filterText])
 
     const CurrentDateChange = (e) => {
@@ -799,11 +807,11 @@ function CreateNewModalTask({ ...props }) {
 
         let strGuid = uuidv4().replace(/-/g, '');
         localStorage.setItem("GUID", strGuid)
-        
+
         setLoading(false);
-        
+
         setAnchorSelectFileEl(null);
-        if(openModal){
+        if (openModal) {
             setOpen(openModal);
         }
 
@@ -819,9 +827,9 @@ function CreateNewModalTask({ ...props }) {
         setExpireDate(dayjs(getCurrentDate()));
 
         Json_GetFolders();
-        Json_GetForwardUserList(txtFolderId?txtFolderId:localStorage.getItem("FolderId"));
+        Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("FolderId"));
         Json_GetFolderData();
-        Json_GetSections(txtFolderId?txtFolderId:localStorage.getItem("FolderId"));
+        Json_GetSections(txtFolderId ? txtFolderId : localStorage.getItem("FolderId"));
         //console.log(nextDate, currentDate)
 
         //document.addEventListener('mousedown', closeFolderList);
@@ -933,7 +941,7 @@ function CreateNewModalTask({ ...props }) {
                     Guid: localStorage.getItem("GUID"),
                     FileType: getFileExtension(file.name).toLowerCase()
                 };
-               // console.log("get folder list 2222222222", fileData);
+                // console.log("get folder list 2222222222", fileData);
                 filesData.push(fileData);
 
                 if (txtTaskType === "CRM") {
@@ -948,10 +956,10 @@ function CreateNewModalTask({ ...props }) {
                         ...filesData,
                     ]);
 
-                    setSelectedFilesFromBrower((prevUploadedFiles) => [
-                        ...prevUploadedFiles,
-                        ...filesData,
-                    ]);
+                    // setSelectedFilesFromBrower((prevUploadedFiles) => [
+                    //     ...prevUploadedFiles,
+                    //     ...filesData,
+                    // ]);
 
                 }
             };
@@ -1005,34 +1013,34 @@ function CreateNewModalTask({ ...props }) {
     }
 
 
-    const SETDate = (date) => {
-        var d = new Date(date);
-        var dd = d.getDate();
-        var mm = d.getMonth() + 1;
+    // const SETDate = (date) => {
+    //     var d = new Date(date);
+    //     var dd = d.getDate();
+    //     var mm = d.getMonth() + 1;
 
-        var yy = d.getFullYear();
-        var DateVal;
-        if (dd < "10" || mm < "10") {
-            if (dd < "10" && mm < '10') {
-                return date = yy + "/0" + mm + "/0" + dd;
-            } else if (dd < "10") {
-                return date = yy + "/" + mm + "/0" + dd;
-            } else if (mm < "10") {
-                return date = yy + "/0" + mm + "/" + dd;
-            }
+    //     var yy = d.getFullYear();
+    //     var DateVal;
+    //     if (dd < "10" || mm < "10") {
+    //         if (dd < "10" && mm < '10') {
+    //             return date = yy + "/0" + mm + "/0" + dd;
+    //         } else if (dd < "10") {
+    //             return date = yy + "/" + mm + "/0" + dd;
+    //         } else if (mm < "10") {
+    //             return date = yy + "/0" + mm + "/" + dd;
+    //         }
 
-        } else {
-            return DateVal = yy + "/" + mm + "/" + dd;
-        }
-    }
+    //     } else {
+    //         return DateVal = yy + "/" + mm + "/" + dd;
+    //     }
+    // }
 
-    const handleSuccess = (mgsid) => {
-        Swal.fire({
-            icon: 'success',
-            title: 'Success!',
-            text: 'Your task has been created successfully.' + mgsid,
-        });
-    };
+    // const handleSuccess = (mgsid) => {
+    //     Swal.fire({
+    //         icon: 'success',
+    //         title: 'Success!',
+    //         text: 'Your task has been created successfully.' + mgsid,
+    //     });
+    // };
 
 
     async function UploadAttachment(filedata) {
@@ -1176,7 +1184,7 @@ function CreateNewModalTask({ ...props }) {
     }
 
     async function Json_CRM_Task_Save() {
-       
+
         if (txtSection) {
             setLoading(true);
         }
@@ -1242,15 +1250,17 @@ function CreateNewModalTask({ ...props }) {
                     console.log("save task rerurn value", js);
 
                     if (js.Status === "success") {
-                        //Json_CRM_GetOutlookTask_ForTask();
+                        Json_CRM_GetOutlookTask_ForTask();
                         setLoading(false);
                         toast.success("Created Task !");
-                        setMessageId(js.Message);
+                        // setMessageId(js.Message);
                         console.log("selectedDocumentFile", selectedDocumentFile)
                         if (selectedDocumentFile.length > 0) {
                             Json_CRM_TaskDMSAttachmentInsert(js.Message);
                         }
                         setOpen(false);
+                        setOpenModal(false)
+                        ClearForm();
                         // setIsApi(!isApi);
 
                         // Inside your function or event handler where you want to show the success message
@@ -1274,24 +1284,24 @@ function CreateNewModalTask({ ...props }) {
 
     }
 
-  
-    function ClearForm(){
+
+    function ClearForm() {
         setCurrentDate(new Date())
         setTextSubject("");
         settxtClient("Select Client");
-       // settxtFolder("Select Folder");
+        // settxtFolder("Select Folder");
         setFolderId(localStorage.getItem("FolderId"));
         settxtSection("Select Section");
         setTxtSectionId("");
-        setTxtDescriptin(""); 
+        setTxtDescriptin("");
         setTextClientId("")
-       
-        setSelectedFiles([]); 
-        
+
+        setSelectedFiles([]);
+
         setTxtPriority("Normal");
         setTxtStatus("Not Started");
 
-        
+
         const currentDate1 = new Date(currentDate);
         const nextDate = new Date(currentDate1); // Copy the current date        
         nextDate.setDate(currentDate1.getDate() + 1); // Increment the day by 1 to get the next day's date    
@@ -1328,7 +1338,7 @@ function CreateNewModalTask({ ...props }) {
         };
         cls.Json_CRM_TaskDMSAttachmentInsert(obj, function (sts, data) {
             if (sts && data) {
-                console.log('Json_CRM_TaskDMSAttachmentInsert', DataTransferItem);
+                console.log('Json_CRM_TaskDMSAttachmentInsert', data);
             }
         })
     }
@@ -1354,30 +1364,30 @@ function CreateNewModalTask({ ...props }) {
 
     };
     /////////////////////////////End Remove Assignee
-    function rearrangeName(fullName) {
-        // Split the full name into an array of words
-        const words = fullName.split(' ');
+    // function rearrangeName(fullName) {
+    //     // Split the full name into an array of words
+    //     const words = fullName.split(' ');
 
-        // Extract the first letter of the first name and capitalize it
-        const firstLetterFirstName = words[0].charAt(0).toUpperCase();
+    //     // Extract the first letter of the first name and capitalize it
+    //     const firstLetterFirstName = words[0].charAt(0).toUpperCase();
 
-        // Extract the first letter of the last name and capitalize it
-        const firstLetterLastName = words[words.length - 1].charAt(0).toUpperCase();
+    //     // Extract the first letter of the last name and capitalize it
+    //     const firstLetterLastName = words[words.length - 1].charAt(0).toUpperCase();
 
-        // Concatenate the first letters
-        const result = firstLetterFirstName + firstLetterLastName;
-        console.log("final save data2222222222", result);
-    }
+    //     // Concatenate the first letters
+    //     const result = firstLetterFirstName + firstLetterLastName;
+    //     console.log("final save data2222222222", result);
+    // }
 
     ////////////////////////////////////DMS Document
     const [documentLisdoc, setOpenDocumentList] = React.useState(false);
     const [dmsDocumentList, setDMSDocumentList] = React.useState([]);
-    const [allMode, setAllMode] = useState('allPages');
+    //const [allMode, setAllMode] = useState('allPages');
     const [selectedRows, setSelectedRows] = useState([]);
 
-    const onAllModeChanged = React.useCallback(({ value }) => {
-        setAllMode(value);
-    }, []);
+    // const onAllModeChanged = React.useCallback(({ value }) => {
+    //     setAllMode(value);
+    // }, []);
 
     const Json_ExplorerSearchDoc = () => {
         try {
@@ -1464,24 +1474,24 @@ function CreateNewModalTask({ ...props }) {
 
     };
 
-    const handleCloseTastkType = (e) => {
-        setAnchorElTastkType(null);
+    // const handleCloseTastkType = (e) => {
+    //     setAnchorElTastkType(null);
 
-        // setCreateTaskButton(e.target.textContent)
-        let txt = e.target.innerText;
-        if (txt === "CRM") {
-            setIsVisibleByTypeCRM(false);
-            settxtTaskType(txt);
-        }
-        else if (txt === "Portal") {
-            setIsVisibleByTypeCRM(true);
-            settxtTaskType(txt);
-        }
-        else {
-            console.log("Else Part");
-        }
+    //     // setCreateTaskButton(e.target.textContent)
+    //     let txt = e.target.innerText;
+    //     if (txt === "CRM") {
+    //         setIsVisibleByTypeCRM(false);
+    //         settxtTaskType(txt);
+    //     }
+    //     else if (txt === "Portal") {
+    //         setIsVisibleByTypeCRM(true);
+    //         settxtTaskType(txt);
+    //     }
+    //     else {
+    //         console.log("Else Part");
+    //     }
 
-    };
+    // };
 
     ////////////////// Priority
     let priorityarr = [{ id: 1, "name": "High" }, { id: 2, "name": "Normal" }, { id: 3, "name": "Low" }];
@@ -1548,13 +1558,13 @@ function CreateNewModalTask({ ...props }) {
         return data.value;
     };
 
-    const getPortalUser = () => {
+    // const getPortalUser = () => {
 
-        Json_GetClientCardDetails();
+    //     Json_GetClientCardDetails();
 
-    }
+    // }
 
-    const [selectedValues, setSelectedValues] = useState([]);
+    //const [selectedValues, setSelectedValues] = useState([]);
     const [selectedEmail, setSelectedEmail] = useState([]);
 
     const handleAutocompleteChange = (event, newValue) => {
@@ -1635,7 +1645,7 @@ function CreateNewModalTask({ ...props }) {
         setTimeout(() => {
             PrepareDocumentsForPublish_Json(filesData, 2)
         }, 4000);
-        
+
 
 
         setOpenDocumentList(false)
@@ -1671,12 +1681,12 @@ function CreateNewModalTask({ ...props }) {
 
 
 
-    const [editorContent, setEditorContent] = useState('');
+    //const [editorContent, setEditorContent] = useState('');
 
     // Handler function to update the editor content
-    const handleContentChange = (e) => {
-        setEditorContent(e.value);
-    };
+    // const handleContentChange = (e) => {
+    //     setEditorContent(e.value);
+    // };
     //////////////////////////Template Start
     const [txtTemplateId, setTxtTempId] = useState(null);
     const [errorMgs, setErrorMgs] = useState(false);
@@ -1700,27 +1710,27 @@ function CreateNewModalTask({ ...props }) {
 
     };
 
-    function GetTemplateData(data) {
-        try {
-            let obj = {};
-            obj.agrno = agrno;
-            obj.UserEmail = Email;
-            obj.password = password;
-            obj.strFolderId = data[0].ProjectID;;
-            obj.strClientId = textClientId;
-            obj.strSectionId = data[0].ItemTypeId;
-            obj.strTemplateId = data[0].TemplateID;
+    // function GetTemplateData(data) {
+    //     try {
+    //         let obj = {};
+    //         obj.agrno = agrno;
+    //         obj.UserEmail = Email;
+    //         obj.password = password;
+    //         obj.strFolderId = data[0].ProjectID;;
+    //         obj.strClientId = textClientId;
+    //         obj.strSectionId = data[0].ItemTypeId;
+    //         obj.strTemplateId = data[0].TemplateID;
 
-            cls.Json_GetTemplateData(obj, function (sts, data) {
-                if (sts && data) {
-                    console.log("Template Data ", data)
-                    Json_GetHtmlFromRtf(data);
-                }
-            })
-        } catch (error) {
-            console.log("Error for Tempalte", error)
-        }
-    }
+    //         cls.Json_GetTemplateData(obj, function (sts, data) {
+    //             if (sts && data) {
+    //                 console.log("Template Data ", data)
+    //                 Json_GetHtmlFromRtf(data);
+    //             }
+    //         })
+    //     } catch (error) {
+    //         console.log("Error for Tempalte", error)
+    //     }
+    // }
 
     const [templateDataMarkup, setTemplateDataMarkup] = useState(null);
 
@@ -1816,7 +1826,7 @@ function CreateNewModalTask({ ...props }) {
 
     useEffect(() => {
         GetSMSTemplate();
-    }, [setTxtTempId])
+    }, [txtTemplateId])
 
     const [textSubject, setTextSubject] = useState("");
     const [editorContentValue, setEditorContentValue] = useState(null);
@@ -1834,100 +1844,110 @@ function CreateNewModalTask({ ...props }) {
         }
     };
 
-    
+
 
 
     function CreatePortalTask() {
-        if (txtSection) {
-            setLoading(true);
+
+        if (selectedEmail) {
+            try {
+                if (txtSection) {
+                    setLoading(true);
+                }
+                else {
+                    toast.error("Please Select a Section !");
+                    setLoading(false);
+                    return false
+                }
+
+
+                let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
+                if (nxtdd === "Invalid Date") {
+                    let dd = nextDate.split("/");//30/03/2024
+                    nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
+                }
+
+                const isaddUser = addUser.map(obj => obj.ID).join(',');
+                let ooo = {
+                    "ClientIsRecurrence": false,
+                    "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
+                    "ClientEnd": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
+                    "ClientDayNumber": "1",
+                    "ClientMonth": "1",
+                    "ClientOccurrenceCount": "1",
+                    "ClientPeriodicity": "1",
+                    "ClientRecurrenceRange": "0",
+                    "ClientRecurrenceType": "0",
+                    "ClientWeekDays": "1",
+                    "ClientWeekOfMonth": "1",
+                    "OwnerID": ownerID.toString(),
+                    "AssignedToID": isaddUser,
+                    "AssociateWithID": textClientId,
+                    "FolderId": txtFolderId.toString(),
+                    "Subject": textSubject,
+                    "TypeofTaskID": txtSectionId.toString(),
+                    "EndDateTime": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
+                    "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
+                    "Status": txtStatus,
+                    "Priority": txtPriorityId.toString(),
+                    "PercentComplete": "1",
+                    "ReminderSet": false,
+                    "ReminderDateTime": remiderDate ? dayjs(remiderDate).format("YYYY/MM/DD") : "1900/01/01",
+                    "TaskNo": "0",
+                    "Attachments": "",
+                    "Details": txtdescription,
+                    "YEDate": "1900/01/01",
+                    "SubDeadline": "1900/01/01",
+                    "DocRecdate": "1900/01/01",
+                    "ElectronicFile": false,
+                    "PaperFile": false,
+                    "Notes": "",
+                    "TaskSource": txtTaskType
+                }
+                console.log("final save data obj", ooo);
+                clsSms.Json_CRM_Task_Save(ooo, function (sts, data) {
+                    if (sts) {
+                        if (data) {
+                            setLoading(false);
+                            let js = JSON.parse(data);
+                            console.log("Json_CRM_Task_Save ", js);
+                            if (js.Status === "success") {
+                                // setMessageId(js.Message);
+                                CreatePortalMessage(js.Message)
+                                // toast.success("Created Task");
+                                setOpen(false);
+                                // setIsApi(!isApi);
+                            }
+                            else {
+                                toast.error("Task Not Created Please Try Again");
+                                console.log("Response final", data)
+                            }
+                        } else {
+                            setLoading(false);
+                            toast.error("Faild Created Task Try again !");
+                        }
+
+
+
+                        // setLoading(false);
+                    }
+                })
+            } catch (error) {
+                console.log({
+                    status: false,
+                    message: "Faild Portal task Try again",
+                    error: error,
+                });
+            }
         }
         else {
-            toast.error("Please Select a Section !");
-            setLoading(false);
-            return false
+            toast.error("Please Select a Email in To")
         }
 
 
-        let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
-        if (nxtdd === "Invalid Date") {
-            let dd = nextDate.split("/");//30/03/2024
-            nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
-        }
-
-
-        try {
-            const isaddUser = addUser.map(obj => obj.ID).join(',');
-            let ooo = {
-                "ClientIsRecurrence": false,
-                "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-                "ClientEnd": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
-                "ClientDayNumber": "1",
-                "ClientMonth": "1",
-                "ClientOccurrenceCount": "1",
-                "ClientPeriodicity": "1",
-                "ClientRecurrenceRange": "0",
-                "ClientRecurrenceType": "0",
-                "ClientWeekDays": "1",
-                "ClientWeekOfMonth": "1",
-                "OwnerID": ownerID.toString(),
-                "AssignedToID": isaddUser,
-                "AssociateWithID": textClientId,
-                "FolderId": txtFolderId.toString(),
-                "Subject": textSubject,
-                "TypeofTaskID": txtSectionId.toString(),
-                "EndDateTime": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
-                "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
-                "Status": txtStatus,
-                "Priority": txtPriorityId.toString(),
-                "PercentComplete": "1",
-                "ReminderSet": false,
-                "ReminderDateTime": remiderDate ? dayjs(remiderDate).format("YYYY/MM/DD") : "1900/01/01",
-                "TaskNo": "0",
-                "Attachments": "",
-                "Details": txtdescription,
-                "YEDate": "1900/01/01",
-                "SubDeadline": "1900/01/01",
-                "DocRecdate": "1900/01/01",
-                "ElectronicFile": false,
-                "PaperFile": false,
-                "Notes": "",
-                "TaskSource": txtTaskType
-            }
-            console.log("final save data obj", ooo);
-            clsSms.Json_CRM_Task_Save(ooo, function (sts, data) {
-                if (sts) {
-                    if (data) {
-                        setLoading(false);
-                        let js = JSON.parse(data);
-                        console.log("Json_CRM_Task_Save ", js);
-                        if (js.Status === "success") {
-                            setMessageId(js.Message);
-                            CreatePortalMessage(js.Message)
-                           // toast.success("Created Task");
-                            setOpen(false);
-                            // setIsApi(!isApi);
-                        }
-                        else {
-                            toast.error("Task Not Created Please Try Again");
-                            console.log("Response final", data)
-                        }
-                    } else {
-                        setLoading(false);
-                        toast.error("Faild Created Task Try again !");
-                    }
 
 
 
-                    // setLoading(false);
-                }
-            })
-        } catch (error) {
-            console.log({
-                status: false,
-                message: "Faild Portal task Try again",
-                error: error,
-            });
-        }
     }
 
 
@@ -1986,7 +2006,12 @@ function CreateNewModalTask({ ...props }) {
                         console.log("MessagePublished_Json", data)
                         if (!data) {
                             toast.success("Task Created");
-                           // Json_CRM_GetOutlookTask_ForTask();
+                            Json_CRM_GetOutlookTask_ForTask();
+                            if(createNewFileObj){
+                                setOpenModal(false);
+                            }
+                           
+                            ClearForm();
                         }
                         setOpen(false);
 
@@ -2054,10 +2079,10 @@ function CreateNewModalTask({ ...props }) {
     }
 
 
-    const removeItemById = (array, idToRemove) => {
-        // Filter out the item with the specified id
-        return array.filter(item => item.ID !== idToRemove);
-    };
+    // const removeItemById = (array, idToRemove) => {
+    //     // Filter out the item with the specified id
+    //     return array.filter(item => item.ID !== idToRemove);
+    // };
 
 
     const handleItemClick = (e) => {
@@ -2086,9 +2111,9 @@ function CreateNewModalTask({ ...props }) {
 
     };
 
-    const closeDropdown = () => {
-        setDropdownVisible(false);
-    };
+    // const closeDropdown = () => {
+    //     setDropdownVisible(false);
+    // };
 
 
     const [isRemindMe, setIsRemindMe] = useState(false);
@@ -2101,19 +2126,19 @@ function CreateNewModalTask({ ...props }) {
 
 
     const SigningMethods = (e) => {
-        console.log("file name ",e)
-        if(e.FileType==="pdf"){
+        console.log("file name ", e)
+        if (e.FileType === "pdf") {
             setIsCheckedForApproval(true);
             setIsDisabledForApproval(true);
             const ToEmail = selectedEmail.map(obj => obj["E-Mail"]).join(",");
             let url = `https://signing.docusms.uk/Signing.aspx?accid=${agrno}&email=${Email}&password=${password}&sendclient=${textClientId}&sendemail=&clientname=${txtClient}&option=upload&file=${agrno}-${localStorage.getItem("GUID")}/${e.FileName}&to=${ToEmail}&rwndrnd=0.8166129123678032`;
             window.open(url);
         }
-        else{
-            console.log("file name ",e)
-           // toast.error("Please convert to pdf");
+        else {
+            console.log("file name ", e)
+            // toast.error("Please convert to pdf");
         }
-       
+
     }
 
     const [anchorElDoc, setAnchorElDoc] = React.useState(null);
@@ -2193,7 +2218,7 @@ function CreateNewModalTask({ ...props }) {
                 accid: agrno,
                 email: Email,
                 password: password,
-                Guid:localStorage.getItem("GUID"),
+                Guid: localStorage.getItem("GUID"),
                 FileName: d.FileName
             }
             var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
@@ -2205,7 +2230,7 @@ function CreateNewModalTask({ ...props }) {
                         let fname = getFileName(data);
                         let res = selectedFiles.map((file) => {
                             if (getFileName(file.FileName) === fname) {
-                                return { ...file, FileName: data,FileType: cls.FileType(data).toLowerCase() };
+                                return { ...file, FileName: data, FileType: cls.FileType(data).toLowerCase() };
                             }
                             else {
                                 return file;
@@ -2253,9 +2278,9 @@ function CreateNewModalTask({ ...props }) {
     const DocumentHandleClose = () => {
         setReferance(false);
     };
-    const handleClickEditReferance = () => {
-        setReferanceEdit(true);
-    };
+    // const handleClickEditReferance = () => {
+    //     setReferanceEdit(true);
+    // };
     const EditDocumentHandleClose = () => {
         setReferanceEdit(false);
     };
@@ -2282,7 +2307,7 @@ function CreateNewModalTask({ ...props }) {
                 <span className="ps-2 create-text">Create New  </span>
             </Button> */}
             <UploadDocument openUploadDocument={openUploadDocument} setOpenUploadDocument={setOpenUploadDocument}></UploadDocument>
-            
+
             <div className="select-border">
                 <Button
                     id="basic-button"
@@ -2618,10 +2643,10 @@ function CreateNewModalTask({ ...props }) {
 
                                                 </>
                                             )}
-                                            {txtTaskType==="Portal" && (
-<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
+                                            {txtTaskType === "Portal" && (
+                                                <HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
                                             )}
-                                            
+
                                         </Box>
 
                                         {!isVisibleByTypeCRM && (<>
@@ -3852,7 +3877,11 @@ function CreateNewModalTask({ ...props }) {
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
+<<<<<<< HEAD
                             Add Contact 
+=======
+                            Add Client
+>>>>>>> f443b86b6d08e7d4f4d68ee7159d76da1727edd7
                         </Typography>
                     </Box>
 

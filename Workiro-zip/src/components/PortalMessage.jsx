@@ -118,20 +118,31 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
         }
 
     }
-    const GetCertificate_Json = (mgsId) => {
+    const GetCertificate_Json = () => {
+       // console.log("GetCertificate_Json", selectedEmail);
         let o = {
             accid: agrno,
             email: Email,
             password: password,
-            messageId: mgsId.PortalDocId,
+            messageId: selectedEmail.PortalDocId,
         };
 
-        ClsPortal.GetCertificate_Json(o, function (sts, data) {
+        ClsPortal.GetCertificate_Json(o, function(sts, data) {
             if (sts) {
+<<<<<<< HEAD
                 console.log("GetCertificate_Json", data);
                 // setTemplateDataMarkup(data)
+=======
+               // console.log("GetCertificate_Json", data); // Logging for debugging
+                var a = document.createElement("a"); //Create <a>
+                a.href = "data:pdf"+ ";base64," + data; //Image Base64 Goes here
+                a.download ="certificate.pdf"; //File name Here
+                a.click(); //Downloaded file
+                    } else {
+                console.error("Error occurred while fetching certificate."); // Handle error condition
+>>>>>>> f443b86b6d08e7d4f4d68ee7159d76da1727edd7
             }
-        })
+        });
     }
 
     const GetDocumentStatus_Json = (m) => {
@@ -240,7 +251,10 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
             GetDocumentStatus_Json(e);
 
+<<<<<<< HEAD
             // GetCertificate_Json(e.PortalDocId);
+=======
+>>>>>>> f443b86b6d08e7d4f4d68ee7159d76da1727edd7
 
             setMessageEmail(e.emailid);
 
@@ -248,7 +262,12 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
             GetMessageViewHistory_Json(e);
 
+<<<<<<< HEAD
             GetSignedAttachment_Json(e);
+=======
+            //GetSignedAttachment_Json(e);
+
+>>>>>>> f443b86b6d08e7d4f4d68ee7159d76da1727edd7
             // ApprovalStatusChanged_Json(e);
             //handleClickOpenPortalAtt(true);
             // let res = allPortalAttachments.length > 0 ? allPortalAttachments.filter((p) => p.emailid === e.emailid) : null;
@@ -318,8 +337,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                     if (sts) {
                         if (data) {
                             const dataURI = "data:application/pdf;base64," + data;
-
-                            console.log("GetSignedAttachment_Json", data);
+                           // console.log("GetSignedAttachment_Json", data);
                             setCertificateData(dataURI)
 
                         }
@@ -400,13 +418,13 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                 setAllPortalAttachments(arrayOfObjects);
                 // Convert array of objects to Set to get unique objects based on specified properties
                 if (arrayOfObjects.length > 0) {
-                    //const uniqueObjectsSet = new Set(arrayOfObjects.map(obj => generateUniqueKey(obj)));
+                    const uniqueObjectsSet = new Set(arrayOfObjects.map(obj => generateUniqueKey(obj)));
 
-                    // Convert Set back to array of objects
-                    // const uniqueObjectsArray = Array.from(arrayOfObjects).map(key => {
-                    //     const [PortalDocId, emailid] = key.split('|');
-                    //     return arrayOfObjects.find(obj => obj.PortalDocId === PortalDocId && obj.emailid === emailid);
-                    // });
+                   // Convert Set back to array of objects
+                    const uniqueObjectsArray = Array.from(uniqueObjectsSet).map(key => {
+                        const [PortalDocId, emailid] = key.split('|');
+                        return arrayOfObjects.find(obj => obj.PortalDocId === PortalDocId && obj.emailid === emailid);
+                    });
 
 
 
@@ -428,21 +446,24 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                 }
                                 return { ...el, ["DDate"]: date };
                             });
+                            
                             console.log("GetMessageAttachments_Json1", mapMethod);
                             setFilterAttachments(mapMethod);
 
                             setTotalAttachment(arrayOfObjects.length);
-                            if (mapMethod.length === 1) {
-                                handleCloseMgs(mapMethod[0]);
 
-                                // setFilterAttachments(uniqueObjectsArray);
-                                // setTotalAttachment(uniqueObjectsArray.length);
-                                settxtRecipient(mapMethod.length)
+                            if (uniqueObjectsArray.length === 1) {
+                                handleCloseMgs(mapMethod[0]);
+                                //setFilterAttachments(uniqueObjectsArray);
+                               // setTotalAttachment(uniqueObjectsArray.length);
+                                settxtRecipient(uniqueObjectsArray.length)
+
+                                
                             }
                             else {
                                 handleCloseMgs(mapMethod[0]);
                                 setMessageEmail(mapMethod[0].emailid);
-                                setPortalEmail(mapMethod)
+                                setPortalEmail(uniqueObjectsArray)
                                 settxtRecipient(mapMethod.length)
                             }
 
@@ -615,8 +636,9 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
     };
 
     const [openCertificate, setOpenCertificate] = React.useState(false);
-    const handleClickOpenCertificate = () => {
+    const handleClickOpenCertificate = (data) => {
         setOpenCertificate(true);
+        GetSignedAttachment_Json(data);
     };
     const handleCloseCertificate = () => {
         setOpenCertificate(false);
@@ -730,36 +752,41 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
         {selectedTask.Source === "Portal" && (<>
             {txtRecipient > 1 && (<>
                 <Box className='d-flex align-items-center  mb-2'>
+{portalEmail.length>1&& (
 
-                    <p className="mb-0 font-14 text-black me-3">{`This message was sent to ${portalEmail.length} recipients. Viewing as`}
-                        <Button
-                            id="basic-button"
-                            aria-controls={openMgsMail ? 'basic-menu' : undefined}
-                            aria-haspopup="true"
-                            aria-expanded={openMgsMail ? 'true' : undefined}
-                            onClick={handleClickMgsMail}
-                        >
-                            {messageEmail ? messageEmail : "Select Message"}
-                        </Button>
-                        <Menu
-                            id="basic-menu"
-                            anchorEl={anchorElMgs}
-                            open={openMgsMail}
-                            onClose={handleCloseMgs}
-                            MenuListProps={{
-                                'aria-labelledby': 'basic-button',
-                            }}
-                        >
-                            {
-                                portalEmail.length > 0 ? portalEmail.map((item, index) => {
-                                    return (<>
-                                        <MenuItem key={index} onClick={() => handleCloseMgs(item)}>{item.emailid}</MenuItem>
-                                    </>)
-                                }) : ""
-                            }
+<p className="mb-0 font-14 text-black me-3">{`This message was sent to ${portalEmail.length} recipients. Viewing as`}
+                      
+<Button
+    id="basic-button"
+    aria-controls={openMgsMail ? 'basic-menu' : undefined}
+    aria-haspopup="true"
+    aria-expanded={openMgsMail ? 'true' : undefined}
+    onClick={handleClickMgsMail}
+>
+    {messageEmail ? messageEmail : "Select Message"}
+</Button>
+<Menu
+    id="basic-menu"
+    anchorEl={anchorElMgs}
+    open={openMgsMail}
+    onClose={handleCloseMgs}
+    MenuListProps={{
+        'aria-labelledby': 'basic-button',
+    }}
+>
+    {
+        portalEmail.length > 1 ? portalEmail.map((item, index) => {
+            return (<>
+                <MenuItem key={index} onClick={() => handleCloseMgs(item)}>{item.emailid}</MenuItem>
+            </>)
+        }) : ""
+    }
 
 
-                        </Menu>  </p>
+</Menu>  </p>
+
+)}
+                    
                 </Box>
             </>)}
 
@@ -810,12 +837,19 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                             <>
                                                 <Box className='d-flex'>
                                                     <VerifiedIcon className='text-green' />
+<<<<<<< HEAD
 
                                                     <Box className='ps-3'>
                                                         <h5 className='font-14 text-black mb-1'>Message Approved </h5>
                                                         <p className='font-12 text-gray sembold mb-2'>{DateFormateDDMMYYYY(documentStatus["Actioned On"])}</p>
                                                         <Button className='btn-blue-2' size="small" onClick={""} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
                                                     </Box>
+=======
+                                                    <h5 className='font-14 text-black mb-1'>Message Approved </h5>
+                                                    
+                                                    <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"] ? moment(documentStatus["Actioned On"]).format("DD/MM/YYYY") : ""}</p>
+                                                    <Button className='btn-blue-2' size="small" onClick={()=>GetCertificate_Json()} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
+>>>>>>> f443b86b6d08e7d4f4d68ee7159d76da1727edd7
                                                 </Box>
 
                                             </>
@@ -1059,6 +1093,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                         <hr />
 
                                         <Box className='d-flex flex-wrap approval-main'>
+<<<<<<< HEAD
                                             {
                                                 item.Signed === "Yes" ? (<>
                                                     <Box className='approval-box'>
@@ -1080,6 +1115,27 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                                 </>)
                                             }
 
+=======
+                                        {
+                                          item.Signed==="Yes" ? (<>
+                                          <Box className='approval-box'>
+                                                <VerifiedIcon className="me-2" />
+                                                <Typography variant='subtitle1' className='text-center'>
+                                                   Document Signed
+                                                   <Button className='btn-blue-2' size="small" onClick={()=>handleClickOpenCertificate(item)} startIcon={<ScheduleIcon />}> Document Signed</Button>
+                                                </Typography>
+                                            </Box>
+                                          </>):(<>
+                                           <Box className='approval-box'>
+                                                <VerifiedIcon className="me-2" />
+                                                <Typography variant='subtitle1' className='text-center'>
+                                                 Document not sent for signature or waiting for other signatories
+                                                </Typography>
+                                            </Box>
+                                          </>)
+                                        }
+                                            
+>>>>>>> f443b86b6d08e7d4f4d68ee7159d76da1727edd7
 
                                             {
                                                 item.ForApproval === "Yes" ? (
