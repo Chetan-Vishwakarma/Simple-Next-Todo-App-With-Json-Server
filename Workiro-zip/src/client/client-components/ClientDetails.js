@@ -269,7 +269,7 @@ function ClientDetails() {
                             <Box className="general-tab white-box">
                                 <Box className="row">
                                     {/* For CompanyDetails */}
-                                    <CompanyDetails companyDetails={companyDetails} />
+                                    <CompanyDetails companyDetails={companyDetails} originatorNo={originatorNo} Cls={Cls}/>
                                     {/* For ClientOverview */}
                                     <ClientOverview Cls={Cls} webClientCLS={webClientCLS} locationState={{agrno:agrno, Email:Email, password:password, folderId:folderId, originatorNo:originatorNo}} />
                                 </Box>
