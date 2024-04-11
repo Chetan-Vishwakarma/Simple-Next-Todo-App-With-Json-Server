@@ -46,7 +46,7 @@ function CompanyDetails({ companyDetails, originatorNo, Cls }) {
                         <Box class="flex-shrink-0">
                             <PinDropIcon />
                         </Box>
-                        {Object.keys(mainAddress).length>0 && <Box class="flex-grow-1 ms-2">
+                        { mainAddress && Object.keys(mainAddress).length>0 && <Box class="flex-grow-1 ms-2">
                             <Typography variant="h6" gutterBottom>
                                 Address
                             </Typography>
