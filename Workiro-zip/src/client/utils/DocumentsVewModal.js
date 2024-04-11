@@ -1,23 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import user from "../../images/01.png";
-import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Link, MenuItem, Menu } from '@mui/material';
+
+import { Box, Button, Typography, Dialog, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Link, MenuItem, Menu } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
+
 import TabPanel from '@mui/lab/TabPanel';
 import DescriptionIcon from '@mui/icons-material/Description';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import Activity from '../../client/utils/Activity';
-import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
-import CategoryIcon from '@mui/icons-material/Category';
-import GradingIcon from '@mui/icons-material/Grading';
-import InsertLinkIcon from '@mui/icons-material/InsertLink';
-import AddIcon from '@mui/icons-material/Add';
-import AlarmOnIcon from '@mui/icons-material/AlarmOn';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import CommanCLS from '../../services/CommanService';
-import { json } from 'react-router-dom';
 
 import HtmlEditorDX from '../../components/HtmlEditor';
 
@@ -28,14 +21,14 @@ import Swal from 'sweetalert2';
 import CreateNewModalTask from '../../components/CreateNewModal';
 
 import $ from 'jquery';
-import CustomLoader from '../../components/CustomLoader';
+
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 
-function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument }) {
-
+function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument,sendUrldata }) {
+console.log(sendUrldata,"sendUrldata");
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -243,7 +236,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                             Preview: "", // Data URL for preview
                             DocId: item["Registration No."],
                             Guid: "",
-                            FileType: item["Type"].toLowerCase(),
+                            FileType: item["Type"],
                             Description: item.Description
 
                         };
@@ -554,8 +547,10 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                         <Box className='text-end mb-3 relative'>
                                             <DownloadForOfflineIcon className='text-red pointer font-32 btn-download' />
                                         </Box>
-                                        <iframe
-                                            src={isLoadingDoc?"https://6612849d1f1acaa676039a99--amazing-haupia-bf1c0b.netlify.app/":viewerUrl} // Specify the URL of the iframe
+                                        {console.log("dfsdljds",sendUrldata)}
+                                        {sendUrldata && (
+                                            <iframe
+                                            src={ isLoadingDoc ? "https://6612849d1f1acaa676039a99--amazing-haupia-bf1c0b.netlify.app/" : sendUrldata } // Specify the URL of the iframe
                                             // src={"http://127.0.0.1:5501/src/client/utils/test/test.html"}
                                             onLoad={()=>{
                                                 setIsLoadingDoc(false);
@@ -567,6 +562,8 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                             title="Embedded Content" // Set the title for accessibility
                                         />
 
+                                        )}
+                                        
                                     </Box>
                                 </TabPanel>
 
@@ -696,13 +693,14 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                             </TabContext>
 
 
-                            {openModal && <CreateNewModalTask
+                            {openModal && openModal && <CreateNewModalTask
                                 TaskType={TaskType}
                                 createNewFileObj={createNewFileObj}
                                 txtClientData={txtClientData}
                                 txtSectionData={txtSectionData}
                                 txtFolderData={txtFolderData}
                                 openModal={openModal}
+                                setOpenModal={setopenModal}
                             ></CreateNewModalTask>}
                         </Box>
                     </DialogContentText>

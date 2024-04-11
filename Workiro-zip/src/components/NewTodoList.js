@@ -30,7 +30,7 @@ function NewTodoList() {
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
 
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
-
+    const [sendUrldata, setsendUrldata] = useState("");
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
     const baseUrlPortal = "https://sharepoint.docusoftweb.com/dsdesktopwebservice.asmx/";
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -457,7 +457,8 @@ if(tbl.length>0){
             PortalID = PortalDocId;
         }
 
-        let url = `https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${e["Registration No."]}&ext=${e.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
+        let url = `https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${e["Registration No."]}&ext=${e.type ? e.type : ""}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
+        console.log(url,"geturldata")
         window.open(url);
     };
 
@@ -466,10 +467,23 @@ if(tbl.length>0){
     const [isLoadingDoc, setIsLoadingDoc] = useState(false);
     const ViewerDocument = (e) => {
         setAnchorElDocumentList(null);
-        console.log("document object", e);
+        console.log("document_object111", e);
         setSelectedDocument(e);
+
         setOpenPDFView(true);
-        //    let url =`https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=1002909&filetype=txt&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=&PortalID=`;
+        var IsApproved = e["IsApproved"];
+        var PortalDocId = e["PortalDocId"];
+        let IsApp = "";
+        let PortalID = "";
+
+        if (IsApproved === "SIG" && PortalDocId !== "") {
+            IsApp = IsApproved;
+            PortalID = PortalDocId;
+        }
+
+           let url =`https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=${e["Registration No."]}&filetype=${e.type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
+           console.log(url,"geturldata");
+           setsendUrldata(url);
         // window.open(url);
         setIsLoadingDoc(true)
 
@@ -520,7 +534,7 @@ if(tbl.length>0){
 
     return (
         <Box className="container-fluid p-0">
-             <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
+             <DocumentsVewModal sendUrldata={sendUrldata} isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
             {/* <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal> */}
             <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 

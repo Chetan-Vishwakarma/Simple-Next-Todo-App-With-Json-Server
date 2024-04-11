@@ -4,14 +4,14 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
+
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import DescriptionIcon from '@mui/icons-material/Description';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import FolderIcon from '@mui/icons-material/Folder';
+
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
@@ -20,7 +20,7 @@ import { Checkbox, FormControlLabel } from '@mui/material';
 import CommanCLS from '../../services/CommanService';
 import dayjs from 'dayjs';
 import CreateNewModalTask from '../../components/CreateNewModal';
-import { red } from '@mui/material/colors';
+//import { red } from '@mui/material/colors';
 import moment from 'moment';
 import { ToastContainer, toast } from 'react-toastify';
 import { useLocation, useSearchParams } from 'react-router-dom';
@@ -33,10 +33,10 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     }
 
     catch (e) {
-
+        console.log("originatorNo", e)
     }
 
-    console.log("location state1", originatorNo)
+   
     const handleCloseDocumentUpload = () => {
         setOpenUploadDocument(false);
     };
@@ -90,11 +90,11 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     const [showModalCreateTask, setshowModalCreateTask] = useState(false);
     const [openModal, setOpenModal] = useState(false);
 
-    const [inputValue, setInputValue] = useState(''); // State to manage the input value
+    
 
     const [fileLangth, setFileLength] = useState(0);
 
-    const [countval, setCountval] = useState(2);
+    
 
     const [validation, setValidation] = useState("");
 
@@ -112,9 +112,9 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     const handleFileSelect = async (event) => {
         const files = event.target.files;
         const selectedFilesArray = Array.from(files);
-        let couter = 0;
+        ///let couter = 0;
         for (let i = 0; i < selectedFilesArray.length; i++) {
-            couter++;
+           // couter++;
             const file = selectedFilesArray[i];
             const isFileAlreadySelected = selectedFiles.some((selectedFile) => selectedFile.FileName === file.name);
 
@@ -141,6 +141,17 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         }
     };
 
+
+    useEffect(() => {
+      
+        setStep(1);
+        setSelectedFiles([]);
+        settxtStandarDescription("");
+        setCreateTaskChk(false);
+         setCreatePublishChk(false)
+         setButtonNameText("Submit")
+    }, [openUploadDocument]);
+
     useEffect(() => {
         setTimeout(() => {
             setFileLength(selectedFiles.length);
@@ -149,19 +160,10 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const RemoveFiles = (id) => {
         // Filter out the object with the specified ID
-        const resutl = selectedFiles.filter(guid => guid.Guid !== id);
+        const resutl = selectedFiles.filter(guid => guid.FileName !== id.FileName);
         setSelectedFiles(resutl);
     };
 
-
-
-    function pad4(num) {
-        let ret = num.toString(16);
-        while (ret.length < 4) {
-            ret = '0' + ret;
-        }
-        return ret;
-    }
 
 
 
@@ -289,7 +291,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     }, [])
 
     const handleOnFolderClick = (data) => {
-        setInputValue('');
+        
         if (data) {
             setTxtFolderId(data.FolderID)
             setTextFolderData(data)
@@ -329,21 +331,21 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const handleCategoryChange = (data) => {
         if (data) {
-            console.log("Get Clietn On click", data);
+            //console.log("Get Clietn On click", data);
             setCategoryId(data.CatId)
         }
 
     }
     const handleStandarDescriptionChange = (data) => {
         if (data) {
-            console.log("Get Clietn On click", data);
+            //console.log("Get Clietn On click", data);
             settxtStandarDescription(data.Description)
         }
 
     }
 
     const handleDescriptionChange = (e) => {
-        console.log("Get Clietn On click", e.target.value);
+       // console.log("Get Clietn On click", e.target.value);
         settxtStandarDescription(e.target.value)
     }
 
@@ -422,7 +424,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         setReceivedDate(dayjs(date).format('YYYY/MM/DD')); // Update the selected date state
     };
 
-    const [createTaskChk, setCreateTaskChk] = useState(false);
+    const [createTaskChk, setCreateTaskChk ] = useState(false);
 
     const [createPublishChk, setCreatePublishChk] = useState(false);
 
@@ -480,7 +482,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const UploadDocumentCreattTask = async () => {
         try {
-
+            setCreateNewFileObj([]);
             if (checkAndLog(txtFolderId, "Please Select a Folder")) return false;
             if (checkAndLog(txtClientId, "Please Select a Client")) return false;
             if (checkAndLog(txtSectionId, "Please Select a Section")) return false;
@@ -541,9 +543,9 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                 "originatorId": txtClientData.ClientID,
                 "senderId": txtClientData.ClientID,
                 "sectionName": txtSectionData.Sec,
-                "extDescription": "",
+                "extDescription": txtStandarDescription ? txtStandarDescription : "" ,
                 "docDirection": "Incoming",
-                "description": txtStandarDescription,
+                "description": txtStandarDescription ? txtStandarDescription : "",
                 "priority": "",
                 "stickyNote": "",
                 "fileName": fileData ? fileData.FileName : "",
@@ -564,32 +566,33 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
             console.log("Json_RegisterItem", obj);
 
 
-
-            setCreateNewFileObj((Previous) => [...Previous, fileData]);
-            //setOpenUploadDocument(false);
-            setshowModalCreateTask(true);
-            setOpenModal(true);
-            //    setTimeout(() => {
-            //     setPassButtonHide(false);
-            // }, 3000);
             cls.Json_RegisterItem(obj, function (sts, data) {
                 if (sts) {
                     if(data){
                         let js = JSON.parse(data)
                         console.log("Json_RegisterItem", js)
-                        if (js.Status == "true") {
-    
+                        if (js.Status === "true") {
                             if (fileData) {
                                 fileData.DocId = js.ItemId;
+                                setCreateNewFileObj((Previous) => [...Previous, fileData]);
                             }
-    
+
                             if (!typeTaskBool) {
                                 //  setOpenUploadDocument(false);
                             }
     
                             setTimeout(() => {
+                               // toast.success(selectedFiles.length + "Document(s) Uploaded!"); 
                                 toast.success(selectedFiles.length + "Document(s) Uploaded!");
-                            }, 4000);
+                                if(buttonNameText==="Submit & Create Portal Task" || buttonNameText==="Submit & Create Task"){
+                                    setshowModalCreateTask(true)
+                                    setOpenModal(true)                                
+                                }
+                            }, 3000);
+
+                            
+
+                            
     
                         }
                         else {
@@ -726,7 +729,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                     {selectedFiles.map((item, index) => {
                                         return <>
                                             <Box className='uploaded-box' key={index}>
-                                                <CloseIcon className='close-icon' onClick={() => RemoveFiles(item.GUID)} />
+                                                <CloseIcon className='close-icon' onClick={() => RemoveFiles(item)} />
                                                 <DescriptionIcon className='font-32' />
                                                 <Typography variant="body1" className='font-14 uploaded-name'>
                                                     {item.FileName}
@@ -761,7 +764,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                         id="combo-box-demo"
                                         options={clientList}
                                         getOptionLabel={(option) => {
-                                            console.log("ldsfljfd",option.Client);
+                                           // console.log("ldsfljfd",option.Client);
                                             return option.Client;
                                         }} // assuming "Client" is the property you want to display
 
@@ -903,7 +906,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
                             </Box>
 
-                            {showModalCreateTask && TaskType && <CreateNewModalTask
+                            {showModalCreateTask  && openModal && <CreateNewModalTask
                                 documentDate={documentDate}
                                 receivedDate={receivedDate}
                                 createNewFileObj={createNewFileObj}
@@ -914,6 +917,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                 // setPassButtonHide={setPassButtonHide}
                                 // passButtonHide={passButtonHide}
                                 openModal={openModal}
+                                setOpenModal={setOpenModal}
                             ></CreateNewModalTask>}
 
 
