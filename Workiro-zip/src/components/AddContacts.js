@@ -203,16 +203,20 @@ function AddContacts({ addContactData }) {
 
               console.log(uniqueArray);
               setBussiness(uniqueArray);
-              const filteredData = json.Table.find(
-                (obj) => obj.ClientId === addContactData.Clientid
-              );
-              if(filteredData){
-                setdefaultClient(filteredData);
-                defaultclientData=filteredData.ClientId;
-                console.log(filteredData, "filteredData", json.Table);
+              try{
+                const filteredData = json.Table.find(
+                  (obj) => obj.ClientId === addContactData.Clientid
+                );
+                if(filteredData){
+                  setdefaultClient(filteredData);
+                  defaultclientData=filteredData.ClientId;
+                  console.log(filteredData, "filteredData", json.Table);
+                }
+              } catch (e) {
+                 console.log("not_found_data")
               }
 
-            }
+            } 
           }
         }
       });
@@ -493,6 +497,7 @@ function AddContacts({ addContactData }) {
     if (value) {
       console.log(value, "valueclientid");
       clientData = value.ClientId;
+      defaultclientData = value.ClientId;
       localStorage.setItem("origiNator", clientData);
       clientName = value.Client;
       setclientNames(clientName);
@@ -878,7 +883,7 @@ function AddContacts({ addContactData }) {
                   setDataFromChild={setDataFromChild}
                 ></ContactUDF>
               </Box>
-              {addContactData=={} ? (
+              {addContactData && addContactData=={} ? (
  <Button
  style={{ marginTop: "5px" }}
  variant="contained"
@@ -893,7 +898,7 @@ function AddContacts({ addContactData }) {
                 style={{ marginTop: "5px" }}
                 variant="contained"
                 // disabled={!clientData || !selectedFolderID}
-                disabled={!clientData}
+                disabled={!defaultclientData}
                 onClick={handleSubmit}
                 className="btn-blue-2"
               >
