@@ -18,6 +18,7 @@ import DocumentsVewModal from '../client/utils/DocumentsVewModal';
 import { toast } from 'react-toastify';
 import DocDetails from './DocDetails';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
+import DocumentRenameModal from './DocumentRenameModal';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -55,6 +56,8 @@ function NewTodoList() {
 
 
     const [loadMore, setLoadMore] = useState(9);
+    const [openRenameModal, setOpenRenameModal] = useState(false);
+    // const handleOpen = () => setOpenRenameModal(true);
 
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -530,6 +533,8 @@ function NewTodoList() {
     return (
         <Box className="container-fluid p-0">
             <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
+
+            <DocumentRenameModal openRenameModal={openRenameModal} setOpenRenameModal={setOpenRenameModal }/>
 
             {/* <DocumentsVewModal sendUrldata={sendUrldata} isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal> */}
             {/* <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal> */}
@@ -1022,7 +1027,10 @@ function NewTodoList() {
                                                             <CloudUploadIcon fontSize="medium" />
                                                         </ListItemIcon>
                                                         Upload New Version</MenuItem>
-                                                    <MenuItem onClick={() => handleCloseDocument(index)}>
+                                                    <MenuItem onClick={() => {
+                                                          handleCloseDocument(index)
+                                                          setOpenRenameModal(true);
+                                                        }}>
                                                         <ListItemIcon>
                                                             <DriveFileRenameOutlineIcon fontSize="medium" />
                                                         </ListItemIcon>
