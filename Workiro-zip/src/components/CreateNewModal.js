@@ -2288,6 +2288,7 @@ function CreateNewModalTask({ ...props }) {
 
     const handleClose5 = () => {
         setOpen5(false);
+        setAddContact(null);
     };
 
     return (
