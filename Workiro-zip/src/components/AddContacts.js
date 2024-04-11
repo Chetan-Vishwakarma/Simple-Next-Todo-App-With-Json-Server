@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -28,7 +28,8 @@ let originatorNo;
 let folderData;
 let clientData;
 let clientName;
-function AddContacts() {
+function AddContacts({addContactData}) {
+  console.log(addContactData,"addContactData11111")
   const [contact, setContact] = useState([]);
   const [fillcontact, setFillContact] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
@@ -41,6 +42,7 @@ function AddContacts() {
   const [clientDetails, setClientDetails] = useState({});
   const [folders, setFolders] = useState([]);
   const [Importdata, setImportdata] = useState([]);
+  const [GellAllClientList, setGellAllClientList] = useState([]);
   const [Importcontactdata, setImportcontactdata] = useState({});
   const [clientNames, setclientNames] = useState("");
   const [clientIddata, setClientIddata] = useState(-1);
@@ -49,6 +51,7 @@ function AddContacts() {
   const [bussiness, setBussiness] = useState([]); // State to hold folders data
   const [selectedFolderID, setSelectedFolderID] = useState(null);
   const [selectedBussId, setSelectedBussId] = useState(null);
+  const [defaultFoldefr, setDefaultFolders] = useState(null);
   const [dataFromChild, setDataFromChild] = useState([]);
   const [userContactDetails, setContactDetails] = useState({
     Title: "",
@@ -138,7 +141,7 @@ function AddContacts() {
       agrno: agrno,
       intProjectId: folderId,
       password: password,
-      strOrignatorNumber: originatorNo
+      strOrignatorNumber: clientIddata ? clientIddata : ""
     };
     try {
       webClientCLS.Json_GetClientCardDetails(obj, (sts, data) => {
@@ -175,6 +178,26 @@ function AddContacts() {
       console.log("Error while calling Json_GetToFavourites", err);
     }
   };
+  const Json_GetAllClientList = () => {
+    let requestBody = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+    };
+    try {
+      Cls.Json_GetAllClientList(requestBody, (sts, data) => {
+        if (sts) {
+          if (data) {
+            let json = JSON.parse(data);
+            console.log(json,"jsondataget");
+            setBussiness(json.Table);
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_GetToFavourites", err);
+    }
+  };
   const Json_GetClientsByFolder = (projectId) => {
     let requestBody = {
       agrno: agrno,
@@ -187,7 +210,11 @@ function AddContacts() {
         if (sts) {
           if (data) {
             let json = JSON.parse(data);
-            setBussiness(json.Table1);
+            console.log(json,"clientdatalist");
+    //         const filteredData = json.Table1.filter(obj => obj.ClientID === addContactData.Clientid);
+
+    // console.log(filteredData,"filteredData",json.Table1);
+            // setBussiness(json.Table1);
           }
         }
       });
@@ -433,6 +460,7 @@ function AddContacts() {
       localStorage.setItem("origiNator", clientData);
       clientName = value.Client;
       setclientNames(clientName);
+      setDefaultFolders(value);
       setClientIddata(value.ClientID);
       updateReferenceID(value.Client);
     } else {
@@ -569,6 +597,15 @@ function AddContacts() {
     Json_GetClientCardDetails();
     Json_GetCRMContactUDFValues();
     Json_GetAllContacts();
+    Json_GetAllClientList();
+    const clientName = localStorage.getItem("ClientName");
+    // Update userContactDetails state with the retrieved value
+    if (clientName) {
+      setContactDetails(prevState => ({
+        ...prevState,
+        ReferenceID: clientName
+      }));
+    }
   }, []);
 
   return (
@@ -578,18 +615,244 @@ function AddContacts() {
 
 
       <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
-        <TabContext value={value}>
+
+
+        <Box className="general-tab white-box">
+          <Box className='d-flex'>
+            <Box className="mb-3 pe-2 me-2">
+              <Box className='position-sticky top-0'>
+                <UploadButtons
+                  userContactDetails={userContactDetails}
+                  setContactDetails={setContactDetails}
+                />
+                <textarea className='form-control textarea-2 mt-3' placeholder='Type here
+              '></textarea>
+              </Box>
+            </Box>
+
+            <Box className="mb-3 w-100">
+              <Box className='well mb-4'>
+                <h2 className='font-20 mb-3 text-black'>Contact Details</h2>
+                <Box className='well well-2 mb-3'>
+
+
+
+                  <Grid container spacing={2}>
+                    <Grid item xs={6} md={6}>
+                      <h2 className='font-14 bold mb-4 text-black'>Import Existing DocuSoft Contact</h2>
+                      <Autocomplete
+                        {...contactlist}
+                        id="contactlist"
+                        clearOnEscape
+                        onChange={onChangecontactlist}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant="outlined"
+                            name="contactlist"
+                            value={""}
+                            //   onChange={onChange}
+                            label="Enter Contact Email"
+                          />
+                        )}
+                      />
+                    </Grid>
+
+                    <Grid item xs={6} md={6}>
+                      <h2 className='font-14 bold mb-4 text-black'>Import from Companies House</h2>
+                      {/* <TextField
+                // {...params}wid
+                fullWidth
+                variant="outlined"
+                name="importclient"
+                // value={Importdata}
+                onKeyDown={handleKeyDown}
+                onChange={onChangeImportData}
+                label="Import List"
+              /> */}
+                      <Autocomplete
+                        fullWidth
+                        // options={ImportContact.map((option) => option.title)}
+                        options={ImportContact} // Pass the entire ImportContact array
+                        getOptionLabel={(option) => option.FirstName + " " + option.LastName}
+                        onChange={(e, value) => setImportdata(value)}
+                        onKeyDown={handleKeyDown}
+                        // inputValue={ImportContact}
+                        noOptionsText="No matches found"
+                        filterOptions={(x) => x}
+                        autoComplete
+                        includeInputInList
+                        value={txtValue}
+                        open={open} // Controlled by state
+                        onOpen={() => setOpen(true)} // Open the Autocomplete dropdown
+                        onClose={() => setOpen(false)} // Close the Autocomplete dropdown
+                        renderOption={(props, option) => {
+                          // Custom rendering for each option
+                          console.log(option, "rendwered dynamic from apifff", props);
+                          return (
+                            !option.resigned_on && (
+                              <div>
+                                <li
+                                  {...props}
+                                  onClick={() => {
+                                    handleOptionClick(option); // Pass the id directly
+                                  }}
+                                >
+                                  <Grid container alignItems="center">
+                                    <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                                      {option.FirstName + " " + option.LastName}
+                                    </Grid>
+                                  </Grid>
+                                </li>
+                              </div>
+                            )
+
+                          );
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            fullWidth
+                            variant="outlined"
+                            name="importclient"
+                            onChange={onChangeImportData}
+                            label="Enter Company Name"
+                          />
+                        )}
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+
+                <Box className='well well-2 mb-3'>
+                  <Grid container spacing={2}>
+                    {/* <Grid item xs={6} md={6}>
+                      <Autocomplete
+                        {...clientlist}
+                        id="clientlist"
+                        clearOnEscape
+                        onChange={onChangeclientlist}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant="outlined"
+                            name="Selectclient"
+                            value={""}
+                            
+                            label="Folder List"
+                          />
+                        )}
+                      />
+                    </Grid> */}
+
+                    <Grid item xs={6} md={6}>
+                      <Autocomplete
+                        // {...bussinesslist}
+                        options={bussiness}
+                        getOptionLabel={(option) => option.Client ? option.Client : ""}
+                        id="clear-on-escape-teams"
+                        clearOnEscape
+                        // defaultValue={}
+                        // value={addContactData.clientName || null}
+                        onChange={onChangebussines}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            name="Selectteamsa"
+                            value={""}
+                            //   onChange={onChangebussines}
+                            label="Reference List"
+                            variant="outlined"
+                          />
+                        )}
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+
+                <Grid container spacing={2}>
+
+                  <Grid item xs={12} md={12}>
+                    <ContactMainform
+                      clientNames={clientNames}
+                      contact={contact}
+                      setContact={setContact}
+                      contactlistdata={contactlistdata}
+                      userContactDetails={userContactDetails}
+                      setContactDetails={setContactDetails}
+                      Importcontactdata={Importcontactdata}
+                      setImportcontactdata={setImportcontactdata}
+                    />
+                  </Grid>
+
+                </Grid>
+              </Box>
+
+              {/* <hr /> */}
+
+              <Box className='well mb-4'>
+                <h2 className='font-20 mb-3 text-black'>AML Details</h2>
+              </Box>
+
+              {/* <hr /> */}
+
+              <Box className='well mb-4'>
+                <h2 className='font-20 mb-3 text-black'>UDF Details</h2>
+                <ContactUDF
+                  data={clientDetails}
+                  setDataFromChild={setDataFromChild}
+                ></ContactUDF>
+              </Box>
+
+              <Button
+                style={{ marginTop: "5px" }}
+                variant="contained"
+                disabled={!clientData || !selectedFolderID}
+                onClick={handleSubmit}
+                className='btn-blue-2'
+              >
+                Add New Contact
+              </Button>
+
+
+            </Box>
+          </Box>
+
+          <Box className="mb-3">
+            {/* <MainContact 
+      userContactDetails={userContactDetails}
+      setContactDetails={setContactDetails}
+      /> */}
+            <Grid container spacing={3}>
+
+            </Grid>
+          </Box>
+
+          {/* <Box className='text-end'>
+      <Button
+        style={{ marginTop: "5px" }}
+        variant="contained"
+        disabled={!clientData || !selectedFolderID}
+        onClick={handleSubmit}
+        className='btn-blue-2'
+      >
+        Add New Contact
+      </Button>
+    </Box> */}
+        </Box>
+
+        {/* end */}
+
+
+        {/* <TabContext value={value}>
           <Box className='mb-1'>
             <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
               <Tab label="Contact Details" value="1" />
               <Tab label="AML Details" value="2" />
               <Tab label="UDF Details" value="3" />
-              {/* <Tab label="Send Proposal" value="4" />
-                            <Tab label="Portal User" value="5" />
-                            <Tab label="Companies House" value="6" />
-                            <Tab label="Requested Document" value="7" /> */}
             </TabList>
           </Box>
+
           <TabPanel value="1" className='p-0'>
             <Box className="general-tab white-box">
               <Box className='d-flex'>
@@ -617,7 +880,6 @@ function AddContacts() {
                               variant="outlined"
                               name="contactlist"
                               value={""}
-                              //   onChange={onChange}
                               label="Contact List"
                             />
                           )}
@@ -625,16 +887,7 @@ function AddContacts() {
                       </Grid>
 
                       <Grid item xs={6} md={6}>
-                        {/* <TextField
-                        // {...params}wid
-                        fullWidth
-                        variant="outlined"
-                        name="importclient"
-                        // value={Importdata}
-                        onKeyDown={handleKeyDown}
-                        onChange={onChangeImportData}
-                        label="Import List"
-                      /> */}
+
                         <Autocomplete
                           fullWidth
                           // options={ImportContact.map((option) => option.title)}
@@ -743,14 +996,12 @@ function AddContacts() {
 
                   </Grid>
 
+
                 </Box>
               </Box>
 
               <Box className="mb-3">
-                {/* <MainContact 
-              userContactDetails={userContactDetails}
-              setContactDetails={setContactDetails}
-              /> */}
+                
                 <Grid container spacing={3}>
 
                 </Grid>
@@ -772,10 +1023,9 @@ function AddContacts() {
           </TabPanel>
 
           <TabPanel value="2" className='p-0'>
-            {/* <ClientAddress></ClientAddress> */}
           </TabPanel>
+
           <TabPanel value="3">
-            {/* <Contact></Contact> */}
             <Box className="general-tab white-box">
               <ContactUDF
                 data={clientDetails}
@@ -784,24 +1034,12 @@ function AddContacts() {
             </Box>
 
           </TabPanel>
-          <TabPanel value="4">
-            <TaskList></TaskList>
-          </TabPanel>
 
-          {/* <TabPanel value="5" className='p-0'>
-                        <DocumentList clientId={originatorNo} globalSearchDocs={globalSearchDocs} ></DocumentList>
-                    </TabPanel> */}
+        </TabContext> */}
 
-          {/* <TabPanel value="5">
-                        <DocumentList/>
-                    </TabPanel> */}
-          <TabPanel value="6" className='p-0'>
-            <CompaniesHouse></CompaniesHouse>
-          </TabPanel>
-          <TabPanel value="7">Item Three</TabPanel>
-        </TabContext>
+
       </Box>
     </Box>
   )
 }
-export default AddContacts;
+export default memo(AddContacts);

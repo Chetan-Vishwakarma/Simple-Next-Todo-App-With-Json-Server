@@ -438,7 +438,6 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
         } else {
           renderedContent = (
 
-
             <FormControlLabel
               required
               control={

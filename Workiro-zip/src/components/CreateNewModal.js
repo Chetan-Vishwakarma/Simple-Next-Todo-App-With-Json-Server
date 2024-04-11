@@ -122,6 +122,8 @@ function CreateNewModalTask({ ...props }) {
 
 
 
+    const [guid, setGuid] = useState('');
+    const [addContactData, setAddContact]=useState({});
 
     //const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
@@ -2732,12 +2734,8 @@ function CreateNewModalTask({ ...props }) {
                                                     className="inner-user-list-dropdown"
                                                     style={{ maxHeight: "200px", overflowY: "auto" }}
                                                 >
-                                                    <p className="sembold">Assigned11</p>
-
+                                                    <p className="sembold">Transfer Ownership To:</p>
                                                     <Box className="box-user-list-dropdown">
-
-
-
                                                         {addUser
                                                             ? addUser.map((item, ind) => {
                                                                 if (item.ID === ownerID) {
@@ -2801,8 +2799,6 @@ function CreateNewModalTask({ ...props }) {
                                                     <p className="sembold">Assigned</p>
 
                                                     <Box className="box-user-list-dropdown">
-
-
 
                                                         {addUser
                                                             ? addUser.map((item, ind) => {
@@ -2935,7 +2931,7 @@ function CreateNewModalTask({ ...props }) {
                                             }}
                                             className="custom-dropdown"
                                         >
-                                            <label onClick={handleSelectFileClose} htmlFor="file-upload">
+                                            <label onClick={handleSelectFileClose} htmlFor="file-upload" className="d-block">
                                                 <MenuItem>Upload File(s)</MenuItem>
                                             </label>
                                             <MenuItem onClick={handleDocumentClickOpen}>Select From DMS</MenuItem>
@@ -3823,7 +3819,7 @@ function CreateNewModalTask({ ...props }) {
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
 
-                        <Reference />
+                        <Reference open5={open5}  setOpen5={setOpen5} setReferance={setReferance} setAddContact={setAddContact} />
 
                     </DialogContentText>
                 </DialogContent>
@@ -3878,7 +3874,7 @@ function CreateNewModalTask({ ...props }) {
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                            Add Client
+                            Add Contact 
                         </Typography>
                     </Box>
 
@@ -3895,7 +3891,7 @@ function CreateNewModalTask({ ...props }) {
                 <DialogContent className="pt-0">
                     <DialogContentText id="alert-dialog-description">
 
-                        <AddContacts />
+                        <AddContacts addContactData={addContactData} />
 
                     </DialogContentText>
                 </DialogContent>

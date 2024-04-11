@@ -177,7 +177,6 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                             console.log("GetDocumentStatus_Json", formattedActivity, res);
                             setDocumentStatus(formattedActivity[0])
 
-
                         }
 
                     }
@@ -357,7 +356,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                     if (data) {
                         let js = JSON.parse(data);
                         console.log("ApprovalStatusChanged_Json", js);
-                       // toast.success()
+                        // toast.success()
                     }
 
                 }
@@ -823,28 +822,31 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                     {documentStatus["Actioned On"] ? (<>
                                         {documentStatus.Approved === "Yes" ? (
                                             <>
-                                                <Box className='ps-3'>
+                                                <Box className='d-flex'>
                                                     <VerifiedIcon className='text-green' />
                                                     <h5 className='font-14 text-black mb-1'>Message Approved </h5>
                                                     
                                                     <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"] ? moment(documentStatus["Actioned On"]).format("DD/MM/YYYY") : ""}</p>
                                                     <Button className='btn-blue-2' size="small" onClick={()=>GetCertificate_Json()} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
                                                 </Box>
+
                                             </>
                                         ) : (
                                             <>
-                                                <Box className='ps-2'>
-                                                    {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
+                                                <Box className='d-flex'>
                                                     <HourglassEmptyIcon className='text-gray' />
-                                                    <h5 className='font-14 text-black mb-1'>Message Disapproved</h5>
-                                                    <Button className='btn-blue-2' size="small" onClick={()=>HandalChangeSendReminder(documentStatus)} startIcon={<ScheduleIcon />}>Send Reminder</Button>
+                                                    <Box className='ps-2'>
+                                                        {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
+                                                        <h5 className='font-14 text-black mb-1'>Message Disapproved</h5>
+                                                        <Button className='btn-blue-2' size="small" onClick={() => HandalChangeSendReminder(documentStatus)} startIcon={<ScheduleIcon />}>Send Reminder</Button>
+                                                    </Box>
                                                 </Box>
                                             </>
                                         )}
                                     </>) : (<>
-                                        <Box className='ps-2'>
+                                        <Box className='d-flex align-items-center'>
                                             {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
-                                            <HourglassEmptyIcon className='text-gray' />
+                                            <HourglassEmptyIcon className='text-warning' />
                                             <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
                                             {/* <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button> */}
                                         </Box>
@@ -859,11 +861,10 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
                                     </>)}
 
-
                                 </>
                             ) : (
                                 <>
-                                    <DoDisturbIcon className='text-gray' />
+                                    <DoDisturbIcon className='text-danger' />
                                     <Box className='ps-3'>
                                         <h5 className='font-14 text-black mb-0'>Not sent for approval </h5>
                                     </Box>
@@ -898,6 +899,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
         </>)}
 
         {/* history modal start */}
+        
         <Dialog
             open={open}
             onClose={handleClose}
@@ -1035,9 +1037,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
             <DialogContent>
                 <DialogContentText>
                     <Box className='row'>
-
                         {filterAttachments.map((item, index) => {
-
                             return <>
 
                                 <Box key={index} className='col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 d-flex'>
@@ -1095,36 +1095,43 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                                         {item["Actioned On"] !== null ? (<>
                                                             {item.Approved === "Yes" ? (
                                                                 <>
-                                                                    <Box className='ps-3'>
+                                                                    <Box className='d-flex'>
                                                                         <VerifiedIcon className='text-green' />
-                                                                        <h5 className='font-14 text-black mb-1'>Document Approved </h5>
-                                                                        <p className='font-12 text-gray sembold mb-2'>{item["Actioned On"] ? moment(item["Actioned On"]).format("DD/MM/YYYY") : ""}</p>
-                                                                        <Button className='btn-blue-2' size="small" onClick={()=>GetCertificate_Json(item)} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
+                                                                        <Box className='ps-3'>
+                                                                            <h5 className='font-14 text-black mb-1'>Document Approved </h5>
+                                                                            <p className='font-12 text-gray sembold mb-2'>{item["Actioned On"] ? moment(item["Actioned On"]).format("DD/MM/YYYY") : ""}</p>
+                                                                            <Button className='btn-blue-2' size="small" onClick={() => GetCertificate_Json(item)} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
+                                                                        </Box>
                                                                     </Box>
+
                                                                 </>
                                                             ) : (
                                                                 <>
-                                                                    <Box className='ps-2'>
-                                                                        {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
+                                                                    <Box className='d-flex'>
                                                                         <HourglassEmptyIcon className='text-gray' />
-                                                                        <h5 className='font-14 text-black mb-1'>Document Disapproved</h5>
-                                                                        {/* <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button> */}
+                                                                        <Box className='ps-2'>
+                                                                            {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
+                                                                            <h5 className='font-14 text-black mb-1'>Document Disapproved</h5>
+                                                                            {/* <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button> */}
+                                                                        </Box>
                                                                     </Box>
                                                                 </>
                                                             )}
-                                                        </>) : (<Box className='ps-2'>
-                                                            {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
+                                                        </>) : (<Box className='d-flex'>
                                                             <HourglassEmptyIcon className='text-gray' />
-                                                            <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
-                                                            <Button className='btn-blue-2' size="small" onClick={()=>HandalChangeSendReminder(item)} startIcon={<ScheduleIcon />}>Document Pending Signature</Button>
-                                                        </Box>)}
-
+                                                            <Box className='ps-2'>
+                                                                {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
+                                                                <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
+                                                                <Button className='btn-blue-2' size="small" onClick={() => HandalChangeSendReminder(item)} startIcon={<ScheduleIcon />}>Document Pending Signature</Button>
+                                                            </Box></Box>)}
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <DoDisturbIcon className='text-gray' />
-                                                        <Box className='ps-3'>
-                                                            <h5 className='font-14 text-black mb-0'>Not sent for approval </h5>
+                                                        <Box className='d-flex'>
+                                                            <DoDisturbIcon className='text-gray' />
+                                                            <Box className='ps-3'>
+                                                                <h5 className='font-14 text-black mb-0'>Not sent for approval </h5>
+                                                            </Box>
                                                         </Box>
                                                     </>
                                                 )
@@ -1230,20 +1237,12 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
                             </Grid>
                         </Box>
-
-
                     </Box>
-
-
                     {/* <DocumentDetails></DocumentDetails> */}
-
-
-
                 </DialogContentText>
             </DialogContent>
         </Dialog>
     </React.Fragment>
-
     )
 }
 export default PortalMessage;

@@ -90,7 +90,8 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     };
 
     const handleClickOpenPDFView = (event, data) => {
-        event.preventDefault();
+        console.log("fjdsfdlsjfljfllj main function");
+        // event.preventDefault();
         event.stopPropagation();
         setSelectedDocument(data);
         setOpenPDFView(true);
@@ -122,6 +123,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState({});
     const DocumentList = (index) => Boolean(anchorElDocumentList[index]);
     const handleClickDocumentList = (event, rowData) => {
+        // console.log("fjdsfdlsjfljfllj problem detect");
         event.stopPropagation();
         const newAnchorElDocumentList = { ...anchorElDocumentList };
         newAnchorElDocumentList[rowData.key] = event.currentTarget;
@@ -466,7 +468,14 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                         dataType="string"  // Set the data type to "string" for proper grouping
                         cellRender={(data) => {
                             return <Box className="file-uploads">
-                                <label className="file-uploads-label file-uploads-document" onDoubleClick={(event) => handleClickOpenPDFView(event, data.data)}>
+                                <label className="file-uploads-label file-uploads-document" onClick={(event)=>{
+                                    event.stopPropagation();
+                                    event.preventDefault();
+                                    handleCloseDocument(event, data);
+                                }} onDoubleClick={(event) =>{
+                                     handleClickOpenPDFView(event, data.data);
+                                     handleCloseDocument(event, data);
+                                }}>
                                     <Box className="d-flex align-items-center">
 
                                         {/* <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" />  */}
@@ -494,7 +503,10 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             aria-controls={anchorElDocumentList[data.key] ? `basic-menu-${data.key}` : undefined}
                                             aria-haspopup="true"
                                             aria-expanded={Boolean(anchorElDocumentList[data.key])}
-                                            onClick={(event) => handleClickDocumentList(event, data)}
+                                            onClick={(event) => {
+                                                console.log("fdsfdfsdhhdfkshfs",event);
+                                                handleClickDocumentList(event, data)
+                                            }}
                                             className='min-width-auto'
                                         >
                                             <MoreVertIcon />
@@ -522,7 +534,8 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                                 <ListItemIcon>
                                                     <CloudUploadIcon fontSize="medium" />
                                                 </ListItemIcon>
-                                                Publish</MenuItem>
+                                                Publish
+                                                </MenuItem>
 
                                             <MenuItem onClick={(event) => {
                                                 handleCloseDocument(event, data)
@@ -1098,7 +1111,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                                 aria-controls={DocumentList ? 'basic-menu' : undefined}
                                                 aria-haspopup="true"
                                                 aria-expanded={DocumentList ? 'true' : undefined}
-                                                onClick={handleClickDocumentList}
+                                                // onClick={handleClickDocumentList}
                                                 className='min-width-auto'
                                             >
                                                 <MoreVertIcon />

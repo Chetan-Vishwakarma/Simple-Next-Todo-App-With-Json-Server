@@ -306,7 +306,7 @@ const ContactMainform = React.memo(
     return (
       <div>
         {" "}
-        <Grid container spacing={3}>
+        <Grid container spacing={2}>
           <Grid item xs={6} md={6}>
             <FormControl fullWidth variant="outlined">
               <Autocomplete
@@ -397,7 +397,7 @@ const ContactMainform = React.memo(
               </DemoContainer>
             </LocalizationProvider>
           </Grid>
-          <Grid item xs={6} md={6}>
+          {/* <Grid item xs={6} md={6}>
             <TextField
               fullWidth
               key={`Referencekey`}
@@ -409,7 +409,7 @@ const ContactMainform = React.memo(
               value={userContactDetails.ReferenceID}
               onChange={onChange}
             />
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={6} md={6} className="d-flex flex-wrap align-items-center">
             <FormControlLabel

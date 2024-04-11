@@ -32,16 +32,27 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import EditClientdetails from './EditClientdetails';
 import EditReference from './EditReference';
+import { toast } from 'react-toastify';
 
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+
+const agrno = localStorage.getItem("agrno");
+const Email = localStorage.getItem("Email");
+const password = localStorage.getItem("Password");
+const folderId = localStorage.getItem("FolderId");
 
 function ClientDetails() {
 
     const location = useLocation();
-
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams,setSearchParams] = useSearchParams();
     const tabValue = searchParams.get("val");
+    // const test = searchParams.get("OrgNo");
 
-    const { agrno, Email, password, folderId, originatorNo, globalSearchDocs } = location.state;
+    const originatorNo = searchParams.get("OrgNo");
+
+
+    const { globalSearchDocs } = location.state!==null? location.state: {globalSearchDocs:[]};
+
     const [selected, setSelected] = React.useState(false);
     const [value, setValue] = React.useState(tabValue ? tabValue : '1');
     const [clientDetails, setClientDetails] = useState({});
@@ -115,7 +126,8 @@ function ClientDetails() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_RemoveToFavourite", json);
+                        // console.log("Json_RemoveToFavourite", json);
+                        toast.success("Removed from favourites");
                         setSelected(false);
                     }
                 }
@@ -138,8 +150,8 @@ function ClientDetails() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_AddToFavourite", json);
-                        let details = json.Table;
+                        // console.log("Json_AddToFavourite", json);
+                        toast.success("Added to favourites");
                         setSelected(true);
                     }
                 }
@@ -183,15 +195,15 @@ function ClientDetails() {
 
     // edit client modal
     const [Referance, setReferance] = React.useState(false);
-    const handleClickReferance = (e,originatorNo) => {
-    
-        console.log(originatorNo,"originatorNossss",clientDetails.Table1);
+    const handleClickReferance = (e, originatorNo) => {
+
+        console.log(originatorNo, "originatorNossss", clientDetails.Table1);
         setReferance(true);
     };
     const EditCLientHandleClose = () => {
         setReferance(false);
     };
-    
+
 
     return (
         <>
@@ -201,6 +213,8 @@ function ClientDetails() {
 
                 {globalSearchDocs.length === 0 && <Box className="d-flex align-items-center justify-content-between flex-wrap">
                     <Box className='d-flex flex-wrap align-items-center'>
+
+                        <ArrowBackIosIcon className='mb-2 pointer' />
 
                         <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
                             {clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}
@@ -255,9 +269,9 @@ function ClientDetails() {
                             <Box className="general-tab white-box">
                                 <Box className="row">
                                     {/* For CompanyDetails */}
-                                    <CompanyDetails companyDetails={companyDetails} />
+                                    <CompanyDetails companyDetails={companyDetails} originatorNo={originatorNo} Cls={Cls}/>
                                     {/* For ClientOverview */}
-                                    <ClientOverview Cls={Cls} webClientCLS={webClientCLS} locationState={location.state} />
+                                    <ClientOverview Cls={Cls} webClientCLS={webClientCLS} locationState={{agrno:agrno, Email:Email, password:password, folderId:folderId, originatorNo:originatorNo}} />
                                 </Box>
                             </Box>
                             <Box className='main-accordian'>

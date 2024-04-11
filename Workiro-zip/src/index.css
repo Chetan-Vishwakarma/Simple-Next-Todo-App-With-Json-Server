@@ -34,6 +34,13 @@
   background: #555;
 }
 
+
+.Toastify {
+  position: absolute;
+  z-index: 999999;
+}
+
+
 nav.navbar.navbar-dark.bg-dark .container {
   background: #4780ff !important;
 }
@@ -1493,7 +1500,7 @@ span.tox-statusbar__branding {
 }
 
 .contact-detail-row .contact-detail-box h4 {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
 }
 
@@ -1538,10 +1545,10 @@ span.tox-statusbar__branding {
 }
 
 .card-box {
-  border: 2px dashed #bde0f9;
+  /* border: 2px dashed #bde0f9;
   padding: 12px;
   border-radius: 6px;
-  background: #ebf6fe;
+  background: #ebf6fe; */
 }
 
 .text-yellow {
@@ -1706,10 +1713,12 @@ span.tox-statusbar__branding {
   min-width: 26px;
   border-radius: 90px !important;
   background: #bebebe !important;
+  border-color: #bebebe !important;
 }
 
 .aml-details-modal .btn-sign.active {
   background: #4780FF !important;
+  border-color: #4780FF !important;
 }
 
 /* .file-uploads-document svg {
@@ -1951,7 +1960,7 @@ span.tox-statusbar__branding {
 }
 
 .table-view-files .dx-datagrid-table tr td {
-  background: #fff;
+  background: #fff !important;
 }
 
 .table-view-files .dx-datagrid-borders .dx-datagrid-headers .dx-datagrid-table tr td {
@@ -2087,11 +2096,11 @@ span.tox-statusbar__branding {
 }
 
 .toggle-btn.Mui-selected {
-  opacity: .4;
+  background-color: #D41B20 !important;
 }
 
 .toggle-btn {
-  background: #4780FF !important;
+  background: #239500 !important;
   color: #fff !important;
   padding: 3px 14px !important;
   background: #fff;
@@ -3151,6 +3160,12 @@ span.tox-statusbar__branding {
   border: 1px solid #ededed;
   padding: 15px;
   border-radius: 3px;
+}
+
+.well-2 {
+  /* background: #f0f4ff;
+  border: 2px dashed #bfd3ff; */
+  background: #f1f5ff;
 }
 
 .modal-head {

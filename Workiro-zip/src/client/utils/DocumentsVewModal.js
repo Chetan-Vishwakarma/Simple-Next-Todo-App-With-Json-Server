@@ -544,11 +544,11 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 </Box>
                                 <TabPanel value="1" className='p-0'>
                                     <Box className='white-box'>
-                                        <Box className='text-end mb-3'>
-                                            <DownloadForOfflineIcon className='text-red pointer font-32  btn-download' />
+                                        <Box className='text-end mb-3 relative'>
+                                            <DownloadForOfflineIcon className='text-red pointer font-32 btn-download' />
                                         </Box>
                                         <iframe
-                                            src={isLoadingDoc?"http://127.0.0.1:5501/src/client/utils/test/test.html":viewerUrl} // Specify the URL of the iframe
+                                            src={isLoadingDoc?"https://6612849d1f1acaa676039a99--amazing-haupia-bf1c0b.netlify.app/":viewerUrl} // Specify the URL of the iframe
                                             // src={"http://127.0.0.1:5501/src/client/utils/test/test.html"}
                                             onLoad={()=>{
                                                 setIsLoadingDoc(false);

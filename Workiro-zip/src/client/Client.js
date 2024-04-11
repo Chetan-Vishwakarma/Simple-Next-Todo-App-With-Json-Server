@@ -634,7 +634,7 @@ function Client() {
         })
     }
     const handleClientNavigation = (clientId) => {
-        navigate('/dashboard/clientDetails', {
+        navigate(`/dashboard/clientDetails?OrgNo=${clientId}`, {
             state: {
                 agrno: agrno,
                 Email: Email,

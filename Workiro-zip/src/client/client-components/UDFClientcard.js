@@ -188,6 +188,7 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
                     <DatePicker
                       // dateFormat="DD/MM/YYYY"
                       // value={currentDate}
+                      label={data.Name}
                       id={
                         data.UserDefFieldID +
                         "_" +
@@ -218,6 +219,7 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
                     <DatePicker
                       // dateFormat="DD/MM/YYYY"
                       // value={currentDate}
+                      label={data.Name}
                       id={
                         data.UserDefFieldID +
                         "_" +

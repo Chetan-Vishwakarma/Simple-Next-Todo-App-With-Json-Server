@@ -215,7 +215,7 @@ if (defaultDateObject.isValid()) {
         //   value={currentDate}
           defaultValue={defaultDateObject}
           // defaultValue={formattedDefaultDate}
-
+          label={data.Name}
           id={
             data.UserDefFieldID +
             "_" +
@@ -252,6 +252,7 @@ if (defaultDateObject.isValid()) {
                     <DatePicker
                       // dateFormat="DD/MM/YYYY"
                       // value={currentDate}
+                      label={data.Name}
                       id={
                         data.UserDefFieldID +
                         "_" +

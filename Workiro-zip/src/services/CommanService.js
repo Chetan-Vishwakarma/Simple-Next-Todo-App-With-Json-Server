@@ -1019,6 +1019,19 @@ console.log("formattedDate",formattedDate)
             }
         })
      }
+
+     PortalUserAccountUpdated_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("PortalUserAccountUpdated_Json",obj,false);
+        super.CallNewService("PortalUserAccountUpdated_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
      Json_CRMSaveUDFValues(obj,callBack){   
         super.CreateNewServiceParamObject("Json_CRMSaveUDFValues",obj,true);
         super.CallNewService("Json_CRMSaveUDFValues",function(status,Data){
@@ -1216,6 +1229,20 @@ console.log("formattedDate",formattedDate)
         super.CallNewService("Json_GetAllReceivedMessages", function (status, Data) {
             if (status) {
                 if (Data !== "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+
+    Json_GetAllClientList(obj,callback) {
+        super.CreateNewServiceParamObject("Json_GetAllClientList",obj,false);
+        super.CallNewService("Json_GetAllClientList", function (status, Data) {
+            if (status) {
+                if (Data != "") {
                     return callback(true, Data);
                 }
                 else {

@@ -31,6 +31,21 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
     data = { ...data, [name]: val };
     console.log(data, "dataOnchange", e);
     setUserDetail(data);
+    if(name == "Line1" || name == "Line2" || name == "Line3" || name =="Town" || name == "MCounty" || name == "Postcode" || mainCountry){
+      console.log(data, "dataOnchangeuserDetail");
+      let addressfill = { ...userDetail };
+      addressfill = { 
+        ...addressfill,
+        Line1:data.Line1,
+        Line2:data.Line2,
+        Line3:data.Line3,
+        Town:data.Town,
+        MCounty:data.MCounty,
+        Postcode:data.Postcode,
+        fullAddress: data.Line1+"\r\n"+data.Line2+"\r\n"+data.Line3+"\r\n"+data.Town+"\r\n"+data.MCounty+"\r\n"+data.Postcode+"\r\n"+mainCountry
+      }
+      setUserDetail(addressfill);
+    }
   };
   const onChange_registerCountry = (event, value) => {
     event.preventDefault();
@@ -98,7 +113,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
         regCountry:dataCompanyHouse.region,
         regPostcode:dataCompanyHouse.postal_code,
         ragistersCountry:"",
-        fullAddress:dataCompanyHouse.address_line_1+"\r\n"+dataCompanyHouse.address_line_2+"\r\n"+dataCompanyHouse.locality+"\r\n"+dataCompanyHouse.region+"\r\n"+dataCompanyHouse.country,
+        fullAddress:dataCompanyHouse.address_line_1+"\r\n"+dataCompanyHouse.address_line_2+"\r\n"+dataCompanyHouse.locality+"\r\n"+dataCompanyHouse.region+"\r\n"+dataCompanyHouse.postal_code+"\r\n"+dataCompanyHouse.country,
       };
       setUserDetail(data1);
     }
@@ -187,7 +202,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                     <TextField
                       fullWidth
                       id="standard-basic"
-                      type="number"
+                      // type="number"
                       label="Postcode"
                       variant="outlined"
                       name="Postcode"
@@ -310,7 +325,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                     <TextField
                       fullWidth
                       id="standard-basic"
-                      type="number"
+                      // type="number"
                       label="Postcode"
                       variant="outlined"
                       name="BilPostcode"
@@ -432,7 +447,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                     <TextField
                       fullWidth
                       id="standard-basic"
-                      type="number"
+                      // type="number"
                       label="Postcode"
                       variant="outlined"
                       name="regPostcode"
@@ -479,7 +494,6 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                             value={userDetail.regAddress}
                             onChange={onChange}
                             variant="outlined"
-                            sx={{ height: '500px;' }}
                           />
                           
                         )}
