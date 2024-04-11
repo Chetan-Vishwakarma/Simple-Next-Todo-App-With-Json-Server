@@ -1044,8 +1044,8 @@ console.log("formattedDate",formattedDate)
         })
      }
      AddContact(obj,callBack){   
-        super.CreateNewServiceParamObject("AddContact",obj,true);
-        super.CallNewService("AddContact",function(status,Data){
+        super.CreateNewServiceParamObject("Json_AddContact",obj,true);
+        super.CallNewService("Json_AddContact",function(status,Data){
             if(status){
                 return callBack(true,Data);
             }

@@ -54,7 +54,7 @@ function AddContacts({ addContactData }) {
   const [GellAllClientList, setGellAllClientList] = useState([]);
   const [Importcontactdata, setImportcontactdata] = useState({});
   const [clientNames, setclientNames] = useState("");
-  const [clientIddata, setClientIddata] = useState(-1);
+  const [clientIddata, setClientIddata] = useState("");
   const [ImportContact, setImportContact] = useState([]);
   const [contactlistdata, setContactlistdata] = useState([]);
   const [bussiness, setBussiness] = useState([]); // State to hold folders data
@@ -421,7 +421,7 @@ function AddContacts({ addContactData }) {
       greeting: userContactDetails.GreetingName
         ? userContactDetails.GreetingName
         : "",
-      email: userContactDetails.EmailName ? userContactDetails.EmailName : "",
+        Contactemail: userContactDetails.EmailName ? userContactDetails.EmailName : "",
       note: userContactDetails.Notes ? userContactDetails.Notes : "",
       emailupdate: userContactDetails.EmailName
         ? userContactDetails.EmailName
