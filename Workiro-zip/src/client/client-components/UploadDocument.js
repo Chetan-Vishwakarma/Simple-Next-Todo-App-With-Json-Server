@@ -36,7 +36,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         console.log("originatorNo", e)
     }
 
-   
+
     const handleCloseDocumentUpload = () => {
         setOpenUploadDocument(false);
     };
@@ -90,11 +90,11 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     const [showModalCreateTask, setshowModalCreateTask] = useState(false);
     const [openModal, setOpenModal] = useState(false);
 
-    
+
 
     const [fileLangth, setFileLength] = useState(0);
 
-    
+
 
     const [validation, setValidation] = useState("");
 
@@ -114,7 +114,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         const selectedFilesArray = Array.from(files);
         ///let couter = 0;
         for (let i = 0; i < selectedFilesArray.length; i++) {
-           // couter++;
+            // couter++;
             const file = selectedFilesArray[i];
             const isFileAlreadySelected = selectedFiles.some((selectedFile) => selectedFile.FileName === file.name);
 
@@ -143,13 +143,13 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
 
     useEffect(() => {
-      
+
         setStep(1);
         setSelectedFiles([]);
         settxtStandarDescription("");
         setCreateTaskChk(false);
-         setCreatePublishChk(false)
-         setButtonNameText("Submit")
+        setCreatePublishChk(false)
+        setButtonNameText("Submit")
     }, [openUploadDocument]);
 
     useEffect(() => {
@@ -212,7 +212,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                 if (sts) {
                     let js = JSON.parse(data);
 
-                    setGetAllFolderData(js);                  
+                    setGetAllFolderData(js);
 
                     let udfTable2 = js.Table2;
                     if (udfTable2.length > 0) {
@@ -231,7 +231,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
             let o = { ProjectId: pid }
             cls.Json_GetSections(o, function (sts, data) {
                 if (sts) {
-                    if(data){
+                    if (data) {
                         let js = JSON.parse(data);
                         let sectionList = js.Table;
                         console.log("Json_GetSections", sectionList)
@@ -239,11 +239,11 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                             setSectionList(sectionList);
                         }
                     }
-                   
+
                 }
             })
         } catch (error) {
-            console.log("Json_GetSections",error);
+            console.log("Json_GetSections", error);
         }
 
     }
@@ -253,12 +253,12 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
             let o = { ProjectId: pid }
             cls.Json_GetClientsByFolder(o, function (sts, data) {
                 if (sts) {
-                    if(data){
+                    if (data) {
                         let js = JSON.parse(data);
                         let clientdata = js.Table1;
                         console.log("Json_GetClientsByFolder", clientdata)
                         if (clientdata.length > 0) {
-                            let client_list = clientdata.filter((v,i,a)=>a.findIndex(v2=>(v2.Client===v.Client))===i);
+                            let client_list = clientdata.filter((v, i, a) => a.findIndex(v2 => (v2.Client === v.Client)) === i);
                             setClientList(client_list);
                             if (originatorNo) {
                                 let res = clientdata.filter((c) => c.ClientID === originatorNo.originatorNo);
@@ -271,7 +271,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                 }
             })
         } catch (error) {
-            console.log("Json_GetClientsByFolder",error);
+            console.log("Json_GetClientsByFolder", error);
         }
 
     }
@@ -291,7 +291,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     }, [])
 
     const handleOnFolderClick = (data) => {
-        
+
         if (data) {
             setTxtFolderId(data.FolderID)
             setTextFolderData(data)
@@ -345,7 +345,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     }
 
     const handleDescriptionChange = (e) => {
-       // console.log("Get Clietn On click", e.target.value);
+        // console.log("Get Clietn On click", e.target.value);
         settxtStandarDescription(e.target.value)
     }
 
@@ -424,7 +424,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         setReceivedDate(dayjs(date).format('YYYY/MM/DD')); // Update the selected date state
     };
 
-    const [createTaskChk, setCreateTaskChk ] = useState(false);
+    const [createTaskChk, setCreateTaskChk] = useState(false);
 
     const [createPublishChk, setCreatePublishChk] = useState(false);
 
@@ -476,7 +476,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         if (value) {
             console.log(value);
         } else {
-            toast.error(errorMessage);           
+            toast.error(errorMessage);
         }
     }
 
@@ -508,115 +508,134 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     const [createNewFileObj, setCreateNewFileObj] = useState([]);
 
     function Json_RegisterItem(fileData) {
-        let values;
-        let concatenatedString;
-        if (udfIdWithValue) {
-            values = Object.values(udfIdWithValue);
-            concatenatedString = values.join(', ');
-        }
-
-
-        let validationMessage = '';
-
-        if (!txtFolderData || !txtFolderData.FolderID) {
-            validationMessage += "Please Select Folder. ";
-        }
-
-        if (!txtClientData || !txtClientData.ClientID) {
-            validationMessage += "Please Select Reference. ";
-        }
-
-        if (!txtSectionData || !txtSectionData.SecID) {
-            validationMessage += "Please Select Section. ";
-        }
-        if (validationMessage === '') {
-
-            let obj = {
-                "sectionId": txtSectionData.SecID,
-                "deptId": 0,
-                "folderId": txtFolderData.FolderID,
-                "categoryId": categoryid ? categoryid : 0,
-                "subSectionId": txtSubSectionData ? txtSubSectionData.SubSectionID : 0,
-                "retForMonth": "-1",
-                "deptName": "",
-                "folderName": txtFolderData.Folder,
-                "originatorId": txtClientData.ClientID,
-                "senderId": txtClientData.ClientID,
-                "sectionName": txtSectionData.Sec,
-                "extDescription": txtStandarDescription ? txtStandarDescription : "" ,
-                "docDirection": "Incoming",
-                "description": txtStandarDescription ? txtStandarDescription : "",
-                "priority": "",
-                "stickyNote": "",
-                "fileName": fileData ? fileData.FileName : "",
-                "forActionList": "",
-                "forInformationList": "",
-                "forGroupList": "",
-                "uDFList": concatenatedString,
-                "sUDFList": "",
-                "clientname": txtClientData.Client,
-                "receiveDate": dayjs(receivedDate).format("YYYY/MM/DD"),
-                "actionByDate": "1990/01/01",
-                "actionDate": dayjs(documentDate).format("YYYY/MM/DD"),
-                "docViewedDate": dayjs(documentDate).format("YYYY/MM/DD"),
-                "strb64": fileData ? fileData.Base64 : "",
-                "strtxt64": "",
-                "EmailMessageId": ""
+        try {
+            let values;
+            let concatenatedString;
+            if (udfIdWithValue) {
+                values = Object.values(udfIdWithValue);
+                concatenatedString = values.join(', ');
             }
-            console.log("Json_RegisterItem", obj);
 
 
-            cls.Json_RegisterItem(obj, function (sts, data) {
-                if (sts) {
-                    if(data){
-                        let js = JSON.parse(data)
-                        console.log("Json_RegisterItem", js)
-                        if (js.Status === "true") {
-                            if (fileData) {
-                                fileData.DocId = js.ItemId;
-                                setCreateNewFileObj((Previous) => [...Previous, fileData]);
-                            }
+            let validationMessage = '';
 
-                            if (!typeTaskBool) {
-                                //  setOpenUploadDocument(false);
-                            }
-    
-                            setTimeout(() => {
-                               // toast.success(selectedFiles.length + "Document(s) Uploaded!"); 
-                                toast.success(selectedFiles.length + "Document(s) Uploaded!");
-                                if(buttonNameText==="Submit & Create Portal Task" || buttonNameText==="Submit & Create Task"){
-                                    setshowModalCreateTask(true)
-                                    setOpenModal(true)                                
+            if (!txtFolderData || !txtFolderData.FolderID) {
+                validationMessage += "Please Select Folder. ";
+            }
+
+            if (!txtClientData || !txtClientData.ClientID) {
+                validationMessage += "Please Select Reference. ";
+            }
+
+            if (!txtSectionData || !txtSectionData.SecID) {
+                validationMessage += "Please Select Section. ";
+            }
+            if (!txtStandarDescription) {
+                validationMessage += "Description is blank. ";
+            }
+
+            if (validationMessage === '') {
+
+                let obj = {
+                    "sectionId": txtSectionData.SecID,
+                    "deptId": 0,
+                    "folderId": txtFolderData.FolderID,
+                    "categoryId": categoryid ? categoryid : 0,
+                    "subSectionId": txtSubSectionData ? txtSubSectionData.SubSectionID : 0,
+                    "retForMonth": "-1",
+                    "deptName": "",
+                    "folderName": txtFolderData.Folder,
+                    "originatorId": txtClientData.ClientID,
+                    "senderId": txtClientData.ClientID,
+                    "sectionName": txtSectionData.Sec,
+                    "extDescription": txtStandarDescription ? txtStandarDescription : "",
+                    "docDirection": "Incoming",
+                    "description": txtStandarDescription ? txtStandarDescription : "",
+                    "priority": "",
+                    "stickyNote": "",
+                    "fileName": fileData ? fileData.FileName : "",
+                    "forActionList": "",
+                    "forInformationList": "",
+                    "forGroupList": "",
+                    "uDFList": concatenatedString,
+                    "sUDFList": "",
+                    "clientname": txtClientData.Client,
+                    "receiveDate": dayjs(receivedDate).format("YYYY/MM/DD"),
+                    "actionByDate": "1990/01/01",
+                    "actionDate": dayjs(documentDate).format("YYYY/MM/DD"),
+                    "docViewedDate": dayjs(documentDate).format("YYYY/MM/DD"),
+                    "strb64": fileData ? fileData.Base64 : "",
+                    "strtxt64": "",
+                    "EmailMessageId": ""
+                }
+                console.log("Json_RegisterItem", obj);
+
+
+                cls.Json_RegisterItem(obj, function (sts, data) {
+                    if (sts) {
+                        if (data) {
+                            let js = JSON.parse(data)
+                            console.log("Json_RegisterItem", js)
+                            if (js.Status === "true") {
+                                if (fileData) {
+                                    fileData.DocId = js.ItemId;
+                                    setCreateNewFileObj((Previous) => [...Previous, fileData]);
                                 }
-                            }, 3000);
 
-                            
+                                if (!typeTaskBool) {
+                                    //  setOpenUploadDocument(false);
+                                }
 
-                            
-    
+                                setTimeout(() => {
+                                    // toast.success(selectedFiles.length + "Document(s) Uploaded!"); 
+                                    toast.success(selectedFiles.length + "Document(s) Uploaded!");
+                                    if (buttonNameText === "Submit & Create Portal Task" || buttonNameText === "Submit & Create Task") {
+                                        setshowModalCreateTask(true)
+                                        setOpenModal(true)
+                                        setTimeout(() => {
+                                            if(openModal){
+                                                setOpenUploadDocument(false); 
+                                            }
+                                        }, 2000);                                      
+                                       
+                                    }
+                                    else {
+                                        setOpenUploadDocument(false);
+                                    }
+                                }, 3000);
+
+
+
+
+
+                            }
+                            else {
+                                //toast.success("Faild Please Try Again");
+                            }
                         }
                         else {
-                            //toast.success("Faild Please Try Again");
+                            toast.error("Faild Please Try Again");
                         }
+
+
+
+
                     }
-                    else{
-                         toast.error("Faild Please Try Again");
-                    }
-                    
+                })
 
-
-
-                }
-            })
-
-        } else {
-            // Data is invalid, set the validation message
-            setValidation(validationMessage);
-            // Hide validation message after 2 seconds
-            setTimeout(() => {
-                setValidation('');
-            }, 3000);
+            } else {
+                // Data is invalid, set the validation message
+                setValidation(validationMessage);
+                // Hide validation message after 2 seconds
+                setTimeout(() => {
+                    setValidation('');
+                }, 3000);
+            }
+        } catch (error) {
+            console.log("Json_RegisterItem Network issue please try again")
         }
+
+
 
 
 
@@ -721,7 +740,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                                 </Box>
                                             </label>
                                         </Box>
-                                        
+
                                     </Box>
                                 </Box>
 
@@ -764,7 +783,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                         id="combo-box-demo"
                                         options={clientList}
                                         getOptionLabel={(option) => {
-                                           // console.log("ldsfljfd",option.Client);
+                                            // console.log("ldsfljfd",option.Client);
                                             return option.Client;
                                         }} // assuming "Client" is the property you want to display
 
@@ -906,7 +925,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
                             </Box>
 
-                            {showModalCreateTask  && openModal && <CreateNewModalTask
+                            {showModalCreateTask && openModal && <CreateNewModalTask
                                 documentDate={documentDate}
                                 receivedDate={receivedDate}
                                 createNewFileObj={createNewFileObj}

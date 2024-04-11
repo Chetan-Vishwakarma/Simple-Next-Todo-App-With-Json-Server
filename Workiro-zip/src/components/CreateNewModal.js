@@ -113,8 +113,8 @@ function CreateNewModalTask({ ...props }) {
         setOpenModal = null,
     } = props || {};
 
-    console.log("documentDate txtSectionId1", documentDate,
-        receivedDate, createNewFileObj)
+    // console.log("documentDate txtSectionId1", documentDate,
+    //     receivedDate, createNewFileObj)
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));

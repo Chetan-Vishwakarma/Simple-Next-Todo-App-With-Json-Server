@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Box, Button, Typography, Dialog, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Link, MenuItem, Menu } from '@mui/material';
+import { Box, Button, Typography, Dialog, DialogContent, DialogContentText, Tabs, Tab, Checkbox } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 
 import TabPanel from '@mui/lab/TabPanel';
@@ -27,12 +27,12 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 
-function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument,sendUrldata }) {
-console.log(sendUrldata,"sendUrldata");
+function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument}) {
+console.log(selectedDocument,"sendUrldata");
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
-    const [txtFolderId, setFolderId] = useState(localStorage.getItem("FolderId"));
+   // const [txtFolderId, setFolderId] = useState(localStorage.getItem("FolderId"));
     const [ViewerToken, setViewerToken] = useState(localStorage.getItem("ViewerToken"));
     const [getAudit, setGetAudit] = useState([]);
 
@@ -141,7 +141,7 @@ console.log(sendUrldata,"sendUrldata");
                 if (sts && data) {
 
                     let atob = window.atob(data);
-                    console.log("Json_GetItemStickyNotes", atob);
+                   // console.log("Json_GetItemStickyNotes", atob);
                     setTemplateDataMarkup(atob)
                 }
             })
@@ -178,13 +178,13 @@ console.log(sendUrldata,"sendUrldata");
         document.documentElement.style.setProperty('--main-bg-color', '#d42027');
         setGetAttachment([]);
         setAgrNo(localStorage.getItem("agrno"));
-        setFolderId(localStorage.getItem("FolderId"));
+      
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
         setViewerToken(localStorage.getItem("ViewerToken"));
 
         if (selectedDocument) {
-            console.log("selectedDocument", selectedDocument)
+           // console.log("selectedDocument", selectedDocument)
 
             setTxtClientData({ Client: selectedDocument.Client, ClientID: selectedDocument.SenderId })
             setTxtSectionData({ Sec: selectedDocument.Section, SecID: selectedDocument.PostItemTypeID })
@@ -547,10 +547,10 @@ console.log(sendUrldata,"sendUrldata");
                                         <Box className='text-end mb-3 relative'>
                                             <DownloadForOfflineIcon className='text-red pointer font-32 btn-download' />
                                         </Box>
-                                        {console.log("dfsdljds",sendUrldata)}
-                                        {sendUrldata && (
+                                     
+                                        {viewerUrl && (
                                             <iframe
-                                            src={ isLoadingDoc ? "https://6612849d1f1acaa676039a99--amazing-haupia-bf1c0b.netlify.app/" : sendUrldata } // Specify the URL of the iframe
+                                            src={ isLoadingDoc ? "https://6612849d1f1acaa676039a99--amazing-haupia-bf1c0b.netlify.app/" : viewerUrl } // Specify the URL of the iframe
                                             // src={"http://127.0.0.1:5501/src/client/utils/test/test.html"}
                                             onLoad={()=>{
                                                 setIsLoadingDoc(false);
