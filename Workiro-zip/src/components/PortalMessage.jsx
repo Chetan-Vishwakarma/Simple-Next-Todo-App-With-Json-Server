@@ -1,40 +1,40 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect,  useState } from "react";
 import CommanCL from "../services/CommanService";
-import HtmlEditorDX from "./HtmlEditor";
-import { Checkbox, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, Typography, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, Link, Chip, Stack, ListItemIcon, Radio, useMediaQuery, useTheme, Accordion, AccordionSummary, AccordionDetails, } from '@mui/material';
+//import HtmlEditorDX from "./HtmlEditor";
+import {  Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText} from '@mui/material';
 import { Avatar, Grid, IconButton, List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
-import CopyLinkButton from "./CopyLinkButton";
+//import CopyLinkButton from "./CopyLinkButton";
 
 import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { styled } from '@mui/material/styles';
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
-import NewReleasesIcon from '@mui/icons-material/NewReleases';
+//import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import MarkunreadIcon from '@mui/icons-material/Markunread';
-import DraftsIcon from '@mui/icons-material/Drafts';
+//import DraftsIcon from '@mui/icons-material/Drafts';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import BallotIcon from '@mui/icons-material/Ballot';
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import moment from 'moment';
 import { toast } from "react-toastify";
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import NotificationImportantIcon from '@mui/icons-material/NotificationImportant';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+// import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+// import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+// import NotificationImportantIcon from '@mui/icons-material/NotificationImportant';
+// import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+// import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import DownloadIcon from '@mui/icons-material/Download';
 import docuicon from "../images/docu-icon.svg";
 import DoDisturbIcon from '@mui/icons-material/DoDisturb';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import CloseIcon from '@mui/icons-material/Close';
+//import CloseIcon from '@mui/icons-material/Close';
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
 }));
 
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+//const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, setSelectedEmailForComment }) => {
