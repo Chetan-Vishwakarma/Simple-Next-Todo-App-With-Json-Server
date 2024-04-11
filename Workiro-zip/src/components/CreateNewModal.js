@@ -121,13 +121,17 @@ function CreateNewModalTask({ ...props }) {
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
 
 
+<<<<<<< HEAD
     const [guid, setGuid] = useState('');
     const [addContactData, setAddContact]=useState({});
+=======
+>>>>>>> 2ae2b71780d139894c609c815eeedada40421763
 
     //const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/"; // base url for api
     //   let dt = new LoginDetails();
+    const [addContactData, setAddContact]=useState({});
 
     let cls = new CommanCLS(baseUrl, agrno, Email, password);
 
@@ -3873,7 +3877,11 @@ function CreateNewModalTask({ ...props }) {
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
+<<<<<<< HEAD
                             Add Contact 
+=======
+                            Add Client
+>>>>>>> 2ae2b71780d139894c609c815eeedada40421763
                         </Typography>
                     </Box>
 
