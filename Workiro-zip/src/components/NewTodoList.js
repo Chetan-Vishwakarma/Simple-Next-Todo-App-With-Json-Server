@@ -118,36 +118,36 @@ function NewTodoList() {
         }
     }
 
-    // const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
+    const Json_Get_CRM_Task_ActivityByTaskId = (item,callBack) => {
+       // console.log("Json_Get_CRM_Task_ActivityByTaskId", item);
+            let obj = {};
+            obj.TaskId = item.TaskID;
+            try {       
 
-    //         let obj = {};
-    //         obj.TaskID = taskid;
-    //         try {       
+                Cls.Json_Get_CRM_Task_ActivityByTaskId(obj, (sts, data) => {
+                    if (sts) {
+                        if (data) {
+                            let json = JSON.parse(data);
+                            console.log("Json_Get_CRM_Task_ActivityByTaskId", json);
+                            const formattedActivity = json.Table.map((activity) => {
+                                let ActivityDate;
+                                if (activity.ActivityDate) {
+                                    ActivityDate = parseInt(activity.ActivityDate.slice(6, -2));
+                                }
+                                const date = new Date(ActivityDate);
+                                return { ...activity, ActivityDate: date, comDate: date, comNotes: activity.Notes };
+                            });
+                         let sort =   formattedActivity.sort((a, b) => a.ActivityDate - b.ActivityDate)
+                            //setCRMTaskAcivity(sort);
 
-    //             Cls.Json_Get_CRM_Task_ActivityByTaskId(obj, (sts, data) => {
-    //                 if (sts) {
-    //                     if (data) {
-    //                         let json = JSON.parse(data);
-    //                         console.log("Json_Get_CRM_Task_ActivityByTaskId", json);
-    //                         const formattedActivity = json.Table.map((activity) => {
-    //                             let ActivityDate;
-    //                             if (activity.ActivityDate) {
-    //                                 ActivityDate = parseInt(activity.ActivityDate.slice(6, -2));
-    //                             }
-    //                             const date = new Date(ActivityDate);
-    //                             return { ...activity, ActivityDate: date, comDate: date, comNotes: activity.Notes };
-    //                         });
-    //                      let sort =   formattedActivity.sort((a, b) => a.ActivityDate - b.ActivityDate)
-    //                         setCRMTaskAcivity(sort);
-
-    //                         return callBack(sort);
-    //                     }
-    //                 }
-    //             });
-    //         } catch (err) {
-    //             console.log("Error while calling Json_CRM_GetOutlookTask", err);
-    //         }
-    //     };
+                           // return callBack(sort);
+                        }
+                    }
+                });
+            } catch (err) {
+                console.log("Error while calling Json_CRM_GetOutlookTask", err);
+            }
+        };
 
     const Json_getRecentTaskList = () => {
 
@@ -847,7 +847,7 @@ function NewTodoList() {
                                         </Box>
                                         <Box className="user-content text-start">
                                             <Typography variant='h2'>{'user name'}</Typography>
-                                            <Typography variant='body1'>{'Lorem ipsome dolor site amet this is a dummy text loprem ipsome dolor site amet this is a dummy text '}</Typography>
+                                            <Typography variant='body1'>{()=>Json_Get_CRM_Task_ActivityByTaskId(item)}</Typography>
                                         </Box>
                                     </Box>
 
