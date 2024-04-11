@@ -1,35 +1,44 @@
-import React, { memo, useEffect, useState } from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ToggleButton from '@mui/material/ToggleButton';
-import DeleteIcon from '@mui/icons-material/Delete';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import EmailIcon from '@mui/icons-material/Email';
-import Tab from '@mui/material/Tab';
-import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
-import SendIcon from '@mui/icons-material/Send';
-import { useLocation, useSearchParams } from 'react-router-dom';
-import CompaniesHouse from '../client/client-components/CompaniesHouse';
-import TaskList from '../client/client-components/TaskList';
-import CustomBreadCrumbs from './CustomBreadCrumbs';
-import Contact from '../client/client-components/Contact';
-import CommanCLS from '../services/CommanService';
-import { Autocomplete, Grid, List, ListItem, ListItemIcon, ListItemText, TextField } from '@mui/material';
-import ContactMainform from '../contact/contact-components/ContactMainform';
-import UploadButtons from '../contact/contact-components/UploadProfile';
-import ContactUDF from '../contact/contact-components/ContactUDF';
-import { ToastContainer, toast } from 'react-toastify';
+import React, { memo, useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import ToggleButton from "@mui/material/ToggleButton";
+import DeleteIcon from "@mui/icons-material/Delete";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import EmailIcon from "@mui/icons-material/Email";
+import Tab from "@mui/material/Tab";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
+import SendIcon from "@mui/icons-material/Send";
+import { useLocation, useSearchParams } from "react-router-dom";
+import CompaniesHouse from "../client/client-components/CompaniesHouse";
+import TaskList from "../client/client-components/TaskList";
+import CustomBreadCrumbs from "./CustomBreadCrumbs";
+import Contact from "../client/client-components/Contact";
+import CommanCLS from "../services/CommanService";
+import {
+  Autocomplete,
+  Grid,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  TextField,
+} from "@mui/material";
+import ContactMainform from "../contact/contact-components/ContactMainform";
+import UploadButtons from "../contact/contact-components/UploadProfile";
+import ContactUDF from "../contact/contact-components/ContactUDF";
+import { ToastContainer, toast } from "react-toastify";
 let originatorNo;
 let folderData;
 let clientData;
+let defaultclientData;
 let clientName;
-function AddContacts({addContactData}) {
-  console.log(addContactData,"addContactData11111")
+function AddContacts({ addContactData }) {
+  console.log(addContactData, "addContactData11111");
   const [contact, setContact] = useState([]);
   const [fillcontact, setFillContact] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
@@ -38,7 +47,7 @@ function AddContacts({addContactData}) {
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
   const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
-  const [value, setValue] = React.useState(tabValue ? tabValue : '1');
+  const [value, setValue] = React.useState(tabValue ? tabValue : "1");
   const [clientDetails, setClientDetails] = useState({});
   const [folders, setFolders] = useState([]);
   const [Importdata, setImportdata] = useState([]);
@@ -81,6 +90,7 @@ function AddContacts({addContactData}) {
     RolesData: "",
     Base64ImgData: "",
     CreatePortal: false,
+    Notes:""
   });
   const [companyDetails, setCompanyDetails] = useState([]);
 
@@ -96,7 +106,6 @@ function AddContacts({addContactData}) {
   let portlCls = new CommanCLS(portalUrl, agrno, Email, password);
   let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
 
-
   // upload document modal start
   const [openUploadDocument, setOpenUploadDocument] = React.useState(false);
   const handleClickOpenUploadDocument = () => {
@@ -104,11 +113,9 @@ function AddContacts({addContactData}) {
   };
   // upload document modal end
 
-
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
 
   const Json_GetCRMContactUDFValues = () => {
     let obj = {
@@ -118,7 +125,7 @@ function AddContacts({addContactData}) {
       ProjectId: folderId,
       // ClientId: localStorage.getItem("origiNator") ? localStorage.getItem("origiNator") : userContactDetails.ReferenceID,
       ClientId: "0007",
-      ContactId: "-1"
+      ContactId: "-1",
     };
     try {
       Cls.Json_GetCRMContactUDFValues(obj, (sts, data) => {
@@ -127,22 +134,20 @@ function AddContacts({addContactData}) {
             let json = JSON.parse(data);
             console.log("Json_GetCRMContactUDFValues", json);
             setClientDetails(json);
-
-
           }
         }
       });
     } catch (err) {
-      console.log("Error while calling Json_GetCRMContactUDFValues", err)
+      console.log("Error while calling Json_GetCRMContactUDFValues", err);
     }
-  }
+  };
   const Json_GetClientCardDetails = () => {
     let obj = {
       Email: Email,
       agrno: agrno,
       intProjectId: folderId,
       password: password,
-      strOrignatorNumber: clientIddata ? clientIddata : ""
+      strOrignatorNumber: clientIddata ? clientIddata : "",
     };
     try {
       webClientCLS.Json_GetClientCardDetails(obj, (sts, data) => {
@@ -152,14 +157,13 @@ function AddContacts({addContactData}) {
             console.log("Json_GetClientCardDetails", json);
             setClientDetails(json);
             setCompanyDetails(json.Table1);
-
           }
         }
       });
     } catch (err) {
-      console.log("Error while calling Json_GetClientCardDetails", err)
+      console.log("Error while calling Json_GetClientCardDetails", err);
     }
-  }
+  };
   const Json_GetFolders = () => {
     let requestBody = {
       agrno: agrno,
@@ -190,14 +194,25 @@ function AddContacts({addContactData}) {
         if (sts) {
           if (data) {
             let json = JSON.parse(data);
-            console.log(json,"jsondataget");
-            if(json.Table && json.Table.length > 0) {
-              setBussiness(json.Table);
-              const filteredData = json.Table.find(obj => obj.ClientId === addContactData.Clientid);
-              setdefaultClient(filteredData);
-              console.log(filteredData,"filteredData",json.Table);
+            console.log(json, "jsondataget");
+            if (json.Table && json.Table.length > 0) {
+              const uniqueArray = json.Table.filter(
+                (obj, index, self) =>
+                  index === self.findIndex((t) => t.ClientId === obj.ClientId)
+              );
+
+              console.log(uniqueArray);
+              setBussiness(uniqueArray);
+              const filteredData = json.Table.find(
+                (obj) => obj.ClientId === addContactData.Clientid
+              );
+              if(filteredData){
+                setdefaultClient(filteredData);
+                defaultclientData=filteredData.ClientId;
+                console.log(filteredData, "filteredData", json.Table);
+              }
+
             }
-           
           }
         }
       });
@@ -217,16 +232,14 @@ function AddContacts({addContactData}) {
         if (sts) {
           if (data) {
             let json = JSON.parse(data);
-            console.log(json,"clientdatalist");
-   
+            console.log(json, "clientdatalist");
           }
         }
       });
     } catch (err) {
       console.log("Error while calling Json_GetToFavourites", err);
     }
-
-  }
+  };
   function saveUDF(contactnumber) {
     console.log(contactnumber, "contactNumber", dataFromChild);
     const result = Object.entries(dataFromChild)
@@ -253,16 +266,17 @@ function AddContacts({addContactData}) {
         }
       }
     });
-
-  };
+  }
   const Json_GetContactNumber = () => {
     let contactData = {
-      "agrno": agrno,
-      "Email": Email,
-      "password": password,
-      "ClientId": clientIddata ? clientIddata : -1,
-      "ContactEmail": userContactDetails.EmailName ? userContactDetails.EmailName : "",
-    }
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      ClientId: clientIddata ? clientIddata : -1,
+      ContactEmail: userContactDetails.EmailName
+        ? userContactDetails.EmailName
+        : "",
+    };
     console.log(contactData, "contactData");
     Cls.Json_GetContactNumber(contactData, (sts, data) => {
       if (sts) {
@@ -274,27 +288,25 @@ function AddContacts({addContactData}) {
           saveUDF(data);
         }
       }
-
     });
   };
   const Json_UpdateContactField = (contactNumber) => {
-    let contactData =
-    {
-      "fieldName": "BirthDate",
-      "fieldFile": "imgPath"
-    }
+    let contactData = {
+      fieldName: "BirthDate",
+      fieldFile: "imgPath",
+    };
     console.log(contactData, "contactData");
     if (contactData.fieldName == "BirthDate") {
       let birthdayObj = {
-        "agrno": agrno,
-        "Email": Email,
-        "password": password,
-        "ClientId": clientIddata ? clientIddata : -1,
-        "projectid": folderId,
-        "ContactNo": contactNumber,
-        "fieldName": "BirthDate",
-        "fieldValue": userContactDetails.BirthDate
-      }
+        agrno: agrno,
+        Email: Email,
+        password: password,
+        ClientId: clientIddata ? clientIddata : -1,
+        projectid: folderId,
+        ContactNo: contactNumber,
+        fieldName: "BirthDate",
+        fieldValue: userContactDetails.BirthDate,
+      };
       Cls.Json_UpdateContactField(birthdayObj, (sts, data) => {
         if (sts) {
           console.log(sts, data, "birthdaynewcontactData");
@@ -302,23 +314,21 @@ function AddContacts({addContactData}) {
           // if (jsonparse) {
           //     console.log(jsonparse,"successcontact");
 
-
           // }
         }
-
       });
     }
     if (contactData.fieldFile == "imgPath") {
       let profileObj = {
-        "agrno": agrno,
-        "Email": Email,
-        "password": password,
-        "ClientId": clientIddata ? clientIddata : -1,
-        "projectid": folderId,
-        "ContactNo": contactNumber,
-        "fieldName": "BirthDate",
-        "fieldValue": userContactDetails.Base64ImgData
-      }
+        agrno: agrno,
+        Email: Email,
+        password: password,
+        ClientId: clientIddata ? clientIddata : -1,
+        projectid: folderId,
+        ContactNo: contactNumber,
+        fieldName: "BirthDate",
+        fieldValue: userContactDetails.Base64ImgData,
+      };
 
       Cls.Json_UpdateContactField(profileObj, (sts, data) => {
         if (sts) {
@@ -327,29 +337,29 @@ function AddContacts({addContactData}) {
           // if (jsonparse) {
           //     console.log(jsonparse,"successcontact");
 
-
           // }
         }
-
       });
     }
   };
   const PortalUserAccountCreated_Json = () => {
     let obj = {
-      "accid": agrno,
-      "email": Email,
-      "password": password,
-      "PresetMemorableData": true,
-      "IssueReminders": false,
-      "ExcludeMessageLink": false,
-      "KeepSignedIn": false,
-      "AllowUpload": false,
-      "ChangeProfile": false,
-      "LoggedIn": false,
-      "Blocked": false,
-      "emailAddress": userContactDetails.EmailName ? userContactDetails.EmailName : "",
-      "ccode": clientIddata ? clientIddata : "",
-      "clientName": clientNames ? clientNames : "",
+      accid: agrno,
+      email: Email,
+      password: password,
+      PresetMemorableData: true,
+      IssueReminders: false,
+      ExcludeMessageLink: false,
+      KeepSignedIn: false,
+      AllowUpload: false,
+      ChangeProfile: false,
+      LoggedIn: false,
+      Blocked: false,
+      emailAddress: userContactDetails.EmailName
+        ? userContactDetails.EmailName
+        : "",
+      ccode: clientIddata ? clientIddata : "",
+      clientName: clientNames ? clientNames : "",
     };
     try {
       portlCls.PortalUserAccountCreated_Json(obj, (sts, data) => {
@@ -358,50 +368,76 @@ function AddContacts({addContactData}) {
             // let json = JSON.parse(data);
             console.log("PortalUserAccountCreated_Json", data);
             toast.success("Portal Account Created Successfully !");
-
           }
         }
       });
     } catch (err) {
-      console.log("Error while calling PortalUserAccountCreated_Json", err)
+      console.log("Error while calling PortalUserAccountCreated_Json", err);
     }
-  }
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(userContactDetails, "createportal");
     let contactData = {
-      "agrno": agrno,
-      "Email": Email,
-      "password": password,
-      "FirstName": userContactDetails.FirstName ? userContactDetails.FirstName : "",
-      "LastName": userContactDetails.LastName ? userContactDetails.LastName : "",
-      "Add1": userContactDetails.MainLine1Name ? userContactDetails.MainLine1Name : "",
-      "Add2": userContactDetails.MainLine2Name ? userContactDetails.MainLine2Name : "",
-      "Add3": userContactDetails.MainLine3Name ? userContactDetails.MainLine3Name : "",
-      "Town": userContactDetails.MainTownName ? userContactDetails.MainTownName : "",
-      "PostCode": userContactDetails.MainPostcodeName ? userContactDetails.MainPostcodeName : "",
-      "Country": userContactDetails.mainCountry ? userContactDetails.mainCountry : "United Kingdom",
-      "ManagerName": userContactDetails.FirstName + " " + userContactDetails.LastName,
-      "Role": userContactDetails.RolesData ? userContactDetails.RolesData : "",
-      "Tel": userContactDetails.MainTelephoneName ? userContactDetails.MainTelephoneName : "",
-      "Mobile": userContactDetails.MainMobileName ? userContactDetails.MainMobileName : "",
-      "greeting": userContactDetails.GreetingName ? userContactDetails.GreetingName : "",
-      "email": userContactDetails.EmailName ? userContactDetails.EmailName : "",
-      "note": "",
-      "emailupdate": userContactDetails.EmailName ? userContactDetails.EmailName : "",
-      "CActive": userContactDetails.Inactive === true ? "Yes" : "No",
-      "AssignedManager": userContactDetails.MainUserId ? userContactDetails.MainUserId : -1,
-      "maincontact": userContactDetails.MainContact ? userContactDetails.MainContact : false,
-      "CCode": clientIddata ? clientIddata : -1,
-      "Salutation": userContactDetails.Title ? userContactDetails.Title : "",
-      "accid": agrno
-    }
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      FirstName: userContactDetails.FirstName
+        ? userContactDetails.FirstName
+        : "",
+      LastName: userContactDetails.LastName ? userContactDetails.LastName : "",
+      Add1: userContactDetails.MainLine1Name
+        ? userContactDetails.MainLine1Name
+        : "",
+      Add2: userContactDetails.MainLine2Name
+        ? userContactDetails.MainLine2Name
+        : "",
+      Add3: userContactDetails.MainLine3Name
+        ? userContactDetails.MainLine3Name
+        : "",
+      Town: userContactDetails.MainTownName
+        ? userContactDetails.MainTownName
+        : "",
+      PostCode: userContactDetails.MainPostcodeName
+        ? userContactDetails.MainPostcodeName
+        : "",
+      Country: userContactDetails.mainCountry
+        ? userContactDetails.mainCountry
+        : "United Kingdom",
+      ManagerName:
+        userContactDetails.FirstName + " " + userContactDetails.LastName,
+      Role: userContactDetails.RolesData ? userContactDetails.RolesData : "",
+      Tel: userContactDetails.MainTelephoneName
+        ? userContactDetails.MainTelephoneName
+        : "",
+      Mobile: userContactDetails.MainMobileName
+        ? userContactDetails.MainMobileName
+        : "",
+      greeting: userContactDetails.GreetingName
+        ? userContactDetails.GreetingName
+        : "",
+      email: userContactDetails.EmailName ? userContactDetails.EmailName : "",
+      note: userContactDetails.Notes ? userContactDetails.Notes : "",
+      emailupdate: userContactDetails.EmailName
+        ? userContactDetails.EmailName
+        : "",
+      CActive: userContactDetails.Inactive === true ? "Yes" : "No",
+      AssignedManager: userContactDetails.MainUserId
+        ? userContactDetails.MainUserId
+        : -1,
+      maincontact: userContactDetails.MainContact
+        ? userContactDetails.MainContact
+        : false,
+      CCode: clientIddata ? clientIddata : defaultclientData,
+      Salutation: userContactDetails.Title ? userContactDetails.Title : "",
+      accid: agrno,
+    };
     console.log(contactData, "contactData");
     Cls.AddContact(contactData, (sts, data) => {
       if (sts) {
         if (data) {
-          if (data == 'Success') {
+          if (data == "Success") {
             console.log(data, "successcontact");
             if (userContactDetails.CreatePortal == true) {
               PortalUserAccountCreated_Json();
@@ -409,20 +445,19 @@ function AddContacts({addContactData}) {
             Json_GetContactNumber();
             toast.success("Contact Added Successfully !");
 
-            // toast.success("Reference ID Already Exists!"); 
-
+            // toast.success("Reference ID Already Exists!");
           }
         }
       }
-
     });
   };
   const handleListItemClick = (item) => {
-    console.log('Selecteditem:', item);
+    console.log("Selecteditem:", item);
     setFillContact(item);
     let data = { ...userContactDetails };
     data = {
-      ...data, ["Title"]: item.Salutation,
+      ...data,
+      ["Title"]: item.Salutation,
       ["FirstName"]: item.FirstName,
       ["LastName"]: item.LastName,
       ["ReferenceName"]: "",
@@ -442,7 +477,7 @@ function AddContacts({addContactData}) {
       ["mainCountry"]: "",
       ["billingsCountry"]: "",
       ["ragistersCountry"]: "",
-      ["ReferenceID"]: clientNames
+      ["ReferenceID"]: clientNames,
     };
     setContactDetails(data);
   };
@@ -453,20 +488,17 @@ function AddContacts({addContactData}) {
     setContactDetails(data);
   };
 
-  const onChangebussines = (
-    event,
-    value
-  ) => {
+  const onChangebussines = (event, value) => {
     event.preventDefault();
     if (value) {
       console.log(value, "valueclientid");
-      clientData = value.ClientID;
+      clientData = value.ClientId;
       localStorage.setItem("origiNator", clientData);
       clientName = value.Client;
       setclientNames(clientName);
       // setDefaultFolders(value);
       setdefaultClient(value);
-      setClientIddata(value.ClientID);
+      setClientIddata(value.ClientId);
       updateReferenceID(value.Client);
     } else {
     }
@@ -491,34 +523,30 @@ function AddContacts({addContactData}) {
       console.log("Error while calling Json_GetToFavourites", err);
     }
   };
-  const
-    Json_CompanyHouseDetails = () => {
-      let requestBody = {
-        CompanyName_Number: Importdata
-      };
-      try {
-        Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
-          if (sts) {
-            if (data) {
-              let json = JSON.parse(data);
-              console.log(json, "Json_CompanyHouseDetails");
-              let jdata = json.ContactDetails;
-              console.log("Json_CompanyHouseDetails1", jdata);
-              // setContactlistdata(json.Table);
-              if (jdata.length > 0) {
-                setImportContact(jdata);
-              }
+  const Json_CompanyHouseDetails = () => {
+    let requestBody = {
+      CompanyName_Number: Importdata,
+    };
+    try {
+      Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
+        if (sts) {
+          if (data) {
+            let json = JSON.parse(data);
+            console.log(json, "Json_CompanyHouseDetails");
+            let jdata = json.ContactDetails;
+            console.log("Json_CompanyHouseDetails1", jdata);
+            // setContactlistdata(json.Table);
+            if (jdata.length > 0) {
+              setImportContact(jdata);
             }
           }
-        });
-      } catch (err) {
-        console.log("Error while calling Json_GetToFavourites", err);
-      }
-    };
-  const onChangeclientlist = (
-    event,
-    value
-  ) => {
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_GetToFavourites", err);
+    }
+  };
+  const onChangeclientlist = (event, value) => {
     event.preventDefault();
     if (value) {
       // Update the selectedFolderID state with the FolderID of the selected option
@@ -543,16 +571,14 @@ function AddContacts({addContactData}) {
     options: contactlistdata,
     getOptionLabel: (option) => option.EMailId || "",
   };
-  const onChangecontactlist = (
-    event,
-    value
-  ) => {
+  const onChangecontactlist = (event, value) => {
     event.preventDefault();
     if (value) {
-      let result = contactlistdata.filter((el) => el["EMailId"] === value.EMailId);
+      let result = contactlistdata.filter(
+        (el) => el["EMailId"] === value.EMailId
+      );
       console.log(value, "onChangetitle", result);
       setContact(result[0]);
-
     } else {
     }
   };
@@ -564,7 +590,6 @@ function AddContacts({addContactData}) {
 
   // };
   const onChangeImportData = (e) => {
-
     e.preventDefault();
     const inputValue = e.target.value;
     console.log(inputValue, "import_data");
@@ -582,14 +607,19 @@ function AddContacts({addContactData}) {
     // let data = id.company_number;
     // Json_CompanyHouseDetails();
     // console.log(data, "onSelectDatacnnumbr");
-
   };
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       console.log(e.target.value, "onChangeImportData");
       Json_CompanyHouseDetails();
     }
+  };
+  const handleChangeTextArea = (e) => {
+    e.preventDefault();
+    let data = { ...userContactDetails };
+    data = { ...data, ["Notes"]: e.target.value };
+    setContactDetails(data);
   }
   console.log(contact, "contactcontact", ImportContact);
   useEffect(() => {
@@ -606,45 +636,50 @@ function AddContacts({addContactData}) {
     const clientName = localStorage.getItem("ClientName");
     // Update userContactDetails state with the retrieved value
     if (clientName) {
-      setContactDetails(prevState => ({
+      setContactDetails((prevState) => ({
         ...prevState,
-        ReferenceID: clientName
+        ReferenceID: clientName,
       }));
     }
   }, []);
-  console.log(defaultClient,"defaultClientfirst");
+  console.log(defaultClient, "defaultClientfirst");
   return (
     <Box className="container-fluid p-0">
       <ToastContainer></ToastContainer>
-      <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/Connections", tabName: "Connections" }, { tabLink: "/dashboard/clientDetails", tabName: "Client Details" }]} />
+      <CustomBreadCrumbs
+        tabs={[
+          { tabLink: "/dashboard/Connections", tabName: "Connections" },
+          { tabLink: "/dashboard/clientDetails", tabName: "Client Details" },
+        ]}
+      />
 
-
-      <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
-
-
+      <Box sx={{ width: "100%", typography: "body1" }} className="mt-3">
         <Box className="general-tab white-box">
-          <Box className='d-flex'>
+          <Box className="d-flex">
             <Box className="mb-3 pe-2 me-2">
-              <Box className='position-sticky top-0'>
+              <Box className="position-sticky top-0">
                 <UploadButtons
                   userContactDetails={userContactDetails}
                   setContactDetails={setContactDetails}
                 />
-                <textarea className='form-control textarea-2 mt-3' placeholder='Type here
-              '></textarea>
+                <textarea
+                  className="form-control textarea-2 mt-3"
+                  placeholder="Notes.."
+                  name="Notes"
+                  onChange={handleChangeTextArea} 
+                ></textarea>
               </Box>
             </Box>
 
             <Box className="mb-3 w-100">
-              <Box className='well mb-4'>
-                <h2 className='font-20 mb-3 text-black'>Contact Details</h2>
-                <Box className='well well-2 mb-3'>
-
-
-
+              <Box className="well mb-4">
+                <h2 className="font-20 mb-3 text-black">Contact Details</h2>
+                <Box className="well well-2 mb-3">
                   <Grid container spacing={2}>
                     <Grid item xs={6} md={6}>
-                      <h2 className='font-14 bold mb-4 text-black'>Import Existing DocuSoft Contact</h2>
+                      <h2 className="font-14 bold mb-4 text-black">
+                        Import Existing DocuSoft Contact
+                      </h2>
                       <Autocomplete
                         {...contactlist}
                         id="contactlist"
@@ -664,7 +699,9 @@ function AddContacts({addContactData}) {
                     </Grid>
 
                     <Grid item xs={6} md={6}>
-                      <h2 className='font-14 bold mb-4 text-black'>Import from Companies House</h2>
+                      <h2 className="font-14 bold mb-4 text-black">
+                        Import from Companies House
+                      </h2>
                       {/* <TextField
                 // {...params}wid
                 fullWidth
@@ -679,7 +716,9 @@ function AddContacts({addContactData}) {
                         fullWidth
                         // options={ImportContact.map((option) => option.title)}
                         options={ImportContact} // Pass the entire ImportContact array
-                        getOptionLabel={(option) => option.FirstName + " " + option.LastName}
+                        getOptionLabel={(option) =>
+                          option.FirstName + " " + option.LastName
+                        }
                         onChange={(e, value) => setImportdata(value)}
                         onKeyDown={handleKeyDown}
                         // inputValue={ImportContact}
@@ -693,7 +732,11 @@ function AddContacts({addContactData}) {
                         onClose={() => setOpen(false)} // Close the Autocomplete dropdown
                         renderOption={(props, option) => {
                           // Custom rendering for each option
-                          console.log(option, "rendwered dynamic from apifff", props);
+                          console.log(
+                            option,
+                            "rendwered dynamic from apifff",
+                            props
+                          );
                           return (
                             !option.resigned_on && (
                               <div>
@@ -704,14 +747,19 @@ function AddContacts({addContactData}) {
                                   }}
                                 >
                                   <Grid container alignItems="center">
-                                    <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                                    <Grid
+                                      item
+                                      sx={{
+                                        width: "calc(100% - 44px)",
+                                        wordWrap: "break-word",
+                                      }}
+                                    >
                                       {option.FirstName + " " + option.LastName}
                                     </Grid>
                                   </Grid>
                                 </li>
                               </div>
                             )
-
                           );
                         }}
                         renderInput={(params) => (
@@ -729,7 +777,7 @@ function AddContacts({addContactData}) {
                   </Grid>
                 </Box>
 
-                <Box className='well well-2 mb-3'>
+                <Box className="well well-2 mb-3">
                   <Grid container spacing={2}>
                     {/* <Grid item xs={6} md={6}>
                       <Autocomplete
@@ -752,13 +800,13 @@ function AddContacts({addContactData}) {
 
                     <Grid item xs={6} md={6}>
                       <Autocomplete
-                        // {...bussinesslist}
                         options={bussiness}
-                        key={"dynamcreferencekey"}
-                        getOptionLabel={(option) => option.Client ? option.Client : ""}
+                        key={"someDynamicValue"} // Use a dynamic and unique key here
+                        getOptionLabel={(option) =>
+                          option.Client 
+                        }
                         id="clear-on-escape-teams"
                         clearOnEscape
-                        // defaultValue={defaultClient[0]}
                         value={defaultClient || null}
                         onChange={onChangebussines}
                         renderInput={(params) => (
@@ -766,18 +814,40 @@ function AddContacts({addContactData}) {
                             {...params}
                             name="Selectteamsa"
                             value={""}
-                            //   onChange={onChangebussines}
                             label="Reference List"
                             variant="outlined"
                           />
                         )}
                       />
+
+                      {/* <Autocomplete
+                        // {...bussinesslist}
+                        options={bussiness}
+                        key={"dynamcreferencekey"}
+                        getOptionLabel={(option) => option.Client ? option.Client : ""}
+
+                        id="clear-on-escape-teams"
+                        clearOnEscape
+                        // defaultValue={defaultClient[0]}
+                        value={defaultClient || null}
+                        onChange={onChangebussines}
+                        renderInput={(params,index) => (
+                          <TextField
+                            {...params}
+                            name="Selectteamsa"
+                            value={""}
+                            //   onChange={onChangebussines}
+                            label="Reference List"
+                            key={index}
+                            variant="outlined"
+                          />
+                        )}
+                      /> */}
                     </Grid>
                   </Grid>
                 </Box>
 
                 <Grid container spacing={2}>
-
                   <Grid item xs={12} md={12}>
                     <ContactMainform
                       clientNames={clientNames}
@@ -790,37 +860,47 @@ function AddContacts({addContactData}) {
                       setImportcontactdata={setImportcontactdata}
                     />
                   </Grid>
-
                 </Grid>
               </Box>
 
               {/* <hr /> */}
 
-              <Box className='well mb-4'>
-                <h2 className='font-20 mb-3 text-black'>AML Details</h2>
+              <Box className="well mb-4">
+                <h2 className="font-20 mb-3 text-black">AML Details</h2>
               </Box>
 
               {/* <hr /> */}
 
-              <Box className='well mb-4'>
-                <h2 className='font-20 mb-3 text-black'>UDF Details</h2>
+              <Box className="well mb-4">
+                <h2 className="font-20 mb-3 text-black">UDF Details</h2>
                 <ContactUDF
                   data={clientDetails}
                   setDataFromChild={setDataFromChild}
                 ></ContactUDF>
               </Box>
-
-              <Button
+              {addContactData=={} ? (
+ <Button
+ style={{ marginTop: "5px" }}
+ variant="contained"
+//  disabled={!clientData || !selectedFolderID}
+ onClick={handleSubmit}
+ className="btn-blue-2"
+>
+ Add New Contact
+</Button>
+              ):(
+                <Button
                 style={{ marginTop: "5px" }}
                 variant="contained"
-                disabled={!clientData || !selectedFolderID}
+                // disabled={!clientData || !selectedFolderID}
+                disabled={!clientData}
                 onClick={handleSubmit}
-                className='btn-blue-2'
+                className="btn-blue-2"
               >
                 Add New Contact
               </Button>
-
-
+              )}
+             
             </Box>
           </Box>
 
@@ -829,9 +909,7 @@ function AddContacts({addContactData}) {
       userContactDetails={userContactDetails}
       setContactDetails={setContactDetails}
       /> */}
-            <Grid container spacing={3}>
-
-            </Grid>
+            <Grid container spacing={3}></Grid>
           </Box>
 
           {/* <Box className='text-end'>
@@ -848,7 +926,6 @@ function AddContacts({addContactData}) {
         </Box>
 
         {/* end */}
-
 
         {/* <TabContext value={value}>
           <Box className='mb-1'>
@@ -1042,10 +1119,8 @@ function AddContacts({addContactData}) {
           </TabPanel>
 
         </TabContext> */}
-
-
       </Box>
     </Box>
-  )
+  );
 }
 export default memo(AddContacts);
