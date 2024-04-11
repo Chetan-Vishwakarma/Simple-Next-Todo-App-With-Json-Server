@@ -64,6 +64,7 @@ import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
 import MarkAsUnreadIcon from "@mui/icons-material/MarkAsUnread";
 import Switch from "@mui/material/Switch";
 import DialogActions from '@mui/material/DialogActions';
+import AddContacts from "../../components/AddContacts";
 const label = { inputProps: { "aria-label": "Switch demo" } };
 // const [nextDate, setNextDate] = useState("");
 
@@ -482,7 +483,16 @@ function ContactDetails() {
       console.log("Error while calling Json_VerifyDrivingLicence", err);
     }
   };
+  const [open51, setOpen51] = React.useState(false);
 
+    const handleClickOpen51 = () => {
+        setOpen51(true);
+    };
+
+    const handleClose51 = () => {
+        setOpen51(false);
+        // setAddContact(null);
+    };
   return (
     <Box className="container-fluid p-0">
       <CustomBreadCrumbs
@@ -518,6 +528,10 @@ function ContactDetails() {
             className="btn-blue-2 me-2 mb-1"
             size="small"
             startIcon={<BorderColorIcon />}
+            onClick={() => {
+              handleClickOpen51()
+              // handleClose51()
+          }}
           >
             Edit Contacts
           </Button>
@@ -1566,7 +1580,48 @@ function ContactDetails() {
     </Dialog>
       )
     }
-      
+      <Dialog
+                open={open51}
+                onClose={handleClose51}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className="custom-modal full-modal"
+            >
+                {/* <DialogTitle id="alert-dialog-title">
+                    {"Use Google's location service?"}
+                </DialogTitle> */}
+
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                            Add Contact 
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={handleClose51}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                {/* <hr /> */}
+
+                <DialogContent className="pt-0">
+                    <DialogContentText id="alert-dialog-description">
+
+                        <AddContacts/>
+
+                    </DialogContentText>
+                </DialogContent>
+                {/* <DialogActions>
+                    <Button onClick={handleClose5}>Disagree</Button>
+                    <Button onClick={handleClose5} autoFocus>
+                        Agree
+                    </Button>
+                </DialogActions> */}
+            </Dialog>
       <Dialog
         open={isViewerModalOpen}
         onClose={() => setIsViewerModalOpen(false)}
