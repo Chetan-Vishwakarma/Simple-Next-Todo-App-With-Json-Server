@@ -1039,6 +1039,7 @@ function NewTodoList() {
                                             onChange={handleChange}
                                             autoFocus
                                             onBlur={(e)=>handleSave(e.target.value, item.Subject, item)}
+                                            className='edit-input'
                                         />
                                     ) : (
                                         <Typography variant="h4">
