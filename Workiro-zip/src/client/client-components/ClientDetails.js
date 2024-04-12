@@ -33,6 +33,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import EditClientdetails from './EditClientdetails';
 import EditReference from './EditReference';
 import { toast } from 'react-toastify';
+import {useNavigate} from "react-router-dom";
 
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
@@ -44,6 +45,7 @@ const folderId = localStorage.getItem("FolderId");
 function ClientDetails() {
 
     const location = useLocation();
+    const navigate = useNavigate();
     const [searchParams,setSearchParams] = useSearchParams();
     const tabValue = searchParams.get("val");
     // const test = searchParams.get("OrgNo");
@@ -214,7 +216,7 @@ function ClientDetails() {
                 {globalSearchDocs.length === 0 && <Box className="d-flex align-items-center justify-content-between flex-wrap">
                     <Box className='d-flex flex-wrap align-items-center'>
 
-                        <ArrowBackIosIcon className='mb-2 pointer' />
+                        <ArrowBackIosIcon className='mb-2 pointer' onClick={()=>navigate("/dashboard/Connections")}/>
 
                         <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
                             {clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}
@@ -284,7 +286,7 @@ function ClientDetails() {
                             <ClientAddress></ClientAddress>
                         </TabPanel>
                         <TabPanel value="3" className='p-0'>
-                            <Contact></Contact>
+                            <Contact clientId={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorNo}></Contact>
                         </TabPanel>
                         <TabPanel value="4" className='p-0'>
                             <TaskList clientName={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}></TaskList>
