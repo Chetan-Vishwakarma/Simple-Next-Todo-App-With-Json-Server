@@ -2367,7 +2367,7 @@ function CreateNewModalTask({ ...props }) {
                     }}>
                         <ListItemIcon>
                             <GroupIcon className="font-20" />
-                        </ListItemIcon> Reference
+                        </ListItemIcon> Add Reference
                     </MenuItem>
 
                     <MenuItem onClick={() => {
@@ -3794,7 +3794,7 @@ function CreateNewModalTask({ ...props }) {
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <div>
                         <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                            Reference
+                            Add Reference
                         </Typography>
                     </div>
                     <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
