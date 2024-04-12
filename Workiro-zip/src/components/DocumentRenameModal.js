@@ -14,8 +14,9 @@ const style = {
     p: 4,
   };
 
-function DocumentRenameModal({openRenameModal,setOpenRenameModal}) {
+function DocumentRenameModal({ClsSms,openRenameModal,setOpenRenameModal}) {
   const handleClose = () => setOpenRenameModal(false);
+
 //   useEffect()
     return (
         <>
