@@ -256,12 +256,14 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
     let requestBody = {
       CompanyName_Number:inputValue
     };
+    console.log(requestBody,"testbodydata");
     try {
        Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
         if (sts) {
+          console.log(sts,"testcompany");
           if (data) {
             let json = JSON.parse(data);
-            console.log(json,"Json_CompanyDetails");
+            console.log(json,"Json_CompanyDetails264");
 let singledata = json.CompanyDetails[0];
 const defaultCompanyStatus = singledata.company_status;
 const defaultStatusObject = status.find(status => status.StatusName.toLowerCase() === defaultCompanyStatus.toLowerCase());
@@ -279,11 +281,13 @@ console.log(defaultStatus,"defaultStatus22222",singledata);
             // setImportCompanyDetails(singledata[0]);
             setDataCompanyHouse(singledata);
             
+          } else {
+            console.log("Errordata");
           }
         }
       });
     } catch (err) {
-      console.log("Error while calling Json_GetToFavourites", err);
+      console.log("errordataget",err);
     }
   };
   const onChangeImportData = (e) => {
@@ -509,7 +513,7 @@ const clearDataCard = () => {
                 name="Selectclient"
                 // value={folders[defaultClient] || []}
                 onChange={onChange}
-                label="Client List"
+                label="Assigned Folder List"
               />
             )}
           />
@@ -532,7 +536,7 @@ const clearDataCard = () => {
                   name="Bussiness"
                   value={userDetail.Bussiness}
                   onChange={onChange}
-                  label="Bussiness"
+                  label="Nature of Bussiness"
                   variant="outlined"
                 />
               )}
