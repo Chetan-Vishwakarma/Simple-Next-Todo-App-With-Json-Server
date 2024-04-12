@@ -1252,4 +1252,16 @@ console.log("formattedDate",formattedDate)
         })
     }
 
+    Json_RenameDocument(obj, callBack) {
+        super.CreateNewServiceParamObject("Json_RenameDocument", obj, true);
+        super.CallNewService("Json_RenameDocument", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+
 }
