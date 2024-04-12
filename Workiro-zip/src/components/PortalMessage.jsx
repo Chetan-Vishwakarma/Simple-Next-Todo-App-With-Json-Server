@@ -835,7 +835,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                         ) : (
                                             <>
                                                 <Box className='d-flex align-items-center'>
-                                                    <HourglassEmptyIcon className='text-gray me-1' />
+                                                    <HourglassEmptyIcon className='text-danger me-1' />
                                                     <h5 className='font-14 text-danger mb-0'>Message Disapproved</h5>
                                                 </Box>
                                             </>
