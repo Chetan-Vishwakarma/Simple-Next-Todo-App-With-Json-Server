@@ -2336,7 +2336,10 @@ function CreateNewModalTask({ ...props }) {
                     {/* <MenuItem 
                     onClick={handleClickEditReferance}
                     >Edit Reference</MenuItem> */}
-                    <MenuItem onClick={() => handleClickOpen("CRM")
+                    <MenuItem onClick={() => {
+                        handleClickOpen("CRM")
+                        handleClose4()
+                    }
                     }>
                         {/* <ListItemIcon>
                             <EjectIcon fontSize="medium" className="text-red rotate-180" />
@@ -2346,7 +2349,12 @@ function CreateNewModalTask({ ...props }) {
                         </ListItemIcon> CRM Task
                     </MenuItem>
 
-                    <MenuItem onClick={() => handleClickOpen("Portal")}><ListItemIcon>
+                    <MenuItem onClick={() => 
+                    {
+                        handleClickOpen("Portal")
+                        handleClose4()
+                    }
+                    }><ListItemIcon>
                         <LanguageIcon className="font-20" />
                     </ListItemIcon>
                         Portal Task</MenuItem>
@@ -3440,14 +3448,11 @@ function CreateNewModalTask({ ...props }) {
 
                                 {/* <Box className="border-bottom">
                                     <label>Index</label>
-                                    
                                 </Box> */}
 
                                 <Box className="mb-3">
                                     <label className="font-14 semibold mb-1">Due By </label>
-
                                     <Box className='custom-datepicker'>
-
                                         <LocalizationProvider
                                             className="pe-0"
                                             dateAdapter={AdapterDayjs}
@@ -3466,11 +3471,7 @@ function CreateNewModalTask({ ...props }) {
                                                 isClearable
                                             />
                                         </LocalizationProvider>
-
-
                                     </Box>
-
-
                                 </Box>
 
                                 <Box className="mb-2">
@@ -3510,7 +3511,6 @@ function CreateNewModalTask({ ...props }) {
 
                                     </>)}
 
-
                                     {txtTaskType === "Portal" && (<>
                                         <label className="font-14 d-block">Expires On</label>
                                         <LocalizationProvider
@@ -3529,9 +3529,6 @@ function CreateNewModalTask({ ...props }) {
                                                 icon="fa fa-calendar"
 
                                             />
-
-
-
                                         </LocalizationProvider>
                                     </>)}
 
@@ -3594,8 +3591,6 @@ function CreateNewModalTask({ ...props }) {
                                             ))
                                             : null}
                                     </Menu>
-
-
                                 </Box>
 
                                 <Box className="select-dropdown">
@@ -3661,17 +3656,8 @@ function CreateNewModalTask({ ...props }) {
                             </Box>
                             {/* col end */}
 
-
-
-
-
-
-
-
                         </Box>
                     </DialogContentText>
-
-
 
                     <DialogActions className="px-0 w-100 p-0">
                         <Box className="d-flex align-items-center justify-content-end w-100">
@@ -3731,7 +3717,6 @@ function CreateNewModalTask({ ...props }) {
                         >
                             Document List
                         </Button>
-
                     </div>
 
                     <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
