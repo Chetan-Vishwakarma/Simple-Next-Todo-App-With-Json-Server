@@ -11,7 +11,8 @@ import Button from '@mui/material/Button';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-
+// import { Toast } from "react-toastify/dist/components";
+import { ToastContainer, toast } from 'react-toastify';
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const UserDetailContext = createContext();
@@ -234,7 +235,13 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
             // setContactlistdata(json.Table);
             if(jdata.length > 0){
               setImportContact(jdata);
+            } else {
+              // toast.error("Unable to fetch Company Details. Failed to receive information from Companies House.");
             }
+          } else{
+            console.log("error ins companyhouse");
+           
+           
           }
         }
       });
