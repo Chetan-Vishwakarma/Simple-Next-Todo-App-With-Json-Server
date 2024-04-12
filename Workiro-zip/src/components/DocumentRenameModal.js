@@ -10,7 +10,6 @@ const folderId = localStorage.getItem("FolderId");
 function DocumentRenameModal({ ClsSms, openRenameModal, setOpenRenameModal, docForDetails, Json_getRecentDocumentList }) {
     const handleClose = () => setOpenRenameModal(false);
     const [description,setDescription] = useState( docForDetails.Subject ? docForDetails.Subject : "" );
-    console.log("erowruisdk",description);
     const Json_RenameDocument = () => {
         let obj = {
             agrno: agrno,
