@@ -531,7 +531,6 @@ function NewTodoList() {
     }
 
     const handleSave = (newDesc, oldDesc, doc) => {
-        console.log("dsleriods",doc);
         if(oldDesc===newDesc) return;
         Json_RenameDocument(doc, newDesc);
     };
