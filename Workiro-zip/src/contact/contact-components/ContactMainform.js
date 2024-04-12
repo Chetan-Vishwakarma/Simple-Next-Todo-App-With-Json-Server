@@ -429,7 +429,7 @@ const ContactMainform = React.memo(
               control={
                 <Switch
                   name="CreatePortal"
-                  checked={createPortal}
+                  checked={userContactDetails.CreatePortal}
                   onChange={handleAdvancedCreatePortal}
                 />
               }
@@ -441,7 +441,7 @@ const ContactMainform = React.memo(
               control={
                 <Switch
                   name="MainContact"
-                  checked={advancedSettingChecked}
+                  checked={userContactDetails.MainContact}
                   onChange={handleAdvancedSettingChange}
                 />
               }

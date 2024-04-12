@@ -1611,7 +1611,7 @@ function ContactDetails() {
                 <DialogContent className="pt-0">
                     <DialogContentText id="alert-dialog-description">
 
-                        <AddContacts/>
+                        <AddContacts contactDetails={contactDetails}/>
 
                     </DialogContentText>
                 </DialogContent>
