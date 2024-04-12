@@ -1091,10 +1091,6 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                           </>)
                                         }
                                             
-<<<<<<< HEAD
-=======
-
->>>>>>> c0fb943bab014a9aa8e57389ad48821843e49a93
                                             {
                                                 item.ForApproval === "Yes" ? (
                                                     <>
