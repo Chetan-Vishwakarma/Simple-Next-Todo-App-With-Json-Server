@@ -235,8 +235,10 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
             // setContactlistdata(json.Table);
             if(jdata.length > 0){
               setImportContact(jdata);
+              console.log("companyhousedata", jdata);
             } else {
               // toast.error("Unable to fetch Company Details. Failed to receive information from Companies House.");
+              console.log("geterror500");
             }
           } else{
             console.log("error ins companyhouse");
