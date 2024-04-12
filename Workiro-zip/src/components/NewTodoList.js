@@ -504,11 +504,42 @@ function NewTodoList() {
         setUpdatedSubject(recentDocument[index].Subject);
     };
 
-    const handleSave = (index) => {
-        console.log("Saving index:", index);
+    const Json_RenameDocument = (doc, newDesc) => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ItemId: doc.ItemId ? doc.ItemId : "",
+            Description: newDesc,
+            FolderId: folderId
+        };
+        ClsSms.Json_RenameDocument(obj, (sts, data) => {
+            if (sts) {
+                if (data) {
+                    let json = JSON.parse(data);
+                    console.log("Json_RenameDocument", json);
+                    if(json.Status==="Success"){
+                        Json_getRecentDocumentList();
+                        toast.success(json.Message);
+                        setEditingIndex(null);
+                    }else{
+                        toast.error("Unable to rename this document");
+                    }
+                }
+            }
+        });
+    }
+
+    const handleSave = (newDesc, oldDesc, doc) => {
+        console.log("dsleriods",doc);
+        if(oldDesc===newDesc) return;
+        Json_RenameDocument(doc, newDesc)
+
+
+        // console.log("Saving index:", index);
         // Save the updated subject or perform any action you want
         console.log("Updated subject:", updatedSubject);
-        setEditingIndex(null);
+        // setEditingIndex(null);
     };
 
     const handleChange = (event) => {
@@ -1009,13 +1040,14 @@ function NewTodoList() {
                                                 {editingIndex == index ? (
                                         <input
                                             type="text"
-                                            value={item.Subject}
+                                            defaultValue={item.Subject}
+                                            value={updatedSubject}
                                             onChange={handleChange}
-                                            // onBlur={() => handleSave(index)}
                                             autoFocus
+                                            onBlur={(e)=>handleSave(e.target.value, item.Subject, item)}
                                         />
                                     ) : (
-                                        <Typography variant="h4" onClick={() => handleEdit(index)}>
+                                        <Typography variant="h4">
                                             {item.Subject}
                                         </Typography>
                                     )}
@@ -1064,6 +1096,7 @@ function NewTodoList() {
                                                     <MenuItem onClick={() => {
                                                           handleCloseDocument(index)
                                                         //   setOpenRenameModal(true);
+                                                        handleEdit(index);
                                                           console.log("lkdgjewerwe",item);
                                                         }}>
                                                         <ListItemIcon>
