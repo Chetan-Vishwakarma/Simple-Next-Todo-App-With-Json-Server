@@ -534,7 +534,7 @@ function NewTodoList() {
         <Box className="container-fluid p-0">
             <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
 
-            <DocumentRenameModal ClsSms={ClsSms} openRenameModal={openRenameModal} setOpenRenameModal={setOpenRenameModal }/>
+            <DocumentRenameModal ClsSms={ClsSms} openRenameModal={openRenameModal} setOpenRenameModal={setOpenRenameModal} docForDetails={docForDetails} Json_getRecentDocumentList={Json_getRecentDocumentList}/>
 
             {/* <DocumentsVewModal sendUrldata={sendUrldata} isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal> */}
             {/* <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal> */}
@@ -1030,6 +1030,7 @@ function NewTodoList() {
                                                     <MenuItem onClick={() => {
                                                           handleCloseDocument(index)
                                                           setOpenRenameModal(true);
+                                                          setDocForDetails(item);
                                                         }}>
                                                         <ListItemIcon>
                                                             <DriveFileRenameOutlineIcon fontSize="medium" />
