@@ -34,12 +34,10 @@
   background: #555;
 }
 
-
 .Toastify {
   /* position: absolute; */
   z-index: 999999;
 }
-
 
 nav.navbar.navbar-dark.bg-dark .container {
   background: #4780ff !important;
@@ -131,6 +129,11 @@ input,
 button,
 body,
 a {
+  font-family: "Poppins", sans-serif !important;
+}
+
+.MuiInputLabel-formControl {
+  font-size: 14px !important;
   font-family: "Poppins", sans-serif !important;
 }
 
