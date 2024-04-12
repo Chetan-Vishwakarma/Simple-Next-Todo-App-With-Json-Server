@@ -29,7 +29,7 @@ function NewTodoList() {
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
-
+    const [isEditing, setIsEditing] = useState(false);
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
     //const [sendUrldata, setsendUrldata] = useState("");
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -66,6 +66,13 @@ function NewTodoList() {
     // const handleClose = () => {
     //     setAnchorEl(null);
     // };
+    const handleEditClick = () => {
+        setIsEditing(true);
+      };
+    
+      const handleBlur = () => {
+        setIsEditing(false);
+      };
     const Json_Get_CRM_UserByProjectId = () => {
         let obj = {
             agrno: agrno,
@@ -488,8 +495,25 @@ function NewTodoList() {
 
     };
 
+    const [editingIndex, setEditingIndex] = useState(null);
+    const [updatedSubject, setUpdatedSubject] = useState('');
 
+    const handleEdit = (index) => {
+        console.log("Editing index:", index);
+        setEditingIndex(index);
+        setUpdatedSubject(recentDocument[index].Subject);
+    };
 
+    const handleSave = (index) => {
+        console.log("Saving index:", index);
+        // Save the updated subject or perform any action you want
+        console.log("Updated subject:", updatedSubject);
+        setEditingIndex(null);
+    };
+
+    const handleChange = (event) => {
+        setUpdatedSubject(event.target.value);
+    };
 
     // Document details List
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
@@ -982,9 +1006,19 @@ function NewTodoList() {
                                                     className='me-2 ms-0'
                                                 />
                                                 <Box className="upload-content pe-3" onDoubleClick={(e) => ViewerDocument(item)}>
-                                                    <Typography variant="h4" >
-                                                        {item.Subject}
-                                                    </Typography>
+                                                {editingIndex == index ? (
+                                        <input
+                                            type="text"
+                                            value={item.Subject}
+                                            onChange={handleChange}
+                                            // onBlur={() => handleSave(index)}
+                                            autoFocus
+                                        />
+                                    ) : (
+                                        <Typography variant="h4" onClick={() => handleEdit(index)}>
+                                            {item.Subject}
+                                        </Typography>
+                                    )}
                                                     <Typography variant="body1">
                                                         {/* Size:  <span className='sembold'>{item.FileSize}</span> |   */}
                                                         <span className='sembold'>{moment(item["RecentDate"]).format("DD/MM/YYYY") !== "Invalid date" ? moment(item["RecentDate"]).format("DD/MM/YYYY") : "01/01/2000"}</span>
@@ -1029,7 +1063,7 @@ function NewTodoList() {
                                                         Upload New Version</MenuItem>
                                                     <MenuItem onClick={() => {
                                                           handleCloseDocument(index)
-                                                          setOpenRenameModal(true);
+                                                        //   setOpenRenameModal(true);
                                                           console.log("lkdgjewerwe",item);
                                                         }}>
                                                         <ListItemIcon>
