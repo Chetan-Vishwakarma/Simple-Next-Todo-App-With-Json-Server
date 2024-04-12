@@ -39,7 +39,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import { useEffect } from "react";
 import CommanCLS from "../../services/CommanService";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -65,11 +65,13 @@ import MarkAsUnreadIcon from "@mui/icons-material/MarkAsUnread";
 import Switch from "@mui/material/Switch";
 import DialogActions from '@mui/material/DialogActions';
 import AddContacts from "../../components/AddContacts";
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 const label = { inputProps: { "aria-label": "Switch demo" } };
 // const [nextDate, setNextDate] = useState("");
 
 function ContactDetails() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { agrno, Email, password, folderId, originatorNo, contactNo } =
     location.state;
@@ -504,6 +506,9 @@ function ContactDetails() {
 
       <Box className="d-flex align-items-center justify-content-between flex-wrap">
         <Box className="d-flex flex-wrap align-items-center">
+
+        <ArrowBackIosIcon className='mb-2 pointer' onClick={()=>navigate("/dashboard/Connections")}/>
+
           <Typography variant="h2" className="title me-3 mb-2" gutterBottom>
             {contactDetails.length > 0
               ? contactDetails[0]["Company Name"]
