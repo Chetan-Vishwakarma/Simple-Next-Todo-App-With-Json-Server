@@ -509,10 +509,12 @@ function CreateNewModalTask({ ...props }) {
             cls.Json_GetFolderData(o, function (sts, data) {
                 if (sts) {
                     let js = JSON.parse(data);
-                    console.log("Json_GetFolderData", js);
+                  
                     let clientList = js.Table1;
                     if (clientList.length > 0) {
-                        setClientList(clientList);
+                        let resutl = clientList.filter((el)=>el.Client !=="" && el.Client !==null)
+                        setClientList(resutl);
+                        console.log("Json_GetFolderData", resutl);
                     }
                     // let sectionList = js.Table;
                     // if (sectionList.length > 0) {
@@ -3262,7 +3264,7 @@ function CreateNewModalTask({ ...props }) {
                                                                     src="/static/images/avatar/1.jpg"
                                                                 />
                                                             </ListItemAvatar> */}
-                                                            <ListItemText
+                                                           <ListItemText
                                                                 primary={item.Client}
                                                                 className='m-0'
                                                                 secondary={
@@ -3279,6 +3281,7 @@ function CreateNewModalTask({ ...props }) {
                                                                     </React.Fragment>
                                                                 }
                                                             />
+                                                            
                                                         </ListItem>
                                                         {/* <Divider variant="inset" component="li" /> */}
                                                     </React.Fragment>
