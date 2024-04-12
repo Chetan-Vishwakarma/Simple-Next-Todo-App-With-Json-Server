@@ -200,13 +200,21 @@ function AddContacts({ addContactData,contactDetails}) {
                 (obj, index, self) =>
                   index === self.findIndex((t) => t.ClientId === obj.ClientId)
               );
-
-              console.log(uniqueArray);
+              if(contactDetails && contactDetails.length > 0) {
+                const filtercontact = json.Table.find(
+                  (obj) => obj.ClientId == contactDetails[0].OriginatorNo
+                );
+                console.log(filtercontact,"filtercontactdata");
+                setdefaultClient(filtercontact);
+              }
+              console.log(uniqueArray,"uniqueArray",json.Table);
               setBussiness(uniqueArray);
               try{
                 const filteredData = json.Table.find(
                   (obj) => obj.ClientId === addContactData.Clientid
                 );
+               
+               
                 if(filteredData){
                   setdefaultClient(filteredData);
                   defaultclientData=filteredData.ClientId;
