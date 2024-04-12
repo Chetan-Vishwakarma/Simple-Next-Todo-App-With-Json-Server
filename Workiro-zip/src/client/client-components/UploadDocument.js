@@ -48,6 +48,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const [txtFolderData, setTextFolderData] = useState(null);
 
+    const [createNewFileObj, setCreateNewFileObj] = useState([]);
+    const [saveCounter, setSaveCounter] = useState(0);
 
     const [clientList, setClientList] = useState([]);
     const [sectionList, setSectionList] = useState([]);
@@ -93,6 +95,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
 
     const [fileLangth, setFileLength] = useState(0);
+    
 
 
 
@@ -143,7 +146,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
 
     useEffect(() => {
-
+        setSaveCounter(0);
         setStep(1);
         setSelectedFiles([]);
         settxtStandarDescription("");
@@ -415,7 +418,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
 
     const handleDateChangeDocument = (date) => {
-        console.log("Get Clietn On click", dayjs(date).format('YYYY/MM/DD'));
+       // console.log("Get Clietn On click", dayjs(date).format('YYYY/MM/DD'));
         setDocumentDate(dayjs(date).format('YYYY/MM/DD')); // Update the selected date state
     };
 
@@ -480,6 +483,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         }
     }
 
+   
+
     const UploadDocumentCreattTask = async () => {
         try {
             setCreateNewFileObj([]);
@@ -491,12 +496,13 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                 for (let i of selectedFiles) {
                     await Json_RegisterItem(i)
                 }
-                // setOpenUploadDocument(false);
-
+                // setOpenUploadDocument(false);   
             }
             else {
-                Json_RegisterItem()
-                // toast.success("Document Uploaded!");
+               // Json_RegisterItem()
+                    toast.error("Please select a document",{
+                        toastStyle: {zIndex:9999},
+                    });
             }
 
         } catch (error) {
@@ -505,7 +511,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     }
 
-    const [createNewFileObj, setCreateNewFileObj] = useState([]);
+   
+    let counter=0;
 
     function Json_RegisterItem(fileData) {
         try {
@@ -575,35 +582,32 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                     if (sts) {
                         if (data) {
                             let js = JSON.parse(data)
-                            console.log("Json_RegisterItem", js)
+                           
                             if (js.Status === "true") {
+                                counter++;
+                                console.log("Json_RegisterItem", js,counter)
                                 if (fileData) {
                                     fileData.DocId = js.ItemId;
                                     setCreateNewFileObj((Previous) => [...Previous, fileData]);
                                 }
 
-                                if (!typeTaskBool) {
-                                    //  setOpenUploadDocument(false);
+                                if(selectedFiles.length===counter){
+                                    toast.success(selectedFiles.length + "Document(s) Uploaded!");                                   
                                 }
 
-                                setTimeout(() => {
-                                    // toast.success(selectedFiles.length + "Document(s) Uploaded!"); 
-                                    toast.success(selectedFiles.length + "Document(s) Uploaded!");
-                                    if (buttonNameText === "Submit & Create Portal Task" || buttonNameText === "Submit & Create Task") {
-                                        setshowModalCreateTask(true)
-                                        setOpenModal(true)
-                                        setTimeout(() => {
-                                            if(openModal){
-                                                setOpenUploadDocument(false); 
-                                            }
-                                        }, 2000);                                      
-                                       
-                                    }
-                                    else {
-                                        setOpenUploadDocument(false);
-                                    }
-                                }, 3000);
-
+                                if (buttonNameText === "Submit & Create Portal Task" || buttonNameText === "Submit & Create Task") {
+                                    setshowModalCreateTask(true)
+                                    setOpenModal(true)
+                                    setTimeout(() => {
+                                        if(openModal){
+                                            setOpenUploadDocument(false); 
+                                        }
+                                    }, 2000);                                      
+                                   
+                                }
+                                else {
+                                    setOpenUploadDocument(false);
+                                }
 
 
 
@@ -698,7 +702,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold text-black'>
-                            Upload Document <span className='bold text-blue'>({fileLangth})</span>
+                            Upload Document <span className='bold text-blue'>({fileLangth}) </span>
                         </Typography>
                     </Box>
 
@@ -891,7 +895,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                     switch (item.ControlType) {
                                         case "ComboBox":
                                             count++;
-                                            console.log("vlaueeee", count)
+                                           // console.log("vlaueeee", count)
                                             let data = getAllFolderData["Table" + count];
                                             if (data && data.length > 0 && item.UDFId === data[0]["UDFID"]) {
                                                 return (

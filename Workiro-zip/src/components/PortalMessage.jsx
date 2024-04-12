@@ -1072,11 +1072,14 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                         {
                                           item.Signed==="Yes" ? (<>
                                           <Box className='approval-box'>
+
                                                 <VerifiedIcon className="me-2" />
+                                                <Box>
                                                 <Typography variant='subtitle1' className='text-center'>
                                                    Document Signed
                                                    <Button className='btn-blue-2' size="small" onClick={()=>handleClickOpenCertificate(item)} startIcon={<ScheduleIcon />}> Document Signed</Button>
                                                 </Typography>
+                                                </Box>
                                             </Box>
                                           </>):(<>
                                            <Box className='approval-box'>
@@ -1088,7 +1091,6 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                           </>)
                                         }
                                             
-
                                             {
                                                 item.ForApproval === "Yes" ? (
                                                     <>
