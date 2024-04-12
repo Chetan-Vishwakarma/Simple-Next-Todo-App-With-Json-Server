@@ -1912,8 +1912,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         {selectedTask.Source === "CRM" && (<>
                             <Box className='d-flex align-items-center justify-content-between flex-wrap'>
                                 <Box className="d-flex mt-0">
-                                    <Box className="mb-2 me-1">
-                                        <label className="font-14 text-black mb-1">Start Date</label>
+                                    <Box className="mb-2 me-1 d-flex">
+                                        <label className="font-14 text-black mb-1 me-1">Start Date</label>
                                         <Box className='custom-datepicker'
                                             sx={{
                                                 width: '140px',
@@ -1935,38 +1935,36 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                         </Box>
                                     </Box>
 
-                                    <Box className="mb-2" sx={{ float: "right" }}>
-                                        <Box className="mb-2 ">
-                                            <label className="font-14 semibold text-black mb-1">
-                                                Due By
-                                            </label>
-                                            <Box className='custom-datepicker'
-                                                sx={{
-                                                    width: '140px',
-                                                }}>
-                                                <CalendarMonthIcon />
-                                                <DatePicker
-                                                    showIcon
-                                                    dateFormat="DD/MM/YYYY"
-                                                    value={nextDate}
-                                                    onChange={(e) => {
-                                                        setNextDate(e);
-                                                        let enddatetime = dayjs(e).format("YYYY/MM/DD");
-                                                        if (enddatetime) {
-                                                            Json_UpdateTaskField("EndDateTime", enddatetime, "Due date updated!")
-                                                        }
+                                    <Box className="mb-2 d-flex">
+                                        <label className="font-14 text-black mb-1 me-1">
+                                            Due By
+                                        </label>
+                                        <Box className='custom-datepicker'
+                                            sx={{
+                                                width: '140px',
+                                            }}>
+                                            <CalendarMonthIcon />
+                                            <DatePicker
+                                                showIcon
+                                                dateFormat="DD/MM/YYYY"
+                                                value={nextDate}
+                                                onChange={(e) => {
+                                                    setNextDate(e);
+                                                    let enddatetime = dayjs(e).format("YYYY/MM/DD");
+                                                    if (enddatetime) {
+                                                        Json_UpdateTaskField("EndDateTime", enddatetime, "Due date updated!")
+                                                    }
 
-                                                    }} // Handle date changes
-                                                    timeFormat={false}
-                                                    isValidDate={disablePastDt}
-                                                    closeOnSelect={true}
-                                                    icon="fa fa-calendar"
-                                                // sx={{
-                                                //     width: '140px'
-                                                // }}
+                                                }} // Handle date changes
+                                                timeFormat={false}
+                                                isValidDate={disablePastDt}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
+                                            // sx={{
+                                            //     width: '140px'
+                                            // }}
 
-                                                />
-                                            </Box>
+                                            />
                                         </Box>
                                     </Box>
                                 </Box>

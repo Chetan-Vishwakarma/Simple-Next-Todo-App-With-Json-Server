@@ -27,12 +27,12 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 
-function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument}) {
-console.log(selectedDocument,"sendUrldata");
+function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument }) {
+    console.log(selectedDocument, "sendUrldata");
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
-   // const [txtFolderId, setFolderId] = useState(localStorage.getItem("FolderId"));
+    // const [txtFolderId, setFolderId] = useState(localStorage.getItem("FolderId"));
     const [ViewerToken, setViewerToken] = useState(localStorage.getItem("ViewerToken"));
     const [getAudit, setGetAudit] = useState([]);
 
@@ -141,7 +141,7 @@ console.log(selectedDocument,"sendUrldata");
                 if (sts && data) {
 
                     let atob = window.atob(data);
-                   // console.log("Json_GetItemStickyNotes", atob);
+                    // console.log("Json_GetItemStickyNotes", atob);
                     setTemplateDataMarkup(atob)
                 }
             })
@@ -178,13 +178,13 @@ console.log(selectedDocument,"sendUrldata");
         document.documentElement.style.setProperty('--main-bg-color', '#d42027');
         setGetAttachment([]);
         setAgrNo(localStorage.getItem("agrno"));
-      
+
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
         setViewerToken(localStorage.getItem("ViewerToken"));
 
         if (selectedDocument) {
-           // console.log("selectedDocument", selectedDocument)
+            // console.log("selectedDocument", selectedDocument)
 
             setTxtClientData({ Client: selectedDocument.Client, ClientID: selectedDocument.SenderId })
             setTxtSectionData({ Sec: selectedDocument.Section, SecID: selectedDocument.PostItemTypeID })
@@ -202,7 +202,6 @@ console.log(selectedDocument,"sendUrldata");
             }
             setViwerUrl(`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${selectedDocument["Registration No."]}&ext=${selectedDocument.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`);
 
-
             Json_GetAudit();
             Json_GetAttachmentsByItemId();
             Json_GetItemStickyNotes();
@@ -211,15 +210,12 @@ console.log(selectedDocument,"sendUrldata");
             setopenModal(false)
         }
 
-
-
     }, [selectedDocument])
 
     const handeleAttachmentChange = (el) => {
         setSeletedFileData((pre) => [...pre, el]);
 
     }
-
 
     function Json_GetItemBase64DataById(item) {
         try {
@@ -254,9 +250,7 @@ console.log(selectedDocument,"sendUrldata");
         } catch (error) {
             console.log("Json_GetItemBase64DataById error", error)
         }
-
     }
-
 
     function DowloadSingleFileOnClick() {
         try {
@@ -289,8 +283,6 @@ console.log(selectedDocument,"sendUrldata");
         } catch (error) {
             console.log({ Status: false, mgs: "Data not found", Error: error });
         }
-
-
     }
 
     function Json_DownloadZip() {
@@ -321,8 +313,6 @@ console.log(selectedDocument,"sendUrldata");
         } catch (error) {
             console.log({ Status: false, mgs: "Data not found", Error: error });
         }
-
-
     }
 
     function DeleteDocumentAttachment() {
@@ -439,10 +429,6 @@ console.log(selectedDocument,"sendUrldata");
 
     }
 
-
-
-
-
     const createTask = () => {
         setTaskType("CRM")
         setopenModal(true)
@@ -454,13 +440,8 @@ console.log(selectedDocument,"sendUrldata");
         setopenModal(true)
     }
 
-
     return (
         <>
-
-
-
-
             <Dialog
                 open={openPDFView}
                 onClose={handleClosePDFView}
@@ -469,9 +450,7 @@ console.log(selectedDocument,"sendUrldata");
                 className='custom-modal full-modal'
                 sx={{ width: '100%', maxWidth: '100%' }}
             >
-                <DialogContent>
-
-
+                <DialogContent className='full-height-modal'>
                     <Box className="d-flex align-items-center justify-content-between">
                         <Box className="dropdown-box">
                             <Typography variant="h4" className='font-18 bold mb-0 text-black'>
@@ -547,27 +526,27 @@ console.log(selectedDocument,"sendUrldata");
                                         <Box className='text-end mb-3 relative'>
                                             <DownloadForOfflineIcon className='text-red pointer font-32 btn-download' />
                                         </Box>
-                                     
+
                                         {viewerUrl && (
                                             <iframe
-                                            src={ isLoadingDoc ? "https://6612849d1f1acaa676039a99--amazing-haupia-bf1c0b.netlify.app/" : viewerUrl } // Specify the URL of the iframe
-                                            // src={"http://127.0.0.1:5501/src/client/utils/test/test.html"}
-                                            onLoad={()=>{
-                                                setIsLoadingDoc(false);
-                                            }}
-                                            width="100%" // Set the width
-                                            height="700px" // Set the height
-                                            frameBorder="0" // Set frameborder to 0
-                                            allowFullScreen // Allow fullscreen mode
-                                            title="Embedded Content" // Set the title for accessibility
-                                        />
+                                                src={isLoadingDoc ? "https://6612849d1f1acaa676039a99--amazing-haupia-bf1c0b.netlify.app/" : viewerUrl} // Specify the URL of the iframe
+                                                // src={"http://127.0.0.1:5501/src/client/utils/test/test.html"}
+                                                onLoad={() => {
+                                                    setIsLoadingDoc(false);
+                                                }}
+                                                width="100%" // Set the width
+                                                height="700px" // Set the height
+                                                frameBorder="0" // Set frameborder to 0
+                                                allowFullScreen // Allow fullscreen mode
+                                                title="Embedded Content" // Set the title for accessibility
+                                            />
 
                                         )}
-                                        
+
                                     </Box>
                                 </TabPanel>
 
-                                <TabPanel value="2">
+                                <TabPanel value="2" className='p-0'>
                                     <Box className='row'>
                                         {Array(12).fill("").map(() => {
                                             return <>
@@ -609,9 +588,8 @@ console.log(selectedDocument,"sendUrldata");
                                     </Box>
                                 </TabPanel>
 
-                                <TabPanel value="4">
-
-                                    <Box className='text-center'>
+                                <TabPanel value="4" className='p-0'>
+                                    <Box className='text-center mt-3'>
                                         {getAssociatedTaskList && getAssociatedTaskList.map((item, index) => {
                                             let str = item?.AssignedToID;
                                             let arr = str?.split(',').map(Number);
@@ -626,7 +604,6 @@ console.log(selectedDocument,"sendUrldata");
                                         })}
 
                                     </Box>
-
                                 </TabPanel>
 
                                 <TabPanel value="5" className='p-0'>
