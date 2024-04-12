@@ -18,7 +18,7 @@ import DocumentsVewModal from '../client/utils/DocumentsVewModal';
 import { toast } from 'react-toastify';
 import DocDetails from './DocDetails';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
-import DocumentRenameModal from './DocumentRenameModal';
+// import DocumentRenameModal from './DocumentRenameModal';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -531,15 +531,8 @@ function NewTodoList() {
     }
 
     const handleSave = (newDesc, oldDesc, doc) => {
-        console.log("dsleriods",doc);
         if(oldDesc===newDesc) return;
-        Json_RenameDocument(doc, newDesc)
-
-
-        // console.log("Saving index:", index);
-        // Save the updated subject or perform any action you want
-        console.log("Updated subject:", updatedSubject);
-        // setEditingIndex(null);
+        Json_RenameDocument(doc, newDesc);
     };
 
     const handleChange = (event) => {
@@ -589,10 +582,8 @@ function NewTodoList() {
         <Box className="container-fluid p-0">
             <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
 
-            <DocumentRenameModal ClsSms={ClsSms} openRenameModal={openRenameModal} setOpenRenameModal={setOpenRenameModal} docForDetails={docForDetails} Json_getRecentDocumentList={Json_getRecentDocumentList}/>
+            {/* <DocumentRenameModal ClsSms={ClsSms} openRenameModal={openRenameModal} setOpenRenameModal={setOpenRenameModal} docForDetails={docForDetails} Json_getRecentDocumentList={Json_getRecentDocumentList}/> */}
 
-            {/* <DocumentsVewModal sendUrldata={sendUrldata} isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal> */}
-            {/* <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal> */}
             <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
             <DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList} />
