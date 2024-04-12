@@ -113,8 +113,8 @@ function CreateNewModalTask({ ...props }) {
         setOpenModal = null,
     } = props || {};
 
-    console.log("documentDate txtSectionId1", documentDate,
-        receivedDate, createNewFileObj)
+    // console.log("documentDate txtSectionId1", documentDate,
+    //     receivedDate, createNewFileObj)
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -128,6 +128,7 @@ function CreateNewModalTask({ ...props }) {
 
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/"; // base url for api
     //   let dt = new LoginDetails();
+    const [addContactData, setAddContact]=useState({});
 
     let cls = new CommanCLS(baseUrl, agrno, Email, password);
 
@@ -2291,6 +2292,7 @@ function CreateNewModalTask({ ...props }) {
 
     const handleClose5 = () => {
         setOpen5(false);
+        setAddContact(null);
     };
 
     return (
@@ -3873,7 +3875,11 @@ function CreateNewModalTask({ ...props }) {
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
+<<<<<<< HEAD
                             Add Client
+=======
+                            Add Contact 
+>>>>>>> c0fb943bab014a9aa8e57389ad48821843e49a93
                         </Typography>
                     </Box>
 

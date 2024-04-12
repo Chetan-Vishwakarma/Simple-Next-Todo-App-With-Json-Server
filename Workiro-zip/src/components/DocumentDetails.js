@@ -35,40 +35,24 @@ import CreateNewModalTask from "./CreateNewModal";
 
 
 // sadik code start
-function createData(document, details) {
-    return { document, details };
-}
-const rows = [
-    createData('Folder', 'Client'),
-    createData('Client', '212121Test'),
-    createData('Section', '01. General Correspondence'),
-    createData('Received Date', '02/03/2024'),
-    createData('Doc. Date', '02/03/2024'),
-    createData('Description', 'General Letter'),
-    createData('Notes', 'Yes'),
-    createData('Category', '1. Received'),
-    createData('DocDirection', 'Incoming'),
-    createData('ItemId', 998301),
-    createData('Tax Year', '18/19'),
-    createData('Financial Year', '2020'),
-    createData('From Email', 'test@gmail.com'),
-    createData('to Email', 'test@gmail.com'),
-    createData('CC', 'test@gmail.com')
-];
+// function createData(document, details) {
+//     return { document, details };
+// }
 
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+
+//const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 // sadik code end
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
 const password = localStorage.getItem("Password");
 const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
-const baseUrlDocuSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
+//const baseUrlDocuSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
 function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, selectedGroup }) {
 
     const Cls = new CommanCLS(baseUrl, agrno, Email, password);
-    const ClsDocuSms = new CommanCLS(baseUrlDocuSms, agrno, Email, password);
+    //const ClsDocuSms = new CommanCLS(baseUrlDocuSms, agrno, Email, password);
 
     const [openPDFView, setOpenPDFView] = React.useState(false);
 
@@ -90,7 +74,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     };
 
     const handleClickOpenPDFView = (event, data) => {
-        console.log("fjdsfdlsjfljfllj main function");
+        //console.log("fjdsfdlsjfljfllj main function");
         // event.preventDefault();
         event.stopPropagation();
         setSelectedDocument(data);
@@ -99,11 +83,11 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     };
 
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+    // const [anchorEl, setAnchorEl] = React.useState(null);
+    // const open = Boolean(anchorEl);
+    // const handleClick = (event) => {
+    //     setAnchorEl(event.currentTarget);
+    // };
     // const handleClose = () => {
     //     // setAnchorEl(null);
     //     setOpen(false)

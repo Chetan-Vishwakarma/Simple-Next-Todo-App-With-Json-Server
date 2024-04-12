@@ -192,7 +192,12 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                                     <TableCell align="left">{row.details}</TableCell>
                                                 </TableRow>
                                             ))} */}
-                                                {Object.keys(docForDetails).length > 0 && Object.keys(docForDetails).map((itm, i) => {
+
+
+
+                                                {
+                                                Object.keys(docForDetails).length > 0 && (!Object.keys(docForDetails).includes("RecentDate") )
+                                                ? Object.keys(docForDetails).map((itm, i) => {
                                                     if (itm !== "StickyNotes") {
                                                         return <TableRow
                                                             key={i}
@@ -202,7 +207,17 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                                             <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date", "Item Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
                                                         </TableRow>
                                                     }
-                                                })}
+                                                }): Object.keys(docForDetails).map((itm, i) => {
+                                                        return <TableRow
+                                                            key={i}
+                                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                        >
+                                                            <TableCell align="left" className='bold'>{itm}</TableCell>
+                                                            <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["RecentDate"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
+                                                        </TableRow>
+                                                })
+                                            }
+
                                             </TableBody>
                                         </Table>
                                     </TableContainer>

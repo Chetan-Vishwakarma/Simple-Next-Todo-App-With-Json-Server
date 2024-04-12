@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import user from "../images/user.jpg";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommanCLS from '../services/CommanService';
 import TaskDetailModal from './TaskDetailModal';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, Typography, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, Link, Chip, Stack, ListItemIcon, Radio, useMediaQuery, useTheme, Accordion, AccordionSummary, AccordionDetails, Checkbox } from '@mui/material';
+import { Box, Button, Typography, Menu, MenuItem, ListItemIcon, Radio, Checkbox } from '@mui/material';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ArticleIcon from '@mui/icons-material/Article';
@@ -18,7 +18,8 @@ import DocumentsVewModal from '../client/utils/DocumentsVewModal';
 import { toast } from 'react-toastify';
 import DocDetails from './DocDetails';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
-import Skeleton from '@mui/material/Skeleton';
+import DocumentRenameModal from './DocumentRenameModal';
+
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 const userId = localStorage.getItem("UserId");
@@ -30,20 +31,20 @@ function NewTodoList() {
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
 
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
-
+    //const [sendUrldata, setsendUrldata] = useState("");
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
-    const baseUrlPortal = "https://sharepoint.docusoftweb.com/dsdesktopwebservice.asmx/";
+    //const baseUrlPortal = "https://sharepoint.docusoftweb.com/dsdesktopwebservice.asmx/";
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
     let ClsSms = new CommanCLS(baseUrl, agrno, Email, password);
     let Cls = new CommanCLS(baseUrlPractice, agrno, Email, password);
-    let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
+    //let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
     //let Clsp = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
     const [allTask, setAllTask] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
     const [recentTaskList, setRecentTaskList] = useState([]);
-const [crmTaskAcivity, setCRMTaskAcivity] = useState([]);
+    //const [crmTaskAcivity, setCRMTaskAcivity] = useState([]);
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [userName, setUserName] = React.useState(null);
@@ -55,14 +56,16 @@ const [crmTaskAcivity, setCRMTaskAcivity] = useState([]);
 
 
     const [loadMore, setLoadMore] = useState(9);
+    const [openRenameModal, setOpenRenameModal] = useState(false);
+    // const handleOpen = () => setOpenRenameModal(true);
 
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+    // const handleClose = () => {
+    //     setAnchorEl(null);
+    // };
     const Json_Get_CRM_UserByProjectId = () => {
         let obj = {
             agrno: agrno,
@@ -86,11 +89,6 @@ const [crmTaskAcivity, setCRMTaskAcivity] = useState([]);
     }
 
     const Json_CRM_GetOutlookTask = () => {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
-        };
         try {
             Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
                 if (sts) {
@@ -111,8 +109,8 @@ const [crmTaskAcivity, setCRMTaskAcivity] = useState([]);
                         // Sorting by EndDateTime
                         formattedTasks.sort((a, b) => b.EndDateTime - a.EndDateTime);
 
-                        const filtredTask = formattedTasks.filter(itm=>itm.AssignedToID.split(",").includes(userId) && itm.mstatus!=="Completed" && ["Portal","CRM"].includes(itm.Source));
-                        
+                        const filtredTask = formattedTasks.filter(itm => itm.AssignedToID.split(",").includes(userId) && itm.mstatus !== "Completed" && ["Portal", "CRM"].includes(itm.Source));
+
                         // console.log("Json_CRM_GetOutlookTask", filtredTask);
                         setAllTask(filtredTask);
                     }
@@ -123,36 +121,36 @@ const [crmTaskAcivity, setCRMTaskAcivity] = useState([]);
         }
     }
 
-const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
-     
-        let obj = {};
-        obj.TaskID = taskid;
-        try {       
+    const Json_Get_CRM_Task_ActivityByTaskId = (item,callBack) => {
+       // console.log("Json_Get_CRM_Task_ActivityByTaskId", item);
+            let obj = {};
+            obj.TaskId = item.TaskID;
+            try {       
 
-            Cls.Json_Get_CRM_Task_ActivityByTaskId(obj, (sts, data) => {
-                if (sts) {
-                    if (data) {
-                        let json = JSON.parse(data);
-                        console.log("Json_Get_CRM_Task_ActivityByTaskId", json);
-                        const formattedActivity = json.Table.map((activity) => {
-                            let ActivityDate;
-                            if (activity.ActivityDate) {
-                                ActivityDate = parseInt(activity.ActivityDate.slice(6, -2));
-                            }
-                            const date = new Date(ActivityDate);
-                            return { ...activity, ActivityDate: date, comDate: date, comNotes: activity.Notes };
-                        });
-                     let sort =   formattedActivity.sort((a, b) => a.ActivityDate - b.ActivityDate)
-                        setCRMTaskAcivity(sort);
-                        
-                        return callBack(sort);
+                Cls.Json_Get_CRM_Task_ActivityByTaskId(obj, (sts, data) => {
+                    if (sts) {
+                        if (data) {
+                            let json = JSON.parse(data);
+                            console.log("Json_Get_CRM_Task_ActivityByTaskId", json);
+                            const formattedActivity = json.Table.map((activity) => {
+                                let ActivityDate;
+                                if (activity.ActivityDate) {
+                                    ActivityDate = parseInt(activity.ActivityDate.slice(6, -2));
+                                }
+                                const date = new Date(ActivityDate);
+                                return { ...activity, ActivityDate: date, comDate: date, comNotes: activity.Notes };
+                            });
+                         let sort =   formattedActivity.sort((a, b) => a.ActivityDate - b.ActivityDate)
+                            //setCRMTaskAcivity(sort);
+
+                           // return callBack(sort);
+                        }
                     }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_CRM_GetOutlookTask", err);
-        }
-    };
+                });
+            } catch (err) {
+                console.log("Error while calling Json_CRM_GetOutlookTask", err);
+            }
+        };
 
     const Json_getRecentTaskList = () => {
 
@@ -190,32 +188,32 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
 
     const [isApi, setIsApi] = useState(false);
 
-    const Json_ExplorerSearchDoc = () => {
-        try {
-            let obj = {};
-            obj.ProjectId = folderId;
-            obj.ClientId = "";
-            obj.sectionId = "-1";
-            Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
-                if (sts && data) {
-                    //console.log("ExplorerSearchDoc", JSON.parse(data));
-                    let json = JSON.parse(data);
-                    if (json?.Table6?.length > 0) {
+    // const Json_ExplorerSearchDoc = () => {
+    //     try {
+    //         let obj = {};
+    //         obj.ProjectId = folderId;
+    //         obj.ClientId = "";
+    //         obj.sectionId = "-1";
+    //         Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
+    //             if (sts && data) {
+    //                 //console.log("ExplorerSearchDoc", JSON.parse(data));
+    //                 let json = JSON.parse(data);
+    //                 if (json?.Table6?.length > 0) {
 
-                        // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
-                        let docs = json.Table6;
+    //                     // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
+    //                     let docs = json.Table6;
 
-                        if (docs?.length > 0) {
-                            console.log("ExplorerSearchDoc", docs);
-                           // Json_getRecentDocumentList(docs)
-                        }
-                    }
-                }
-            })
-        } catch (error) {
-            console.log("ExplorerSearchDoc", error)
-        }
-    }
+    //                     if (docs?.length > 0) {
+    //                         console.log("ExplorerSearchDoc", docs);
+    //                        // Json_getRecentDocumentList(docs)
+    //                     }
+    //                 }
+    //             }
+    //         })
+    //     } catch (error) {
+    //         console.log("ExplorerSearchDoc", error)
+    //     }
+    // }
 
     const Json_getRecentDocumentList = () => {
 
@@ -225,28 +223,28 @@ const Json_Get_CRM_Task_ActivityByTaskId = (taskid,callBack) => {
                     if (data) {
                         let json = JSON.parse(data);
                         let tbl = json.Table;
-if(tbl.length>0){
-    const mapMethod = tbl.map(el => {
-        let date = "";
-        if (el["RecentDate"]) {
-            const dateString = el["RecentDate"].slice(6, -2); // Extract the date part
-            const timestamp = parseInt(dateString); // Convert to timestamp
-            if (!isNaN(timestamp)) {
-                date = new Date(timestamp); // Create Date object using timestamp
-            } else {
-                console.error("Invalid timestamp:", dateString);
-            }
-        } else {
-            date = el["RecentDate"];
-        }
-        return { ...el, ["RecentDate"]: date,["Registration No."]:el.ItemId,["Description"]:el.Subject };
-    });
-    setRecentDocument(mapMethod);
-    // const itemIdSet = new Set(tbl.map(item => item.ItemId));
-     console.log("Json_getRecentDocumentList", mapMethod);
-}
+                        if (tbl.length > 0) {
+                            const mapMethod = tbl.map(el => {
+                                let date = "";
+                                if (el["RecentDate"]) {
+                                    const dateString = el["RecentDate"].slice(6, -2); // Extract the date part
+                                    const timestamp = parseInt(dateString); // Convert to timestamp
+                                    if (!isNaN(timestamp)) {
+                                        date = new Date(timestamp); // Create Date object using timestamp
+                                    } else {
+                                        console.error("Invalid timestamp:", dateString);
+                                    }
+                                } else {
+                                    date = el["RecentDate"];
+                                }
+                                return { ...el, ["RecentDate"]: date, ["Registration No."]: el.ItemId, ["Description"]: el.Subject,["Type"]: el.type };
+                            });
+                            setRecentDocument(mapMethod);
+                            // const itemIdSet = new Set(tbl.map(item => item.ItemId));
+                           // console.log("Json_getRecentDocumentList", mapMethod);
+                        }
 
-                       
+
 
                         // if (exData.length > 0) {
                         //     const filteredArray2 = exData.filter(item => itemIdSet.has(item["Registration No."]));
@@ -279,7 +277,7 @@ if(tbl.length>0){
 
     useEffect(() => {
         Json_getRecentDocumentList();
-       // Json_ExplorerSearchDoc();
+        // Json_ExplorerSearchDoc();
         Json_Get_CRM_UserByProjectId();
         Json_CRM_GetOutlookTask();
         Json_getRecentTaskList();
@@ -296,9 +294,9 @@ if(tbl.length>0){
             const sectionOffset = section.offsetTop;
             const sectionHeight = section.offsetHeight;
             if (scrollPosition >= sectionOffset && scrollPosition < sectionOffset + sectionHeight) {
-              setActiveSectionList(sectionId);
+                setActiveSectionList(sectionId);
             }
-          });
+        });
     };
 
     useEffect(() => {
@@ -309,10 +307,10 @@ if(tbl.length>0){
         Json_CRM_GetOutlookTask();
         window.addEventListener('scroll', handleScroll);
 
-    return () => {
-      // Remove scroll event listener on component unmount
-      window.removeEventListener('scroll', handleScroll);
-    };
+        return () => {
+            // Remove scroll event listener on component unmount
+            window.removeEventListener('scroll', handleScroll);
+        };
     }, []);
 
     function startFormattingDate(dt) {
@@ -427,7 +425,7 @@ if(tbl.length>0){
     };
 
 
-    const handleDowloadDocument = (e,index) => {
+    const handleDowloadDocument = (e, index) => {
         handleCloseDocument(index);
         // setAnchorElDocumentList(null);
         console.log("document object", e);
@@ -443,7 +441,7 @@ if(tbl.length>0){
         })
     };
 
-    const handleOpenBrower = (e,index) => {
+    const handleOpenBrower = (e, index) => {
         handleCloseDocument(index);
         //setAnchorElDocumentList(null);
         console.log("document object", e);
@@ -457,7 +455,8 @@ if(tbl.length>0){
             PortalID = PortalDocId;
         }
 
-        let url = `https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${e["Registration No."]}&ext=${e.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
+        let url = `https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${e["Registration No."]}&ext=${e.Type ? e.type : ""}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
+        console.log(url, "geturldata")
         window.open(url);
     };
 
@@ -466,11 +465,24 @@ if(tbl.length>0){
     const [isLoadingDoc, setIsLoadingDoc] = useState(false);
     const ViewerDocument = (e) => {
         setAnchorElDocumentList(null);
-        console.log("document object", e);
+        // console.log("document_object111", e);
         setSelectedDocument(e);
+
         setOpenPDFView(true);
-        //    let url =`https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=1002909&filetype=txt&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=&PortalID=`;
-        // window.open(url);
+        var IsApproved = e["IsApproved"];
+        var PortalDocId = e["PortalDocId"];
+        let IsApp = "";
+        let PortalID = "";
+
+        if (IsApproved === "SIG" && PortalDocId !== "") {
+            IsApp = IsApproved;
+            PortalID = PortalDocId;
+        }
+
+        let url = `https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=${e["Registration No."]}&filetype=${e.type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
+        console.log(url, "geturldata");
+        // setsendUrldata(url);
+        //window.open(url);
         setIsLoadingDoc(true)
 
 
@@ -512,19 +524,23 @@ if(tbl.length>0){
         //     }
         // }
         setActiveSectionList(target);
-        
+
     }
 
-   
-    
+
+
 
     return (
         <Box className="container-fluid p-0">
-             <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
+            <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
+
+            <DocumentRenameModal openRenameModal={openRenameModal} setOpenRenameModal={setOpenRenameModal }/>
+
+            {/* <DocumentsVewModal sendUrldata={sendUrldata} isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal> */}
             {/* <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal> */}
             <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
-            <DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList }/>
+            <DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList} />
 
             <Box className='d-flex flex-wrap align-items-end justify-content-end'>
                 {/* <Box className='clearfix'>
@@ -558,12 +574,12 @@ if(tbl.length>0){
             <Box className='no-touch'>
                 <nav className="cd-vertical-nav">
                     <ul>
-                        <li onClick={() => handleActiveTab("section1")}><a href="#section1" className={activeSectionList==="section1" ? "active" : ""}><span className="label">Task Due <br />Soon</span>
+                        <li onClick={() => handleActiveTab("section1")}><a href="#section1" className={activeSectionList === "section1" ? "active" : ""}><span className="label">Task Due <br />Soon</span>
                             <EventNoteIcon className='hover-icon' />
                         </a></li>
-                        <li onClick={() => handleActiveTab("section2")}><a href="#section2" className={activeSectionList==="section2" ? "active" : ""}><span className="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
-                        <li onClick={() => handleActiveTab("section3")}><a href="#section3" className={activeSectionList==="section3" ? "active" : ""}><span className="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
-                        <li onClick={() => handleActiveTab("section4")}><a href="#section4" className={activeSectionList==="section4" ? "active" : ""}><span className="label">Recently Accessed Documents</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section2")}><a href="#section2" className={activeSectionList === "section2" ? "active" : ""}><span className="label">Recently Updated</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section3")}><a href="#section3" className={activeSectionList === "section3" ? "active" : ""}><span className="label">Pinned<br />Task</span><EventNoteIcon className='hover-icon' /></a></li>
+                        <li onClick={() => handleActiveTab("section4")}><a href="#section4" className={activeSectionList === "section4" ? "active" : ""}><span className="label">Recently Accessed Documents</span><EventNoteIcon className='hover-icon' /></a></li>
                     </ul>
                 </nav>
             </Box>
@@ -671,7 +687,7 @@ if(tbl.length>0){
                                     <Typography variant='subtitle1 mb-3 d-block'><strong>Type: </strong> {item.Source} </Typography>
 
                                     <Typography variant='h2' className='mb-2'>{item.Subject}
-                                    {/* <Skeleton /> */}
+                                        {/* <Skeleton /> */}
                                     </Typography>
 
                                     <Box className='d-flex align-items-center justify-content-between'>
@@ -722,21 +738,21 @@ if(tbl.length>0){
                                     <Box className='mt-2'>
                                         <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)}>Mark Complete</Button>
                                         <DateRangePicker initialSettings={{
-                                                    singleDatePicker: true, 
-                                                    showDropdowns: true,
-                                                    startDate: item["EndDateTime"],
-                                                    minYear: 1901,
-                                                    maxYear: 2100,
-                                                }}
-                                                onCallback={(start) => {
-                                                    const date = start.format('YYYY/MM/DD');
-                                                    Json_UpdateTaskField("EndDateTime",date,item);
-                                                }}
-                                                >
-                                                    <Button variant="outlined" className='btn-outlin-2'>
-                                                        Defer
-                                                    </Button>
-                                                </DateRangePicker>
+                                            singleDatePicker: true,
+                                            showDropdowns: true,
+                                            startDate: item["EndDateTime"],
+                                            minYear: 1901,
+                                            maxYear: 2100,
+                                        }}
+                                            onCallback={(start) => {
+                                                const date = start.format('YYYY/MM/DD');
+                                                Json_UpdateTaskField("EndDateTime", date, item);
+                                            }}
+                                        >
+                                            <Button variant="outlined" className='btn-outlin-2'>
+                                                Defer
+                                            </Button>
+                                        </DateRangePicker>
                                     </Box>
 
                                 </Box>
@@ -836,7 +852,7 @@ if(tbl.length>0){
                                         </Box>
                                         <Box className="user-content text-start">
                                             <Typography variant='h2'>{'user name'}</Typography>
-                                            <Typography variant='body1'>{'Lorem ipsome dolor site amet this is a dummy text loprem ipsome dolor site amet this is a dummy text '}</Typography>
+                                            <Typography variant='body1'>{()=>Json_Get_CRM_Task_ActivityByTaskId(item)}</Typography>
                                         </Box>
                                     </Box>
 
@@ -944,98 +960,101 @@ if(tbl.length>0){
                 {/* row end */}
                 <hr />
                 <div id="section4">
-                <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>You accessed the following documents recently:</Typography>
+                    <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>You accessed the following documents recently:</Typography>
 
-                {/* <DocumentDetails></DocumentDetails> */}
+                    {/* <DocumentDetails></DocumentDetails> */}
 
-                <Box className='row'>
-                    {recentDocument.length > 0 ? recentDocument.map((item, index) => {
-                        return <>
+                    <Box className='row'>
+                        {recentDocument.length > 0 ? recentDocument.map((item, index) => {
+                            return <>
 
-                            <Box className='col-xxl-3 col-xl-4 col-md-6 d-flex' key={index}>
-                                <Box className="file-uploads d-flex w-100">
-                                    <label className="file-uploads-label file-uploads-document w-100">
-                                        <Box className="d-flex align-items-center">
+                                <Box className='col-xxl-3 col-xl-4 col-md-6 d-flex' key={index}>
+                                    <Box className="file-uploads d-flex w-100">
+                                        <label className="file-uploads-label file-uploads-document w-100">
+                                            <Box className="d-flex align-items-center">
 
-                                            <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
+                                                <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
 
-                                            <DescriptionIcon
-                                                sx={{
-                                                    fontSize: 32,
-                                                }}
-                                                className='me-2 ms-0'
-                                            />
-                                            <Box className="upload-content pe-3" onDoubleClick={(e) => ViewerDocument(item)}>
-                                                <Typography variant="h4" >
-                                                    {item.Subject}
-                                                </Typography>
-                                                <Typography variant="body1">
-                                                    {/* Size:  <span className='sembold'>{item.FileSize}</span> |   */}
-                                                    <span className='sembold'>{moment(item["RecentDate"]).format("DD/MM/YYYY")!=="Invalid date"?moment(item["RecentDate"]).format("DD/MM/YYYY"):"01/01/2000"}</span>
-                                                    | <span className='sembold'>{item.OriginatorName? item.OriginatorName :""}</span>
-                                                </Typography>
+                                                <DescriptionIcon
+                                                    sx={{
+                                                        fontSize: 32,
+                                                    }}
+                                                    className='me-2 ms-0'
+                                                />
+                                                <Box className="upload-content pe-3" onDoubleClick={(e) => ViewerDocument(item)}>
+                                                    <Typography variant="h4" >
+                                                        {item.Subject}
+                                                    </Typography>
+                                                    <Typography variant="body1">
+                                                        {/* Size:  <span className='sembold'>{item.FileSize}</span> |   */}
+                                                        <span className='sembold'>{moment(item["RecentDate"]).format("DD/MM/YYYY") !== "Invalid date" ? moment(item["RecentDate"]).format("DD/MM/YYYY") : "01/01/2000"}</span>
+                                                        | <span className='sembold'>{item.OriginatorName ? item.OriginatorName : ""}</span>
+                                                    </Typography>
+                                                </Box>
                                             </Box>
-                                        </Box>
-                                        <Box>
-                                            <Button
-                                                id={`basic-button-${index}`}
-                                                aria-controls={openMenus[index] ? `basic-menu-${index}` : undefined}
-                                                aria-haspopup="true"
-                                                aria-expanded={openMenus[index] ? 'true' : undefined}
-                                                onClick={(event) => handleClickDocumentList(event, index)}
-                                                className='min-width-auto'
-                                            >
-                                                <MoreVertIcon />
-                                            </Button>
-                                            <Menu
-                                                id={`basic-menu-${index}`}
-                                                anchorEl={openMenus[index]}
-                                                open={Boolean(openMenus[index])}
-                                                onClose={() => handleCloseDocument(index)}
-                                                MenuListProps={{
-                                                    'aria-labelledby': `basic-button-${index}`,
-                                                }}
-                                                className='custom-dropdown'
-                                            >
-                                                <MenuItem onClick={() => {
-                                                    handleCloseDocument(index)
-                                                    handleClickOpenDocumentDetailsList(item)
-                                                }}>
-                                                    <ListItemIcon>
-                                                        <ArticleIcon fontSize="medium" />
-                                                    </ListItemIcon>
-                                                    Document Details</MenuItem>
+                                            <Box>
+                                                <Button
+                                                    id={`basic-button-${index}`}
+                                                    aria-controls={openMenus[index] ? `basic-menu-${index}` : undefined}
+                                                    aria-haspopup="true"
+                                                    aria-expanded={openMenus[index] ? 'true' : undefined}
+                                                    onClick={(event) => handleClickDocumentList(event, index)}
+                                                    className='min-width-auto'
+                                                >
+                                                    <MoreVertIcon />
+                                                </Button>
+                                                <Menu
+                                                    id={`basic-menu-${index}`}
+                                                    anchorEl={openMenus[index]}
+                                                    open={Boolean(openMenus[index])}
+                                                    onClose={() => handleCloseDocument(index)}
+                                                    MenuListProps={{
+                                                        'aria-labelledby': `basic-button-${index}`,
+                                                    }}
+                                                    className='custom-dropdown'
+                                                >
+                                                    <MenuItem onClick={() => {
+                                                        handleCloseDocument(index)
+                                                        handleClickOpenDocumentDetailsList(item)
+                                                    }}>
+                                                        <ListItemIcon>
+                                                            <ArticleIcon fontSize="medium" />
+                                                        </ListItemIcon>
+                                                        Document Details</MenuItem>
 
-                                                <MenuItem onClick={()=>handleCloseDocument(index)}>
-                                                    <ListItemIcon>
-                                                        <CloudUploadIcon fontSize="medium" />
-                                                    </ListItemIcon>
-                                                    Upload New Version</MenuItem>
-                                                <MenuItem onClick={()=>handleCloseDocument(index)}>
-                                                    <ListItemIcon>
-                                                        <DriveFileRenameOutlineIcon fontSize="medium" />
-                                                    </ListItemIcon>
-                                                    Rename Document</MenuItem>
-                                                <MenuItem onClick={() => handleOpenBrower(item,index)} >
-                                                    <ListItemIcon>
-                                                        <TravelExploreIcon fontSize="medium" />
-                                                    </ListItemIcon>
-                                                    Open in Browser</MenuItem>
-                                                <MenuItem onClick={(e) => handleDowloadDocument(item,index)}>
-                                                    <ListItemIcon>
-                                                        <CloudDownloadIcon fontSize="medium" />
-                                                    </ListItemIcon>
-                                                    Download</MenuItem>
-                                            </Menu>
-                                        </Box>
-                                    </label>
+                                                    <MenuItem onClick={() => handleCloseDocument(index)}>
+                                                        <ListItemIcon>
+                                                            <CloudUploadIcon fontSize="medium" />
+                                                        </ListItemIcon>
+                                                        Upload New Version</MenuItem>
+                                                    <MenuItem onClick={() => {
+                                                          handleCloseDocument(index)
+                                                          setOpenRenameModal(true);
+                                                        }}>
+                                                        <ListItemIcon>
+                                                            <DriveFileRenameOutlineIcon fontSize="medium" />
+                                                        </ListItemIcon>
+                                                        Rename Document</MenuItem>
+                                                    <MenuItem onClick={() => handleOpenBrower(item, index)} >
+                                                        <ListItemIcon>
+                                                            <TravelExploreIcon fontSize="medium" />
+                                                        </ListItemIcon>
+                                                        Open in Browser</MenuItem>
+                                                    <MenuItem onClick={(e) => handleDowloadDocument(item, index)}>
+                                                        <ListItemIcon>
+                                                            <CloudDownloadIcon fontSize="medium" />
+                                                        </ListItemIcon>
+                                                        Download</MenuItem>
+                                                </Menu>
+                                            </Box>
+                                        </label>
+                                    </Box>
                                 </Box>
-                            </Box>
 
-                        </>
-                    }) : ""}
+                            </>
+                        }) : ""}
 
-                </Box>
+                    </Box>
                 </div>
 
 
