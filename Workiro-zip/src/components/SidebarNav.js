@@ -150,6 +150,8 @@ export default function SidebarNav() {
   const [userId, setUserId] = useState(localStorage.getItem("UserId"));
   const [globalSearch,setGlobalSearch] = useState(localStorage.getItem("globalSearchKey"));
 
+  console.log("fueteuiuert",window.location.pathname);
+
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
   let Cls = new CommanCLS(baseUrl, agrno, Email, password);
@@ -393,7 +395,16 @@ export default function SidebarNav() {
 
   useEffect(()=>{
     setGlobalSearch(localStorage.getItem("globalSearchKey"));
-  },[globalSearch]);
+    tabs.map(itm => {
+      if (itm.tabName === "Search Result") {
+        itm.tabLink = `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${folderId}`;
+      } else {
+        itm.tabLink = itm.tabLink;
+      }
+    });
+    // setTabs([...tabs,{ tabLink: `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${folderId}`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
+    
+  },[globalSearch,window.location.pathname]);
 
   return (
     <>
