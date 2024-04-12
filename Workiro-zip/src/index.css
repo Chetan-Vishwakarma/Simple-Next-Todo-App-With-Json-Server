@@ -2357,10 +2357,11 @@ span.tox-statusbar__branding {
 }
 
 .edit-input {
-  padding: 0;
   margin: 0;
   border: 0;
   width: 100%;
+  font-weight: 600;
+  padding: 0px;
 }
 
 @media only screen and (max-width: 1199px) {

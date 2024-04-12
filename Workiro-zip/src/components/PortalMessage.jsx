@@ -824,10 +824,11 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                             <>
                                                 <Box className='d-flex'>
                                                     <VerifiedIcon className='text-green' />
-                                                    <h5 className='font-14 text-black mb-1'>Message Approved </h5>
-
-                                                    <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"] ? moment(documentStatus["Actioned On"]).format("DD/MM/YYYY") : ""}</p>
-                                                    <Button className='btn-blue-2' size="small" onClick={() => GetCertificate_Json()} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
+                                                    <Box className='ps-2'>
+                                                        <h5 className='font-14 text-black mb-1'>Message Approved </h5>
+                                                        <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"] ? moment(documentStatus["Actioned On"]).format("DD/MM/YYYY") : ""}</p>
+                                                        <Button className='btn-blue-2' size="small" onClick={() => GetCertificate_Json()} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
+                                                    </Box>
                                                 </Box>
 
                                             </>
@@ -1037,7 +1038,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                             return <>
 
                                 <Box key={index} className='col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 d-flex'>
-                                    <Box className='todo-list-box white-box relative w-100'>
+                                    <Box className='todo-list-box white-box relative w-100 font-14'>
 
                                         <Box className='download-btn-box'>
                                             <Button onClick={() => UploadToDocuSoft(item)} size="small" className="min-width-auto me-1">
@@ -1057,7 +1058,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                         <Typography variant='subtitle1 mb-2 d-block'><strong> Published On: </strong> {DateFormateDDMMYYYY(item.DDate)} </Typography>
 
                                         <Box className='d-flex align-items-center justify-content-between'>
-                                            <Typography variant='subtitle1'><pan className='text-gray'>
+                                            <Typography variant='subtitle1'><pan className='text-gray font-14'>
                                                 Recipient Email  </pan>
                                                 <a href='#'>{item.emailid}</a></Typography>
                                         </Box>
@@ -1071,7 +1072,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
                                                         <VerifiedIcon className="me-2" />
                                                         <Box>
-                                                            <Typography variant='subtitle1' className='text-center'>
+                                                            <Typography variant='subtitle1' className='text-center font-14'>
                                                                 Document Signed
                                                                 <Button className='btn-blue-2' size="small" onClick={() => handleClickOpenCertificate(item)} startIcon={<ScheduleIcon />}> Document Signed</Button>
                                                             </Typography>
@@ -1080,7 +1081,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                                 </>) : (<>
                                                     <Box className='approval-box'>
                                                         <VerifiedIcon className="me-2" />
-                                                        <Typography variant='subtitle1' className='text-center'>
+                                                        <Typography variant='subtitle1' className='text-center font-14'>
                                                             Document not sent for signature or waiting for other signatories
                                                         </Typography>
                                                     </Box>

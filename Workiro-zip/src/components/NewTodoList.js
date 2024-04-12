@@ -1066,7 +1066,7 @@ function NewTodoList() {
                                                     aria-haspopup="true"
                                                     aria-expanded={openMenus[index] ? 'true' : undefined}
                                                     onClick={(event) => handleClickDocumentList(event, index)}
-                                                    className='min-width-auto'
+                                                    className='min-width-auto p-0'
                                                 >
                                                     <MoreVertIcon />
                                                 </Button>
