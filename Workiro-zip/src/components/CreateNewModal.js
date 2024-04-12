@@ -1254,7 +1254,9 @@ function CreateNewModalTask({ ...props }) {
                             Json_CRM_TaskDMSAttachmentInsert(js.Message);
                         }
                         setOpen(false);
+                       try{
                         setOpenModal(false)
+                       } catch(e){}
                         ClearForm();
                         // setIsApi(!isApi);
 

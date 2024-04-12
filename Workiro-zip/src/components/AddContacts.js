@@ -673,7 +673,8 @@ function AddContacts({ addContactData,contactDetails}) {
       ["billingsCountry"]: "",
       ["ragistersCountry"]: "",
       ["ReferenceID"]: clientNames,
-      ["CreatePortal"]: item["Portal User"]
+      ["CreatePortal"]: item["Portal User"],
+      ["Base64ImgData"]:item.imgPath 
     };
     setContactDetails(data);
     }
