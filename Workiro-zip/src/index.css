@@ -2352,6 +2352,17 @@ span.tox-statusbar__branding {
   align-items: center;
 }
 
+.edit-input:focus {
+  outline: none;
+}
+
+.edit-input {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  width: 100%;
+}
+
 @media only screen and (max-width: 1199px) {
   .client-box-main {
     flex: 0 0 33.33%;
