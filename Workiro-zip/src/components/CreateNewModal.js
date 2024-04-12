@@ -124,7 +124,7 @@ function CreateNewModalTask({ ...props }) {
 
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/"; // base url for api
     //   let dt = new LoginDetails();
-    const [addContactData, setAddContact]=useState({});
+    const [addContactData, setAddContact] = useState({});
 
     let cls = new CommanCLS(baseUrl, agrno, Email, password);
 
@@ -509,10 +509,10 @@ function CreateNewModalTask({ ...props }) {
             cls.Json_GetFolderData(o, function (sts, data) {
                 if (sts) {
                     let js = JSON.parse(data);
-                  
+
                     let clientList = js.Table1;
                     if (clientList.length > 0) {
-                        let resutl = clientList.filter((el)=>el.Client !=="" && el.Client !==null)
+                        let resutl = clientList.filter((el) => el.Client !== "" && el.Client !== null)
                         setClientList(resutl);
                         console.log("Json_GetFolderData", resutl);
                     }
@@ -1189,7 +1189,11 @@ function CreateNewModalTask({ ...props }) {
             return false
         }
         const isaddUser = addUser.map(obj => obj.ID).join(',');
-        const attString = attachmentPath.map(obj => obj.Path).join('|');
+        let attString = "";
+        if (attachmentPath.length > 0) {
+            attString = attachmentPath.map(obj => obj.Path).join('|');
+        }
+
 
         //console.log("nextDate1", currentDate)
         let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
@@ -1245,6 +1249,11 @@ function CreateNewModalTask({ ...props }) {
                     console.log("save task rerurn value", js);
 
                     if (js.Status === "success") {
+                        setAttachmentPath([]);
+                        setSelectedFiles([])
+                        let strGuid = uuidv4().replace(/-/g, '');
+                        localStorage.setItem("GUID", strGuid)
+
                         Json_CRM_GetOutlookTask_ForTask();
                         setLoading(false);
                         toast.success("Created Task !");
@@ -1254,9 +1263,9 @@ function CreateNewModalTask({ ...props }) {
                             Json_CRM_TaskDMSAttachmentInsert(js.Message);
                         }
                         setOpen(false);
-                       try{
-                        setOpenModal(false)
-                       } catch(e){}
+                        try {
+                            setOpenModal(false)
+                        } catch (e) { }
                         ClearForm();
                         // setIsApi(!isApi);
 
@@ -1909,6 +1918,7 @@ function CreateNewModalTask({ ...props }) {
                             let js = JSON.parse(data);
                             console.log("Json_CRM_Task_Save ", js);
                             if (js.Status === "success") {
+                               
                                 // setMessageId(js.Message);
                                 CreatePortalMessage(js.Message)
                                 // toast.success("Created Task");
@@ -2004,11 +2014,16 @@ function CreateNewModalTask({ ...props }) {
                         if (!data) {
                             toast.success("Task Created");
                             Json_CRM_GetOutlookTask_ForTask();
-                            if(createNewFileObj){
+                            if (createNewFileObj) {
                                 setOpenModal(false);
                             }
-                           
+                            setSelectedFiles([]);
                             ClearForm();
+                            setAttachmentPath([]);
+                            setSelectedFiles([])
+                            let strGuid = uuidv4().replace(/-/g, '');
+                            localStorage.setItem("GUID", strGuid)
+
                         }
                         setOpen(false);
 
@@ -2351,14 +2366,13 @@ function CreateNewModalTask({ ...props }) {
                         </ListItemIcon> CRM Task
                     </MenuItem>
 
-                    <MenuItem onClick={() => 
-                    {
+                    <MenuItem onClick={() => {
                         handleClickOpen("Portal")
                         handleClose4()
                     }
                     }><ListItemIcon>
-                        <LanguageIcon className="font-20" />
-                    </ListItemIcon>
+                            <LanguageIcon className="font-20" />
+                        </ListItemIcon>
                         Portal Task</MenuItem>
 
                     <MenuItem onClick={() => {
@@ -3215,6 +3229,7 @@ function CreateNewModalTask({ ...props }) {
                                                         : undefined
                                                 }
                                                 onClick={(event) => handleClick3(event, "client")}
+                                                className={textClientId ? "" : "text-danger"}
                                             >
                                                 {txtClient}
                                                 <KeyboardArrowDownIcon />
@@ -3274,7 +3289,7 @@ function CreateNewModalTask({ ...props }) {
                                                                     src="/static/images/avatar/1.jpg"
                                                                 />
                                                             </ListItemAvatar> */}
-                                                           <ListItemText
+                                                            <ListItemText
                                                                 primary={item.Client}
                                                                 className='m-0'
                                                                 secondary={
@@ -3291,7 +3306,7 @@ function CreateNewModalTask({ ...props }) {
                                                                     </React.Fragment>
                                                                 }
                                                             />
-                                                            
+
                                                         </ListItem>
                                                         {/* <Divider variant="inset" component="li" /> */}
                                                     </React.Fragment>
@@ -3330,6 +3345,7 @@ function CreateNewModalTask({ ...props }) {
                                                         : undefined
                                                 }
                                                 onClick={(event) => handleClick3(event, "section")}
+                                                className={txtSectionId ? "" : "text-danger"}
                                             >
                                                 {txtSection}
                                                 <KeyboardArrowDownIcon />
@@ -3806,7 +3822,7 @@ function CreateNewModalTask({ ...props }) {
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
 
-                        <Reference open5={open5}  setOpen5={setOpen5} setReferance={setReferance} setAddContact={setAddContact} />
+                        <Reference open5={open5} setOpen5={setOpen5} setReferance={setReferance} setAddContact={setAddContact} />
 
                     </DialogContentText>
                 </DialogContent>
@@ -3861,7 +3877,7 @@ function CreateNewModalTask({ ...props }) {
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                            Add Contact 
+                            Add Contact
                         </Typography>
                     </Box>
 

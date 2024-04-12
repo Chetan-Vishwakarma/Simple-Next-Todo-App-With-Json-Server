@@ -364,6 +364,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
     async function Json_Get_CRM_SavedTask_ByTaskId(taskid) {
+        setAttachmentFile([]);
         let obj = {};
         obj.TaskId = taskid;
         await Cls.Json_Get_CRM_SavedTask_ByTaskId(obj, function (status, data) {
@@ -599,7 +600,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     useEffect(() => {
 
-
+        setAttachmentFile([]);
 
         setNumPriority(selectedTask.Priority);
         //End PortMethods
