@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Modal from '@mui/material/Modal';
-import {Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material';
+import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material';
 
 const style = {
     position: 'absolute',
@@ -12,12 +12,12 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
-  };
+};
 
-function DocumentRenameModal({ClsSms,openRenameModal,setOpenRenameModal}) {
-  const handleClose = () => setOpenRenameModal(false);
+function DocumentRenameModal({ ClsSms, openRenameModal, setOpenRenameModal }) {
+    const handleClose = () => setOpenRenameModal(false);
 
-//   useEffect()
+    //   useEffect()
     return (
         <>
             {/* <Button onClick={handleOpen}>Open modal</Button> */}
@@ -37,7 +37,7 @@ function DocumentRenameModal({ClsSms,openRenameModal,setOpenRenameModal}) {
                 </Box>
             </Modal> */}
 
-<Dialog
+            <Dialog
                 open={openRenameModal}
                 onClose={(event) => handleClose(event)}
                 aria-labelledby="alert-dialog-title"

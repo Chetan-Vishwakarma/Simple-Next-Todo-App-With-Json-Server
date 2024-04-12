@@ -1030,7 +1030,6 @@ function NewTodoList() {
                                                     <MenuItem onClick={() => {
                                                           handleCloseDocument(index)
                                                           setOpenRenameModal(true);
-                                                          console.log("lkdgjewerwe",item);
                                                         }}>
                                                         <ListItemIcon>
                                                             <DriveFileRenameOutlineIcon fontSize="medium" />
