@@ -29,6 +29,7 @@ import docuicon from "../images/docu-icon.svg";
 import DoDisturbIcon from '@mui/icons-material/DoDisturb';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 //import CloseIcon from '@mui/icons-material/Close';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -1065,7 +1066,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
                                         <hr />
 
-                                        <Box className='d-flex flex-wrap approval-main'>
+                                        <Box className='d-flex approval-main'>
                                             {
                                                 item.Signed === "Yes" ? (<>
                                                     <Box className='approval-box'>
@@ -1080,7 +1081,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                                     </Box>
                                                 </>) : (<>
                                                     <Box className='approval-box'>
-                                                        <VerifiedIcon className="me-2" />
+                                                        <HourglassBottomIcon className="me-2" />
                                                         <Typography variant='subtitle1' className='text-center font-14'>
                                                             Document not sent for signature or waiting for other signatories
                                                         </Typography>

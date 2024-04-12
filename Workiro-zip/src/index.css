@@ -192,6 +192,7 @@ input,
   background: #4780FF !important;
   transition: .5s all ease;
   border: 1px solid #4780FF !important;
+  white-space: nowrap;
 }
 
 .btn-blue-2.Mui-disabled {
