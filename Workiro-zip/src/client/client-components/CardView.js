@@ -356,7 +356,7 @@ function CardView(props) {
           </Box>
         })))
       }
-      <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer>
+      {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
     </>
   )
 }
