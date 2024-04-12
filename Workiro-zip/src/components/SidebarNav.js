@@ -339,7 +339,7 @@ export default function SidebarNav() {
   }
 
   const [tabs, setTabs] = useState([{
-    tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon: <DashboardIcon />}, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon: <AccountBoxIcon /> }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false, tabIcon: <AssignmentIcon /> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon: <GroupIcon /> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon: <ViewCarouselIcon /> }, 
+    tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon: <DashboardIcon />}, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon: <AccountBoxIcon /> }, { tabLink: "/dashboard/TodoList", tabName: 'To-do List', active: false, tabIcon: <AssignmentIcon /> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon: <GroupIcon /> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon: <ViewCarouselIcon /> }, 
     // { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false, tabIcon: <ContentPasteSearchIcon /> },
   // { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false, tabIcon: <PersonAddIcon /> },
 ]);

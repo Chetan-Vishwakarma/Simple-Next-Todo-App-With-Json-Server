@@ -128,32 +128,24 @@ function NewTodoList() {
         }
     }
 
-    const Json_Get_CRM_Task_ActivityByTaskId = (item,callBack) => {
-       // console.log("Json_Get_CRM_Task_ActivityByTaskId", item);
-            let obj = {};
-            obj.TaskId = item.TaskID;
-            try {       
-
-                Cls.Json_Get_CRM_Task_ActivityByTaskId(obj, (sts, data) => {
-                    if (sts) {
-                        if (data) {
-                            let json = JSON.parse(data);
-                            console.log("Json_Get_CRM_Task_ActivityByTaskId", json);
-                            const formattedActivity = json.Table.map((activity) => {
-                                let ActivityDate;
-                                if (activity.ActivityDate) {
-                                    ActivityDate = parseInt(activity.ActivityDate.slice(6, -2));
-                                }
-                                const date = new Date(ActivityDate);
-                                return { ...activity, ActivityDate: date, comDate: date, comNotes: activity.Notes };
-                            });
-                         let sort =   formattedActivity.sort((a, b) => a.ActivityDate - b.ActivityDate)
-                            //setCRMTaskAcivity(sort);
-
-                           // return callBack(sort);
+    const Json_Get_CRM_Task_ActivityByTaskId = (item) => {
+       // console.log("Json_Get_CRM_Task_ActivityByTaskId", item);           
+            try {
+                let obj = {};
+                obj.TaskID = item.TaskID;
+                return new Promise((resolve, reject) => {
+                    Cls.Json_Get_CRM_Task_ActivityByTaskId(obj, (sts, data) => {
+                        let json = JSON.parse(data);
+                        let tbl = json.Table;
+                        if (sts && tbl.length > 0) {
+                            console.log("Error while calling Json_CRM_GetOutlookTask", tbl[tbl.length - 1]);
+                            resolve(tbl[tbl.length - 1].Notes);
+                        } else {
+                            reject("No data or Notes found");
                         }
-                    }
+                    });
                 });
+               
             } catch (err) {
                 console.log("Error while calling Json_CRM_GetOutlookTask", err);
             }
@@ -823,7 +815,18 @@ function NewTodoList() {
                 <Typography variant='subtitle1' className='font-18 bold mb-2 mt-4'>The following tasks were recently updated: </Typography>
 
                 <Box className='row'>
-                    {recentTaskList.length > 0 ? recentTaskList.slice(0, loadMore).map((item, index) => {
+                    {recentTaskList.length > 0 ? recentTaskList.slice(0, 20).map((item, index) => {
+                  let notesshow;
+                  Json_Get_CRM_Task_ActivityByTaskId(item).then((notes) => {
+                    console.log("Hello Notes",notes)
+                    notesshow=notes;
+                })
+                .catch((error) => {
+                    // Handle errors here
+                });
+                  
+                     console.log("Hello Notes1",notesshow);
+                       
                         return <>
 
                             <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
@@ -898,7 +901,11 @@ function NewTodoList() {
                                         </Box>
                                         <Box className="user-content text-start">
                                             <Typography variant='h2'>{'user name'}</Typography>
-                                            <Typography variant='body1'>{()=>Json_Get_CRM_Task_ActivityByTaskId(item)}</Typography>
+                                            <Typography variant='body1'>
+                                            {
+                                              "notes" 
+                                            }
+                                            </Typography>
                                         </Box>
                                     </Box>
 
@@ -1057,7 +1064,7 @@ function NewTodoList() {
                                                     aria-haspopup="true"
                                                     aria-expanded={openMenus[index] ? 'true' : undefined}
                                                     onClick={(event) => handleClickDocumentList(event, index)}
-                                                    className='min-width-auto'
+                                                    className='min-width-auto p-0'
                                                 >
                                                     <MoreVertIcon />
                                                 </Button>
