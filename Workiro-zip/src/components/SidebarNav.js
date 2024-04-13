@@ -217,6 +217,7 @@ export default function SidebarNav() {
   }
 
   const Json_AdvanceSearchDoc = (f_id = folderId) => {
+    console.log("Json_AdvanceSearchDoc forDocuments", forDocuments);
     if (forDocuments !== "") {
       let obj = {
         ClientId: "",
@@ -242,13 +243,11 @@ export default function SidebarNav() {
               console.log("Json_AdvanceSearchDoc", json.Table6);
               if (json.Table6) {
                 let fltDouble = [];
-                let allDescriptions = json.Table6.map((itm) => itm.Description).filter(item => {
+                json.Table6.map((itm) => itm.Description).filter(item => {
                   if (!fltDouble.includes(item)) {
                     fltDouble.push(item);
                   }
                 });
-                console.log("Json_AdvanceSearchDoc", allDescriptions);
-                // options = fltDouble;
                 setDocumentsDescription(fltDouble);
                 setMyDocuments(json.Table6);
               }

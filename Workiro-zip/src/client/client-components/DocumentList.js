@@ -318,6 +318,7 @@ export default function DocumentList({ clientId }) {
                 setTimeout(() => {
                     let docKeys = Object.keys(globalSearchDocs[0]);
                     // console.log("documentKeys",docKeys);
+                    globalSearchDocs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
                     setDocumentKeys(docKeys);
                     setDocuments(globalSearchDocs);
                     // handleDocumentsFilter(globalSearchDocs);
