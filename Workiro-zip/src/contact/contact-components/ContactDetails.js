@@ -497,12 +497,12 @@ function ContactDetails() {
     };
   return (
     <Box className="container-fluid p-0">
-      <CustomBreadCrumbs
+      {/* <CustomBreadCrumbs
         tabs={[
           { tabLink: "/dashboard/Connections", tabName: "Connections" },
           { tabLink: "/dashboard/ContactDetails", tabName: "Contact Details" },
         ]}
-      />
+      /> */}
 
       <Box className="d-flex align-items-center justify-content-between flex-wrap">
         <Box className="d-flex flex-wrap align-items-center">
