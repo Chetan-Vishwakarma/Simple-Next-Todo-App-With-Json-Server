@@ -211,7 +211,7 @@ function ClientDetails() {
         <>
             <Box className="container-fluid p-0">
 
-                <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/Connections", tabName: "Connections" }, { tabLink: "/dashboard/clientDetails", tabName: "Client Details" }]} />
+                {/* <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/Connections", tabName: "Connections" }, { tabLink: "/dashboard/clientDetails", tabName: "Client Details" }]} /> */}
 
                 {globalSearchDocs.length === 0 && <Box className="d-flex align-items-center justify-content-between flex-wrap">
                     <Box className='d-flex flex-wrap align-items-center'>

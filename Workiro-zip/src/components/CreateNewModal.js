@@ -994,7 +994,7 @@ function CreateNewModalTask({ ...props }) {
                     console.log("PrepareDocumentsForPublish_Json", data);
 
                     if (data === "Success") {
-
+                        
                     }
                 }
             });
@@ -1250,8 +1250,7 @@ function CreateNewModalTask({ ...props }) {
                     console.log("save task rerurn value", js);
 
                     if (js.Status === "success") {
-                        setAttachmentPath([]);
-                        setSelectedFiles([])
+                       
                         let strGuid = uuidv4().replace(/-/g, '');
                         localStorage.setItem("GUID", strGuid)
 
@@ -1263,6 +1262,7 @@ function CreateNewModalTask({ ...props }) {
                         if (selectedDocumentFile.length > 0) {
                             Json_CRM_TaskDMSAttachmentInsert(js.Message);
                         }
+                        
                         setOpen(false);
                         try {
                             setOpenModal(false)
@@ -1273,6 +1273,9 @@ function CreateNewModalTask({ ...props }) {
                         // Inside your function or event handler where you want to show the success message
                         //handleSuccess(js.Message);
                         // setOpen(false);
+
+                        // setAttachmentPath([]);
+                        //setSelectedFiles([])
                     }
                     else {
                         toast.error("Task Not Created Please Try Again");
@@ -1346,6 +1349,8 @@ function CreateNewModalTask({ ...props }) {
         cls.Json_CRM_TaskDMSAttachmentInsert(obj, function (sts, data) {
             if (sts && data) {
                 console.log('Json_CRM_TaskDMSAttachmentInsert', data);
+                setAttachmentPath([]);
+                        setSelectedFiles([])
             }
         })
     }
@@ -2020,8 +2025,8 @@ function CreateNewModalTask({ ...props }) {
                             }
                             setSelectedFiles([]);
                             ClearForm();
-                            setAttachmentPath([]);
-                            setSelectedFiles([])
+                            //setAttachmentPath([]);
+                            //setSelectedFiles([])
                             let strGuid = uuidv4().replace(/-/g, '');
                             localStorage.setItem("GUID", strGuid)
 

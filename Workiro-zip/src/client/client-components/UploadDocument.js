@@ -146,6 +146,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
 
     useEffect(() => {
+        setCreateNewFileObj([]);
         setSaveCounter(0);
         setStep(1);
         setSelectedFiles([]);
@@ -592,17 +593,18 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                 }
 
                                 if(selectedFiles.length===counter){
-                                    toast.success(selectedFiles.length + "Document(s) Uploaded!");                                   
+                                    toast.success(selectedFiles.length + "Document(s) Uploaded!");                      
                                 }
 
                                 if (buttonNameText === "Submit & Create Portal Task" || buttonNameText === "Submit & Create Task") {
                                     setshowModalCreateTask(true)
-                                    setOpenModal(true)
+                                    setOpenModal(true);
                                     setTimeout(() => {
                                         if(openModal){
                                             setOpenUploadDocument(false); 
                                         }
-                                    }, 2000);                                      
+                                      
+                                    }, 4000);                                      
                                    
                                 }
                                 else {
@@ -614,7 +616,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
                             }
                             else {
-                                //toast.success("Faild Please Try Again");
+                                toast.error("Faild Please Try Again");
                             }
                         }
                         else {
