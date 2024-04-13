@@ -36,6 +36,10 @@ import SaveAsIcon from '@mui/icons-material/SaveAs';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import InsertPageBreakIcon from '@mui/icons-material/InsertPageBreak';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { red,yellow,green } from '@mui/material/colors';
 
 import {
     List,
@@ -1506,7 +1510,7 @@ function CreateNewModalTask({ ...props }) {
     // };
 
     ////////////////// Priority
-    let priorityarr = [{ id: 1, "name": "High" }, { id: 2, "name": "Normal" }, { id: 3, "name": "Low" }];
+    let priorityarr = [{ id: 1, "name": "High", icon: <PriorityHighIcon className='font-20' sx={{ color: red[900] }} /> }, { id: 2, "name": "Normal", icon: <ReportProblemIcon className='font-20' color="secondary" /> }, { id: 3, "name": "Low", icon: <ArrowDownwardIcon className='font-20' sx={{ color: green[500] }} /> }];
     let statusarr = [
         { id: 1, "name": "Not Started" },
         { id: 2, "name": "In Progress" },
@@ -3601,7 +3605,7 @@ function CreateNewModalTask({ ...props }) {
                                                         className='ps-2'
                                                     >
                                                         <ListItemIcon>
-                                                            <PanoramaFishEyeIcon fontSize="medium" />
+                                                            {item.icon}
                                                         </ListItemIcon>
 
                                                         {item.name}</MenuItem>
