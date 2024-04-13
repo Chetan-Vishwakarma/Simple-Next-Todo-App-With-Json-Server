@@ -33,6 +33,9 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import GroupIcon from '@mui/icons-material/Group';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import InsertPageBreakIcon from '@mui/icons-material/InsertPageBreak';
 
 import {
     List,
@@ -42,7 +45,6 @@ import {
 } from "@mui/material";
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 
-
 import dayjs from 'dayjs';
 import DataGrid, {
     Column,
@@ -51,7 +53,6 @@ import DataGrid, {
     Paging,
     SearchPanel,
 } from 'devextreme-react/data-grid';
-
 
 // import LoginDetails from "../services/Utils";
 import CommanCLS from "../services/CommanService";
@@ -1918,7 +1919,7 @@ function CreateNewModalTask({ ...props }) {
                             let js = JSON.parse(data);
                             console.log("Json_CRM_Task_Save ", js);
                             if (js.Status === "success") {
-                               
+
                                 // setMessageId(js.Message);
                                 CreatePortalMessage(js.Message)
                                 // toast.success("Created Task");
@@ -2955,9 +2956,9 @@ function CreateNewModalTask({ ...props }) {
                                             className="custom-dropdown"
                                         >
                                             <label onClick={handleSelectFileClose} htmlFor="file-upload" className="d-block">
-                                                <MenuItem>Upload File(s)</MenuItem>
+                                                <MenuItem><FileUploadIcon className="font-20 me-1" /> Upload File(s)</MenuItem>
                                             </label>
-                                            <MenuItem onClick={handleDocumentClickOpen}>Select From DMS</MenuItem>
+                                            <MenuItem onClick={handleDocumentClickOpen}><InsertPageBreakIcon className="font-20 me-1" /> Select From DMS</MenuItem>
 
                                         </Menu>
 
@@ -3018,16 +3019,11 @@ function CreateNewModalTask({ ...props }) {
                                                                     onClose={handleCloseDoc}
                                                                     MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
                                                                 >
-                                                                    <MenuItem onClick={() => DeleteFile(file)}>Delete</MenuItem>
+                                                                    <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Delete</MenuItem>
                                                                     {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
-                                                                        <MenuItem onClick={(e) => ConvertToPdf_Json(file)}>Convert To Pdf</MenuItem>
+                                                                        <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
                                                                     )}
-
-
                                                                 </Menu>
-
-
-
 
                                                             </Box>
                                                         </Box>
@@ -3785,16 +3781,18 @@ function CreateNewModalTask({ ...props }) {
 
                         {/* file upload end */}
 
-                        <Button
-                            variant="contained"
-                            onClick={AddDocuments}
-                            className="btn-blue-2 mt-3"
-                        >
-                            {'Add Document'}
-                        </Button>
-
                     </DialogContentText>
                 </DialogContent>
+
+                <DialogActions className="p-4 pt-3">
+                    <Button
+                        variant="contained"
+                        onClick={AddDocuments}
+                        className="btn-blue-2"
+                    >
+                        {'Add Document'}
+                    </Button>
+                </DialogActions>
             </Dialog>
             {/* end */}
 
