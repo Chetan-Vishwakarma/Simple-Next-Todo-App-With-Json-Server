@@ -18,9 +18,9 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const UserDetailContext = createContext();
 // const UserDetailContext = createContext();
 let folderData=[];
-const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse,setDataFromChild}) => {
+const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse,setDataFromChild,defaultUser,setDefaultUser,defaultClient,setDefaultClient}) => {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
-  const [defaultClient, setDefaultClient] = useState([]);
+  // const [defaultClient, setDefaultClient] = useState([]);
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
   const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
@@ -30,7 +30,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
   const [bussiness, setBussiness] = useState([]);
   const [sources, setSources] = useState([]);
   const [mangers, setMangers] = useState([]);
-  const [defaultUser, setDefaultUser] = useState(null);
+  //const [defaultUser, setDefaultUser] = useState(null);
   const [defaultStatus, setDefaultStatus] = useState(null);
   const [defaultSources, setDefaultSources] = useState(null);
   const [defaultFolder, setDefaultFolder] = useState(null);
