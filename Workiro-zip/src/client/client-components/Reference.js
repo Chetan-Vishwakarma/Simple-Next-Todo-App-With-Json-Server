@@ -27,6 +27,10 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
   const [selectedFolderID, setSelectedFolderID] = useState(null);
   const [dataFromChild, setDataFromChild] = useState([]);
   const [dataCompanyHouse, setDataCompanyHouse] = useState([]);
+
+  const [defaultUser, setDefaultUser] = useState(null);
+
+  const [defaultClient, setDefaultClient] = useState([]);
   // const [activeStep, setActiveStep] = React.useState(0);
   const [contactData, setContactData] = useState("");
   const handleClickOpen5 = () => {
@@ -103,6 +107,7 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
   console.log("userDetailuserDetail", userDetail);
   const [originatorNo, setoriginatorNo] = useState("");
   const [companyDetails, setCompanyDetails] = useState([]);
+  const [activeStep, setActiveStep] = React.useState(0);
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
   let Cls = new CommanCLS(baseUrl, agrno, Email, password);
@@ -198,7 +203,7 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
 
     Json_SetClientAddress(obj);
   };
-  const [activeStep, setActiveStep] = React.useState(0);
+
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     if(localStorage.getItem("ClientName")){
@@ -398,8 +403,13 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
   const handleReset = () => {
+     setTimeout(() => {
+      setDefaultUser(null);
+      setDefaultClient(null);
+     },1000);
+    console.log(defaultUser,"defaultUserdefaultUser")
     setActiveStep(0);
-   
+    setUserDetail({});
   };
 
   // Stepper form
@@ -417,9 +427,13 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
               // setDataCompanyHouse={setDataCompanyHouse}
               setUserDetail={setUserDetail}
               //
+              defaultClient={defaultClient}
+              setDefaultClient={setDefaultClient}
               setDataCompanyHouse={setDataCompanyHouse}
               setSelectedFolderID={setSelectedFolderID}
               //
+              defaultUser={defaultUser}
+              setDefaultUser={setDefaultUser}
             ></AddClientdetails>
           }
         </Box>
