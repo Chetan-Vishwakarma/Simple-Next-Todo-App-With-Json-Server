@@ -358,8 +358,10 @@ export default function SidebarNav() {
       } else {
         itm.active = false;
       }
-    })
-
+    });
+    if(window.location.pathname==="/dashboard/SearchResult" && tabs.every(itm=>itm.tabName!=="Search Result")){
+      setTabs([...tabs, { tabLink: `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${localStorage.getItem("FolderId")}`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
+    } // when we load page on search result tab this functionality will work but it is only temp.
   }, []);
 
   const handleGlobalSearch = (val) => {
