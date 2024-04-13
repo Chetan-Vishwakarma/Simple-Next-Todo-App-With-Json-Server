@@ -319,6 +319,7 @@ export default function DocumentList({ clientId }) {
                     let docKeys = Object.keys(globalSearchDocs[0]);
                     // console.log("documentKeys",docKeys);
                     globalSearchDocs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
+                    globalSearchDocs.map((itm) => itm["Received Date"] = formatDate(itm["Received Date"]));
                     setDocumentKeys(docKeys);
                     setDocuments(globalSearchDocs);
                     // handleDocumentsFilter(globalSearchDocs);
@@ -344,6 +345,7 @@ export default function DocumentList({ clientId }) {
                                     let docKeys = Object.keys(docs[0]);
                                     setDocumentKeys(docKeys);
                                     docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
+                                    docs.map((itm) => itm["Received Date"] = formatDate(itm["Received Date"]));
                                     setDocuments(docs);
                                     if(docs[0].Message){   // for data loading issue (api response issue)
                                         Json_ExplorerSearchDoc();
@@ -1012,9 +1014,9 @@ export default function DocumentList({ clientId }) {
                         dataSource={dataNotFoundBoolean ? [] : advFilteredResult.length > 0 ? advFilteredResult : documents}
                         columnAutoWidth={true}
                         showBorders={true}>
-                        <Column dataField="Description" dataType="string" caption="Discount" />
+                        <Column dataField="Description" dataType="string" caption="Document Name" />
                         <Column dataField="Section" dataType="string" caption="Section" />
-                        <Column dataField="SubSection" dataType="string" caption="Sub" />
+                        <Column dataField="SubSection" dataType="string" caption="Sub Section" />
                         <Column dataField="Item Date" dataType="date" caption="Doc. Date" />
                         <Column dataField="Received Date" dataType="date" caption="Received Date" />
                         <Column dataField="Category" dataType="string" caption="Category" />
