@@ -485,7 +485,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
             let o = {};
             o.ProjectId = secid;
             Cls.Json_GetSections(o, function (sts, data) {
-                if (sts) {
+                if (sts && data) {
                     let js = JSON.parse(data);
 
 
@@ -571,7 +571,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
             o.ProjectId = fid;
             o.SectionId = "-1";
             Cls.Json_GetForwardUserList(o, function (sts, data) {
-                if (sts) {
+                if (sts && data) {
                     let js = JSON.parse(data);
                     let dt = js.Table;
                     if (dt.length > 0) {
