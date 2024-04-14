@@ -1377,13 +1377,22 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     // 
 
-    const [anchorElAttached, setAnchorElAttached] = React.useState(null);
-    const openAttached = Boolean(anchorElAttached);
-    const AttachedhandleClick = (event) => {
-        setAnchorElAttached(event.currentTarget);
+    // const [anchorElAttached, setAnchorElAttached] = React.useState(null);
+    // const openAttached = Boolean(anchorElAttached);
+    // const AttachedhandleClick = (event) => {
+    //     setAnchorElAttached(event.currentTarget);
+    // };
+    // const AttachedhandleClose = () => {
+    //     setAnchorElAttached(null);
+    // };
+
+    const [AttachmentRef, setAttachmentRef] = React.useState(null);
+    //   const open = Boolean(anchorEl);
+    const handleAttachmentClick = (event) => {
+        setAttachmentRef(event.currentTarget);
     };
-    const AttachedhandleClose = () => {
-        setAnchorElAttached(null);
+    const handleAttachmentClose = () => {
+        setAttachmentRef(null);
     };
 
 
@@ -2429,28 +2438,28 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
 
-                                        <div className="relative">
+                                        <div>
                                             <Button
                                                 id="basic-button"
-                                                aria-controls={openAttached ? 'basic-menu' : undefined}
+                                                aria-controls={Boolean(AttachmentRef) ? 'basic-menu' : undefined}
                                                 aria-haspopup="true"
-                                                aria-expanded={openAttached ? 'true' : undefined}
-                                                onClick={AttachedhandleClick}
+                                                aria-expanded={Boolean(AttachmentRef) ? 'true' : undefined}
+                                                onClick={handleAttachmentClick}
                                             >
                                                 Dashboard
                                             </Button>
                                             <Menu
                                                 id="basic-menu"
-                                                anchorElAttached={anchorElAttached}
-                                                open={openAttached}
-                                                onClose={AttachedhandleClose}
+                                                anchorEl={AttachmentRef}
+                                                open={Boolean(AttachmentRef)}
+                                                onClose={handleAttachmentClose}
                                                 MenuListProps={{
                                                     'aria-labelledby': 'basic-button',
                                                 }}
                                             >
-                                                <MenuItem onClick={AttachedhandleClose}>Profile</MenuItem>
-                                                <MenuItem onClick={AttachedhandleClose}>My account</MenuItem>
-                                                <MenuItem onClick={AttachedhandleClose}>Logout dfadf</MenuItem>
+                                                <MenuItem onClick={handleAttachmentClose}>Profile</MenuItem>
+                                                <MenuItem onClick={handleAttachmentClose}>My account</MenuItem>
+                                                <MenuItem onClick={handleAttachmentClose}>Logout</MenuItem>
                                             </Menu>
                                         </div>
 
