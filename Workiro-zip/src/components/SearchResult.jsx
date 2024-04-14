@@ -206,31 +206,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                         let json = JSON.parse(data);
                         console.log("Json_CRM_GetOutlookTask111", json);
                         let result = json.Table.filter((el) => (el.Source === "CRM" || el.Source === "Portal") && el.Subject.toLowerCase().includes(target.toLowerCase()));
-                        // const formattedTasks = result.map((task) => {
-                        //     let timestamp;
-                        //     if (task.EndDateTime) {
-                        //         timestamp = parseInt(task.EndDateTime.slice(6, -2));
-                        //     }
-
-                        //     const date = new Date(timestamp);
-
-                        //     return { ...task, EndDateTime: date };
-                        // });
-
-                        // let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
-
-                        // let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
-                        //     let timestamp;
-                        //     if (task.CreationDate) {
-                        //         timestamp = parseInt(task.CreationDate.slice(6, -2));
-                        //     }
-
-                        //     const date = new Date(timestamp);
-
-                        //     return { ...task, CreationDate: date };
-                        // }).sort((a, b) => b.CreationDate - a.CreationDate);
-
-                        // let fltTasks = hasCreationDate.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
                         setFilteredTasks(result);
                     }
                 }
