@@ -2386,13 +2386,8 @@ function CreateNewModalTask({ ...props }) {
                         </ListItemIcon>
                         Portal Task </MenuItem>
 
-<<<<<<< HEAD
-                        <MenuItem onClick={() => {
-                        handleClickOpen("DMS")
-=======
                     {/* <MenuItem onClick={() => {
                         handleClickOpen("Portal")
->>>>>>> 851fd983fa16c5954c5c5b252e06845aae10b102
                         handleClose4()
                     }
                     }><ListItemIcon>
