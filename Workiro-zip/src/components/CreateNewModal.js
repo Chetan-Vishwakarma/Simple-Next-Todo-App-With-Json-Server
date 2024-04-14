@@ -706,7 +706,7 @@ function CreateNewModalTask({ ...props }) {
         // if(passButtonHide){
         //     setPassButtonHide(passButtonHide)
         // }
-
+       console.log(txtTaskType,"tasktypeee");
         if (createNewFileObj) {
             console.log("createNewFileObj111122222", createNewFileObj)
             setSelectedFiles(createNewFileObj);
@@ -738,6 +738,7 @@ function CreateNewModalTask({ ...props }) {
             setTxtSectionId(txtSectionData.SecID);
         }
         if (TaskType) {
+            console.log(TaskType,"dmstask");
             if (TaskType === "CRM") {
                 setIsVisibleByTypeCRM(false);
                 settxtTaskType("CRM")
@@ -2386,7 +2387,7 @@ function CreateNewModalTask({ ...props }) {
                         Portal Task </MenuItem>
 
                         <MenuItem onClick={() => {
-                        handleClickOpen("Portal")
+                        handleClickOpen("DMS")
                         handleClose4()
                     }
                     }><ListItemIcon>
