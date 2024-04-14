@@ -1084,7 +1084,7 @@ console.log("formattedDate",formattedDate)
     Json_CompanyHouseDetails(obj,callback) {
         super.CreateNewServiceParamObject("Json_CompanyHouseDetails",obj,false);
         super.CallNewService("Json_CompanyHouseDetails", function (status, Data) {
-            console.log("errordataget111111111111111111111",status,Data);
+            // console.log("errordataget111111111111111111111",status,Data);
             if (status) {
                 if (Data !=="") {
                     return callback(true, Data);
@@ -1264,5 +1264,21 @@ console.log("formattedDate",formattedDate)
             }
         })
     }
+
+    Json_AddToWork(obj, callBack) {
+        //let o = { ProjectId: FolderId,SectionId: };
+        super.CreateNewServiceParamObject("Json_AddToWork", obj, true);
+        super.CallNewService("Json_AddToWork", function (status, Data) {
+          if (status) {
+            if (Data != "") {
+              return callBack(true, Data);
+            } else {
+              return callBack(false, []);
+            }
+          } else {
+            // console.log("status", status);
+          }
+        });
+      }
 
 }
