@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 
 const counterSlices = createSlice({
     name: "counter",
@@ -7,10 +6,10 @@ const counterSlices = createSlice({
         userDetail: null,
         dataCompanyHouse: null,
         selectedFolderID: null,
-        myTasks:[]   
+        myTasks:[]
     },
     reducers: {
-        //sonam state
+        //sonam state start
         setUserDetail: (state, action) => {
             state.userDetail = action.payload;
           },
@@ -19,10 +18,11 @@ const counterSlices = createSlice({
           },
           setSelectedFolderID: (state, action) => {
             state.selectedFolderID = action.payload;
-          },
+          },//sonam state end
+          //chetan state start
           setMyTasks: (state, action) => {
             state.myTasks = action.payload;
-          }
+          }, // chetan state end
     }
 });
 

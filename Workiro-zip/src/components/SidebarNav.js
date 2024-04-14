@@ -217,6 +217,7 @@ export default function SidebarNav() {
   }
 
   const Json_AdvanceSearchDoc = (f_id = folderId) => {
+    console.log("Json_AdvanceSearchDoc forDocuments", forDocuments);
     if (forDocuments !== "") {
       let obj = {
         ClientId: "",
@@ -242,13 +243,11 @@ export default function SidebarNav() {
               console.log("Json_AdvanceSearchDoc", json.Table6);
               if (json.Table6) {
                 let fltDouble = [];
-                let allDescriptions = json.Table6.map((itm) => itm.Description).filter(item => {
+                json.Table6.map((itm) => itm.Description).filter(item => {
                   if (!fltDouble.includes(item)) {
                     fltDouble.push(item);
                   }
                 });
-                console.log("Json_AdvanceSearchDoc", allDescriptions);
-                // options = fltDouble;
                 setDocumentsDescription(fltDouble);
                 setMyDocuments(json.Table6);
               }
@@ -359,8 +358,18 @@ export default function SidebarNav() {
       } else {
         itm.active = false;
       }
-    })
-
+    });
+    if(window.location.pathname==="/dashboard/SearchResult" && tabs.every(itm=>itm.tabName!=="Search Result")){
+      navigate("/dashboard/TodoList");
+      tabs.length > 0 && tabs.map(itm => {
+        if (itm.tabLink==="/dashboard/TodoList") {
+          itm.active = true;
+        } else {
+          itm.active = false;
+        }
+      });
+      // setTabs([...tabs, { tabLink: `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${localStorage.getItem("FolderId")}`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
+    } // when we load page on search result tab this functionality will work but it is only temp.
   }, []);
 
   const handleGlobalSearch = (val) => {

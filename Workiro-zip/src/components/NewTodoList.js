@@ -18,6 +18,7 @@ import DocumentsVewModal from '../client/utils/DocumentsVewModal';
 import { toast } from 'react-toastify';
 import DocDetails from './DocDetails';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
+import CustomLoader from './CustomLoader';
 // import DocumentRenameModal from './DocumentRenameModal';
 
 
@@ -798,7 +799,7 @@ function NewTodoList() {
                             {/* col end */}
 
                         </>
-                    }) : ""}
+                    }) : <CustomLoader/>}
                 </Box>
 
                 <Box id="section2" className='py-4 text-center'>
@@ -914,7 +915,7 @@ function NewTodoList() {
                             {/* col end */}
 
                         </>
-                    }) : ""}
+                    }) : <CustomLoader/>}
                 </Box>
                 <Box id="section3" className='py-4 text-center'>
                     <Button variant="outlined" onClick={handleLoadMoreRecentTask} className='btn-outlin-2'>View More</Button>
@@ -1119,7 +1120,7 @@ function NewTodoList() {
                                 </Box>
 
                             </>
-                        }) : ""}
+                        }) : <CustomLoader/>}
 
                     </Box>
                 </div>

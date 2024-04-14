@@ -8,8 +8,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import DocumentList from '../client/client-components/DocumentList';
 import DataNotFound from './DataNotFound';
 import CommanCLS from '../services/CommanService';
-import { useDispatch } from 'react-redux';
-import { setMyTasks } from '../redux/reducers/counterSlice';
 import { toast } from 'react-toastify';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import moment from 'moment';
@@ -30,7 +28,6 @@ const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 const smsUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
 function SearchResult({ myTotalTasks, myDocuments }) {
-    const dispatch = useDispatch();
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
     let ClsSms = new CommanCLS(smsUrl, agrno, Email, password);
     const navigate = useNavigate();
@@ -179,12 +176,12 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         let fltTasks = myTotalTasks.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
         setFilteredTasks(fltTasks);
         let fltDocuments = myDocuments.filter(itm => itm.Description.toLowerCase().includes(target.toLowerCase()));
-        fltDocuments.map(itm => {
-            itm["Item Date"] = formatDate(itm["Item Date"])
-        })
+        // fltDocuments.map(itm => {
+        //     itm["Item Date"] = formatDate(itm["Item Date"])
+        // })
         setFilteredDocuments(fltDocuments);
         // console.log("fkjhdkjs",fltDocuments);
-    }, [target, folder]);
+    }, [target, folder, myDocuments]);
 
     // useEffect(()=>{
     //     setTarget(localStorage.getItem("globalSearchKey"));
@@ -293,11 +290,11 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                     />
                                     <Box className="upload-content pe-3">
                                         <Typography variant="h4" >
-                                            {item.Description ? item.Description : ""}
+                                            {item.Description ? item.Description : "No Name"}
                                         </Typography>
                                         <Typography variant="body1">
                                             {/* Size:  <span className='sembold'>{item.FileSize? item.FileSize: ""}</span> |  */}
-                                            Date <span className='sembold'>{item["Item Date"] !== "NaN/NaN/NaN" ? item["Item Date"] : "01/01/2000"}</span>
+                                            Date <span className='sembold'>{item["Item Date"] !== "NaN/NaN/NaN" ? formatDate(item["Item Date"]) : "01/01/2000"}</span>
                                             | <span className='sembold'>{item.Client}</span>
                                         </Typography>
                                     </Box>
