@@ -2416,18 +2416,56 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     <Box className='position-relative'>
                                         {selectedTask.Source === "CRM" && (<>
                                             <Box className='upload-chat-file'>
-                                                <input
+                                                {/* <input
                                                     type="file"
                                                     id={`file-upload ${selectedTask.ID}`}
                                                     multiple
                                                     onChange={handleFileSelect}
                                                     className="file-input"
                                                 />
-                                                <label for={`file-upload ${selectedTask.ID}`} className="pointer"><AttachFileIcon /></label>
+                                                <label for={`file-upload ${selectedTask.ID}`} className="pointer"><AttachFileIcon /></label> */}
+
+
+                                                <div>
+                                                    <Button
+                                                        id="basic-button"
+                                                        aria-controls={Boolean(AttachmentRef) ? 'basic-menu' : undefined}
+                                                        aria-haspopup="true"
+                                                        aria-expanded={Boolean(AttachmentRef) ? 'true' : undefined}
+                                                        onClick={handleAttachmentClick}
+                                                        className="p-0 min-width-auto"
+                                                    >
+                                                        <AttachFileIcon />
+                                                    </Button>
+                                                    <Menu
+                                                        id="basic-menu"
+                                                        anchorEl={AttachmentRef}
+                                                        open={Boolean(AttachmentRef)}
+                                                        onClose={handleAttachmentClose}
+                                                        MenuListProps={{
+                                                            'aria-labelledby': 'basic-button',
+                                                        }}
+                                                    >
+                                                        <MenuItem onClick={handleAttachmentClose}>
+                                                            <input
+                                                                type="file"
+                                                                id={`file-upload ${selectedTask.ID}`}
+                                                                multiple
+                                                                onChange={handleFileSelect}
+                                                                className="file-input"
+                                                            />
+                                                            <label for={`file-upload ${selectedTask.ID}`} className="pointer">
+                                                                Upload File(s)
+                                                            </label>
+                                                        </MenuItem>
+                                                        
+                                                        <MenuItem onClick={handleAttachmentClose}>Select From DMS</MenuItem>
+                                                    </Menu>
+                                                </div>
+
 
                                             </Box>
                                         </>)}
-
 
                                         <textarea
                                             className="textarea"
@@ -2435,38 +2473,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                             value={notesMessage}
                                             onChange={handleChangeNotes}
                                         ></textarea>
-
-
-
-                                        <div>
-                                            <Button
-                                                id="basic-button"
-                                                aria-controls={Boolean(AttachmentRef) ? 'basic-menu' : undefined}
-                                                aria-haspopup="true"
-                                                aria-expanded={Boolean(AttachmentRef) ? 'true' : undefined}
-                                                onClick={handleAttachmentClick}
-                                            >
-                                                Dashboard
-                                            </Button>
-                                            <Menu
-                                                id="basic-menu"
-                                                anchorEl={AttachmentRef}
-                                                open={Boolean(AttachmentRef)}
-                                                onClose={handleAttachmentClose}
-                                                MenuListProps={{
-                                                    'aria-labelledby': 'basic-button',
-                                                }}
-                                            >
-                                                <MenuItem onClick={handleAttachmentClose}>Profile</MenuItem>
-                                                <MenuItem onClick={handleAttachmentClose}>My account</MenuItem>
-                                                <MenuItem onClick={handleAttachmentClose}>Logout</MenuItem>
-                                            </Menu>
-                                        </div>
-
-
-
                                     </Box>
-
                                 </Box>
 
                                 {selectedTask.Source === "Portal" ? (<Box className="d-flex d-flex align-items-center ms-3">
