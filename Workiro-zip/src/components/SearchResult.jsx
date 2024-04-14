@@ -205,39 +205,33 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                     if (data) {
                         let json = JSON.parse(data);
                         console.log("Json_CRM_GetOutlookTask111", json);
-                        let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
-                        const formattedTasks = result.map((task) => {
-                            let timestamp;
-                            if (task.EndDateTime) {
-                                timestamp = parseInt(task.EndDateTime.slice(6, -2));
-                            }
+                        let result = json.Table.filter((el) => (el.Source === "CRM" || el.Source === "Portal") && el.Subject.toLowerCase().includes(target.toLowerCase()));
+                        // const formattedTasks = result.map((task) => {
+                        //     let timestamp;
+                        //     if (task.EndDateTime) {
+                        //         timestamp = parseInt(task.EndDateTime.slice(6, -2));
+                        //     }
 
-                            const date = new Date(timestamp);
+                        //     const date = new Date(timestamp);
 
-                            return { ...task, EndDateTime: date };
-                        });
+                        //     return { ...task, EndDateTime: date };
+                        // });
 
-                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
+                        // let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
 
-                        let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
-                            let timestamp;
-                            if (task.CreationDate) {
-                                timestamp = parseInt(task.CreationDate.slice(6, -2));
-                            }
+                        // let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
+                        //     let timestamp;
+                        //     if (task.CreationDate) {
+                        //         timestamp = parseInt(task.CreationDate.slice(6, -2));
+                        //     }
 
-                            const date = new Date(timestamp);
+                        //     const date = new Date(timestamp);
 
-                            return { ...task, CreationDate: date };
-                        }).sort((a, b) => b.CreationDate - a.CreationDate);
+                        //     return { ...task, CreationDate: date };
+                        // }).sort((a, b) => b.CreationDate - a.CreationDate);
 
-                        // dispatch(setMyTasks([...hasCreationDate]));
-                        let fltTasks = hasCreationDate.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
-                        setFilteredTasks(fltTasks);
-
-                        // setActualData([...hasCreationDate]);
-                        // setAllTask([...hasCreationDate]);
-
-                        // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
+                        // let fltTasks = hasCreationDate.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
+                        setFilteredTasks(result);
                     }
                 }
             });
