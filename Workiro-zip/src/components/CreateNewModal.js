@@ -2386,14 +2386,19 @@ function CreateNewModalTask({ ...props }) {
                         </ListItemIcon>
                         Portal Task </MenuItem>
 
+<<<<<<< HEAD
                         <MenuItem onClick={() => {
                         handleClickOpen("DMS")
+=======
+                    {/* <MenuItem onClick={() => {
+                        handleClickOpen("Portal")
+>>>>>>> 851fd983fa16c5954c5c5b252e06845aae10b102
                         handleClose4()
                     }
                     }><ListItemIcon>
                             <LanguageIcon className="font-20" />
                         </ListItemIcon>
-                        DMS Task </MenuItem>
+                        DMS Task </MenuItem> */}
 
                     <MenuItem onClick={() => {
                         handleClickReferance()
@@ -2985,14 +2990,14 @@ function CreateNewModalTask({ ...props }) {
                                 </Box>
 
 
-                                {/* DMS Start */}
+                                {/* DMS Start 
                                 <Box className="file-uploads">
-                                    {/* <input
+                                    <input
                                         type="file"
                                         id="file-upload"
                                         multiple
                                         onChange={handleFileSelect}
-                                    /> */}
+                                    />
                                     <label className="file-uploads-label">
                                         <Box className="d-flex align-items-center">
                                             <span className="material-symbols-outlined icon">
@@ -3040,7 +3045,7 @@ function CreateNewModalTask({ ...props }) {
 
                                     </label>
                                 </Box>
-                                {/* DMS End */}
+                                 DMS End */}
 
 
 
