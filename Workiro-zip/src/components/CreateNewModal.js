@@ -103,7 +103,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-20' />, <PublishedWithChangesIcon color='primary' className='font-20' />, <HourglassBottomIcon color='primary' className='font-20' />, <CheckCircleOutlineIcon color='success' className='font-20' />];
 
 const userId = localStorage.getItem("UserId");
-
+let addItemdata = [];
 function CreateNewModalTask({ ...props }) {
     const dispatch = useDispatch();
     const {
@@ -156,6 +156,9 @@ function CreateNewModalTask({ ...props }) {
     //const [anchorel, setAnchorel] = React.useState(null);
 
     const [ownerID, setOwnerID] = React.useState("");
+    const [ownerName, setOwnerName] = React.useState("");
+    const [ownerMessage, setOwnerMessage] = React.useState("");
+    const [ownerTaskID, setOwnerTaskID] = React.useState([]);
     //const [messageId, setMessageId] = React.useState("");
 
     const [txtdescription, setTxtDescriptin] = React.useState("");
@@ -437,8 +440,9 @@ function CreateNewModalTask({ ...props }) {
                         if (result.length > 0) {
                             result.map((el) => {
                                 if (el.ID === parseInt(localStorage.getItem("UserId"))) {
-                                    // console.log("Json_GetForwardUserList11", addUser);
+                                    console.log("Json_GetForwardUserList11", el);
                                     setOwnerID(el.ID);
+                                    setOwnerName(el.ForwardTo);
                                     setOwnerRighClick(el);
                                     setAddUser((pre) => [...pre, el])
                                 }
@@ -1255,7 +1259,14 @@ function CreateNewModalTask({ ...props }) {
                     console.log("save task rerurn value", js);
 
                     if (js.Status === "success") {
-
+                        console.log(selectedRows,"Json_CRM_Task_Save ", js.Message);
+                        setOwnerMessage(js.Message);
+                        console.log(addItemdata,"Json_CRM_Task_");
+                                                       if(selectedRows && selectedRows.length > 0) {
+                                                        selectedRows.forEach((item)=>{
+                                                             addToWorkTable(item.ItemId,js.Message);
+                                                        });
+                                                       }
                         let strGuid = uuidv4().replace(/-/g, '');
                         localStorage.setItem("GUID", strGuid)
 
@@ -1526,8 +1537,31 @@ function CreateNewModalTask({ ...props }) {
         setSelectedRows(selectedItems.selectedRowsData);
         // You can perform further actions with the selectedRows array
         console.log("selectedItems11", selectedItems); // Log the selected rows data
+       // Create a Set to store unique data
+    // const uniqueData = new Set(addItemdata);
+    // setOwnerTaskID(selectedItems.selectedRowsData[0]);
+    // // Loop through each selected row data and add it to the uniqueData Set
+    // selectedItems.selectedRowsData.forEach(rowData => {
+    //     uniqueData.add(rowData);
+    // });
 
+    // // Convert the uniqueData Set back to an array and set it to addItemdata
+    // addItemdata = [...uniqueData];
+    console.log(addItemdata,"addItemdata");
     };
+    function addToWorkTable(Itid,taskID) {
+        console.log(taskID,"addToWorkTable", Itid);
+        let obj = {  agrno: agrno, Email: Email, password: password,ItemId: Itid, comment: `${ownerName} has invoked task ID : ${taskID}`};
+        console.log("addToWorkTable111", obj);
+        clsSms.Json_AddToWork(obj, function (status, data) {
+          if (status) {
+            if (data) {
+              //let json = JSON.parse(data);
+              console.log("getitemid", data);
+            }
+          }
+        });
+      }
     const Json_GetClientCardDetails = (cid) => {
         try {
             if (txtFolderId && cid) {
@@ -1921,15 +1955,15 @@ function CreateNewModalTask({ ...props }) {
                     "Notes": "",
                     "TaskSource": txtTaskType
                 }
-                console.log("final save data obj", ooo);
+                console.log(txtSectionId.toString(),"final save data obj", ooo);
                 clsSms.Json_CRM_Task_Save(ooo, function (sts, data) {
                     if (sts) {
                         if (data) {
                             setLoading(false);
                             let js = JSON.parse(data);
-                            console.log("Json_CRM_Task_Save ", js);
+                            console.log(addItemdata,"Json_CRM_Task_Save ", js);
                             if (js.Status === "success") {
-
+                              
                                 // setMessageId(js.Message);
                                 CreatePortalMessage(js.Message)
                                 // toast.success("Created Task");
