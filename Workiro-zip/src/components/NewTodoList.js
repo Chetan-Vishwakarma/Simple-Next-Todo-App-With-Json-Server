@@ -57,6 +57,7 @@ function NewTodoList() {
 
 
     const [loadMore, setLoadMore] = useState(9);
+    const [test, setTest] = useState({});
     const [openRenameModal, setOpenRenameModal] = useState(false);
     // const handleOpen = () => setOpenRenameModal(true);
 
@@ -484,8 +485,6 @@ function NewTodoList() {
         // setsendUrldata(url);
         //window.open(url);
         setIsLoadingDoc(true)
-
-
     };
 
     const [editingIndex, setEditingIndex] = useState(null);
@@ -497,7 +496,7 @@ function NewTodoList() {
         setUpdatedSubject(recentDocument[index].Subject);
     };
 
-    const Json_RenameDocument = (doc, newDesc) => {
+    const Json_RenameDocument = (doc, newDesc, index) => {
         let obj = {
             agrno: agrno,
             Email: Email,
@@ -512,9 +511,10 @@ function NewTodoList() {
                     let json = JSON.parse(data);
                     console.log("Json_RenameDocument", json);
                     if(json.Status==="Success"){
-                        Json_getRecentDocumentList();
+                        // Json_getRecentDocumentList();
                         toast.success(json.Message);
                         setEditingIndex(null);
+                        setTest({...test, [index]: newDesc});
                     }else{
                         toast.error("Unable to rename this document");
                     }
@@ -523,9 +523,9 @@ function NewTodoList() {
         });
     }
 
-    const handleSave = (newDesc, oldDesc, doc) => {
+    const handleSave = (newDesc, oldDesc, doc, index) => {
         if(oldDesc===newDesc) return;
-        Json_RenameDocument(doc, newDesc);
+        Json_RenameDocument(doc, newDesc, index);
     };
 
     const handleChange = (event) => {
@@ -1043,12 +1043,12 @@ function NewTodoList() {
                                             value={updatedSubject}
                                             onChange={handleChange}
                                             autoFocus
-                                            onBlur={(e)=>handleSave(e.target.value, item.Subject, item)}
+                                            onBlur={(e)=>handleSave(e.target.value, item.Subject, item, index)}
                                             className='edit-input'
                                         />
                                     ) : (
                                         <Typography variant="h4">
-                                            {item.Subject}
+                                            { Object.keys(test).includes(String(index)) ? test[index] : item.Subject? item.Subject : ""}
                                         </Typography>
                                     )}
                                                     <Typography variant="body1">

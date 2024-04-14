@@ -45,7 +45,7 @@ export default function AssigneeUsers({ selectedTask, setAddUser, addUser, setOw
             o.ProjectId = txtFolderId;
             o.SectionId = "-1";
             cls.Json_GetForwardUserList(o, function (sts, data) {
-                if (sts) {
+                if (sts && data) {
                     let js = JSON.parse(data);
                     let dt = js.Table;
                     if (dt.length > 0) {

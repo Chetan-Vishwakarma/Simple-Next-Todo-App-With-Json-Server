@@ -19,11 +19,13 @@ import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutli
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import DocDetails from './DocDetails';
+import DocumentsVewModal from '../client/utils/DocumentsVewModal';
 
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
 const password = localStorage.getItem("Password");
 const userId = localStorage.getItem("UserId");
+const folderId = localStorage.getItem("FolderId");
 const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 const smsUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
@@ -40,7 +42,78 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState({});
     const [expanded, setExpanded] = React.useState('panel1');
 
+    const [selectedDocument, setSelectedDocument] = React.useState(null);
+    const [openPDFView, setOpenPDFView] = React.useState(false);
+    const [isLoadingDoc, setIsLoadingDoc] = useState(false);
+    const ViewerDocument = (e) => {
+        setAnchorElDocumentList({});
+        // console.log("document_object111", e);
+        setSelectedDocument(e);
+
+        setOpenPDFView(true);
+        var IsApproved = e["IsApproved"];
+        var PortalDocId = e["PortalDocId"];
+        let IsApp = "";
+        let PortalID = "";
+
+        if (IsApproved === "SIG" && PortalDocId !== "") {
+            IsApp = IsApproved;
+            PortalID = PortalDocId;
+        }
+
+        let url = `https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=${e["Registration No."]}&filetype=${e.type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
+        console.log(url, "geturldata");
+        // setsendUrldata(url);
+        //window.open(url);
+        setIsLoadingDoc(true)
+    };
+
+    const [editingIndex, setEditingIndex] = useState(null);
+    const [updatedSubject, setUpdatedSubject] = useState('');
+    const [test, setTest] = useState({});
+    
+    const handleEdit = (index) => {
+        console.log("Editing index:", index);
+        setEditingIndex(index);
+        setUpdatedSubject(filteredDocuments[index].Description);
+    };
+    const handleChange = (event) => {
+        setUpdatedSubject(event.target.value);
+    };
+    const Json_RenameDocument = (doc, newDesc, index) => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ItemId: doc["Registration No."] ? doc["Registration No."] : "",
+            Description: newDesc,
+            FolderId: folderId
+        };
+        ClsSms.Json_RenameDocument(obj, (sts, data) => {
+            if (sts) {
+                if (data) {
+                    let json = JSON.parse(data);
+                    console.log("Json_RenameDocument", json);
+                    if(json.Status==="Success"){
+                        // Json_getRecentDocumentList();
+                        toast.success(json.Message);
+                        setEditingIndex(null);
+                        setTest({...test, [index]:newDesc});
+                    }else{
+                        toast.error("Unable to rename this document");
+                    }
+                }
+            }
+        });
+    }
+
+    const handleSave = (newDesc, oldDesc, doc, index) => {
+        if(oldDesc===newDesc) return;
+        Json_RenameDocument(doc, newDesc, index);
+    };
+
     const handleClickDocumentList = (event, index) => {
+        event.stopPropagation();
         setAnchorElDocumentList(prevState => ({
             ...prevState,
             [index]: event.currentTarget
@@ -48,6 +121,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     };
 
     const handleCloseDocument = (event, index) => {
+        event.stopPropagation();
         setAnchorElDocumentList(prevState => ({
             ...prevState,
             [index]: null
@@ -175,7 +249,11 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     useEffect(() => {
         let fltTasks = myTotalTasks.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
         setFilteredTasks(fltTasks);
-        let fltDocuments = myDocuments.filter(itm => itm.Description.toLowerCase().includes(target.toLowerCase()));
+        let fltDocuments = myDocuments.filter(itm => {
+            if(itm.Description && target){
+                return itm.Description.toLowerCase().includes(target.toLowerCase());
+            }
+        });
         // fltDocuments.map(itm => {
         //     itm["Item Date"] = formatDate(itm["Item Date"])
         // })
@@ -207,6 +285,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     }
     return (
         <>
+        <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
             <DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList} />
             <Box className='mb-5'>
                 <h3 className='font-20 mt-1'><SearchIcon /> We found the following Tasks matching <span className='text-blue bold'>"{target}"</span></h3>
@@ -280,7 +359,11 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                 <Grid className='mt-0' container spacing={2}>
                     {filteredDocuments.length > 0 ? filteredDocuments.slice(0, 9).map((item, index) => {
                         return <Grid key={index} className='pt-0' item xs={12} lg={4} md={4} sm={12}><Box className="file-uploads">
-                            <label className="file-uploads-label file-uploads-document">
+                            <label className="file-uploads-label file-uploads-document" onClick={(event)=>{
+                                    event.stopPropagation();
+                                    event.preventDefault();
+                                    handleCloseDocument(event, index);
+                                }} onDoubleClick={(e) => ViewerDocument(item)}>
                                 <Box className="d-flex align-items-center">
                                     <DescriptionIcon
                                         sx={{
@@ -289,9 +372,21 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                         className='me-2 ms-0'
                                     />
                                     <Box className="upload-content pe-3">
+                                    {editingIndex == index ? (
+                                        <input
+                                            type="text"
+                                            defaultValue={item.Description}
+                                            value={updatedSubject}
+                                            onChange={handleChange}
+                                            autoFocus
+                                            onBlur={(e)=>handleSave(e.target.value, item.Description, item, index)}
+                                            className='edit-input'
+                                        />
+                                    ) : (
                                         <Typography variant="h4" >
-                                            {item.Description ? item.Description : "No Name"}
+                                            { Object.keys(test).includes(String(index)) ? test[index] : item.Description ? item.Description : "No Name" }
                                         </Typography>
+                                    )}
                                         <Typography variant="body1">
                                             {/* Size:  <span className='sembold'>{item.FileSize? item.FileSize: ""}</span> |  */}
                                             Date <span className='sembold'>{item["Item Date"] !== "NaN/NaN/NaN" ? formatDate(item["Item Date"]) : "01/01/2000"}</span>
@@ -344,7 +439,10 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                             </ListItemIcon>
                                             Upload New Version</MenuItem>
                                         <MenuItem
-                                            onClick={(event) => handleCloseDocument(event, index)}
+                                            onClick={(event) => {
+                                                handleEdit(index);
+                                                handleCloseDocument(event, index);
+                                            }}
                                         >
                                             <ListItemIcon>
                                                 <DriveFileRenameOutlineIcon fontSize="medium" />
