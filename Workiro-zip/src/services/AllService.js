@@ -13,7 +13,7 @@ export default class AllService extends AllServiceParamerter {
 
         super.Call(data, MethodName, function (returnValue) {           
             var str = JSON.parse(JSON.stringify(returnValue));			
-			// console.log("this1",MethodName, returnValue);			
+			console.log("this1111111111111111111111111",MethodName, returnValue);			
             if (str != "" && str.d != "0") {
                 return callBack(true, str.d);
             } else {

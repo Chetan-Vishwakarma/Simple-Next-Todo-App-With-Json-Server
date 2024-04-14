@@ -282,12 +282,17 @@ console.log(defaultStatus,"defaultStatus22222",singledata);
             setDataCompanyHouse(singledata);
             
           } else {
-            console.log("Errordata");
+            // console.log("Errordata");
+            toast.error("Unable to fetch Company Details. Failed to receive information from Companies House.");
           }
         }
+        else{
+          console.log("errordataget111111111111111111111",sts); 
+        }
       });
-    } catch (err) {
-      console.log("errordataget",err);
+    } catch (e) {
+      console.log("errordatagetsonam",e);
+      toast.error("Unable to fetch Company Details. Failed to receive information from Companies House.");
     }
   };
   const onChangeImportData = (e) => {
@@ -308,7 +313,7 @@ const handleOptionClick = (id) => {
     setOpen(false); 
   // Perform actions with the id
   let data = id.company_number;
-  Json_CompanyDetails(id.company_number);
+  Json_CompanyDetails(id.title);
   console.log(data, "onSelectDatacnnumbr");
 
 };

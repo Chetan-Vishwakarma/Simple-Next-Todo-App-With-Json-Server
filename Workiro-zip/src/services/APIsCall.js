@@ -20,6 +20,7 @@ export default class API {
                     callback(msg);
                 },
                 error: function (e) {
+                    callback(e);
                     ////////////////////alert(e.statusText + " failed");
                     console.log("Network Error !\n Please check your data connection ! Try again");
                 }
