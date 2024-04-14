@@ -25,6 +25,7 @@ const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
 const password = localStorage.getItem("Password");
 const userId = localStorage.getItem("UserId");
+const folderId = localStorage.getItem("FolderId");
 const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 const smsUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
@@ -65,6 +66,50 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         // setsendUrldata(url);
         //window.open(url);
         setIsLoadingDoc(true)
+    };
+
+    const [editingIndex, setEditingIndex] = useState(null);
+    const [updatedSubject, setUpdatedSubject] = useState('');
+    const [test, setTest] = useState({});
+    
+    const handleEdit = (index) => {
+        console.log("Editing index:", index);
+        setEditingIndex(index);
+        setUpdatedSubject(filteredDocuments[index].Description);
+    };
+    const handleChange = (event) => {
+        setUpdatedSubject(event.target.value);
+    };
+    const Json_RenameDocument = (doc, newDesc, index) => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ItemId: doc["Registration No."] ? doc["Registration No."] : "",
+            Description: newDesc,
+            FolderId: folderId
+        };
+        ClsSms.Json_RenameDocument(obj, (sts, data) => {
+            if (sts) {
+                if (data) {
+                    let json = JSON.parse(data);
+                    console.log("Json_RenameDocument", json);
+                    if(json.Status==="Success"){
+                        // Json_getRecentDocumentList();
+                        toast.success(json.Message);
+                        setEditingIndex(null);
+                        setTest({...test, [index]:newDesc});
+                    }else{
+                        toast.error("Unable to rename this document");
+                    }
+                }
+            }
+        });
+    }
+
+    const handleSave = (newDesc, oldDesc, doc, index) => {
+        if(oldDesc===newDesc) return;
+        Json_RenameDocument(doc, newDesc, index);
     };
 
     const handleClickDocumentList = (event, index) => {
@@ -314,7 +359,11 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                 <Grid className='mt-0' container spacing={2}>
                     {filteredDocuments.length > 0 ? filteredDocuments.slice(0, 9).map((item, index) => {
                         return <Grid key={index} className='pt-0' item xs={12} lg={4} md={4} sm={12}><Box className="file-uploads">
-                            <label className="file-uploads-label file-uploads-document" onDoubleClick={(e) => ViewerDocument(item)}>
+                            <label className="file-uploads-label file-uploads-document" onClick={(event)=>{
+                                    event.stopPropagation();
+                                    event.preventDefault();
+                                    handleCloseDocument(event, index);
+                                }} onDoubleClick={(e) => ViewerDocument(item)}>
                                 <Box className="d-flex align-items-center">
                                     <DescriptionIcon
                                         sx={{
@@ -323,9 +372,21 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                         className='me-2 ms-0'
                                     />
                                     <Box className="upload-content pe-3">
+                                    {editingIndex == index ? (
+                                        <input
+                                            type="text"
+                                            defaultValue={item.Description}
+                                            value={updatedSubject}
+                                            onChange={handleChange}
+                                            autoFocus
+                                            onBlur={(e)=>handleSave(e.target.value, item.Description, item, index)}
+                                            className='edit-input'
+                                        />
+                                    ) : (
                                         <Typography variant="h4" >
-                                            {item.Description ? item.Description : "No Name"}
+                                            { Object.keys(test).includes(String(index)) ? test[index] : item.Description ? item.Description : "No Name" }
                                         </Typography>
+                                    )}
                                         <Typography variant="body1">
                                             {/* Size:  <span className='sembold'>{item.FileSize? item.FileSize: ""}</span> |  */}
                                             Date <span className='sembold'>{item["Item Date"] !== "NaN/NaN/NaN" ? formatDate(item["Item Date"]) : "01/01/2000"}</span>
@@ -378,7 +439,10 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                             </ListItemIcon>
                                             Upload New Version</MenuItem>
                                         <MenuItem
-                                            onClick={(event) => handleCloseDocument(event, index)}
+                                            onClick={(event) => {
+                                                handleEdit(index);
+                                                handleCloseDocument(event, index);
+                                            }}
                                         >
                                             <ListItemIcon>
                                                 <DriveFileRenameOutlineIcon fontSize="medium" />
