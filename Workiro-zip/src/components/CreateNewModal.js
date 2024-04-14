@@ -2383,7 +2383,16 @@ function CreateNewModalTask({ ...props }) {
                     }><ListItemIcon>
                             <LanguageIcon className="font-20" />
                         </ListItemIcon>
-                        Portal Task</MenuItem>
+                        Portal Task </MenuItem>
+
+                        <MenuItem onClick={() => {
+                        handleClickOpen("Portal")
+                        handleClose4()
+                    }
+                    }><ListItemIcon>
+                            <LanguageIcon className="font-20" />
+                        </ListItemIcon>
+                        DMS Task </MenuItem>
 
                     <MenuItem onClick={() => {
                         handleClickReferance()
