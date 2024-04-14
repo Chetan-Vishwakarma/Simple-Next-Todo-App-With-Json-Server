@@ -1084,7 +1084,7 @@ console.log("formattedDate",formattedDate)
     Json_CompanyHouseDetails(obj,callback) {
         super.CreateNewServiceParamObject("Json_CompanyHouseDetails",obj,false);
         super.CallNewService("Json_CompanyHouseDetails", function (status, Data) {
-            console.log("errordataget111111111111111111111",status,Data);
+            // console.log("errordataget111111111111111111111",status,Data);
             if (status) {
                 if (Data !=="") {
                     return callback(true, Data);
