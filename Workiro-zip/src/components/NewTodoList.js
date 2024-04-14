@@ -484,8 +484,6 @@ function NewTodoList() {
         // setsendUrldata(url);
         //window.open(url);
         setIsLoadingDoc(true)
-
-
     };
 
     const [editingIndex, setEditingIndex] = useState(null);

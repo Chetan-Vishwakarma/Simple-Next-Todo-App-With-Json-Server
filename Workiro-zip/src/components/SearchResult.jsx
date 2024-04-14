@@ -19,6 +19,7 @@ import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutli
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import DocDetails from './DocDetails';
+import DocumentsVewModal from '../client/utils/DocumentsVewModal';
 
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
@@ -40,7 +41,34 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState({});
     const [expanded, setExpanded] = React.useState('panel1');
 
+    const [selectedDocument, setSelectedDocument] = React.useState(null);
+    const [openPDFView, setOpenPDFView] = React.useState(false);
+    const [isLoadingDoc, setIsLoadingDoc] = useState(false);
+    const ViewerDocument = (e) => {
+        setAnchorElDocumentList({});
+        // console.log("document_object111", e);
+        setSelectedDocument(e);
+
+        setOpenPDFView(true);
+        var IsApproved = e["IsApproved"];
+        var PortalDocId = e["PortalDocId"];
+        let IsApp = "";
+        let PortalID = "";
+
+        if (IsApproved === "SIG" && PortalDocId !== "") {
+            IsApp = IsApproved;
+            PortalID = PortalDocId;
+        }
+
+        let url = `https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=${e["Registration No."]}&filetype=${e.type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
+        console.log(url, "geturldata");
+        // setsendUrldata(url);
+        //window.open(url);
+        setIsLoadingDoc(true)
+    };
+
     const handleClickDocumentList = (event, index) => {
+        event.stopPropagation();
         setAnchorElDocumentList(prevState => ({
             ...prevState,
             [index]: event.currentTarget
@@ -48,6 +76,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     };
 
     const handleCloseDocument = (event, index) => {
+        event.stopPropagation();
         setAnchorElDocumentList(prevState => ({
             ...prevState,
             [index]: null
@@ -175,7 +204,11 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     useEffect(() => {
         let fltTasks = myTotalTasks.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
         setFilteredTasks(fltTasks);
-        let fltDocuments = myDocuments.filter(itm => itm.Description.toLowerCase().includes(target.toLowerCase()));
+        let fltDocuments = myDocuments.filter(itm => {
+            if(itm.Description && target){
+                return itm.Description.toLowerCase().includes(target.toLowerCase());
+            }
+        });
         // fltDocuments.map(itm => {
         //     itm["Item Date"] = formatDate(itm["Item Date"])
         // })
@@ -207,6 +240,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     }
     return (
         <>
+        <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
             <DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList} />
             <Box className='mb-5'>
                 <h3 className='font-20 mt-1'><SearchIcon /> We found the following Tasks matching <span className='text-blue bold'>"{target}"</span></h3>
@@ -280,7 +314,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                 <Grid className='mt-0' container spacing={2}>
                     {filteredDocuments.length > 0 ? filteredDocuments.slice(0, 9).map((item, index) => {
                         return <Grid key={index} className='pt-0' item xs={12} lg={4} md={4} sm={12}><Box className="file-uploads">
-                            <label className="file-uploads-label file-uploads-document">
+                            <label className="file-uploads-label file-uploads-document" onDoubleClick={(e) => ViewerDocument(item)}>
                                 <Box className="d-flex align-items-center">
                                     <DescriptionIcon
                                         sx={{
