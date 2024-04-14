@@ -1375,6 +1375,17 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         setAnchorElFiles(null);
     };
 
+    // 
+
+    const [anchorElAttached, setAnchorElAttached] = React.useState(null);
+    const openAttached = Boolean(anchorElAttached);
+    const AttachedhandleClick = (event) => {
+        setAnchorElAttached(event.currentTarget);
+    };
+    const AttachedhandleClose = () => {
+        setAnchorElAttached(null);
+    };
+
 
     return (
         <React.Fragment>
@@ -2415,6 +2426,36 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                             value={notesMessage}
                                             onChange={handleChangeNotes}
                                         ></textarea>
+
+
+
+                                        <div className="relative">
+                                            <Button
+                                                id="basic-button"
+                                                aria-controls={openAttached ? 'basic-menu' : undefined}
+                                                aria-haspopup="true"
+                                                aria-expanded={openAttached ? 'true' : undefined}
+                                                onClick={AttachedhandleClick}
+                                            >
+                                                Dashboard
+                                            </Button>
+                                            <Menu
+                                                id="basic-menu"
+                                                anchorElAttached={anchorElAttached}
+                                                open={openAttached}
+                                                onClose={AttachedhandleClose}
+                                                MenuListProps={{
+                                                    'aria-labelledby': 'basic-button',
+                                                }}
+                                            >
+                                                <MenuItem onClick={AttachedhandleClose}>Profile</MenuItem>
+                                                <MenuItem onClick={AttachedhandleClose}>My account</MenuItem>
+                                                <MenuItem onClick={AttachedhandleClose}>Logout dfadf</MenuItem>
+                                            </Menu>
+                                        </div>
+
+
+
                                     </Box>
 
                                 </Box>
