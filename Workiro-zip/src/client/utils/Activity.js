@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Popover, Tabs, Tab, Checkbox, } from '@mui/material';
+import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Popover, Tabs, Tab, Checkbox, Grid, Autocomplete, TextField, } from '@mui/material';
 
 import { useAutocomplete } from '@mui/base/useAutocomplete';
 import { styled } from '@mui/system';
@@ -13,6 +13,29 @@ import AppsIcon from '@mui/icons-material/Apps';
 import TableRowsIcon from '@mui/icons-material/TableRows';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import WarningIcon from '@mui/icons-material/Warning';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import DescriptionIcon from '@mui/icons-material/Description';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import SwapVertIcon from '@mui/icons-material/SwapVert';
+import UpgradeIcon from '@mui/icons-material/Upgrade';
+import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
+import PersonIcon from '@mui/icons-material/Person';
+
+
+const BootstrapTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+    [`& .${tooltipClasses.arrow}`]: {
+        //   color: theme.palette.common.black,
+    },
+    [`& .${tooltipClasses.tooltip}`]: {
+        //   backgroundColor: theme.palette.common.black,
+    },
+}));
+
 
 // import Dialog from '@mui/material/Dialog';
 // import DialogActions from '@mui/material/DialogActions';
@@ -93,13 +116,21 @@ function Activity({ ...props }) {
 
 
     // sort dropdown
-    const [activityTypeEl, setActivityTypeEl] = React.useState(null);
-    // const openSort = Boolean(anchorElSort);
+    const [anchorElSort, setAnchorElSort] = React.useState(null);
+    const openSort = Boolean(anchorElSort);
     const handleClickSort = (event) => {
-        setActivityTypeEl(event.currentTarget);
+        setAnchorElSort(event.currentTarget);
     };
     const handleCloseSort = () => {
-        setActivityTypeEl(null);
+        setAnchorElSort(null);
+    };
+
+
+    // 
+    const [age, setAge] = React.useState('');
+
+    const handleChange = (event) => {
+        setAge(event.target.value);
     };
 
     return (
@@ -136,7 +167,6 @@ function Activity({ ...props }) {
                         <ToggleButton
                             size='small'
                             value="check"
-                            // onClick={handleClickOpen}
                             onClick={handleClickOpenAddComment}
                         >
                             <PostAddIcon />
@@ -167,16 +197,15 @@ function Activity({ ...props }) {
                                 }}
                                 className='p-5'
                             >
-
-                                <Box className='client-details-filter p-2'>
+                                <Box className='client-details-filter p-2' sx={{ width: '180px' }}>
                                     <Typography variant="Body2" className='font-14 sembold mb-2 text-black'>
                                         View
                                     </Typography>
 
                                     <div className='text-center mb-2 client-details-filter-btn d-flex'>
-                                        <ToggleButton className='w-100 active' value="left" aria-label="left aligned">
+                                        {/* <ToggleButton className='w-100 active' value="left" aria-label="left aligned">
                                             <DnsIcon />
-                                        </ToggleButton>
+                                        </ToggleButton> */}
                                         <ToggleButton className='w-100' value="left" aria-label="left aligned">
                                             <AppsIcon />
                                         </ToggleButton>
@@ -186,32 +215,96 @@ function Activity({ ...props }) {
                                     </div>
 
                                     <Box className='p-1'>
-                                        <Typography variant="Body2" className='font-13 sembold mb-1 text-black ps-2'>
+                                        <Typography variant="Body2" className='font-12 sembold mb-1 text-black ps-2 d-block'>
                                             Activity Type
+                                        </Typography>
+                                        <Box className='d-flex'>
+                                            <FormControl sx={{ m: 1, minWidth: 80 }} className='select-border mt-0'>
+                                                <BootstrapTooltip title="Sort By" arrow
+                                                    placement="bottom-start"
+                                                    slotProps={{
+                                                        popper: {
+                                                            modifiers: [
+                                                                {
+                                                                    name: 'offset',
+                                                                    options: {
+                                                                        offset: [0, -10],
+                                                                    },
+                                                                },
+                                                            ],
+                                                        },
+                                                    }}
+                                                >
+                                                    <Select
+                                                        value={age}
+                                                        onChange={handleChange}
+                                                        displayEmpty
+                                                        inputProps={{ 'aria-label': 'Without label' }}
+                                                        className='custom-dropdown'
+                                                        label="Sort By"
+                                                    >
+                                                        <MenuItem value="" style={{ display: "none" }}>
+                                                            <SwapVertIcon className='pe-1' /> Sort By
+                                                        </MenuItem>
+                                                        <MenuItem className='ps-1' value="None"><WarningIcon className='ps-1' />  Clear Sortby</MenuItem>
+                                                        <MenuItem value={"Date"} className='ps-1'>
+                                                            <CalendarMonthIcon className='pe-1' />
+                                                            By Date</MenuItem>
+                                                        <MenuItem value={"Description"} className='ps-1'><DescriptionIcon className='pe-1' />
+                                                            By Description</MenuItem>
+                                                    </Select>
+                                                </BootstrapTooltip>
+                                            </FormControl>
+                                            <UpgradeIcon />
+                                            {/* <VerticalAlignBottomIcon /> */}
+                                        </Box>
+                                    </Box>
+
+                                    <Box className='p-1'>
+                                        <Typography variant="Body2" className='font-12 sembold mb-1 text-black ps-2 d-block'>
+                                            User(s)
                                         </Typography>
 
                                         <div>
-                                            <Button
-                                                id="basic-button"
-                                                aria-controls={Boolean(activityTypeEl) ? 'basic-menu' : undefined}
-                                                aria-haspopup="true"
-                                                aria-expanded={Boolean(activityTypeEl) ? 'true' : undefined}
-                                                onClick={handleClickSort}
+                                            <BootstrapTooltip title="User(s)" arrow
+                                                placement="bottom-start"
+                                                slotProps={{
+                                                    popper: {
+                                                        modifiers: [
+                                                            {
+                                                                name: 'offset',
+                                                                options: {
+                                                                    offset: [0, -10],
+                                                                },
+                                                            },
+                                                        ],
+                                                    },
+                                                }}
                                             >
-                                                Dashboard
-                                            </Button>
+                                                <Button
+                                                    id="basic-button"
+                                                    aria-controls={openSort ? 'basic-menu' : undefined}
+                                                    aria-haspopup="true"
+                                                    aria-expanded={openSort ? 'true' : undefined}
+                                                    onClick={handleClickSort}
+                                                    className='min-width-auto'
+                                                >
+                                                    All
+                                                </Button>
+                                            </BootstrapTooltip>
                                             <Menu
                                                 id="basic-menu"
-                                                anchorElSort={activityTypeEl}
-                                                open={Boolean(activityTypeEl)}
+                                                anchorEl={anchorElSort}
+                                                open={openSort}
                                                 onClose={handleCloseSort}
                                                 MenuListProps={{
                                                     'aria-labelledby': 'basic-button',
                                                 }}
+                                                className='custom-dropdown'
                                             >
-                                                <MenuItem onClick={handleCloseSort}>Profile</MenuItem>
-                                                <MenuItem onClick={handleCloseSort}>My account</MenuItem>
-                                                <MenuItem onClick={handleCloseSort}>Logout</MenuItem>
+                                                <MenuItem onClick={handleCloseSort}>Dropdown List 1</MenuItem>
+                                                <MenuItem onClick={handleCloseSort}>Dropdown List 2</MenuItem>
+                                                <MenuItem onClick={handleCloseSort}>Dropdown List 3</MenuItem>
                                             </Menu>
                                         </div>
 
@@ -248,7 +341,9 @@ function Activity({ ...props }) {
                                             <Box class="icon-time-status"></Box>
                                             <Box class="content-time">
                                                 <h5>{item.Comments}</h5>
-                                                <p>{item["ForwardedBy"]}</p>
+                                                <Box className='user-name pt-2 mt-2 d-flex align-items-center'>
+                                                    <PersonIcon className='me-1'/> <p className='mb-0'>{item["ForwardedBy"]}</p>
+                                                </Box>
                                             </Box>
                                         </Box>
                                     </li>
@@ -265,22 +360,73 @@ function Activity({ ...props }) {
                 onClose={AddCommenthandleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
+                className='custom-modal'
             >
-                <DialogTitle id="alert-dialog-title">
-                    {"Use Google's location service?"}
-                </DialogTitle>
+
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                            Add Comment
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={AddCommenthandleClose}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        Let Google help apps determine location. This means sending anonymous
-                        location data to Google, even when no apps are running.
+
+                        <Grid container spacing={3} className='mb-2'>
+                            <Grid item xs={6} md={6}>
+                                <Autocomplete
+                                    disablePortal
+                                    id="combo-box-demo"
+                                    options={Comment}
+                                    renderInput={(params) => <TextField {...params} label="Standard Comment(s):" />}
+                                />
+                            </Grid>
+
+                            <Grid item xs={6} md={6}>
+                                <Autocomplete
+                                    disablePortal
+                                    id="combo-box-demo"
+                                    options={Comment}
+                                    renderInput={(params) => <TextField {...params} label="Standard Comment(s):" />}
+                                />
+                            </Grid>
+
+                        </Grid>
+
+                        <Box className='w-100 mt-3 mb-4'>
+                            <textarea className='textarea textarea-2 w-100' placeholder='Enter Your Comment..'></textarea>
+                        </Box>
+
+
                     </DialogContentText>
+
+                    <DialogActions className='justify-content-between'>
+                        <Typography variant="h4" className='font-18 bold text-black mb-0'>
+                            Doc ID: 1568
+                        </Typography>
+
+                        <Box>
+                            <Button onClick={AddCommenthandleClose} className='btn-red me-2'>Cancle</Button>
+                            <Button onClick={AddCommenthandleClose} className='btn-blue-2' autoFocus>
+                                Submit
+                            </Button>
+                        </Box>
+
+
+                    </DialogActions>
+
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={AddCommenthandleClose}>Disagree</Button>
-                    <Button onClick={AddCommenthandleClose} autoFocus>
-                        Agree
-                    </Button>
-                </DialogActions>
+
             </Dialog>
 
         </>
@@ -428,5 +574,16 @@ const Layout = styled('div')`
     // flex-flow: column nowrap;
     // gap: 4px;
   `;
+
+// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
+const Comment = [
+    { label: 'The Shawshank Redemption', year: 1994 },
+    { label: 'The Godfather', year: 1972 },
+    { label: 'The Godfather: Part II', year: 1974 },
+    { label: 'The Dark Knight', year: 2008 },
+    { label: '12 Angry Men', year: 1957 },
+    { label: "Schindler's List", year: 1993 },
+    { label: 'Pulp Fiction', year: 1994 }
+];
 
 export default Activity

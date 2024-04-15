@@ -776,16 +776,38 @@ span.tox-statusbar__branding {
 .activity-timeline ul li .timeline-details {
   display: inline-block;
   width: 100%;
-  margin-left: 10px;
-  /* border: 2px solid #eee; */
-  border-radius: 3px;
-  padding: 5px 0;
+  margin-left: 26px;
+  border: 1px solid #D41B20;
+  border-radius: 4px;
+  padding: 15px 15px 10px 15px;
   margin-bottom: 15px;
+  position: relative;
+}
+
+.activity-timeline ul li .timeline-details:after {
+  border-left: 10px solid red;
+  border-right: 10px solid transparent;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  content: '';
+}
+
+.activity-timeline ul li .timeline-details:after {
+  border-left: 10px solid transparent;
+  border-right: 10px solid rgb(212 27 32 / 75%);
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 0;
 }
 
 .activity-timeline ul li .timeline-details .content-time {
-  display: inline-block;
+  /* display: inline-block; */
 }
+
+.activity-timeline ul li .timeline-details .content-time .user-name {}
 
 .activity-timeline ul li .timeline-details .content-time h5 {
   font-size: 14px;
@@ -956,9 +978,11 @@ span.tox-statusbar__branding {
 ::placeholder {
   color: #c9c9c9;
 }
+
 .search-box {
   z-index: 1;
 }
+
 .search-box .Mui-focused {
   box-shadow: none !important;
 }
