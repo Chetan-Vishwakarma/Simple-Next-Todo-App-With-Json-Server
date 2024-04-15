@@ -91,15 +91,13 @@ function Activity({ ...props }) {
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
-
-    // sort dropdown
-    const [activityTypeEl, setActivityTypeEl] = React.useState(null);
-    // const openSort = Boolean(anchorElSort);
-    const handleClickSort = (event) => {
-        setActivityTypeEl(event.currentTarget);
+    const [ActiveEl, seActiveEl] = React.useState(null);
+    // const open = Boolean(anchorEl);
+    const handleActiveClick = (event) => {
+        seActiveEl(event.currentTarget);
     };
-    const handleCloseSort = () => {
-        setActivityTypeEl(null);
+    const handleActiveClose = () => {
+        seActiveEl(null);
     };
 
     return (
@@ -193,28 +191,27 @@ function Activity({ ...props }) {
                                         <div>
                                             <Button
                                                 id="basic-button"
-                                                aria-controls={Boolean(activityTypeEl) ? 'basic-menu' : undefined}
+                                                aria-controls={Boolean(ActiveEl) ? 'basic-menu' : undefined}
                                                 aria-haspopup="true"
-                                                aria-expanded={Boolean(activityTypeEl) ? 'true' : undefined}
-                                                onClick={handleClickSort}
+                                                aria-expanded={Boolean(ActiveEl) ? 'true' : undefined}
+                                                onClick={handleActiveClick}
                                             >
                                                 Dashboard
                                             </Button>
                                             <Menu
                                                 id="basic-menu"
-                                                anchorElSort={activityTypeEl}
-                                                open={Boolean(activityTypeEl)}
-                                                onClose={handleCloseSort}
+                                                anchorEl={ActiveEl}
+                                                open={Boolean(ActiveEl)}
+                                                onClose={handleActiveClose}
                                                 MenuListProps={{
                                                     'aria-labelledby': 'basic-button',
                                                 }}
                                             >
-                                                <MenuItem onClick={handleCloseSort}>Profile</MenuItem>
-                                                <MenuItem onClick={handleCloseSort}>My account</MenuItem>
-                                                <MenuItem onClick={handleCloseSort}>Logout</MenuItem>
+                                                <MenuItem onClick={handleActiveClose}>Profile</MenuItem>
+                                                <MenuItem onClick={handleActiveClose}>My account</MenuItem>
+                                                <MenuItem onClick={handleActiveClose}>Logout</MenuItem>
                                             </Menu>
                                         </div>
-
                                     </Box>
 
                                 </Box>
