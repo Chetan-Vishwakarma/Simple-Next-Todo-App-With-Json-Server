@@ -959,7 +959,7 @@ export default function DocumentList({ clientId }) {
                                                     <CalendarMonthIcon className='pe-1' />
                                                     By Date</MenuItem>
                                                 <MenuItem value={"Description"} className='ps-1'><DescriptionIcon className='pe-1' />
-                                                    By Description dsfaaa</MenuItem>
+                                                    By Description</MenuItem>
                                             </Select>
                                         </BootstrapTooltip>
                                     </FormControl>

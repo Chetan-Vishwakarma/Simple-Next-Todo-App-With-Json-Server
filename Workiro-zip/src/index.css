@@ -956,7 +956,9 @@ span.tox-statusbar__branding {
 ::placeholder {
   color: #c9c9c9;
 }
-
+.search-box {
+  z-index: 1;
+}
 .search-box .Mui-focused {
   box-shadow: none !important;
 }
