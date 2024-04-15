@@ -500,13 +500,26 @@ function Client() {
             setObjFilter(obj);
             return;
         } else if (selectedChoice === "All") {
-            // console.log("Obj for Contact: ",obj);
-            // console.log("Obj for Client: ",objFilterClient);
 
-            let fltClients = handleSearchBy(clients, obj);
+            const mappingObj = CommonFilters.reduce((obj1, item) => {
+                obj1[item.key] = item.val;
+                return obj1;
+            }, {});
+
+            const updatedData = {};
+            for (const key in obj) {
+                if (mappingObj.hasOwnProperty(key)) {
+                    updatedData[mappingObj[key]] = obj[key];
+                } else {
+                    updatedData[key] = obj[key];
+                }
+            }
+
+
+            // let fltClients = handleSearchBy(clients, obj);
+            let fltClients = handleSearchBy(clients, updatedData);
             let fltContacts = handleSearchBy(contacts, obj);
-            console.log("ssdddsdsdse FilteredClient CommonFilters: ",CommonFilters);
-            console.log("ssdddsdsdse FilteredClient obj: ",obj);
+
             setFilteredClients(fltClients);
             setFilteredContacts(fltContacts);
             if (Object.keys(obj).length === 0) {
@@ -707,18 +720,18 @@ function Client() {
                 });
                 setSuggestionList(fltRepeatData);
                 return;
-            }else if (filteredClients.length > 0 && filteredContacts.length === 0) {
+            } else if (filteredClients.length > 0 && filteredContacts.length === 0) {
                 let list1 = createSuggestionList(label, filteredClients);
-                
+
                 let fltRepeatData = [...list1];
 
                 setSuggestionList(fltRepeatData);
                 return;
-            }else if (filteredClients.length === 0 && filteredContacts.length > 0) {
+            } else if (filteredClients.length === 0 && filteredContacts.length > 0) {
                 let list2 = createSuggestionList(value, filteredContacts);
 
                 let fltRepeatData = [...list2];
-                
+
                 setSuggestionList(fltRepeatData);
                 return;
             }
