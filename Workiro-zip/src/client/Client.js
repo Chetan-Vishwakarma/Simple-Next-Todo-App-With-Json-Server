@@ -505,8 +505,8 @@ function Client() {
 
             let fltClients = handleSearchBy(clients, obj);
             let fltContacts = handleSearchBy(contacts, obj);
-            // console.log("FilteredClient: ",fltClients);
-            // console.log("FilteredContact: ",fltContacts);
+            console.log("ssdddsdsdse FilteredClient CommonFilters: ",CommonFilters);
+            console.log("ssdddsdsdse FilteredClient obj: ",obj);
             setFilteredClients(fltClients);
             setFilteredContacts(fltContacts);
             if (Object.keys(obj).length === 0) {
