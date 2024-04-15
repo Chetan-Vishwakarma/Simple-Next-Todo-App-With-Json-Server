@@ -307,7 +307,6 @@ function Activity({ ...props }) {
                                                 <MenuItem onClick={handleCloseSort}>Dropdown List 3</MenuItem>
                                             </Menu>
                                         </div>
-
                                     </Box>
 
                                 </Box>
