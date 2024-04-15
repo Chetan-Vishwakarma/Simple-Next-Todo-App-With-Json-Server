@@ -278,7 +278,7 @@ function CardView(props) {
               <Box className='inner-client-box'>
 
                 <Box className='client-img'>
-                  <img src={user} />
+                <img src={user2} />
                 </Box>
                 <Typography variant="h2">{item["First Name"] && item["First Name"]} {item["Last Name"] && item["Last Name"]}</Typography>
                 <Typography variant='h4'>{item["Company Name"] && item["Company Name"].substr(0.15) + '.'}</Typography>
