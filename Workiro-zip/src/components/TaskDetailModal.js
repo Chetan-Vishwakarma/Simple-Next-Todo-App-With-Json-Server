@@ -145,7 +145,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     ////////////////////////////////Attachment files
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [attachmentPath, setAttachmentPath] = useState([]);
-
+    const [selectedDocumentFileDMS, setSelectedDocumentFileDMS] = useState([]);
 
     const [txtdescription, setTxtDescriptin] = React.useState("");
     const [details, setDetails] = React.useState("");
@@ -413,6 +413,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                     // for (let item of table6) {
                     //     arrFile.push(getFilePath(item));
                     // }
+                    console.log(table6,"table6adddata");
                     setAttachmentFile(table6);
                     // setTimeout(() => {
                     //     console.log("attachmentFile", attachmentFile);
@@ -844,10 +845,10 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         ...filesData,
                     ]);
 
-                //     setSelectedDocumentFile((prevUploadedFiles) => [
-                //         ...prevUploadedFiles,
-                //         ...filesData,
-                //     ]);
+                    setSelectedDocumentFileDMS((prevUploadedFiles) => [
+                        ...prevUploadedFiles,
+                        ...filesData,
+                    ]);
             }
             })
 
@@ -861,6 +862,23 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
         setOpenDocumentListDMS(false)
 
+    }
+
+    function Json_CRM_TaskDMSAttachmentInsert(TaskID) {
+
+        const ItemId = selectedDocumentFileDMS.map(obj => obj.DocId).join("|");
+        let obj = {
+            TaskID: TaskID,
+            DMSItems: ItemId,
+            Notes: ""
+        };
+        Cls.Json_CRM_TaskDMSAttachmentInsert(obj, function (sts, data) {
+            if (sts && data) {
+                console.log('Json_CRM_TaskDMSAttachmentInsert', data);
+                setAttachmentPath([]);
+                setSelectedFiles([])
+            }
+        })
     }
     function dateAndTime(dt) {
         // Create a new Date object
@@ -1114,6 +1132,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                     let js = JSON.parse(data);
                     if (js.Status === "success") {
                         setSelectedFiles([]);
+                        
                         setMessageId(js.Message);
                         // setLoading(false);
                         setIsApi(!isApi);
@@ -1127,7 +1146,10 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                             Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
                         }, 2000);
                         setIsVisible(false); // Toggle visibility
-
+                        if (selectedFiles && selectedFiles.length > 0) {
+                            console.log(selectedFiles,"selectedDocumentFileDMS")
+                            Json_CRM_TaskDMSAttachmentInsert(js.Message);
+                        }
                         const attString = attachmentPath.map((item) => {
                             let fileName = "";
                             if (item.FileName) {
@@ -1137,10 +1159,17 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                             return fileName;
                         });
-
-
-                        let mgs = `Upload File ${attString}`;
+                        if(selectedFiles && selectedFiles.length > 0){
+                        let res = selectedFiles.map((e)=>e.FileName).join(',');
+                        let mgs = `Upload File ${res}`;
                         Json_AddSupplierActivity(mgs, "sys")
+                        } else {
+
+                            let mgs = `Upload File ${attString}`;
+                        Json_AddSupplierActivity(mgs, "sys")
+                        }
+
+                      
 
                     }
                     else {
