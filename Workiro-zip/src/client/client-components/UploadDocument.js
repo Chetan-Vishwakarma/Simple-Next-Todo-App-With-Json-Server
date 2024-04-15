@@ -604,7 +604,10 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                             setOpenUploadDocument(false); 
                                         }
                                       
-                                    }, 4000);                                      
+                                    }, 4000);    
+                                    
+                                    // setOpenModal(true) doring conflict
+                                    // setOpenUploadDocument(false);
                                    
                                 }
                                 else {
@@ -680,6 +683,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
             [id]: setUdf // Update selected value for a specific ComboBox
         }));
 
+        
         // console.log("newValue",udfIdWithValue);
 
     };
