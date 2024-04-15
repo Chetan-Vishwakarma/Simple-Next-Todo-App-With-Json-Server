@@ -633,12 +633,13 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
     const HandalChangeSendReminder = (m) => {
         //setSelectedEmail
+        //console.log("SendReminder_Json", m)
         try {
             let o = {
                 accid: agrno,
                 email: Email,
                 password: password,
-                messageID: m.PortalDocId,
+                messageID: selectedEmail.PortalDocId,
                 contactEmail: selectedEmail.emailid
             };
             ClsPortal.SendReminder_Json(o, function (sts, data) {

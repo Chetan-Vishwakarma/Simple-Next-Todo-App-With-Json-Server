@@ -122,7 +122,7 @@ function NewTodoList() {
     }
 
     const Json_Get_CRM_Task_ActivityByTaskId = (item) => {
-       // console.log("Json_Get_CRM_Task_ActivityByTaskId", item);           
+            
             try {
                 let obj = {};
                 obj.TaskID = item.TaskID;
@@ -131,7 +131,7 @@ function NewTodoList() {
                         let json = JSON.parse(data);
                         let tbl = json.Table;
                         if (sts && tbl.length > 0) {
-                            console.log("Error while calling Json_CRM_GetOutlookTask", tbl[tbl.length - 1]);
+                            //console.log("Error while calling Json_CRM_GetOutlookTask", tbl[tbl.length - 1]);
                             resolve(tbl[tbl.length - 1].Notes);
                         } else {
                             reject("No data or Notes found");
@@ -770,16 +770,16 @@ function NewTodoList() {
 
                 <Box className='row'>
                     {recentTaskList.length > 0 ? recentTaskList.slice(0, 20).map((item, index) => {
-                  let notesshow;
-                  Json_Get_CRM_Task_ActivityByTaskId(item).then((notes) => {
-                    console.log("Hello Notes",notes)
-                    notesshow=notes;
-                })
-                .catch((error) => {
-                    // Handle errors here
-                });
+                //   let notesshow;
+                //   Json_Get_CRM_Task_ActivityByTaskId(item).then((notes) => {
+                //     console.log("Hello Notes",notes)
+                //     notesshow=notes;
+                // })
+                // .catch((error) => {
+                //     // Handle errors here
+                // });
                   
-                     console.log("Hello Notes1",notesshow);
+                //      console.log("Hello Notes1",notesshow);
                        
                         return <>
 
@@ -857,7 +857,7 @@ function NewTodoList() {
                                             <Typography variant='h2'>{'user name'}</Typography>
                                             <Typography variant='body1'>
                                             {
-                                              "notes" 
+                                              "" 
                                             }
                                             </Typography>
                                         </Box>

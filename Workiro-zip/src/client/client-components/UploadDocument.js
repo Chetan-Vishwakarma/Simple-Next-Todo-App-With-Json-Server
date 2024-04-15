@@ -598,11 +598,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                 if (buttonNameText === "Submit & Create Portal Task" || buttonNameText === "Submit & Create Task") {
                                     setshowModalCreateTask(true)
                                     setOpenModal(true)
-                                    setTimeout(() => {
-                                        if(openModal){
-                                            setOpenUploadDocument(false); 
-                                        }
-                                    }, 2000);                                      
+
+                                    setOpenUploadDocument(false);                                      
                                    
                                 }
                                 else {
@@ -678,6 +675,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
             [id]: setUdf // Update selected value for a specific ComboBox
         }));
 
+        
         // console.log("newValue",udfIdWithValue);
 
     };
