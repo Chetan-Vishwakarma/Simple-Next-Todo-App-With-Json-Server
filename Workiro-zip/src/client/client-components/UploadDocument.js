@@ -25,7 +25,11 @@ import moment from 'moment';
 import { ToastContainer, toast } from 'react-toastify';
 import { useLocation, useSearchParams } from 'react-router-dom';
 let originatorNo;
-function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
+function UploadDocument({ 
+      openUploadDocument, 
+      setOpenUploadDocument,
+      documentDate, setDocumentDate, receivedDate, setReceivedDate, createNewFileObj, setCreateNewFileObj, txtFolderData, setTxtFolderData, txtClientData, setTxtClientData, txtSectionData, setTxtSectionData, TaskType, setTaskType, openModal, setOpenModal, handleClickOpen
+    }) {
     //console.log("location state",localtion.state)
     const localtion = useLocation();
     try {
@@ -46,9 +50,9 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
     const [txtFolderId, setTxtFolderId] = useState(localStorage.getItem("ProjectId"));
 
-    const [txtFolderData, setTextFolderData] = useState(null);
+    // const [txtFolderData, setTextFolderData] = useState(null);
 
-    const [createNewFileObj, setCreateNewFileObj] = useState([]);
+    // const [createNewFileObj, setCreateNewFileObj] = useState([]);
     const [saveCounter, setSaveCounter] = useState(0);
 
     const [clientList, setClientList] = useState([]);
@@ -65,15 +69,15 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const [txtClientId, setTxtClientId] = useState(originatorNo);/////////////////for clientid set
 
-    const [txtClientData, setTxtClientData] = useState(null);/////////////////for clientid set
+    // const [txtClientData, setTxtClientData] = useState(null);/////////////////for clientid set
 
     const [txtSectionId, setTxtSectionId] = useState(null);//////for sectionid set
 
-    const [txtSectionData, setTxtSectionData] = useState(null);//////for sectionid set
+    // const [txtSectionData, setTxtSectionData] = useState(null);//////for sectionid set
 
-    const [documentDate, setDocumentDate] = useState(null); // Initialize the selected date state
+    // const [documentDate, setDocumentDate] = useState(null); // Initialize the selected date state
 
-    const [receivedDate, setReceivedDate] = useState(null); // Initialize the selected date state
+    // const [receivedDate, setReceivedDate] = useState(null); // Initialize the selected date state
 
     const [standarDescription, setStandarDescription] = useState([]); // Initialize the selected date state
 
@@ -90,7 +94,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     const [categoryList, setCategoryList] = useState([])
 
     const [showModalCreateTask, setshowModalCreateTask] = useState(false);
-    const [openModal, setOpenModal] = useState(false);
+    // const [openModal, setOpenModal] = useState(false);
 
 
 
@@ -101,7 +105,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const [validation, setValidation] = useState("");
 
-    const [TaskType, setTaskType] = useState("");
+    // const [TaskType, setTaskType] = useState("");
 
     let count = 2;
 
@@ -191,7 +195,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                         setFolderList(tbl);
                         if (result.length > 0) {
                             console.log("get folder list", result);
-                            setTextFolderData(result[0])
+                            // setTextFolderData(result[0])
+                            setTxtFolderData(result[0]);
                         }
                     }
                 }
@@ -298,7 +303,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
         if (data) {
             setTxtFolderId(data.FolderID)
-            setTextFolderData(data)
+            // setTextFolderData(data)
+            setTxtFolderData(data);
             Json_GetSections(data.FolderID)
             Json_GetClientsByFolder(data.FolderID)
         }
@@ -599,12 +605,14 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                 if (buttonNameText === "Submit & Create Portal Task" || buttonNameText === "Submit & Create Task") {
                                     setshowModalCreateTask(true)
                                     setOpenModal(true);
-                                    setTimeout(() => {
-                                        if(openModal){
-                                            setOpenUploadDocument(false); 
-                                        }
+                                    handleClickOpen("Portal");
+                                    setOpenUploadDocument(false);
+                                    // setTimeout(() => {
+                                    //     if(openModal){
+                                    //         setOpenUploadDocument(false); 
+                                    //     }
                                       
-                                    }, 4000);    
+                                    // }, 4000);    
                                     
                                     // setOpenModal(true) doring conflict
                                     // setOpenUploadDocument(false);
@@ -935,7 +943,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
                             </Box>
 
-                            {showModalCreateTask && openModal && <CreateNewModalTask
+                            {/* {showModalCreateTask && openModal && <CreateNewModalTask
                                 documentDate={documentDate}
                                 receivedDate={receivedDate}
                                 createNewFileObj={createNewFileObj}
@@ -947,7 +955,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                 // passButtonHide={passButtonHide}
                                 openModal={openModal}
                                 setOpenModal={setOpenModal}
-                            ></CreateNewModalTask>}
+                            ></CreateNewModalTask>} */}
 
 
                         </>)}
