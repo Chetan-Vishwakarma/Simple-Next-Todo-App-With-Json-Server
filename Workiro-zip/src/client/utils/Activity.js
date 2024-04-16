@@ -23,6 +23,7 @@ import SwapVertIcon from '@mui/icons-material/SwapVert';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import PersonIcon from '@mui/icons-material/Person';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -138,7 +139,7 @@ function Activity({ ...props }) {
 
             <Box class="ml-auto mr-auto">
 
-                <Box className='d-flex justify-content-between my-3 mb-4'>
+                <Box className='d-flex justify-content-between my-3 mb-4 align-items-start'>
                     <Box className="search-box m-auto">
                         <Layout>
                             <AutocompleteWrapper>
@@ -161,6 +162,16 @@ function Activity({ ...props }) {
                                 )}
                             </AutocompleteWrapper>
                         </Layout>
+
+
+                        <Box className='mt-2'>
+                            <Button className='btn-arrow' sx={{ background: '#4780FF' }}><span className='text-white me-1'>testdfasdf</span>
+                                <span className="material-symbols-outlined font-16 text-white close">
+                                    close
+                                </span>
+                                <PlayArrowIcon className='arrow-icon' sx={{ color: '#4780FF' }} />
+                            </Button>
+                        </Box>
                     </Box>
 
                     <Box className='d-flex'>
@@ -341,7 +352,7 @@ function Activity({ ...props }) {
                                             <Box class="content-time">
                                                 <h5>{item.Comments}</h5>
                                                 <Box className='user-name pt-2 mt-2 d-flex align-items-center'>
-                                                    <PersonIcon className='me-1'/> <p className='mb-0'>{item["ForwardedBy"]}</p>
+                                                    <PersonIcon className='me-1' /> <p className='mb-0'>{item["ForwardedBy"]}</p>
                                                 </Box>
                                             </Box>
                                         </Box>
