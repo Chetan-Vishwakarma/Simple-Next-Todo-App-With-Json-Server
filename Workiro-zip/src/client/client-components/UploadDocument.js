@@ -606,7 +606,7 @@ function UploadDocument({
                                     setshowModalCreateTask(true)
                                     setOpenModal(true);
                                     handleClickOpen("Portal");
-                                    setOpenUploadDocument(false);
+                                    // setOpenUploadDocument(false);
                                     // setTimeout(() => {
                                     //     if(openModal){
                                     //         setOpenUploadDocument(false); 

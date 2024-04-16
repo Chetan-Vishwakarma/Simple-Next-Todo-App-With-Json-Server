@@ -1366,7 +1366,9 @@ function CreateNewModalTask({ ...props }) {
     }
 
     function Json_CRM_TaskDMSAttachmentInsert(TaskID) {
-
+        if(openUploadDocument){
+            setOpenUploadDocument(false);
+        }
         const ItemId = selectedDocumentFile.map(obj => obj.DocId).join("|");
         let obj = {
             TaskID: TaskID,
