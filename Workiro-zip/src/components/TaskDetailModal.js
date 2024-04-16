@@ -2050,7 +2050,7 @@ console.log("attachmentPath111",attachmentPath,selectedDocumentFileDMS)
 
                         <Box className="d-flex flex-wrap justify-content-between">
                             <Box className="d-flex flex-wrap align-items-center">
-                                Client:-
+                                Client
                                 <Button
                                     id="fade-button"
                                     aria-controls={openClient ? 'fade-menu' : undefined}
@@ -2096,7 +2096,7 @@ console.log("attachmentPath111",attachmentPath,selectedDocumentFileDMS)
 
 
 
-                                Section:-
+                                Section
                                 <Button
                                     id="fade-button"
                                     aria-controls={openSection ? 'fade-menu' : undefined}
