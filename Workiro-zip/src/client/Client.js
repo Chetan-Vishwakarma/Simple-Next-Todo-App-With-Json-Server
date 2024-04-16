@@ -756,7 +756,24 @@ function Client() {
     const handleAlignment = (event, newAlignment) => {
         setAlignment(newAlignment);
     };
-
+    const SyncFunctionData = () => {
+        console.log('SyncFunctionData');
+        let obj = {};
+        obj.agrno = agrno;
+        obj.Email = Email;
+        obj.password = password;
+       
+        try {
+            Cls.TeamSolution(obj, function (sts, data) {
+                if (sts && data) {
+                    console.log({ status: true, messages: "Success", res: data });
+                   
+                }
+            });
+        } catch (error) {
+            console.log({ status: false, messages: "Faild Please Try again" });
+        }
+    }
 
 
     return (
@@ -1016,6 +1033,7 @@ function Client() {
                                 onChange={handleAlignment}
 
                             >
+                            <Button variant="text" onClick={SyncFunctionData}>Sync</Button>
 
                                 {isGridView &&
                                     <ToggleButton value="left" aria-label="left aligned"

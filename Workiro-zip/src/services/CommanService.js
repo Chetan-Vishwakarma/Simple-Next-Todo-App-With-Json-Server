@@ -1281,4 +1281,20 @@ console.log("formattedDate",formattedDate)
         });
       }
 
+      TeamSolution(obj, callBack) {
+        //let o = { ProjectId: FolderId,SectionId: };
+        super.CreateNewServiceParamObject("TeamSolution", obj, true);
+        super.CallNewService("TeamSolution", function (status, Data) {
+          if (status) {
+            if (Data != "") {
+              return callBack(true, Data);
+            } else {
+              return callBack(false, []);
+            }
+          } else {
+            // console.log("status", status);
+          }
+        });
+      }
+
 }
