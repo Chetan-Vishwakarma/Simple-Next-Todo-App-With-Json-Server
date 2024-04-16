@@ -8,6 +8,17 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 // import {AdapterDayjs,LocalizationProvider,DatePicker} from '@mui/x-date-pickers';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import TextSnippetIcon from '@mui/icons-material/TextSnippet';
+import DataGrid, {
+   Column,
+   FilterRow,
+   Pager,
+   Paging,
+   SearchPanel,
+} from 'devextreme-react/data-grid';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import InsertPageBreakIcon from '@mui/icons-material/InsertPageBreak';
 import BallotIcon from '@mui/icons-material/Ballot';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -71,7 +82,7 @@ const Demo = styled('div')(({ theme }) => ({
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
-
+let addItemdata = [];
 function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) {
     console.log("TaskDetailModal2222", selectedTask);
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -95,10 +106,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     const [folderList, setFolderList] = useState([]);
     const [portalComments, setPortalComments] = useState([]);
     const [copyLink, setCopyLink] = useState("");
-
+    const pageSizes = [10, 25, 50, 100];
     const [txtFolder, settxtFolder] = useState(selectedTask.Folder);
     const [txtFolderId, setTxtFolderId] = useState(selectedTask.FolderID);
-
+    const [dmsDocumentList, setDMSDocumentList] = React.useState([]);
+    const [selectedRows, setSelectedRows] = useState([]);
     const [secondary, setSecondary] = React.useState(false);
     const [getCRMSaved, setGetCRMSaved] = React.useState([]);
 
@@ -136,7 +148,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     ////////////////////////////////Attachment files
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [attachmentPath, setAttachmentPath] = useState([]);
-
+    const [selectedDocumentFileDMS, setSelectedDocumentFileDMS] = useState([]);
 
     const [txtdescription, setTxtDescriptin] = React.useState("");
     const [details, setDetails] = React.useState("");
@@ -163,6 +175,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     const toggleVisibilityCancle = () => {
         setIsVisible(false); // Toggle visibility
     };
+
     const handalClickEditeSubject = () => {
         setIsVisible(false); // Toggle visibility
         setisvisibleSubject(true)
@@ -204,7 +217,22 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         Json_UpdateTaskField("TypeOfTaskID", e.SecID, "Section Updated!")
     };
 
+ const handleSelectionChanged = (selectedItems) => {
+        setSelectedRows(selectedItems.selectedRowsData);
+        // You can perform further actions with the selectedRows array
+        console.log("selectedItems11", selectedItems); // Log the selected rows data
+       // Create a Set to store unique data
+    // const uniqueData = new Set(addItemdata);
+    // setOwnerTaskID(selectedItems.selectedRowsData[0]);
+    // // Loop through each selected row data and add it to the uniqueData Set
+    // selectedItems.selectedRowsData.forEach(rowData => {
+    //     uniqueData.add(rowData);
+    // });
 
+    // // Convert the uniqueData Set back to an array and set it to addItemdata
+    // addItemdata = [...uniqueData];
+    console.log(addItemdata,"addItemdata");
+    };
 
 
 
@@ -288,10 +316,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     // Event handler to handle file selection
     const handleFileSelect = (event) => {
+
         const files = event.target.files;
         const selectedFilesArray = Array.from(files);
         const filesData = [];
-
+        console.log(files,"filedatafdfdfdfdfdfdfdfdfd");
         selectedFilesArray.forEach((file, index) => {
             const reader = new FileReader();
             reader.onload = () => {
@@ -387,6 +416,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                     // for (let item of table6) {
                     //     arrFile.push(getFilePath(item));
                     // }
+                    console.log(table6,"table6adddata");
                     setAttachmentFile(table6);
                     // setTimeout(() => {
                     //     console.log("attachmentFile", attachmentFile);
@@ -768,7 +798,95 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         }
 
     };
+    function Json_GetItemBase64DataById(item, callBack) {
+        try {
+            let obj = {};
+            obj.ItemId = item["Registration No."]
+            const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/"; // base url for api
+            //   let dt = new LoginDetails();
 
+            let cls = new CommanCLS(baseUrl, agrno, Email, password);
+            cls.Json_GetItemBase64DataById(obj, function (sts, data) {
+                if (sts) {
+                    if (data !== "No Data Exist") {
+                        // console.log("Json_GetItemBase64DataById data", data)
+                        return callBack(data);
+                    }
+                    else {
+                        toast.error(item.Description + "was not uploaded as it had no data")
+                    }
+
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetItemBase64DataById error", error)
+        }
+
+    }
+    const AddDocuments = () => {
+        let filesData = [];
+        setSelectedRows([]);
+        console.log("AddDocuments11",selectedRows);
+        selectedRows.forEach((row, index) => {
+
+            Json_GetItemBase64DataById(row, function (base64data) {
+                const fileData = {
+                    FileName: row.Description + "." + row.Type,
+                    Base64: base64data ? base64data : "", // Base64 data of the file
+                    FileSize: "",
+                    Preview: "", // Data URL for preview
+                    DocId: row["Registration No."],
+                    Guid: localStorage.getItem("GUID"),
+                    FileType: row["Type"].toLowerCase(),
+                    Description: row.Description
+
+                };
+                filesData.push(fileData);
+                console.log(filesData,"getfilesdata");
+                //Check if this is the last file
+                if (index === selectedRows.length - 1) {
+                    // Add new files to the uploadedFiles array
+                    setSelectedFiles((prevUploadedFiles) => [
+                        ...prevUploadedFiles,
+                        ...filesData,
+                    ]);
+
+                    setSelectedDocumentFileDMS((prevUploadedFiles) => [
+                        ...prevUploadedFiles,
+                        ...filesData,
+                    ]);
+            }
+            })
+
+
+        })
+        // setTimeout(() => {
+        //     PrepareDocumentsForPublish_Json(filesData, 2)
+        // }, 4000);
+
+
+
+        setOpenDocumentListDMS(false)
+
+    }
+
+    function Json_CRM_TaskDMSAttachmentInsert(TaskID) {
+
+        const ItemId = selectedDocumentFileDMS.map(obj => obj.DocId).join("|");
+        let obj = {
+            TaskID: TaskID,
+            DMSItems: ItemId,
+            Notes: ""
+        };
+        Cls.Json_CRM_TaskDMSAttachmentInsert(obj, function (sts, data) {
+            if (sts && data) {
+                console.log('Json_CRM_TaskDMSAttachmentInsert', data);
+                setAttachmentPath([]);
+                setSelectedFiles([])
+            }
+        })
+    }
     function dateAndTime(dt) {
         // Create a new Date object
         var date = new Date(dt);
@@ -1021,6 +1139,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                     let js = JSON.parse(data);
                     if (js.Status === "success") {
                         setSelectedFiles([]);
+                        
                         setMessageId(js.Message);
                         // setLoading(false);
                         setIsApi(!isApi);
@@ -1034,7 +1153,10 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                             Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
                         }, 2000);
                         setIsVisible(false); // Toggle visibility
-
+                        if (selectedFiles && selectedFiles.length > 0) {
+                            console.log(selectedFiles,"selectedDocumentFileDMS")
+                            Json_CRM_TaskDMSAttachmentInsert(js.Message);
+                        }
                         const attString = attachmentPath.map((item) => {
                             let fileName = "";
                             if (item.FileName) {
@@ -1044,10 +1166,17 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                             return fileName;
                         });
-
-
-                        let mgs = `Upload File ${attString}`;
+                        if(selectedFiles && selectedFiles.length > 0){
+                        let res = selectedFiles.map((e)=>e.FileName).join(',');
+                        let mgs = `Upload File ${res}`;
                         Json_AddSupplierActivity(mgs, "sys")
+                        } else {
+
+                            let mgs = `Upload File ${attString}`;
+                        Json_AddSupplierActivity(mgs, "sys")
+                        }
+
+                      
 
                     }
                     else {
@@ -1201,7 +1330,17 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     const handleSearchInputChangeSection = (event) => {
         setSearchSectionQuery(event.target.value);
     };
+    const renderTypeCell = (data) => {
+        // Define the condition based on which the icon will be rendered
+        if (data.value === 'pdf') {
+            return <PictureAsPdfIcon></PictureAsPdfIcon>;
+        } else if (data.value === 'txt') {
 
+            return <TextSnippetIcon></TextSnippetIcon>;
+        }
+        // You can add more conditions or return default content if needed
+        return data.value;
+    };
     const filtereSectionList = sectionList.filter((item) =>
         item.Sec.toLowerCase().includes(searchSectionQuery.toLowerCase())
     );
@@ -1394,6 +1533,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     // };
 
     const [AttachmentRef, setAttachmentRef] = React.useState(null);
+    const [documentListDMS, setOpenDocumentListDMS] = React.useState(false);
     //   const open = Boolean(anchorEl);
     const handleAttachmentClick = (event) => {
         setAttachmentRef(event.currentTarget);
@@ -1401,7 +1541,58 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     const handleAttachmentClose = () => {
         setAttachmentRef(null);
     };
+   
+    const handleDocumentClickOpen = () => {
+        console.log("DocumentClickOpensonam",txtClientId);
+        // setAttachmentRef(null);
+        
+        if (txtClientId) {
 
+            Json_ExplorerSearchDoc();
+            setOpenDocumentListDMS(true);
+
+        } else {
+            toast.warn("Select Referece !");
+        }
+        getButtonColor();
+    };
+    
+    const handleCloseDocumentListDMS = () => {
+        setOpenDocumentListDMS(false);
+    };
+    const Json_ExplorerSearchDoc = () => {
+        console.log(selectedTask,'Json_ExplorerSearchDoc',txtClientId);
+        try {
+
+            if (selectedTask.FolderID && txtClientId) {
+                console.log(txtFolderId,'Json_ExplorerSearchDoctxtClientId',txtClientId);
+                let obj = {};
+                obj.ProjectId = selectedTask.FolderID;
+                obj.ClientId = txtClientId;
+                obj.sectionId = "-1";
+                Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
+                    if (sts && data) {
+                        let json = JSON.parse(data);
+                        console.log("ExplorerSearchDoc", json);
+                        let tble6 = json.Table6;
+                        setDMSDocumentList(tble6);
+                    }
+                })
+            }
+
+        } catch (error) {
+            console.log("ExplorerSearchDoc", error)
+        }
+
+    }
+    const [txtColor, setTxtColor] = useState({ color: "#1976d2" });
+    const getButtonColor = () => {
+        if (txtClientId) {
+            setTxtColor({ color: "#1976d2" }); // Example: Set color to green when conditions met
+        } else {
+            setTxtColor({ color: "red" }); // Example: Set color to blue when conditions not met
+        }
+    };
 
     return (
         <React.Fragment>
@@ -2381,6 +2572,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                             <Box className="d-flex align-items-end main-file-upload  pt-3">
                                 <Box className="w-100">
                                     <Stack direction="row" className='pb-2 custom-chips' spacing={1}>
+                                        {console.log(selectedFiles,"selectedFiles11")}
                                         {
                                             selectedFiles && selectedFiles.slice(0, 3).map((item, index) => (
                                                 <Chip key={index} label={item.FileName} variant="outlined" onDelete={() => handleDelete(item)} />
@@ -2444,7 +2636,31 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                     >
                                                         <AttachFileIcon />
                                                     </Button>
-                                                    <Menu
+                                                    <input
+        type="file"
+        id={`file-upload ${selectedTask.ID}`}
+        multiple
+        onChange={handleFileSelect}
+        className="file-input"
+        style={{ display: 'none' }} // Hide the input element
+    />
+    <Menu
+        id="basic-menu"
+        anchorEl={AttachmentRef}
+        open={Boolean(AttachmentRef)}
+        onClose={handleAttachmentClose}
+        MenuListProps={{
+            'aria-labelledby': 'basic-button',
+        }}
+    >
+        <MenuItem onClick={handleAttachmentClose}>
+            <label htmlFor={`file-upload ${selectedTask.ID}`} className="pointer">
+            <FileUploadIcon className="font-20 me-1" /> Upload File(s)
+            </label>
+        </MenuItem>
+        <MenuItem onClick={handleDocumentClickOpen}><InsertPageBreakIcon className="font-20 me-1" /> Select From DMS</MenuItem>
+    </Menu>
+                                                    {/* <Menu
                                                         id="basic-menu"
                                                         anchorEl={AttachmentRef}
                                                         open={Boolean(AttachmentRef)}
@@ -2452,22 +2668,23 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                         MenuListProps={{
                                                             'aria-labelledby': 'basic-button',
                                                         }}
-                                                    >
+                                                    > 
+                                                     <input
+                                                    type="file"
+                                                    id={`file-upload ${selectedTask.ID}`}
+                                                    multiple
+                                                onChange={handleFileSelect}
+                                                    className="file-input"
+                                                />
                                                         <MenuItem onClick={handleAttachmentClose}>
-                                                            <input
-                                                                type="file"
-                                                                id={`file-upload ${selectedTask.ID}`}
-                                                                multiple
-                                                                onChange={handleFileSelect}
-                                                                className="file-input"
-                                                            />
-                                                            <label for={`file-upload ${selectedTask.ID}`} className="pointer">
+                                                          
+                                                            <label htmlFor={`file-upload ${selectedTask.ID}`}   className="pointer">
                                                                 Upload File(s)
                                                             </label>
                                                         </MenuItem>
                                                         
-                                                        <MenuItem onClick={handleAttachmentClose}>Select From DMS</MenuItem>
-                                                    </Menu>
+                                                        <MenuItem onClick={handleDocumentClickOpen}>Select From DMS</MenuItem>
+                                                    </Menu> */}
                                                 </div>
 
 
@@ -2934,7 +3151,93 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
             </Dialog>
 
+            <Dialog
+                open={documentListDMS}
+                onClose={handleCloseDocumentListDMS}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal'
 
+                sx={{
+                    maxWidth: 640,
+                    margin: '0 auto'
+                }}
+            >
+                {/* <DialogTitle id="alert-dialog-title">
+                        {"Use Google's location service?"}
+                    </DialogTitle> */}
+
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+
+                    <div>
+                        <Button
+                            id="basic-button"
+                        >
+                            Document List
+                        </Button>
+                    </div>
+
+                    <Button onClick={handleCloseDocumentListDMS} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <DataGrid
+                            dataSource={dmsDocumentList}
+                            allowColumnReordering={true}
+                            rowAlternationEnabled={true}
+                            showBorders={true}
+                            width="100%"
+                            selectedRowKeys={selectedRows}
+                            selection={{ mode: 'multiple' }}
+                            onSelectionChanged={handleSelectionChanged} // Handle selection change event
+                            className="table-grid"
+                        >
+                            <FilterRow visible={true} />
+                            <SearchPanel visible={true} highlightCaseSensitive={true} />
+
+
+                            <Column
+                                dataField="Type"
+                                caption="Type"
+                                cellRender={renderTypeCell} // Render cells based on condition
+                            />
+
+                            <Column
+                                dataField="Description"
+                                caption="Description"
+                            />
+                            <Column
+                                dataField="Section"
+                                caption="Section"
+                            />
+                            <Column
+                                dataField="Client"
+                                caption="Client"
+                            />
+                            <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
+                            <Paging defaultPageSize={10} />
+                        </DataGrid>
+
+                        {/* file upload end */}
+
+                    </DialogContentText>
+                </DialogContent>
+
+                <DialogActions className="p-4 pt-3">
+                    <Button
+                        variant="contained"
+                        onClick={AddDocuments}
+                        className="btn-blue-2"
+                    >
+                        {'Add Document'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </React.Fragment>
     );
 }

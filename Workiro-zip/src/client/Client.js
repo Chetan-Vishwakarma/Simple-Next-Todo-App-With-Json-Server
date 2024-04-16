@@ -208,16 +208,16 @@ function Client() {
                     if (data) {
                         let json = JSON.parse(data);
                         const clients_data = json?.Table;
-                        
+
                         // sorting functionality start
                         const fvClient = favouriteClients.map(itm => itm.OriginatorNo);   // getting favourite clients org number
                         const filterFvClient = [...new Set(fvClient)];  // filtering duplicate favourite client
                         const dddd = [...clients_data].filter(itm => itm["Company Name"] !== '').sort((a, b) => a["Company Name"].localeCompare(b["Company Name"]));
-                        let dtaa = [...dddd].sort((a,b)=>{
+                        let dtaa = [...dddd].sort((a, b) => {
                             let cpm = 0;
-                            if(filterFvClient.includes(a.OriginatorNo)){
+                            if (filterFvClient.includes(a.OriginatorNo)) {
                                 cpm = -1;
-                            }else{
+                            } else {
                                 cpm = 1;
                             }
                             return cpm;
@@ -500,13 +500,26 @@ function Client() {
             setObjFilter(obj);
             return;
         } else if (selectedChoice === "All") {
-            // console.log("Obj for Contact: ",obj);
-            // console.log("Obj for Client: ",objFilterClient);
 
-            let fltClients = handleSearchBy(clients, obj);
+            const mappingObj = CommonFilters.reduce((obj1, item) => {
+                obj1[item.key] = item.val;
+                return obj1;
+            }, {});
+
+            const updatedData = {};
+            for (const key in obj) {
+                if (mappingObj.hasOwnProperty(key)) {
+                    updatedData[mappingObj[key]] = obj[key];
+                } else {
+                    updatedData[key] = obj[key];
+                }
+            }
+
+
+            // let fltClients = handleSearchBy(clients, obj);
+            let fltClients = handleSearchBy(clients, updatedData);
             let fltContacts = handleSearchBy(contacts, obj);
-            // console.log("FilteredClient: ",fltClients);
-            // console.log("FilteredContact: ",fltContacts);
+
             setFilteredClients(fltClients);
             setFilteredContacts(fltContacts);
             if (Object.keys(obj).length === 0) {
@@ -693,6 +706,37 @@ function Client() {
 
 
         } else if (selectedChoice === "All") {
+
+
+            if (filteredClients.length > 0 && filteredContacts.length > 0) {
+                let list1 = createSuggestionList(label, filteredClients);
+                let list2 = createSuggestionList(value, filteredContacts);
+                let fltRepeatData = [...list1];
+
+                list2.filter((itm) => {
+                    if (!fltRepeatData.includes(itm)) {
+                        fltRepeatData.push(itm);
+                    }
+                });
+                setSuggestionList(fltRepeatData);
+                return;
+            } else if (filteredClients.length > 0 && filteredContacts.length === 0) {
+                let list1 = createSuggestionList(label, filteredClients);
+
+                let fltRepeatData = [...list1];
+
+                setSuggestionList(fltRepeatData);
+                return;
+            } else if (filteredClients.length === 0 && filteredContacts.length > 0) {
+                let list2 = createSuggestionList(value, filteredContacts);
+
+                let fltRepeatData = [...list2];
+
+                setSuggestionList(fltRepeatData);
+                return;
+            }
+
+
             let list1 = createSuggestionList(label, clients);
             let list2 = createSuggestionList(value, contacts);
             let fltRepeatData = [...list1];
@@ -970,7 +1014,7 @@ function Client() {
                                 value={alignment}
                                 exclusive
                                 onChange={handleAlignment}
-                                aria-label="text alignment"
+
                             >
 
                                 {isGridView &&

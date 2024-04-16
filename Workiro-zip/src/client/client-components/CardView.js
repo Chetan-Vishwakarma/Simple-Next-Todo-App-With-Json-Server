@@ -230,7 +230,7 @@ function CardView(props) {
                 {/* <PersonIcon className="me-2" /> */}
                 <Tooltip title="Client" className='my-1'>
                   <IconButton>
-                    <ApartmentIcon />
+                    <PersonIcon />
                   </IconButton>
                 </Tooltip>
                 <Box className='info-details'>

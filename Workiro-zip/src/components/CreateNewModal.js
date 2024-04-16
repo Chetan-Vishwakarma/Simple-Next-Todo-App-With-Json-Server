@@ -1664,6 +1664,7 @@ function CreateNewModalTask({ ...props }) {
 
     const AddDocuments = () => {
         let filesData = [];
+        console.log("AddDocuments11",selectedRows);
         selectedRows.forEach((row, index) => {
 
             Json_GetItemBase64DataById(row, function (base64data) {
