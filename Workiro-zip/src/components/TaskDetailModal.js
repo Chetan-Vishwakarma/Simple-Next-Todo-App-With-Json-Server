@@ -1889,7 +1889,10 @@ console.log("attachmentPath111",attachmentPath,selectedDocumentFileDMS)
                             >
 
                                 {/* only for portal */}
-                                <MenuItem className='ps-2' onClick={() => {
+                                {selectedTask.Source==="Portal" && (
+
+                                    <>
+                                     <MenuItem className='ps-2' onClick={() => {
                                     setSelectedIndexProfile(null);
                                 }}>
                                     <ListItemIcon >
@@ -1912,6 +1915,9 @@ console.log("attachmentPath111",attachmentPath,selectedDocumentFileDMS)
                                     <ListItemIcon>
                                         <DeleteIcon fontSize="medium" />
                                     </ListItemIcon> Delete Message (s)</MenuItem>
+                                    </>
+                                )}
+                               
 
                                 {/* <MenuItem className='ps-2'>
                                     <ListItemIcon>
