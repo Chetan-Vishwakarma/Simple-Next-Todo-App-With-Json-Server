@@ -397,6 +397,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     async function Json_Get_CRM_SavedTask_ByTaskId(taskid) {
         setAttachmentFile([]);
+        setAttachmentPath([]);
+        setSelectedDocumentFileDMS([]);
         let obj = {};
         obj.TaskId = taskid;
         await Cls.Json_Get_CRM_SavedTask_ByTaskId(obj, function (status, data) {
@@ -412,16 +414,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                 let table6 = json.T6;
                 if (table6.length > 0) {
-                    // let arrFile = [];
-                    // for (let item of table6) {
-                    //     arrFile.push(getFilePath(item));
-                    // }
-                    console.log(table6,"table6adddata");
-                    setAttachmentFile(table6);
-                    // setTimeout(() => {
-                    //     console.log("attachmentFile", attachmentFile);
-                    // }, 3000);
-
+                    let filesData=[];
                     for (let item of table6) {
 
                         // if(item.DestinationPath){
@@ -429,18 +422,51 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         //    // setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
                         // }
 
+                        if(item.DestinationPath) {
+                            let o = { Path: item.DestinationPath,FileName:""};
+                          
+                          
+                           setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+                           console.log(item.DestinationPath,"table6adddata44444");
+                       }
+                       else{
+                           if(item.ItemId){
+                            const fileData = {
+                                FileName:"",
+                                Base64: "", // Base64 data of the file
+                                FileSize: "",
+                                Preview: "", // Data URL for preview
+                                DocId: item.ItemId,
+                                Guid: localStorage.getItem("GUID"),
+                                FileType:"",
+                                Description: ""
+            
+                            };
+                            filesData.push(fileData);
+                          
+                            }
+    
+                       }
 
-                        // if(item.DestinationPath && !item.ItemId){
-                        //     let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };                        
-                        //     setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
-                        // }
-                        // else{
-                        //     if(item.ItemId){
-                        //         SetFileataByItemId(item.ItemId);
-                        //     }
-
-                        // }
                     }
+                    console.log(filesData,"table6adddata333333");
+                    setTimeout(()=>{
+                        setSelectedDocumentFileDMS((pre)=> [...pre, ...filesData])
+                    },3000)
+
+                    // let arrFile = [];
+                    // for (let item of table6) {
+                    //     arrFile.push(getFilePath(item));
+                    // }
+                   
+                    setAttachmentFile(table6);
+                    // setTimeout(() => {
+                    //     console.log("attachmentFile", attachmentFile);
+                    // }, 3000);
+
+
+            
+                   
 
 
 
@@ -827,9 +853,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     const AddDocuments = () => {
         let filesData = [];
         setSelectedRows([]);
+        //setSelectedDocumentFileDMS([]);
         console.log("AddDocuments11",selectedRows);
         selectedRows.forEach((row, index) => {
-
             Json_GetItemBase64DataById(row, function (base64data) {
                 const fileData = {
                     FileName: row.Description + "." + row.Type,
@@ -1101,6 +1127,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     }
 
     async function Json_CRM_Task_Update() {
+
+
+console.log("attachmentPath111",attachmentPath,selectedDocumentFileDMS)
 
         if (addUser.length > 0) {
             const idsString = addUser.map(obj => obj.ID).join(',');
