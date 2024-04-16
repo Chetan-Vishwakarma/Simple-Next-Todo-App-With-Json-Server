@@ -1459,11 +1459,14 @@ function CreateNewModalTask({ ...props }) {
     };
 
     const handleDocumentClickOpen = () => {
+        setDMSDocumentList([])
+     
+
         setAnchorSelectFileEl(null);
 
         if (textClientId) {
 
-            Json_ExplorerSearchDoc();
+           Json_ExplorerSearchDoc();
             setOpenDocumentList(true);
 
         } else {

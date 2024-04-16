@@ -26,6 +26,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SendIcon from '@mui/icons-material/Send';
 import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
+import FolderIcon from '@mui/icons-material/Folder';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import user from "../images/user.jpg";
@@ -71,6 +72,8 @@ import DocumentList from "../client/client-components/DocumentList";
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import Activity from "../client/utils/Activity";
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
+
+import moment from 'moment';
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -644,7 +647,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         setTxtClientId(selectedTask.ClientNo);
         setNotesMessage("");
         Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
-        setCurrentDate(startFormattingDate(selectedTask.CreationDate));
+
+        //setCurrentDate(startFormattingDate(selectedTask.CreationDate));
+       setCurrentDate(moment(selectedTask.Start,"DD/MM/YYYY").toDate());
+       // console.log("moment11",moment(selectedTask.Start,"DD/MM/YYYY").toDate());
+//moment(dateString, "DD/MM/YYYY").toDate();
         setNextDate(DateFormet(selectedTask.EndDateTime));
         setRemiderDate(dayjs(Cls.getCurrentDate()));
         Json_GetFolderData(selectedTask.FolderID ? selectedTask.FolderID : localStorage.getItem("FolderId"));
@@ -1102,7 +1109,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
             let obj = {
                 AssignedToID: idsString,
                 TaskID: selectedTask.ID,
-                DMSItems: "",
+                DMSItems: (selectedDocumentFileDMS && selectedDocumentFileDMS.length>0) ? selectedDocumentFileDMS.map(obj => obj.DocId).join("|") : "",
                 Attachments: attString ? attString : "",
                 Notes: "",
                 Details: txtdescription,
@@ -1142,14 +1149,14 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         toast.success("Updated Task !");
                         //setIsVisible(false); // Toggle visibility
                         setTimeout(() => {
-                            setAttachmentPath([]);
+                            // setAttachmentPath([]);
                             Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
                         }, 2000);
                         setIsVisible(false); // Toggle visibility
-                        if (selectedFiles && selectedFiles.length > 0) {
-                            console.log(selectedFiles,"selectedDocumentFileDMS")
-                            Json_CRM_TaskDMSAttachmentInsert(js.Message);
-                        }
+                        // if (selectedFiles && selectedFiles.length > 0) {
+                        //     console.log(selectedFiles,"selectedDocumentFileDMS")
+                        //     Json_CRM_TaskDMSAttachmentInsert(js.Message);
+                        // }
                         const attString = attachmentPath.map((item) => {
                             let fileName = "";
                             if (item.FileName) {
@@ -1909,13 +1916,13 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                             return (<>
                                                 <MenuItem onClick={() => handleCloseProfile(item)}>
                                                     <ListItemIcon>
-                                                        <DoNotDisturbAltIcon fontSize="medium" />
+                                                        <FolderIcon fontSize="medium" />
                                                     </ListItemIcon>
 
                                                     {item.Folder}
                                                 </MenuItem>
                                             </>)
-                                        }) : ""}
+                                        }) : ""}.length
 
 
                                     </Menu>

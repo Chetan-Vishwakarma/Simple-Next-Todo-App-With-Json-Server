@@ -606,8 +606,10 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
         if (selectedTask.PubMessageId) {
 
             GetMessageAttachments_Json(selectedTask.PubMessageId);
-            setStartDate(startFormattingDate(selectedTask.CreationDate));
-            setEndDate(startFormattingDate(selectedTask.EndDateTime));
+            
+            setStartDate(moment(selectedTask.Start).format("DD/MM/YYYY"));
+
+            setEndDate(moment(selectedTask.EndDateTime).format("DD/MM/YYYY"));
 
             Json_GetForwardUserList(selectedTask.FolderID)
         }
