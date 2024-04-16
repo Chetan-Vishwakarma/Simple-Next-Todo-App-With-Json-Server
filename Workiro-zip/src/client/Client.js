@@ -18,7 +18,8 @@ import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CustomLoader from '../components/CustomLoader';
-
+import SyncIcon from '@mui/icons-material/Sync';
+import Tooltip from '@mui/material/Tooltip';
 
 const CommonFilters = [
     { key: "Company Name", val: "Company Name" }, { key: "Address 1", val: "Address Line 1" },
@@ -762,12 +763,12 @@ function Client() {
         obj.agrno = agrno;
         obj.Email = Email;
         obj.password = password;
-       
+
         try {
             Cls.TeamSolution(obj, function (sts, data) {
                 if (sts && data) {
                     console.log({ status: true, messages: "Success", res: data });
-                   
+
                 }
             });
         } catch (error) {
@@ -1026,14 +1027,21 @@ function Client() {
                             </>}
                         </Box>
 
-                        <Box className=''>
+                        <Box className='d-flex'>
+
+                            {/* <Button variant="text" onClick={SyncFunctionData}>Sync</Button> */}
+
                             <ToggleButtonGroup
                                 value={alignment}
                                 exclusive
-                                onChange={handleAlignment}
-
+                            // onChange={handleAlignment}
                             >
-                            <Button variant="text" onClick={SyncFunctionData}>Sync</Button>
+                                <Tooltip title="Sync">
+                                    <ToggleButton value="left" aria-label="left aligned"
+                                        onClick={SyncFunctionData}
+                                    >
+                                        <SyncIcon />
+                                    </ToggleButton></Tooltip>
 
                                 {isGridView &&
                                     <ToggleButton value="left" aria-label="left aligned"
@@ -1057,6 +1065,7 @@ function Client() {
 
 
                             </ToggleButtonGroup>
+
                         </Box>
 
 
