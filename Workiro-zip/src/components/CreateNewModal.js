@@ -1312,6 +1312,8 @@ function CreateNewModalTask({ ...props }) {
 
 
     function ClearForm() {
+        
+        setSelectedDocumentFile([]);
         setCurrentDate(new Date())
         setTextSubject("");
         settxtClient("Select Client");
