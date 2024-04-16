@@ -604,16 +604,11 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                             setOpenUploadDocument(false); 
                                         }
                                       
-<<<<<<< HEAD
-                                    }, 4000);                                      
-                                    
-=======
                                     }, 4000);    
                                     
                                     // setOpenModal(true) doring conflict
                                     // setOpenUploadDocument(false);
                                    
->>>>>>> 4c23a709deec64ade6300bb1f645745e3a5c2f30
                                 }
                                 else {
                                     setOpenUploadDocument(false);
