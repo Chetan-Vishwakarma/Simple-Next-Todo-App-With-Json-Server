@@ -1102,7 +1102,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
             let obj = {
                 AssignedToID: idsString,
                 TaskID: selectedTask.ID,
-                DMSItems: "",
+                DMSItems: (selectedDocumentFileDMS && selectedDocumentFileDMS.length>0) ? selectedDocumentFileDMS.map(obj => obj.DocId).join("|") : "",
                 Attachments: attString ? attString : "",
                 Notes: "",
                 Details: txtdescription,
@@ -1142,14 +1142,14 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         toast.success("Updated Task !");
                         //setIsVisible(false); // Toggle visibility
                         setTimeout(() => {
-                            setAttachmentPath([]);
+                            // setAttachmentPath([]);
                             Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
                         }, 2000);
                         setIsVisible(false); // Toggle visibility
-                        if (selectedFiles && selectedFiles.length > 0) {
-                            console.log(selectedFiles,"selectedDocumentFileDMS")
-                            Json_CRM_TaskDMSAttachmentInsert(js.Message);
-                        }
+                        // if (selectedFiles && selectedFiles.length > 0) {
+                        //     console.log(selectedFiles,"selectedDocumentFileDMS")
+                        //     Json_CRM_TaskDMSAttachmentInsert(js.Message);
+                        // }
                         const attString = attachmentPath.map((item) => {
                             let fileName = "";
                             if (item.FileName) {
