@@ -44,9 +44,11 @@ return(<>
   <Editor
         apiKey='w9rz0c8fw8u2pd3qv7d779obkouylvlrlb9w9s1fmytnlan1'
         initialValue={templateDataMarkup}
+        
         init={{
             height: "300px",
             menubar: false,
+            readonly: true,
             plugins: [
                 'a11ychecker','advlist','advcode','advtable','autolink','checklist','export',
                 'lists','link','image','charmap','preview','anchor','searchreplace','visualblocks',
@@ -56,7 +58,8 @@ return(<>
                 'alignleft aligncenter alignright alignjustify | ' +
                 'bullist numlist checklist outdent indent | removeformat | a11ycheck code table help',
             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-            resize: true // Enable resizing
+            resize: true, // Enable resizing,
+            
         }}
         onEditorChange={handleEditorChange}
         // onInit={(evt, editor) => {

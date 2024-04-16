@@ -36,6 +36,10 @@ import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 
 import { Editor } from '@tinymce/tinymce-react';
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 89d74c643010680a6d61e7e8ba232a436335d810
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
 }));
@@ -796,6 +800,11 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                 <h5 className='mb-0 text-black'>{selectedTask.Subject}</h5>
             </Box> */}
                 <Box className='mb-2'>
+<<<<<<< HEAD
+=======
+                   
+
+>>>>>>> 89d74c643010680a6d61e7e8ba232a436335d810
                 <Editor
         apiKey='w9rz0c8fw8u2pd3qv7d779obkouylvlrlb9w9s1fmytnlan1'
         initialValue={templateDataMarkup}
@@ -821,6 +830,11 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
         //     editorRef.current = editor;
         //   }}
     />
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 89d74c643010680a6d61e7e8ba232a436335d810
                     {/* <textarea
                         templateDataMarkup={templateDataMarkup}
                         setTemplateDataMarkup={setTemplateDataMarkup}

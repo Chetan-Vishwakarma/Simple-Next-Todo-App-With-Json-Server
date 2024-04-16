@@ -944,13 +944,15 @@ function CreateNewModalTask({ ...props }) {
         const files = event.target.files;
         const selectedFilesArray = Array.from(files);
         const filesData = [];
-        let completeOpeiton=0;
+
+        let completeCounter=0;
+    
         selectedFilesArray.forEach((file, index) => {
             const reader = new FileReader();
-            completeOpeiton++;
+            completeCounter++;
             reader.onload = () => {
                 let fileByte = reader.result.split(";")[1].replace("base64,", "");
-
+    
                 const fileData = {
                     FileName: file.name,
                     Base64: fileByte ? fileByte : "", // Base64 data of the file
@@ -960,39 +962,36 @@ function CreateNewModalTask({ ...props }) {
                     Guid: localStorage.getItem("GUID"),
                     FileType: getFileExtension(file.name).toLowerCase()
                 };
-                // console.log("get folder list 2222222222", fileData);
+    
                 filesData.push(fileData);
-
+    
                 if (txtTaskType === "CRM") {
-                    UploadAttachment(fileData)
+                    UploadAttachment(fileData);
                 }
-
+    
                 // Check if this is the last file
                 if (index === selectedFilesArray.length - 1) {
                     // Add new files to the uploadedFiles array
-                    if(completeOpeiton===selectedFilesArray.length){
-                        setSelectedFiles((prevUploadedFiles) => [
-                            ...prevUploadedFiles,
-                            ...filesData,
-                        ]);
+                    setSelectedFiles((prevUploadedFiles) => [
+                        ...prevUploadedFiles,
+                        ...filesData,
+                    ]);
+    
+                    // Call PrepareDocumentsForPublish_Json after all files data are processed
+                    if(completeCounter===selectedFilesArray.length){
 
                         if (txtTaskType === "Portal") {
                             PrepareDocumentsForPublish_Json(filesData, 1);
                         }
+                        
                     }
                    
-
-                    // setSelectedFilesFromBrower((prevUploadedFiles) => [
-                    //     ...prevUploadedFiles,
-                    //     ...filesData,
-                    // ]);
-
                 }
             };
             reader.readAsDataURL(file); // Read file as data URL (base64)
         });
-
     };
+    
 
     function PrepareDocumentsForPublish_Json(filedata, ids) {
         try {
@@ -1684,7 +1683,7 @@ function CreateNewModalTask({ ...props }) {
 
     const AddDocuments = () => {
         let filesData = [];
-        //console.log("AddDocuments11", selectedRows);
+        console.log("AddDocuments11", selectedRows);
     
         // Counter to keep track of completed asynchronous operations
         let completedOperations = 0;
@@ -1726,51 +1725,7 @@ function CreateNewModalTask({ ...props }) {
             });
         });
     };
-
-    // const AddDocuments = () => {
-    //     let filesData = [];
-    //     console.log("AddDocuments11",selectedRows);
-    //     selectedRows.forEach((row, index) => {
-
-    //         Json_GetItemBase64DataById(row, function (base64data) {
-    //             const fileData = {
-    //                 FileName: row.Description + "." + row.Type,
-    //                 Base64: base64data ? base64data : "", // Base64 data of the file
-    //                 FileSize: "",
-    //                 Preview: "", // Data URL for preview
-    //                 DocId: row["Registration No."],
-    //                 Guid: localStorage.getItem("GUID"),
-    //                 FileType: row["Type"].toLowerCase(),
-    //                 Description: row.Description
-
-    //             };
-    //             filesData.push(fileData);
-    //             // Check if this is the last file
-    //             if (index === selectedRows.length - 1) {
-    //                 // Add new files to the uploadedFiles array
-    //                 setSelectedFiles((prevUploadedFiles) => [
-    //                     ...prevUploadedFiles,
-    //                     ...filesData,
-    //                 ]);
-
-    //                 setSelectedDocumentFile((prevUploadedFiles) => [
-    //                     ...prevUploadedFiles,
-    //                     ...filesData,
-    //                 ]);
-    //             }
-    //         })
-
-
-    //     })
-    //     setTimeout(() => {
-    //         PrepareDocumentsForPublish_Json(filesData, 2)
-    //     }, 4000);
-
-
-
-    //     setOpenDocumentList(false)
-
-    // }
+    
 
     function Json_GetItemBase64DataById(item, callBack) {
         try {
