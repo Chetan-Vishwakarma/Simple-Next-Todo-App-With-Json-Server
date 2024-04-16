@@ -716,7 +716,8 @@ function TodoList() {
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value="Folder" style={{ display: "none" }}>Folders</MenuItem>
+                                <MenuItem value="Folder" style={{ display: "none" }}>
+                                    Folders</MenuItem>
                                 <MenuItem value="" className='text-danger ps-1'><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
                                 {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'><FolderSharedIcon className="font-20 me-1" /> {fld.Folder}</MenuItem>)}
                             </Select>

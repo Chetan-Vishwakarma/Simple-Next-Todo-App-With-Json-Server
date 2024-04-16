@@ -368,6 +368,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     async function Json_Get_CRM_SavedTask_ByTaskId(taskid) {
         setAttachmentFile([]);
+        setAttachmentPath([]);
+        // setSelectedDocumentFileDMS([]);
         let obj = {};
         obj.TaskId = taskid;
         await Cls.Json_Get_CRM_SavedTask_ByTaskId(obj, function (status, data) {
@@ -383,15 +385,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                 let table6 = json.T6;
                 if (table6.length > 0) {
-                    // let arrFile = [];
-                    // for (let item of table6) {
-                    //     arrFile.push(getFilePath(item));
-                    // }
-                    setAttachmentFile(table6);
-                    // setTimeout(() => {
-                    //     console.log("attachmentFile", attachmentFile);
-                    // }, 3000);
-
+                    let filesData=[];
                     for (let item of table6) {
 
                         // if(item.DestinationPath){
@@ -399,26 +393,62 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         //    // setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
                         // }
 
-
-                        if(item.DestinationPath && !item.ItemId){
-                            let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };                        
-                            setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
-                        }
-                        else{
-                            if(item.ItemId){
-                                SetFileataByItemId(item.ItemId);
+                        if(item.DestinationPath) {
+                            let o = { Path: item.DestinationPath,FileName:""};
+                          
+                          
+                           setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+                           console.log(item.DestinationPath,"table6adddata44444");
+                       }
+                       else{
+                           if(item.ItemId){
+                            const fileData = {
+                                FileName:"",
+                                Base64: "", // Base64 data of the file
+                                FileSize: "",
+                                Preview: "", // Data URL for preview
+                                DocId: item.ItemId,
+                                Guid: localStorage.getItem("GUID"),
+                                FileType:"",
+                                Description: ""
+            
+                            };
+                            filesData.push(fileData);
+                          
                             }
+    
+                       }
 
-                        }
                     }
+                    console.log(filesData,"table6adddata333333");
+                    setTimeout(()=>{
+                        // setSelectedDocumentFileDMS((pre)=> [...pre, ...filesData])
+                    },3000)
+
+                    // let arrFile = [];
+                    // for (let item of table6) {
+                    //     arrFile.push(getFilePath(item));
+                    // }
+                   
+                    setAttachmentFile(table6);
+                    // setTimeout(() => {
+                    //     console.log("attachmentFile", attachmentFile);
+                    // }, 3000);
 
 
+                        // if(item.DestinationPath && !item.ItemId){
+                        //     let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };                        
+                        //     setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+                        // }
+                        // else{
+                        //     if(item.ItemId){
+                        //         SetFileataByItemId(item.ItemId);
+                        //     }
 
-
-
+                        // }
                 }
             }
-        });
+            });
     }
 
     function SetFileataByItemId(itemid) {
@@ -774,6 +804,96 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     };
 
+    function Json_GetItemBase64DataById(item, callBack) {
+        try {
+            let obj = {};
+            obj.ItemId = item["Registration No."]
+            const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/"; // base url for api
+            //   let dt = new LoginDetails();
+
+            let cls = new CommanCLS(baseUrl, agrno, Email, password);
+            cls.Json_GetItemBase64DataById(obj, function (sts, data) {
+                if (sts) {
+                    if (data !== "No Data Exist") {
+                        // console.log("Json_GetItemBase64DataById data", data)
+                        return callBack(data);
+                    }
+                    else {
+                        toast.error(item.Description + "was not uploaded as it had no data")
+                    }
+
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetItemBase64DataById error", error)
+        }
+
+    }
+    const AddDocuments = () => {
+        let filesData = [];
+        // setSelectedRows([]);
+        //setSelectedDocumentFileDMS([]);
+        // console.log("AddDocuments11",selectedRows);
+        // selectedRows.forEach((row, index) => {
+        //     Json_GetItemBase64DataById(row, function (base64data) {
+        //         const fileData = {
+        //             FileName: row.Description + "." + row.Type,
+        //             Base64: base64data ? base64data : "", // Base64 data of the file
+        //             FileSize: "",
+        //             Preview: "", // Data URL for preview
+        //             DocId: row["Registration No."],
+        //             Guid: localStorage.getItem("GUID"),
+        //             FileType: row["Type"].toLowerCase(),
+        //             Description: row.Description
+
+        //         };
+        //         filesData.push(fileData);
+        //         console.log(filesData,"getfilesdata");
+        //         //Check if this is the last file
+        //         if (index === selectedRows.length - 1) {
+        //             // Add new files to the uploadedFiles array
+        //             setSelectedFiles((prevUploadedFiles) => [
+        //                 ...prevUploadedFiles,
+        //                 ...filesData,
+        //             ]);
+
+        //             setSelectedDocumentFileDMS((prevUploadedFiles) => [
+        //                 ...prevUploadedFiles,
+        //                 ...filesData,
+        //             ]);
+        //     }
+        //     })
+
+
+        // })
+        // setTimeout(() => {
+        //     PrepareDocumentsForPublish_Json(filesData, 2)
+        // }, 4000);
+
+
+
+        // setOpenDocumentListDMS(false)
+
+    }
+
+    // function Json_CRM_TaskDMSAttachmentInsert(TaskID) {
+
+    //     const ItemId = selectedDocumentFileDMS.map(obj => obj.DocId).join("|");
+    //     let obj = {
+    //         TaskID: TaskID,
+    //         DMSItems: ItemId,
+    //         Notes: ""
+    //     };
+    //     Cls.Json_CRM_TaskDMSAttachmentInsert(obj, function (sts, data) {
+    //         if (sts && data) {
+    //             console.log('Json_CRM_TaskDMSAttachmentInsert', data);
+    //             setAttachmentPath([]);
+    //             setSelectedFiles([])
+    //         }
+    //     })
+    // }
+
     function dateAndTime(dt) {
         // Create a new Date object
         var date = new Date(dt);
@@ -988,6 +1108,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     }
 
     async function Json_CRM_Task_Update() {
+
+
+// console.log("attachmentPath111",attachmentPath,selectedDocumentFileDMS)
 
         if (addUser.length > 0) {
             const idsString = addUser.map(obj => obj.ID).join(',');
@@ -1834,7 +1957,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                         <Box className="d-flex flex-wrap justify-content-between">
                             <Box className="d-flex flex-wrap align-items-center">
-                                Client Name
+                                Client
                                 <Button
                                     id="fade-button"
                                     aria-controls={openClient ? 'fade-menu' : undefined}

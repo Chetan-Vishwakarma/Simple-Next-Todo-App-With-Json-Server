@@ -36,6 +36,7 @@ import { toast } from 'react-toastify';
 import {useNavigate} from "react-router-dom";
 
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import UploadDocForClient from './UploadDocForClient';
 
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
@@ -251,8 +252,8 @@ function ClientDetails() {
                     </Box>
                 </Box>}
 
-                <UploadDocument setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument} localtion={location}
-                ></UploadDocument>
+                <UploadDocForClient setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument} localtion={location}
+                ></UploadDocForClient>
                 <hr />
                 <Box sx={{ width: '100%', typography: 'body1' }} className="">
                     <TabContext value={value}>

@@ -25,10 +25,9 @@ import moment from 'moment';
 import { ToastContainer, toast } from 'react-toastify';
 import { useLocation, useSearchParams } from 'react-router-dom';
 let originatorNo;
-function UploadDocument({ 
+function UploadDocForClient({ 
       openUploadDocument, 
-      setOpenUploadDocument,
-      documentDate, setDocumentDate, receivedDate, setReceivedDate, createNewFileObj, setCreateNewFileObj, txtFolderData, setTxtFolderData, txtClientData, setTxtClientData, txtSectionData, setTxtSectionData, TaskType, setTaskType, openModal, setOpenModal, handleClickOpen
+      setOpenUploadDocument
     }) {
     //console.log("location state",localtion.state)
     const localtion = useLocation();
@@ -50,9 +49,9 @@ function UploadDocument({
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
     const [txtFolderId, setTxtFolderId] = useState(localStorage.getItem("ProjectId"));
 
-    // const [txtFolderData, setTextFolderData] = useState(null);
+    const [txtFolderData, setTextFolderData] = useState(null);
 
-    // const [createNewFileObj, setCreateNewFileObj] = useState([]);
+    const [createNewFileObj, setCreateNewFileObj] = useState([]);
     const [saveCounter, setSaveCounter] = useState(0);
 
     const [clientList, setClientList] = useState([]);
@@ -69,15 +68,15 @@ function UploadDocument({
 
     const [txtClientId, setTxtClientId] = useState(originatorNo);/////////////////for clientid set
 
-    // const [txtClientData, setTxtClientData] = useState(null);/////////////////for clientid set
+    const [txtClientData, setTxtClientData] = useState(null);/////////////////for clientid set
 
     const [txtSectionId, setTxtSectionId] = useState(null);//////for sectionid set
 
-    // const [txtSectionData, setTxtSectionData] = useState(null);//////for sectionid set
+    const [txtSectionData, setTxtSectionData] = useState(null);//////for sectionid set
 
-    // const [documentDate, setDocumentDate] = useState(null); // Initialize the selected date state
+    const [documentDate, setDocumentDate] = useState(null); // Initialize the selected date state
 
-    // const [receivedDate, setReceivedDate] = useState(null); // Initialize the selected date state
+    const [receivedDate, setReceivedDate] = useState(null); // Initialize the selected date state
 
     const [standarDescription, setStandarDescription] = useState([]); // Initialize the selected date state
 
@@ -94,7 +93,7 @@ function UploadDocument({
     const [categoryList, setCategoryList] = useState([])
 
     const [showModalCreateTask, setshowModalCreateTask] = useState(false);
-    // const [openModal, setOpenModal] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
 
 
 
@@ -105,7 +104,7 @@ function UploadDocument({
 
     const [validation, setValidation] = useState("");
 
-    // const [TaskType, setTaskType] = useState("");
+    const [TaskType, setTaskType] = useState("");
 
     let count = 2;
 
@@ -195,8 +194,8 @@ function UploadDocument({
                         setFolderList(tbl);
                         if (result.length > 0) {
                             console.log("get folder list", result);
-                            // setTextFolderData(result[0])
-                            setTxtFolderData(result[0]);
+                            setTextFolderData(result[0])
+                            // setTxtFolderData(result[0]);
                         }
                     }
                 }
@@ -303,8 +302,8 @@ function UploadDocument({
 
         if (data) {
             setTxtFolderId(data.FolderID)
-            // setTextFolderData(data)
-            setTxtFolderData(data);
+            setTextFolderData(data)
+            // setTxtFolderData(data);
             Json_GetSections(data.FolderID)
             Json_GetClientsByFolder(data.FolderID)
         }
@@ -605,8 +604,8 @@ function UploadDocument({
                                 if (buttonNameText === "Submit & Create Portal Task" || buttonNameText === "Submit & Create Task") {
                                     setshowModalCreateTask(true)
                                     setOpenModal(true);
-                                    handleClickOpen("Portal");
-                                    // setOpenUploadDocument(false);
+                                    setOpenUploadDocument(false);
+                                    // handleClickOpen("Portal");
                                     // setTimeout(() => {
                                     //     if(openModal){
                                     //         setOpenUploadDocument(false); 
@@ -1006,4 +1005,4 @@ function UploadDocument({
     )
 }
 
-export default UploadDocument
+export default UploadDocForClient

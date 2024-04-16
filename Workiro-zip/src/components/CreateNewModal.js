@@ -106,17 +106,28 @@ const userId = localStorage.getItem("UserId");
 let addItemdata = [];
 function CreateNewModalTask({ ...props }) {
     const dispatch = useDispatch();
-    const {
-        documentDate = null,
-        receivedDate = null,
-        createNewFileObj = null,
-        txtFolderData = null,
-        txtClientData = null,
-        txtSectionData = null,
-        TaskType = null,
-        openModal = null,
-        setOpenModal = null,
-    } = props || {};
+    // const {
+    //     documentDate = null,
+    //     receivedDate = null,
+    //     createNewFileObj = null,
+    //     txtFolderData = null,
+    //     txtClientData = null,
+    //     txtSectionData = null,
+    //     TaskType = null,
+    //     openModal = null,
+    //     setOpenModal = null,
+    // } = props || {};
+
+
+    const [documentDate, setDocumentDate] = useState(null);
+    const [receivedDate, setReceivedDate] = useState(null);
+    const [createNewFileObj, setCreateNewFileObj] = useState(null);
+    const [txtFolderData, setTxtFolderData] = useState(null);
+    const [txtClientData, setTxtClientData] = useState(null);
+    const [txtSectionData, setTxtSectionData] = useState(null);
+    const [TaskType, setTaskType] = useState(null);
+    const [openModal, setOpenModal] = useState(null);
+
 
     // console.log("documentDate txtSectionId1", documentDate,
     //     receivedDate, createNewFileObj)
@@ -705,6 +716,7 @@ function CreateNewModalTask({ ...props }) {
     }, [sectionAnchorEl]);
 
 
+    
     useEffect(() => {
         ClearForm();
         // if(passButtonHide){
@@ -932,12 +944,10 @@ function CreateNewModalTask({ ...props }) {
         const files = event.target.files;
         const selectedFilesArray = Array.from(files);
         const filesData = [];
-
-        let completeCounter=0;
-    
+        let completeOpeiton=0;
         selectedFilesArray.forEach((file, index) => {
             const reader = new FileReader();
-            completeCounter++;
+            completeOpeiton++;
             reader.onload = () => {
                 let fileByte = reader.result.split(";")[1].replace("base64,", "");
     
@@ -960,13 +970,17 @@ function CreateNewModalTask({ ...props }) {
                 // Check if this is the last file
                 if (index === selectedFilesArray.length - 1) {
                     // Add new files to the uploadedFiles array
-                    setSelectedFiles((prevUploadedFiles) => [
-                        ...prevUploadedFiles,
-                        ...filesData,
-                    ]);
-    
-                    // Call PrepareDocumentsForPublish_Json after all files data are processed
-                    if(completeCounter===selectedFilesArray.length){
+                    if(completeOpeiton===selectedFilesArray.length){
+                        setSelectedFiles((prevUploadedFiles) => [
+                            ...prevUploadedFiles,
+                            ...filesData,
+                        ]);
+
+                        if (txtTaskType === "Portal") {
+                            PrepareDocumentsForPublish_Json(filesData, 1);
+                        }
+                    }
+                   
 
                         if (txtTaskType === "Portal") {
                             PrepareDocumentsForPublish_Json(filesData, 1);
@@ -975,9 +989,8 @@ function CreateNewModalTask({ ...props }) {
                     }
                    
                 }
-            };
-            reader.readAsDataURL(file); // Read file as data URL (base64)
-        });
+                reader.readAsDataURL(file); // Read file as data URL (base64)
+            });
     };
     
 
@@ -1314,6 +1327,8 @@ function CreateNewModalTask({ ...props }) {
 
 
     function ClearForm() {
+        
+        setSelectedDocumentFile([]);
         setCurrentDate(new Date())
         setTextSubject("");
         settxtClient("Select Client");
@@ -1357,7 +1372,9 @@ function CreateNewModalTask({ ...props }) {
     }
 
     function Json_CRM_TaskDMSAttachmentInsert(TaskID) {
-
+        if(openUploadDocument){
+            setOpenUploadDocument(false);
+        }
         const ItemId = selectedDocumentFile.map(obj => obj.DocId).join("|");
         let obj = {
             TaskID: TaskID,
@@ -1664,6 +1681,7 @@ function CreateNewModalTask({ ...props }) {
     //const filteredOptions = portalUser ? portalUser.filter(option => option["E-Mail"] !== selectedEmail) : [];
     const [selectedDocumentFile, setSelectedDocumentFile] = useState([]);
 
+
     const AddDocuments = () => {
         let filesData = [];
         console.log("AddDocuments11", selectedRows);
@@ -1708,7 +1726,51 @@ function CreateNewModalTask({ ...props }) {
             });
         });
     };
-    
+
+    // const AddDocuments = () => {
+    //     let filesData = [];
+    //     console.log("AddDocuments11",selectedRows);
+    //     selectedRows.forEach((row, index) => {
+
+    //         Json_GetItemBase64DataById(row, function (base64data) {
+    //             const fileData = {
+    //                 FileName: row.Description + "." + row.Type,
+    //                 Base64: base64data ? base64data : "", // Base64 data of the file
+    //                 FileSize: "",
+    //                 Preview: "", // Data URL for preview
+    //                 DocId: row["Registration No."],
+    //                 Guid: localStorage.getItem("GUID"),
+    //                 FileType: row["Type"].toLowerCase(),
+    //                 Description: row.Description
+
+    //             };
+    //             filesData.push(fileData);
+    //             // Check if this is the last file
+    //             if (index === selectedRows.length - 1) {
+    //                 // Add new files to the uploadedFiles array
+    //                 setSelectedFiles((prevUploadedFiles) => [
+    //                     ...prevUploadedFiles,
+    //                     ...filesData,
+    //                 ]);
+
+    //                 setSelectedDocumentFile((prevUploadedFiles) => [
+    //                     ...prevUploadedFiles,
+    //                     ...filesData,
+    //                 ]);
+    //             }
+    //         })
+
+
+    //     })
+    //     setTimeout(() => {
+    //         PrepareDocumentsForPublish_Json(filesData, 2)
+    //     }, 4000);
+
+
+
+    //     setOpenDocumentList(false)
+
+    // }
 
     function Json_GetItemBase64DataById(item, callBack) {
         try {
@@ -2371,7 +2433,27 @@ function CreateNewModalTask({ ...props }) {
                 <span className="material-symbols-outlined">edit_square</span>{" "}
                 <span className="ps-2 create-text">Create New  </span>
             </Button> */}
-            <UploadDocument openUploadDocument={openUploadDocument} setOpenUploadDocument={setOpenUploadDocument}></UploadDocument>
+            <UploadDocument 
+              openUploadDocument={openUploadDocument} 
+              setOpenUploadDocument={setOpenUploadDocument}
+              documentDate={documentDate}
+              setDocumentDate={setDocumentDate}
+              receivedDate={receivedDate}
+              setReceivedDate={setReceivedDate}
+              createNewFileObj={createNewFileObj}
+              setCreateNewFileObj={setCreateNewFileObj}
+              txtFolderData={txtFolderData}
+              setTxtFolderData={setTxtFolderData}
+              txtClientData={txtClientData}
+              setTxtClientData={setTxtClientData}
+              txtSectionData={txtSectionData}
+              setTxtSectionData={setTxtSectionData}
+              TaskType={TaskType}
+              setTaskType={setTaskType}
+              openModal={openModal}
+              setOpenModal={setOpenModal}
+              handleClickOpen={handleClickOpen}
+            ></UploadDocument>
 
             <div className="select-border">
                 <Button
