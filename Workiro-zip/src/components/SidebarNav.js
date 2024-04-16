@@ -150,6 +150,8 @@ export default function SidebarNav() {
   const [userId, setUserId] = useState(localStorage.getItem("UserId"));
   const [globalSearch,setGlobalSearch] = useState(localStorage.getItem("globalSearchKey"));
 
+  console.log("fueteuiuert",window.location.pathname);
+
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
   let Cls = new CommanCLS(baseUrl, agrno, Email, password);
@@ -215,6 +217,7 @@ export default function SidebarNav() {
   }
 
   const Json_AdvanceSearchDoc = (f_id = folderId) => {
+    console.log("Json_AdvanceSearchDoc forDocuments", forDocuments);
     if (forDocuments !== "") {
       let obj = {
         ClientId: "",
@@ -240,13 +243,11 @@ export default function SidebarNav() {
               console.log("Json_AdvanceSearchDoc", json.Table6);
               if (json.Table6) {
                 let fltDouble = [];
-                let allDescriptions = json.Table6.map((itm) => itm.Description).filter(item => {
+                json.Table6.map((itm) => itm.Description).filter(item => {
                   if (!fltDouble.includes(item)) {
                     fltDouble.push(item);
                   }
                 });
-                console.log("Json_AdvanceSearchDoc", allDescriptions);
-                // options = fltDouble;
                 setDocumentsDescription(fltDouble);
                 setMyDocuments(json.Table6);
               }
@@ -337,7 +338,7 @@ export default function SidebarNav() {
   }
 
   const [tabs, setTabs] = useState([{
-    tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon: <DashboardIcon />}, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon: <AccountBoxIcon /> }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false, tabIcon: <AssignmentIcon /> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon: <GroupIcon /> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon: <ViewCarouselIcon /> }, 
+    tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon: <DashboardIcon />}, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon: <AccountBoxIcon /> }, { tabLink: "/dashboard/TodoList", tabName: 'To-do List', active: false, tabIcon: <AssignmentIcon /> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon: <GroupIcon /> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon: <ViewCarouselIcon /> }, 
     // { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false, tabIcon: <ContentPasteSearchIcon /> },
   // { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false, tabIcon: <PersonAddIcon /> },
 ]);
@@ -357,8 +358,18 @@ export default function SidebarNav() {
       } else {
         itm.active = false;
       }
-    })
-
+    });
+    if(window.location.pathname==="/dashboard/SearchResult" && tabs.every(itm=>itm.tabName!=="Search Result")){
+      navigate("/dashboard/TodoList");
+      tabs.length > 0 && tabs.map(itm => {
+        if (itm.tabLink==="/dashboard/TodoList") {
+          itm.active = true;
+        } else {
+          itm.active = false;
+        }
+      });
+      // setTabs([...tabs, { tabLink: `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${localStorage.getItem("FolderId")}`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
+    } // when we load page on search result tab this functionality will work but it is only temp.
   }, []);
 
   const handleGlobalSearch = (val) => {
@@ -393,7 +404,16 @@ export default function SidebarNav() {
 
   useEffect(()=>{
     setGlobalSearch(localStorage.getItem("globalSearchKey"));
-  },[globalSearch]);
+    tabs.map(itm => {
+      if (itm.tabName === "Search Result") {
+        itm.tabLink = `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${folderId}`;
+      } else {
+        itm.tabLink = itm.tabLink;
+      }
+    });
+    // setTabs([...tabs,{ tabLink: `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${folderId}`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
+    
+  },[globalSearch,window.location.pathname]);
 
   return (
     <>

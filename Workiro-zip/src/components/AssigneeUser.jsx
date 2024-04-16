@@ -45,7 +45,7 @@ export default function AssigneeUsers({ selectedTask, setAddUser, addUser, setOw
             o.ProjectId = txtFolderId;
             o.SectionId = "-1";
             cls.Json_GetForwardUserList(o, function (sts, data) {
-                if (sts) {
+                if (sts && data) {
                     let js = JSON.parse(data);
                     let dt = js.Table;
                     if (dt.length > 0) {
@@ -239,7 +239,7 @@ export default function AssigneeUsers({ selectedTask, setAddUser, addUser, setOw
 
 
     return (<>
-        <div className="mt-2 mb-2">
+        <div className="mt-1 mb-2">
 
             <Button
                 id="basic-button5"
@@ -247,21 +247,21 @@ export default function AssigneeUsers({ selectedTask, setAddUser, addUser, setOw
                     UserDropdownopen ? "basic-menu5" : undefined
                 }
                 aria-haspopup="true"
-                aria-expanded={UserDropdownopen ? "true" : undefined}              
+                aria-expanded={UserDropdownopen ? "true" : undefined}
                 onContextMenu={handleRightClick}
                 className="p-0 w-auto d-inline-block"
 
 
-            >   
-             <Box className="d-flex align-items-center">
+            >
+                <Box className="d-flex align-items-center">
                     {ownerRighClick && (<>
                         <Box
-                            className="user-img-list me-2 admin"
+                            className="user-img-list me-1 admin"
                             title={ownerRighClick.ForwardTo}
                             key={ownerRighClick.ID}
                         >
                             <p>{firsorScandCtr(ownerRighClick)}</p>
-                        </Box> <ArrowForwardIosIcon className='me-1' />
+                        </Box> <ArrowForwardIosIcon className='me-1 font-20' />
                     </>)}
 
 
@@ -281,7 +281,7 @@ export default function AssigneeUsers({ selectedTask, setAddUser, addUser, setOw
                                 return (
                                     <>
                                         <Box
-                                            className="user-img-list me-2 admin"
+                                            className="user-img-list me-1 admin"
                                             title={item.ForwardTo}
                                             key={item.ID}
                                         >
@@ -297,9 +297,9 @@ export default function AssigneeUsers({ selectedTask, setAddUser, addUser, setOw
                         })
                         : null}
 
-                </Box>             
+                </Box>
             </Button>
-           
+
 
             {dropdownVisible && (<Menu
                 id="basic-menu5"
@@ -348,15 +348,15 @@ export default function AssigneeUsers({ selectedTask, setAddUser, addUser, setOw
                                                 </Box>
                                                 <p>{item.ForwardTo}</p>
                                                 {/* <span
-                                                                                    className="close"
-                                                                                    onClick={() => handleRemoveUser(item.ID)}
-                                                                                    role="button" // Adding role="button" to indicate this element is clickable
-                                                                                    tabIndex="0" // Adding tabIndex to make the element focusable
-                                                                                >
-                                                                                    <span className="material-symbols-outlined">
-                                                                                        close
-                                                                                    </span>
-                                                                                </span> */}
+                                                    className="close"
+                                                    onClick={() => handleRemoveUser(item.ID)}
+                                                    role="button" // Adding role="button" to indicate this element is clickable
+                                                    tabIndex="0" // Adding tabIndex to make the element focusable
+                                                >
+                                                    <span className="material-symbols-outlined">
+                                                        close
+                                                    </span>
+                                                </span> */}
                                             </button>
                                         </React.Fragment>
                                     );
@@ -374,16 +374,13 @@ export default function AssigneeUsers({ selectedTask, setAddUser, addUser, setOw
                     aria-haspopup="true"
                     aria-expanded={openFiles ? 'true' : undefined}
                     onClick={handleClickFiles}
+                    className="p-0 min-width-auto"
                 >
-
                     <Box
-                        className="user-img-list me-2 admin"
+                        className="user-img-list me-1 admin"
                     >
-                        <p>+ {addUser.length - 3}</p>
+                        <p>+{addUser.length - 3}</p>
                     </Box>
-
-
-
                 </Button>
                 <Menu
                     id="basic-menu"
@@ -393,6 +390,7 @@ export default function AssigneeUsers({ selectedTask, setAddUser, addUser, setOw
                     MenuListProps={{
                         'aria-labelledby': 'basic-button',
                     }}
+                    className="custom-menu"
                 >
                     {addUser.length > 3 &&
                         addUser.slice(3, addUser.length).map((item, index) => (
@@ -402,27 +400,24 @@ export default function AssigneeUsers({ selectedTask, setAddUser, addUser, setOw
                 </Menu>
             </>)}
 
-                    <Button
+            <Button
                 id="basic-button5"
                 aria-controls={
                     UserDropdownopen ? "basic-menu5" : undefined
                 }
                 aria-haspopup="true"
                 aria-expanded={UserDropdownopen ? "true" : undefined}
-                onClick={handleUserClick}              
+                onClick={handleUserClick}
                 className="p-0 w-auto d-inline-block"
+            >
 
-
-            >    
-
-            <Box className="d-flex">
-                        <span class="material-symbols-outlined">
-                            person_add
-                        </span>
-                    </Box>
+                <Box className="d-flex">
+                    <span class="material-symbols-outlined">
+                        person_add
+                    </span>
+                </Box>
 
             </Button>
-
 
             <Menu
                 id="basic-menu5"
@@ -440,11 +435,7 @@ export default function AssigneeUsers({ selectedTask, setAddUser, addUser, setOw
                     style={{ maxHeight: "200px", overflowY: "auto" }}
                 >
                     <p className="sembold">Assigned</p>
-
                     <Box className="box-user-list-dropdown">
-
-
-
                         {addUser
                             ? addUser.map((item, ind) => {
                                 if (item.ID === ownerID) {

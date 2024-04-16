@@ -34,12 +34,10 @@
   background: #555;
 }
 
-
 .Toastify {
-  position: absolute;
+  /* position: absolute; */
   z-index: 999999;
 }
-
 
 nav.navbar.navbar-dark.bg-dark .container {
   background: #4780ff !important;
@@ -134,6 +132,11 @@ a {
   font-family: "Poppins", sans-serif !important;
 }
 
+.MuiInputLabel-formControl {
+  font-size: 14px !important;
+  font-family: "Poppins", sans-serif !important;
+}
+
 body {
   background: #f1f1f1 !important;
   font-family: "Poppins", sans-serif !important;
@@ -189,6 +192,7 @@ input,
   background: #4780FF !important;
   transition: .5s all ease;
   border: 1px solid #4780FF !important;
+  white-space: nowrap;
 }
 
 .btn-blue-2.Mui-disabled {
@@ -2350,6 +2354,18 @@ span.tox-statusbar__branding {
   vertical-align: middle;
   display: flex;
   align-items: center;
+}
+
+.edit-input:focus {
+  outline: none;
+}
+
+.edit-input {
+  margin: 0;
+  border: 0;
+  width: 100%;
+  font-weight: 600;
+  padding: 0px;
 }
 
 @media only screen and (max-width: 1199px) {

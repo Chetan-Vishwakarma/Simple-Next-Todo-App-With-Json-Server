@@ -18,7 +18,8 @@ import DocumentsVewModal from '../client/utils/DocumentsVewModal';
 import { toast } from 'react-toastify';
 import DocDetails from './DocDetails';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
-import DocumentRenameModal from './DocumentRenameModal';
+import CustomLoader from './CustomLoader';
+// import DocumentRenameModal from './DocumentRenameModal';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -29,7 +30,7 @@ function NewTodoList() {
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
-
+    const [isEditing, setIsEditing] = useState(false);
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
     //const [sendUrldata, setsendUrldata] = useState("");
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -56,6 +57,7 @@ function NewTodoList() {
 
 
     const [loadMore, setLoadMore] = useState(9);
+    const [test, setTest] = useState({});
     const [openRenameModal, setOpenRenameModal] = useState(false);
     // const handleOpen = () => setOpenRenameModal(true);
 
@@ -66,6 +68,13 @@ function NewTodoList() {
     // const handleClose = () => {
     //     setAnchorEl(null);
     // };
+    const handleEditClick = () => {
+        setIsEditing(true);
+      };
+    
+      const handleBlur = () => {
+        setIsEditing(false);
+      };
     const Json_Get_CRM_UserByProjectId = () => {
         let obj = {
             agrno: agrno,
@@ -476,12 +485,52 @@ function NewTodoList() {
         // setsendUrldata(url);
         //window.open(url);
         setIsLoadingDoc(true)
-
-
     };
 
+    const [editingIndex, setEditingIndex] = useState(null);
+    const [updatedSubject, setUpdatedSubject] = useState('');
 
+    const handleEdit = (index) => {
+        console.log("Editing index:", index);
+        setEditingIndex(index);
+        setUpdatedSubject(recentDocument[index].Subject);
+    };
 
+    const Json_RenameDocument = (doc, newDesc, index) => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ItemId: doc.ItemId ? doc.ItemId : "",
+            Description: newDesc,
+            FolderId: folderId
+        };
+        ClsSms.Json_RenameDocument(obj, (sts, data) => {
+            if (sts) {
+                if (data) {
+                    let json = JSON.parse(data);
+                    console.log("Json_RenameDocument", json);
+                    if(json.Status==="Success"){
+                        // Json_getRecentDocumentList();
+                        toast.success(json.Message);
+                        setEditingIndex(null);
+                        setTest({...test, [index]: newDesc});
+                    }else{
+                        toast.error("Unable to rename this document");
+                    }
+                }
+            }
+        });
+    }
+
+    const handleSave = (newDesc, oldDesc, doc, index) => {
+        if(oldDesc===newDesc) return;
+        Json_RenameDocument(doc, newDesc, index);
+    };
+
+    const handleChange = (event) => {
+        setUpdatedSubject(event.target.value);
+    };
 
     // Document details List
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
@@ -526,10 +575,8 @@ function NewTodoList() {
         <Box className="container-fluid p-0">
             <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
 
-            <DocumentRenameModal openRenameModal={openRenameModal} setOpenRenameModal={setOpenRenameModal }/>
+            {/* <DocumentRenameModal ClsSms={ClsSms} openRenameModal={openRenameModal} setOpenRenameModal={setOpenRenameModal} docForDetails={docForDetails} Json_getRecentDocumentList={Json_getRecentDocumentList}/> */}
 
-            {/* <DocumentsVewModal sendUrldata={sendUrldata} isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal> */}
-            {/* <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal> */}
             <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
             <DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList} />
@@ -752,7 +799,7 @@ function NewTodoList() {
                             {/* col end */}
 
                         </>
-                    }) : ""}
+                    }) : <CustomLoader/>}
                 </Box>
 
                 <Box id="section2" className='py-4 text-center'>
@@ -868,7 +915,7 @@ function NewTodoList() {
                             {/* col end */}
 
                         </>
-                    }) : ""}
+                    }) : <CustomLoader/>}
                 </Box>
                 <Box id="section3" className='py-4 text-center'>
                     <Button variant="outlined" onClick={handleLoadMoreRecentTask} className='btn-outlin-2'>View More</Button>
@@ -989,9 +1036,21 @@ function NewTodoList() {
                                                     className='me-2 ms-0'
                                                 />
                                                 <Box className="upload-content pe-3" onDoubleClick={(e) => ViewerDocument(item)}>
-                                                    <Typography variant="h4" >
-                                                        {item.Subject}
-                                                    </Typography>
+                                                {editingIndex == index ? (
+                                        <input
+                                            type="text"
+                                            defaultValue={item.Subject}
+                                            value={updatedSubject}
+                                            onChange={handleChange}
+                                            autoFocus
+                                            onBlur={(e)=>handleSave(e.target.value, item.Subject, item, index)}
+                                            className='edit-input'
+                                        />
+                                    ) : (
+                                        <Typography variant="h4">
+                                            { Object.keys(test).includes(String(index)) ? test[index] : item.Subject? item.Subject : ""}
+                                        </Typography>
+                                    )}
                                                     <Typography variant="body1">
                                                         {/* Size:  <span className='sembold'>{item.FileSize}</span> |   */}
                                                         <span className='sembold'>{moment(item["RecentDate"]).format("DD/MM/YYYY") !== "Invalid date" ? moment(item["RecentDate"]).format("DD/MM/YYYY") : "01/01/2000"}</span>
@@ -1006,7 +1065,7 @@ function NewTodoList() {
                                                     aria-haspopup="true"
                                                     aria-expanded={openMenus[index] ? 'true' : undefined}
                                                     onClick={(event) => handleClickDocumentList(event, index)}
-                                                    className='min-width-auto'
+                                                    className='min-width-auto p-0'
                                                 >
                                                     <MoreVertIcon />
                                                 </Button>
@@ -1036,7 +1095,9 @@ function NewTodoList() {
                                                         Upload New Version</MenuItem>
                                                     <MenuItem onClick={() => {
                                                           handleCloseDocument(index)
-                                                          setOpenRenameModal(true);
+                                                        //   setOpenRenameModal(true);
+                                                        handleEdit(index);
+                                                          console.log("lkdgjewerwe",item);
                                                         }}>
                                                         <ListItemIcon>
                                                             <DriveFileRenameOutlineIcon fontSize="medium" />
@@ -1059,7 +1120,7 @@ function NewTodoList() {
                                 </Box>
 
                             </>
-                        }) : ""}
+                        }) : <CustomLoader/>}
 
                     </Box>
                 </div>

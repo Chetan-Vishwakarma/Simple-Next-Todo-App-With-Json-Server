@@ -1038,7 +1038,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
             >
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
-                        <Typography variant="h4" className='font-18 bold mb-2 text-black'>
+                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
                             Document List
                         </Typography>
                         {/* <Box className="btn-Select">

@@ -11,6 +11,8 @@ import SearchResult from './components/SearchResult'
 import DocumentList from './client/client-components/DocumentList';
 import AddContacts from './components/AddContacts';
 
+import { ToastContainer, toast } from "react-toastify";
+
 
 function App() {
   return (
@@ -33,6 +35,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer>
     </div>
   )
 }

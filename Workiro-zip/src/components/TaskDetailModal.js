@@ -15,6 +15,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SendIcon from '@mui/icons-material/Send';
 import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
+import FolderIcon from '@mui/icons-material/Folder';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import user from "../images/user.jpg";
@@ -60,6 +61,8 @@ import DocumentList from "../client/client-components/DocumentList";
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import Activity from "../client/utils/Activity";
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
+
+import moment from 'moment';
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -364,6 +367,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
     async function Json_Get_CRM_SavedTask_ByTaskId(taskid) {
+        setAttachmentFile([]);
         let obj = {};
         obj.TaskId = taskid;
         await Cls.Json_Get_CRM_SavedTask_ByTaskId(obj, function (status, data) {
@@ -484,7 +488,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
             let o = {};
             o.ProjectId = secid;
             Cls.Json_GetSections(o, function (sts, data) {
-                if (sts) {
+                if (sts && data) {
                     let js = JSON.parse(data);
 
 
@@ -570,7 +574,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
             o.ProjectId = fid;
             o.SectionId = "-1";
             Cls.Json_GetForwardUserList(o, function (sts, data) {
-                if (sts) {
+                if (sts && data) {
                     let js = JSON.parse(data);
                     let dt = js.Table;
                     if (dt.length > 0) {
@@ -599,7 +603,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     useEffect(() => {
 
-
+        setAttachmentFile([]);
 
         setNumPriority(selectedTask.Priority);
         //End PortMethods
@@ -613,7 +617,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         setTxtClientId(selectedTask.ClientNo);
         setNotesMessage("");
         Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
-        setCurrentDate(startFormattingDate(selectedTask.CreationDate));
+
+        //setCurrentDate(startFormattingDate(selectedTask.CreationDate));
+       setCurrentDate(moment(selectedTask.Start,"DD/MM/YYYY").toDate());
+       // console.log("moment11",moment(selectedTask.Start,"DD/MM/YYYY").toDate());
+//moment(dateString, "DD/MM/YYYY").toDate();
         setNextDate(DateFormet(selectedTask.EndDateTime));
         setRemiderDate(dayjs(Cls.getCurrentDate()));
         Json_GetFolderData(selectedTask.FolderID ? selectedTask.FolderID : localStorage.getItem("FolderId"));
@@ -1374,6 +1382,26 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         setAnchorElFiles(null);
     };
 
+    // 
+
+    // const [anchorElAttached, setAnchorElAttached] = React.useState(null);
+    // const openAttached = Boolean(anchorElAttached);
+    // const AttachedhandleClick = (event) => {
+    //     setAnchorElAttached(event.currentTarget);
+    // };
+    // const AttachedhandleClose = () => {
+    //     setAnchorElAttached(null);
+    // };
+
+    const [AttachmentRef, setAttachmentRef] = React.useState(null);
+    //   const open = Boolean(anchorEl);
+    const handleAttachmentClick = (event) => {
+        setAttachmentRef(event.currentTarget);
+    };
+    const handleAttachmentClose = () => {
+        setAttachmentRef(null);
+    };
+
 
     return (
         <React.Fragment>
@@ -1697,13 +1725,13 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                             return (<>
                                                 <MenuItem onClick={() => handleCloseProfile(item)}>
                                                     <ListItemIcon>
-                                                        <DoNotDisturbAltIcon fontSize="medium" />
+                                                        <FolderIcon fontSize="medium" />
                                                     </ListItemIcon>
 
                                                     {item.Folder}
                                                 </MenuItem>
                                             </>)
-                                        }) : ""}
+                                        }) : ""}.length
 
 
                                     </Menu>
@@ -1912,8 +1940,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         {selectedTask.Source === "CRM" && (<>
                             <Box className='d-flex align-items-center justify-content-between flex-wrap'>
                                 <Box className="d-flex mt-0">
-                                    <Box className="mb-2 me-1">
-                                        <label className="font-14 text-black mb-1">Start Date</label>
+                                    <Box className="mb-2 me-1 d-flex">
+                                        <label className="font-14 text-black mb-1 me-1">Start Date</label>
                                         <Box className='custom-datepicker'
                                             sx={{
                                                 width: '140px',
@@ -1935,38 +1963,36 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                         </Box>
                                     </Box>
 
-                                    <Box className="mb-2" sx={{ float: "right" }}>
-                                        <Box className="mb-2 ">
-                                            <label className="font-14 semibold text-black mb-1">
-                                                Due By
-                                            </label>
-                                            <Box className='custom-datepicker'
-                                                sx={{
-                                                    width: '140px',
-                                                }}>
-                                                <CalendarMonthIcon />
-                                                <DatePicker
-                                                    showIcon
-                                                    dateFormat="DD/MM/YYYY"
-                                                    value={nextDate}
-                                                    onChange={(e) => {
-                                                        setNextDate(e);
-                                                        let enddatetime = dayjs(e).format("YYYY/MM/DD");
-                                                        if (enddatetime) {
-                                                            Json_UpdateTaskField("EndDateTime", enddatetime, "Due date updated!")
-                                                        }
+                                    <Box className="mb-2 d-flex">
+                                        <label className="font-14 text-black mb-1 me-1">
+                                            Due By
+                                        </label>
+                                        <Box className='custom-datepicker'
+                                            sx={{
+                                                width: '140px',
+                                            }}>
+                                            <CalendarMonthIcon />
+                                            <DatePicker
+                                                showIcon
+                                                dateFormat="DD/MM/YYYY"
+                                                value={nextDate}
+                                                onChange={(e) => {
+                                                    setNextDate(e);
+                                                    let enddatetime = dayjs(e).format("YYYY/MM/DD");
+                                                    if (enddatetime) {
+                                                        Json_UpdateTaskField("EndDateTime", enddatetime, "Due date updated!")
+                                                    }
 
-                                                    }} // Handle date changes
-                                                    timeFormat={false}
-                                                    isValidDate={disablePastDt}
-                                                    closeOnSelect={true}
-                                                    icon="fa fa-calendar"
-                                                // sx={{
-                                                //     width: '140px'
-                                                // }}
+                                                }} // Handle date changes
+                                                timeFormat={false}
+                                                isValidDate={disablePastDt}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
+                                            // sx={{
+                                            //     width: '140px'
+                                            // }}
 
-                                                />
-                                            </Box>
+                                            />
                                         </Box>
                                     </Box>
                                 </Box>
@@ -2397,18 +2423,56 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     <Box className='position-relative'>
                                         {selectedTask.Source === "CRM" && (<>
                                             <Box className='upload-chat-file'>
-                                                <input
+                                                {/* <input
                                                     type="file"
                                                     id={`file-upload ${selectedTask.ID}`}
                                                     multiple
                                                     onChange={handleFileSelect}
                                                     className="file-input"
                                                 />
-                                                <label for={`file-upload ${selectedTask.ID}`} className="pointer"><AttachFileIcon /></label>
+                                                <label for={`file-upload ${selectedTask.ID}`} className="pointer"><AttachFileIcon /></label> */}
+
+
+                                                <div>
+                                                    <Button
+                                                        id="basic-button"
+                                                        aria-controls={Boolean(AttachmentRef) ? 'basic-menu' : undefined}
+                                                        aria-haspopup="true"
+                                                        aria-expanded={Boolean(AttachmentRef) ? 'true' : undefined}
+                                                        onClick={handleAttachmentClick}
+                                                        className="p-0 min-width-auto"
+                                                    >
+                                                        <AttachFileIcon />
+                                                    </Button>
+                                                    <Menu
+                                                        id="basic-menu"
+                                                        anchorEl={AttachmentRef}
+                                                        open={Boolean(AttachmentRef)}
+                                                        onClose={handleAttachmentClose}
+                                                        MenuListProps={{
+                                                            'aria-labelledby': 'basic-button',
+                                                        }}
+                                                    >
+                                                        <MenuItem onClick={handleAttachmentClose}>
+                                                            <input
+                                                                type="file"
+                                                                id={`file-upload ${selectedTask.ID}`}
+                                                                multiple
+                                                                onChange={handleFileSelect}
+                                                                className="file-input"
+                                                            />
+                                                            <label for={`file-upload ${selectedTask.ID}`} className="pointer">
+                                                                Upload File(s)
+                                                            </label>
+                                                        </MenuItem>
+                                                        
+                                                        <MenuItem onClick={handleAttachmentClose}>Select From DMS</MenuItem>
+                                                    </Menu>
+                                                </div>
+
 
                                             </Box>
                                         </>)}
-
 
                                         <textarea
                                             className="textarea"
@@ -2417,7 +2481,6 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                             onChange={handleChangeNotes}
                                         ></textarea>
                                     </Box>
-
                                 </Box>
 
                                 {selectedTask.Source === "Portal" ? (<Box className="d-flex d-flex align-items-center ms-3">
@@ -2429,7 +2492,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     >
                                         Send
                                     </Button>
-                                    <ToastContainer></ToastContainer>
+                                    {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
                                 </Box>) : (
                                     <Box className="d-flex d-flex align-items-center ms-3">
                                         <Button
@@ -2440,7 +2503,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                         >
                                             Send
                                         </Button>
-                                        <ToastContainer></ToastContainer>
+                                        {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
                                     </Box>
                                 )}
 
@@ -2449,7 +2512,6 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                     </DialogContentText>
 
                     {/* <hr /> */}
-
 
                 </DialogContent>
             </Dialog>
@@ -2475,7 +2537,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
-                        <Typography variant="h4" className='font-18 bold mb-2 text-black'>
+                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
                             Document List
                         </Typography>
                         {/* <Box className="btn-Select">

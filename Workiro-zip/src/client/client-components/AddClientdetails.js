@@ -11,15 +11,16 @@ import Button from '@mui/material/Button';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-
+// import { Toast } from "react-toastify/dist/components";
+import { ToastContainer, toast } from 'react-toastify';
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const UserDetailContext = createContext();
 // const UserDetailContext = createContext();
 let folderData=[];
-const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse,setDataFromChild}) => {
+const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse,setDataFromChild,defaultUser,setDefaultUser,defaultClient,setDefaultClient}) => {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
-  const [defaultClient, setDefaultClient] = useState([]);
+  // const [defaultClient, setDefaultClient] = useState([]);
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
   const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
@@ -29,7 +30,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
   const [bussiness, setBussiness] = useState([]);
   const [sources, setSources] = useState([]);
   const [mangers, setMangers] = useState([]);
-  const [defaultUser, setDefaultUser] = useState(null);
+  //const [defaultUser, setDefaultUser] = useState(null);
   const [defaultStatus, setDefaultStatus] = useState(null);
   const [defaultSources, setDefaultSources] = useState(null);
   const [defaultFolder, setDefaultFolder] = useState(null);
@@ -234,7 +235,15 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
             // setContactlistdata(json.Table);
             if(jdata.length > 0){
               setImportContact(jdata);
+              console.log("companyhousedata", jdata);
+            } else {
+              // toast.error("Unable to fetch Company Details. Failed to receive information from Companies House.");
+              console.log("geterror500");
             }
+          } else{
+            console.log("error ins companyhouse");
+           
+           
           }
         }
       });
@@ -247,12 +256,14 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
     let requestBody = {
       CompanyName_Number:inputValue
     };
+    console.log(requestBody,"testbodydata");
     try {
        Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
         if (sts) {
+          console.log(sts,"testcompany");
           if (data) {
             let json = JSON.parse(data);
-            console.log(json,"Json_CompanyDetails");
+            console.log(json,"Json_CompanyDetails264");
 let singledata = json.CompanyDetails[0];
 const defaultCompanyStatus = singledata.company_status;
 const defaultStatusObject = status.find(status => status.StatusName.toLowerCase() === defaultCompanyStatus.toLowerCase());
@@ -270,11 +281,18 @@ console.log(defaultStatus,"defaultStatus22222",singledata);
             // setImportCompanyDetails(singledata[0]);
             setDataCompanyHouse(singledata);
             
+          } else {
+            // console.log("Errordata");
+            toast.error("Unable to fetch Company Details. Failed to receive information from Companies House.");
           }
         }
+        else{
+          console.log("errordataget111111111111111111111",sts); 
+        }
       });
-    } catch (err) {
-      console.log("Error while calling Json_GetToFavourites", err);
+    } catch (e) {
+      console.log("errordatagetsonam",e);
+      toast.error("Unable to fetch Company Details. Failed to receive information from Companies House.");
     }
   };
   const onChangeImportData = (e) => {
@@ -295,7 +313,7 @@ const handleOptionClick = (id) => {
     setOpen(false); 
   // Perform actions with the id
   let data = id.company_number;
-  Json_CompanyDetails(id.company_number);
+  Json_CompanyDetails(id.title);
   console.log(data, "onSelectDatacnnumbr");
 
 };
@@ -500,7 +518,7 @@ const clearDataCard = () => {
                 name="Selectclient"
                 // value={folders[defaultClient] || []}
                 onChange={onChange}
-                label="Client List"
+                label="Assigned Folder List"
               />
             )}
           />
@@ -523,7 +541,7 @@ const clearDataCard = () => {
                   name="Bussiness"
                   value={userDetail.Bussiness}
                   onChange={onChange}
-                  label="Bussiness"
+                  label="Nature of Bussiness"
                   variant="outlined"
                 />
               )}

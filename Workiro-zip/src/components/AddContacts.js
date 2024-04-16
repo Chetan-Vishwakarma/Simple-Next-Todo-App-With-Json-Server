@@ -37,8 +37,8 @@ let folderData;
 let clientData;
 let defaultclientData;
 let clientName;
-function AddContacts({ addContactData }) {
-  console.log(addContactData, "addContactData11111");
+function AddContacts({ addContactData,contactDetails}) {
+  console.log(addContactData, "addContactData11111",contactDetails);
   const [contact, setContact] = useState([]);
   const [fillcontact, setFillContact] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
@@ -200,13 +200,21 @@ function AddContacts({ addContactData }) {
                 (obj, index, self) =>
                   index === self.findIndex((t) => t.ClientId === obj.ClientId)
               );
-
-              console.log(uniqueArray);
+              if(contactDetails && contactDetails.length > 0) {
+                const filtercontact = json.Table.find(
+                  (obj) => obj.ClientId == contactDetails[0].OriginatorNo
+                );
+                console.log(filtercontact,"filtercontactdata");
+                setdefaultClient(filtercontact);
+              }
+              console.log(uniqueArray,"uniqueArray",json.Table);
               setBussiness(uniqueArray);
               try{
                 const filteredData = json.Table.find(
                   (obj) => obj.ClientId === addContactData.Clientid
                 );
+               
+               
                 if(filteredData){
                   setdefaultClient(filteredData);
                   defaultclientData=filteredData.ClientId;
@@ -330,7 +338,7 @@ function AddContacts({ addContactData }) {
         ClientId: clientIddata ? clientIddata : -1,
         projectid: folderId,
         ContactNo: contactNumber,
-        fieldName: "BirthDate",
+        fieldName: "imgPath",
         fieldValue: userContactDetails.Base64ImgData,
       };
 
@@ -638,6 +646,38 @@ function AddContacts({ addContactData }) {
     Json_GetCRMContactUDFValues();
     Json_GetAllContacts();
     Json_GetAllClientList();
+    if(contactDetails && contactDetails.length > 0){
+      console.log(contactDetails,"contactdetailssonam");
+      let item = contactDetails[0];
+      let data = { ...userContactDetails };
+    data = {
+      ...data,
+      ["Title"]: item.Title,
+      ["FirstName"]: item["First Name"],
+      ["LastName"]: item["Last Name"],
+      ["ReferenceName"]: "",
+      ["MainContact"]: item["Main Contact"],
+      ["Inactive"]: item.CActive,
+      ["GreetingName"]: item.Greeting,
+      ["EmailName"]: item["E-Mail"],
+      ["MainUserId"]: -1,
+      ["MainLine1Name"]: item["Address 1"],
+      ["MainLine2Name"]: item["Address 2"],
+      ["MainLine3Name"]: item["Address 3"],
+      ["MainTownName"]: item.Town,
+      ["MainPostcodeName"]: item.Postcode,
+      ["Maincontactcountry"]: "",
+      ["MainTelephoneName"]: item.Tel,
+      ["MainMobileName"]: item.Mobile,
+      ["mainCountry"]: "",
+      ["billingsCountry"]: "",
+      ["ragistersCountry"]: "",
+      ["ReferenceID"]: clientNames,
+      ["CreatePortal"]: item["Portal User"],
+      ["Base64ImgData"]:item.imgPath 
+    };
+    setContactDetails(data);
+    }
     const clientName = localStorage.getItem("ClientName");
     // Update userContactDetails state with the retrieved value
     if (clientName) {
@@ -650,7 +690,7 @@ function AddContacts({ addContactData }) {
   console.log(defaultClient, "defaultClientfirst");
   return (
     <Box className="container-fluid p-0">
-      <ToastContainer></ToastContainer>
+      {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
       <CustomBreadCrumbs
         tabs={[
           { tabLink: "/dashboard/Connections", tabName: "Connections" },

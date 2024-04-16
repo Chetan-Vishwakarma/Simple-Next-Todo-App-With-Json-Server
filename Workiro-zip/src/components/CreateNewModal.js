@@ -33,6 +33,13 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import GroupIcon from '@mui/icons-material/Group';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import InsertPageBreakIcon from '@mui/icons-material/InsertPageBreak';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { red, yellow, green } from '@mui/material/colors';
 
 import {
     List,
@@ -42,7 +49,6 @@ import {
 } from "@mui/material";
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 
-
 import dayjs from 'dayjs';
 import DataGrid, {
     Column,
@@ -51,7 +57,6 @@ import DataGrid, {
     Paging,
     SearchPanel,
 } from 'devextreme-react/data-grid';
-
 
 // import LoginDetails from "../services/Utils";
 import CommanCLS from "../services/CommanService";
@@ -98,7 +103,7 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-20' />, <PublishedWithChangesIcon color='primary' className='font-20' />, <HourglassBottomIcon color='primary' className='font-20' />, <CheckCircleOutlineIcon color='success' className='font-20' />];
 
 const userId = localStorage.getItem("UserId");
-
+let addItemdata = [];
 function CreateNewModalTask({ ...props }) {
     const dispatch = useDispatch();
     const {
@@ -124,7 +129,7 @@ function CreateNewModalTask({ ...props }) {
 
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/"; // base url for api
     //   let dt = new LoginDetails();
-    const [addContactData, setAddContact]=useState({});
+    const [addContactData, setAddContact] = useState({});
 
     let cls = new CommanCLS(baseUrl, agrno, Email, password);
 
@@ -151,6 +156,9 @@ function CreateNewModalTask({ ...props }) {
     //const [anchorel, setAnchorel] = React.useState(null);
 
     const [ownerID, setOwnerID] = React.useState("");
+    const [ownerName, setOwnerName] = React.useState("");
+    const [ownerMessage, setOwnerMessage] = React.useState("");
+    const [ownerTaskID, setOwnerTaskID] = React.useState([]);
     //const [messageId, setMessageId] = React.useState("");
 
     const [txtdescription, setTxtDescriptin] = React.useState("");
@@ -432,8 +440,9 @@ function CreateNewModalTask({ ...props }) {
                         if (result.length > 0) {
                             result.map((el) => {
                                 if (el.ID === parseInt(localStorage.getItem("UserId"))) {
-                                    // console.log("Json_GetForwardUserList11", addUser);
+                                    console.log("Json_GetForwardUserList11", el);
                                     setOwnerID(el.ID);
+                                    setOwnerName(el.ForwardTo);
                                     setOwnerRighClick(el);
                                     setAddUser((pre) => [...pre, el])
                                 }
@@ -509,10 +518,12 @@ function CreateNewModalTask({ ...props }) {
             cls.Json_GetFolderData(o, function (sts, data) {
                 if (sts) {
                     let js = JSON.parse(data);
-                    console.log("Json_GetFolderData", js);
+
                     let clientList = js.Table1;
                     if (clientList.length > 0) {
-                        setClientList(clientList);
+                        let resutl = clientList.filter((el) => el.Client !== "" && el.Client !== null)
+                        setClientList(resutl);
+                        console.log("Json_GetFolderData", resutl);
                     }
                     // let sectionList = js.Table;
                     // if (sectionList.length > 0) {
@@ -699,7 +710,7 @@ function CreateNewModalTask({ ...props }) {
         // if(passButtonHide){
         //     setPassButtonHide(passButtonHide)
         // }
-
+       console.log(txtTaskType,"tasktypeee");
         if (createNewFileObj) {
             console.log("createNewFileObj111122222", createNewFileObj)
             setSelectedFiles(createNewFileObj);
@@ -731,6 +742,7 @@ function CreateNewModalTask({ ...props }) {
             setTxtSectionId(txtSectionData.SecID);
         }
         if (TaskType) {
+            console.log(TaskType,"dmstask");
             if (TaskType === "CRM") {
                 setIsVisibleByTypeCRM(false);
                 settxtTaskType("CRM")
@@ -1187,7 +1199,11 @@ function CreateNewModalTask({ ...props }) {
             return false
         }
         const isaddUser = addUser.map(obj => obj.ID).join(',');
-        const attString = attachmentPath.map(obj => obj.Path).join('|');
+        let attString = "";
+        if (attachmentPath.length > 0) {
+            attString = attachmentPath.map(obj => obj.Path).join('|');
+        }
+
 
         //console.log("nextDate1", currentDate)
         let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
@@ -1243,6 +1259,17 @@ function CreateNewModalTask({ ...props }) {
                     console.log("save task rerurn value", js);
 
                     if (js.Status === "success") {
+                        console.log(selectedRows,"Json_CRM_Task_Save ", js.Message);
+                        setOwnerMessage(js.Message);
+                        console.log(addItemdata,"Json_CRM_Task_");
+                                                       if(selectedRows && selectedRows.length > 0) {
+                                                        selectedRows.forEach((item)=>{
+                                                             addToWorkTable(item.ItemId,js.Message);
+                                                        });
+                                                       }
+                        let strGuid = uuidv4().replace(/-/g, '');
+                        localStorage.setItem("GUID", strGuid)
+
                         Json_CRM_GetOutlookTask_ForTask();
                         setLoading(false);
                         toast.success("Created Task !");
@@ -1251,14 +1278,20 @@ function CreateNewModalTask({ ...props }) {
                         if (selectedDocumentFile.length > 0) {
                             Json_CRM_TaskDMSAttachmentInsert(js.Message);
                         }
+
                         setOpen(false);
-                        setOpenModal(false)
+                        try {
+                            setOpenModal(false)
+                        } catch (e) { }
                         ClearForm();
                         // setIsApi(!isApi);
 
                         // Inside your function or event handler where you want to show the success message
                         //handleSuccess(js.Message);
                         // setOpen(false);
+
+                        // setAttachmentPath([]);
+                        //setSelectedFiles([])
                     }
                     else {
                         toast.error("Task Not Created Please Try Again");
@@ -1332,6 +1365,8 @@ function CreateNewModalTask({ ...props }) {
         cls.Json_CRM_TaskDMSAttachmentInsert(obj, function (sts, data) {
             if (sts && data) {
                 console.log('Json_CRM_TaskDMSAttachmentInsert', data);
+                setAttachmentPath([]);
+                setSelectedFiles([])
             }
         })
     }
@@ -1424,11 +1459,14 @@ function CreateNewModalTask({ ...props }) {
     };
 
     const handleDocumentClickOpen = () => {
+        setDMSDocumentList([])
+     
+
         setAnchorSelectFileEl(null);
 
         if (textClientId) {
 
-            Json_ExplorerSearchDoc();
+           Json_ExplorerSearchDoc();
             setOpenDocumentList(true);
 
         } else {
@@ -1487,7 +1525,7 @@ function CreateNewModalTask({ ...props }) {
     // };
 
     ////////////////// Priority
-    let priorityarr = [{ id: 1, "name": "High" }, { id: 2, "name": "Normal" }, { id: 3, "name": "Low" }];
+    let priorityarr = [{ id: 1, "name": "High", icon: <PriorityHighIcon className='font-20' sx={{ color: red[900] }} /> }, { id: 2, "name": "Normal", icon: <ReportProblemIcon className='font-20' color="secondary" /> }, { id: 3, "name": "Low", icon: <ArrowDownwardIcon className='font-20' sx={{ color: green[500] }} /> }];
     let statusarr = [
         { id: 1, "name": "Not Started" },
         { id: 2, "name": "In Progress" },
@@ -1502,8 +1540,31 @@ function CreateNewModalTask({ ...props }) {
         setSelectedRows(selectedItems.selectedRowsData);
         // You can perform further actions with the selectedRows array
         console.log("selectedItems11", selectedItems); // Log the selected rows data
+       // Create a Set to store unique data
+    // const uniqueData = new Set(addItemdata);
+    // setOwnerTaskID(selectedItems.selectedRowsData[0]);
+    // // Loop through each selected row data and add it to the uniqueData Set
+    // selectedItems.selectedRowsData.forEach(rowData => {
+    //     uniqueData.add(rowData);
+    // });
 
+    // // Convert the uniqueData Set back to an array and set it to addItemdata
+    // addItemdata = [...uniqueData];
+    console.log(addItemdata,"addItemdata");
     };
+    function addToWorkTable(Itid,taskID) {
+        console.log(taskID,"addToWorkTable", Itid);
+        let obj = {  agrno: agrno, Email: Email, password: password,ItemId: Itid, comment: `${ownerName} has invoked task ID : ${taskID}`};
+        console.log("addToWorkTable111", obj);
+        clsSms.Json_AddToWork(obj, function (status, data) {
+          if (status) {
+            if (data) {
+              //let json = JSON.parse(data);
+              console.log("getitemid", data);
+            }
+          }
+        });
+      }
     const Json_GetClientCardDetails = (cid) => {
         try {
             if (txtFolderId && cid) {
@@ -1897,14 +1958,15 @@ function CreateNewModalTask({ ...props }) {
                     "Notes": "",
                     "TaskSource": txtTaskType
                 }
-                console.log("final save data obj", ooo);
+                console.log(txtSectionId.toString(),"final save data obj", ooo);
                 clsSms.Json_CRM_Task_Save(ooo, function (sts, data) {
                     if (sts) {
                         if (data) {
                             setLoading(false);
                             let js = JSON.parse(data);
-                            console.log("Json_CRM_Task_Save ", js);
+                            console.log(addItemdata,"Json_CRM_Task_Save ", js);
                             if (js.Status === "success") {
+                              
                                 // setMessageId(js.Message);
                                 CreatePortalMessage(js.Message)
                                 // toast.success("Created Task");
@@ -2000,11 +2062,16 @@ function CreateNewModalTask({ ...props }) {
                         if (!data) {
                             toast.success("Task Created");
                             Json_CRM_GetOutlookTask_ForTask();
-                            if(createNewFileObj){
+                            if (createNewFileObj) {
                                 setOpenModal(false);
                             }
-                           
+                            setSelectedFiles([]);
                             ClearForm();
+                            //setAttachmentPath([]);
+                            //setSelectedFiles([])
+                            let strGuid = uuidv4().replace(/-/g, '');
+                            localStorage.setItem("GUID", strGuid)
+
                         }
                         setOpen(false);
 
@@ -2334,7 +2401,10 @@ function CreateNewModalTask({ ...props }) {
                     {/* <MenuItem 
                     onClick={handleClickEditReferance}
                     >Edit Reference</MenuItem> */}
-                    <MenuItem onClick={() => handleClickOpen("CRM")
+                    <MenuItem onClick={() => {
+                        handleClickOpen("CRM")
+                        handleClose4()
+                    }
                     }>
                         {/* <ListItemIcon>
                             <EjectIcon fontSize="medium" className="text-red rotate-180" />
@@ -2344,10 +2414,23 @@ function CreateNewModalTask({ ...props }) {
                         </ListItemIcon> CRM Task
                     </MenuItem>
 
-                    <MenuItem onClick={() => handleClickOpen("Portal")}><ListItemIcon>
-                        <LanguageIcon className="font-20" />
-                    </ListItemIcon>
-                        Portal Task</MenuItem>
+                    <MenuItem onClick={() => {
+                        handleClickOpen("Portal")
+                        handleClose4()
+                    }
+                    }><ListItemIcon>
+                            <LanguageIcon className="font-20" />
+                        </ListItemIcon>
+                        Portal Task </MenuItem>
+
+                    {/* <MenuItem onClick={() => {
+                        handleClickOpen("Portal")
+                        handleClose4()
+                    }
+                    }><ListItemIcon>
+                            <LanguageIcon className="font-20" />
+                        </ListItemIcon>
+                        DMS Task </MenuItem> */}
 
                     <MenuItem onClick={() => {
                         handleClickReferance()
@@ -2355,7 +2438,7 @@ function CreateNewModalTask({ ...props }) {
                     }}>
                         <ListItemIcon>
                             <GroupIcon className="font-20" />
-                        </ListItemIcon> Reference
+                        </ListItemIcon> Add Reference
                     </MenuItem>
 
                     <MenuItem onClick={() => {
@@ -2929,14 +3012,74 @@ function CreateNewModalTask({ ...props }) {
                                             className="custom-dropdown"
                                         >
                                             <label onClick={handleSelectFileClose} htmlFor="file-upload" className="d-block">
-                                                <MenuItem>Upload File(s)</MenuItem>
+                                                <MenuItem><FileUploadIcon className="font-20 me-1" /> Upload File(s)</MenuItem>
                                             </label>
-                                            <MenuItem onClick={handleDocumentClickOpen}>Select From DMS</MenuItem>
+                                            <MenuItem onClick={handleDocumentClickOpen}><InsertPageBreakIcon className="font-20 me-1" /> Select From DMS</MenuItem>
 
                                         </Menu>
 
                                     </label>
                                 </Box>
+
+
+                                {/* DMS Start 
+                                <Box className="file-uploads">
+                                    <input
+                                        type="file"
+                                        id="file-upload"
+                                        multiple
+                                        onChange={handleFileSelect}
+                                    />
+                                    <label className="file-uploads-label">
+                                        <Box className="d-flex align-items-center">
+                                            <span className="material-symbols-outlined icon">
+                                                cloud_upload
+                                            </span>
+                                            <Box className="upload-content pe-3">
+                                                <Typography variant="h4">
+                                                    Main Document
+                                                </Typography>
+                                                <Typography variant="body1">
+                                                    JPG, PNG or PDF, file size no more than 10MB
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+
+                                        <Button
+                                            id="basic-button"
+                                            variant="contained"
+                                            aria-controls={openSelectFile ? 'basic-menu' : undefined}
+                                            aria-haspopup="true"
+                                            aria-expanded={openSelectFile ? 'true' : undefined}
+                                            onClick={handleClickSelectFile}
+                                            className="btn-blue-2"
+                                        >
+                                            Select file
+                                        </Button>
+                                        <Menu
+                                            id="basic-menu"
+                                            anchorEl={anchorSelectFileEl}
+                                            open={openSelectFile}
+                                            onClose={handleSelectFileClose}
+                                            MenuListProps={{
+                                                'aria-labelledby': 'basic-button',
+                                            }}
+                                            className="custom-dropdown"
+                                        >
+                                            <label onClick={handleSelectFileClose} htmlFor="file-upload" className="d-block">
+                                                <MenuItem><FileUploadIcon className="font-20 me-1" /> 
+                                                Select DMS Document
+                                                </MenuItem>
+                                            </label>
+                                            <MenuItem onClick={handleDocumentClickOpen}><InsertPageBreakIcon className="font-20 me-1" /> Upload new document</MenuItem>
+
+                                        </Menu>
+
+                                    </label>
+                                </Box>
+                                 DMS End */}
+
+
 
                                 <Box className="file-uploads file-upload-height">
                                     {selectedFiles.length > 0
@@ -2992,16 +3135,11 @@ function CreateNewModalTask({ ...props }) {
                                                                     onClose={handleCloseDoc}
                                                                     MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
                                                                 >
-                                                                    <MenuItem onClick={() => DeleteFile(file)}>Delete</MenuItem>
+                                                                    <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Delete</MenuItem>
                                                                     {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
-                                                                        <MenuItem onClick={(e) => ConvertToPdf_Json(file)}>Convert To Pdf</MenuItem>
+                                                                        <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
                                                                     )}
-
-
                                                                 </Menu>
-
-
-
 
                                                             </Box>
                                                         </Box>
@@ -3203,6 +3341,7 @@ function CreateNewModalTask({ ...props }) {
                                                         : undefined
                                                 }
                                                 onClick={(event) => handleClick3(event, "client")}
+                                                className={textClientId ? "" : "text-danger"}
                                             >
                                                 {txtClient}
                                                 <KeyboardArrowDownIcon />
@@ -3279,6 +3418,7 @@ function CreateNewModalTask({ ...props }) {
                                                                     </React.Fragment>
                                                                 }
                                                             />
+
                                                         </ListItem>
                                                         {/* <Divider variant="inset" component="li" /> */}
                                                     </React.Fragment>
@@ -3317,6 +3457,7 @@ function CreateNewModalTask({ ...props }) {
                                                         : undefined
                                                 }
                                                 onClick={(event) => handleClick3(event, "section")}
+                                                className={txtSectionId ? "" : "text-danger"}
                                             >
                                                 {txtSection}
                                                 <KeyboardArrowDownIcon />
@@ -3437,14 +3578,11 @@ function CreateNewModalTask({ ...props }) {
 
                                 {/* <Box className="border-bottom">
                                     <label>Index</label>
-                                    
                                 </Box> */}
 
                                 <Box className="mb-3">
                                     <label className="font-14 semibold mb-1">Due By </label>
-
                                     <Box className='custom-datepicker'>
-
                                         <LocalizationProvider
                                             className="pe-0"
                                             dateAdapter={AdapterDayjs}
@@ -3463,11 +3601,7 @@ function CreateNewModalTask({ ...props }) {
                                                 isClearable
                                             />
                                         </LocalizationProvider>
-
-
                                     </Box>
-
-
                                 </Box>
 
                                 <Box className="mb-2">
@@ -3507,7 +3641,6 @@ function CreateNewModalTask({ ...props }) {
 
                                     </>)}
 
-
                                     {txtTaskType === "Portal" && (<>
                                         <label className="font-14 d-block">Expires On</label>
                                         <LocalizationProvider
@@ -3526,9 +3659,6 @@ function CreateNewModalTask({ ...props }) {
                                                 icon="fa fa-calendar"
 
                                             />
-
-
-
                                         </LocalizationProvider>
                                     </>)}
 
@@ -3582,7 +3712,7 @@ function CreateNewModalTask({ ...props }) {
                                                         className='ps-2'
                                                     >
                                                         <ListItemIcon>
-                                                            <PanoramaFishEyeIcon fontSize="medium" />
+                                                            {item.icon}
                                                         </ListItemIcon>
 
                                                         {item.name}</MenuItem>
@@ -3591,8 +3721,6 @@ function CreateNewModalTask({ ...props }) {
                                             ))
                                             : null}
                                     </Menu>
-
-
                                 </Box>
 
                                 <Box className="select-dropdown">
@@ -3658,17 +3786,8 @@ function CreateNewModalTask({ ...props }) {
                             </Box>
                             {/* col end */}
 
-
-
-
-
-
-
-
                         </Box>
                     </DialogContentText>
-
-
 
                     <DialogActions className="px-0 w-100 p-0">
                         <Box className="d-flex align-items-center justify-content-end w-100">
@@ -3728,7 +3847,6 @@ function CreateNewModalTask({ ...props }) {
                         >
                             Document List
                         </Button>
-
                     </div>
 
                     <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
@@ -3779,16 +3897,18 @@ function CreateNewModalTask({ ...props }) {
 
                         {/* file upload end */}
 
-                        <Button
-                            variant="contained"
-                            onClick={AddDocuments}
-                            className="btn-blue-2 mt-3"
-                        >
-                            {'Add Document'}
-                        </Button>
-
                     </DialogContentText>
                 </DialogContent>
+
+                <DialogActions className="p-4 pt-3">
+                    <Button
+                        variant="contained"
+                        onClick={AddDocuments}
+                        className="btn-blue-2"
+                    >
+                        {'Add Document'}
+                    </Button>
+                </DialogActions>
             </Dialog>
             {/* end */}
 
@@ -3804,7 +3924,7 @@ function CreateNewModalTask({ ...props }) {
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <div>
                         <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                            Reference
+                            Add Reference
                         </Typography>
                     </div>
                     <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
@@ -3816,7 +3936,7 @@ function CreateNewModalTask({ ...props }) {
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
 
-                        <Reference open5={open5}  setOpen5={setOpen5} setReferance={setReferance} setAddContact={setAddContact} />
+                        <Reference open5={open5} setOpen5={setOpen5} setReferance={setReferance} setAddContact={setAddContact} />
 
                     </DialogContentText>
                 </DialogContent>
@@ -3871,7 +3991,7 @@ function CreateNewModalTask({ ...props }) {
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                            Add Contact 
+                            Add Contact
                         </Typography>
                     </Box>
 
@@ -3901,7 +4021,7 @@ function CreateNewModalTask({ ...props }) {
             </Dialog>
 
 
-            <ToastContainer></ToastContainer>
+            {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
 
         </React.Fragment >
 

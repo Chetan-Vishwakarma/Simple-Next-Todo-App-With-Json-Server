@@ -146,6 +146,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
 
     useEffect(() => {
+        setCreateNewFileObj([]);
         setSaveCounter(0);
         setStep(1);
         setSelectedFiles([]);
@@ -592,15 +593,19 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                 }
 
                                 if(selectedFiles.length===counter){
-                                    toast.success(selectedFiles.length + "Document(s) Uploaded!");                                   
+                                    toast.success(selectedFiles.length + "Document(s) Uploaded!");                      
                                 }
 
                                 if (buttonNameText === "Submit & Create Portal Task" || buttonNameText === "Submit & Create Task") {
                                     setshowModalCreateTask(true)
-                                    setOpenModal(true)
-
-                                    setOpenUploadDocument(false);                                      
-                                   
+                                    setOpenModal(true);
+                                    setTimeout(() => {
+                                        if(openModal){
+                                            setOpenUploadDocument(false); 
+                                        }
+                                      
+                                    }, 4000);                                      
+                                    
                                 }
                                 else {
                                     setOpenUploadDocument(false);
@@ -611,7 +616,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
                             }
                             else {
-                                //toast.success("Faild Please Try Again");
+                                toast.error("Faild Please Try Again");
                             }
                         }
                         else {
@@ -985,7 +990,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                     </Box>
                 </DialogActions>
             </Dialog>
-            <ToastContainer></ToastContainer>
+            {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
         </React.Fragment>
     )
 }

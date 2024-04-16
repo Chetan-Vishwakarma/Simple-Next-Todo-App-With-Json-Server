@@ -1,22 +1,42 @@
 import React, { useEffect, useState } from 'react'
-import Modal from '@mui/material/Modal';
-import {Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material';
+import { toast } from 'react-toastify';
+import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, TextField, Autocomplete } from '@mui/material';
 
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
+const agrno = localStorage.getItem("agrno");
+const Email = localStorage.getItem("Email");
+const password = localStorage.getItem("Password");
+const folderId = localStorage.getItem("FolderId");
 
-function DocumentRenameModal({openRenameModal,setOpenRenameModal}) {
-  const handleClose = () => setOpenRenameModal(false);
-//   useEffect()
+function DocumentRenameModal({ ClsSms, openRenameModal, setOpenRenameModal, docForDetails, Json_getRecentDocumentList }) {
+    const handleClose = () => setOpenRenameModal(false);
+    const [description,setDescription] = useState( docForDetails.Subject ? docForDetails.Subject : "" );
+    console.log("erowruisdk",description);
+    const Json_RenameDocument = () => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ItemId: docForDetails.ItemId ? docForDetails.ItemId : "",
+            Description: description,
+            FolderId: folderId
+        };
+        ClsSms.Json_RenameDocument(obj, (sts, data) => {
+            if (sts) {
+                if (data) {
+                    let json = JSON.parse(data);
+                    console.log("Json_RenameDocument", json);
+                    if(json.Status==="Success"){
+                        Json_getRecentDocumentList();
+                        toast.success(json.Message);
+                    }else{
+                        toast.error("Unable to rename this document");
+                    }
+                    handleClose();
+                }
+            }
+        });
+    }
+    //   useEffect()
     return (
         <>
             {/* <Button onClick={handleOpen}>Open modal</Button> */}
@@ -36,7 +56,7 @@ function DocumentRenameModal({openRenameModal,setOpenRenameModal}) {
                 </Box>
             </Modal> */}
 
-<Dialog
+            <Dialog
                 open={openRenameModal}
                 onClose={(event) => handleClose(event)}
                 aria-labelledby="alert-dialog-title"
@@ -63,7 +83,15 @@ function DocumentRenameModal({openRenameModal,setOpenRenameModal}) {
                 </Box>
                 <DialogContent>
                     <DialogContentText>
-                        <h1>Hello Docusoft</h1>
+                        {/* <Autocomplete
+                            disablePortal
+                            id="combo-box-demo"
+                            options={top100Films}
+                            sx={{ width: 300 }}
+                            renderInput={(params) => <TextField onChange={(e)=>setDiscription(e.target.value)} {...params} label="Movie" />}
+                        /> */}
+                        <TextField value={description} onChange={(e)=>setDescription(e.target.value)} label="Description" />
+                        <Button onClick={Json_RenameDocument}>Submit</Button>
                     </DialogContentText>
                 </DialogContent>
 
@@ -71,5 +99,11 @@ function DocumentRenameModal({openRenameModal,setOpenRenameModal}) {
         </>
     )
 }
+const top100Films = [
+    { label: 'General Letter', year: 1994 },
+    { label: 'Test Letter', year: 1974 },
+    { label: 'Test Assignment', year: 2008 },
+    { label: 'Tester Document', year: 1957 }
+  ];
 
 export default DocumentRenameModal

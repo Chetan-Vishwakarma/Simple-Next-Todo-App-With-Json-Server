@@ -14,6 +14,7 @@ import CheckBox, { CheckBoxTypes } from 'devextreme-react/check-box';
 import CommanCLS from '../../services/CommanService';
 import CustomLoader from '../../components/CustomLoader';
 import { useNavigate } from 'react-router';
+import DataNotFound from '../../components/DataNotFound';
 
 const saleAmountEditorOptions = { format: 'currency', showClearButton: true };
 const filterLabel = { 'aria-label': 'Filter' };
@@ -79,8 +80,8 @@ const orderHeaderFilter = (data) => {
 };
 
 
-function Contact() {
-
+function Contact({clientId}) {
+console.log("fjdsfjerio",typeof clientId);
   const navigate = useNavigate();
 
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -97,6 +98,8 @@ function Contact() {
   const [currentFilter, setCurrentFilter] = useState(applyFilterTypes[0].key);
 
   const [allContactList, setAllContactList] = useState([]);
+  const [dataNotFound, setDataNotFound] = useState(false);
+
 
   const dataGridRef = useRef(null);
 
@@ -129,8 +132,11 @@ function Contact() {
               let res = js.Table.map((el)=>{
              el["Date Of Birth"]=cls.DateFormateDate(el["Date Of Birth"]);
                 return el;
-              })
+              }).filter(itm=>itm.OriginatorNo===clientId);
               setAllContactList(res)
+              if(res.length===0){
+                setDataNotFound(true);
+              }
             }
           }
 
@@ -170,7 +176,7 @@ function Contact() {
 
   return (
     <div className='table-responsive table-grid table-grid-2'>
-      {allContactList.length>0?<DataGrid
+      { dataNotFound ? <DataNotFound/> : ( allContactList.length>0 ? <DataGrid
         id="gridContainer"
         className='client-card-contact-grid'
         ref={dataGridRef}
@@ -231,7 +237,7 @@ function Contact() {
         caption="Date Of Birth"
            format="M/d/yyyy, HH:mm"
          />
-      </DataGrid>:<CustomLoader/>}
+      </DataGrid>:<CustomLoader/>)}
     </div>
   )
 }
