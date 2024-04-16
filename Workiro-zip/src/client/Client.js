@@ -19,6 +19,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CustomLoader from '../components/CustomLoader';
 import SyncIcon from '@mui/icons-material/Sync';
+import Tooltip from '@mui/material/Tooltip';
 
 const CommonFilters = [
     { key: "Company Name", val: "Company Name" }, { key: "Address 1", val: "Address Line 1" },
@@ -1035,12 +1036,12 @@ function Client() {
                                 exclusive
                             // onChange={handleAlignment}
                             >
-
-                                <ToggleButton value="left" aria-label="left aligned"
-                                    onClick={SyncFunctionData}
-                                >
-                                    <SyncIcon />
-                                </ToggleButton>
+                                <Tooltip title="Sync">
+                                    <ToggleButton value="left" aria-label="left aligned"
+                                        onClick={SyncFunctionData}
+                                    >
+                                        <SyncIcon />
+                                    </ToggleButton></Tooltip>
 
                                 {isGridView &&
                                     <ToggleButton value="left" aria-label="left aligned"
