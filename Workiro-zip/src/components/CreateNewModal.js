@@ -106,17 +106,28 @@ const userId = localStorage.getItem("UserId");
 let addItemdata = [];
 function CreateNewModalTask({ ...props }) {
     const dispatch = useDispatch();
-    const {
-        documentDate = null,
-        receivedDate = null,
-        createNewFileObj = null,
-        txtFolderData = null,
-        txtClientData = null,
-        txtSectionData = null,
-        TaskType = null,
-        openModal = null,
-        setOpenModal = null,
-    } = props || {};
+    // const {
+    //     documentDate = null,
+    //     receivedDate = null,
+    //     createNewFileObj = null,
+    //     txtFolderData = null,
+    //     txtClientData = null,
+    //     txtSectionData = null,
+    //     TaskType = null,
+    //     openModal = null,
+    //     setOpenModal = null,
+    // } = props || {};
+
+
+    const [documentDate, setDocumentDate] = useState(null);
+    const [receivedDate, setReceivedDate] = useState(null);
+    const [createNewFileObj, setCreateNewFileObj] = useState(null);
+    const [txtFolderData, setTxtFolderData] = useState(null);
+    const [txtClientData, setTxtClientData] = useState(null);
+    const [txtSectionData, setTxtSectionData] = useState(null);
+    const [TaskType, setTaskType] = useState(null);
+    const [openModal, setOpenModal] = useState(null);
+
 
     // console.log("documentDate txtSectionId1", documentDate,
     //     receivedDate, createNewFileObj)
@@ -1361,7 +1372,9 @@ function CreateNewModalTask({ ...props }) {
     }
 
     function Json_CRM_TaskDMSAttachmentInsert(TaskID) {
-
+        if(openUploadDocument){
+            setOpenUploadDocument(false);
+        }
         const ItemId = selectedDocumentFile.map(obj => obj.DocId).join("|");
         let obj = {
             TaskID: TaskID,
@@ -2420,7 +2433,27 @@ function CreateNewModalTask({ ...props }) {
                 <span className="material-symbols-outlined">edit_square</span>{" "}
                 <span className="ps-2 create-text">Create New  </span>
             </Button> */}
-            <UploadDocument openUploadDocument={openUploadDocument} setOpenUploadDocument={setOpenUploadDocument}></UploadDocument>
+            <UploadDocument 
+              openUploadDocument={openUploadDocument} 
+              setOpenUploadDocument={setOpenUploadDocument}
+              documentDate={documentDate}
+              setDocumentDate={setDocumentDate}
+              receivedDate={receivedDate}
+              setReceivedDate={setReceivedDate}
+              createNewFileObj={createNewFileObj}
+              setCreateNewFileObj={setCreateNewFileObj}
+              txtFolderData={txtFolderData}
+              setTxtFolderData={setTxtFolderData}
+              txtClientData={txtClientData}
+              setTxtClientData={setTxtClientData}
+              txtSectionData={txtSectionData}
+              setTxtSectionData={setTxtSectionData}
+              TaskType={TaskType}
+              setTaskType={setTaskType}
+              openModal={openModal}
+              setOpenModal={setOpenModal}
+              handleClickOpen={handleClickOpen}
+            ></UploadDocument>
 
             <div className="select-border">
                 <Button
