@@ -932,11 +932,15 @@ function CreateNewModalTask({ ...props }) {
         const files = event.target.files;
         const selectedFilesArray = Array.from(files);
         const filesData = [];
+
+        let completeCounter=0;
+    
         selectedFilesArray.forEach((file, index) => {
             const reader = new FileReader();
+            completeCounter++;
             reader.onload = () => {
                 let fileByte = reader.result.split(";")[1].replace("base64,", "");
-
+    
                 const fileData = {
                     FileName: file.name,
                     Base64: fileByte ? fileByte : "", // Base64 data of the file
@@ -946,13 +950,13 @@ function CreateNewModalTask({ ...props }) {
                     Guid: localStorage.getItem("GUID"),
                     FileType: getFileExtension(file.name).toLowerCase()
                 };
-                // console.log("get folder list 2222222222", fileData);
+    
                 filesData.push(fileData);
-
+    
                 if (txtTaskType === "CRM") {
-                    UploadAttachment(fileData)
+                    UploadAttachment(fileData);
                 }
-
+    
                 // Check if this is the last file
                 if (index === selectedFilesArray.length - 1) {
                     // Add new files to the uploadedFiles array
@@ -960,24 +964,22 @@ function CreateNewModalTask({ ...props }) {
                         ...prevUploadedFiles,
                         ...filesData,
                     ]);
+    
+                    // Call PrepareDocumentsForPublish_Json after all files data are processed
+                    if(completeCounter===selectedFilesArray.length){
 
-                    // setSelectedFilesFromBrower((prevUploadedFiles) => [
-                    //     ...prevUploadedFiles,
-                    //     ...filesData,
-                    // ]);
-
+                        if (txtTaskType === "Portal") {
+                            PrepareDocumentsForPublish_Json(filesData, 1);
+                        }
+                        
+                    }
+                   
                 }
             };
             reader.readAsDataURL(file); // Read file as data URL (base64)
         });
-
-        setTimeout(() => {
-
-            if (txtTaskType === "Portal") {
-                PrepareDocumentsForPublish_Json(filesData, 1);
-            }
-        }, 4000);
     };
+    
 
     function PrepareDocumentsForPublish_Json(filedata, ids) {
         try {
@@ -1664,9 +1666,12 @@ function CreateNewModalTask({ ...props }) {
 
     const AddDocuments = () => {
         let filesData = [];
-        console.log("AddDocuments11",selectedRows);
+        console.log("AddDocuments11", selectedRows);
+    
+        // Counter to keep track of completed asynchronous operations
+        let completedOperations = 0;
+    
         selectedRows.forEach((row, index) => {
-
             Json_GetItemBase64DataById(row, function (base64data) {
                 const fileData = {
                     FileName: row.Description + "." + row.Type,
@@ -1677,35 +1682,33 @@ function CreateNewModalTask({ ...props }) {
                     Guid: localStorage.getItem("GUID"),
                     FileType: row["Type"].toLowerCase(),
                     Description: row.Description
-
                 };
                 filesData.push(fileData);
-                // Check if this is the last file
-                if (index === selectedRows.length - 1) {
+    
+                completedOperations++; // Increment the completed operations counter
+    
+                // Check if all operations are completed
+                if (completedOperations === selectedRows.length) {
                     // Add new files to the uploadedFiles array
                     setSelectedFiles((prevUploadedFiles) => [
                         ...prevUploadedFiles,
                         ...filesData,
                     ]);
-
+    
                     setSelectedDocumentFile((prevUploadedFiles) => [
                         ...prevUploadedFiles,
                         ...filesData,
                     ]);
+    
+                    // Call PrepareDocumentsForPublish_Json after all files data are processed
+                    PrepareDocumentsForPublish_Json(filesData, 2);
+    
+                    setOpenDocumentList(false);
                 }
-            })
-
-
-        })
-        setTimeout(() => {
-            PrepareDocumentsForPublish_Json(filesData, 2)
-        }, 4000);
-
-
-
-        setOpenDocumentList(false)
-
-    }
+            });
+        });
+    };
+    
 
     function Json_GetItemBase64DataById(item, callBack) {
         try {

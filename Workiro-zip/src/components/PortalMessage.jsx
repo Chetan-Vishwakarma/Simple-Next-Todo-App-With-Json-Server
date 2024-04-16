@@ -31,6 +31,9 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 //import CloseIcon from '@mui/icons-material/Close';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 
+import { Editor } from '@tinymce/tinymce-react';
+
+
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
 }));
@@ -791,17 +794,43 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                 <h5 className='mb-0 text-black'>{selectedTask.Subject}</h5>
             </Box> */}
                 <Box className='mb-2'>
-                    {/* <p className='mb-0'>
-                        <HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
-                    </p> */}
-                    <textarea
+                   
+
+                <Editor
+        apiKey='w9rz0c8fw8u2pd3qv7d779obkouylvlrlb9w9s1fmytnlan1'
+        initialValue={templateDataMarkup}
+        disabled = {true}
+        init={{
+            height: "300px",
+            menubar: false,
+            readonly: true,
+            plugins: [
+                'a11ychecker','advlist','advcode','advtable','autolink','checklist','export',
+                'lists','link','image','charmap','preview','anchor','searchreplace','visualblocks',
+                'powerpaste','fullscreen','formatpainter','insertdatetime','media','table','help','wordcount','resize'
+            ],
+            toolbar: 'undo redo | casechange blocks | bold italic backcolor | ' +
+                'alignleft aligncenter alignright alignjustify | ' +
+                'bullist numlist checklist outdent indent | removeformat | a11ycheck code table help',
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+            resize: true, // Enable resizing,
+         
+        }}
+        //onEditorChange={handleEditorChange}
+        // onInit={(evt, editor) => {
+        //     editorRef.current = editor;
+        //   }}
+    />
+
+
+                    {/* <textarea
                         templateDataMarkup={templateDataMarkup}
                         setTemplateDataMarkup={setTemplateDataMarkup}
                         setEditorContentValue={setEditorContentValue}
                         className="form-control textarea textarea-2"
                         disabled={selectedTask.Source === "Portal"}
                         value={templateDataMarkup}
-                    ></textarea>
+                    ></textarea> */}
                 </Box>
 
                 <Box className='d-flex flex-wrap align-items-center justify-content-between'>
