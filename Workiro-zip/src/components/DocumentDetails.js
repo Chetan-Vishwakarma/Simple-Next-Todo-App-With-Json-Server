@@ -32,6 +32,8 @@ import DataNotFound from "./DataNotFound";
 import CommanCLS from "../services/CommanService";
 import TaskDetailModal from "./TaskDetailModal";
 import CreateNewModalTask from "./CreateNewModal";
+import { useDispatch } from "react-redux";
+import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux } from "../redux/reducers/counterSlice";
 
 
 // sadik code start
@@ -50,7 +52,7 @@ const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 //const baseUrlDocuSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
 function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, selectedGroup }) {
-
+    const dispatch = useDispatch();
     const Cls = new CommanCLS(baseUrl, agrno, Email, password);
     //const ClsDocuSms = new CommanCLS(baseUrlDocuSms, agrno, Email, password);
 
@@ -253,23 +255,13 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         const dateObject = new Date(timeStamp);
         return `${dateObject.getDate()}/${dateObject.getMonth() + 1}/${dateObject.getFullYear()}`;
     }
-    const [createNewFileObj, setCreateNewFileObj] = useState([]);
 
-    const [TaskType, setTaskType] = useState("");
-    const [txtClientData, setTxtClientData] = useState({});
-    const [txtSectionData, setTxtSectionData] = useState({});
-    const [txtFolderData, setTxtFolderData] = useState({});
-    const [openModals,setopenModal]=useState(false);
-
-    useEffect(()=>{
-        setopenModal(false)
-    },[])
-    function Json_GetItemBase64DataById(item) {
+    function Json_GetItemBase64DataById(item, tskType) {
         try {
             let filesData = [];
             let obj = {};
             obj.ItemId = item["Registration No."]
-            console.log("handle change fileData1", obj)
+            // console.log("handle change fileData1", obj);
 
             Cls.Json_GetItemBase64DataById(obj, function (sts, base64data) {
                 if (sts) {
@@ -287,12 +279,14 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                         };
                         console.log("handle change fileData", fileData)
                         filesData.push(fileData);
-                        setCreateNewFileObj(filesData);
 
-                        setTxtClientData({ Client: item.Client, ClientID: item.SenderId })
-                        setTxtSectionData({ Sec: item.Section, SecID: item.PostItemTypeID })
-                        setTxtFolderData({ Folder: item.Folder, FolderID: item.ProjectId })
+                        let tempTxtClientData = { Client: item.Client, ClientID: item.SenderId };
+                        let tempTxtSectionData = { Sec: item.Section, SecID: item.PostItemTypeID };
+                        let tempFolderData = { Folder: item.Folder, FolderID: item.ProjectId };
 
+                        dispatch(setClientAndDocDataForTaskModalRedux({ TaskType: tskType, createNewFileObj: filesData, txtClientData: tempTxtClientData, txtSectionData: tempTxtSectionData, txtFolderData: tempFolderData, }));
+                        console.log("dgjkdlgjroeti",tskType);
+                        dispatch(handleOpenModalRedux(tskType));
                     }
                     else {
                         toast.error(item.Description + "was not uploaded as it had no data")
@@ -309,34 +303,32 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
 
     const handleCloseDocumentPublish = (event, rowData) => {
         if (rowData) {
-            setopenModal(true);
-            setTaskType("Portal")
             console.log("row selected data", rowData)
             event.stopPropagation();
             const newAnchorElDocumentList = { ...anchorElDocumentList };
             delete newAnchorElDocumentList[rowData.key];
             setAnchorElDocumentList(newAnchorElDocumentList);
-            Json_GetItemBase64DataById(rowData.data)
+            let res = Json_GetItemBase64DataById(rowData.data, "Portal");
+            if(res){
+                dispatch(handleOpenModalRedux("Portal"));
+            }
         }
     };
 
 
     const handleCloseDocumentCreateTask = (event, rowData) => {
         if (rowData) {
-            setopenModal(true);
-            setTaskType("CRM")
-           // console.log("row selected data", rowData)
+            // console.log("row selected data", rowData)
             event.stopPropagation();
             const newAnchorElDocumentList = { ...anchorElDocumentList };
             delete newAnchorElDocumentList[rowData.key];
             setAnchorElDocumentList(newAnchorElDocumentList);
-            Json_GetItemBase64DataById(rowData.data)
+            Json_GetItemBase64DataById(rowData.data, "CRM"); 
         }
     };
 
     const handleCloseDocumentDownload = (event, rowData) => {
         if (rowData) {
-           
             console.log("row selected data", rowData)
             event.stopPropagation();
             const newAnchorElDocumentList = { ...anchorElDocumentList };
@@ -346,16 +338,16 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         }
     };
 
-    function downloadFile(item){
+    function downloadFile(item) {
 
-        try {           
+        try {
             let obj = {};
             obj.ItemId = item["Registration No."]
             console.log("handle change fileData1", obj)
 
             Cls.Json_GetItemBase64DataById(obj, function (sts, base64data) {
                 if (sts) {
-                    if (base64data !== "No Data Exist") {  
+                    if (base64data !== "No Data Exist") {
                         let ankr = document.createElement("a");
                         ankr.href = `data:application/octet-stream;base64,${base64data}`;
                         ankr.download = item.Path;
@@ -373,13 +365,13 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         }
 
 
-        
+
     }
 
     const handleCloseDocumentOpenDocumentBrowers = (event, rowData) => {
         if (rowData) {
-             event.stopPropagation();
-             let selectedDocument=rowData.data;
+            event.stopPropagation();
+            let selectedDocument = rowData.data;
             const newAnchorElDocumentList = { ...anchorElDocumentList };
             delete newAnchorElDocumentList[rowData.key];
             setAnchorElDocumentList(newAnchorElDocumentList);
@@ -391,10 +383,10 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                 IsApp = IsApproved;
                 PortalID = PortalDocId;
             }
-         let ViwerUrl = `https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${selectedDocument["Registration No."]}&ext=${selectedDocument.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
-          window.open(ViwerUrl)
+            let ViwerUrl = `https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${selectedDocument["Registration No."]}&ext=${selectedDocument.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
+            window.open(ViwerUrl)
 
-            
+
         }
     };
 
@@ -403,7 +395,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     return (
         <>
             <Box>
-            {openModals && openModals && <CreateNewModalTask                              
+                {/* {openModals && openModals && <CreateNewModalTask                              
                                TaskType={TaskType}
                                createNewFileObj={createNewFileObj}
                                txtClientData={txtClientData}
@@ -411,7 +403,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                txtFolderData={txtFolderData}
                                openModal={openModals}
                                setOpenModal={setopenModal}
-                           ></CreateNewModalTask>}
+                           ></CreateNewModalTask>} */}
 
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
@@ -452,13 +444,13 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                         dataType="string"  // Set the data type to "string" for proper grouping
                         cellRender={(data) => {
                             return <Box className="file-uploads">
-                                <label className="file-uploads-label file-uploads-document" onClick={(event)=>{
+                                <label className="file-uploads-label file-uploads-document" onClick={(event) => {
                                     event.stopPropagation();
                                     event.preventDefault();
                                     handleCloseDocument(event, data);
-                                }} onDoubleClick={(event) =>{
-                                     handleClickOpenPDFView(event, data.data);
-                                     handleCloseDocument(event, data);
+                                }} onDoubleClick={(event) => {
+                                    handleClickOpenPDFView(event, data.data);
+                                    handleCloseDocument(event, data);
                                 }}>
                                     <Box className="d-flex align-items-center">
 
@@ -488,7 +480,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             aria-haspopup="true"
                                             aria-expanded={Boolean(anchorElDocumentList[data.key])}
                                             onClick={(event) => {
-                                                console.log("fdsfdfsdhhdfkshfs",event);
+                                                console.log("fdsfdfsdhhdfkshfs", event);
                                                 handleClickDocumentList(event, data)
                                             }}
                                             className='min-width-auto'
@@ -519,7 +511,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                                     <CloudUploadIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Publish
-                                                </MenuItem>
+                                            </MenuItem>
 
                                             <MenuItem onClick={(event) => {
                                                 handleCloseDocument(event, data)

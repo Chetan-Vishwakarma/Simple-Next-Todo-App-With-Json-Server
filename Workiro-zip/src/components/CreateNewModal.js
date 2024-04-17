@@ -79,8 +79,8 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EditReference from "../client/client-components/EditReference";
 import UploadDocument from "../client/client-components/UploadDocument";
 import AddContacts from "./AddContacts";
-import { setMyTasks } from "../redux/reducers/counterSlice";
-import { useDispatch } from "react-redux";
+import { handleOpenModalRedux, setMyTasks } from "../redux/reducers/counterSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -106,6 +106,9 @@ const userId = localStorage.getItem("UserId");
 let addItemdata = [];
 function CreateNewModalTask({ ...props }) {
     const dispatch = useDispatch();
+    const reduxRefForTaskModal = useSelector((state=>state.counter.openTaskModal));
+    const reduxRefClientAndDoc = useSelector((state=>state.counter.clientAndDocDataForTaskModal));
+
     // const {
     //     documentDate = null,
     //     receivedDate = null,
@@ -265,6 +268,9 @@ function CreateNewModalTask({ ...props }) {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
+    const [txtTaskType, settxtTaskType] = React.useState("");
+    const [isVisibleByTypeCRM, setIsVisibleByTypeCRM] = React.useState(false);
+    const [textSubject, setTextSubject] = useState("");
     const handleClickOpen = (vl) => {
         console.log("Type show 1111", vl)
         if (vl === "Portal") {
@@ -279,12 +285,43 @@ function CreateNewModalTask({ ...props }) {
         setOpen(true);
 
         ClearForm();
-
-
     };
+
+    // React.useMemo(()=>{
+    //     if(reduxRefForTaskModal){
+    //         handleClickOpen("CRM");
+    //         setCreateNewFileObj(reduxRefClientAndDoc.createNewFileObj);
+    //         setTxtClientData(reduxRefClientAndDoc.txtClientData);
+    //         setTxtFolderData(reduxRefClientAndDoc.txtFolderData);
+    //         setTxtSectionData(reduxRefClientAndDoc.txtSectionData);
+    //         console.log("djskfdjeiurwio",reduxRefClientAndDoc);
+    //     }else{
+    //         return;
+    //     }
+    // },[reduxRefForTaskModal,reduxRefClientAndDoc]);
+    useEffect(()=>{
+        console.log("dfdksfoier",reduxRefForTaskModal);
+        if(reduxRefForTaskModal){
+            setTaskType(reduxRefClientAndDoc.TaskType);
+            setCreateNewFileObj(reduxRefClientAndDoc.createNewFileObj);
+            setTxtClientData(reduxRefClientAndDoc.txtClientData);
+            setTxtFolderData(reduxRefClientAndDoc.txtFolderData);
+            setTxtSectionData(reduxRefClientAndDoc.txtSectionData);
+            // console.log("djskfdjeiurwio",reduxRefClientAndDoc);
+            if(reduxRefForTaskModal==="CRM"){
+                handleClickOpen("CRM");
+            }else if(reduxRefForTaskModal==="Portal"){
+                handleClickOpen("Portal");
+            }
+        } else {
+            handleClose();
+        }
+    },[reduxRefForTaskModal]);
+
 
     const handleClose = () => {
         setOpen(false);
+        dispatch(handleOpenModalRedux(false));
     };
 
     // dropdown add
@@ -728,7 +765,6 @@ function CreateNewModalTask({ ...props }) {
             //     ...createNewFileObj,
             // ]);
             setSelectedDocumentFile(createNewFileObj);
-
             setTimeout(() => {
                 if (TaskType === "Portal") {
                     PrepareDocumentsForPublish_Json(createNewFileObj, 2);
@@ -1321,6 +1357,7 @@ function CreateNewModalTask({ ...props }) {
 
     }
 
+   
 
     function ClearForm() {
         setCurrentDate(new Date())
@@ -1366,7 +1403,7 @@ function CreateNewModalTask({ ...props }) {
     }
 
     function Json_CRM_TaskDMSAttachmentInsert(TaskID) {
-
+        setOpenUploadDocument(false);  // to close the upload documents modal
         const ItemId = selectedDocumentFile.map(obj => obj.DocId).join("|");
         let obj = {
             TaskID: TaskID,
@@ -1502,10 +1539,6 @@ function CreateNewModalTask({ ...props }) {
     const [portalUser, setPortalUser] = React.useState([]);
     const [portalUserCC, setPortalUserCC] = React.useState([]);
     const [portalUserTo, setPortalUserTo] = React.useState([]);
-
-    const [txtTaskType, settxtTaskType] = React.useState("");
-
-    const [isVisibleByTypeCRM, setIsVisibleByTypeCRM] = React.useState(false);
 
 
 
@@ -1895,7 +1928,7 @@ function CreateNewModalTask({ ...props }) {
         GetSMSTemplate();
     }, [txtTemplateId])
 
-    const [textSubject, setTextSubject] = useState("");
+    
     const [editorContentValue, setEditorContentValue] = useState(null);
 
     // Handle selection change
