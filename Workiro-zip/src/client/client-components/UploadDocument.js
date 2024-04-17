@@ -599,7 +599,7 @@ function UploadDocument({
                                 }
 
                                 if(selectedFiles.length===counter){
-                                    toast.success(selectedFiles.length + "Document(s) Uploaded!");                      
+                                    toast.success(selectedFiles.length + " Document(s) Uploaded!");                      
                                 }
 
                                 if (buttonNameText === "Submit & Create Portal Task" || buttonNameText === "Submit & Create Task") {

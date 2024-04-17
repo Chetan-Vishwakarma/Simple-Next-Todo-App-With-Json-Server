@@ -75,7 +75,6 @@ import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-
 import EditReference from "../client/client-components/EditReference";
 import UploadDocument from "../client/client-components/UploadDocument";
 import AddContacts from "./AddContacts";
@@ -719,7 +718,7 @@ function CreateNewModalTask({ ...props }) {
         // if(passButtonHide){
         //     setPassButtonHide(passButtonHide)
         // }
-       console.log(txtTaskType,"tasktypeee");
+        console.log(txtTaskType, "tasktypeee");
         if (createNewFileObj) {
             console.log("createNewFileObj111122222", createNewFileObj)
             setSelectedFiles(createNewFileObj);
@@ -751,7 +750,7 @@ function CreateNewModalTask({ ...props }) {
             setTxtSectionId(txtSectionData.SecID);
         }
         if (TaskType) {
-            console.log(TaskType,"dmstask");
+            console.log(TaskType, "dmstask");
             if (TaskType === "CRM") {
                 setIsVisibleByTypeCRM(false);
                 settxtTaskType("CRM")
@@ -805,7 +804,7 @@ function CreateNewModalTask({ ...props }) {
 
     const CurrentDateChange = (e) => {
         setCurrentDate(e);
-        // setNextDate(formattedDate);
+        setNextDate("");
     }
 
     const [selectedDate, setSelectedDate] = useState(null); // State for selected date
@@ -942,14 +941,14 @@ function CreateNewModalTask({ ...props }) {
         const selectedFilesArray = Array.from(files);
         const filesData = [];
 
-        let completeCounter=0;
-    
+        let completeCounter = 0;
+
         selectedFilesArray.forEach((file, index) => {
             const reader = new FileReader();
             completeCounter++;
             reader.onload = () => {
                 let fileByte = reader.result.split(";")[1].replace("base64,", "");
-    
+
                 const fileData = {
                     FileName: file.name,
                     Base64: fileByte ? fileByte : "", // Base64 data of the file
@@ -959,13 +958,13 @@ function CreateNewModalTask({ ...props }) {
                     Guid: localStorage.getItem("GUID"),
                     FileType: getFileExtension(file.name).toLowerCase()
                 };
-    
+
                 filesData.push(fileData);
-    
+
                 if (txtTaskType === "CRM") {
                     UploadAttachment(fileData);
                 }
-    
+
                 // Check if this is the last file
                 if (index === selectedFilesArray.length - 1) {
                     // Add new files to the uploadedFiles array
@@ -973,22 +972,22 @@ function CreateNewModalTask({ ...props }) {
                         ...prevUploadedFiles,
                         ...filesData,
                     ]);
-    
+
                     // Call PrepareDocumentsForPublish_Json after all files data are processed
-                    if(completeCounter===selectedFilesArray.length){
+                    if (completeCounter === selectedFilesArray.length) {
 
                         if (txtTaskType === "Portal") {
                             PrepareDocumentsForPublish_Json(filesData, 1);
                         }
-                        
+
                     }
-                   
+
                 }
             };
             reader.readAsDataURL(file); // Read file as data URL (base64)
         });
     };
-    
+
 
     function PrepareDocumentsForPublish_Json(filedata, ids) {
         try {
@@ -1270,14 +1269,14 @@ function CreateNewModalTask({ ...props }) {
                     console.log("save task rerurn value", js);
 
                     if (js.Status === "success") {
-                        console.log(selectedRows,"Json_CRM_Task_Save ", js.Message);
+                        console.log(selectedRows, "Json_CRM_Task_Save ", js.Message);
                         setOwnerMessage(js.Message);
-                        console.log(addItemdata,"Json_CRM_Task_");
-                                                       if(selectedRows && selectedRows.length > 0) {
-                                                        selectedRows.forEach((item)=>{
-                                                             addToWorkTable(item.ItemId,js.Message);
-                                                        });
-                                                       }
+                        console.log(addItemdata, "Json_CRM_Task_");
+                        if (selectedRows && selectedRows.length > 0) {
+                            selectedRows.forEach((item) => {
+                                addToWorkTable(item.ItemId, js.Message);
+                            });
+                        }
                         let strGuid = uuidv4().replace(/-/g, '');
                         localStorage.setItem("GUID", strGuid)
 
@@ -1323,6 +1322,7 @@ function CreateNewModalTask({ ...props }) {
 
 
     function ClearForm() {
+        setAddUser([])
         setCurrentDate(new Date())
         setTextSubject("");
         settxtClient("Select Client");
@@ -1471,13 +1471,13 @@ function CreateNewModalTask({ ...props }) {
 
     const handleDocumentClickOpen = () => {
         setDMSDocumentList([])
-     
+
 
         setAnchorSelectFileEl(null);
 
         if (textClientId) {
 
-           Json_ExplorerSearchDoc();
+            Json_ExplorerSearchDoc();
             setOpenDocumentList(true);
 
         } else {
@@ -1551,31 +1551,31 @@ function CreateNewModalTask({ ...props }) {
         setSelectedRows(selectedItems.selectedRowsData);
         // You can perform further actions with the selectedRows array
         console.log("selectedItems11", selectedItems); // Log the selected rows data
-       // Create a Set to store unique data
-    // const uniqueData = new Set(addItemdata);
-    // setOwnerTaskID(selectedItems.selectedRowsData[0]);
-    // // Loop through each selected row data and add it to the uniqueData Set
-    // selectedItems.selectedRowsData.forEach(rowData => {
-    //     uniqueData.add(rowData);
-    // });
+        // Create a Set to store unique data
+        // const uniqueData = new Set(addItemdata);
+        // setOwnerTaskID(selectedItems.selectedRowsData[0]);
+        // // Loop through each selected row data and add it to the uniqueData Set
+        // selectedItems.selectedRowsData.forEach(rowData => {
+        //     uniqueData.add(rowData);
+        // });
 
-    // // Convert the uniqueData Set back to an array and set it to addItemdata
-    // addItemdata = [...uniqueData];
-    console.log(addItemdata,"addItemdata");
+        // // Convert the uniqueData Set back to an array and set it to addItemdata
+        // addItemdata = [...uniqueData];
+        console.log(addItemdata, "addItemdata");
     };
-    function addToWorkTable(Itid,taskID) {
-        console.log(taskID,"addToWorkTable", Itid);
-        let obj = {  agrno: agrno, Email: Email, password: password,ItemId: Itid, comment: `${ownerName} has invoked task ID : ${taskID}`};
+    function addToWorkTable(Itid, taskID) {
+        console.log(taskID, "addToWorkTable", Itid);
+        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${ownerName} has invoked task ID : ${taskID}` };
         console.log("addToWorkTable111", obj);
         clsSms.Json_AddToWork(obj, function (status, data) {
-          if (status) {
-            if (data) {
-              //let json = JSON.parse(data);
-              console.log("getitemid", data);
+            if (status) {
+                if (data) {
+                    //let json = JSON.parse(data);
+                    console.log("getitemid", data);
+                }
             }
-          }
         });
-      }
+    }
     const Json_GetClientCardDetails = (cid) => {
         try {
             if (txtFolderId && cid) {
@@ -1676,10 +1676,10 @@ function CreateNewModalTask({ ...props }) {
     const AddDocuments = () => {
         let filesData = [];
         console.log("AddDocuments11", selectedRows);
-    
+
         // Counter to keep track of completed asynchronous operations
         let completedOperations = 0;
-    
+
         selectedRows.forEach((row, index) => {
             Json_GetItemBase64DataById(row, function (base64data) {
                 const fileData = {
@@ -1693,9 +1693,9 @@ function CreateNewModalTask({ ...props }) {
                     Description: row.Description
                 };
                 filesData.push(fileData);
-    
+
                 completedOperations++; // Increment the completed operations counter
-    
+
                 // Check if all operations are completed
                 if (completedOperations === selectedRows.length) {
                     // Add new files to the uploadedFiles array
@@ -1703,21 +1703,21 @@ function CreateNewModalTask({ ...props }) {
                         ...prevUploadedFiles,
                         ...filesData,
                     ]);
-    
+
                     setSelectedDocumentFile((prevUploadedFiles) => [
                         ...prevUploadedFiles,
                         ...filesData,
                     ]);
-    
+
                     // Call PrepareDocumentsForPublish_Json after all files data are processed
                     PrepareDocumentsForPublish_Json(filesData, 2);
-    
+
                     setOpenDocumentList(false);
                 }
             });
         });
     };
-    
+
 
     function Json_GetItemBase64DataById(item, callBack) {
         try {
@@ -1971,15 +1971,15 @@ function CreateNewModalTask({ ...props }) {
                     "Notes": "",
                     "TaskSource": txtTaskType
                 }
-                console.log(txtSectionId.toString(),"final save data obj", ooo);
+                console.log(txtSectionId.toString(), "final save data obj", ooo);
                 clsSms.Json_CRM_Task_Save(ooo, function (sts, data) {
                     if (sts) {
                         if (data) {
                             setLoading(false);
                             let js = JSON.parse(data);
-                            console.log(addItemdata,"Json_CRM_Task_Save ", js);
+                            console.log(addItemdata, "Json_CRM_Task_Save ", js);
                             if (js.Status === "success") {
-                              
+
                                 // setMessageId(js.Message);
                                 CreatePortalMessage(js.Message)
                                 // toast.success("Created Task");
@@ -2371,6 +2371,15 @@ function CreateNewModalTask({ ...props }) {
         setAddContact(null);
     };
 
+    const [anchorElFiles, setAnchorElFiles] = React.useState(null);
+    const openFiles = Boolean(anchorElFiles);
+    const handleClickFiles = (event) => {
+        setAnchorElFiles(event.currentTarget);
+    };
+    const handleCloseFiles = () => {
+        setAnchorElFiles(null);
+    };
+
     return (
         <React.Fragment>
             {/* <Button
@@ -2380,26 +2389,26 @@ function CreateNewModalTask({ ...props }) {
                 <span className="material-symbols-outlined">edit_square</span>{" "}
                 <span className="ps-2 create-text">Create New  </span>
             </Button> */}
-            <UploadDocument 
-              openUploadDocument={openUploadDocument} 
-              setOpenUploadDocument={setOpenUploadDocument}
-              documentDate={documentDate}
-              setDocumentDate={setDocumentDate}
-              receivedDate={receivedDate}
-              setReceivedDate={setReceivedDate}
-              createNewFileObj={createNewFileObj}
-              setCreateNewFileObj={setCreateNewFileObj}
-              txtFolderData={txtFolderData}
-              setTxtFolderData={setTxtFolderData}
-              txtClientData={txtClientData}
-              setTxtClientData={setTxtClientData}
-              txtSectionData={txtSectionData}
-              setTxtSectionData={setTxtSectionData}
-              TaskType={TaskType}
-              setTaskType={setTaskType}
-              openModal={openModal}
-              setOpenModal={setOpenModal}
-              handleClickOpen={handleClickOpen}
+            <UploadDocument
+                openUploadDocument={openUploadDocument}
+                setOpenUploadDocument={setOpenUploadDocument}
+                documentDate={documentDate}
+                setDocumentDate={setDocumentDate}
+                receivedDate={receivedDate}
+                setReceivedDate={setReceivedDate}
+                createNewFileObj={createNewFileObj}
+                setCreateNewFileObj={setCreateNewFileObj}
+                txtFolderData={txtFolderData}
+                setTxtFolderData={setTxtFolderData}
+                txtClientData={txtClientData}
+                setTxtClientData={setTxtClientData}
+                txtSectionData={txtSectionData}
+                setTxtSectionData={setTxtSectionData}
+                TaskType={TaskType}
+                setTaskType={setTaskType}
+                openModal={openModal}
+                setOpenModal={setOpenModal}
+                handleClickOpen={handleClickOpen}
             ></UploadDocument>
 
             <div className="select-border">
@@ -2770,231 +2779,287 @@ function CreateNewModalTask({ ...props }) {
                                             </Box>
                                         </>)}
 
-                                        <div className="mt-2">
-                                            <Button
-                                                id="basic-button5"
-                                                aria-controls={
-                                                    UserDropdownopen ? "basic-menu5" : undefined
-                                                }
-                                                aria-haspopup="true"
-                                                aria-expanded={UserDropdownopen ? "true" : undefined}
-                                                onClick={handleUserClick}
-                                                onContextMenu={handleRightClick}
-                                                className="p-0 w-auto d-inline-block"
-                                            >
+                                        <div className="mt-1 mb-2">
 
-                                                <Box className="d-flex align-items-center">
-                                                    {ownerRighClick && (<>
-                                                        <Box
-                                                            className="user-img-list me-2 admin"
-                                                            title={ownerRighClick.ForwardTo}
-                                                            key={ownerRighClick.ID}
-                                                        >
-                                                            <p>{firsorScandCtr(ownerRighClick)}</p>
-                                                        </Box> <ArrowForwardIosIcon className='me-1' />
-                                                    </>)}
+<Button
+    id="basic-button5"
+    aria-controls={
+        UserDropdownopen ? "basic-menu5" : undefined
+    }
+    aria-haspopup="true"
+    aria-expanded={UserDropdownopen ? "true" : undefined}
+    onContextMenu={handleRightClick}
+    className="p-0 w-auto d-inline-block"
 
-                                                    {addUser.length > 1
-                                                        ? addUser.map((item) => {
-                                                            const words = item.ForwardTo.split(" ");
-                                                            // Extract the first letter of each word and concatenate them
-                                                            let result = "";
-                                                            for (
-                                                                let i = 0;
-                                                                i < words.length && i < 2;
-                                                                i++
-                                                            ) {
-                                                                result += words[i].charAt(0);
-                                                            }
-                                                            if (item.ID !== ownerID) {
-                                                                return (
-                                                                    <>
-                                                                        <Box
-                                                                            className="user-img-list me-2 admin"
-                                                                            title={item.ForwardTo}
-                                                                            key={item.ID}
-                                                                        >
-                                                                            <p>{result}</p>
-                                                                        </Box>
-                                                                    </>
-                                                                );
-                                                            }
-                                                        })
-                                                        : null}
 
-                                                    <Box className="d-flex">
-                                                        <span class="material-symbols-outlined">
-                                                            person_add
-                                                        </span>
-                                                    </Box>
+>
+    <Box className="d-flex align-items-center">
+        {ownerRighClick && (<>
+            <Box
+                className="user-img-list me-1 admin"
+                title={ownerRighClick.ForwardTo}
+                key={ownerRighClick.ID}
+            >
+                <p>{firsorScandCtr(ownerRighClick)}</p>
+            </Box> <ArrowForwardIosIcon className='me-1 font-20' />
+        </>)}
 
-                                                </Box>
 
-                                            </Button>
+        {addUser.length > 1
+            ? addUser.slice(1, 3).map((item) => {
+                const words = item.ForwardTo.split(" ");
+                // Extract the first letter of each word and concatenate them
+                let result = "";
+                for (
+                    let i = 0;
+                    i < words.length && i < 2;
+                    i++
+                ) {
+                    result += words[i].charAt(0);
+                }
+                if (item.ID !== ownerID) {
+                    return (
+                        <>
+                            <Box
+                                className="user-img-list me-1 admin"
+                                title={item.ForwardTo}
+                                key={item.ID}
+                            >
+                                <p>{result}</p>
+                            </Box>
 
-                                            {dropdownVisible && (<Menu
-                                                id="basic-menu5"
-                                                anchorEl={userDropdownanchorElRight}
-                                                open={UserDropdownopenRight}
-                                                onClose={handleUserClose}
-                                                MenuListProps={{
-                                                    "aria-labelledby": "basic-button5",
-                                                }}
-                                                className="user-list-dropdown"
-                                            >
 
-                                                <Box
-                                                    className="inner-user-list-dropdown"
-                                                    style={{ maxHeight: "200px", overflowY: "auto" }}
-                                                >
-                                                    <p className="sembold">Transfer Ownership To:</p>
-                                                    <Box className="box-user-list-dropdown">
-                                                        {addUser
-                                                            ? addUser.map((item, ind) => {
-                                                                if (item.ID === ownerID) {
-                                                                    return (
-                                                                        <React.Fragment key={ind}>
-                                                                            <button type="button"
-                                                                                id={item.ID}
-                                                                            >
-                                                                                <Box className="user-img-list me-2">
-                                                                                    <img src={user} alt="User" />
-                                                                                </Box>
-                                                                                <p>{item.ForwardTo}</p>
-                                                                            </button>
-                                                                        </React.Fragment>
-                                                                    );
-                                                                } else {
-                                                                    return (
-                                                                        <React.Fragment key={ind}>
-                                                                            <button type="button" id={item.ID}
-                                                                                onClick={() => handleItemClick(item)}
-                                                                            >
-                                                                                <Box className="user-img-list me-2">
-                                                                                    <img src={user} alt="User" />
-                                                                                </Box>
-                                                                                <p>{item.ForwardTo}</p>
-                                                                                {/* <span
-                                                                                    className="close"
-                                                                                    onClick={() => handleRemoveUser(item.ID)}
-                                                                                    role="button" // Adding role="button" to indicate this element is clickable
-                                                                                    tabIndex="0" // Adding tabIndex to make the element focusable
-                                                                                >
-                                                                                    <span className="material-symbols-outlined">
-                                                                                        close
-                                                                                    </span>
-                                                                                </span> */}
-                                                                            </button>
-                                                                        </React.Fragment>
-                                                                    );
-                                                                }
-                                                            })
-                                                            : null}
-                                                    </Box>
-                                                </Box>
-                                            </Menu>)}
+                        </>
+                    );
+                }
 
-                                            <Menu
-                                                id="basic-menu5"
-                                                anchorEl={userDropdownanchorEl}
-                                                open={UserDropdownopen}
-                                                onClose={handleUserClose}
-                                                MenuListProps={{
-                                                    "aria-labelledby": "basic-button5",
-                                                }}
-                                                className="user-list-dropdown"
-                                            >
 
-                                                <Box
-                                                    className="inner-user-list-dropdown"
-                                                    style={{ maxHeight: "200px", overflowY: "auto" }}
-                                                >
-                                                    <p className="sembold">Assigned</p>
+            })
+            : null}
 
-                                                    <Box className="box-user-list-dropdown">
+    </Box>
+</Button>
 
-                                                        {addUser
-                                                            ? addUser.map((item, ind) => {
-                                                                if (item.ID === ownerID) {
-                                                                    return (
-                                                                        <React.Fragment key={ind}>
-                                                                            <button type="button" id={item.ID} >
-                                                                                <Box className="user-img-list me-2">
-                                                                                    <img src={user} alt="User" />
-                                                                                </Box>
-                                                                                <p>{item.ForwardTo}</p>
-                                                                            </button>
-                                                                        </React.Fragment>
-                                                                    );
-                                                                } else {
-                                                                    return (
-                                                                        <React.Fragment key={ind}>
-                                                                            <button type="button" id={item.ID}>
-                                                                                <Box className="user-img-list me-2">
-                                                                                    <img src={user} alt="User" />
-                                                                                </Box>
-                                                                                <p>{item.ForwardTo}</p>
-                                                                                <span
-                                                                                    className="close"
-                                                                                    onClick={() => handleRemoveUser(item.ID)}
-                                                                                    role="button" // Adding role="button" to indicate this element is clickable
-                                                                                    tabIndex="0" // Adding tabIndex to make the element focusable
-                                                                                >
-                                                                                    <span className="material-symbols-outlined">
-                                                                                        close
-                                                                                    </span>
-                                                                                </span>
-                                                                            </button>
-                                                                        </React.Fragment>
-                                                                    );
-                                                                }
-                                                            })
-                                                            : null}
-                                                    </Box>
-                                                </Box>
 
-                                                <Box className="inner-user-list-dropdown">
-                                                    <p className="sembold mb-0">My Team</p>
+{dropdownVisible && (<Menu
+    id="basic-menu5"
+    anchorEl={userDropdownanchorElRight}
+    open={UserDropdownopenRight}
+    onClose={handleUserClose}
+    MenuListProps={{
+        "aria-labelledby": "basic-button5",
+    }}
+    className="user-list-dropdown"
+>
 
-                                                    <Box className="box-user-list-dropdown" style={{ maxHeight: "200px", overflowY: "auto" }}>
-                                                        <Box className="mb-1 mt-3 px-3">
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                placeholder="Search..."
-                                                                size='small'
-                                                                value={filterText}
-                                                                onChange={(e) => setFilterText(e.target.value)}
-                                                            />
-                                                        </Box>
-                                                        <Box className="box-user-list-dropdown">
+    <Box
+        className="inner-user-list-dropdown"
+        style={{ maxHeight: "200px", overflowY: "auto" }}
+    >
+        <p className="sembold">Transfer Ownership To:</p>
 
-                                                            {FilderDataList.map((item, ind) => (
-                                                                <React.Fragment key={ind}>
-                                                                    <button
-                                                                        type="button"
-                                                                        id={item.ID}
-                                                                        onClick={() => handalClickAddUser(item)}
-                                                                    >
-                                                                        <Box className="user-img-list me-2">
-                                                                            <img src={user} alt="User" />
-                                                                        </Box>
-                                                                        <p>{item.ForwardTo}</p>
-                                                                        {/* <a href="" className="close">
-                                    <span className="material-symbols-outlined">
-                                      close
+        <Box className="box-user-list-dropdown">
+
+
+
+            {addUser
+                ? addUser.map((item, ind) => {
+                    if (item.ID === ownerID) {
+                        return (
+                            <React.Fragment key={ind}>
+                                <button type="button"
+                                    id={item.ID}
+                                >
+                                    <Box className="user-img-list me-2">
+                                        <img src={user} alt="User" />
+                                    </Box>
+                                    <p>{item.ForwardTo}</p>
+                                </button>
+                            </React.Fragment>
+                        );
+                    } else {
+                        return (
+                            <React.Fragment key={ind}>
+                                <button type="button" id={item.ID}
+                                    onClick={() => handleItemClick(item)}
+                                >
+                                    <Box className="user-img-list me-2">
+                                        <img src={user} alt="User" />
+                                    </Box>
+                                    <p>{item.ForwardTo}</p>
+                                    {/* <span
+                                        className="close"
+                                        onClick={() => handleRemoveUser(item.ID)}
+                                        role="button" // Adding role="button" to indicate this element is clickable
+                                        tabIndex="0" // Adding tabIndex to make the element focusable
+                                    >
+                                        <span className="material-symbols-outlined">
+                                            close
+                                        </span>
+                                    </span> */}
+                                </button>
+                            </React.Fragment>
+                        );
+                    }
+                })
+                : null}
+        </Box>
+    </Box>
+</Menu>)}
+
+{addUser.length > 4 && (<>
+    <Button
+        id="basic-button"
+        aria-controls={openFiles ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={openFiles ? 'true' : undefined}
+        onClick={handleClickFiles}
+        className="p-0 min-width-auto"
+    >
+        <Box
+            className="user-img-list me-1 admin"
+        >
+            <p>+{addUser.length - 3}</p>
+        </Box>
+    </Button>
+    <Menu
+        id="basic-menu"
+        anchorEl={anchorElFiles}
+        open={openFiles}
+        onClose={handleCloseFiles}
+        MenuListProps={{
+            'aria-labelledby': 'basic-button',
+        }}
+        className="custom-menu"
+    >
+        {addUser.length > 3 &&
+            addUser.slice(3, addUser.length).map((item, index) => (
+                <MenuItem key={index} onClick={handleCloseFiles}>{item.ForwardTo}</MenuItem>
+            ))
+        }
+    </Menu>
+</>)}
+
+<Button
+    id="basic-button5"
+    aria-controls={
+        UserDropdownopen ? "basic-menu5" : undefined
+    }
+    aria-haspopup="true"
+    aria-expanded={UserDropdownopen ? "true" : undefined}
+    onClick={handleUserClick}
+    className="p-0 w-auto d-inline-block"
+>
+
+    <Box className="d-flex">
+        <span class="material-symbols-outlined">
+            person_add
+        </span>
+    </Box>
+
+</Button>
+
+<Menu
+    id="basic-menu5"
+    anchorEl={userDropdownanchorEl}
+    open={UserDropdownopen}
+    onClose={handleUserClose}
+    MenuListProps={{
+        "aria-labelledby": "basic-button5",
+    }}
+    className="user-list-dropdown"
+>
+
+    <Box
+        className="inner-user-list-dropdown"
+        style={{ maxHeight: "200px", overflowY: "auto" }}
+    >
+        <p className="sembold">Assigned</p>
+        <Box className="box-user-list-dropdown">
+            {addUser
+                ? addUser.map((item, ind) => {
+                    if (item.ID === ownerID) {
+                        return (
+                            <React.Fragment key={ind}>
+                                <button type="button" id={item.ID} >
+                                    <Box className="user-img-list me-2">
+                                        <img src={user} alt="User" />
+                                    </Box>
+                                    <p>{item.ForwardTo}</p>
+                                </button>
+                            </React.Fragment>
+                        );
+                    } else {
+                        return (
+                            <React.Fragment key={ind}>
+                                <button type="button" id={item.ID}>
+                                    <Box className="user-img-list me-2">
+                                        <img src={user} alt="User" />
+                                    </Box>
+                                    <p>{item.ForwardTo}</p>
+                                    <span
+                                        className="close"
+                                        onClick={() => handleRemoveUser(item.ID)}
+                                        role="button" // Adding role="button" to indicate this element is clickable
+                                        tabIndex="0" // Adding tabIndex to make the element focusable
+                                    >
+                                        <span className="material-symbols-outlined">
+                                            close
+                                        </span>
                                     </span>
-                                  </a> */}
-                                                                    </button>
-                                                                </React.Fragment>
-                                                            ))}
-                                                        </Box>
-                                                    </Box>
-                                                </Box>
-                                            </Menu>
+                                </button>
+                            </React.Fragment>
+                        );
+                    }
+                })
+                : null}
+        </Box>
+    </Box>
+
+    <Box className="inner-user-list-dropdown">
+        <p className="sembold mb-0">My Team</p>
+
+        <Box className="box-user-list-dropdown" style={{ maxHeight: "200px", overflowY: "auto" }}>
+            <Box className="mb-1 mt-3 px-3">
+                <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search..."
+                    value={filterText}
+                    onChange={(e) => setFilterText(e.target.value)}
+                />
+            </Box>
+            <Box className="box-user-list-dropdown">
+
+                {FilderDataList.map((item, ind) => (
+                    <React.Fragment key={ind}>
+                        <button
+                            type="button"
+                            id={item.ID}
+                            onClick={() => handalClickAddUser(item)}
+                        >
+                            <Box className="user-img-list me-2">
+                                <img src={user} alt="User" />
+                            </Box>
+                            <p>{item.ForwardTo}</p>
+                            {/* <a href="" className="close">
+                        <span className="material-symbols-outlined">
+                          close
+                        </span>
+                      </a> */}
+                        </button>
+                    </React.Fragment>
+                ))}
+            </Box>
+        </Box>
+    </Box>
+</Menu>
 
 
-                                        </div>
+</div>
+
+
+                                        
                                     </Box>
                                 </Box>
 
@@ -3200,7 +3265,7 @@ function CreateNewModalTask({ ...props }) {
                                         className="btn-blue-2 mt-3"
 
                                     >
-                                        {'CRM Task'}
+                                        {'Create Task'}
                                     </Button>
                                 )}
 
@@ -3586,7 +3651,13 @@ function CreateNewModalTask({ ...props }) {
                                                     showIcon
                                                     dateFormat="DD/MM/YYYY"
                                                     value={currentDate}
-                                                    onChange={(e) => CurrentDateChange(e)} // Handle date changes
+                                                    onChange={(e) => {
+                                                        console.log("hello,111111")
+                                                        CurrentDateChange(e);
+                                                        setNextDate("");
+                                                    }
+
+                                                    } // Handle date changes
                                                     timeFormat={false}
                                                     isValidDate={disablePastDt}
                                                     closeOnSelect={true}
@@ -3622,7 +3693,7 @@ function CreateNewModalTask({ ...props }) {
                                         >
                                             <CalendarMonthIcon />
                                             <DatePicker className=" w-100"
-                                                selected={selectedDate}
+                                                //selected={selectedDate}
                                                 showIcon
                                                 dateFormat="DD/MM/YYYY"
                                                 value={nextDate}

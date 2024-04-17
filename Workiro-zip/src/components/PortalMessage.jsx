@@ -880,7 +880,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                             {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
                                             <HourglassEmptyIcon className='text-warning me-1' />
                                             <h5 className='font-14 text-black mb-0'>Pending Approval</h5>
-                                            {/* <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button> */}
+                                            <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
                                         </Box>
 
                                         {/*  */}
