@@ -2107,6 +2107,7 @@ function CreateNewModalTask({ ...props }) {
                         console.log("MessagePublished_Json", data)
                         if (!data) {
                             toast.success("Task Created");
+                            setOpenUploadDocument(false);
                             Json_CRM_GetOutlookTask_ForTask();
                             if (createNewFileObj) {
                                 setOpenModal(false);
