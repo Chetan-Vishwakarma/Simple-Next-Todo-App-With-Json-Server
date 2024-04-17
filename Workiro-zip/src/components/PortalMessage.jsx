@@ -796,6 +796,8 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                 <h5 className='mb-0 text-black'>{selectedTask.Subject}</h5>
             </Box> */}
                 <Box className='mb-2'>
+                   
+
                 <Editor
         apiKey='w9rz0c8fw8u2pd3qv7d779obkouylvlrlb9w9s1fmytnlan1'
         initialValue={templateDataMarkup}
@@ -821,6 +823,8 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
         //     editorRef.current = editor;
         //   }}
     />
+
+
                     {/* <textarea
                         templateDataMarkup={templateDataMarkup}
                         setTemplateDataMarkup={setTemplateDataMarkup}
