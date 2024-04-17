@@ -1297,4 +1297,21 @@ console.log("formattedDate",formattedDate)
         });
       }
 
+
+      Json_GetUserComments(obj, callBack) {
+        //let o = { ProjectId: FolderId,SectionId: };
+        super.CreateNewServiceParamObject("Json_GetUserComments", obj, true);
+        super.CallNewService("Json_GetUserComments", function (status, Data) {
+          if (status) {
+            if (Data != "") {
+              return callBack(true, Data);
+            } else {
+              return callBack(false, []);
+            }
+          } else {
+            // console.log("status", status);
+          }
+        });
+      }
+
 }

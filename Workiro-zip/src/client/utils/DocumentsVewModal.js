@@ -13,7 +13,7 @@ import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import CommanCLS from '../../services/CommanService';
 
 import HtmlEditorDX from '../../components/HtmlEditor';
-
+import moment from 'moment';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -28,7 +28,7 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument }) {
-    console.log(selectedDocument, "sendUrldata");
+    console.log(selectedDocument, "sendUrldata1233333");
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -89,6 +89,12 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         setOpenPDFView(false);
     };
 
+    const call_Json_GetAudit=()=>{
+        Json_GetAudit();
+    }
+
+
+
     const Json_GetAudit = () => {
         try {
             let obj = {
@@ -100,9 +106,22 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                     let parse = JSON.parse(data);
                     let table = parse.Table;
                     if (table.length > 0) {
-                        setGetAudit(table);
+                        const formattedActivity = table.map((Actioned) => {
+                            let ActioneddATE;
+                            if (Actioned["Actioned Date"]) {
+                                ActioneddATE = moment(Actioned["Actioned Date"]).format("DD/MM/YYYY HH:mm:ss");
+                            }
+                           // const date = new Date(ActivityDate);
+                            return { ...Actioned, ["Actioned Date"]: ActioneddATE};
+                        });
+
+                        const filteredArray = formattedActivity.filter(item => item.Comments !== null);
+
+                        setGetAudit(filteredArray);
+                        console.log("Json_GetAudit", filteredArray)
                     }
-                    console.log("Json_GetAudit", table)
+                    
+                  
                 }
             })
         } catch (error) {
@@ -607,7 +626,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 </TabPanel>
 
                                 <TabPanel value="5" className='p-0'>
-                                    <Activity getAudit={getAudit}></Activity>
+                                    <Activity getAudit={getAudit} selectedDocument={selectedDocument} call_Json_GetAudit={call_Json_GetAudit}></Activity>
                                 </TabPanel>
 
                                 {/* <TabPanel value="5">
