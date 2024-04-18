@@ -48,7 +48,7 @@ const BootstrapTooltip = styled(({ className, ...props }) => (
 
 // const options = ['Document Registered', 'Track Document 1064109', 'Document Description Edited', 'Patrick has invoked task ID', 'Patrick has invoked task ID'];
 
-
+let temp= [];
 function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     // let { getAudit } = props;
     // const [open, setOpen] = React.useState(false);
@@ -59,6 +59,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     const [getUserComment, setgetUserComment] = useState([]);
     const [getCateGory, setgetCateGory] = useState([]);
     const [FilterActivity, setFilterActivity] = useState([]);
+    const [Auditcomments, setAuditcomments] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [selectedDocudata, setselectedDocument] = useState({});
     const [userAddComment, setAddComment] = useState({
@@ -159,6 +160,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
         setEmail(localStorage.getItem("Email"));
         console.log("getAudit", getAudit);
         setFilterActivity(getAudit);
+        setAuditcomments(getAudit);
         setselectedDocument(selectedDocument);
         Json_GetUserComments();
         Json_GetCategory();
@@ -168,7 +170,27 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     // 
     const [value, setValue] = React.useState();
     const [inputValue, setInputValue] = React.useState('');
-   
+    const [filteredData, setFilteredData] = useState([]);
+
+    const handleSearch = (documentToSearch) => {
+     
+        const newFilteredData = getAudit.filter(item => {
+            for (const key in documentToSearch) {
+                if (documentToSearch.hasOwnProperty(key) && item.hasOwnProperty(key)) {
+                    if (documentToSearch[key] !== item[key]) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        // Append the new filtered data to the existing array
+        setFilterActivity(newFilteredData);
+    };
+    console.log(getAudit,`ActivityselectedDocument`,filteredData);
     const {
         getRootProps,
         getInputProps,
@@ -178,19 +200,47 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
         focused,
     } = useAutocomplete({
         id: 'controlled-state-demo',
-        options: FilterActivity, 
+        options: [], 
         getOptionLabel: (option) => option.Comments,
         value,
         onChange: (event, newValue) => {
             setValue(newValue);
+            console.log(getAudit,"getAuditsonam",newValue);
             if (newValue && !selectedOptions.some(option => option['Activity ID'] === newValue['Activity ID'])) {
+                const filteredOptions =  filterSelectedOptionsByKeywords(newValue.Comments);
+                console.log(filteredOptions,"filteredOptions");
+
                 setSelectedOptions([...selectedOptions, newValue]);
             }
+            // handleSearch(newValue);
           },
         inputValue,
         onInputChange: (event, newInputValue) => setInputValue(newInputValue),
     });
-
+    // const filterSelectedOptionsByKeyword = (keyword) => {
+    //     return getAudit.filter(option => option.Comments.toLowerCase().includes(keyword.toLowerCase()));
+    // };
+    // const filterSelectedOptionsByKeywords = (keywords) => {
+    //     let filteredOptions = getAudit;
+    //     for (const keyword of keywords) {
+    //         filteredOptions = filteredOptions.filter(option => option.Comments.toLowerCase().includes(keyword.toLowerCase()));
+    //     }
+    //     return filteredOptions;
+    // };
+    const filterSelectedOptionsByKeywords = (keywords) => {
+        if (!Array.isArray(keywords)) {
+            // If keywords is not an array, convert it into an array with a single element
+            keywords = [keywords];
+        }
+    
+        return getAudit.filter(option => {
+            return keywords.every(keyword => option.Comments.toLowerCase().includes(keyword.toLowerCase()));
+        });
+    };
+    
+    
+    
+    
 
     // modal add comment
     // const handleClickOpen = () => {
@@ -235,25 +285,81 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
 
     // 
     const [age, setAge] = React.useState('');
-
+    const [searchValues, setsearchValues] = React.useState('');
+    const [searchValuesArr, setsearchValuesArr] = React.useState([]);
     const handleChange = (event) => {
         setAge(event.target.value);
     };
-    const handleOptionSelect = (selectedOption) => {
-    console.log('Selected option:', selectedOption);
-    setSelectedOptions([...selectedOptions, selectedOption]);
-    // Perform any other actions you want with the selected option
-    if (!selectedOptions.some(option => option['Activity ID'] === selectedOption['Activity ID'])) {
-        // Add the selected option to selectedOptions
-        setSelectedOptions([...selectedOptions, selectedOption]);
-    }
+    const handleOptionSelect = (e) => {
+    console.log('Selectedsonamoption:',e.target.value);
+    setsearchValues(e.target.value);
+    // setSelectedOptions([...selectedOptions, selectedOption]);
+    // // Perform any other actions you want with the selected option
+    // if (!selectedOptions.some(option => option['Activity ID'] === selectedOption['Activity ID'])) {
+    //     // Add the selected option to selectedOptions
+    //     setSelectedOptions([...selectedOptions, selectedOption]);
+    // }
    };
-   const handleRemoveOption = (optionToRemove) => {
-    // Filter out the option to remove from the list of selected options
-    const updatedOptions = selectedOptions.filter(option => option !== optionToRemove);
-    setSelectedOptions(updatedOptions);
-  };
-    console.log(groupedOptions,"groupedOptions");
+   const filterComments = (array, searchString) => {
+    const words = searchString.toLowerCase().split(" ");
+    return array.filter(obj => {
+        const commentWords = obj.Comments.toLowerCase().split(" ");
+        return words.every(word => commentWords.includes(word));
+    });
+};
+
+const [tempdata, setTemp] = useState([]);
+
+const [tempdatafilter, setTempdatafilter] = useState([]);
+
+const handleEnterKeyPress = (event) => {
+    let dataFilter = [];
+   
+    if (event.key === 'Enter') {
+        if(event.target.value){ 
+        //    temp.push(event.target.value)
+        let tempStr = [...tempdata,event.target.value];
+        setTemp(tempStr);
+        console.log("tempStr",tempStr)
+        
+            // setTemp((prevTemp) => [...prevTemp,event.target.value]); // Push the value of event.target.value into the temp array
+             console.log('handleEnterKeyPress:', temp.join(' '));
+            // let words = temp.join(' ').toLowerCase().split(" ");
+            let filteredArr = getAudit.filter(obj => {
+                let commentWords = obj.Comments.toLowerCase().split(" ");
+                return tempStr.every(word => commentWords.includes(word.toLowerCase()));
+
+            });
+            console.log(filteredArr, "filteredArrdone");
+            setTempdatafilter(filteredArr);
+        }
+        
+       // console.log('handleEnterKeyPress:', tempdata); // Log the concatenated values of temp array
+        const concatenatedString = tempdata.join(' ');
+       // console.log(concatenatedString,"concatenatedString");
+        // console.log('handleEnterKeyPress:',temp);
+        const keyword = event.target.value.toLowerCase();
+        const filteredArray = getAudit.filter(item => item.Comments && item.Comments.toLowerCase().includes(keyword));
+
+        dataFilter.push(...filteredArray);
+      
+       
+       
+        if (filteredArray.length > 0) {
+            setsearchValuesArr(prevSearchValuesArr => [...prevSearchValuesArr, ...filteredArray]);
+        }
+    }
+};
+
+const handleRemoveOption = (optionToRemove) => {
+    // Filter out the option to remove from tempdata
+    const updatedTempdata = tempdata.filter(option => option !== optionToRemove);
+    setTemp(updatedTempdata);
+    const updatedSearchValuesArr = tempdatafilter.filter(item => item['Activity ID'] !== optionToRemove['Activity ID']);
+    setTempdatafilter(updatedSearchValuesArr);
+};
+
+    console.log(searchValuesArr,"groupedOptions");
     return (
         <>
             <Box class="ml-auto mr-auto">
@@ -267,16 +373,20 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
                                     className={focused ? 'Mui-focused' : ''}
                                 >
                                     <span className="material-symbols-outlined search-icon">search</span>
-                                    <Input {...getInputProps()}
+                                    <Input  {...getInputProps()}
                                         placeholder='Search'
                                         className='ps-0'
+                                        value={searchValues}
+                                        onKeyDown= {handleEnterKeyPress}
+                                            
+                                        onChange={handleOptionSelect}
                                     />
                                 </AutocompleteRoot>
                                 
                                 {groupedOptions.length > 0 && (
                                     <Listbox {...getListboxProps()}>
                                         {groupedOptions.slice(0, 3).map((option, index) => (
-                                            <Option {...getOptionProps({ option, index })} onChange={() => handleOptionSelect(option)}>{option.Comments} </Option>
+                                            <Option {...getOptionProps({ option, index })}>{option.Comments} </Option>
                                         ))}
                                     </Listbox>
                                 )}
@@ -285,16 +395,16 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
 
 
                         <Box className='mt-2'>
-                        {/* {selectedOptions && selectedOptions.map((option, index) => (
+                        {tempdata && tempdata.map((option, index) => (
                            
-                            <Button className='btn-arrow' sx={{ background: '#4780FF' }}><span className='text-white me-1'>{option.Comments}</span>
+                            <Button className='btn-arrow' sx={{ background: '#4780FF' }}><span className='text-white me-1'>{option}</span>
                                 <span className="material-symbols-outlined font-16 text-white close" onClick={() => handleRemoveOption(option)}>
                                     close
                                 </span>
                                 <PlayArrowIcon className='arrow-icon' sx={{ color: '#4780FF' }} />
                             </Button>
-                            ))} */}
-                            {selectedOptions && selectedOptions
+                            ))}
+                            {/* {selectedOptions && selectedOptions
     .filter(option => option !== null && option !== undefined) // Filter out null or undefined options
     .map((option, index) => (
         <Button key={index} className='btn-arrow' sx={{ background: '#4780FF' }}>
@@ -304,7 +414,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
             </span>
             <PlayArrowIcon className='arrow-icon' sx={{ color: '#4780FF' }} />
         </Button>
-))}
+))} */}
 
                         </Box>
                     </Box>
@@ -467,8 +577,55 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
                 {toggleScreen.singleCardView ?
                 <Box class="activity-timeline">
                     <ul class="timeline-ul">
+                    {tempdatafilter && tempdatafilter.length > 0 ? (
+    tempdatafilter.map((item, index) => (
+        <li key={index}>
+            <Box class="datetime">
+                <span>{item["Actioned Date"]}</span>
+                <span>{ }</span>
+            </Box>
+            <Box class="line-dotted">
+                <Box class="line-time"></Box>
+                <Box class="circle-time"></Box>
+                <Box class="circle-border"></Box>
+            </Box>
+            <Box class="timeline-details">
+                <Box class="icon-time-status"></Box>
+                <Box class="content-time">
+                    <h5>{item.Comments}</h5>
+                    <Box className='user-name pt-2 mt-2 d-flex align-items-center'>
+                        <PersonIcon className='me-1' /> <p className='mb-0'>{item["ForwardedBy"]}</p>
+                    </Box>
+                </Box>
+            </Box>
+        </li>
+    ))
+) : (
+    getAudit.map((item, index) => (
+        <li key={index}>
+            <Box class="datetime">
+                <span>{item["Actioned Date"]}</span>
+                <span>{ }</span>
+            </Box>
+            <Box class="line-dotted">
+                <Box class="line-time"></Box>
+                <Box class="circle-time"></Box>
+                <Box class="circle-border"></Box>
+            </Box>
+            <Box class="timeline-details">
+                <Box class="icon-time-status"></Box>
+                <Box class="content-time">
+                    <h5>{item.Comments}</h5>
+                    <Box className='user-name pt-2 mt-2 d-flex align-items-center'>
+                        <PersonIcon className='me-1' /> <p className='mb-0'>{item["ForwardedBy"]}</p>
+                    </Box>
+                </Box>
+            </Box>
+        </li>
+    ))
+)}
 
-                        {getAudit ? getAudit.map((item, index) => {
+                        {/* {selectedOptions ? selectedOptions.map((item, index) => {
                             return (
                                 <>
                                     <li key={index}>
@@ -495,12 +652,12 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
                                 </>
                             )
 
-                        }) : ""}
+                        }) : ""} */}
                     </ul>
                     
                 </Box>
                  :(
-                    <div><Activitygrid getAudit={getAudit} selectedDocument={selectedDocument} call_Json_GetAudit={call_Json_GetAudit}/></div>
+                    <div><Activitygrid getAudit={getAudit} selectedDocument={selectedDocument} call_Json_GetAudit={call_Json_GetAudit} selectedOptions={selectedOptions}/></div>
                  )}
             </Box>
 
