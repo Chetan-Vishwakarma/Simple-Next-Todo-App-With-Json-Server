@@ -280,14 +280,27 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
 
 
                         <Box className='mt-2'>
-                        {selectedOptions.map((option, index) => (
+                        {/* {selectedOptions && selectedOptions.map((option, index) => (
+                           
                             <Button className='btn-arrow' sx={{ background: '#4780FF' }}><span className='text-white me-1'>{option.Comments}</span>
                                 <span className="material-symbols-outlined font-16 text-white close" onClick={() => handleRemoveOption(option)}>
                                     close
                                 </span>
                                 <PlayArrowIcon className='arrow-icon' sx={{ color: '#4780FF' }} />
                             </Button>
-                            ))}
+                            ))} */}
+                            {selectedOptions && selectedOptions
+    .filter(option => option !== null && option !== undefined) // Filter out null or undefined options
+    .map((option, index) => (
+        <Button key={index} className='btn-arrow' sx={{ background: '#4780FF' }}>
+            <span className='text-white me-1'>{option.Comments}</span>
+            <span className="material-symbols-outlined font-16 text-white close" onClick={() => handleRemoveOption(option)}>
+                close
+            </span>
+            <PlayArrowIcon className='arrow-icon' sx={{ color: '#4780FF' }} />
+        </Button>
+))}
+
                         </Box>
                     </Box>
 
