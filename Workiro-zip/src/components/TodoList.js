@@ -513,6 +513,7 @@ function TodoList() {
             let groupedData = groupByProperty(allTask, val);
             // console.log("Grouped Data: ",groupedData);
             setDataInGroup(groupedData);
+            toast.success(`Grouped by applied`);
         } else if (val === "Group By") {
             setDataInGroup([]);
         }
@@ -572,7 +573,7 @@ function TodoList() {
         ClsSms.Json_UpdateTaskField(o, function (sts, data) {
             if (sts && data) {
                 if (data === "Success") {
-                    toast.success("Completed")
+                    toast.success(FieldName==="EndDateTime"?"Due Date Changed":"Completed")
                     Json_AddSupplierActivity(e);
                 }
                 console.log("Json_UpdateTaskField", data)
