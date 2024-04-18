@@ -24,7 +24,8 @@ import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import PersonIcon from '@mui/icons-material/Person';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-
+import { ToastContainer, toast } from 'react-toastify';
+import Activitygrid from './Activitygrid';
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -45,32 +46,130 @@ const BootstrapTooltip = styled(({ className, ...props }) => (
 // import DialogTitle from '@mui/material/DialogTitle';
 
 
-const options = ['Document Registered', 'Track Document 1064109', 'Document Description Edited', 'Patrick has invoked task ID', 'Patrick has invoked task ID'];
+// const options = ['Document Registered', 'Track Document 1064109', 'Document Description Edited', 'Patrick has invoked task ID', 'Patrick has invoked task ID'];
 
 
-function Activity({ ...props }) {
-    let { getAudit } = props;
+function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
+    // let { getAudit } = props;
     // const [open, setOpen] = React.useState(false);
-
+    console.log(getAudit,`ActivityselectedDocument`,selectedDocument);
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
+    const [getUserComment, setgetUserComment] = useState([]);
+    const [getCateGory, setgetCateGory] = useState([]);
+    const [FilterActivity, setFilterActivity] = useState([]);
+    const [selectedOptions, setSelectedOptions] = useState([]);
+    const [selectedDocudata, setselectedDocument] = useState({});
+    const [userAddComment, setAddComment] = useState({
+        CommentId: "",
+        CategoryId: "",
+        TextAddComment: "",
+      });
+      const [toggleScreen, setToggleScreen] = useState({ singleCardView: true, tableGridView: false });
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/"; // base url for api
     //   let dt = new LoginDetails();
     let cls = new CommanCLS(baseUrl, agrno, Email, password);
+    const Json_GetUserComments =()=>{
+        let requestBody = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+          };
+          try {
+            cls.Json_GetUserComments(requestBody, (sts, data) => {
+              if (sts) {
+                if (data) {
+                  let json = JSON.parse(data);
+                  console.log("Json_GetUserComments", json.Table);
+                  setgetUserComment(json.Table);
+                }
+              }
+            });
+          } catch (err) {
+            console.log("Error while calling Json_GetClientCardDetails", err);
+          }
+    }
+    const Json_GetCategory =()=>{
+        console.log("Json_GetCategory",selectedDocument);
+        let requestBody = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            SectionId:selectedDocument.PostItemTypeID
+          };
+          try {
+            cls.Json_GetCategory(requestBody, (sts, data) => {
+              if (sts) {
+                if (data) {
+                  let json = JSON.parse(data);
+                  console.log("Json_GetCategory", json.Table);
+                  setgetCateGory(json.Table);
+                }
+              }
+            });
+          } catch (err) {
+            console.log("Error while calling Json_GetClientCardDetails", err);
+          }
+    }
+    const onChangeStandardCate = (event, value) => {
+        event.preventDefault();
+        if (value) {
+          let data = { ...userAddComment };
+          data = { ...data, ["CommentId"]: value.Comment };
+          
+          setAddComment(data);
+        } else {
+        }
+      };
 
+      const onChangeStandardComment = (event, value) => {
+        event.preventDefault();
+        if (value) {
+          let data = { ...userAddComment };
+          data = { ...data, ["CategoryId"]: value.CatId };
+        
+          setAddComment(data);
+        } else {
+        }
+      };
+      const handleChangeTextArea = (e) => {
+        e.preventDefault();
+        let data = { ...userAddComment };
+        data = { ...data, ["TextAddComment"]: e.target.value };
+        setAddComment(data);
+      }
+    function addToWorkTable() {
+       
+        let obj = {  agrno: agrno, Email: Email, password: password,ItemId: selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : "", comment:userAddComment.TextAddComment};
+        console.log(selectedDocudata["Registration No."],"addToWorkTable111", obj);
+        cls.Json_AddToWork(obj, function (status, data) {
+          if (status) {
+            if (data) {
+              //let json = JSON.parse(data);
+              console.log("getitemid", data);
+              toast.success("Activity added !");
+              call_Json_GetAudit();
+            }
+          }
+        });
+      }
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
-        console.log("getAudit", getAudit)
+        console.log("getAudit", getAudit);
+        setFilterActivity(getAudit);
+        setselectedDocument(selectedDocument);
+        Json_GetUserComments();
+        Json_GetCategory();
     }, [getAudit])
 
 
     // 
-    const [value, setValue] = React.useState(options[0]);
+    const [value, setValue] = React.useState();
     const [inputValue, setInputValue] = React.useState('');
-
+   
     const {
         getRootProps,
         getInputProps,
@@ -80,9 +179,15 @@ function Activity({ ...props }) {
         focused,
     } = useAutocomplete({
         id: 'controlled-state-demo',
-        options,
+        options: FilterActivity, 
+        getOptionLabel: (option) => option.Comments,
         value,
-        onChange: (event, newValue) => setValue(newValue),
+        onChange: (event, newValue) => {
+            setValue(newValue);
+            if (newValue && !selectedOptions.some(option => option['Activity ID'] === newValue['Activity ID'])) {
+                setSelectedOptions([...selectedOptions, newValue]);
+            }
+          },
         inputValue,
         onInputChange: (event, newInputValue) => setInputValue(newInputValue),
     });
@@ -101,6 +206,8 @@ function Activity({ ...props }) {
     };
     const AddCommenthandleClose = () => {
         setOpenAddComment(false);
+        addToWorkTable();
+
     };
 
 
@@ -133,10 +240,23 @@ function Activity({ ...props }) {
     const handleChange = (event) => {
         setAge(event.target.value);
     };
-
+    const handleOptionSelect = (selectedOption) => {
+    console.log('Selected option:', selectedOption);
+    setSelectedOptions([...selectedOptions, selectedOption]);
+    // Perform any other actions you want with the selected option
+    if (!selectedOptions.some(option => option['Activity ID'] === selectedOption['Activity ID'])) {
+        // Add the selected option to selectedOptions
+        setSelectedOptions([...selectedOptions, selectedOption]);
+    }
+   };
+   const handleRemoveOption = (optionToRemove) => {
+    // Filter out the option to remove from the list of selected options
+    const updatedOptions = selectedOptions.filter(option => option !== optionToRemove);
+    setSelectedOptions(updatedOptions);
+  };
+    console.log(groupedOptions,"groupedOptions");
     return (
         <>
-
             <Box class="ml-auto mr-auto">
 
                 <Box className='d-flex justify-content-between my-3 mb-4 align-items-start'>
@@ -153,10 +273,11 @@ function Activity({ ...props }) {
                                         className='ps-0'
                                     />
                                 </AutocompleteRoot>
+                                
                                 {groupedOptions.length > 0 && (
                                     <Listbox {...getListboxProps()}>
-                                        {groupedOptions.map((option, index) => (
-                                            <Option {...getOptionProps({ option, index })}>{option}</Option>
+                                        {groupedOptions.slice(0, 3).map((option, index) => (
+                                            <Option {...getOptionProps({ option, index })} onChange={() => handleOptionSelect(option)}>{option.Comments} </Option>
                                         ))}
                                     </Listbox>
                                 )}
@@ -165,12 +286,27 @@ function Activity({ ...props }) {
 
 
                         <Box className='mt-2'>
-                            <Button className='btn-arrow' sx={{ background: '#4780FF' }}><span className='text-white me-1'>testdfasdf</span>
-                                <span className="material-symbols-outlined font-16 text-white close">
+                        {/* {selectedOptions && selectedOptions.map((option, index) => (
+                           
+                            <Button className='btn-arrow' sx={{ background: '#4780FF' }}><span className='text-white me-1'>{option.Comments}</span>
+                                <span className="material-symbols-outlined font-16 text-white close" onClick={() => handleRemoveOption(option)}>
                                     close
                                 </span>
                                 <PlayArrowIcon className='arrow-icon' sx={{ color: '#4780FF' }} />
                             </Button>
+                            ))} */}
+                            {selectedOptions && selectedOptions
+    .filter(option => option !== null && option !== undefined) // Filter out null or undefined options
+    .map((option, index) => (
+        <Button key={index} className='btn-arrow' sx={{ background: '#4780FF' }}>
+            <span className='text-white me-1'>{option.Comments}</span>
+            <span className="material-symbols-outlined font-16 text-white close" onClick={() => handleRemoveOption(option)}>
+                close
+            </span>
+            <PlayArrowIcon className='arrow-icon' sx={{ color: '#4780FF' }} />
+        </Button>
+))}
+
                         </Box>
                     </Box>
 
@@ -217,10 +353,10 @@ function Activity({ ...props }) {
                                         {/* <ToggleButton className='w-100 active' value="left" aria-label="left aligned">
                                             <DnsIcon />
                                         </ToggleButton> */}
-                                        <ToggleButton className='w-100' value="left" aria-label="left aligned">
+                                        <ToggleButton className='w-100' value="left" aria-label="left aligned" onClick={() => setToggleScreen({ singleCardView: false, tableGridView: true })}>
                                             <AppsIcon />
                                         </ToggleButton>
-                                        <ToggleButton className='w-100' value="left" aria-label="left aligned">
+                                        <ToggleButton className='w-100' value="left" aria-label="left aligned" onClick={() => setToggleScreen({ singleCardView: true, tableGridView: false })}>
                                             <TableRowsIcon />
                                         </ToggleButton>
                                     </div>
@@ -329,7 +465,7 @@ function Activity({ ...props }) {
                 </Box>
 
                 <hr />
-
+                {toggleScreen.singleCardView ?
                 <Box class="activity-timeline">
                     <ul class="timeline-ul">
 
@@ -338,7 +474,7 @@ function Activity({ ...props }) {
                                 <>
                                     <li key={index}>
                                         <Box class="datetime">
-                                            <span>{cls.DateForMate(item["Actioned Date"])}</span>
+                                            <span>{item["Actioned Date"]}</span>
                                             <span>{ }</span>
                                         </Box>
                                         <Box class="line-dotted">
@@ -362,7 +498,11 @@ function Activity({ ...props }) {
 
                         }) : ""}
                     </ul>
+                    
                 </Box>
+                 :(
+                    <div><Activitygrid getAudit={getAudit} selectedDocument={selectedDocument} call_Json_GetAudit={call_Json_GetAudit}/></div>
+                 )}
             </Box>
 
             <Dialog
@@ -396,8 +536,11 @@ function Activity({ ...props }) {
                             <Grid item xs={6} md={6}>
                                 <Autocomplete
                                     disablePortal
-                                    id="combo-box-demo"
-                                    options={Comment}
+                                    id="combo-box-demo-comment"
+                                    key="comment"
+                                    options={getUserComment}
+                                    getOptionLabel={(option) => option.Comment}
+                                    onChange={onChangeStandardComment}
                                     renderInput={(params) => <TextField {...params} label="Standard Comment(s):" />}
                                 />
                             </Grid>
@@ -406,15 +549,20 @@ function Activity({ ...props }) {
                                 <Autocomplete
                                     disablePortal
                                     id="combo-box-demo"
-                                    options={Comment}
-                                    renderInput={(params) => <TextField {...params} label="Standard Comment(s):" />}
+                                    options={getCateGory}
+                                    getOptionLabel={(option) => option.CatName}
+                                    onChange={onChangeStandardCate}
+                                    renderInput={(params) => <TextField {...params} label="Category List:" />}
                                 />
                             </Grid>
 
                         </Grid>
 
                         <Box className='w-100 mt-3 mb-4'>
-                            <textarea className='textarea textarea-2 w-100' placeholder='Enter Your Comment..'></textarea>
+                            <textarea className='textarea textarea-2 w-100' placeholder='Enter Your Comment..'
+                            name='TextComment'
+                            onChange={handleChangeTextArea}
+                            ></textarea>
                         </Box>
 
 
@@ -422,7 +570,7 @@ function Activity({ ...props }) {
 
                     <DialogActions className='justify-content-between'>
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                            Doc ID: 1568
+                            Doc ID: {selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : ""}
                         </Typography>
 
                         <Box>
