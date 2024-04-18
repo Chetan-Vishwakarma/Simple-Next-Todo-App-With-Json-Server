@@ -59,6 +59,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     const [getUserComment, setgetUserComment] = useState([]);
     const [getCateGory, setgetCateGory] = useState([]);
     const [FilterActivity, setFilterActivity] = useState([]);
+    const [Auditcomments, setAuditcomments] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [selectedDocudata, setselectedDocument] = useState({});
     const [userAddComment, setAddComment] = useState({
@@ -160,6 +161,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
         setEmail(localStorage.getItem("Email"));
         console.log("getAudit", getAudit);
         setFilterActivity(getAudit);
+        setAuditcomments(getAudit);
         setselectedDocument(selectedDocument);
         Json_GetUserComments();
         Json_GetCategory();
@@ -169,7 +171,27 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     // 
     const [value, setValue] = React.useState();
     const [inputValue, setInputValue] = React.useState('');
-   
+    const [filteredData, setFilteredData] = useState([]);
+
+    const handleSearch = (documentToSearch) => {
+     
+        const newFilteredData = getAudit.filter(item => {
+            for (const key in documentToSearch) {
+                if (documentToSearch.hasOwnProperty(key) && item.hasOwnProperty(key)) {
+                    if (documentToSearch[key] !== item[key]) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        // Append the new filtered data to the existing array
+        setFilterActivity(newFilteredData);
+    };
+    console.log(getAudit,`ActivityselectedDocument`,filteredData);
     const {
         getRootProps,
         getInputProps,
@@ -179,14 +201,16 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
         focused,
     } = useAutocomplete({
         id: 'controlled-state-demo',
-        options: FilterActivity, 
+        options: Auditcomments, 
         getOptionLabel: (option) => option.Comments,
         value,
         onChange: (event, newValue) => {
             setValue(newValue);
+            console.log(getAudit,"getAuditsonam",newValue);
             if (newValue && !selectedOptions.some(option => option['Activity ID'] === newValue['Activity ID'])) {
                 setSelectedOptions([...selectedOptions, newValue]);
             }
+            // handleSearch(newValue);
           },
         inputValue,
         onInputChange: (event, newInputValue) => setInputValue(newInputValue),
@@ -254,7 +278,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     const updatedOptions = selectedOptions.filter(option => option !== optionToRemove);
     setSelectedOptions(updatedOptions);
   };
-    console.log(groupedOptions,"groupedOptions");
+    console.log(selectedOptions,"groupedOptions");
     return (
         <>
             <Box class="ml-auto mr-auto">
@@ -468,8 +492,55 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
                 {toggleScreen.singleCardView ?
                 <Box class="activity-timeline">
                     <ul class="timeline-ul">
+                    {selectedOptions && selectedOptions.length > 0 ? (
+    selectedOptions.map((item, index) => (
+        <li key={index}>
+            <Box class="datetime">
+                <span>{item["Actioned Date"]}</span>
+                <span>{ }</span>
+            </Box>
+            <Box class="line-dotted">
+                <Box class="line-time"></Box>
+                <Box class="circle-time"></Box>
+                <Box class="circle-border"></Box>
+            </Box>
+            <Box class="timeline-details">
+                <Box class="icon-time-status"></Box>
+                <Box class="content-time">
+                    <h5>{item.Comments}</h5>
+                    <Box className='user-name pt-2 mt-2 d-flex align-items-center'>
+                        <PersonIcon className='me-1' /> <p className='mb-0'>{item["ForwardedBy"]}</p>
+                    </Box>
+                </Box>
+            </Box>
+        </li>
+    ))
+) : (
+    getAudit.map((item, index) => (
+        <li key={index}>
+            <Box class="datetime">
+                <span>{item["Actioned Date"]}</span>
+                <span>{ }</span>
+            </Box>
+            <Box class="line-dotted">
+                <Box class="line-time"></Box>
+                <Box class="circle-time"></Box>
+                <Box class="circle-border"></Box>
+            </Box>
+            <Box class="timeline-details">
+                <Box class="icon-time-status"></Box>
+                <Box class="content-time">
+                    <h5>{item.Comments}</h5>
+                    <Box className='user-name pt-2 mt-2 d-flex align-items-center'>
+                        <PersonIcon className='me-1' /> <p className='mb-0'>{item["ForwardedBy"]}</p>
+                    </Box>
+                </Box>
+            </Box>
+        </li>
+    ))
+)}
 
-                        {getAudit ? getAudit.map((item, index) => {
+                        {/* {selectedOptions ? selectedOptions.map((item, index) => {
                             return (
                                 <>
                                     <li key={index}>
@@ -496,12 +567,12 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
                                 </>
                             )
 
-                        }) : ""}
+                        }) : ""} */}
                     </ul>
                     
                 </Box>
                  :(
-                    <div><Activitygrid getAudit={getAudit} selectedDocument={selectedDocument} call_Json_GetAudit={call_Json_GetAudit}/></div>
+                    <div><Activitygrid getAudit={getAudit} selectedDocument={selectedDocument} call_Json_GetAudit={call_Json_GetAudit} selectedOptions={selectedOptions}/></div>
                  )}
             </Box>
 
