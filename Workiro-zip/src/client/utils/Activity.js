@@ -169,7 +169,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     // 
     const [value, setValue] = React.useState();
     const [inputValue, setInputValue] = React.useState('');
-
+   
     const {
         getRootProps,
         getInputProps,
@@ -184,7 +184,9 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
         value,
         onChange: (event, newValue) => {
             setValue(newValue);
-            setSelectedOptions([...selectedOptions, newValue]);
+            if (newValue && !selectedOptions.some(option => option['Activity ID'] === newValue['Activity ID'])) {
+                setSelectedOptions([...selectedOptions, newValue]);
+            }
           },
         inputValue,
         onInputChange: (event, newInputValue) => setInputValue(newInputValue),
@@ -242,6 +244,10 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     console.log('Selected option:', selectedOption);
     setSelectedOptions([...selectedOptions, selectedOption]);
     // Perform any other actions you want with the selected option
+    if (!selectedOptions.some(option => option['Activity ID'] === selectedOption['Activity ID'])) {
+        // Add the selected option to selectedOptions
+        setSelectedOptions([...selectedOptions, selectedOption]);
+    }
    };
    const handleRemoveOption = (optionToRemove) => {
     // Filter out the option to remove from the list of selected options
