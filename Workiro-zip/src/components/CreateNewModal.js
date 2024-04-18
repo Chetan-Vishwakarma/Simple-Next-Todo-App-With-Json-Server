@@ -157,6 +157,7 @@ function CreateNewModalTask({ ...props }) {
 
     const [userList, setUserList] = React.useState([]);
     const [addUser, setAddUser] = useState([]);
+    const [clearData, setClearData] = useState([]);
     const [ownerRighClick, setOwnerRighClick] = useState(null)
 
     const folderListRef = React.useRef(null);
@@ -489,6 +490,7 @@ function CreateNewModalTask({ ...props }) {
                                     setOwnerID(el.ID);
                                     setOwnerName(el.ForwardTo);
                                     setOwnerRighClick(el);
+                                    setClearData(el);
                                     setAddUser((pre) => [...pre, el])
                                 }
                             })
@@ -1273,7 +1275,7 @@ function CreateNewModalTask({ ...props }) {
             "ClientWeekDays": "1",
             "ClientWeekOfMonth": "1",
             "OwnerID": ownerID.toString(),
-            "AssignedToID": isaddUser,
+            "AssignedToID": isaddUser?isaddUser:ownerID,
             "AssociateWithID": textClientId,
             "FolderId": txtFolderId.toString(),
             "Subject": textSubject,
@@ -1359,8 +1361,15 @@ function CreateNewModalTask({ ...props }) {
 
    
 
+
     function ClearForm() {
-        setAddUser([])
+       // console.log("Add User List11", addUser);  
+//setAddUser(clearData)
+       
+setAddUser([]);
+
+       
+
         setCurrentDate(new Date())
         setTextSubject("");
         settxtClient("Select Client");
@@ -1982,7 +1991,7 @@ function CreateNewModalTask({ ...props }) {
                     "ClientWeekDays": "1",
                     "ClientWeekOfMonth": "1",
                     "OwnerID": ownerID.toString(),
-                    "AssignedToID": isaddUser,
+                    "AssignedToID": isaddUser?isaddUser:ownerID,
                     "AssociateWithID": textClientId,
                     "FolderId": txtFolderId.toString(),
                     "Subject": textSubject,
