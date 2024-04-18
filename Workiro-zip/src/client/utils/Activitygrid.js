@@ -8,7 +8,7 @@ import DataGrid, {
 import { Box, Typography, Button, Paper, Grid, TextField, Autocomplete } from '@mui/material';
 import 'devextreme/dist/css/dx.light.css';
 import CommanCLS from '../../services/CommanService';
-export default function Activitygrid({selectedDocument,call_Json_GetAudit,getAudit,selectedOptions}) {
+export default function Activitygrid({selectedDocument,call_Json_GetAudit,getAudit,tempdatafilter}) {
   console.log('selectedDocumentsonam',selectedDocument,"call_Json_GetAuditsonam",call_Json_GetAudit,"getAuditsonam",getAudit);
   const [dataNotFoundBoolean, setDataNotFoundBoolean] = useState(false);
   const [advFilteredResult, setAdvFilteredResult] = useState([]);
@@ -31,7 +31,7 @@ export default function Activitygrid({selectedDocument,call_Json_GetAudit,getAud
         id="dataGrid"
        
         style={{ width: "78%" }}
-        dataSource={selectedOptions.length > 0 ? selectedOptions : getAudit.length > 0 ? getAudit : []}
+        dataSource={tempdatafilter.length > 0 ? tempdatafilter : getAudit.length > 0 ? getAudit : []}
         keyExpr="Activity ID"
         columnAutoWidth={true}
         showBorders={true}>
