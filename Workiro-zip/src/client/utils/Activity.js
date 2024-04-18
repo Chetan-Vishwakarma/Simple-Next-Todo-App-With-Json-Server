@@ -332,31 +332,40 @@ const handleEnterKeyPress = (event) => {
             });
             console.log(filteredArr, "filteredArrdone");
             setTempdatafilter(filteredArr);
+            setsearchValues("");
         }
-        
-       // console.log('handleEnterKeyPress:', tempdata); // Log the concatenated values of temp array
-        const concatenatedString = tempdata.join(' ');
-       // console.log(concatenatedString,"concatenatedString");
-        // console.log('handleEnterKeyPress:',temp);
-        const keyword = event.target.value.toLowerCase();
-        const filteredArray = getAudit.filter(item => item.Comments && item.Comments.toLowerCase().includes(keyword));
 
-        dataFilter.push(...filteredArray);
+        // const concatenatedString = tempdata.join(' ');
+        // const keyword = event.target.value.toLowerCase();
+        // const filteredArray = getAudit.filter(item => item.Comments && item.Comments.toLowerCase().includes(keyword));
+
+        // dataFilter.push(...filteredArray);
       
        
        
-        if (filteredArray.length > 0) {
-            setsearchValuesArr(prevSearchValuesArr => [...prevSearchValuesArr, ...filteredArray]);
-        }
+        // if (filteredArray.length > 0) {
+        //     setsearchValuesArr(prevSearchValuesArr => [...prevSearchValuesArr, ...filteredArray]);
+        // }
     }
 };
 
 const handleRemoveOption = (optionToRemove) => {
     // Filter out the option to remove from tempdata
-    const updatedTempdata = tempdata.filter(option => option !== optionToRemove);
-    setTemp(updatedTempdata);
-    const updatedSearchValuesArr = tempdatafilter.filter(item => item['Activity ID'] !== optionToRemove['Activity ID']);
-    setTempdatafilter(updatedSearchValuesArr);
+    // const updatedTempdata = tempdata.filter(option => option !== optionToRemove);
+    // setTemp(updatedTempdata);
+    // const updatedSearchValuesArr = tempdatafilter.filter(item => item['Activity ID'] !== optionToRemove['Activity ID']);
+    // setTempdatafilter(updatedSearchValuesArr);
+    const remianData = tempdata.filter(option => option !== optionToRemove);
+    setTemp(remianData);
+
+    let filteredArr = getAudit.filter(obj => {
+        let commentWords = obj.Comments.toLowerCase().split(" ");
+        return remianData.every(word => commentWords.includes(word.toLowerCase()));
+
+    });
+
+    setTempdatafilter(filteredArr);
+
 };
 
     console.log(searchValuesArr,"groupedOptions");
