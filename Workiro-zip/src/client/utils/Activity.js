@@ -91,12 +91,11 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
           }
     }
     const Json_GetCategory =()=>{
-        console.log("Json_GetCategory",selectedDocument);
         let requestBody = {
             agrno: agrno,
             Email: Email,
             password: password,
-            SectionId:selectedDocument.PostItemTypeID
+            SectionId: selectedDocument ? selectedDocument.PostItemTypeID : ""
           };
           try {
             cls.Json_GetCategory(requestBody, (sts, data) => {
@@ -570,7 +569,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
 
                     <DialogActions className='justify-content-between'>
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                            Doc ID: {selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : ""}
+                            Doc ID: {selectedDocudata && selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : ""}
                         </Typography>
 
                         <Box>
