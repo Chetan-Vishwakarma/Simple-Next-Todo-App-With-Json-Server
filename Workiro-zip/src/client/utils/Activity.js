@@ -208,6 +208,9 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
             setValue(newValue);
             console.log(getAudit,"getAuditsonam",newValue);
             if (newValue && !selectedOptions.some(option => option['Activity ID'] === newValue['Activity ID'])) {
+                const filteredOptions =  filterSelectedOptionsByKeywords(newValue.Comments);
+                console.log(filteredOptions,"filteredOptions");
+
                 setSelectedOptions([...selectedOptions, newValue]);
             }
             // handleSearch(newValue);
@@ -215,7 +218,30 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
         inputValue,
         onInputChange: (event, newInputValue) => setInputValue(newInputValue),
     });
-
+    // const filterSelectedOptionsByKeyword = (keyword) => {
+    //     return getAudit.filter(option => option.Comments.toLowerCase().includes(keyword.toLowerCase()));
+    // };
+    // const filterSelectedOptionsByKeywords = (keywords) => {
+    //     let filteredOptions = getAudit;
+    //     for (const keyword of keywords) {
+    //         filteredOptions = filteredOptions.filter(option => option.Comments.toLowerCase().includes(keyword.toLowerCase()));
+    //     }
+    //     return filteredOptions;
+    // };
+    const filterSelectedOptionsByKeywords = (keywords) => {
+        if (!Array.isArray(keywords)) {
+            // If keywords is not an array, convert it into an array with a single element
+            keywords = [keywords];
+        }
+    
+        return getAudit.filter(option => {
+            return keywords.every(keyword => option.Comments.toLowerCase().includes(keyword.toLowerCase()));
+        });
+    };
+    
+    
+    
+    
 
     // modal add comment
     // const handleClickOpen = () => {
