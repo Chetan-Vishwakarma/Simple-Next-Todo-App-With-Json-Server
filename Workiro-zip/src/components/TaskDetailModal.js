@@ -11,11 +11,16 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import DataGrid, {
-   Column,
-   FilterRow,
-   Pager,
-   Paging,
-   SearchPanel,
+    Column,
+    Grouping,
+    GroupPanel,
+    FilterRow,
+    Pager,
+    Paging,
+    SearchPanel,
+    Selection,
+    Scrolling,
+    Sorting
 } from 'devextreme-react/data-grid';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import InsertPageBreakIcon from '@mui/icons-material/InsertPageBreak';
@@ -155,6 +160,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     const [clientList, setClientList] = useState([]);
 
+    const [associatedTask, setAssociatedTask] = useState([]);
+
 
 
     ////////////////////////////////End Attachment files
@@ -217,21 +224,21 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         Json_UpdateTaskField("TypeOfTaskID", e.SecID, "Section Updated!")
     };
 
- const handleSelectionChanged = (selectedItems) => {
+    const handleSelectionChanged = (selectedItems) => {
         setSelectedRows(selectedItems.selectedRowsData);
         // You can perform further actions with the selectedRows array
         console.log("selectedItems11", selectedItems); // Log the selected rows data
-       // Create a Set to store unique data
-    // const uniqueData = new Set(addItemdata);
-    // setOwnerTaskID(selectedItems.selectedRowsData[0]);
-    // // Loop through each selected row data and add it to the uniqueData Set
-    // selectedItems.selectedRowsData.forEach(rowData => {
-    //     uniqueData.add(rowData);
-    // });
+        // Create a Set to store unique data
+        // const uniqueData = new Set(addItemdata);
+        // setOwnerTaskID(selectedItems.selectedRowsData[0]);
+        // // Loop through each selected row data and add it to the uniqueData Set
+        // selectedItems.selectedRowsData.forEach(rowData => {
+        //     uniqueData.add(rowData);
+        // });
 
-    // // Convert the uniqueData Set back to an array and set it to addItemdata
-    // addItemdata = [...uniqueData];
-    console.log(addItemdata,"addItemdata");
+        // // Convert the uniqueData Set back to an array and set it to addItemdata
+        // addItemdata = [...uniqueData];
+        console.log(addItemdata, "addItemdata");
     };
 
 
@@ -320,7 +327,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         const files = event.target.files;
         const selectedFilesArray = Array.from(files);
         const filesData = [];
-        console.log(files,"filedatafdfdfdfdfdfdfdfdfd");
+        console.log(files, "filedatafdfdfdfdfdfdfdfdfd");
         selectedFilesArray.forEach((file, index) => {
             const reader = new FileReader();
             reader.onload = () => {
@@ -416,7 +423,6 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                     // for (let item of table6) {
                     //     arrFile.push(getFilePath(item));
                     // }
-                   
                     setAttachmentFile(table6);
                     // setTimeout(() => {
                     //     console.log("attachmentFile", attachmentFile);
@@ -428,10 +434,10 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         //     let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };
                         //    // setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
                         // }
+                    }
                 }
-                }
-        }
-      });
+            }
+        });
     }
 
     const disableDueDate = (date) => {
@@ -639,9 +645,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
 
         //setCurrentDate(startFormattingDate(selectedTask.CreationDate));
-       setCurrentDate(moment(selectedTask.Start,"DD/MM/YYYY").toDate());
-       // console.log("moment11",moment(selectedTask.Start,"DD/MM/YYYY").toDate());
-//moment(dateString, "DD/MM/YYYY").toDate();
+        setCurrentDate(moment(selectedTask.Start, "DD/MM/YYYY").toDate());
+        // console.log("moment11",moment(selectedTask.Start,"DD/MM/YYYY").toDate());
+        //moment(dateString, "DD/MM/YYYY").toDate();
         setNextDate(DateFormet(selectedTask.EndDateTime));
         setRemiderDate(dayjs(Cls.getCurrentDate()));
         Json_GetFolderData(selectedTask.FolderID ? selectedTask.FolderID : localStorage.getItem("FolderId"));
@@ -818,7 +824,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         let filesData = [];
         setSelectedRows([]);
         //setSelectedDocumentFileDMS([]);
-        console.log("AddDocuments11",selectedRows);
+        console.log("AddDocuments11", selectedRows);
         selectedRows.forEach((row, index) => {
             Json_GetItemBase64DataById(row, function (base64data) {
                 const fileData = {
@@ -833,7 +839,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                 };
                 filesData.push(fileData);
-                console.log(filesData,"getfilesdata");
+                console.log(filesData, "getfilesdata");
                 //Check if this is the last file
                 if (index === selectedRows.length - 1) {
                     // Add new files to the uploadedFiles array
@@ -846,7 +852,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         ...prevUploadedFiles,
                         ...filesData,
                     ]);
-            }
+                }
             })
 
 
@@ -1099,7 +1105,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
             let obj = {
                 AssignedToID: idsString,
                 TaskID: selectedTask.ID,
-                DMSItems: (selectedDocumentFileDMS && selectedDocumentFileDMS.length>0) ? selectedDocumentFileDMS.map(obj => obj.DocId).join("|") : "",
+                DMSItems: (selectedDocumentFileDMS && selectedDocumentFileDMS.length > 0) ? selectedDocumentFileDMS.map(obj => obj.DocId).join("|") : "",
                 Attachments: attString ? attString : "",
                 Notes: "",
                 Details: txtdescription,
@@ -1129,7 +1135,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                     let js = JSON.parse(data);
                     if (js.Status === "success") {
                         setSelectedFiles([]);
-                        
+
                         setMessageId(js.Message);
                         // setLoading(false);
                         setIsApi(!isApi);
@@ -1156,17 +1162,17 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                             return fileName;
                         });
-                        if(selectedFiles && selectedFiles.length > 0){
-                        let res = selectedFiles.map((e)=>e.FileName).join(',');
-                        let mgs = `Upload File ${res}`;
-                        Json_AddSupplierActivity(mgs, "sys")
+                        if (selectedFiles && selectedFiles.length > 0) {
+                            let res = selectedFiles.map((e) => e.FileName).join(',');
+                            let mgs = `Upload File ${res}`;
+                            Json_AddSupplierActivity(mgs, "sys")
                         } else {
 
                             let mgs = `Upload File ${attString}`;
-                        Json_AddSupplierActivity(mgs, "sys")
+                            Json_AddSupplierActivity(mgs, "sys")
                         }
 
-                      
+
 
                     }
                     else {
@@ -1237,8 +1243,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
 
-    const handleDownloadDoc = (objdata) => {
-        console.log(objdata)
+    const handleDownloadDoc = (event, objdata) => {
+        handleCloseDocument(event, objdata);
         let o = {
             path: window.btoa(objdata.DestinationPath),
         }
@@ -1418,15 +1424,21 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
     // details dropdown
-    const [anchorElDocumentList, setAnchorElDocumentList] = React.useState(null);
-    const DocumentList = Boolean(anchorElDocumentList);
-    const handleClickDocumentList = (event) => {
-        console.log(event.currentTarget);
+    const [anchorElDocumentList, setAnchorElDocumentList] = React.useState({});
+    // const DocumentList = Boolean(anchorElDocumentList);
+    const handleClickDocumentList = (event, rowData) => {
+        // console.log("fjdsfdlsjfljfllj problem detect");
         event.stopPropagation();
-        setAnchorElDocumentList(event.currentTarget);
+        const newAnchorElDocumentList = { ...anchorElDocumentList };
+        newAnchorElDocumentList[rowData.key] = event.currentTarget;
+        setAnchorElDocumentList(newAnchorElDocumentList);
     };
-    const handleCloseDocument = () => {
-        setAnchorElDocumentList(null);
+
+    const handleCloseDocument = (event, rowData) => {
+        event.stopPropagation();
+        const newAnchorElDocumentList = { ...anchorElDocumentList };
+        delete newAnchorElDocumentList[rowData.key];
+        setAnchorElDocumentList(newAnchorElDocumentList);
     };
 
 
@@ -1434,10 +1446,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     // Document details List
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
     const [docForDetails, setDocForDetails] = useState({});
-    const handleClickOpenDocumentDetailsList = (sDoc) => {
+    const handleClickOpenDocumentDetailsList = (event, sDoc) => {
         setDocForDetails(sDoc);
         setExpanded("panel1");
         setOpenDocumentDetailsList(true);
+        Json_getAssociatedTaskListByDocumentId(sDoc);
     };
     const handleCloseDocumentDetailsList = () => {
         setOpenDocumentDetailsList(false);
@@ -1531,11 +1544,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     const handleAttachmentClose = () => {
         setAttachmentRef(null);
     };
-   
+
     const handleDocumentClickOpen = () => {
-        console.log("DocumentClickOpensonam",txtClientId);
+        console.log("DocumentClickOpensonam", txtClientId);
         // setAttachmentRef(null);
-        
+
         if (txtClientId) {
 
             Json_ExplorerSearchDoc();
@@ -1546,16 +1559,16 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         }
         getButtonColor();
     };
-    
+
     const handleCloseDocumentListDMS = () => {
         setOpenDocumentListDMS(false);
     };
     const Json_ExplorerSearchDoc = () => {
-        console.log(selectedTask,'Json_ExplorerSearchDoc',txtClientId);
+        console.log(selectedTask, 'Json_ExplorerSearchDoc', txtClientId);
         try {
 
             if (selectedTask.FolderID && txtClientId) {
-                console.log(txtFolderId,'Json_ExplorerSearchDoctxtClientId',txtClientId);
+                console.log(txtFolderId, 'Json_ExplorerSearchDoctxtClientId', txtClientId);
                 let obj = {};
                 obj.ProjectId = selectedTask.FolderID;
                 obj.ClientId = txtClientId;
@@ -1583,6 +1596,28 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
             setTxtColor({ color: "red" }); // Example: Set color to blue when conditions not met
         }
     };
+
+    const Json_getAssociatedTaskListByDocumentId = (sDoc) => {
+        console.log("sDoc", sDoc);
+        let obj = {
+            Email: localStorage.getItem('Email'),
+            ItemId: sDoc["AttachId"],
+            agrno: localStorage.getItem("agrno"),
+            password: localStorage.getItem("Password")
+        }
+        try {
+            ClsSms.Json_getAssociatedTaskListByDocumentId(obj, (sts, data) => {
+                const res = JSON.parse(data);
+                if (res.Table.length > 0) {
+                    setAssociatedTask(res.Table);
+                } else {
+                    setAssociatedTask([]);
+                }
+            })
+        } catch (err) {
+            console.log("Error while calling Json_getAssociatedTaskListByDocumentId", err);
+        }
+    }
 
     return (
         <React.Fragment>
@@ -1850,34 +1885,34 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                             >
 
                                 {/* only for portal */}
-                                {selectedTask.Source==="Portal" && (
+                                {selectedTask.Source === "Portal" && (
                                     <>
-                                     <MenuItem className='ps-2' onClick={() => {
-                                    setSelectedIndexProfile(null);
-                                }}>
-                                    <ListItemIcon >
-                                        <ContentCopyIcon fontSize="medium" className="font-20" />
-                                    </ListItemIcon>
-                                    {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>}
-                                </MenuItem>
+                                        <MenuItem className='ps-2' onClick={() => {
+                                            setSelectedIndexProfile(null);
+                                        }}>
+                                            <ListItemIcon >
+                                                <ContentCopyIcon fontSize="medium" className="font-20" />
+                                            </ListItemIcon>
+                                            {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>}
+                                        </MenuItem>
 
-                                <MenuItem className='ps-1'>
-                                    <ListItemIcon>
-                                        <MergeIcon fontSize="medium" />
-                                    </ListItemIcon> Merge</MenuItem>
+                                        <MenuItem className='ps-1'>
+                                            <ListItemIcon>
+                                                <MergeIcon fontSize="medium" />
+                                            </ListItemIcon> Merge</MenuItem>
 
-                                <MenuItem className='ps-1'>
-                                    <ListItemIcon>
-                                        <AttachEmailIcon className="font-22" />
-                                    </ListItemIcon> Retract Message (s)</MenuItem>
+                                        <MenuItem className='ps-1'>
+                                            <ListItemIcon>
+                                                <AttachEmailIcon className="font-22" />
+                                            </ListItemIcon> Retract Message (s)</MenuItem>
 
-                                <MenuItem className='ps-1'>
-                                    <ListItemIcon>
-                                        <DeleteIcon fontSize="medium" />
-                                    </ListItemIcon> Delete Message (s)</MenuItem>
+                                        <MenuItem className='ps-1'>
+                                            <ListItemIcon>
+                                                <DeleteIcon fontSize="medium" />
+                                            </ListItemIcon> Delete Message (s)</MenuItem>
                                     </>
                                 )}
-                               
+
 
                                 {/* <MenuItem className='ps-2'>
                                     <ListItemIcon>
@@ -2141,8 +2176,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                     setCurrentDate(e)
                                                     setNextDate("");
                                                 }
-                                                   
-                                                
+
+
                                                 } // Handle date changes
                                                 timeFormat={false}
                                                 isValidDate={disablePastDt}
@@ -2573,7 +2608,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                             <Box className="d-flex align-items-end main-file-upload  pt-3">
                                 <Box className="w-100">
                                     <Stack direction="row" className='pb-2 custom-chips' spacing={1}>
-                                        {console.log(selectedFiles,"selectedFiles11")}
+                                        {console.log(selectedFiles, "selectedFiles11")}
                                         {
                                             selectedFiles && selectedFiles.slice(0, 3).map((item, index) => (
                                                 <Chip key={index} label={item.FileName} variant="outlined" onDelete={() => handleDelete(item)} />
@@ -2638,29 +2673,29 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                         <AttachFileIcon />
                                                     </Button>
                                                     <input
-        type="file"
-        id={`file-upload ${selectedTask.ID}`}
-        multiple
-        onChange={handleFileSelect}
-        className="file-input"
-        style={{ display: 'none' }} // Hide the input element
-    />
-    <Menu
-        id="basic-menu"
-        anchorEl={AttachmentRef}
-        open={Boolean(AttachmentRef)}
-        onClose={handleAttachmentClose}
-        MenuListProps={{
-            'aria-labelledby': 'basic-button',
-        }}
-    >
-        <MenuItem onClick={handleAttachmentClose}>
-            <label htmlFor={`file-upload ${selectedTask.ID}`} className="pointer">
-            <FileUploadIcon className="font-20 me-1" /> Upload File(s)
-            </label>
-        </MenuItem>
-        <MenuItem onClick={handleDocumentClickOpen}><InsertPageBreakIcon className="font-20 me-1" /> Select From DMS</MenuItem>
-    </Menu>
+                                                        type="file"
+                                                        id={`file-upload ${selectedTask.ID}`}
+                                                        multiple
+                                                        onChange={handleFileSelect}
+                                                        className="file-input"
+                                                        style={{ display: 'none' }} // Hide the input element
+                                                    />
+                                                    <Menu
+                                                        id="basic-menu"
+                                                        anchorEl={AttachmentRef}
+                                                        open={Boolean(AttachmentRef)}
+                                                        onClose={handleAttachmentClose}
+                                                        MenuListProps={{
+                                                            'aria-labelledby': 'basic-button',
+                                                        }}
+                                                    >
+                                                        <MenuItem onClick={handleAttachmentClose}>
+                                                            <label htmlFor={`file-upload ${selectedTask.ID}`} className="pointer">
+                                                                <FileUploadIcon className="font-20 me-1" /> Upload File(s)
+                                                            </label>
+                                                        </MenuItem>
+                                                        <MenuItem onClick={handleDocumentClickOpen}><InsertPageBreakIcon className="font-20 me-1" /> Select From DMS</MenuItem>
+                                                    </Menu>
                                                     {/* <Menu
                                                         id="basic-menu"
                                                         anchorEl={AttachmentRef}
@@ -2784,7 +2819,130 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                             <Grid item xs={12} md={6}>
 
                                 <Box className="search-box">
-                                    {attachmentFile.length > 0 ? attachmentFile.map((item, index) => {
+                                    {attachmentFile.length > 0 && <DataGrid
+                                        dataSource={attachmentFile}
+                                        // keyExpr="Guid"
+                                        allowColumnReordering={true}
+                                        rowAlternationEnabled={true}
+                                        showBorders={true}
+                                        width="100%"
+                                        wordWrapEnabled={true}
+                                        className="table-view-files"
+                                    >
+                                        <Grouping autoExpandAll={false} />
+                                        <GroupPanel visible={true} />
+                                        <Sorting mode="single" />
+                                        <Scrolling mode="virtual" />
+                                        <Selection mode="multiple" />
+                                        {/* {selectedGroup === "Type" && <Column dataField="Type" groupIndex={0} dataType="Type" width={75} />}
+                                        {selectedGroup === "Comments" && <Column dataField="Comments" groupIndex={0} dataType="Comments" width={75} visible={false} />}
+                                        {selectedGroup === "Description" && <Column dataField="Description" groupIndex={0} dataType="Description" width={75} visible={false} />}
+                                        {selectedGroup === "CommentBy" && <Column dataField="CommentBy" groupIndex={0} dataType="CommentBy" width={75} visible={false} />} */}
+                                        <Column
+                                            dataField="Description"
+                                            caption="Description"
+
+                                            // Set the groupIndex to 0 to enable grouping by this column
+                                            dataType="string"  // Set the data type to "string" for proper grouping
+                                            cellRender={(data) => {
+                                                return <Box className="file-uploads">
+                                                    <label className="file-uploads-label file-uploads-document" onClick={(event) => {
+                                                        event.stopPropagation();
+                                                        event.preventDefault();
+                                                        handleCloseDocument(event, data);
+                                                    }} onDoubleClick={(event) => {
+                                                        // handleClickOpenPDFView(event, data.data);
+                                                        handleCloseDocument(event, data);
+                                                    }}>
+                                                        <Box className="d-flex align-items-center">
+
+                                                            {/* <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" />  */}
+
+                                                            <DescriptionIcon
+                                                                sx={{
+                                                                    fontSize: 32,
+                                                                }}
+                                                                className='me-2 ms-0'
+                                                            />
+                                                            <Box className="upload-content pe-3">
+                                                                <Typography variant="h4" >
+                                                                    {data.data.Description ? data.data.Description : "Demo"}
+                                                                </Typography>
+                                                                <Typography variant="body1">
+                                                                    {/* Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span>  */}
+                                                                    Date <span className='sembold'>{data.data["Item Date"] ? data.data["Item Date"] : ""}</span> |
+                                                                    Uploaded by <span className='sembold'>Patrick</span>
+                                                                </Typography>
+                                                            </Box>
+                                                        </Box>
+                                                        <Box>
+                                                            <Button
+                                                                id={`basic-button-${data.key}`}
+                                                                aria-controls={anchorElDocumentList[data.key] ? `basic-menu-${data.key}` : undefined}
+                                                                aria-haspopup="true"
+                                                                aria-expanded={Boolean(anchorElDocumentList[data.key])}
+                                                                onClick={(event) => {
+                                                                    handleClickDocumentList(event, data)
+                                                                }}
+                                                                className='min-width-auto'
+                                                            >
+                                                                <MoreVertIcon />
+                                                            </Button>
+                                                            <Menu
+                                                                id={`basic-menu-${data.key}`}
+                                                                anchorEl={anchorElDocumentList[data.key]}
+                                                                open={Boolean(anchorElDocumentList[data.key])}
+                                                                onClose={(event) => handleCloseDocument(event, data)}
+                                                                MenuListProps={{
+                                                                    'aria-labelledby': `basic-button-${data.key}`,
+                                                                }}
+                                                                className='custom-dropdown'
+                                                            >
+                                                                <MenuItem onClick={(event) => {
+                                                                    handleCloseDocument(event, data)
+                                                                    handleClickOpenDocumentDetailsList(event, data.data)
+                                                                }}>
+                                                                    <ListItemIcon>
+                                                                        <ArticleIcon fontSize="medium" />
+                                                                    </ListItemIcon>
+                                                                    Document Details</MenuItem>
+
+                                                                <MenuItem
+                                                                    onClick={(event) => handleCloseDocument(event, data)}
+                                                                >
+                                                                    <ListItemIcon>
+                                                                        <CloudUploadIcon fontSize="medium" />
+                                                                    </ListItemIcon>
+                                                                    Upload New Version</MenuItem>
+                                                                <MenuItem
+                                                                    onClick={(event) => handleCloseDocument(event, data)}
+                                                                >
+                                                                    <ListItemIcon>
+                                                                        <DriveFileRenameOutlineIcon fontSize="medium" />
+                                                                    </ListItemIcon>
+                                                                    Rename Document</MenuItem>
+                                                                <MenuItem
+                                                                // onClick={(event) => handleCloseDocumentOpenDocumentBrowers(event, data)}
+                                                                >
+                                                                    <ListItemIcon>
+                                                                        <TravelExploreIcon fontSize="medium" />
+                                                                    </ListItemIcon>
+                                                                    Open in Browser</MenuItem>
+                                                                <MenuItem
+                                                                    onClick={(event) => handleDownloadDoc(event, data)}
+                                                                >
+                                                                    <ListItemIcon>
+                                                                        <CloudDownloadIcon fontSize="medium" />
+                                                                    </ListItemIcon>
+                                                                    Download</MenuItem>
+                                                            </Menu>
+                                                        </Box>
+                                                    </label>
+                                                </Box>
+                                            }}
+                                        />
+                                    </DataGrid>}
+                                    {/* {attachmentFile.length > 0 ? attachmentFile.map((item, index) => {
                                         let fileName = "";
                                         if (item.FileName) {
                                             let Typest = item.FileName.lastIndexOf("\\");
@@ -2869,9 +3027,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                     </Box>
                                                 </label>
                                             </Box>
-                                            {/* file upload end */}
+                                            {/* file upload end
                                         </>
-                                    }) : ""}
+                                    }) : ""} */}
                                 </Box>
 
                                 {/* <Demo>
@@ -2978,7 +3136,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                                         >
                                                             <TableCell align="left" className='bold'>{itm}</TableCell>
-                                                            <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date", "Item Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
+                                                            <TableCell align="left">{docForDetails[itm] ? docForDetails[itm] : "Not Available"}</TableCell>
+                                                            {/* <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date", "Item Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell> */}
                                                         </TableRow>
                                                     }
                                                 })}
@@ -3105,12 +3264,16 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <Box className='mt-3'>
-
-                                        {Array(5).fill("").map(() => {
+                                        {associatedTask.length > 0 ? associatedTask.map((itm,i) => {
+                                            return <>
+                                                <Link key={i} href="#" className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />{itm.Subject}</Link>
+                                            </>
+                                        }): <Typography>Not Available</Typography>}
+                                        {/* {Array(5).fill("").map(() => {
                                             return <>
                                                 <Link href="#" className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />Contact agreement</Link>
                                             </>
-                                        })}
+                                        })} */}
                                     </Box>
                                 </AccordionDetails>
                             </Accordion>
