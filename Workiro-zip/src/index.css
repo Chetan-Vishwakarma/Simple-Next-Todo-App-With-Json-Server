@@ -396,6 +396,7 @@ button {
 .side-navi li {
   color: #727272;
   transition: .5s all ease;
+  overflow: hidden;
 }
 
 .side-navi li.active {
@@ -994,9 +995,9 @@ span.tox-statusbar__branding {
 }
 
 .client-img {
-  width: 110px;
-  min-width: 110px;
-  height: 110px;
+  width: 90px;
+  min-width: 90px;
+  height: 90px;
   overflow: hidden;
   border-radius: 90px;
   margin: 0 auto 22px;
@@ -1027,7 +1028,7 @@ span.tox-statusbar__branding {
 }
 
 .client-img img {
-  height: 110px;
+  height: 90px;
 }
 
 .user-register {
@@ -1957,10 +1958,10 @@ span.tox-statusbar__branding {
 }
 
 .todo-list-details {
-  border-radius: 12px;
-  margin-top: 20px;
+  border-radius: 8px;
+  margin-top: 15px;
   background: #edf0ff;
-  padding: 15px;
+  padding: 10px;
 }
 
 .approval-main .approval-box {
@@ -2158,7 +2159,7 @@ span.tox-statusbar__branding {
 
   .todo-list-box h2,
   .client-box h2 {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .form-control,

@@ -611,7 +611,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
         if (selectedTask.PubMessageId) {
 
             GetMessageAttachments_Json(selectedTask.PubMessageId);
-            
+
             setStartDate(moment(selectedTask.Start).format("DD/MM/YYYY"));
 
             setEndDate(moment(selectedTask.EndDateTime).format("DD/MM/YYYY"));
@@ -796,33 +796,33 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                 <h5 className='mb-0 text-black'>{selectedTask.Subject}</h5>
             </Box> */}
                 <Box className='mb-2'>
-                   
 
-                <Editor
-        apiKey='w9rz0c8fw8u2pd3qv7d779obkouylvlrlb9w9s1fmytnlan1'
-        initialValue={templateDataMarkup}
-        disabled = {true}
-        init={{
-            height: "300px",
-            menubar: false,
-            readonly: true,
-            plugins: [
-                'a11ychecker','advlist','advcode','advtable','autolink','checklist','export',
-                'lists','link','image','charmap','preview','anchor','searchreplace','visualblocks',
-                'powerpaste','fullscreen','formatpainter','insertdatetime','media','table','help','wordcount','resize'
-            ],
-            toolbar: 'undo redo | casechange blocks | bold italic backcolor | ' +
-                'alignleft aligncenter alignright alignjustify | ' +
-                'bullist numlist checklist outdent indent | removeformat | a11ycheck code table help',
-            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-            resize: true, // Enable resizing,
-         
-        }}
-        //onEditorChange={handleEditorChange}
-        // onInit={(evt, editor) => {
-        //     editorRef.current = editor;
-        //   }}
-    />
+
+                    <Editor
+                        apiKey='w9rz0c8fw8u2pd3qv7d779obkouylvlrlb9w9s1fmytnlan1'
+                        initialValue={templateDataMarkup}
+                        disabled={true}
+                        init={{
+                            height: "300px",
+                            menubar: false,
+                            readonly: true,
+                            plugins: [
+                                'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
+                                'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
+                                'powerpaste', 'fullscreen', 'formatpainter', 'insertdatetime', 'media', 'table', 'help', 'wordcount', 'resize'
+                            ],
+                            toolbar: 'undo redo | casechange blocks | bold italic backcolor | ' +
+                                'alignleft aligncenter alignright alignjustify | ' +
+                                'bullist numlist checklist outdent indent | removeformat | a11ycheck code table help',
+                            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                            resize: true, // Enable resizing,
+
+                        }}
+                    //onEditorChange={handleEditorChange}
+                    // onInit={(evt, editor) => {
+                    //     editorRef.current = editor;
+                    //   }}
+                    />
 
 
                     {/* <textarea
@@ -879,8 +879,10 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                         <Box className='d-flex align-items-center'>
                                             {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
                                             <HourglassEmptyIcon className='text-warning me-1' />
-                                            <h5 className='font-14 text-black mb-0'>Pending Approval</h5>
-                                            <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
+                                            <Box className='ps-2'>
+                                                <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
+                                                <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
+                                            </Box>
                                         </Box>
 
                                         {/*  */}
@@ -1072,7 +1074,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                         {filterAttachments.map((item, index) => {
                             return <>
 
-                                <Box key={index} className='col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 d-flex'>
+                                <Box key={index} className='col-xxl-6 col-xl-6 col-lg-12 col-md-12 col-sm-12 d-flex'>
                                     <Box className='todo-list-box white-box relative w-100 font-14'>
 
                                         <Box className='download-btn-box'>
