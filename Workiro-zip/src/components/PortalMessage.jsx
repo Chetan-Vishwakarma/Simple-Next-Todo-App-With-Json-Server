@@ -12,7 +12,7 @@ import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 //import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import MarkunreadIcon from '@mui/icons-material/Markunread';
-//import DraftsIcon from '@mui/icons-material/Drafts';
+import DraftsIcon from '@mui/icons-material/Drafts';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import BallotIcon from '@mui/icons-material/Ballot';
 import dayjs from "dayjs";
@@ -31,6 +31,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import docuicon from "../images/docu-icon.svg";
 import DoDisturbIcon from '@mui/icons-material/DoDisturb';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import CloseIcon from '@mui/icons-material/Close';
 //import CloseIcon from '@mui/icons-material/Close';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 
@@ -79,6 +80,8 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
     const [startDate, setStartDate] = React.useState("");
     const [endDate, setEndDate] = React.useState("");
     const [messageViewHistory, setMessageViewHistory] = React.useState([]);
+
+    
 
     const [copyLink, setCopyLink] = React.useState("");
     const [certificateData, setCertificateData] = React.useState("");
@@ -837,11 +840,12 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
                 <Box className='d-flex flex-wrap align-items-center justify-content-between'>
                     <Box className='d-flex'>
-                        <MarkunreadIcon className='text-blue' />
+{messageViewHistory?.length>0 ? (<DraftsIcon className='text-blue' /> ):(<MarkunreadIcon className='text-blue' /> )}
+                      
                         {/* <DraftsIcon /> */}
                         <Box className='ps-3'>
                             <h5 className='font-14 text-black mb-1'>{messageViewHistory?.length > 0 ? "Last Viewed On" : "The message has not yet been viewed"} </h5>
-                            <p className='font-12 text-gray sembold mb-2'>{messageViewHistory?.length > 0 ? DateFormateDDMMYYYY(messageViewHistory[messageViewHistory.length - 1].ViewDateTime) : ""}</p>
+                            <p className='font-12 text-gray sembold mb-2'>{messageViewHistory?.length > 0 ? moment(messageViewHistory[0].ViewDateTime).format("DD/MM/YYYY")  : null}</p>
                             <Button className='btn-blue-2' size="small" startIcon={<ScheduleIcon />} onClick={handleClickOpen}>View History</Button>
                         </Box>
                     </Box>
@@ -870,7 +874,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                         ) : (
                                             <>
                                                 <Box className='d-flex align-items-center'>
-                                                    <HourglassEmptyIcon className='text-danger me-1' />
+                                                    <CloseIcon className='text-danger me-1' />
                                                     <h5 className='font-14 text-danger mb-0'>Message Disapproved</h5>
                                                 </Box>
                                             </>
@@ -970,7 +974,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
                                         <li key={index}>
                                             <Box class="datetime">
-                                                <span>{item.ViewDateTime} </span>
+                                                <span>{moment(item.ViewDateTime).format("DD/MM/YYYY HH:mm:ss")} </span>
                                             </Box>
                                             <Box class="line-dotted">
                                                 <Box class="line-time"></Box>
@@ -1092,7 +1096,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
                                         <Typography variant='subtitle1 mb-2 d-block'><strong>Document Number: </strong> {item.ItemID ? item.ItemID : ""} </Typography>
 
-                                        <Typography variant='subtitle1 mb-2 d-block'><strong> Published On: </strong> {DateFormateDDMMYYYY(item.DDate)} </Typography>
+                                        <Typography variant='subtitle1 mb-2 d-block'><strong> Published On: </strong> {moment(item.DDate).format("DD/MM/YYYY")} </Typography>
 
                                         <Box className='d-flex align-items-center justify-content-between'>
                                             <Typography variant='subtitle1'><pan className='text-gray font-14'>

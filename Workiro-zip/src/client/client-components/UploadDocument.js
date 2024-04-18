@@ -210,11 +210,11 @@ function UploadDocument({
         }
     }
 
-    function Json_GetFolderData() {
+    function Json_GetFolderData(fid) {
         // console.log("Json_GetFolderData11", txtFolderId);
         try {
             let o = {};
-            o.ProjectId = txtFolderId;
+            o.ProjectId = fid;
             o.SectionId = "-1";
             o.ClientId = "";
             cls.Json_GetFolderData(o, function (sts, data) {
@@ -290,7 +290,7 @@ function UploadDocument({
         Json_GetSections(localStorage.getItem("ProjectId"))
         Json_GetClientsByFolder(localStorage.getItem("ProjectId"))
         Json_GetFolders();
-        Json_GetFolderData();
+        Json_GetFolderData(localStorage.getItem("ProjectId"));
         setDocumentDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
         setReceivedDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
         // console.log("GetCurrentDayDate", dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD"));
@@ -300,6 +300,7 @@ function UploadDocument({
     }, [])
 
     const handleOnFolderClick = (data) => {
+        console.log("Get folder On click", data);
 
         if (data) {
             setTxtFolderId(data.FolderID)
@@ -308,7 +309,7 @@ function UploadDocument({
             Json_GetSections(data.FolderID)
             Json_GetClientsByFolder(data.FolderID)
         }
-        Json_GetFolderData()
+        Json_GetFolderData(data.FolderID)
 
     }
 
