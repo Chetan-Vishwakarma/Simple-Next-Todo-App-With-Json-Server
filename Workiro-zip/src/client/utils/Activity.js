@@ -666,7 +666,7 @@ const handleRemoveOption = (optionToRemove) => {
                     
                 </Box>
                  :(
-                    <div><Activitygrid getAudit={getAudit} selectedDocument={selectedDocument} call_Json_GetAudit={call_Json_GetAudit} selectedOptions={selectedOptions}/></div>
+                    <div><Activitygrid getAudit={getAudit} selectedDocument={selectedDocument} call_Json_GetAudit={call_Json_GetAudit} tempdatafilter={tempdatafilter}/></div>
                  )}
             </Box>
 
