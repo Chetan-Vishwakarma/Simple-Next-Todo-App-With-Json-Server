@@ -92,12 +92,11 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
           }
     }
     const Json_GetCategory =()=>{
-        console.log("Json_GetCategory",selectedDocument);
         let requestBody = {
             agrno: agrno,
             Email: Email,
             password: password,
-            SectionId:selectedDocument.PostItemTypeID
+            SectionId: selectedDocument ? selectedDocument.PostItemTypeID : ""
           };
           try {
             cls.Json_GetCategory(requestBody, (sts, data) => {
@@ -333,31 +332,40 @@ const handleEnterKeyPress = (event) => {
             });
             console.log(filteredArr, "filteredArrdone");
             setTempdatafilter(filteredArr);
+            setsearchValues("");
         }
-        
-       // console.log('handleEnterKeyPress:', tempdata); // Log the concatenated values of temp array
-        const concatenatedString = tempdata.join(' ');
-       // console.log(concatenatedString,"concatenatedString");
-        // console.log('handleEnterKeyPress:',temp);
-        const keyword = event.target.value.toLowerCase();
-        const filteredArray = getAudit.filter(item => item.Comments && item.Comments.toLowerCase().includes(keyword));
 
-        dataFilter.push(...filteredArray);
+        // const concatenatedString = tempdata.join(' ');
+        // const keyword = event.target.value.toLowerCase();
+        // const filteredArray = getAudit.filter(item => item.Comments && item.Comments.toLowerCase().includes(keyword));
+
+        // dataFilter.push(...filteredArray);
       
        
        
-        if (filteredArray.length > 0) {
-            setsearchValuesArr(prevSearchValuesArr => [...prevSearchValuesArr, ...filteredArray]);
-        }
+        // if (filteredArray.length > 0) {
+        //     setsearchValuesArr(prevSearchValuesArr => [...prevSearchValuesArr, ...filteredArray]);
+        // }
     }
 };
 
 const handleRemoveOption = (optionToRemove) => {
     // Filter out the option to remove from tempdata
-    const updatedTempdata = tempdata.filter(option => option !== optionToRemove);
-    setTemp(updatedTempdata);
-    const updatedSearchValuesArr = tempdatafilter.filter(item => item['Activity ID'] !== optionToRemove['Activity ID']);
-    setTempdatafilter(updatedSearchValuesArr);
+    // const updatedTempdata = tempdata.filter(option => option !== optionToRemove);
+    // setTemp(updatedTempdata);
+    // const updatedSearchValuesArr = tempdatafilter.filter(item => item['Activity ID'] !== optionToRemove['Activity ID']);
+    // setTempdatafilter(updatedSearchValuesArr);
+    const remianData = tempdata.filter(option => option !== optionToRemove);
+    setTemp(remianData);
+
+    let filteredArr = getAudit.filter(obj => {
+        let commentWords = obj.Comments.toLowerCase().split(" ");
+        return remianData.every(word => commentWords.includes(word.toLowerCase()));
+
+    });
+
+    setTempdatafilter(filteredArr);
+
 };
 
     console.log(searchValuesArr,"groupedOptions");
@@ -727,7 +735,7 @@ const handleRemoveOption = (optionToRemove) => {
 
                     <DialogActions className='justify-content-between'>
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                            Doc ID: {selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : ""}
+                            Doc ID: {selectedDocudata && selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : ""}
                         </Typography>
 
                         <Box>
