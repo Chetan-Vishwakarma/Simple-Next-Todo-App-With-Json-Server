@@ -27,8 +27,7 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 
-function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument }) {
-    console.log(selectedDocument, "sendUrldata1233333");
+function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument, Json_CRM_GetOutlookTask }) {
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -615,7 +614,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                             let isUserAssigned = arr?.includes(parseInt(localStorage.getItem('UserId')));
                                             console.log("isUserAssigned", isUserAssigned)
                                             return (
-                                                <label key={index} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex">
+                                                <label key={index} onClick={(e) => Json_CRM_GetOutlookTask(e, item)} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex">
                                                     <RadioButtonUncheckedIcon className={`me-1 ${isUserAssigned ? 'green' : 'disabled'}`} />
                                                     {item.Subject}
                                                 </label>
