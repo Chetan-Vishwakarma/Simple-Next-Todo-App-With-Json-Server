@@ -1296,7 +1296,7 @@ function CreateNewModalTask({ ...props }) {
             "Notes": "",
             "TaskSource": "CRM"
         }
-        console.log("final save data obj", ooo);
+        console.log(selectedRows,"finalattStringsave data obj", attString);
         cls.Json_CRM_Task_Save(ooo, function (sts, data) {
             if (sts) {
                 if (data) {
@@ -1322,6 +1322,7 @@ function CreateNewModalTask({ ...props }) {
                         // setMessageId(js.Message);
                         console.log("selectedDocumentFile", selectedDocumentFile)
                         if (selectedDocumentFile.length > 0) {
+                            addToWorkTable(selectedDocumentFile.map(obj => obj.DocId).join("|"), js.Message);
                             Json_CRM_TaskDMSAttachmentInsert(js.Message);
                         }
 
@@ -1598,7 +1599,7 @@ function CreateNewModalTask({ ...props }) {
     };
     function addToWorkTable(Itid, taskID) {
         console.log(taskID, "addToWorkTable", Itid);
-        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${ownerName} has invoked task ID : ${taskID}` };
+        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${ownerName} has initiated task ID : ${taskID}` };
         console.log("addToWorkTable111", obj);
         clsSms.Json_AddToWork(obj, function (status, data) {
             if (status) {
