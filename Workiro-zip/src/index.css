@@ -260,7 +260,7 @@ button {
 
 .table-grid-2 .dx-datagrid-rowsview .dx-datagrid-content:not(.dx-datagrid-content-fixed) {
   height: calc(100vh - 450px);
-  overflow: auto;
+  overflow-y: auto;
 }
 
 .table-grid-2 {
@@ -819,7 +819,10 @@ span.tox-statusbar__branding {
   margin-bottom: 3px;
   font-size: 14px;
 }
-
+.activity-timeline.activity-timeline-2 {
+  max-height: calc(100vh - 360px);
+  overflow: auto;
+}
 
 /* timeline status end */
 
@@ -3172,6 +3175,7 @@ span.tox-statusbar__branding {
 .full-height-modal {
   height: calc(100vh - 200px);
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .no-touch .cd-vertical-nav:hover .hover-icon {

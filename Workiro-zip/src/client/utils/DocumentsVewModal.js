@@ -495,7 +495,8 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                 onClose={handleClosePDFView}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
-                className='custom-modal full-modal'
+                className='custom-modal full-modal
+                '
                 sx={{ width: '100%', maxWidth: '100%' }}
             >
 
@@ -556,11 +557,8 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
                 <DialogContent className='clearfix'>
 
-
-                    <hr />
-
                     <DialogContentText id="alert-dialog-description">
-                        <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
+                        <Box className="mt-3 full-height-modal">
                             <TabContext value={value}>
                                 <Box>
                                     <Tabs onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>

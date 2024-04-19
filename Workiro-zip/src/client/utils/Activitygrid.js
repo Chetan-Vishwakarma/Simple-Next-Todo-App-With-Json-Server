@@ -26,11 +26,11 @@ export default function Activitygrid({selectedDocument,call_Json_GetAudit,getAud
    
   }, [])
   return (
-    <div><Box className='table-responsive table-grid table-grid-2'>
+    <div><Box className=''>
     <DataGrid
         id="dataGrid"
-       
-        style={{ width: "78%" }}
+        className='table-grid'
+        // style={{ width: "100%" }}
         dataSource={tempdatafilter.length > 0 ? tempdatafilter : getAudit.length > 0 ? getAudit : []}
         keyExpr="Activity ID"
         columnAutoWidth={true}

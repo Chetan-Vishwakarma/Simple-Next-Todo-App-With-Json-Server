@@ -716,18 +716,15 @@ const handleRemoveOption = (optionToRemove) => {
                                             </Menu>
                                         </div>
                                     </Box>
-
                                 </Box>
-
                             </Popover>
                         </Box>
                     </Box>
-
                 </Box>
 
-                <hr />
+                <hr className='mt-0' />
                 {toggleScreen.singleCardView ?
-                <Box class="activity-timeline">
+                <Box class="activity-timeline activity-timeline-2">
                     <ul class="timeline-ul">
                     {tempdatafilter && tempdatafilter.length > 0 ? (
     tempdatafilter.map((item, index) => (
