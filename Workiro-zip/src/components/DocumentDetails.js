@@ -49,11 +49,14 @@ const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
 const password = localStorage.getItem("Password");
 const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 //const baseUrlDocuSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
 function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, selectedGroup }) {
     const dispatch = useDispatch();
     const Cls = new CommanCLS(baseUrl, agrno, Email, password);
+    const ClsPractice = new CommanCLS(baseUrlPractice, agrno, Email, password);
+
     //const ClsDocuSms = new CommanCLS(baseUrlDocuSms, agrno, Email, password);
 
     const [openPDFView, setOpenPDFView] = React.useState(false);
@@ -150,10 +153,13 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
             password: localStorage.getItem("Password")
         };
         try {
-            Cls.Json_CRM_GetOutlookTask(obj, (sts, data) => {
+            Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
                 const res = JSON.parse(data);
                 if (res.Table) {
+
                     const fltTask = res.Table.filter(itm => itm.ID === sTask.Taskid);
+                    // res.Table.filter(itm =>console.log(`ertiretufjhjfg ${itm.ID}`,itm.ID))
+                    // console.log(`ertiretufjhjfg taskID`,sTask.Taskid);
                     const formattedTasks = fltTask.map((task) => {
                         let timestamp, timestamp2;
                         if (task.EndDateTime) {
@@ -168,6 +174,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
 
                         return { ...task, EndDateTime: date, CreationDate: date2 };
                     });
+                    // console.log("ertiretufjhjfg",formattedTasks);
                     setSelectedTask(formattedTasks[0]);
                     handleClickDetailOpen(formattedTasks[0]);
                 }

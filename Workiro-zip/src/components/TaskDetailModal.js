@@ -106,22 +106,28 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     /////////////////////////////////////////Task Activity
     const [anchorEl4, setAnchorEl4] = React.useState(null);
     const [selectedEmailForComment, setSelectedEmailForComment] = React.useState({});
-    const [NumPriority, setNumPriority] = React.useState(selectedTask.Priority);
+    // const [NumPriority, setNumPriority] = React.useState(selectedTask.Priority);
+    const [NumPriority, setNumPriority] = React.useState( ( selectedTask && selectedTask.Priority ) ? selectedTask.Priority: "" );
 
     const [folderList, setFolderList] = useState([]);
     const [portalComments, setPortalComments] = useState([]);
     const [copyLink, setCopyLink] = useState("");
     const pageSizes = [10, 25, 50, 100];
-    const [txtFolder, settxtFolder] = useState(selectedTask.Folder);
-    const [txtFolderId, setTxtFolderId] = useState(selectedTask.FolderID);
+    // const [txtFolder, settxtFolder] = useState(selectedTask.Folder);
+    const [txtFolder, settxtFolder] = useState( ( selectedTask && selectedTask.Folder ) ? selectedTask.Folder: "" );
+    // const [txtFolderId, setTxtFolderId] = useState(selectedTask.FolderID);
+    const [txtFolderId, setTxtFolderId] = useState( ( selectedTask && selectedTask.FolderID ) ? selectedTask.FolderID: "" );
     const [dmsDocumentList, setDMSDocumentList] = React.useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
     const [secondary, setSecondary] = React.useState(false);
     const [getCRMSaved, setGetCRMSaved] = React.useState([]);
 
-    const [txtSection, settxtSection] = React.useState(selectedTask.Section);
-    const [txtClient, setTxtClient] = React.useState(selectedTask.Client);
-    const [txtClientId, setTxtClientId] = React.useState(selectedTask.Client);
+    // const [txtSection, settxtSection] = React.useState(selectedTask.Section);
+    const [txtSection, settxtSection] = React.useState( ( selectedTask && selectedTask.Section ) ? selectedTask.Section: "" );
+    // const [txtClient, setTxtClient] = React.useState(selectedTask.Client);
+    const [txtClient, setTxtClient] = React.useState( ( selectedTask && selectedTask.Client ) ? selectedTask.Client: "" );
+    // const [txtClientId, setTxtClientId] = React.useState(selectedTask.Client);
+    const [txtClientId, setTxtClientId] = React.useState( ( selectedTask && selectedTask.Client ) ? selectedTask.Client: "" );
 
     const [txtSectionId, settxtSectionId] = React.useState(null);
 
@@ -1662,7 +1668,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                 )} */}
 
                             </Button>
-                            {selectedTask.Source === "CRM" && (<>
+                            { selectedTask && selectedTask.Source === "CRM" && (<>
                                 <Menu
                                     id="basic-menu"
                                     anchorEl={anchorEl4}
@@ -1730,23 +1736,26 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                             variant="subtitle1"
                             className="font-16 sembold mb-0"
                         >
-                            {selectedTask.Source}
+                            {selectedTask && selectedTask.Source}
                         </Typography>
                     </Box>
 
                     <Box className="d-flex">
                         <Box>
                             <Button
-                                id={`fade-button-${selectedTask.ID}`} // Use unique IDs for each button
+                                id={`fade-button-${selectedTask && selectedTask.ID}`} // Use unique IDs for each button
                                 aria-controls={
                                     anchorElStatus
-                                        ? `fade-menu-${selectedTask.ID}`
+                                        ? `fade-menu-${selectedTask && selectedTask.ID}`
                                         : undefined
                                 }
                                 aria-haspopup="true"
                                 aria-expanded={anchorElStatus ? "true" : undefined}
-                                onClick={(event) =>
-                                    handleClickStatus(event, selectedTask.ID)
+                                onClick={(event) =>{
+                                    if(selectedTask && selectedTask.ID){
+                                        handleClickStatus(event, selectedTask.ID)
+                                    }
+                                }
                                 } // Pass index to handleClick
                                 className="min-width-auto px-0 text-danger"
                             >
@@ -1772,7 +1781,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     <ListItemIcon className="min-width-auto  me-2 text-primary">
                                         <PublishedWithChangesIcon fontSize="medium" />
                                     </ListItemIcon>
-                                    <span className="text-primary">{status ? status : selectedTask.mstatus}</span>
+                                    <span className="text-primary">{status ? status : selectedTask && selectedTask.mstatus}</span>
                                 </>
 
                                 )}
@@ -1791,21 +1800,21 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     <ListItemIcon className="min-width-auto me-2">
                                         <PublishedWithChangesIcon fontSize="medium" />
                                     </ListItemIcon>
-                                    <span className="text-success">{selectedTask.mstatus}</span>
+                                    <span className="text-success">{selectedTask && selectedTask.mstatus}</span>
                                 </>
 
                                 )}
 
                             </Button>
                             <Menu
-                                id={`fade-menu-${selectedTask.ID}`} // Use unique IDs for each menu
+                                id={`fade-menu-${ selectedTask && selectedTask.ID}`} // Use unique IDs for each menu
                                 MenuListProps={{
-                                    "aria-labelledby": `fade-button-${selectedTask.ID}`,
+                                    "aria-labelledby": `fade-button-${selectedTask && selectedTask.ID}`,
                                 }}
                                 anchorEl={anchorElStatus}
                                 open={
-                                    selectedIndexStatus === selectedTask.ID &&
-                                    Boolean(anchorElStatus)
+                                    selectedTask && (selectedIndexStatus === selectedTask.ID &&
+                                    Boolean(anchorElStatus))
                                 } // Open menu if selectedIndex matches
                                 onClose={handleCloseStatus}
                             >
@@ -1856,36 +1865,39 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                         <div className="ps-2">
                             <Button
-                                id={`fade-button-${selectedTask.ID}`} // Use unique IDs for each button
+                                id={`fade-button-${selectedTask && selectedTask.ID}`} // Use unique IDs for each button
                                 aria-controls={
                                     anchorElProfile
-                                        ? `fade-menu-${selectedTask.ID}`
+                                        ? `fade-menu-${selectedTask && selectedTask.ID}`
                                         : undefined
                                 }
                                 aria-haspopup="true"
                                 aria-expanded={anchorElProfile ? "true" : undefined}
-                                onClick={(event) =>
-                                    handleClickProfile(event, selectedTask.ID)
+                                onClick={(event) =>{
+                                    if(selectedTask && selectedTask.ID ){
+                                        handleClickProfile(event, selectedTask.ID)
+                                    }
+                                }
                                 } // Pass index to handleClick
                                 className="min-width-auto px-0 text-gray"
                             >
                                 <MoreVertIcon />
                             </Button>
                             <Menu
-                                id={`fade-menu-${selectedTask.ID}`} // Use unique IDs for each menu
+                                id={`fade-menu-${selectedTask && selectedTask.ID}`} // Use unique IDs for each menu
                                 MenuListProps={{
-                                    "aria-labelledby": `fade-button-${selectedTask.ID}`,
+                                    "aria-labelledby": `fade-button-${selectedTask && selectedTask.ID}`,
                                 }}
                                 anchorEl={anchorElProfile}
                                 open={
-                                    selectedIndexProfile === selectedTask.ID &&
-                                    Boolean(anchorElProfile)
+                                    selectedTask && (selectedIndexProfile === selectedTask.ID &&
+                                    Boolean(anchorElProfile))
                                 } // Open menu if selectedIndex matches
                                 onClose={handleCloseProfile}
                             >
 
                                 {/* only for portal */}
-                                {selectedTask.Source === "Portal" && (
+                                {selectedTask && selectedTask.Source === "Portal" && (
                                     <>
                                         <MenuItem className='ps-2' onClick={() => {
                                             setSelectedIndexProfile(null);
@@ -1918,7 +1930,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     <ListItemIcon>
                                         <DeleteIcon fontSize="medium" />
                                     </ListItemIcon> Delete Message (s)</MenuItem> */}
-                                {selectedTask.Source === "CRM" && (<>
+                                {selectedTask && selectedTask.Source === "CRM" && (<>
                                     <Button
                                         id="basic-button"
                                         aria-controls={openFolder ? 'basic-menu' : undefined}
@@ -1996,12 +2008,12 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     onChange={handalChangeSetSubject}
                                     onClick={handalClickEditeSubject}
                                     value={tSubject}
-                                    disabled={selectedTask.Source === "Portal"}
+                                    disabled={selectedTask && selectedTask.Source === "Portal"}
                                 />
                             </Box>
 
                             <Box className="mt-2 mb-3">
-                                {selectedTask.Source === "CRM" && (<>
+                                {selectedTask && selectedTask.Source === "CRM" && (<>
                                     <textarea
                                         className="form-control textarea textarea-ony-read resize-none"
                                         placeholder="Description"
@@ -2014,7 +2026,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
                                 {
-                                    <PortalMessage selectedTask={selectedTask} Json_RegisterItem={Json_RegisterItem} setPortalComments={setPortalComments} setSelectedEmailForComment={setSelectedEmailForComment}></PortalMessage>
+                                    <PortalMessage selectedTask={selectedTask && selectedTask} Json_RegisterItem={Json_RegisterItem} setPortalComments={setPortalComments} setSelectedEmailForComment={setSelectedEmailForComment}></PortalMessage>
                                 }
 
                             </Box>
@@ -2022,7 +2034,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
 
-                            {isVisible && selectedTask.Source === "CRM" && ( // Show the box if isVisible is true
+                            {isVisible && selectedTask && selectedTask.Source === "CRM" && ( // Show the box if isVisible is true
 
                                 <Box className='mb-3 mt-2'>
                                     <Stack spacing={2} direction="row">
@@ -2031,7 +2043,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     </Stack>
                                 </Box>
                             )}
-                            {isvisibleSubject && selectedTask.Source === "CRM" && ( // Show the box if isVisible is true
+                            {isvisibleSubject && selectedTask && selectedTask.Source === "CRM" && ( // Show the box if isVisible is true
 
                                 <Box className='mb-3 mt-2'>
                                     <Stack spacing={2} direction="row">
@@ -2053,9 +2065,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     aria-expanded={openClient ? 'true' : undefined}
                                     onClick={handleClickClick}
                                 >
-                                    {txtClient ? txtClient : selectedTask.Client}
+                                    {txtClient ? txtClient : selectedTask && selectedTask.Client}
                                 </Button>
-                                {selectedTask.Source === "CRM" && (<Menu
+                                {selectedTask && selectedTask.Source === "CRM" && (<Menu
                                     id="fade-menu11"
                                     MenuListProps={{
                                         'aria-labelledby': 'fade-button',
@@ -2077,7 +2089,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     />
 
                                     {filtereClient ? filtereClient.map((item, index) => {
-                                        if (selectedTask.Source === "Portal") {
+                                        if (selectedTask && selectedTask.Source === "Portal") {
                                             return <MenuItem key={index} onClick={() => {
                                                 setAnchorClsEl(null);
                                             }}>{item.Client}</MenuItem>
@@ -2099,9 +2111,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     aria-expanded={openSection ? 'true' : undefined}
                                     onClick={handleClickSection}
                                 >
-                                    {txtSection ? txtSection : selectedTask.Section}
+                                    {txtSection ? txtSection :selectedTask && selectedTask.Section}
                                 </Button>
-                                {selectedTask.Source === "CRM" && (<Menu
+                                {selectedTask && selectedTask.Source === "CRM" && (<Menu
                                     id="fade-menu"
                                     MenuListProps={{
                                         'aria-labelledby': 'fade-button',
@@ -2123,7 +2135,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     />
 
                                     {filtereSectionList ? filtereSectionList.map((item, index) => {
-                                        if (selectedTask.Source === "Portal") {
+                                        if (selectedTask && selectedTask.Source === "Portal") {
                                             return <MenuItem key={index} onClick={() => {
                                                 setAnchorSectionEl(null);
                                             }}>{item.Sec}</MenuItem>
@@ -2153,12 +2165,12 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         </Box>
                     </Box> */}
 
-                            <AssigneeUsers selectedTask={selectedTask} setAddUser={setAddUser} addUser={addUser} setOwnerID={setOwnerID} ownerID={ownerID} Json_UpdateTaskField={Json_UpdateTaskField} ></AssigneeUsers>
+                            <AssigneeUsers selectedTask={selectedTask && selectedTask} setAddUser={setAddUser} addUser={addUser} setOwnerID={setOwnerID} ownerID={ownerID} Json_UpdateTaskField={Json_UpdateTaskField} ></AssigneeUsers>
 
                             {/* dropdown end */}
                         </Box>
                         {/*  */}
-                        {selectedTask.Source === "CRM" && (<>
+                        {selectedTask && selectedTask.Source === "CRM" && (<>
                             <Box className='d-flex align-items-center justify-content-between flex-wrap'>
                                 <Box className="d-flex mt-0">
                                     <Box className="mb-2 me-1 d-flex">
@@ -2235,7 +2247,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                         <Box className="pb-0 mb-0">
                             <Box className="main-chatbox">
-                                {selectedTask.Source === "Portal" ? (<>
+                                {selectedTask && selectedTask.Source === "Portal" ? (<>
                                     {portalComments
                                         ? portalComments.map((item, index) => {
 
@@ -2649,7 +2661,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     </Stack>
 
                                     <Box className='position-relative'>
-                                        {selectedTask.Source === "CRM" && (<>
+                                        {selectedTask && selectedTask.Source === "CRM" && (<>
                                             <Box className='upload-chat-file'>
                                                 {/* <input
                                                     type="file"
@@ -2674,7 +2686,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                     </Button>
                                                     <input
                                                         type="file"
-                                                        id={`file-upload ${selectedTask.ID}`}
+                                                        id={`file-upload ${selectedTask && selectedTask.ID}`}
                                                         multiple
                                                         onChange={handleFileSelect}
                                                         className="file-input"
@@ -2690,7 +2702,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                         }}
                                                     >
                                                         <MenuItem onClick={handleAttachmentClose}>
-                                                            <label htmlFor={`file-upload ${selectedTask.ID}`} className="pointer">
+                                                            <label htmlFor={`file-upload ${selectedTask && selectedTask.ID}`} className="pointer">
                                                                 <FileUploadIcon className="font-20 me-1" /> Upload File(s)
                                                             </label>
                                                         </MenuItem>
@@ -2736,7 +2748,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     </Box>
                                 </Box>
 
-                                {selectedTask.Source === "Portal" ? (<Box className="d-flex d-flex align-items-center ms-3">
+                                {selectedTask && selectedTask.Source === "Portal" ? (<Box className="d-flex d-flex align-items-center ms-3">
                                     <Button
                                         className="btn-blue-2 ms-0 mb-2"
                                         size="small"
