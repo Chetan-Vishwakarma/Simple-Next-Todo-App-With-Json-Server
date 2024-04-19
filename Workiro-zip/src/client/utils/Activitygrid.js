@@ -35,9 +35,9 @@ export default function Activitygrid({selectedDocument,call_Json_GetAudit,getAud
         keyExpr="Activity ID"
         columnAutoWidth={true}
         showBorders={true}>
-        <Column dataField="Actioned Date" dataType="date" caption="Actioned Date"  format="M/d/yyyy, HH:mm" />
-        <Column dataField="Comments" dataType="string" caption="Comments" />
-        <Column dataField="ForwardedBy" dataType="string" caption="ForwardedBy" />
+        <Column dataField="Actioned Date" dataType="date" caption="Date"  format="M/d/yyyy, HH:mm" />
+        <Column dataField="Comments" dataType="string" caption="Activity" />
+        <Column dataField="ForwardedBy" dataType="string" caption="User" />
         {/* <Column dataField="Received Date" dataType="date" caption="Received Date" />
         <Column dataField="Category" dataType="string" caption="Category" />
         <Column dataField="Client" dataType="string" caption="Reference" />

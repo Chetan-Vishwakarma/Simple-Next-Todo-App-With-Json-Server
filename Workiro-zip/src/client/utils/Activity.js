@@ -61,6 +61,8 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     const [FilterActivity, setFilterActivity] = useState([]);
     const [Auditcomments, setAuditcomments] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
+    const [selectedComments, setSelectedComments] = React.useState('');
+    const [sortByProperty, setSortByProperty] = useState("");
     const [selectedDocudata, setselectedDocument] = useState({});
     const [userAddComment, setAddComment] = useState({
         CommentId: "",
@@ -348,7 +350,110 @@ const handleEnterKeyPress = (event) => {
         // }
     }
 };
+const handleMenuItemClick = (selectedValue) => {
+    // Here you can handle the selected value
+    console.log("Selected valuemenu:", selectedValue);
+    const filteredArr = getAudit.filter(item => {
+        // Check if the selected value is found in the Comments property of each object
+        return item.Comments.toLowerCase().includes(selectedValue.toLowerCase());
+    });
+    
+    console.log(filteredArr,"menufilteredArr");
+    setTempdatafilter(filteredArr);
+    setAnchorElSort(null);
+};
 
+const handleMenuItemByDate = () => {
+    // Sort the getAudit array based on the Actioned Date
+    const sortedData = getAudit.slice().sort((a, b) => {
+        const dateA = new Date(a["Actioned Date"]);
+        const dateB = new Date(b["Actioned Date"]);
+        return dateA - dateB;
+    });
+
+    // Set the sorted data to tempdatafilter state
+    setTempdatafilter(sortedData);
+
+    // Close the menu
+    setAnchorElSort(null);
+};
+function parseDate(dateString) {
+    const [datePart, timePart] = dateString.split(' ');
+    const [day, month, year] = datePart.split('/');
+    const [hour, minute, second] = timePart.split(':');
+    return new Date(year, month - 1, day, hour, minute, second);
+}
+function handleAscendingSort() {
+    console.log(sortByProperty, "ascending11");
+    if (sortByProperty === "Date") {
+        console.log(sortByProperty, "ascending22");
+        // Sort by Actioned Date in ascending order
+        const sortedArr = [...getAudit].sort((a, b) => {
+            // Convert Actioned Date strings to date objects for comparison
+            const dateA = parseDate(a["Actioned Date"]);
+            const dateB = parseDate(b["Actioned Date"]);
+            return dateA - dateB;
+        });
+        console.log(sortedArr, "Sorted by Date ascending");
+
+        // Set the sorted array to tempdatafilter state variable
+        setTempdatafilter(sortedArr);
+    } else if (sortByProperty === "Description") {
+        console.log(sortByProperty, "ascendingDescriptions");
+        // Sort by Comments in ascending order
+        const sortedArr = [...getAudit].sort((a, b) => {
+            // Compare Comments lexicographically
+            return a.Comments.localeCompare(b.Comments);
+        });
+        console.log(sortedArr, "Sorted by Description ascending");
+
+        // Set the sorted array to tempdatafilter state variable
+        setTempdatafilter(sortedArr);
+    }
+}
+
+
+function handleDescendingSort() {
+    if (sortByProperty === "Date") {
+        console.log(sortByProperty, "descending22");
+        // Sort by Actioned Date in descending order
+        const sortedArr = [...getAudit].sort((a, b) => {
+            // Convert Actioned Date strings to date objects for comparison
+            const dateA = parseDate(a["Actioned Date"]);
+            const dateB = parseDate(b["Actioned Date"]);
+            return dateB - dateA; // Compare in descending order
+        });
+        console.log(sortedArr, "Sorted by Date descending");
+
+        // Set the sorted array to tempdatafilter state variable
+        setTempdatafilter(sortedArr);
+    } else if (sortByProperty === "Description") {
+        console.log(sortByProperty, "descending22");
+        // Sort by Comments in descending order
+        const sortedArr = [...getAudit].sort((a, b) => {
+            // Compare Comments lexicographically in descending order
+            return b.Comments.localeCompare(a.Comments);
+        });
+        console.log(sortedArr, "Sorted by Description descending");
+
+        // Set the sorted array to tempdatafilter state variable
+        setTempdatafilter(sortedArr);
+    }
+}
+
+
+const handleMenuItemByDes = (selectedValue) => {
+    // Here you can handle the selected value
+    console.log("handleMenuItemByDes:", selectedValue);
+    const filteredArr = getAudit.filter(item => {
+        // Check if the selected value is found in the Comments property of each object
+        return item.Comments.toLowerCase().includes(selectedValue.toLowerCase());
+    });
+    
+    console.log(filteredArr,"menufilteredArr");
+    setTempdatafilter(filteredArr);
+    setAnchorElSort(null);
+};
 const handleRemoveOption = (optionToRemove) => {
     // Filter out the option to remove from tempdata
     // const updatedTempdata = tempdata.filter(option => option !== optionToRemove);
@@ -501,8 +606,17 @@ const handleRemoveOption = (optionToRemove) => {
                                                     }}
                                                 >
                                                     <Select
-                                                        value={age}
-                                                        onChange={handleChange}
+                                                        // value={age}
+                                                        // onChange={handleChange}
+                                                        value={sortByProperty}
+                                                        onChange={(e) => {
+                                                            if (e.target.value === "Sort By") {
+                                                                setSortByProperty("")
+                                                                return;
+                                                            }
+                                                            setSortByProperty(e.target.value)
+                                                        }
+                                                        }
                                                         displayEmpty
                                                         inputProps={{ 'aria-label': 'Without label' }}
                                                         className='custom-dropdown'
@@ -512,16 +626,29 @@ const handleRemoveOption = (optionToRemove) => {
                                                             <SwapVertIcon className='pe-1' /> Sort By
                                                         </MenuItem>
                                                         <MenuItem className='ps-1' value="None"><WarningIcon className='ps-1' />  Clear Sortby</MenuItem>
-                                                        <MenuItem value={"Date"} className='ps-1'>
+                                                        <MenuItem value={"Date"} className='ps-1' >
                                                             <CalendarMonthIcon className='pe-1' />
                                                             By Date</MenuItem>
-                                                        <MenuItem value={"Description"} className='ps-1'><DescriptionIcon className='pe-1' />
-                                                            By Description</MenuItem>
+                                                        <MenuItem value={"Description"} className='ps-1' ><DescriptionIcon className='pe-1' />
+                                                            By Activity</MenuItem>
                                                     </Select>
                                                 </BootstrapTooltip>
                                             </FormControl>
-                                            <UpgradeIcon />
-                                            {/* <VerticalAlignBottomIcon /> */}
+                                            {/* <UpgradeIcon />
+                                            <VerticalAlignBottomIcon /> */}
+                                            {sortByProperty !== "" && sortByProperty !== "None" && <Checkbox
+                                        // {...label}
+                                        icon={<UpgradeIcon />}
+                                        checkedIcon={<VerticalAlignBottomIcon />}
+                                        className='p-0'
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                handleAscendingSort();
+                                            } else {
+                                                handleDescendingSort();
+                                            }
+                                        }}
+                                    />}
                                         </Box>
                                     </Box>
 
@@ -557,7 +684,7 @@ const handleRemoveOption = (optionToRemove) => {
                                                     All
                                                 </Button>
                                             </BootstrapTooltip>
-                                            <Menu
+                                            {/* <Menu
                                                 id="basic-menu"
                                                 anchorEl={anchorElSort}
                                                 open={openSort}
@@ -566,10 +693,26 @@ const handleRemoveOption = (optionToRemove) => {
                                                     'aria-labelledby': 'basic-button',
                                                 }}
                                                 className='custom-dropdown'
+                                            > */}
+                                             <Menu
+                                                id="basic-menu"
+                                            
+                                                anchorEl={anchorElSort}
+                                                open={openSort}
+                                                onClose={handleCloseSort}
+                                                MenuListProps={{
+                                                    'aria-labelledby': 'basic-button',
+                                                }}
+                                              
+                                                className='custom-dropdown'
                                             >
-                                                <MenuItem onClick={handleCloseSort}>Dropdown List 1</MenuItem>
-                                                <MenuItem onClick={handleCloseSort}>Dropdown List 2</MenuItem>
-                                                <MenuItem onClick={handleCloseSort}>Dropdown List 3</MenuItem>
+                                               <MenuItem value="Section" onClick={() => handleMenuItemClick("00. Clear Filter")}>00. Clear Filter</MenuItem>
+                                                {getAudit && getAudit.length > 0 && getAudit.map((itm) => {
+                                                    return <MenuItem key={itm.Comments} value={itm.Comments} onClick={() => handleMenuItemClick(itm.Comments)}>{itm.Comments}</MenuItem>
+                                                })}
+                                                
+                                                {/* <MenuItem onClick={handleCloseSort}>Dropdown List 2</MenuItem>
+                                                <MenuItem onClick={handleCloseSort}>Dropdown List 3</MenuItem> */}
                                             </Menu>
                                         </div>
                                     </Box>
