@@ -551,12 +551,34 @@ function TodoList() {
         setAnchorEl4(null);
     };
 
-
+    const Json_AddSupplierActivityMarkComplete = (e) => {
+        let obj = {};
+        obj.OriginatorNo = e.ClientNo;
+        obj.ActionReminder = "";
+        obj.Notes = `${e["Forwarded By"]} has completed a task - ${e.Subject}. Task ID ${e.ID}`;
+        obj.Status = "sys"; //selectedTask.Status;
+        obj.TaskId = e.ID;
+        obj.TaskName = "";
+        obj.ActivityLevelID = "";
+        obj.ItemId = "";
+    
+        try {
+            ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
+                if (sts && data) {
+                    console.log({ status: true, messages: "Success"});
+                    // Json_CRM_GetOutlookTask()
+                }
+            });
+        } catch (error) {
+            console.log({ status: false, messages: "Faild Please Try again" });
+        }
+    };
     const MarkComplete = (e) => {
         console.log("MarkComplete", e)
         Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
             if (res) {
                 Json_UpdateTaskField("Status", "Completed", e);
+                Json_AddSupplierActivityMarkComplete(e);
             }
         })
     }
