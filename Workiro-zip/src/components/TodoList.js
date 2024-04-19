@@ -50,7 +50,7 @@ import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20' />, <PublishedWithChangesIcon color='primary' className='me-1 font-20' />, <HourglassBottomIcon color='primary' className='me-1 font-20' />, <CheckCircleOutlineIcon color='success' className='me-1 font-20' />];
-
+let attatmentdata = [];
 function TodoList() {
     const location = useLocation();
     const reduxData = useSelector((data) => data.counter.myTasks);
@@ -78,7 +78,7 @@ function TodoList() {
     const [selectedTask, setSelectedTask] = useState({});
 
     const [anchorEl, setAnchorEl] = React.useState(null);
-
+    const [attachmentFile, setAttachmentFile] = useState([]);
     const [loadMore, setLoadMore] = useState(20);
 
     const [folders, setFolders] = useState([]);
@@ -550,17 +550,72 @@ function TodoList() {
     const handleClose4 = () => {
         setAnchorEl4(null);
     };
+    //  function Json_Get_CRM_SavedTask_ByTaskId(taskid) {
+    //     // setAttachmentFile([]);
+    //     let obj = {};
+    //     obj.TaskId = taskid;
+    //      Cls.Json_Get_CRM_SavedTask_ByTaskId(obj, function (status, data) {
+    //         if (status && data) {
+    //             let json = JSON.parse(data);
+    //             console.log("Json_Get_CRM_SavedTask_ByTaskId", json);
 
-
+    //             let table6 = json.T6;
+    //             if (table6.length > 0) {
+    //                 attatmentdata.push(table6);
+    //                 setAttachmentFile(table6);
+                   
+    //             }
+    //         }
+    //     });
+    // }
+    function addToWorkTable(Itid, e) {
+        console.log(e, "addToWorkTable", Itid);
+        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has initiated a task-${e.Subject} . Task ID : ${e.ID}` };
+        console.log("addToWorkTable111", obj);
+        ClsSms.Json_AddToWork(obj, function (status, data) {
+            if (status) {
+                if (data) {
+                    //let json = JSON.parse(data);
+                    console.log("getitemid", data);
+                }
+            }
+        });
+    }
     const MarkComplete = (e) => {
-        console.log("MarkComplete", e)
+       
+       console.log(attatmentdata,"attatmentdataattatmentdata");
+       
         Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
             if (res) {
+               
                 Json_UpdateTaskField("Status", "Completed", e);
+
+               try{
+                let obj = {};
+                obj.TaskId = e.ID;
+                 Cls.Json_Get_CRM_SavedTask_ByTaskId(obj, function (status, data) {
+                    if (status && data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_Get_CRM_SavedTask_ByTaskId", json);
+        
+                        let table6 = json.T6;
+                        if (table6 && table6.length > 0) {
+                            if (table6 && table6.length > 0) {
+                                table6.forEach((item) => {
+                                    addToWorkTable(item.ItemId, e);
+                                });
+                            }
+                            
+                           
+                        }
+                    }
+                });
+               } catch (e) {}
             }
         })
     }
     function Json_UpdateTaskField(FieldName, FieldValue, e) {
+        // Json_Get_CRM_SavedTask_ByTaskId(e.ID);
         let o = {
             agrno: agrno,
             strEmail: Email,
@@ -574,6 +629,7 @@ function TodoList() {
             if (sts && data) {
                 if (data === "Success") {
                     toast.success(FieldName==="EndDateTime"?"Due Date Changed":"Completed")
+                  
                     Json_AddSupplierActivity(e);
                 }
                 console.log("Json_UpdateTaskField", data)

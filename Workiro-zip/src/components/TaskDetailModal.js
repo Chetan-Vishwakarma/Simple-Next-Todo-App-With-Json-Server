@@ -1178,7 +1178,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                             Json_AddSupplierActivity(mgs, "sys")
                         }
 
-
+                       
 
                     }
                     else {
@@ -2803,7 +2803,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                            Document List
+                            Attachment List
                         </Typography>
                         {/* <Box className="btn-Select">
                                     <Button className='btn-white'>Action</Button>
@@ -2878,7 +2878,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                             />
                                                             <Box className="upload-content pe-3">
                                                                 <Typography variant="h4" >
-                                                                    {data.data.Description ? data.data.Description : "Demo"}
+                                                                    {data.data.ItemId ? data.data.ItemId : "Demo"}
                                                                 </Typography>
                                                                 <Typography variant="body1">
                                                                     {/* Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span>  */}
