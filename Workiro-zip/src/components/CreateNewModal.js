@@ -3290,6 +3290,72 @@ setAddUser([]);
                                                 </>
                                             );
                                         })
+                                        : (createNewFileObj && createNewFileObj.length > 0)
+                                        ? createNewFileObj.map((file, index) => {
+                                            // console.log("Uploadin", file);
+
+                                            return (
+                                                <>
+                                                    <label className="file-uploads-label mb-2" key={index}>
+                                                        <Box className="d-flex align-items-center">
+                                                            <span className="material-symbols-outlined icon">
+                                                                description
+                                                            </span>
+                                                            <Box className="upload-content pe-3">
+                                                                <Typography variant="h4">
+                                                                    {file ? file.FileName : ""}
+                                                                </Typography>
+                                                                <Typography variant="body1">
+                                                                    {file ? kbToMb(file.FileSize) : ""} MB
+                                                                </Typography>
+                                                            </Box>
+                                                        </Box>
+
+                                                        <Box className="d-flex align-items-center">
+
+                                                            {txtTaskType === "Portal" && (<>
+                                                                <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
+                                                                    Sign
+                                                                </Button>
+                                                            </>)}
+
+                                                            <Box className="ps-2">
+
+                                                                <Button
+                                                                    id="basic-button"
+                                                                    aria-controls={openDoc ? 'basic-menu' : undefined}
+                                                                    aria-haspopup="true"
+                                                                    aria-expanded={openDoc ? 'true' : undefined}
+                                                                    onClick={(event) => handleClickDoc(event, index)} // Pass index to handleClickDoc
+                                                                    className="min-width-auto"
+
+                                                                >
+                                                                    <span className="material-symbols-outlined">
+                                                                        more_vert
+                                                                    </span>
+                                                                </Button>
+
+                                                                <Menu
+                                                                    id="basic-menu"
+                                                                    className="custom-dropdown"
+                                                                    anchorEl={anchorElDoc}
+                                                                    open={openDoc && selectedFileIndex === index} // Ensure the menu opens only for the selected file
+                                                                    onClose={handleCloseDoc}
+                                                                    MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
+                                                                >
+                                                                    <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Delete</MenuItem>
+                                                                    {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
+                                                                        <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
+                                                                    )}
+                                                                </Menu>
+
+                                                            </Box>
+                                                        </Box>
+                                                        {/* <Button variant="text" className='btn-blue-2'>Select file</Button> */}
+                                                    </label>
+                                                </>
+                                            );
+                                        })
                                         : null}
                                 </Box>
 
