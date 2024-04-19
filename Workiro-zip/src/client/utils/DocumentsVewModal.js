@@ -47,9 +47,13 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
     //const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
-    const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/"; // base url for api
+    const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+    const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+     // base url for api
     //   let dt = new LoginDetails();
     let cls = new CommanCLS(baseUrl, agrno, Email, password);
+    let clsPractice = new CommanCLS(baseUrlPractice, agrno, Email, password);
+
     // const [value, setValue] = React.useState(1);
     // const handleChange = (event, newValue) => {
     //     setValue(newValue);
