@@ -20,6 +20,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 import CreateNewModalTask from '../../components/CreateNewModal';
 
+import { useDispatch } from "react-redux";
+import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux } from "../../redux/reducers/counterSlice"
+
 import $ from 'jquery';
 
 
@@ -28,6 +31,7 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument, Json_CRM_GetOutlookTask }) {
+    const dispatch = useDispatch();
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -88,7 +92,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         setOpenPDFView(false);
     };
 
-    const call_Json_GetAudit=()=>{
+    const call_Json_GetAudit = () => {
         Json_GetAudit();
     }
 
@@ -110,8 +114,8 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                             if (Actioned["Actioned Date"]) {
                                 ActioneddATE = moment(Actioned["Actioned Date"]).format("DD/MM/YYYY HH:mm:ss");
                             }
-                           // const date = new Date(ActivityDate);
-                            return { ...Actioned, ["Actioned Date"]: ActioneddATE};
+                            // const date = new Date(ActivityDate);
+                            return { ...Actioned, ["Actioned Date"]: ActioneddATE };
                         });
 
                         const filteredArray = formattedActivity.filter(item => item.Comments !== null);
@@ -119,8 +123,8 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                         setGetAudit(filteredArray);
                         console.log("Json_GetAudit", filteredArray)
                     }
-                    
-                  
+
+
                 }
             })
         } catch (error) {
@@ -256,6 +260,17 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                         };
                         console.log("handle change fileData", fileData)
                         filesData.push(fileData);
+
+
+                        // let tempTxtClientData = { Client: item.Client, ClientID: item.SenderId };
+                        // let tempTxtSectionData = { Sec: item.Section, SecID: item.PostItemTypeID };
+                        // let tempFolderData = { Folder: item.Folder, FolderID: item.ProjectId };
+
+                        // dispatch(setClientAndDocDataForTaskModalRedux({ TaskType: "CRM", createNewFileObj: filesData, txtClientData: tempTxtClientData, txtSectionData: tempTxtSectionData, txtFolderData: tempFolderData, }));
+                        // // console.log("dgjkdlgjroeti",tskType);
+                        // dispatch(handleOpenModalRedux("CRM"));
+
+
                         setCreateNewFileObj(filesData);
                     }
                     else {
@@ -447,15 +462,30 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
     }
 
+    const handleTaskModalOpening = (taskType) => {
+        if (selectedDocument && createNewFileObj) {
+            let tempTxtClientData = { Client: selectedDocument.Client, ClientID: selectedDocument.SenderId };
+            let tempTxtSectionData = { Sec: selectedDocument.Section, SecID: selectedDocument.PostItemTypeID };
+            let tempFolderData = { Folder: selectedDocument.Folder, FolderID: selectedDocument.ProjectId };
+            
+            console.log("handle change fileData",createNewFileObj);
+
+            dispatch(setClientAndDocDataForTaskModalRedux({ TaskType: taskType, createNewFileObj: createNewFileObj, txtClientData: tempTxtClientData, txtSectionData: tempTxtSectionData, txtFolderData: tempFolderData, }));
+            // console.log("dgjkdlgjroeti",tskType);
+            dispatch(handleOpenModalRedux(taskType));
+        }
+    }
+
     const createTask = () => {
         setTaskType("CRM")
-        setopenModal(true)
-
+        // setopenModal(true)
+        handleTaskModalOpening("CRM");
     }
 
     const createTaskForPublish = () => {
         setTaskType("Portal")
-        setopenModal(true)
+        // setopenModal(true)
+        handleTaskModalOpening("Portal");
     }
 
     return (
@@ -472,7 +502,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                     <Box className="d-flex align-items-center justify-content-between">
                         <Box className="dropdown-box">
                             <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                            Document Viewer
+                                Document Viewer
                             </Typography>
                         </Box>
 
@@ -688,7 +718,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                             </TabContext>
 
 
-                            {openModal && openModal && <CreateNewModalTask
+                            {/* {openModal && openModal && <CreateNewModalTask
                                 TaskType={TaskType}
                                 createNewFileObj={createNewFileObj}
                                 txtClientData={txtClientData}
@@ -696,7 +726,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 txtFolderData={txtFolderData}
                                 openModal={openModal}
                                 setOpenModal={setopenModal}
-                            ></CreateNewModalTask>}
+                            ></CreateNewModalTask>} */}
                         </Box>
                     </DialogContentText>
                 </DialogContent>
