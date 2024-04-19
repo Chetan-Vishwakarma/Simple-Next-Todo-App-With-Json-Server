@@ -468,7 +468,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                 className='custom-modal full-modal'
                 sx={{ width: '100%', maxWidth: '100%' }}
             >
-                <DialogContent className='full-height-modal'>
+                <DialogContent className='clearfix'>
                     <Box className="d-flex align-items-center justify-content-between">
                         <Box className="dropdown-box">
                             <Typography variant="h4" className='font-18 bold mb-0 text-black'>

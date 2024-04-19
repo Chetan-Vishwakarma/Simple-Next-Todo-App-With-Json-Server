@@ -1121,9 +1121,9 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                                     </Box>
                                                 </>) : (<>
                                                     <Box className='approval-box'>
-                                                        <HourglassBottomIcon className="me-2" />
+                                                        <HourglassEmptyIcon className="me-2" />
                                                         <Typography variant='subtitle1' className='text-center font-14'>
-                                                            Document not sent for signature or waiting for other signatories
+                                                            not for signature or awaiting other signatories
                                                         </Typography>
                                                     </Box>
                                                 </>)
@@ -1162,7 +1162,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                                             <Box className='ps-2'>
                                                                 {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
                                                                 <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
-                                                                <Button className='btn-blue-2' size="small" onClick={() => HandalChangeSendReminder(item)} startIcon={<ScheduleIcon />}>Document Pending Signature</Button>
+                                                                <Button className='btn-blue-2' size="small" onClick={() => HandalChangeSendReminder(item)} startIcon={<ScheduleIcon />}>Send Reminder</Button>
                                                             </Box></Box>)}
                                                     </>
                                                 ) : (
