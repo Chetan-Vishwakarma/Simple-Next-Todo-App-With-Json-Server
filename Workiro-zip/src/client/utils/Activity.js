@@ -61,6 +61,8 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     const [FilterActivity, setFilterActivity] = useState([]);
     const [Auditcomments, setAuditcomments] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
+    const [UniqueUser, setUniqueUser] = useState([]);
+    const [ForwardUser, setForwardUser] = useState("");
     const [selectedComments, setSelectedComments] = React.useState('');
     const [sortByProperty, setSortByProperty] = useState("");
     const [selectedDocudata, setselectedDocument] = useState({});
@@ -163,6 +165,18 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
         console.log("getAudit", getAudit);
         setFilterActivity(getAudit);
         setAuditcomments(getAudit);
+        const uniqueForwardedBy = [];
+        const forwardedBySet = new Set();
+        if(getAudit && getAudit.length > 0) {
+        getAudit.forEach(item => {
+        if (!forwardedBySet.has(item.ForwardedBy)) {
+        forwardedBySet.add(item.ForwardedBy);
+        uniqueForwardedBy.push(item);
+         }
+        });
+        console.log(uniqueForwardedBy,"uniqueForwardedBy");
+        setUniqueUser(uniqueForwardedBy);
+    }
         setselectedDocument(selectedDocument);
         Json_GetUserComments();
         Json_GetCategory();
@@ -352,10 +366,11 @@ const handleEnterKeyPress = (event) => {
 };
 const handleMenuItemClick = (selectedValue) => {
     // Here you can handle the selected value
+    setForwardUser(selectedValue);
     console.log("Selected valuemenu:", selectedValue);
     const filteredArr = getAudit.filter(item => {
         // Check if the selected value is found in the Comments property of each object
-        return item.Comments.toLowerCase().includes(selectedValue.toLowerCase());
+        return item.ForwardedBy.toLowerCase().includes(selectedValue.toLowerCase());
     });
     
     console.log(filteredArr,"menufilteredArr");
@@ -673,6 +688,7 @@ const handleRemoveOption = (optionToRemove) => {
                                                     },
                                                 }}
                                             >
+
                                                 <Button
                                                     id="basic-button"
                                                     aria-controls={openSort ? 'basic-menu' : undefined}
@@ -681,7 +697,7 @@ const handleRemoveOption = (optionToRemove) => {
                                                     onClick={handleClickSort}
                                                     className='min-width-auto'
                                                 >
-                                                    All
+                                                  {(ForwardUser && ForwardUser!="Clear Filter") ? ForwardUser : "All"}  
                                                 </Button>
                                             </BootstrapTooltip>
                                             {/* <Menu
@@ -706,9 +722,9 @@ const handleRemoveOption = (optionToRemove) => {
                                               
                                                 className='custom-dropdown'
                                             >
-                                               <MenuItem value="Section" onClick={() => handleMenuItemClick("00. Clear Filter")}>00. Clear Filter</MenuItem>
-                                                {getAudit && getAudit.length > 0 && getAudit.map((itm) => {
-                                                    return <MenuItem key={itm.Comments} value={itm.Comments} onClick={() => handleMenuItemClick(itm.Comments)}>{itm.Comments}</MenuItem>
+                                               <MenuItem value="Section" onClick={() => handleMenuItemClick("Clear Filter")}>Clear Filter</MenuItem>
+                                                {UniqueUser && UniqueUser.length > 0 && UniqueUser.map((itm) => {
+                                                    return <MenuItem key={itm.ForwardedBy} value={itm.ForwardedBy} onClick={() => handleMenuItemClick(itm.ForwardedBy)}>{itm.ForwardedBy}</MenuItem>
                                                 })}
                                                 
                                                 {/* <MenuItem onClick={handleCloseSort}>Dropdown List 2</MenuItem>
