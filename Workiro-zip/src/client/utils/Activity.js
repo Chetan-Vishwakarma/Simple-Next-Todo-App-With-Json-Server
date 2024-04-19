@@ -478,7 +478,7 @@ const handleRemoveOption = (optionToRemove) => {
         <>
             <Box class="ml-auto mr-auto">
 
-                <Box className='d-flex justify-content-between my-3 mb-4 align-items-start'>
+                <Box className='d-flex justify-content-between my-1 mb-2 align-items-start'>
                     <Box className="search-box m-auto">
                         <Layout>
                             <AutocompleteWrapper>
