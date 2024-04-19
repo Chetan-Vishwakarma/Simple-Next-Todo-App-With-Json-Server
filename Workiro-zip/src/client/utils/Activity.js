@@ -745,8 +745,8 @@ const handleRemoveOption = (optionToRemove) => {
                 {toggleScreen.singleCardView ?
                 <Box class="activity-timeline">
                     <ul class="timeline-ul">
-                    {tempdatafilter && tempdatafilter.length > 0 ? (
-    tempdatafilter.map((item, index) => (
+                    {tempdatafilter ? (
+    tempdatafilter && tempdatafilter.length>0 && tempdatafilter.map((item, index) => (
         <li key={index}>
             <Box class="datetime">
                 <span>{item["Actioned Date"]}</span>
