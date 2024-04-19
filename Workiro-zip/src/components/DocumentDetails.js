@@ -175,8 +175,12 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                         return { ...task, EndDateTime: date, CreationDate: date2 };
                     });
                     // console.log("ertiretufjhjfg",formattedTasks);
-                    setSelectedTask(formattedTasks[0]);
-                    handleClickDetailOpen(formattedTasks[0]);
+                    if( formattedTasks.length > 0 ){
+                        setSelectedTask(formattedTasks[0]);
+                        handleClickDetailOpen(formattedTasks[0]);
+                    }else if( formattedTasks.length === 0 ){
+                        toast.error("Unable to open this task due to internal issue");
+                    }
                 }
             });
         } catch (err) {
