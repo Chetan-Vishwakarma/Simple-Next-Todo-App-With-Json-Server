@@ -37,6 +37,7 @@ import {useNavigate} from "react-router-dom";
 
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import UploadDocForClient from './UploadDocForClient';
+import CustomLoader from '../../components/CustomLoader';
 
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
@@ -269,7 +270,7 @@ function ClientDetails() {
                             </TabList>
                         </Box>
                         <TabPanel value="1" className='p-0'>
-                            <Box className="general-tab white-box">
+                            { ( clientDetails && clientDetails?.Table3?.length > 0 ) ?<><Box className="general-tab white-box">
                                 <Box className="row">
                                     {/* For CompanyDetails */}
                                     <CompanyDetails companyDetails={companyDetails} originatorNo={originatorNo} Cls={Cls}/>
@@ -280,7 +281,7 @@ function ClientDetails() {
                             <Box className='main-accordian'>
                                 {/* For UDFs */}
                                 <UdfCard data={clientDetails} />
-                            </Box>
+                            </Box></>:<CustomLoader/>}
                         </TabPanel>
 
                         <TabPanel value="2" className='p-0'>
