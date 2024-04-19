@@ -1324,7 +1324,7 @@ function CreateNewModalTask({ ...props }) {
                         // setMessageId(js.Message);
                         console.log("selectedDocumentFile", selectedDocumentFile)
                         if (selectedDocumentFile.length > 0) {
-                            addToWorkTable(selectedDocumentFile.map(obj => obj.DocId).join("|"), js.Message);
+                            addToWorkTable(selectedDocumentFile.map(obj => obj.DocId).join("|"), js.Message,textSubject);
                             Json_CRM_TaskDMSAttachmentInsert(js.Message);
                         }
 
@@ -1606,9 +1606,9 @@ setAddUser([]);
         // addItemdata = [...uniqueData];
         console.log(addItemdata, "addItemdata");
     };
-    function addToWorkTable(Itid, taskID) {
+    function addToWorkTable(Itid, taskID,textSubject) {
         console.log(taskID, "addToWorkTable", Itid);
-        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${ownerName} has initiated task ID : ${taskID}` };
+        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${ownerName} has initiated a task-${textSubject} . Task ID : ${taskID}` };
         console.log("addToWorkTable111", obj);
         clsSms.Json_AddToWork(obj, function (status, data) {
             if (status) {
