@@ -126,6 +126,16 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         setAnchorElDocumentList(newAnchorElDocumentList);
     };
 
+    const [editField,setEditField] = useState("");
+    const [testForEdit,setTestForEdit] = useState("");
+    const [renderTest,setRenderTest] = useState({});
+
+    const handleEditField = (event, key) => {
+        event.stopPropagation();
+        setEditField(key);
+        setTestForEdit("");
+    }
+
     // const Json_Get_CRM_Task_ActivityByTaskId=(sTask)=>{
     //     let obj = {
     //         Email: localStorage.getItem('Email'),
@@ -474,9 +484,13 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             className='me-2 ms-0'
                                         />
                                         <Box className="upload-content pe-3">
-                                            <Typography variant="h4" >
-                                                {data.data.Description ? data.data.Description : "Demo"}
-                                            </Typography>
+                                            {editField===data.key?<input value={testForEdit} onChange={(e)=>setTestForEdit(e.target.value)} onBlur={(e)=>{
+                                                e.stopPropagation();
+                                                setRenderTest({...renderTest, [data.key]:testForEdit});
+                                                // setEditField("");
+                                            }} placeholder="test..." autoFocus={true}/>:<Typography variant="h4" >
+                                                {renderTest[data.key] ? renderTest[data.key] : data.data.Description ? data.data.Description : "Demo"}
+                                            </Typography>}
                                             <Typography variant="body1">
                                                 {/* Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span>  */}
                                                 Date <span className='sembold'>{data.data["Item Date"] ? data.data["Item Date"] : ""}</span> |
@@ -540,7 +554,10 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                                 </ListItemIcon>
                                                 Upload New Version</MenuItem>
                                             <MenuItem
-                                                onClick={(event) => handleCloseDocument(event, data)}
+                                                onClick={(event) => {
+                                                    handleEditField(event, data.key);
+                                                    handleCloseDocument(event, data);
+                                                }}
                                             >
                                                 <ListItemIcon>
                                                     <DriveFileRenameOutlineIcon fontSize="medium" />
