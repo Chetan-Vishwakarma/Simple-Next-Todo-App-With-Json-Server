@@ -207,7 +207,7 @@ function PortalDetails() {
                             {Array(6).fill("").map(() => {
                                 return <>
 
-                                    <Box className='col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 d-flex'>
+                                    <Box className='col-xxl-6 col-xl-6 col-lg-12 col-md-12 col-sm-12 d-flex'>
                                         <Box className='todo-list-box white-box relative w-100'>
 
                                             {/* <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography> */}

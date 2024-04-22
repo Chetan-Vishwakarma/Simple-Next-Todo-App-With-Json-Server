@@ -19,18 +19,20 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Checkbox, FormControlLabel } from '@mui/material';
 import CommanCLS from '../../services/CommanService';
 import dayjs from 'dayjs';
-import CreateNewModalTask from '../../components/CreateNewModal';
-//import { red } from '@mui/material/colors';
 import moment from 'moment';
-import { ToastContainer, toast } from 'react-toastify';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useLocation } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
+
 let originatorNo;
 function UploadDocument({ 
       openUploadDocument, 
       setOpenUploadDocument,
-      documentDate, setDocumentDate, receivedDate, setReceivedDate, createNewFileObj, setCreateNewFileObj, txtFolderData, setTxtFolderData, txtClientData, setTxtClientData, txtSectionData, setTxtSectionData, TaskType, setTaskType, openModal, setOpenModal, handleClickOpen
+      documentDate, setDocumentDate, receivedDate, setReceivedDate, setCreateNewFileObj, txtFolderData, setTxtFolderData, txtClientData, setTxtClientData, txtSectionData, setTxtSectionData, setTaskType, setOpenModal, handleClickOpen, openDocumentModalByRedux
     }) {
-    //console.log("location state",localtion.state)
+        //console.log("location state",localtion.state)
+    const dispatch = useDispatch();
     const localtion = useLocation();
     try {
         originatorNo = localtion.state;
@@ -43,6 +45,7 @@ function UploadDocument({
 
 
     const handleCloseDocumentUpload = () => {
+        dispatch(setOpenDocumentModalByRedux(false));
         setOpenUploadDocument(false);
     };
 
@@ -50,6 +53,7 @@ function UploadDocument({
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
     const [txtFolderId, setTxtFolderId] = useState(localStorage.getItem("ProjectId"));
+
 
     // const [txtFolderData, setTextFolderData] = useState(null);
 
@@ -309,9 +313,9 @@ function UploadDocument({
             setTxtFolderData(data);
             Json_GetSections(data.FolderID)
             Json_GetClientsByFolder(data.FolderID)
+            Json_GetFolderData(data.FolderID)
         }
-        Json_GetFolderData(data.FolderID)
-
+        // Json_GetFolderData(data.FolderID)
     }
 
     const handleClientChange = (data) => {
@@ -596,6 +600,7 @@ function UploadDocument({
                                 counter++;
                                // console.log("Json_RegisterItem", js,counter)
                                 if (fileData) {
+
                                     fileData.DocId = js.ItemId;
                                     setCreateNewFileObj((Previous) => [...Previous, fileData]);
                                 }
@@ -607,6 +612,7 @@ function UploadDocument({
                                 }
 
                                 if (buttonNameText === "Submit & Create Portal Task" || buttonNameText === "Submit & Create Task") {
+                                    let taskType = buttonNameText === "Submit & Create Portal Task" ? "Portal" : buttonNameText === "Submit & Create Task" ? "CRM" : "";
                                     setshowModalCreateTask(true)
                                     setOpenModal(true);
                                     handleClickOpen("Portal");
@@ -800,7 +806,7 @@ function UploadDocument({
                                 </Box>
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-                                    <Autocomplete
+                                    {!openDocumentModalByRedux?(<Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
                                         options={clientList}
@@ -811,7 +817,19 @@ function UploadDocument({
                                         //value={originatorNo.originatorNo} // Set default selected option based on the ID
                                         onChange={(event, newValue) => handleClientChange(newValue)}
                                         renderInput={(params) => <TextField {...params} label="Reference" />}
-                                    />
+                                    />):(<Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={clientList}
+                                        defaultValue={clientList.filter(itm=>itm.ClientID===originatorNo.originatorNo)[0]}
+                                        getOptionLabel={(option) => {
+                                            // console.log("ldsfljfd",option.Client);
+                                            return option.Client;
+                                        }} // assuming "Client" is the property you want to display
+
+                                        onChange={(event, newValue) => handleClientChange(newValue)}
+                                        renderInput={(params) => <TextField {...params} label="Reference" />}
+                                    />)}
                                 </Box>
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 d-flex align-items-end'>

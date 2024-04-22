@@ -493,7 +493,7 @@ const handleRemoveOption = (optionToRemove) => {
         <>
             <Box class="ml-auto mr-auto">
 
-                <Box className='d-flex justify-content-between my-3 mb-4 align-items-start'>
+                <Box className='d-flex justify-content-between my-1 mb-2 align-items-start'>
                     <Box className="search-box m-auto">
                         <Layout>
                             <AutocompleteWrapper>
@@ -732,18 +732,15 @@ const handleRemoveOption = (optionToRemove) => {
                                             </Menu>
                                         </div>
                                     </Box>
-
                                 </Box>
-
                             </Popover>
                         </Box>
                     </Box>
-
                 </Box>
 
-                <hr />
+                <hr className='mt-0' />
                 {toggleScreen.singleCardView ?
-                <Box class="activity-timeline">
+                <Box class="activity-timeline activity-timeline-2">
                     <ul class="timeline-ul">
                     {tempdatafilter ? (
     tempdatafilter && tempdatafilter.length>0 && tempdatafilter.map((item, index) => (

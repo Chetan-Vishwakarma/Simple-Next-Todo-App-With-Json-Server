@@ -471,8 +471,8 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
             let tempTxtClientData = { Client: selectedDocument.Client, ClientID: selectedDocument.SenderId };
             let tempTxtSectionData = { Sec: selectedDocument.Section, SecID: selectedDocument.PostItemTypeID };
             let tempFolderData = { Folder: selectedDocument.Folder, FolderID: selectedDocument.ProjectId };
-            
-            console.log("handle change fileData",createNewFileObj);
+
+            console.log("handle change fileData", createNewFileObj);
 
             dispatch(setClientAndDocDataForTaskModalRedux({ TaskType: taskType, createNewFileObj: createNewFileObj, txtClientData: tempTxtClientData, txtSectionData: tempTxtSectionData, txtFolderData: tempFolderData, }));
             // console.log("dgjkdlgjroeti",tskType);
@@ -499,39 +499,40 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                 onClose={handleClosePDFView}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
-                className='custom-modal full-modal'
+                className='custom-modal full-modal
+                '
                 sx={{ width: '100%', maxWidth: '100%' }}
             >
-                <DialogContent className='full-height-modal'>
-                    <Box className="d-flex align-items-center justify-content-between">
-                        <Box className="dropdown-box">
-                            <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                                Document Viewer
-                            </Typography>
-                        </Box>
 
-                        {/*  */}
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                            Document Viewer
+                        </Typography>
+                    </Box>
 
-                        <Box className="d-flex align-items-center justify-content-between flex-wrap">
+                    {/*  */}
 
-                            <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTask} >Create Task</Button>
-                            <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTaskForPublish} >Publish</Button>
-                            <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
-                            {/* <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button> */}
+                    <Box className="d-flex align-items-center justify-content-between flex-wrap">
 
-                            <Box>
-                                <Button
-                                    id="basic-button"
-                                    aria-controls={ChangeIndex ? 'basic-menu' : undefined}
-                                    aria-haspopup="true"
-                                    aria-expanded={ChangeIndex ? 'true' : undefined}
-                                    onClick={handleClickChangeIndex}
-                                    className='btn-blue-2'
-                                >
-                                    Category
-                                    {/* <KeyboardArrowDownIcon className='ms-1' /> */}
-                                </Button>
-                                {/* <Menu
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTask} >Create Task</Button>
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTaskForPublish} >Publish</Button>
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
+                        {/* <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button> */}
+
+                        <Box>
+                            <Button
+                                id="basic-button"
+                                aria-controls={ChangeIndex ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={ChangeIndex ? 'true' : undefined}
+                                onClick={handleClickChangeIndex}
+                                className='btn-blue-2 mb-1'
+                            >
+                                Category
+                                {/* <KeyboardArrowDownIcon className='ms-1' /> */}
+                            </Button>
+                            {/* <Menu
                                 id="basic-menu"
                                 className='custom-dropdown'
                                 anchorEl={anchorElChangeIndex}
@@ -547,21 +548,21 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 <MenuItem onClick={handleCloseChangeIndex}> <AddIcon className='me-2' /> </MenuItem>
                                 <MenuItem onClick={handleCloseChangeIndex}> <AlarmOnIcon className='me-2' /> Add Activity </MenuItem>
                             </Menu> */}
-                            </Box>
-
-                            <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
-                                <span className="material-symbols-outlined text-black">
-                                    cancel
-                                </span>
-                            </Button>
-
                         </Box>
-                    </Box>
 
-                    <hr />
+                        <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
+                            <span className="material-symbols-outlined text-black">
+                                cancel
+                            </span>
+                        </Button>
+
+                    </Box>
+                </Box>
+
+                <DialogContent className='clearfix'>
 
                     <DialogContentText id="alert-dialog-description">
-                        <Box sx={{ width: '100%', typography: 'body1' }} className="mt-3">
+                        <Box className="mt-3 full-height-modal">
                             <TabContext value={value}>
                                 <Box>
                                     <Tabs onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
