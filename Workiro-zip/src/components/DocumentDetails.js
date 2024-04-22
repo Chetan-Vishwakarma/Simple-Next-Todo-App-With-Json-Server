@@ -48,6 +48,7 @@ import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux } from "../r
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
 const password = localStorage.getItem("Password");
+const folderId = localStorage.getItem("FolderId");
 const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 //const baseUrlDocuSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -129,6 +130,52 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     const [editField,setEditField] = useState("");
     const [testForEdit,setTestForEdit] = useState("");
     const [renderTest,setRenderTest] = useState({});
+
+    const [editingIndex, setEditingIndex] = useState(null);
+    const [updatedSubject, setUpdatedSubject] = useState('');
+    const [test, setTest] = useState({});
+
+    const handleEdit = (index,data) => {
+        console.log("Editing index:", index);
+        setEditingIndex(index);
+        setUpdatedSubject(data.Description);
+    };
+
+    const handleEditChange = (event) => {
+        setUpdatedSubject(event.target.value);
+    };
+
+    const Json_RenameDocument = (doc, newDesc, index) => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ItemId: doc["Registration No."] ? doc["Registration No."] : "",
+            Description: newDesc,
+            FolderId: folderId
+        };
+        Cls.Json_RenameDocument(obj, (sts, data) => {
+            if (sts) {
+                if (data) {
+                    let json = JSON.parse(data);
+                    console.log("Json_RenameDocument", json);
+                    if(json.Status==="Success"){
+                        // Json_getRecentDocumentList();
+                        toast.success(json.Message);
+                        setEditingIndex(null);
+                        setTest({...test, [index]: newDesc});
+                    }else{
+                        toast.error("Unable to rename this document");
+                    }
+                }
+            }
+        });
+    }
+
+    const handleSave = (newDesc, oldDesc, doc, index) => {
+        if(oldDesc===newDesc) return;
+        Json_RenameDocument(doc, newDesc, index);
+    };
 
     const handleEditField = (event, key) => {
         event.stopPropagation();
@@ -484,12 +531,16 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             className='me-2 ms-0'
                                         />
                                         <Box className="upload-content pe-3">
-                                            {editField===data.key?<input value={testForEdit} onChange={(e)=>setTestForEdit(e.target.value)} onBlur={(e)=>{
-                                                e.stopPropagation();
-                                                setRenderTest({...renderTest, [data.key]:testForEdit});
-                                                // setEditField("");
-                                            }} placeholder="test..." autoFocus={true}/>:<Typography variant="h4" >
-                                                {renderTest[data.key] ? renderTest[data.key] : data.data.Description ? data.data.Description : "Demo"}
+                                            {editingIndex===data.key?<input
+                                            type="text"
+                                            defaultValue={data.data.Description}
+                                            value={updatedSubject}
+                                            onChange={handleEditChange}
+                                            autoFocus
+                                            onBlur={(e)=>handleSave(e.target.value, data.data.Description, data.data, data.key)}
+                                            className='edit-input'
+                                        />:<Typography variant="h4" >
+                                                {test[data.key] ? test[data.key] : data.data.Description ? data.data.Description : "Demo"}
                                             </Typography>}
                                             <Typography variant="body1">
                                                 {/* Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span>  */}
@@ -555,7 +606,8 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                                 Upload New Version</MenuItem>
                                             <MenuItem
                                                 onClick={(event) => {
-                                                    handleEditField(event, data.key);
+                                                    // handleEditField(event, data.key);
+                                                    handleEdit(data.key,data.data);
                                                     handleCloseDocument(event, data);
                                                 }}
                                             >
