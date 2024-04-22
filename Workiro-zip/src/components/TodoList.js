@@ -570,19 +570,19 @@ function TodoList() {
     //         }
     //     });
     // }
-    function addToWorkTable(Itid, e) {
-        console.log(e, "addToWorkTable", Itid);
-        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has initiated a task-${e.Subject} . Task ID : ${e.ID}` };
-        console.log("addToWorkTable111", obj);
-        ClsSms.Json_AddToWork(obj, function (status, data) {
-            if (status) {
-                if (data) {
-                    //let json = JSON.parse(data);
-                    console.log("getitemid", data);
-                }
-            }
-        });
-    }
+    // function addToWorkTable(Itid, e) {
+    //     console.log(e, "addToWorkTable", Itid);
+    //     let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has initiated a task-${e.Subject} . Task ID : ${e.ID}` };
+    //     console.log("addToWorkTable111", obj);
+    //     ClsSms.Json_AddToWork(obj, function (status, data) {
+    //         if (status) {
+    //             if (data) {
+    //                 //let json = JSON.parse(data);
+    //                 console.log("getitemid", data);
+    //             }
+    //         }
+    //     });
+    // }
     function addToWorkTable(Itid, e) {
         console.log(e, "addToWorkTable", Itid);
         let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has initiated a task-${e.Subject} . Task ID : ${e.ID}` };
@@ -605,17 +605,20 @@ function TodoList() {
         };
 
         ClsPortal.GetMessageAttachments_Json(o, function (sts, data) {
+            
             if (sts && data) {
                 let arrayOfObjects = JSON.parse(data);
                 console.log("GetMessageAttachments_Json11", arrayOfObjects);
                 if(arrayOfObjects && arrayOfObjects.length > 0) {
                     setAttachmentFileTodo(arrayOfObjects);
-                    arrayOfObjects.forEach((item) => {
+                    if(e.Source==="Portal") {
+                        arrayOfObjects.forEach((item) => {
                             if(item.ItemID) {
                                 addToWorkTable(item.ItemID,e);
                             }
                            
                         });
+                    }
                    
                 }
             }
@@ -644,13 +647,17 @@ function TodoList() {
                                 table6.forEach((item) => {
                                     addToWorkTable(item.ItemId, e);
                                 });
+                            } else {
+                                
                             }
                        
                     }
                 });
                } catch (e) {}
                try{
-                GetMessageAttachments_Json(e.PubMessageId,e);
+                 if(e.Source==="Portal"){
+                    GetMessageAttachments_Json(e.PubMessageId,e);
+                 }
                } catch (e) {}
             }
         })

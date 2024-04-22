@@ -642,6 +642,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
         };
 
         ClsPortal.GetMessageAttachments_Json(o, function (sts, data) {
+            
             if (sts && data) {
                 let arrayOfObjects = JSON.parse(data);
                 console.log("GetMessageAttachments_Json11", arrayOfObjects);
@@ -784,19 +785,30 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
         setanchorElStatus(null);
         setSelectedIndexStatus(null); // Reset the selected index after closing the menu
         if (e.target.innerText) {
-            Json_UpdateTaskField("Status", e.target.innerText, returnMessageStatus(e.target.innerText));
-            if (attachmentFile && attachmentFile.length > 0) {
-                attachmentFile.forEach((item) => {
-                    addToWorkTable(item.ItemId, selectedTask);
-                });
-            }
-            if (PortalDocumentShow && PortalDocumentShow.length > 0) {
-                PortalDocumentShow.forEach((item) => {
-                    if(item.ItemID) {
-                        addToWorkTable(item.ItemID,selectedTask);
+            Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
+                if (res) {
+                    Json_UpdateTaskField("Status", e.target.innerText, returnMessageStatus(e.target.innerText));
+                    if (attachmentFile && attachmentFile.length > 0) {
+                        attachmentFile.forEach((item) => {
+                            addToWorkTable(item.ItemId, selectedTask);
+                        });
+                    } 
+                    if(selectedTask.Source ==="Portal"){
+
+                        if (PortalDocumentShow && PortalDocumentShow.length > 0) {
+                            PortalDocumentShow.forEach((item) => {
+                                if(item.ItemID) {
+                                    addToWorkTable(item.ItemID,selectedTask);
+                                }
+                            });
+                        }
                     }
-                });
-            }
+                    
+                }
+    
+           });
+    
+           
         }
 
     };
@@ -1416,20 +1428,29 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
        
         setChecked(event.target.checked);
         if (event.target.checked) {
-            Json_UpdateTaskField("Status", "Completed", returnMessageStatus("Completed"));
-            if (attachmentFile && attachmentFile.length > 0) {
-                attachmentFile.forEach((item) => {
-                    addToWorkTable(item.ItemId, selectedTask);
-                });
-            }
-            if (PortalDocumentShow && PortalDocumentShow.length > 0) {
-                PortalDocumentShow.forEach((item) => {
-                    if(item.ItemID) {
-                        addToWorkTable(item.ItemID,selectedTask);
+            Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
+                if (res) {
+                    Json_UpdateTaskField("Status", "Completed", returnMessageStatus("Completed"));
+                    if (attachmentFile && attachmentFile.length > 0) {
+                        attachmentFile.forEach((item) => {
+                            addToWorkTable(item.ItemId, selectedTask);
+                        });
                     }
-                });
-            }
-            setStatus("Completed");
+                    if(selectedTask.Source ==="Portal"){
+                        if (PortalDocumentShow && PortalDocumentShow.length > 0) {
+                            PortalDocumentShow.forEach((item) => {
+                                if(item.ItemID) {
+                                    addToWorkTable(item.ItemID,selectedTask);
+                                }
+                            });
+                        }
+                    }
+                  
+                    setStatus("Completed");
+                }
+    
+    });
+            
             
         }
         else {

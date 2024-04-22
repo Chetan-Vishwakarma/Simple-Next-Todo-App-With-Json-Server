@@ -1324,7 +1324,10 @@ function CreateNewModalTask({ ...props }) {
                         // setMessageId(js.Message);
                         console.log("selectedDocumentFile", selectedDocumentFile)
                         if (selectedDocumentFile.length > 0) {
-                            addToWorkTable(selectedDocumentFile.map(obj => obj.DocId).join("|"), js.Message,textSubject);
+                            selectedDocumentFile.map((item) => {
+                                addToWorkTable(item.DocId, js.Message,textSubject);
+                            });
+                            // addToWorkTable(selectedDocumentFile.map(obj => obj.DocId), js.Message,textSubject);
                             Json_CRM_TaskDMSAttachmentInsert(js.Message);
                         }
 
