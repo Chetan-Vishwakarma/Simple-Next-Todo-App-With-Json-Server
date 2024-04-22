@@ -60,12 +60,14 @@ function TodoList() {
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
-
+    const [allPortalAttachments, setAllPortalAttachments] = React.useState([]);
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
     const [userId, setUserId] = useState(localStorage.getItem("UserId"));
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 
     let Cls = new CommanCLS(baseUrlPractice, agrno, Email, password);
+    const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
+    let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
     //let Clsp = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -78,7 +80,7 @@ function TodoList() {
     const [selectedTask, setSelectedTask] = useState({});
 
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const [attachmentFile, setAttachmentFile] = useState([]);
+    const [attachmentFileTodo, setAttachmentFileTodo] = useState([]);
     const [loadMore, setLoadMore] = useState(20);
 
     const [folders, setFolders] = useState([]);
@@ -581,10 +583,48 @@ function TodoList() {
             }
         });
     }
+    function addToWorkTable(Itid, e) {
+        console.log(e, "addToWorkTable", Itid);
+        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has initiated a task-${e.Subject} . Task ID : ${e.ID}` };
+        console.log("addToWorkTable111", obj);
+        ClsSms.Json_AddToWork(obj, function (status, data) {
+            if (status) {
+                if (data) {
+                    //let json = JSON.parse(data);
+                    console.log("getitemid", data);
+                }
+            }
+        });
+    }
+    const GetMessageAttachments_Json = (mgsId,e) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageId: mgsId,
+        };
+
+        ClsPortal.GetMessageAttachments_Json(o, function (sts, data) {
+            if (sts && data) {
+                let arrayOfObjects = JSON.parse(data);
+                console.log("GetMessageAttachments_Json11", arrayOfObjects);
+                if(arrayOfObjects && arrayOfObjects.length > 0) {
+                    setAttachmentFileTodo(arrayOfObjects);
+                    arrayOfObjects.forEach((item) => {
+                            if(item.ItemID) {
+                                addToWorkTable(item.ItemID,e);
+                            }
+                           
+                        });
+                   
+                }
+            }
+       });
+    }
     const MarkComplete = (e) => {
        
-       console.log(attatmentdata,"attatmentdataattatmentdata");
-       
+       console.log(attatmentdata,"attatmentdataattatmentdata",e);
+      
         Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
             if (res) {
                
@@ -608,6 +648,9 @@ function TodoList() {
                        
                     }
                 });
+               } catch (e) {}
+               try{
+                GetMessageAttachments_Json(e.PubMessageId,e);
                } catch (e) {}
             }
         })
@@ -701,7 +744,7 @@ function TodoList() {
 
                 {globalSearchTask.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/MyTask", tabName: "My Task" }]} />}
 
-                <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
+                <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal} attachmentFileTodo={attachmentFileTodo}></TaskDetailModal>
                 {/* <CreateNewModalTask setIsApi={setIsApi} isApi={isApi}></CreateNewModalTask> */}
                 <Box className='d-flex main-search-box mb-3 align-items-center justify-content-between'>
                     <Box className='d-flex align-items-center'>

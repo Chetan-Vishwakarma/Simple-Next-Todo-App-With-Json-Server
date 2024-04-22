@@ -448,7 +448,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
                             setTotalAttachment(arrayOfObjects.length);
 
-                            if (uniqueObjectsArray.length === 1) {
+                            if (uniqueObjectsArray && uniqueObjectsArray.length === 1) {
                                 handleCloseMgs(mapMethod[0]);
                                 //setFilterAttachments(uniqueObjectsArray);
                                 // setTotalAttachment(uniqueObjectsArray.length);

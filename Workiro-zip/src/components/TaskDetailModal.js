@@ -88,8 +88,8 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 let addItemdata = [];
-function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) {
-    console.log("TaskDetailModal2222", selectedTask);
+function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,attachmentFileTodo }) {
+    console.log(attachmentFileTodo,"TaskDetailModal2222", selectedTask);
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
     const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
     const baseUrlSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -111,6 +111,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     const [folderList, setFolderList] = useState([]);
     const [portalComments, setPortalComments] = useState([]);
+    const [PortalDocumentShow, setPortalDocumentShow] = useState([]);
     const [copyLink, setCopyLink] = useState("");
     const pageSizes = [10, 25, 50, 100];
     // const [txtFolder, settxtFolder] = useState(selectedTask.Folder);
@@ -418,13 +419,13 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                 console.log("Json_Get_CRM_SavedTask_ByTaskId", json);
                 let table2 = json.T2;
                 // setGetCRMSaved(table2);
-                if (table2.length > 0) {
+                if (table2 && table2.length > 0) {
                     setTxtDescriptin(table2[0].Details);
                     setDetails(table2[0].Details);
                 }
 
                 let table6 = json.T6;
-                if (table6.length > 0) {
+                if (table6 && table6.length > 0) {
                     // let arrFile = [];
                     // for (let item of table6) {
                     //     arrFile.push(getFilePath(item));
@@ -630,8 +631,27 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     }
 
 
+    // const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
+    // let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
+    const GetMessageAttachments_Json = (mgsId,e) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageId: mgsId,
+        };
 
-
+        ClsPortal.GetMessageAttachments_Json(o, function (sts, data) {
+            if (sts && data) {
+                let arrayOfObjects = JSON.parse(data);
+                console.log("GetMessageAttachments_Json11", arrayOfObjects);
+                if(arrayOfObjects && arrayOfObjects.length > 0) {
+                    setPortalDocumentShow(arrayOfObjects);
+                   
+                }
+            }
+       });
+    }
 
     useEffect(() => {
 
@@ -645,6 +665,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         settxtSection(selectedTask.Section);
         setTxtClient(selectedTask.Client);
         setTxtClient(selectedTask.Client)
+        GetMessageAttachments_Json(selectedTask.PubMessageId,selectedTask);
         settxtSectionId(selectedTask.SectionId);
         setTxtClientId(selectedTask.ClientNo);
         setNotesMessage("");
@@ -756,7 +777,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
     const handleCloseStatus = (e) => {
-        console.log("top_status_changed",selectedTask);
+        console.log(PortalDocumentShow,"top_status_changed",selectedTask);
         
         console.log(e.target.innerText);
         setStatus(e.target.innerText);
@@ -767,6 +788,13 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
             if (attachmentFile && attachmentFile.length > 0) {
                 attachmentFile.forEach((item) => {
                     addToWorkTable(item.ItemId, selectedTask);
+                });
+            }
+            if (PortalDocumentShow && PortalDocumentShow.length > 0) {
+                PortalDocumentShow.forEach((item) => {
+                    if(item.ItemID) {
+                        addToWorkTable(item.ItemID,selectedTask);
+                    }
                 });
             }
         }
@@ -1392,6 +1420,13 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
             if (attachmentFile && attachmentFile.length > 0) {
                 attachmentFile.forEach((item) => {
                     addToWorkTable(item.ItemId, selectedTask);
+                });
+            }
+            if (PortalDocumentShow && PortalDocumentShow.length > 0) {
+                PortalDocumentShow.forEach((item) => {
+                    if(item.ItemID) {
+                        addToWorkTable(item.ItemID,selectedTask);
+                    }
                 });
             }
             setStatus("Completed");
