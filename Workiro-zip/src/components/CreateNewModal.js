@@ -1581,9 +1581,9 @@ setAddUser([]);
     ////////////////// Priority
     let priorityarr = [{ id: 1, "name": "High", icon: <PriorityHighIcon className='font-20' sx={{ color: red[900] }} /> }, { id: 2, "name": "Normal", icon: <ReportProblemIcon className='font-20' color="secondary" /> }, { id: 3, "name": "Low", icon: <ArrowDownwardIcon className='font-20' sx={{ color: green[500] }} /> }];
     let statusarr = [
-        { id: 1, "name": "Not Started" },
+        { id: 1, "name": "Not Started  " },
         { id: 2, "name": "In Progress" },
-        { id: 3, "name": "On Hold" },
+        { id: 3, "name": "On Hold"  },
         { id: 4, "name": "Completed" },
         // { id: 5, "name": "Done" },
         // { id: 6, "name": "Completed" },
