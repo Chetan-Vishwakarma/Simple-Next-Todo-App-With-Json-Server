@@ -614,7 +614,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
         if (selectedTask.PubMessageId) {
 
             GetMessageAttachments_Json(selectedTask.PubMessageId);
-            
+
             setStartDate(moment(selectedTask.Start).format("DD/MM/YYYY"));
 
             setEndDate(moment(selectedTask.EndDateTime).format("DD/MM/YYYY"));
@@ -883,8 +883,10 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                         <Box className='d-flex align-items-center'>
                                             {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
                                             <HourglassEmptyIcon className='text-warning me-1' />
-                                            <h5 className='font-14 text-black mb-0'>Pending Approval</h5>
-                                            <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
+                                            <Box className='ps-2'>
+                                                <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
+                                                <Button className='btn-blue-2' size="small" onClick={HandalChangeSendReminder} startIcon={<ScheduleIcon />}>Send Reminder</Button>
+                                            </Box>
                                         </Box>
 
                                         {/*  */}
@@ -1076,7 +1078,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                         {filterAttachments.map((item, index) => {
                             return <>
 
-                                <Box key={index} className='col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 d-flex'>
+                                <Box key={index} className='col-xxl-6 col-xl-6 col-lg-12 col-md-12 col-sm-12 d-flex'>
                                     <Box className='todo-list-box white-box relative w-100 font-14'>
 
                                         <Box className='download-btn-box'>
@@ -1119,9 +1121,9 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                                     </Box>
                                                 </>) : (<>
                                                     <Box className='approval-box'>
-                                                        <HourglassBottomIcon className="me-2" />
+                                                        <HourglassEmptyIcon className="me-2" />
                                                         <Typography variant='subtitle1' className='text-center font-14'>
-                                                            Document not sent for signature or waiting for other signatories
+                                                            not for signature or awaiting other signatories
                                                         </Typography>
                                                     </Box>
                                                 </>)
@@ -1160,7 +1162,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                                             <Box className='ps-2'>
                                                                 {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
                                                                 <h5 className='font-14 text-black mb-1'>Pending Approval</h5>
-                                                                <Button className='btn-blue-2' size="small" onClick={() => HandalChangeSendReminder(item)} startIcon={<ScheduleIcon />}>Document Pending Signature</Button>
+                                                                <Button className='btn-blue-2' size="small" onClick={() => HandalChangeSendReminder(item)} startIcon={<ScheduleIcon />}>Send Reminder</Button>
                                                             </Box></Box>)}
                                                     </>
                                                 ) : (

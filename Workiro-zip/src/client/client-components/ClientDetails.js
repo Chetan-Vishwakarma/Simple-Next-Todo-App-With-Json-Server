@@ -38,6 +38,8 @@ import {useNavigate} from "react-router-dom";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import UploadDocForClient from './UploadDocForClient';
 import CustomLoader from '../../components/CustomLoader';
+import { useDispatch } from "react-redux";
+import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
 
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
@@ -47,6 +49,7 @@ const folderId = localStorage.getItem("FolderId");
 function ClientDetails() {
 
     const location = useLocation();
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [searchParams,setSearchParams] = useSearchParams();
     const tabValue = searchParams.get("val");
@@ -76,7 +79,18 @@ function ClientDetails() {
 
     // upload document modal start
     const [openUploadDocument, setOpenUploadDocument] = React.useState(false);
+
+    const [documentDate, setDocumentDate] = useState(null);
+    const [receivedDate, setReceivedDate] = useState(null);
+    const [createNewFileObj, setCreateNewFileObj] = useState(null);
+    const [txtFolderData, setTxtFolderData] = useState(null);
+    const [txtClientData, setTxtClientData] = useState(null);
+    const [txtSectionData, setTxtSectionData] = useState(null);
+    const [TaskType, setTaskType] = useState(null);
+    const [openModal, setOpenModal] = useState(null);
+
     const handleClickOpenUploadDocument = () => {
+        dispatch(setOpenDocumentModalByRedux(true));
         setOpenUploadDocument(true);
     };
     // upload document modal end
@@ -253,8 +267,31 @@ function ClientDetails() {
                     </Box>
                 </Box>}
 
-                <UploadDocForClient setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument} localtion={location}
-                ></UploadDocForClient>
+                {/* <UploadDocForClient setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument} localtion={location}
+                ></UploadDocForClient> */}
+
+{/* <UploadDocument
+                openUploadDocument={openUploadDocument}
+                setOpenUploadDocument={setOpenUploadDocument}
+                documentDate={documentDate}
+                setDocumentDate={setDocumentDate}
+                receivedDate={receivedDate}
+                setReceivedDate={setReceivedDate}
+                createNewFileObj={createNewFileObj}
+                setCreateNewFileObj={setCreateNewFileObj}
+                txtFolderData={txtFolderData}
+                setTxtFolderData={setTxtFolderData}
+                txtClientData={txtClientData}
+                setTxtClientData={setTxtClientData}
+                txtSectionData={txtSectionData}
+                setTxtSectionData={setTxtSectionData}
+                TaskType={TaskType}
+                setTaskType={setTaskType}
+                openModal={openModal}
+                setOpenModal={setOpenModal}
+                handleClickOpen={()=>{console.log("Testing on Add Document button")}}
+            ></UploadDocument> */}
+
                 <hr />
                 <Box sx={{ width: '100%', typography: 'body1' }} className="">
                     <TabContext value={value}>

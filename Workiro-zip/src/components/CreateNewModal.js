@@ -107,6 +107,7 @@ function CreateNewModalTask({ ...props }) {
     const dispatch = useDispatch();
     const reduxRefForTaskModal = useSelector((state=>state.counter.openTaskModal));
     const reduxRefClientAndDoc = useSelector((state=>state.counter.clientAndDocDataForTaskModal));
+    const openDocumentModalByRedux = useSelector((state=>state.counter.openDocumentModalByRedux));
 
     // const {
     //     documentDate = null,
@@ -310,6 +311,7 @@ function CreateNewModalTask({ ...props }) {
             setTxtSectionData(reduxRefClientAndDoc.txtSectionData);
             // console.log("djskfdjeiurwio",reduxRefClientAndDoc);
             if(reduxRefForTaskModal==="CRM"){
+                setOpenUploadDocument(false);
                 handleClickOpen("CRM");
             }else if(reduxRefForTaskModal==="Portal"){
                 handleClickOpen("Portal");
@@ -318,6 +320,12 @@ function CreateNewModalTask({ ...props }) {
             handleClose();
         }
     },[reduxRefForTaskModal]);
+
+    useEffect(()=>{
+        setOpenUploadDocument(openDocumentModalByRedux);
+    },[openDocumentModalByRedux]);
+
+    
 
 
     const handleClose = () => {
@@ -2465,6 +2473,7 @@ setAddUser([]);
                 openModal={openModal}
                 setOpenModal={setOpenModal}
                 handleClickOpen={handleClickOpen}
+                openDocumentModalByRedux={openDocumentModalByRedux}
             ></UploadDocument>
 
             <div className="select-border">
