@@ -443,7 +443,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                 return { ...el, ["DDate"]: date };
                             });
 
-                            console.log("GetMessageAttachments_Json1", mapMethod);
+                            console.log(arrayOfObjects,"GetMessageAttachments_Json1", mapMethod);
                             setFilterAttachments(mapMethod);
 
                             setTotalAttachment(arrayOfObjects.length);
