@@ -756,13 +756,19 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
     const handleCloseStatus = (e) => {
-        console.log("top_status_changed");
+        console.log("top_status_changed",selectedTask);
+        
         console.log(e.target.innerText);
         setStatus(e.target.innerText);
         setanchorElStatus(null);
         setSelectedIndexStatus(null); // Reset the selected index after closing the menu
         if (e.target.innerText) {
-            Json_UpdateTaskField("Status", e.target.innerText, returnMessageStatus(e.target.innerText))
+            Json_UpdateTaskField("Status", e.target.innerText, returnMessageStatus(e.target.innerText));
+            if (attachmentFile && attachmentFile.length > 0) {
+                attachmentFile.forEach((item) => {
+                    addToWorkTable(item.ItemId, selectedTask);
+                });
+            }
         }
 
     };
@@ -1364,13 +1370,32 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
     const [checked, setChecked] = useState(false);
-
+    function addToWorkTable(Itid, e) {
+        console.log(e, "addToWorkTable", Itid);
+        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has initiated a task-${e.Subject} . Task ID : ${e.ID}` };
+        console.log("addToWorkTable111", obj);
+        ClsSms.Json_AddToWork(obj, function (status, data) {
+            if (status) {
+                if (data) {
+                    //let json = JSON.parse(data);
+                    console.log("getitemid", data);
+                }
+            }
+        });
+    }
     const handleChangeStatus = (event) => {
-        console.log("change_statusevent");
+        console.log("change_statusevent",selectedTask);
+       
         setChecked(event.target.checked);
         if (event.target.checked) {
             Json_UpdateTaskField("Status", "Completed", returnMessageStatus("Completed"));
-            setStatus("Completed")
+            if (attachmentFile && attachmentFile.length > 0) {
+                attachmentFile.forEach((item) => {
+                    addToWorkTable(item.ItemId, selectedTask);
+                });
+            }
+            setStatus("Completed");
+            
         }
         else {
             setStatus(selectedTask.mstatus)

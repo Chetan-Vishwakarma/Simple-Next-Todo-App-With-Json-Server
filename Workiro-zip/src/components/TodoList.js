@@ -599,15 +599,13 @@ function TodoList() {
                         console.log("Json_Get_CRM_SavedTask_ByTaskId", json);
         
                         let table6 = json.T6;
-                        if (table6 && table6.length > 0) {
+                        
                             if (table6 && table6.length > 0) {
                                 table6.forEach((item) => {
                                     addToWorkTable(item.ItemId, e);
                                 });
                             }
-                            
-                           
-                        }
+                       
                     }
                 });
                } catch (e) {}
