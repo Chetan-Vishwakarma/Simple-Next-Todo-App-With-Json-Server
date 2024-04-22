@@ -687,7 +687,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             </TableHead>
                                             <TableBody>
                                                 {Object.keys(docForDetails).length > 0 && Object.keys(docForDetails).map((itm, i) => {
-                                                    if (["Registration No.","Folder","Client","Section","Received Date","Item Date","FileSize","Notes","Category","Attach","Type","Version","Received By","Item ID"].includes(itm)) {
+                                                    if ( [ "Registration No.", "Folder", "Client", "Section", "Received Date", "Item Date", "FileSize", "Notes", "Category", "Attach", "Type", "Version", "Received By", "Item ID" ].includes(itm) ) {
                                                         return <TableRow
                                                             key={i}
                                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
