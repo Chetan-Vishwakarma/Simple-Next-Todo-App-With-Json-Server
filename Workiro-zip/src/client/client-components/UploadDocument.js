@@ -308,9 +308,9 @@ function UploadDocument({
             setTxtFolderData(data);
             Json_GetSections(data.FolderID)
             Json_GetClientsByFolder(data.FolderID)
+            Json_GetFolderData(data.FolderID)
         }
-        Json_GetFolderData(data.FolderID)
-
+        // Json_GetFolderData(data.FolderID)
     }
 
     const handleClientChange = (data) => {
