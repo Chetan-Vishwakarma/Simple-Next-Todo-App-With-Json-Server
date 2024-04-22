@@ -34,6 +34,7 @@ function UploadDocument({
     const localtion = useLocation();
     try {
         originatorNo = localtion.state;
+      //  console.log("originatorNo11",originatorNo )
     }
 
     catch (e) {
@@ -593,14 +594,16 @@ function UploadDocument({
                            
                             if (js.Status === "true") {
                                 counter++;
-                                console.log("Json_RegisterItem", js,counter)
+                               // console.log("Json_RegisterItem", js,counter)
                                 if (fileData) {
                                     fileData.DocId = js.ItemId;
                                     setCreateNewFileObj((Previous) => [...Previous, fileData]);
                                 }
 
                                 if(selectedFiles.length===counter){
-                                    toast.success(selectedFiles.length + " Document(s) Uploaded!");                      
+                                    let msg =`${selectedFiles.length}  Document(s) Uploaded!`;
+                                    console.log("Json_RegisterItem 222 ",msg)
+                                    toast.success(msg);                      
                                 }
 
                                 if (buttonNameText === "Submit & Create Portal Task" || buttonNameText === "Submit & Create Task") {
@@ -805,7 +808,7 @@ function UploadDocument({
                                             // console.log("ldsfljfd",option.Client);
                                             return option.Client;
                                         }} // assuming "Client" is the property you want to display
-
+                                        //value={originatorNo.originatorNo} // Set default selected option based on the ID
                                         onChange={(event, newValue) => handleClientChange(newValue)}
                                         renderInput={(params) => <TextField {...params} label="Reference" />}
                                     />
