@@ -756,6 +756,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
     const handleCloseStatus = (e) => {
+        console.log("top_status_changed");
         console.log(e.target.innerText);
         setStatus(e.target.innerText);
         setanchorElStatus(null);
@@ -1365,6 +1366,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     const [checked, setChecked] = useState(false);
 
     const handleChangeStatus = (event) => {
+        console.log("change_statusevent");
         setChecked(event.target.checked);
         if (event.target.checked) {
             Json_UpdateTaskField("Status", "Completed", returnMessageStatus("Completed"));
