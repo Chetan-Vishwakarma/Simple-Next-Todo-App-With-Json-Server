@@ -327,7 +327,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
 const [tempdata, setTemp] = useState([]);
 
 const [tempdatafilter, setTempdatafilter] = useState([]);
-
+const [IsActivity, setIsActivity] = useState(false);
 const handleEnterKeyPress = (event) => {
     let dataFilter = [];
    
@@ -346,8 +346,11 @@ const handleEnterKeyPress = (event) => {
                 return tempStr.every(word => commentWords.includes(word.toLowerCase()));
 
             });
-            console.log(filteredArr, "filteredArrdone");
-            setTempdatafilter(filteredArr);
+            
+            if(filteredArr && filteredArr.length > 0){
+                setTempdatafilter(filteredArr);
+            }
+          
             setsearchValues("");
         }
 
@@ -373,8 +376,11 @@ const handleMenuItemClick = (selectedValue) => {
         return item.ForwardedBy.toLowerCase().includes(selectedValue.toLowerCase());
     });
     
-    console.log(filteredArr,"menufilteredArr");
-    setTempdatafilter(filteredArr);
+   
+    if(filteredArr && filteredArr.length > 0) {
+        setTempdatafilter(filteredArr);
+    }
+   
     setAnchorElSort(null);
 };
 
