@@ -260,7 +260,7 @@ button {
 
 .table-grid-2 .dx-datagrid-rowsview .dx-datagrid-content:not(.dx-datagrid-content-fixed) {
   height: calc(100vh - 450px);
-  overflow: auto;
+  overflow-y: auto;
 }
 
 .table-grid-2 {
@@ -396,6 +396,7 @@ button {
 .side-navi li {
   color: #727272;
   transition: .5s all ease;
+  overflow: hidden;
 }
 
 .side-navi li.active {
@@ -818,7 +819,10 @@ span.tox-statusbar__branding {
   margin-bottom: 3px;
   font-size: 14px;
 }
-
+.activity-timeline.activity-timeline-2 {
+  max-height: calc(100vh - 360px);
+  overflow: auto;
+}
 
 /* timeline status end */
 
@@ -994,9 +998,9 @@ span.tox-statusbar__branding {
 }
 
 .client-img {
-  width: 110px;
-  min-width: 110px;
-  height: 110px;
+  width: 90px;
+  min-width: 90px;
+  height: 90px;
   overflow: hidden;
   border-radius: 90px;
   margin: 0 auto 22px;
@@ -1027,7 +1031,7 @@ span.tox-statusbar__branding {
 }
 
 .client-img img {
-  height: 110px;
+  height: 90px;
 }
 
 .user-register {
@@ -1957,10 +1961,10 @@ span.tox-statusbar__branding {
 }
 
 .todo-list-details {
-  border-radius: 12px;
-  margin-top: 20px;
+  border-radius: 8px;
+  margin-top: 15px;
   background: #edf0ff;
-  padding: 15px;
+  padding: 10px;
 }
 
 .approval-main .approval-box {
@@ -2158,7 +2162,7 @@ span.tox-statusbar__branding {
 
   .todo-list-box h2,
   .client-box h2 {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .form-control,
@@ -3171,6 +3175,7 @@ span.tox-statusbar__branding {
 .full-height-modal {
   height: calc(100vh - 200px);
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .no-touch .cd-vertical-nav:hover .hover-icon {
