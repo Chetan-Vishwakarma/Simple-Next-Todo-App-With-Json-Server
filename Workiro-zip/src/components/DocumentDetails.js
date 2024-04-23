@@ -9,6 +9,7 @@ import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutli
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import moment from 'moment';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
@@ -278,9 +279,20 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                     let parse = JSON.parse(data);
                     let table = parse.Table;
                     if (table.length > 0) {
-                        setGetAudit(table);
+                        const formattedActivity = table.map((Actioned) => {
+                            let ActioneddATE;
+                            if (Actioned["Actioned Date"]) {
+                                ActioneddATE = moment(Actioned["Actioned Date"]).format("DD/MM/YYYY HH:mm:ss");
+                            }
+                            // const date = new Date(ActivityDate);
+                            return { ...Actioned, ["Actioned Date"]: ActioneddATE };
+                        });
+
+                        const filteredArray = formattedActivity.filter(item => item.Comments !== null);
+
+                        setGetAudit(filteredArray);
+                        console.log("Json_GetAudit", filteredArray)
                     }
-                    console.log("Json_GetAudit", table)
                 }
             })
         } catch (error) {
@@ -458,6 +470,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         }
     };
 
+    
 
 
     return (
@@ -849,7 +862,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                 </AccordionSummary>
                                 <AccordionDetails>
 
-                                    <Activity getAudit={getAudit}></Activity>
+                                    <Activity getAudit={getAudit} selectedDocument={docForDetails} ></Activity>
 
 
                                     {/* {Array(5).fill("").map(() => {
