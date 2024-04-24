@@ -296,7 +296,12 @@ function NewTodoList() {
 
     }, [isApi])
 
-    const handleScroll = () => {
+    const handleScroll = (e) => {
+        
+        if(parseInt(window.innerHeight)+parseInt(e.target.documentElement.scrollTop)>=e.target.documentElement.scrollHeight){
+            setActiveSectionList("section4");
+            return;
+        }
         const sections = document.querySelectorAll('div[id^="section"]');
         const scrollPosition = window.scrollY;
 
