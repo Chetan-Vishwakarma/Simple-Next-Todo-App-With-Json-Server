@@ -271,11 +271,15 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     };
     const AddCommenthandleClose = () => {
         setOpenAddComment(false);
+        // addToWorkTable();
+
+    };
+    const AddCommenthandleCloseSubmit = () => {
+        setOpenAddComment(false);
         addToWorkTable();
 
     };
-
-
+    
     // popover
     const [anchorEl, setAnchorEl] = React.useState(null);
     const handleClick = (event) => {
@@ -903,7 +907,7 @@ const handleRemoveOption = (optionToRemove) => {
 
                         <Box>
                             <Button onClick={AddCommenthandleClose} className='btn-red me-2'>Cancle</Button>
-                            <Button onClick={AddCommenthandleClose} className='btn-blue-2' autoFocus>
+                            <Button onClick={AddCommenthandleCloseSubmit} className='btn-blue-2' autoFocus>
                                 Submit
                             </Button>
                         </Box>
