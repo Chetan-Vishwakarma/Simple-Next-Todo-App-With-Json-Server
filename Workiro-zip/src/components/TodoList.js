@@ -49,6 +49,7 @@ import { setMyTasks } from '../redux/reducers/counterSlice';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
+
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20' />, <PublishedWithChangesIcon color='primary' className='me-1 font-20' />, <HourglassBottomIcon color='primary' className='me-1 font-20' />, <CheckCircleOutlineIcon color='success' className='me-1 font-20' />];
 let attatmentdata = [];
 function TodoList() {
@@ -138,7 +139,7 @@ function TodoList() {
             console.log("Error while calling Json_GetFolders", err);
         }
     }
-    console.log("fdlkgjgljroirreotudfn",globalSearchTask.map(itm=>itm.mstatus));
+    console.log("fdlkgjgljroirreotudfn", globalSearchTask.map(itm => itm.mstatus));
     const Json_CRM_GetOutlookTask = () => {
         if (globalSearchTask.length > 0) {
             const formattedTasks = globalSearchTask.map((task) => {
@@ -169,7 +170,7 @@ function TodoList() {
             setActualData([...hasCreationDate]);
             setAllTask([...hasCreationDate]);
 
-            setTaskFilter({...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"]});
+            setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] });
             // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
             Json_GetFolders();
             setIsApi(true);
@@ -208,7 +209,7 @@ function TodoList() {
                             return { ...task, CreationDate: date };
                         }).sort((a, b) => b.CreationDate - a.CreationDate);
 
-                        hasCreationDate.filter(itm=>{
+                        hasCreationDate.filter(itm => {
                             console.log(`sdfklrioire ${itm.mstatus}`);
                         })
 
@@ -216,7 +217,7 @@ function TodoList() {
                         // setActualData([...hasCreationDate]);
                         // setAllTask([...hasCreationDate]);
 
-                        setTaskFilter({...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"]});  // for initialization of filter
+                        setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] });  // for initialization of filter
                         setIsLoading(false);
                         Json_GetFolders();
                     }
@@ -375,7 +376,7 @@ function TodoList() {
     };
 
     useEffect(() => {
-        actualData.filter(itm=>{
+        actualData.filter(itm => {
             console.log(`sdfklrioire ${itm.mstatus}`);
         })
         let fltData = actualData.filter(function (obj) {
@@ -577,7 +578,7 @@ function TodoList() {
     //             if (table6.length > 0) {
     //                 attatmentdata.push(table6);
     //                 setAttachmentFile(table6);
-                   
+
     //             }
     //         }
     //     });
@@ -608,7 +609,7 @@ function TodoList() {
             }
         });
     }
-    const GetMessageAttachments_Json = (mgsId,e) => {
+    const GetMessageAttachments_Json = (mgsId, e) => {
         let o = {
             accid: agrno,
             email: Email,
@@ -617,60 +618,60 @@ function TodoList() {
         };
 
         ClsPortal.GetMessageAttachments_Json(o, function (sts, data) {
-            
+
             if (sts && data) {
                 let arrayOfObjects = JSON.parse(data);
                 console.log("GetMessageAttachments_Json11", arrayOfObjects);
-                if(arrayOfObjects && arrayOfObjects.length > 0) {
+                if (arrayOfObjects && arrayOfObjects.length > 0) {
                     setAttachmentFileTodo(arrayOfObjects);
-                    if(e.Source==="Portal") {
+                    if (e.Source === "Portal") {
                         arrayOfObjects.forEach((item) => {
-                            if(item.ItemID) {
-                                addToWorkTable(item.ItemID,e);
+                            if (item.ItemID) {
+                                addToWorkTable(item.ItemID, e);
                             }
-                           
+
                         });
                     }
-                   
+
                 }
             }
-       });
+        });
     }
     const MarkComplete = (e) => {
-       
-       console.log(attatmentdata,"attatmentdataattatmentdata",e);
-      
+
+        console.log(attatmentdata, "attatmentdataattatmentdata", e);
+
         Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
             if (res) {
-               
+
                 Json_UpdateTaskField("Status", "Completed", e);
 
-               try{
-                let obj = {};
-                obj.TaskId = e.ID;
-                 Cls.Json_Get_CRM_SavedTask_ByTaskId(obj, function (status, data) {
-                    if (status && data) {
-                        let json = JSON.parse(data);
-                        console.log("Json_Get_CRM_SavedTask_ByTaskId", json);
-        
-                        let table6 = json.T6;
-                        
+                try {
+                    let obj = {};
+                    obj.TaskId = e.ID;
+                    Cls.Json_Get_CRM_SavedTask_ByTaskId(obj, function (status, data) {
+                        if (status && data) {
+                            let json = JSON.parse(data);
+                            console.log("Json_Get_CRM_SavedTask_ByTaskId", json);
+
+                            let table6 = json.T6;
+
                             if (table6 && table6.length > 0) {
                                 table6.forEach((item) => {
                                     addToWorkTable(item.ItemId, e);
                                 });
                             } else {
-                                
+
                             }
-                       
+
+                        }
+                    });
+                } catch (e) { }
+                try {
+                    if (e.Source === "Portal") {
+                        GetMessageAttachments_Json(e.PubMessageId, e);
                     }
-                });
-               } catch (e) {}
-               try{
-                 if(e.Source==="Portal"){
-                    GetMessageAttachments_Json(e.PubMessageId,e);
-                 }
-               } catch (e) {}
+                } catch (e) { }
             }
         })
     }
@@ -688,8 +689,8 @@ function TodoList() {
         ClsSms.Json_UpdateTaskField(o, function (sts, data) {
             if (sts && data) {
                 if (data === "Success") {
-                    toast.success(FieldName==="EndDateTime"?"Due Date Changed":"Completed")
-                  
+                    toast.success(FieldName === "EndDateTime" ? "Due Date Changed" : "Completed")
+
                     Json_AddSupplierActivity(e);
                 }
                 console.log("Json_UpdateTaskField", data)
@@ -797,15 +798,26 @@ function TodoList() {
                                             setSuggestionList(fltData);
                                             setTaskFilter({ ...taskFilter, Subject: [e.target.value] });
                                         }}
-                                        onKeyDown={(e)=>{
-                                            if(e.key==="Enter"){
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
                                                 setIsSearch(false);
                                             }
                                         }}
                                         placeholder='Search'
                                         className='ps-0'
                                         value={searchInput}
-                                         />
+                                    />
+
+                                    <span onClick={() => {
+                                        handleFilterDeletion("Subject");
+                                        setIsSearch(false);
+                                        setSearchInput("");
+                                    }}
+                                        className='btn-clear'
+                                    >
+                                        <ClearIcon />
+                                    </span>
+
                                 </AutocompleteRoot>
 
                                 {isSearch && suggestionList.length > 0 && <Listbox sx={{ zIndex: 1 }}>
@@ -817,11 +829,7 @@ function TodoList() {
                                 </Listbox>}
                             </AutocompleteWrapper>
                         </Layout>
-                        <span onClick={()=>{
-                            handleFilterDeletion("Subject");
-                            setIsSearch(false);
-                            setSearchInput("");
-                        }}>Clear</span>
+
 
 
                         <FormControl size="small" className='select-border ms-3'>
@@ -899,11 +907,11 @@ function TodoList() {
                                     setSelectedStatus(e.target.value);
                                     if (e.target.value === "Status") {
                                         // handleFilterDeletion("mstatus");
-                                        setTaskFilter({...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"]})
+                                        setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] })
                                         return;
                                     } else if (e.target.value === "") {
                                         // handleFilterDeletion("mstatus");
-                                        setTaskFilter({...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"]})
+                                        setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] })
                                         setSelectedStatus("Status");
                                         return;
                                     } else {

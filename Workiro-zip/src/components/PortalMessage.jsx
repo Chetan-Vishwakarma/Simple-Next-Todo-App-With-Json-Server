@@ -880,7 +880,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                             </>
                                         )}
                                     </>) : (<>
-                                        <Box className='d-flex align-items-center'>
+                                        <Box className='d-flex'>
                                             {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
                                             <HourglassEmptyIcon className='text-warning me-1' />
                                             <Box className='ps-2'>
