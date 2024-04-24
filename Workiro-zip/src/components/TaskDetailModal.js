@@ -1412,7 +1412,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
     const [checked, setChecked] = useState(false);
     function addToWorkTable(Itid, e) {
         console.log(e, "addToWorkTable", Itid);
-        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has initiated a task-${e.Subject} . Task ID : ${e.ID}` };
+        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has completed a task-${e.Subject} . Task ID : ${e.ID}` };
         console.log("addToWorkTable111", obj);
         ClsSms.Json_AddToWork(obj, function (status, data) {
             if (status) {
