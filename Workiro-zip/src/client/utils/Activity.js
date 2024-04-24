@@ -568,9 +568,11 @@ const handleRemoveOption = (optionToRemove) => {
         if (grid.current && grid.current.instance) {
             console.log("sonamcurrenttempdatafilter",grid.current.instance.getDataSource()._items)
           exportexcel(grid.current.instance.getDataSource()._items);
+          setAnchorElDown(null);
         } else {
             console.log(tempdatafilter,"sonamtempdatafilter",getAudit);
           exportexcel(getAudit ? getAudit : tempdatafilter); // Export data from tempdatafilter if available, otherwise export data from getAudit
+          setAnchorElDown(null);
         }
       }, [grid, tempdatafilter, getAudit]);
     // const ExportData = useCallback(() => {
