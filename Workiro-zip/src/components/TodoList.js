@@ -136,6 +136,7 @@ function TodoList() {
             console.log("Error while calling Json_GetFolders", err);
         }
     }
+    console.log("fdlkgjgljroirreotudfn",globalSearchTask.map(itm=>itm.mstatus));
     const Json_CRM_GetOutlookTask = () => {
         if (globalSearchTask.length > 0) {
             const formattedTasks = globalSearchTask.map((task) => {
@@ -149,7 +150,7 @@ function TodoList() {
                 return { ...task, EndDateTime: date };
             });
 
-            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
+            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
 
             let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                 let timestamp;
@@ -166,6 +167,7 @@ function TodoList() {
             setActualData([...hasCreationDate]);
             setAllTask([...hasCreationDate]);
 
+            setTaskFilter({...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"]});
             // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
             Json_GetFolders();
             setIsApi(true);
@@ -190,7 +192,8 @@ function TodoList() {
                             return { ...task, EndDateTime: date };
                         });
 
-                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
+                        // let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
+                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
 
                         let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                             let timestamp;
@@ -203,11 +206,15 @@ function TodoList() {
                             return { ...task, CreationDate: date };
                         }).sort((a, b) => b.CreationDate - a.CreationDate);
 
+                        hasCreationDate.filter(itm=>{
+                            console.log(`sdfklrioire ${itm.mstatus}`);
+                        })
+
                         dispatch(setMyTasks([...hasCreationDate]));
                         // setActualData([...hasCreationDate]);
                         // setAllTask([...hasCreationDate]);
 
-                        // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
+                        setTaskFilter({...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"]});  // for initialization of filter
                         setIsLoading(false);
                         Json_GetFolders();
                     }
@@ -366,6 +373,9 @@ function TodoList() {
     };
 
     useEffect(() => {
+        actualData.filter(itm=>{
+            console.log(`sdfklrioire ${itm.mstatus}`);
+        })
         let fltData = actualData.filter(function (obj) {
             return Object.keys(taskFilter).every(function (key) {
                 if (taskFilter[key][0].length > 0 || typeof taskFilter[key][0] === "object") {
@@ -873,14 +883,16 @@ function TodoList() {
                                 onChange={(e) => {
                                     setSelectedStatus(e.target.value);
                                     if (e.target.value === "Status") {
-                                        handleFilterDeletion("Status");
+                                        // handleFilterDeletion("mstatus");
+                                        setTaskFilter({...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"]})
                                         return;
                                     } else if (e.target.value === "") {
-                                        handleFilterDeletion("Status");
+                                        // handleFilterDeletion("mstatus");
+                                        setTaskFilter({...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"]})
                                         setSelectedStatus("Status");
                                         return;
                                     } else {
-                                        setTaskFilter({ ...taskFilter, Status: [e.target.value] });
+                                        setTaskFilter({ ...taskFilter, mstatus: [e.target.value] });
                                     }
                                 }}
                                 className='custom-dropdown'
