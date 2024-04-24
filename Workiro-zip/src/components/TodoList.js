@@ -817,11 +817,11 @@ function TodoList() {
                                 </Listbox>}
                             </AutocompleteWrapper>
                         </Layout>
-                        <spa onClick={()=>{
+                        <span onClick={()=>{
                             handleFilterDeletion("Subject");
                             setIsSearch(false);
                             setSearchInput("");
-                        }}>Clear</spa>
+                        }}>Clear</span>
 
 
                         <FormControl size="small" className='select-border ms-3'>
