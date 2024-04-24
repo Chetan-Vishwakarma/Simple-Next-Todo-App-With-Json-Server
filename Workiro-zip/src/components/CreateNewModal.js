@@ -107,6 +107,7 @@ function CreateNewModalTask({ ...props }) {
     const dispatch = useDispatch();
     const reduxRefForTaskModal = useSelector((state=>state.counter.openTaskModal));
     const reduxRefClientAndDoc = useSelector((state=>state.counter.clientAndDocDataForTaskModal));
+    const openDocumentModalByRedux = useSelector((state=>state.counter.openDocumentModalByRedux));
 
     // const {
     //     documentDate = null,
@@ -177,6 +178,7 @@ function CreateNewModalTask({ ...props }) {
     // const [txtcomment, setTxtComment] = React.useState("");
     ///////////////////////////////////////////client Data
     const [clientList, setClientList] = useState([]);
+    const [PortalSelectDoc, setPortalSelectDoc] = useState([]);
     const [txtClient, settxtClient] = useState("Select Client");
     const [textClientId, setTextClientId] = useState("");
 
@@ -309,6 +311,7 @@ function CreateNewModalTask({ ...props }) {
             setTxtSectionData(reduxRefClientAndDoc.txtSectionData);
             // console.log("djskfdjeiurwio",reduxRefClientAndDoc);
             if(reduxRefForTaskModal==="CRM"){
+                setOpenUploadDocument(false);
                 handleClickOpen("CRM");
             }else if(reduxRefForTaskModal==="Portal"){
                 handleClickOpen("Portal");
@@ -317,6 +320,12 @@ function CreateNewModalTask({ ...props }) {
             handleClose();
         }
     },[reduxRefForTaskModal]);
+
+    useEffect(()=>{
+        setOpenUploadDocument(openDocumentModalByRedux);
+    },[openDocumentModalByRedux]);
+
+    
 
 
     const handleClose = () => {
@@ -1031,6 +1040,9 @@ function CreateNewModalTask({ ...props }) {
         try {
             // let myNewArr = [...selectedFilesFromBrower, ...selectedDocumentFile];
             // console.log("myNewArr", myNewArr)
+            if(filedata){
+                setPortalSelectDoc(filedata);
+            }
             console.log("PrepareDocumentsForPublish_Json22", filedata);
             const ItemId = filedata.map(obj => obj.DocId);
             const fileNames = filedata.map(obj => obj["FileName"]);
@@ -1307,9 +1319,9 @@ function CreateNewModalTask({ ...props }) {
                     console.log("save task rerurn value", js);
 
                     if (js.Status === "success") {
-                        console.log(selectedRows, "Json_CRM_Task_Save ", js.Message);
+                       
                         setOwnerMessage(js.Message);
-                        console.log(addItemdata, "Json_CRM_Task_");
+                      
                         if (selectedRows && selectedRows.length > 0) {
                             selectedRows.forEach((item) => {
                                 addToWorkTable(item.ItemId, js.Message);
@@ -1322,9 +1334,12 @@ function CreateNewModalTask({ ...props }) {
                         setLoading(false);
                         toast.success("Created Task !");
                         // setMessageId(js.Message);
-                        console.log("selectedDocumentFile", selectedDocumentFile)
-                        if (selectedDocumentFile.length > 0) {
-                            addToWorkTable(selectedDocumentFile.map(obj => obj.DocId).join("|"), js.Message,textSubject);
+                      
+                        if (selectedDocumentFile && selectedDocumentFile.length > 0) {
+                            selectedDocumentFile.map((item) => {
+                                addToWorkTable(item.DocId, js.Message,textSubject);
+                            });
+                            // addToWorkTable(selectedDocumentFile.map(obj => obj.DocId), js.Message,textSubject);
                             Json_CRM_TaskDMSAttachmentInsert(js.Message);
                         }
 
@@ -2020,10 +2035,15 @@ setAddUser([]);
                         if (data) {
                             setLoading(false);
                             let js = JSON.parse(data);
-                            console.log(addItemdata, "Json_CRM_Task_Save ", js);
+                            console.log(selectedDocumentFile,"Json_CRM_Task_Saveportal ", js);
                             if (js.Status === "success") {
 
                                 // setMessageId(js.Message);
+                                if (selectedDocumentFile && selectedDocumentFile.length > 0) {
+                                    selectedDocumentFile.map((item) => {
+                                        addToWorkTable(item.DocId, js.Message,textSubject);
+                                    });
+                                  }
                                 CreatePortalMessage(js.Message)
                                 // toast.success("Created Task");
                                 setOpen(false);
@@ -2107,7 +2127,7 @@ setAddUser([]);
 
 
                 }
-                console.log("final save data obj", obj);
+                console.log(PortalSelectDoc,"final save data obj", obj);
 
                 var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
                 let cls = new CommanCLS(urlLetter, agrno, Email, password);
@@ -2453,6 +2473,7 @@ setAddUser([]);
                 openModal={openModal}
                 setOpenModal={setOpenModal}
                 handleClickOpen={handleClickOpen}
+                openDocumentModalByRedux={openDocumentModalByRedux}
             ></UploadDocument>
 
             <div className="select-border">

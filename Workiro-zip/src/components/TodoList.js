@@ -60,12 +60,14 @@ function TodoList() {
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
-
+    const [allPortalAttachments, setAllPortalAttachments] = React.useState([]);
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
     const [userId, setUserId] = useState(localStorage.getItem("UserId"));
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 
     let Cls = new CommanCLS(baseUrlPractice, agrno, Email, password);
+    const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
+    let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
     //let Clsp = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -78,7 +80,7 @@ function TodoList() {
     const [selectedTask, setSelectedTask] = useState({});
 
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const [attachmentFile, setAttachmentFile] = useState([]);
+    const [attachmentFileTodo, setAttachmentFileTodo] = useState([]);
     const [loadMore, setLoadMore] = useState(20);
 
     const [folders, setFolders] = useState([]);
@@ -95,6 +97,8 @@ function TodoList() {
     const [isSearch, setIsSearch] = useState(false);
 
     const [suggestionList, setSuggestionList] = useState([]);
+
+    const [searchInput, setSearchInput] = useState("");
 
 
 
@@ -134,6 +138,7 @@ function TodoList() {
             console.log("Error while calling Json_GetFolders", err);
         }
     }
+    console.log("fdlkgjgljroirreotudfn",globalSearchTask.map(itm=>itm.mstatus));
     const Json_CRM_GetOutlookTask = () => {
         if (globalSearchTask.length > 0) {
             const formattedTasks = globalSearchTask.map((task) => {
@@ -147,7 +152,7 @@ function TodoList() {
                 return { ...task, EndDateTime: date };
             });
 
-            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
+            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
 
             let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                 let timestamp;
@@ -164,6 +169,7 @@ function TodoList() {
             setActualData([...hasCreationDate]);
             setAllTask([...hasCreationDate]);
 
+            setTaskFilter({...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"]});
             // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
             Json_GetFolders();
             setIsApi(true);
@@ -188,7 +194,8 @@ function TodoList() {
                             return { ...task, EndDateTime: date };
                         });
 
-                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
+                        // let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
+                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
 
                         let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                             let timestamp;
@@ -201,11 +208,15 @@ function TodoList() {
                             return { ...task, CreationDate: date };
                         }).sort((a, b) => b.CreationDate - a.CreationDate);
 
+                        hasCreationDate.filter(itm=>{
+                            console.log(`sdfklrioire ${itm.mstatus}`);
+                        })
+
                         dispatch(setMyTasks([...hasCreationDate]));
                         // setActualData([...hasCreationDate]);
                         // setAllTask([...hasCreationDate]);
 
-                        // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
+                        setTaskFilter({...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"]});  // for initialization of filter
                         setIsLoading(false);
                         Json_GetFolders();
                     }
@@ -364,6 +375,9 @@ function TodoList() {
     };
 
     useEffect(() => {
+        actualData.filter(itm=>{
+            console.log(`sdfklrioire ${itm.mstatus}`);
+        })
         let fltData = actualData.filter(function (obj) {
             return Object.keys(taskFilter).every(function (key) {
                 if (taskFilter[key][0].length > 0 || typeof taskFilter[key][0] === "object") {
@@ -568,9 +582,22 @@ function TodoList() {
     //         }
     //     });
     // }
+    // function addToWorkTable(Itid, e) {
+    //     console.log(e, "addToWorkTable", Itid);
+    //     let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has initiated a task-${e.Subject} . Task ID : ${e.ID}` };
+    //     console.log("addToWorkTable111", obj);
+    //     ClsSms.Json_AddToWork(obj, function (status, data) {
+    //         if (status) {
+    //             if (data) {
+    //                 //let json = JSON.parse(data);
+    //                 console.log("getitemid", data);
+    //             }
+    //         }
+    //     });
+    // }
     function addToWorkTable(Itid, e) {
         console.log(e, "addToWorkTable", Itid);
-        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has initiated a task-${e.Subject} . Task ID : ${e.ID}` };
+        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has completed  a task-${e.Subject} . Task ID : ${e.ID}` };
         console.log("addToWorkTable111", obj);
         ClsSms.Json_AddToWork(obj, function (status, data) {
             if (status) {
@@ -581,10 +608,38 @@ function TodoList() {
             }
         });
     }
+    const GetMessageAttachments_Json = (mgsId,e) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageId: mgsId,
+        };
+
+        ClsPortal.GetMessageAttachments_Json(o, function (sts, data) {
+            
+            if (sts && data) {
+                let arrayOfObjects = JSON.parse(data);
+                console.log("GetMessageAttachments_Json11", arrayOfObjects);
+                if(arrayOfObjects && arrayOfObjects.length > 0) {
+                    setAttachmentFileTodo(arrayOfObjects);
+                    if(e.Source==="Portal") {
+                        arrayOfObjects.forEach((item) => {
+                            if(item.ItemID) {
+                                addToWorkTable(item.ItemID,e);
+                            }
+                           
+                        });
+                    }
+                   
+                }
+            }
+       });
+    }
     const MarkComplete = (e) => {
        
-       console.log(attatmentdata,"attatmentdataattatmentdata");
-       
+       console.log(attatmentdata,"attatmentdataattatmentdata",e);
+      
         Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
             if (res) {
                
@@ -599,17 +654,22 @@ function TodoList() {
                         console.log("Json_Get_CRM_SavedTask_ByTaskId", json);
         
                         let table6 = json.T6;
-                        if (table6 && table6.length > 0) {
+                        
                             if (table6 && table6.length > 0) {
                                 table6.forEach((item) => {
                                     addToWorkTable(item.ItemId, e);
                                 });
+                            } else {
+                                
                             }
-                            
-                           
-                        }
+                       
                     }
                 });
+               } catch (e) {}
+               try{
+                 if(e.Source==="Portal"){
+                    GetMessageAttachments_Json(e.PubMessageId,e);
+                 }
                } catch (e) {}
             }
         })
@@ -703,7 +763,7 @@ function TodoList() {
 
                 {globalSearchTask.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/MyTask", tabName: "My Task" }]} />}
 
-                <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
+                <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal} attachmentFileTodo={attachmentFileTodo}></TaskDetailModal>
                 {/* <CreateNewModalTask setIsApi={setIsApi} isApi={isApi}></CreateNewModalTask> */}
                 <Box className='d-flex main-search-box mb-3 align-items-center justify-content-between'>
                     <Box className='d-flex align-items-center'>
@@ -726,6 +786,7 @@ function TodoList() {
                                         }}
                                         onBlur={(e) => setIsSearch(false)}
                                         onChange={(e) => {
+                                            setSearchInput(e.target.value);
                                             if (e.target.value === "") {
                                                 setSuggestionList([]);
                                                 handleFilterDeletion("Subject");
@@ -736,8 +797,15 @@ function TodoList() {
                                             setSuggestionList(fltData);
                                             setTaskFilter({ ...taskFilter, Subject: [e.target.value] });
                                         }}
+                                        onKeyDown={(e)=>{
+                                            if(e.key==="Enter"){
+                                                setIsSearch(false);
+                                            }
+                                        }}
                                         placeholder='Search'
-                                        className='ps-0' />
+                                        className='ps-0'
+                                        value={searchInput}
+                                         />
                                 </AutocompleteRoot>
 
                                 {isSearch && suggestionList.length > 0 && <Listbox sx={{ zIndex: 1 }}>
@@ -749,6 +817,11 @@ function TodoList() {
                                 </Listbox>}
                             </AutocompleteWrapper>
                         </Layout>
+                        <span onClick={()=>{
+                            handleFilterDeletion("Subject");
+                            setIsSearch(false);
+                            setSearchInput("");
+                        }}>Clear</span>
 
 
                         <FormControl size="small" className='select-border ms-3'>
@@ -825,14 +898,16 @@ function TodoList() {
                                 onChange={(e) => {
                                     setSelectedStatus(e.target.value);
                                     if (e.target.value === "Status") {
-                                        handleFilterDeletion("Status");
+                                        // handleFilterDeletion("mstatus");
+                                        setTaskFilter({...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"]})
                                         return;
                                     } else if (e.target.value === "") {
-                                        handleFilterDeletion("Status");
+                                        // handleFilterDeletion("mstatus");
+                                        setTaskFilter({...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"]})
                                         setSelectedStatus("Status");
                                         return;
                                     } else {
-                                        setTaskFilter({ ...taskFilter, Status: [e.target.value] });
+                                        setTaskFilter({ ...taskFilter, mstatus: [e.target.value] });
                                     }
                                 }}
                                 className='custom-dropdown'

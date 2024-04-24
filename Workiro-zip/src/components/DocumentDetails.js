@@ -9,6 +9,7 @@ import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutli
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import moment from 'moment';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
@@ -48,6 +49,7 @@ import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux } from "../r
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
 const password = localStorage.getItem("Password");
+const folderId = localStorage.getItem("FolderId");
 const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 //const baseUrlDocuSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -125,6 +127,62 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         delete newAnchorElDocumentList[rowData.key];
         setAnchorElDocumentList(newAnchorElDocumentList);
     };
+
+    const [editField,setEditField] = useState("");
+    const [testForEdit,setTestForEdit] = useState("");
+    const [renderTest,setRenderTest] = useState({});
+
+    const [editingIndex, setEditingIndex] = useState(null);
+    const [updatedSubject, setUpdatedSubject] = useState('');
+    const [test, setTest] = useState({});
+
+    const handleEdit = (index,data) => {
+        console.log("Editing index:", index);
+        setEditingIndex(index);
+        setUpdatedSubject(data.Description);
+    };
+
+    const handleEditChange = (event) => {
+        setUpdatedSubject(event.target.value);
+    };
+
+    const Json_RenameDocument = (doc, newDesc, index) => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ItemId: doc["Registration No."] ? doc["Registration No."] : "",
+            Description: newDesc,
+            FolderId: folderId
+        };
+        Cls.Json_RenameDocument(obj, (sts, data) => {
+            if (sts) {
+                if (data) {
+                    let json = JSON.parse(data);
+                    console.log("Json_RenameDocument", json);
+                    if(json.Status==="Success"){
+                        // Json_getRecentDocumentList();
+                        toast.success(json.Message);
+                        setEditingIndex(null);
+                        setTest({...test, [index]: newDesc});
+                    }else{
+                        toast.error("Unable to rename this document");
+                    }
+                }
+            }
+        });
+    }
+
+    const handleSave = (newDesc, oldDesc, doc, index) => {
+        if(oldDesc===newDesc) return;
+        Json_RenameDocument(doc, newDesc, index);
+    };
+
+    const handleEditField = (event, key) => {
+        event.stopPropagation();
+        setEditField(key);
+        setTestForEdit("");
+    }
 
     // const Json_Get_CRM_Task_ActivityByTaskId=(sTask)=>{
     //     let obj = {
@@ -221,9 +279,20 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                     let parse = JSON.parse(data);
                     let table = parse.Table;
                     if (table.length > 0) {
-                        setGetAudit(table);
+                        const formattedActivity = table.map((Actioned) => {
+                            let ActioneddATE;
+                            if (Actioned["Actioned Date"]) {
+                                ActioneddATE = moment(Actioned["Actioned Date"]).format("DD/MM/YYYY HH:mm:ss");
+                            }
+                            // const date = new Date(ActivityDate);
+                            return { ...Actioned, ["Actioned Date"]: ActioneddATE };
+                        });
+
+                        const filteredArray = formattedActivity.filter(item => item.Comments !== null);
+
+                        setGetAudit(filteredArray);
+                        console.log("Json_GetAudit", filteredArray)
                     }
-                    console.log("Json_GetAudit", table)
                 }
             })
         } catch (error) {
@@ -401,6 +470,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         }
     };
 
+    
 
 
     return (
@@ -474,9 +544,17 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             className='me-2 ms-0'
                                         />
                                         <Box className="upload-content pe-3">
-                                            <Typography variant="h4" >
-                                                {data.data.Description ? data.data.Description : "Demo"}
-                                            </Typography>
+                                            {editingIndex===data.key?<input
+                                            type="text"
+                                            defaultValue={data.data.Description}
+                                            value={updatedSubject}
+                                            onChange={handleEditChange}
+                                            autoFocus
+                                            onBlur={(e)=>handleSave(e.target.value, data.data.Description, data.data, data.key)}
+                                            className='edit-input'
+                                        />:<Typography variant="h4" >
+                                                {test[data.key] ? test[data.key] : data.data.Description ? data.data.Description : "Demo"}
+                                            </Typography>}
                                             <Typography variant="body1">
                                                 {/* Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span>  */}
                                                 Date <span className='sembold'>{data.data["Item Date"] ? data.data["Item Date"] : ""}</span> |
@@ -540,7 +618,11 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                                 </ListItemIcon>
                                                 Upload New Version</MenuItem>
                                             <MenuItem
-                                                onClick={(event) => handleCloseDocument(event, data)}
+                                                onClick={(event) => {
+                                                    // handleEditField(event, data.key);
+                                                    handleEdit(data.key,data.data);
+                                                    handleCloseDocument(event, data);
+                                                }}
                                             >
                                                 <ListItemIcon>
                                                     <DriveFileRenameOutlineIcon fontSize="medium" />
@@ -618,13 +700,13 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             </TableHead>
                                             <TableBody>
                                                 {Object.keys(docForDetails).length > 0 && Object.keys(docForDetails).map((itm, i) => {
-                                                    if (itm !== "StickyNotes") {
+                                                    if ( [ "Registration No.", "Folder", "Client", "Section", "Received Date", "Item Date", "FileSize", "Notes", "Category", "Attach", "Type", "Version", "Received By", "Item ID" ].includes(itm) ) {
                                                         return <TableRow
                                                             key={i}
                                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                                         >
                                                             <TableCell align="left" className='bold'>{itm}</TableCell>
-                                                            <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
+                                                            <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? docForDetails[itm] : ""}</TableCell>
                                                         </TableRow>
                                                     }
                                                 })}
@@ -780,7 +862,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                 </AccordionSummary>
                                 <AccordionDetails>
 
-                                    <Activity getAudit={getAudit}></Activity>
+                                    <Activity getAudit={getAudit} selectedDocument={docForDetails} ></Activity>
 
 
                                     {/* {Array(5).fill("").map(() => {

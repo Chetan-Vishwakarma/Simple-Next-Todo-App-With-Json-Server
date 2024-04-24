@@ -271,11 +271,15 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     };
     const AddCommenthandleClose = () => {
         setOpenAddComment(false);
+        // addToWorkTable();
+
+    };
+    const AddCommenthandleCloseSubmit = () => {
+        setOpenAddComment(false);
         addToWorkTable();
 
     };
-
-
+    
     // popover
     const [anchorEl, setAnchorEl] = React.useState(null);
     const handleClick = (event) => {
@@ -327,7 +331,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
 const [tempdata, setTemp] = useState([]);
 
 const [tempdatafilter, setTempdatafilter] = useState([]);
-
+const [IsActivity, setIsActivity] = useState(false);
 const handleEnterKeyPress = (event) => {
     let dataFilter = [];
    
@@ -346,8 +350,11 @@ const handleEnterKeyPress = (event) => {
                 return tempStr.every(word => commentWords.includes(word.toLowerCase()));
 
             });
-            console.log(filteredArr, "filteredArrdone");
-            setTempdatafilter(filteredArr);
+            
+            if(filteredArr && filteredArr.length > 0){
+                setTempdatafilter(filteredArr);
+            }
+          
             setsearchValues("");
         }
 
@@ -373,8 +380,11 @@ const handleMenuItemClick = (selectedValue) => {
         return item.ForwardedBy.toLowerCase().includes(selectedValue.toLowerCase());
     });
     
-    console.log(filteredArr,"menufilteredArr");
-    setTempdatafilter(filteredArr);
+   
+    if(filteredArr && filteredArr.length > 0) {
+        setTempdatafilter(filteredArr);
+    }
+   
     setAnchorElSort(null);
 };
 
@@ -742,53 +752,61 @@ const handleRemoveOption = (optionToRemove) => {
                 {toggleScreen.singleCardView ?
                 <Box class="activity-timeline activity-timeline-2">
                     <ul class="timeline-ul">
-                    {tempdatafilter ? (
-    tempdatafilter && tempdatafilter.length>0 && tempdatafilter.map((item, index) => (
-        <li key={index}>
-            <Box class="datetime">
-                <span>{item["Actioned Date"]}</span>
-                <span>{ }</span>
-            </Box>
-            <Box class="line-dotted">
-                <Box class="line-time"></Box>
-                <Box class="circle-time"></Box>
-                <Box class="circle-border"></Box>
-            </Box>
-            <Box class="timeline-details">
-                <Box class="icon-time-status"></Box>
-                <Box class="content-time">
-                    <h5>{item.Comments}</h5>
-                    <Box className='user-name pt-2 mt-2 d-flex align-items-center'>
-                        <PersonIcon className='me-1' /> <p className='mb-0'>{item["ForwardedBy"]}</p>
-                    </Box>
-                </Box>
-            </Box>
-        </li>
-    ))
-) : (
-    getAudit.map((item, index) => (
-        <li key={index}>
-            <Box class="datetime">
-                <span>{item["Actioned Date"]}</span>
-                <span>{ }</span>
-            </Box>
-            <Box class="line-dotted">
-                <Box class="line-time"></Box>
-                <Box class="circle-time"></Box>
-                <Box class="circle-border"></Box>
-            </Box>
-            <Box class="timeline-details">
-                <Box class="icon-time-status"></Box>
-                <Box class="content-time">
-                    <h5>{item.Comments}</h5>
-                    <Box className='user-name pt-2 mt-2 d-flex align-items-center'>
-                        <PersonIcon className='me-1' /> <p className='mb-0'>{item["ForwardedBy"]}</p>
-                    </Box>
-                </Box>
-            </Box>
-        </li>
-    ))
-)}
+                    {(() => {
+        try {
+            if (tempdatafilter && tempdatafilter.length > 0) {
+                return tempdatafilter.map((item, index) => (
+                    <li key={index}>
+                        <Box class="datetime">
+                            <span>{item["Actioned Date"]}</span>
+                            <span>{ }</span>
+                        </Box>
+                        <Box class="line-dotted">
+                            <Box class="line-time"></Box>
+                            <Box class="circle-time"></Box>
+                            <Box class="circle-border"></Box>
+                        </Box>
+                        <Box class="timeline-details">
+                            <Box class="icon-time-status"></Box>
+                            <Box class="content-time">
+                                <h5>{item.Comments}</h5>
+                                <Box className='user-name pt-2 mt-2 d-flex align-items-center'>
+                                    <PersonIcon className='me-1' /> <p className='mb-0'>{item["ForwardedBy"]}</p>
+                                </Box>
+                            </Box>
+                        </Box>
+                    </li>
+                ))
+            } else {
+                return getAudit.map((item, index) => (
+                    <li key={index}>
+                        <Box class="datetime">
+                            <span>{item["Actioned Date"]}</span>
+                            <span>{ }</span>
+                        </Box>
+                        <Box class="line-dotted">
+                            <Box class="line-time"></Box>
+                            <Box class="circle-time"></Box>
+                            <Box class="circle-border"></Box>
+                        </Box>
+                        <Box class="timeline-details">
+                            <Box class="icon-time-status"></Box>
+                            <Box class="content-time">
+                                <h5>{item.Comments}</h5>
+                                <Box className='user-name pt-2 mt-2 d-flex align-items-center'>
+                                    <PersonIcon className='me-1' /> <p className='mb-0'>{item["ForwardedBy"]}</p>
+                                </Box>
+                            </Box>
+                        </Box>
+                    </li>
+                ))
+            }
+        } catch (error) {
+            console.error(error);
+            return null; // or display an error message
+        }
+    })()}
+                   
 
                         {/* {selectedOptions ? selectedOptions.map((item, index) => {
                             return (
@@ -896,7 +914,7 @@ const handleRemoveOption = (optionToRemove) => {
 
                         <Box>
                             <Button onClick={AddCommenthandleClose} className='btn-red me-2'>Cancle</Button>
-                            <Button onClick={AddCommenthandleClose} className='btn-blue-2' autoFocus>
+                            <Button onClick={AddCommenthandleCloseSubmit} className='btn-blue-2' autoFocus>
                                 Submit
                             </Button>
                         </Box>

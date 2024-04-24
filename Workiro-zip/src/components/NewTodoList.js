@@ -97,7 +97,8 @@ function NewTodoList() {
         });
     }
 
-    const Json_CRM_GetOutlookTask = () => {
+    const Json_CRM_GetOutlookTask = (e, toOpen) => {
+        
         try {
             Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
                 if (sts) {
@@ -118,10 +119,19 @@ function NewTodoList() {
                         // Sorting by EndDateTime
                         formattedTasks.sort((a, b) => b.EndDateTime - a.EndDateTime);
 
+                        if(toOpen){
+                            let forTaskDetailModal = formattedTasks.filter(itm=>itm.ID===toOpen.Taskid);
+                            setSelectedTask(forTaskDetailModal[0]);
+                            setOpen(true);
+                            console.log("sdfdskjfksdjkhwe filter",)
+                        }
+
                         const filtredTask = formattedTasks.filter(itm => itm.AssignedToID.split(",").includes(userId) && itm.mstatus !== "Completed" && ["Portal", "CRM"].includes(itm.Source));
 
                         // console.log("Json_CRM_GetOutlookTask", filtredTask);
                         setAllTask(filtredTask);
+                        console.log("sdfdskjfksdjkhwe",filtredTask,"toOpen",toOpen);
+                        
                     }
                 }
             });
@@ -286,7 +296,12 @@ function NewTodoList() {
 
     }, [isApi])
 
-    const handleScroll = () => {
+    const handleScroll = (e) => {
+        
+        if(parseInt(window.innerHeight)+parseInt(e.target.documentElement.scrollTop)>=e.target.documentElement.scrollHeight){
+            setActiveSectionList("section4");
+            return;
+        }
         const sections = document.querySelectorAll('div[id^="section"]');
         const scrollPosition = window.scrollY;
 
@@ -573,11 +588,11 @@ function NewTodoList() {
 
     return (
         <Box className="container-fluid p-0">
-            <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
+            <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument} Json_CRM_GetOutlookTask={Json_CRM_GetOutlookTask}></DocumentsVewModal>
 
             {/* <DocumentRenameModal ClsSms={ClsSms} openRenameModal={openRenameModal} setOpenRenameModal={setOpenRenameModal} docForDetails={docForDetails} Json_getRecentDocumentList={Json_getRecentDocumentList}/> */}
 
-            <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
+            <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal} ></TaskDetailModal>
 
             <DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList} />
 

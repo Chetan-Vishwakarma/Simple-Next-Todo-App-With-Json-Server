@@ -162,8 +162,15 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyH
             let defaultUser1 = json.Table3.find(
               (manager) => manager.UserId == localStorage.getItem("UserId")
             );
-            console.log(defaultUser1,"defaulttManager");
+
+            console.log(defaultUser1,"defaulttManager",json.Table);
             setDefaultUser(defaultUser1);
+           try{
+            const defaultStatus = json.Table.find(item => item.StatusName === "Active");
+            console.log(defaultStatus,"defaultstatus",json.Table);
+            setDefaultStatus(defaultStatus);
+           } catch(e){};
+
             setStatus(json.Table);
           }
         }
