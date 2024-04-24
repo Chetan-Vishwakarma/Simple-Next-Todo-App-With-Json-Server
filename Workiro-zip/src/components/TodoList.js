@@ -98,6 +98,8 @@ function TodoList() {
 
     const [suggestionList, setSuggestionList] = useState([]);
 
+    const [searchInput, setSearchInput] = useState("");
+
 
 
     // for date datepicker
@@ -784,6 +786,7 @@ function TodoList() {
                                         }}
                                         onBlur={(e) => setIsSearch(false)}
                                         onChange={(e) => {
+                                            setSearchInput(e.target.value);
                                             if (e.target.value === "") {
                                                 setSuggestionList([]);
                                                 handleFilterDeletion("Subject");
@@ -794,8 +797,15 @@ function TodoList() {
                                             setSuggestionList(fltData);
                                             setTaskFilter({ ...taskFilter, Subject: [e.target.value] });
                                         }}
+                                        onKeyDown={(e)=>{
+                                            if(e.key==="Enter"){
+                                                setIsSearch(false);
+                                            }
+                                        }}
                                         placeholder='Search'
-                                        className='ps-0' />
+                                        className='ps-0'
+                                        value={searchInput}
+                                         />
                                 </AutocompleteRoot>
 
                                 {isSearch && suggestionList.length > 0 && <Listbox sx={{ zIndex: 1 }}>
@@ -807,6 +817,11 @@ function TodoList() {
                                 </Listbox>}
                             </AutocompleteWrapper>
                         </Layout>
+                        <spa onClick={()=>{
+                            handleFilterDeletion("Subject");
+                            setIsSearch(false);
+                            setSearchInput("");
+                        }}>Clear</spa>
 
 
                         <FormControl size="small" className='select-border ms-3'>
