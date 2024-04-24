@@ -752,54 +752,61 @@ const handleRemoveOption = (optionToRemove) => {
                 {toggleScreen.singleCardView ?
                 <Box class="activity-timeline activity-timeline-2">
                     <ul class="timeline-ul">
-                    {tempdatafilter && tempdatafilter.length > 0 ? (
-    tempdatafilter.map((item, index) => (
-        <li key={index}>
-            <Box class="datetime">
-                <span>{item["Actioned Date"]}</span>
-                <span>{ }</span>
-            </Box>
-            <Box class="line-dotted">
-                <Box class="line-time"></Box>
-                <Box class="circle-time"></Box>
-                <Box class="circle-border"></Box>
-            </Box>
-            <Box class="timeline-details">
-                <Box class="icon-time-status"></Box>
-                <Box class="content-time">
-                    <h5>{item.Comments}</h5>
-                    <Box className='user-name pt-2 mt-2 d-flex align-items-center'>
-                        <PersonIcon className='me-1' /> <p className='mb-0'>{item["ForwardedBy"]}</p>
-                    </Box>
-                </Box>
-            </Box>
-        </li>
-    ))
-) : (
-    getAudit.map((item, index) => (
-        <li key={index}>
-            <Box class="datetime">
-                <span>{item["Actioned Date"]}</span>
-                <span>{ }</span>
-            </Box>
-            <Box class="line-dotted">
-                <Box class="line-time"></Box>
-                <Box class="circle-time"></Box>
-                <Box class="circle-border"></Box>
-            </Box>
-            <Box class="timeline-details">
-                <Box class="icon-time-status"></Box>
-                <Box class="content-time">
-                    <h5>{item.Comments}</h5>
-                    <Box className='user-name pt-2 mt-2 d-flex align-items-center'>
-                        <PersonIcon className='me-1' /> <p className='mb-0'>{item["ForwardedBy"]}</p>
-                    </Box>
-                </Box>
-            </Box>
-        </li>
-    ))
-)}
-
+                    {(() => {
+        try {
+            if (tempdatafilter && tempdatafilter.length > 0) {
+                return tempdatafilter.map((item, index) => (
+                    <li key={index}>
+                        <Box class="datetime">
+                            <span>{item["Actioned Date"]}</span>
+                            <span>{ }</span>
+                        </Box>
+                        <Box class="line-dotted">
+                            <Box class="line-time"></Box>
+                            <Box class="circle-time"></Box>
+                            <Box class="circle-border"></Box>
+                        </Box>
+                        <Box class="timeline-details">
+                            <Box class="icon-time-status"></Box>
+                            <Box class="content-time">
+                                <h5>{item.Comments}</h5>
+                                <Box className='user-name pt-2 mt-2 d-flex align-items-center'>
+                                    <PersonIcon className='me-1' /> <p className='mb-0'>{item["ForwardedBy"]}</p>
+                                </Box>
+                            </Box>
+                        </Box>
+                    </li>
+                ))
+            } else {
+                return getAudit.map((item, index) => (
+                    <li key={index}>
+                        <Box class="datetime">
+                            <span>{item["Actioned Date"]}</span>
+                            <span>{ }</span>
+                        </Box>
+                        <Box class="line-dotted">
+                            <Box class="line-time"></Box>
+                            <Box class="circle-time"></Box>
+                            <Box class="circle-border"></Box>
+                        </Box>
+                        <Box class="timeline-details">
+                            <Box class="icon-time-status"></Box>
+                            <Box class="content-time">
+                                <h5>{item.Comments}</h5>
+                                <Box className='user-name pt-2 mt-2 d-flex align-items-center'>
+                                    <PersonIcon className='me-1' /> <p className='mb-0'>{item["ForwardedBy"]}</p>
+                                </Box>
+                            </Box>
+                        </Box>
+                    </li>
+                ))
+            }
+        } catch (error) {
+            console.error(error);
+            return null; // or display an error message
+        }
+    })()}
+                   
 
                         {/* {selectedOptions ? selectedOptions.map((item, index) => {
                             return (
