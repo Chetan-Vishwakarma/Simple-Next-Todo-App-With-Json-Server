@@ -628,7 +628,7 @@ export default function DocumentList({ clientId }) {
 
 
 
-                <div style={{ top: globalSearchDocs.length > 0 && "80px" }} className='main-client-details-filter'>
+                <div style={{ top: globalSearchDocs.length > 0 && "85px", right: globalSearchDocs.length > 0 && "20px" }} className='main-client-details-filter'>
                     <Button aria-describedby={id} variant="" className='min-width-auto btn-blue px-0' onClick={handleClick}>
                         <TuneIcon />
                     </Button>
@@ -909,11 +909,11 @@ export default function DocumentList({ clientId }) {
                                                 className='custom-dropdown'
                                             >
                                                 <MenuItem value="" style={{ display: "none" }}>
-                                                Document ID
+                                                    Document ID
                                                 </MenuItem>
-                                                
+
                                                 <MenuItem>
-                                                <input className='form-control' />
+                                                    <input className='form-control' />
                                                 </MenuItem>
 
                                             </Select>
@@ -1046,8 +1046,6 @@ export default function DocumentList({ clientId }) {
                             </Box>
 
                         </Box>
-
-
                     </Popover>
                 </div>
 
