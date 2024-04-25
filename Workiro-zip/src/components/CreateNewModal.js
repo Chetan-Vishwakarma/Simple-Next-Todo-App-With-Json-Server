@@ -540,7 +540,7 @@ function CreateNewModalTask({ ...props }) {
 
 
         setTimeout(() => {
-            console.log(addUser);
+            console.log("handalClickAddUser",addUser);
         }, 2000);
     };
 
@@ -1382,9 +1382,9 @@ function CreateNewModalTask({ ...props }) {
        // console.log("Add User List11", addUser);  
 //setAddUser(clearData)
        
-setAddUser([]);
+//setAddUser([]);
 
-       
+Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("FolderId"));
 
         setCurrentDate(new Date())
         setTextSubject("");

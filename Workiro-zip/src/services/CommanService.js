@@ -29,6 +29,10 @@ Json_GetContactListByFolder(obj,callBack) {
     return parts[parts.length - 1];
 };
 
+getFileName(x){
+    let parts = x.split(".");
+   return parts[0];
+}
 ///////////////////end all contact
      ConfirmMessage(txt,callBack) {
         Swal.fire({
