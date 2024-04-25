@@ -9,6 +9,8 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import Activity from '../../client/utils/Activity';
 
+import LockIcon from '@mui/icons-material/Lock';
+
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import CommanCLS from '../../services/CommanService';
 
@@ -71,6 +73,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     const [value, setValue] = React.useState('1');
     const [viewerUrl, setViwerUrl] = React.useState('');
     const [seletedFileData, setSeletedFileData] = React.useState([]);
+    const [getVertion, setGetVertion] = React.useState([]);
     const [selectedFiles, setSelectedFiles] = React.useState([]);
 
     const [templateDataMarkup, setTemplateDataMarkup] = React.useState([]);
@@ -158,6 +161,8 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         }
 
     }
+
+
     const Json_GetItemStickyNotes = () => {
         try {
             let obj = {
@@ -234,6 +239,8 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
             Json_getAssociatedTaskListByDocumentId();
             setSeletedFileData([]);
             setopenModal(false)
+            Json_GetVersionByItemId();
+
         }
 
     }, [selectedDocument])
@@ -242,6 +249,32 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         setSeletedFileData((pre) => [...pre, el]);
 
     }
+
+
+    function Json_GetVersionByItemId() {
+        try {           
+            let obj = {};
+            obj.itemId = selectedDocument["Registration No."];
+            cls.Json_GetVersionByItemId(obj, function (sts, data) {
+                if (sts) {   
+                    if(data){
+                        let js = JSON.parse(data);
+                        let tbl = js.Table;
+                        if(tbl.length>0){
+                            console.log("Json_GetVersionByItemId",tbl)
+                            setGetVertion(tbl)
+                        }
+                       
+                    }                
+
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetVersionByItemId error", error)
+        }
+    }
+
 
     function Json_GetItemBase64DataById(item) {
         try {
@@ -601,9 +634,10 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
                                 <TabPanel value="2" className='p-0'>
                                     <Box className='row'>
-                                        {Array(12).fill("").map(() => {
+
+                                        {getVertion.length>0 ? getVertion.map((item,index) => {
                                             return <>
-                                                <Box className='col-lg-3'>
+                                                <Box className='col-lg-3' key={index}>
                                                     <Box className="file-uploads">
                                                         <label className="file-uploads-label file-uploads-document">
                                                             <Box className="d-flex align-items-center">
@@ -614,11 +648,15 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                                                     className='me-2'
                                                                 />
                                                                 <Box className="upload-content pe-3">
-                                                                    <Typography variant="h4" >
-                                                                        This File is Test Files.pdf 2
+                                                                    <Typography variant="h4" className='d-flex align-items-center justify-content-between' >
+                                                                      Version No {item.VersionNo} {item.IsLocked && (<>
+                                                                      
+                                                                      <LockIcon size="small"></LockIcon>
+                                                                      
+                                                                      </>)}
                                                                     </Typography>
                                                                     <Typography variant="body1">
-                                                                        12:36PM 28/12/2023 | File uploaded by Patrick
+                                                                        {moment(item["VDate"]).format("DD/MM/YYYY HH:mm:ss")} | Updated by {item.UserName.toUpperCase()}
                                                                     </Typography>
                                                                 </Box>
                                                             </Box>
@@ -627,7 +665,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                                     {/* file upload end */}
                                                 </Box>
                                             </>
-                                        })}
+                                        }):""}
                                     </Box>
                                 </TabPanel>
 

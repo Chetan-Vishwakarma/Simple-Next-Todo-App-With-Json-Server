@@ -1214,7 +1214,7 @@ function TodoList() {
 
                                             <Box className='d-flex align-items-center justify-content-between'>
                                                 <Typography variant='subtitle1'><pan className='text-gray'>
-                                                    {FiterAssinee(item.OwnerID)} {arr.length > 2 && (<ArrowForwardIosIcon className='font-14' />)} </pan>
+                                                    {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)} </pan>
                                                     {/* <a href='#'>Patrick</a>, */}
                                                     <a href='#'>{FilterAgs(item)}</a> <a href='#'> {arr.length > 2 && (<>
                                                         +{arr.length - 2}

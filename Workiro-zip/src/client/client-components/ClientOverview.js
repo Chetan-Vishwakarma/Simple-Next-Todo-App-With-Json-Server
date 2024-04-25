@@ -85,8 +85,12 @@ function ClientOverview({ Cls, locationState }) {
                     if (data) {
                         let json = JSON.parse(data);
                         let details = json.Table
-                        console.log("Json_ExplorerSearchDoc", details);
-                        setTotalDocuments(details.length);
+                        let tbl6 = json.Table6;
+                        if(tbl6) {
+                            console.log("Json_ExplorerSearchDoc", tbl6);
+                            setTotalDocuments(tbl6.length);
+                        }
+                        
                     }
                 }
             });
