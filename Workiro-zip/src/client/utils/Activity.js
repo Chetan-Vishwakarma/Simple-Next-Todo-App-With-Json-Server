@@ -551,11 +551,22 @@ const handleRemoveOption = (optionToRemove) => {
         let workbook = new Workbook();
         let worksheet = workbook.addWorksheet("SheetName");
         console.log(data,"worksheetdat");
+        const headerRow = worksheet.addRow(["Actioned Date", "Comments", "ForwardedBy"]);
+  
+  // Apply bold formatting to header row
+  headerRow.eachCell((cell, colNumber) => {
+    cell.font = { bold: true };
+  });
+  
         data.forEach((item, index) => {
           // Add your logic to populate the worksheet with data from the items
           worksheet.addRow([item["Actioned Date"], item.Comments, item["ForwardedBy"]]);
         });
-      
+       // Set column widths to add space between columns (in pixels)
+  worksheet.columns.forEach(column => {
+    column.width = 30; // Adjust as needed
+  });
+
         workbook.xlsx.writeBuffer().then(function (buffer) {
           saveAs(
             new Blob([buffer], { type: "application/octet-stream" }),

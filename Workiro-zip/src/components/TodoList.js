@@ -200,6 +200,7 @@ function TodoList() {
                         console.log("resultoutlook", result);
                         if(result && result.length > 0){
                             setExporttoExcel(result);
+                            exportTaskData = [...result];
                             
                         }
                         const formattedTasks = result.map((task) => {
@@ -755,11 +756,31 @@ function TodoList() {
         let workbook = new Workbook();
         let worksheet = workbook.addWorksheet("SheetName");
         console.log(data,"worksheetdat");
-        data.forEach((item, index) => {
-          // Add your logic to populate the worksheet with data from the items
-          worksheet.addRow([item["Actioned Date"], item.Subject, item["ForwardedBy"]]);
-        });
-      
+         // Add column headers
+  const headerRow = worksheet.addRow(["Source", "Subject", "Forwarded By", "End Date", "Client", "Status"]);
+  
+  // Apply bold formatting to header row
+  headerRow.eachCell((cell, colNumber) => {
+    cell.font = { bold: true };
+  });
+
+  // Add data rows
+  data.forEach((item, index) => {
+    worksheet.addRow([
+      item?.Source,
+      item?.Subject,
+      item["ForwardedBy"],
+      startFormattingDate(item["EndDateTime"]),
+      item?.Client,
+      item?.Status
+    ]);
+  });
+
+  // Set column widths to add space between columns (in pixels)
+  worksheet.columns.forEach(column => {
+    column.width = 30; // Adjust as needed
+  });
+
         workbook.xlsx.writeBuffer().then(function (buffer) {
           saveAs(
             new Blob([buffer], { type: "application/octet-stream" }),
@@ -769,7 +790,8 @@ function TodoList() {
       };
 
       const ExportData = useCallback(() => {
-          exportexcel(ExporttoExcel ? ExporttoExcel : []); // Export data from 
+          console.log("exportData",exportTaskData);
+          exportexcel(exportTaskData ? exportTaskData : []); // Export data from 
           setAnchorElDown(null);
       }, []);
 
