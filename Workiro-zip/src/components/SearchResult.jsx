@@ -370,7 +370,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                             }}
                                         >
                                         <Typography variant="h4" >
-                                            {/* { Object.keys(test).includes(String(index)) ? test[index] : item.Description ? item.Description.substr(0,30)+"..." : "No Name" } */}
                                             { Object.keys(test).includes(String(index)) ? test[index] : (item.Description && item.Description.length > 35) ? item.Description.substr(0,35)+"..." : item.Description ? item.Description : "No Name" }
                                         </Typography>
                                         </BootstrapTooltip>
