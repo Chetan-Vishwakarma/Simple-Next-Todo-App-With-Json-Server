@@ -57,6 +57,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import ToggleButton from '@mui/material/ToggleButton';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import TestForDetails from './TestForDetails';
 
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -148,9 +149,9 @@ export default function SidebarNav() {
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
   const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
   const [userId, setUserId] = useState(localStorage.getItem("UserId"));
-  const [globalSearch,setGlobalSearch] = useState(localStorage.getItem("globalSearchKey"));
+  const [globalSearch, setGlobalSearch] = useState(localStorage.getItem("globalSearchKey"));
 
-  console.log("fueteuiuert",window.location.pathname);
+  console.log("fueteuiuert", window.location.pathname);
 
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -338,10 +339,11 @@ export default function SidebarNav() {
   }
 
   const [tabs, setTabs] = useState([{
-    tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon: <DashboardIcon />}, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon: <AccountBoxIcon /> }, { tabLink: "/dashboard/TodoList", tabName: 'To-do List', active: false, tabIcon: <AssignmentIcon /> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon: <GroupIcon /> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon: <ViewCarouselIcon /> }, 
+    tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon: <DashboardIcon />
+  }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon: <AccountBoxIcon /> }, { tabLink: "/dashboard/TodoList", tabName: 'To-do List', active: false, tabIcon: <AssignmentIcon /> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon: <GroupIcon /> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon: <ViewCarouselIcon /> },
     // { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false, tabIcon: <ContentPasteSearchIcon /> },
-  // { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false, tabIcon: <PersonAddIcon /> },
-]);
+    // { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false, tabIcon: <PersonAddIcon /> },
+  ]);
   const [searchInputForGlobalSearch, setSearchInputForGlobalSearch] = useState("");
 
   React.useEffect(() => {
@@ -359,10 +361,10 @@ export default function SidebarNav() {
         itm.active = false;
       }
     });
-    if(window.location.pathname==="/dashboard/SearchResult" && tabs.every(itm=>itm.tabName!=="Search Result")){
+    if (window.location.pathname === "/dashboard/SearchResult" && tabs.every(itm => itm.tabName !== "Search Result")) {
       navigate("/dashboard/TodoList");
       tabs.length > 0 && tabs.map(itm => {
-        if (itm.tabLink==="/dashboard/TodoList") {
+        if (itm.tabLink === "/dashboard/TodoList") {
           itm.active = true;
         } else {
           itm.active = false;
@@ -402,7 +404,7 @@ export default function SidebarNav() {
     setAnchorEl4(null);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     setGlobalSearch(localStorage.getItem("globalSearchKey"));
     tabs.map(itm => {
       if (itm.tabName === "Search Result") {
@@ -412,8 +414,8 @@ export default function SidebarNav() {
       }
     });
     // setTabs([...tabs,{ tabLink: `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${folderId}`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
-    
-  },[globalSearch,window.location.pathname]);
+
+  }, [globalSearch, window.location.pathname]);
 
   return (
     <>
@@ -446,10 +448,10 @@ export default function SidebarNav() {
                           <span className="material-symbols-outlined search-icon">search</span>
 
                           <form onSubmit={(e) => {
-                            localStorage.setItem("globalSearchKey",searchInputForGlobalSearch);
-                            const isAlready = tabs.map(itm=>itm.tabName).some(item=>item==="Search Result");
-                            if(!isAlready){
-                              setTabs([...tabs,{ tabLink: `/dashboard/SearchResult?str=${globalSearch}&folder=${folderId}`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
+                            localStorage.setItem("globalSearchKey", searchInputForGlobalSearch);
+                            const isAlready = tabs.map(itm => itm.tabName).some(item => item === "Search Result");
+                            if (!isAlready) {
+                              setTabs([...tabs, { tabLink: `/dashboard/SearchResult?str=${globalSearch}&folder=${folderId}`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
                             }
                             e.preventDefault();
                             navigate(`/dashboard/SearchResult?str=${forDocuments}&folder=${selectedFolder}`);
@@ -537,8 +539,11 @@ export default function SidebarNav() {
                     </Select>
                   </FormControl> */}
 
-
                   <div>
+                    <TestForDetails folderList={folders}/>
+                  </div>
+
+                  {/* <div>
 
                     <ToggleButton
                       // value="check"
@@ -575,7 +580,7 @@ export default function SidebarNav() {
                       })}
 
                     </Menu>
-                  </div>
+                  </div> */}
 
                 </Box>
 
@@ -810,49 +815,49 @@ export default function SidebarNav() {
               </ListItem>
             ))}
             <ListItem className={''} disablePadding sx={{ display: 'block' }}>
-                <ListItemButton
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                }}
+                onClick={() => {
+                  navigate("/dashboard/LogOut");
+                }}
+              >
+
+                <ListItemIcon
                   sx={{
-                    minHeight: 48,
-                    justifyContent: open ? 'initial' : 'center',
-                    px: 2.5,
-                  }}
-                  onClick={() => {
-                    navigate("/dashboard/LogOut");
+                    minWidth: 0,
+                    mr: open ? 2 : 'auto',
+                    justifyContent: 'center',
                   }}
                 >
 
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 2 : 'auto',
-                      justifyContent: 'center',
+
+                  <BootstrapTooltip title={"Logout"} arrow
+                    placement="bottom-start"
+                    slotProps={{
+                      popper: {
+                        modifiers: [
+                          {
+                            name: 'offset',
+                            options: {
+                              offset: [0, 5],
+                            },
+                          },
+                        ],
+                      },
                     }}
                   >
+                    <LogoutIcon />
+                  </BootstrapTooltip>
 
+                </ListItemIcon>
 
-                    <BootstrapTooltip title={"Logout"} arrow
-                      placement="bottom-start"
-                      slotProps={{
-                        popper: {
-                          modifiers: [
-                            {
-                              name: 'offset',
-                              options: {
-                                offset: [0, 5],
-                              },
-                            },
-                          ],
-                        },
-                      }}
-                    >
-                      <LogoutIcon />
-                    </BootstrapTooltip>
-
-                  </ListItemIcon>
-
-                  <ListItemText primary={"Log Out"} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
-              </ListItem>
+                <ListItemText primary={"Log Out"} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
           </List>
         </Drawer>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>

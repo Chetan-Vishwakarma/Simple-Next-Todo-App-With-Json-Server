@@ -28,6 +28,9 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
   const [ClientAddress, setClientAddress] = useState([]);
+  const [MainAddress, setMainAddress] = useState(null);
+  const [BillingAddress, setBillingAddress] = useState(null);
+  const [RegisteredAddress, setRegisteredAddress] = useState(null);
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
   let Cls = new CommanCLS(baseUrl, agrno, Email, password);
@@ -93,56 +96,68 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
       Cls.Json_GetClientAddresses(requestBody, (sts, data) => {
         if (sts) {
           if (data) {
-            let json = JSON.parse(data);
-            console.log(json.Table,"Json_GetClientAddresses111");
-            setClientAddress(json.Table);
-            let mainAddress, billingAddress, registeredAddress;
-
-            // Iterate through the Table data to find Main, Billing, and Registered addresses
-            if(json && json.Table.length > 0) {
-              json.Table.forEach(element => {
-                if (element.AddressType == "Main Address") {
-                  console.log(element,"main_address");
-                    mainAddress = element;
-                } else if (element.AddressType == "Billing Address") {
-                    billingAddress = element;
-                } else if (element.AddressType == "Registered Address") {
-                    registeredAddress = element;
-                }
-            });
-            }
-            
-            console.log(mainAddress,"Mainaddress222222222222222222");
+            try {
+              let json = JSON.parse(data);
+              console.log(json.Table, "Json_GetClientAddresses111");
+              setClientAddress(json.Table);
+              
+              // Initialize address variables
+              let mainAddress = null,
+                  billingAddress = null,
+                  registeredAddress = null;
           
-            const updatedUserDetail = {
+              // Iterate through the addresses to find the specific types
+              json.Table.forEach(element => {
+                switch (element.AddressType) {
+                  case "Main Address":
+                    mainAddress = element;
+                    break;
+                  case "Billing Address":
+                    billingAddress = element;
+                    break;
+                  case "Registered Address":
+                    registeredAddress = element;
+                    break;
+                  default:
+                    // Handle any other address types if necessary
+                    break;
+                }
+              });
+          
+              // Update the userDetail state with the found addresses
+              const updatedUserDetail = {
                 ...userDetail,
-                Line1: mainAddress ? mainAddress.Add1 : "test",
-                Line2: mainAddress ? mainAddress.Add2 : "",
-                Line3: mainAddress ? mainAddress.Add3 : "",
-                Town: mainAddress ? mainAddress.Town : "",
-                MCounty: mainAddress ? mainAddress.County : "",
-                Postcode: mainAddress ? mainAddress.Postcode : "",
-                BilLine1: billingAddress ? billingAddress.Add1 : "",
-                BilLine2: billingAddress ? billingAddress.Add2 : "",
-                BilLine3: billingAddress ? billingAddress.Add3 : "",
-                BilTown: billingAddress ? billingAddress.Town : "",
-                BilCountry: billingAddress ? billingAddress.County : "",
-                BilPostcode: billingAddress ? billingAddress.Postcode : "",
-                regLine1: registeredAddress ? registeredAddress.Add1 : "",
-                regLine2: registeredAddress ? registeredAddress.Add2 : "",
-                regLine3: registeredAddress ? registeredAddress.Add3 : "",
-                regTown: registeredAddress ? registeredAddress.Town : "",
-                regCountry: registeredAddress ? registeredAddress.County : "",
-                regPostcode: registeredAddress ? registeredAddress.Postcode : "",
+                Line1: mainAddress?.Add1 || "test",
+                Line2: mainAddress?.Add2 || "",
+                Line3: mainAddress?.Add3 || "",
+                Town: mainAddress?.Town || "",
+                MCounty: mainAddress?.County || "",
+                Postcode: mainAddress?.Postcode || "",
+                BilLine1: billingAddress?.Add1 || "",
+                BilLine2: billingAddress?.Add2 || "",
+                BilLine3: billingAddress?.Add3 || "",
+                BilTown: billingAddress?.Town || "",
+                BilCountry: billingAddress?.County || "",
+                BilPostcode: billingAddress?.Postcode || "",
+                regLine1: registeredAddress?.Add1 || "",
+                regLine2: registeredAddress?.Add2 || "",
+                regLine3: registeredAddress?.Add3 || "",
+                regTown: registeredAddress?.Town || "",
+                regCountry: registeredAddress?.County || "",
+                regPostcode: registeredAddress?.Postcode || "",
                 fullAddress: mainAddress 
                     ? `${mainAddress.Add1}\n${mainAddress.Add2}\n${mainAddress.Add3}\n${mainAddress.Town}\n${mainAddress.County}\n${mainAddress.Postcode}`
                     : ""
-            };
-            
-            // Set the updatedUserDetail to state
-            setUserDetail(updatedUserDetail);
-            
+              };
+          
+              // Set the updatedUserDetail to state
+              setUserDetail(updatedUserDetail);
+            } catch (error) {
+              console.error(error);
+              // Handle parsing error if necessary
+            }
           }
+          
         }
       });
     } catch (err) {
