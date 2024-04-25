@@ -144,6 +144,7 @@ function UploadDocument({
                             Guid: localStorage.getItem("GUID"),
                             FileType: cls.getFileExtension(file.name).toLowerCase()
                         };
+                        
                         setSelectedFiles((prevUploadedFiles) => [...prevUploadedFiles, fileData]);
                         resolve();
                     };
@@ -151,6 +152,7 @@ function UploadDocument({
                 });
             }
         }
+
     };
 
 
@@ -482,6 +484,12 @@ function UploadDocument({
 
     const handleNext = () => {
         setStep(step + 1);
+        if(selectedFiles.length===1){
+            settxtStandarDescription(cls.getFileName(selectedFiles[0].FileName));
+        }
+        else{
+            settxtStandarDescription(""); 
+        }
     };
 
     const handlePrevious = () => {
@@ -550,9 +558,9 @@ function UploadDocument({
             if (!txtSectionData || !txtSectionData.SecID) {
                 validationMessage += "Please Select Section. ";
             }
-            if (!txtStandarDescription) {
-                validationMessage += "Description is blank. ";
-            }
+            // if (!txtStandarDescription) {
+            //     validationMessage += "Description is blank. ";
+            // }
 
             if (validationMessage === '') {
 
@@ -568,9 +576,9 @@ function UploadDocument({
                     "originatorId": txtClientData.ClientID,
                     "senderId": txtClientData.ClientID,
                     "sectionName": txtSectionData.Sec,
-                    "extDescription": txtStandarDescription ? txtStandarDescription : "",
+                    "extDescription":validationMessage==="" ? cls.getFileName(fileData.FileName) : txtStandarDescription,
                     "docDirection": "Incoming",
-                    "description": txtStandarDescription ? txtStandarDescription : "",
+                    "description": validationMessage==="" ? cls.getFileName(fileData.FileName) : txtStandarDescription,
                     "priority": "",
                     "stickyNote": "",
                     "fileName": fileData ? fileData.FileName : "",
@@ -588,6 +596,7 @@ function UploadDocument({
                     "strtxt64": "",
                     "EmailMessageId": ""
                 }
+                
                 console.log("Json_RegisterItem", obj);
 
 

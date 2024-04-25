@@ -112,7 +112,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
             });
             }
             
-            console.log(mainAddress,"Mainaddress");
+            console.log(mainAddress,"Mainaddress222222222222222222");
           
             const updatedUserDetail = {
                 ...userDetail,
