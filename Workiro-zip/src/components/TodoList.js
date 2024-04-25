@@ -755,7 +755,7 @@ function TodoList() {
     const exportexcel = (data) => {
         let workbook = new Workbook();
         let worksheet = workbook.addWorksheet("SheetName");
-        console.log(data,"worksheetdat");
+        console.log(data,"worksheetdata",data[0]["EndDateTime"]);
          // Add column headers
   const headerRow = worksheet.addRow(["Source", "Subject", "Forwarded By", "End Date", "Client", "Status"]);
   
@@ -763,14 +763,22 @@ function TodoList() {
   headerRow.eachCell((cell, colNumber) => {
     cell.font = { bold: true };
   });
-
+  
   // Add data rows
   data.forEach((item, index) => {
+    let timestamp;
+    let date;
+    if (item["EndDateTime"]) {
+      timestamp = parseInt(item["EndDateTime"].slice(6, -2));
+      date = startFormattingDate(timestamp);
+    } else {
+      date = '';
+    }
     worksheet.addRow([
       item?.Source,
       item?.Subject,
-      item["ForwardedBy"],
-      startFormattingDate(item["EndDateTime"]),
+      item["Forwarded By"],
+      date,      
       item?.Client,
       item?.Status
     ]);
