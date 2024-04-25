@@ -294,10 +294,10 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                             const date = new Date(ActivityDate);
                             return { ...activity, ActivityDate: date, comDate: date, comNotes: activity.Notes };
                         });
-                        // console.log(
-                        //     "Json_Get_CRM_Task_ActivityByTaskId",
-                        //     formattedActivity
-                        // );
+                        console.log(
+                            "sonamJson_Get_CRM_Task_ActivityByTaskId",
+                            formattedActivity
+                        );
 
                         setCRMTaskAcivity(
                             formattedActivity.sort((a, b) => a.ActivityDate - b.ActivityDate)
@@ -408,7 +408,20 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
 
     const [attachmentFile, setAttachmentFile] = useState([]);
 
-
+    function formatDate(inputDate) {
+        // Parse the input date string into a Date object
+        const date = new Date(inputDate);
+        
+        // Get day, month, and year components
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1
+        const year = date.getFullYear().toString();
+        
+        // Construct the formatted date string in "dd/mm/yyyy" format
+        const formattedDate = `${day}/${month}/${year}`;
+        
+        return formattedDate;
+      }
     async function Json_Get_CRM_SavedTask_ByTaskId(taskid) {
         setAttachmentFile([]);
         let obj = {};
@@ -426,11 +439,19 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
 
                 let table6 = json.T6;
                 if (table6 && table6.length > 0) {
-                    // let arrFile = [];
-                    // for (let item of table6) {
-                    //     arrFile.push(getFilePath(item));
-                    // }
-                    setAttachmentFile(table6);
+                    const formattedActivity = table6.map((activity) => {
+                        let timestamp;
+                        if (activity.Item_Date) {
+                            timestamp = parseInt(activity.Item_Date.slice(6, -2));
+                        }
+                        const date = new Date(timestamp);
+                        const formatedate = formatDate(date)
+                        // console.log(formatDate(date),"dateformattingdate");
+                        return { ...activity, Item_Date: formatedate};
+                    });
+
+                   
+                    setAttachmentFile(formattedActivity);
                     // setTimeout(() => {
                     //     console.log("attachmentFile", attachmentFile);
                     // }, 3000);
@@ -2947,6 +2968,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                                             // Set the groupIndex to 0 to enable grouping by this column
                                             dataType="string"  // Set the data type to "string" for proper grouping
                                             cellRender={(data) => {
+                                                console.log(data,"datadms")
                                                 return <Box className="file-uploads">
                                                     <label className="file-uploads-label file-uploads-document" onClick={(event) => {
                                                         event.stopPropagation();
@@ -2968,11 +2990,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                                                             />
                                                             <Box className="upload-content pe-3">
                                                                 <Typography variant="h4" >
-                                                                    {data.data.ItemId ? data.data.ItemId : "Demo"}
+                                                                    {data.data.FileName ? data.data.FileName : "Demo"}
                                                                 </Typography>
                                                                 <Typography variant="body1">
                                                                     {/* Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span>  */}
-                                                                    Date <span className='sembold'>{data.data["Item Date"] ? data.data["Item Date"] : ""}</span> |
+                                                                    Date <span className='sembold'>{data.data["Item_Date"] ? data.data["Item_Date"] : ""}</span> |
                                                                     Uploaded by <span className='sembold'>Patrick</span>
                                                                 </Typography>
                                                             </Box>
