@@ -8,13 +8,18 @@ import DataGrid, {
 } from 'devextreme-react/data-grid';
 import 'devextreme/dist/css/dx.light.css';
 
-
+import ToggleButton from '@mui/material/ToggleButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import {Workbook} from 'exceljs';
+ import saveAs from "file-saver";
 import SelectBox, { SelectBoxTypes } from 'devextreme-react/select-box';
 import CheckBox, { CheckBoxTypes } from 'devextreme-react/check-box';
 import CommanCLS from '../../services/CommanService';
 import CustomLoader from '../../components/CustomLoader';
 import DataNotFound from '../../components/DataNotFound';
-
+import DownloadIcon from '@mui/icons-material/Download';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; 
 const saleAmountEditorOptions = { format: 'currency', showClearButton: true };
 const filterLabel = { 'aria-label': 'Filter' };
 
@@ -78,7 +83,7 @@ const orderHeaderFilter = (data) => {
   };
 };
 
-
+let exportTaskData = [];
 function TaskList({clientName}) {
 
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -94,7 +99,7 @@ function TaskList({clientName}) {
   const [showHeaderFilter, setShowHeaderFilter] = useState(true);
   const [currentFilter, setCurrentFilter] = useState(applyFilterTypes[0].key);
 
-
+  const [anchorElDown, setAnchorElDown] = useState(null);
   const [outlookTaskList, setOutlookTaskList] = useState([]);
   const [dataNotFound, setDataNotFound] = useState(false);
 
@@ -137,7 +142,9 @@ function TaskList({clientName}) {
               if(filteredData.length===0){
                 setDataNotFound(true);
               }
+              console.log("filteredData",filteredData)
               setOutlookTaskList(filteredData);
+              exportTaskData = [...filteredData];
             }
 
           }
@@ -176,7 +183,66 @@ function TaskList({clientName}) {
         return <span className={statusClass}>{dt.mstatus}</span>;
     }
 };
+const handleMenuOpen = (event) => {
+  setAnchorElDown(event.currentTarget);
+};
 
+const handleMenuClose = () => {
+  setAnchorElDown(null);
+};
+const exportexcel = (data) => {
+let workbook = new Workbook();
+let worksheet = workbook.addWorksheet("SheetName");
+console.log(data,"worksheetdata");
+ // Add column headers
+const headerRow = worksheet.addRow(["ClientNo", "Client", "Section", "Forwarded By", "Start","EndDateTime","Subject","mstatus","Source"]);
+
+// Apply bold formatting to header row
+headerRow.eachCell((cell, colNumber) => {
+cell.font = { bold: true };
+});
+
+// Add data rows
+data.forEach((item, index) => {
+let timestamp;
+let date;
+// if (item["EndDateTime"]) {
+// timestamp = parseInt(item["EndDateTime"].slice(6, -2));
+// date = startFormattingDate(timestamp);
+// } else {
+// date = '';
+// }
+worksheet.addRow([
+item?.ClientNo,
+item?.Client,
+item?.Section,
+item["Forwarded By"],
+item?.Start,
+item?.EndDateTime,
+item?.Subject,
+item?.mstatus,
+item?.Source
+]);
+});
+
+// Set column widths to add space between columns (in pixels)
+worksheet.columns.forEach(column => {
+column.width = 30; // Adjust as needed
+});
+
+workbook.xlsx.writeBuffer().then(function (buffer) {
+  saveAs(
+    new Blob([buffer], { type: "application/octet-stream" }),
+    "dataGrid.xlsx"
+  );
+});
+};
+
+const ExportData = useCallback(() => {
+  console.log("exportData",exportTaskData);
+  exportexcel(exportTaskData ? exportTaskData : []); // Export data from 
+  setAnchorElDown(null);
+}, []);
 const handleRowDoubleClick = (e) => {
   // Handle double click event on the row
   console.log('Row double-clicked sdaskldjsajlaj:', e.data);
@@ -192,6 +258,21 @@ const handleRowDoubleClick = (e) => {
 
   return (
     <div className='table-responsive table-grid table-grid-2'>
+       <ToggleButton
+          size='small'
+          value="check" className='mx-2'
+          onClick={handleMenuOpen}
+        >
+          <DownloadIcon />
+        </ToggleButton><Menu
+          anchorEl={anchorElDown}
+          open={Boolean(anchorElDown)}
+          onClose={handleMenuClose}
+        >
+            <MenuItem onClick={ExportData}><InsertDriveFileIcon />  Export to Excel</MenuItem>
+
+
+          </Menu>
       {dataNotFound?<DataNotFound/>:(outlookTaskList.length>0?<DataGrid
         id="gridContainer"
         className='client-card-task-grid'
