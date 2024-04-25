@@ -785,28 +785,35 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
         setanchorElStatus(null);
         setSelectedIndexStatus(null); // Reset the selected index after closing the menu
         if (e.target.innerText) {
-            Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
-                if (res) {
-                    Json_UpdateTaskField("Status", e.target.innerText, returnMessageStatus(e.target.innerText));
-                    if (attachmentFile && attachmentFile.length > 0) {
-                        attachmentFile.forEach((item) => {
-                            addToWorkTable(item.ItemId, selectedTask);
-                        });
-                    } 
-                    if(selectedTask.Source ==="Portal"){
-
-                        if (PortalDocumentShow && PortalDocumentShow.length > 0) {
-                            PortalDocumentShow.forEach((item) => {
-                                if(item.ItemID) {
-                                    addToWorkTable(item.ItemID,selectedTask);
-                                }
+            console.log(e.target.innerText,"innerText");
+            if(e.target.innerText=="Completed"){
+                Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
+                    if (res) {
+                        Json_UpdateTaskField("Status", e.target.innerText, returnMessageStatus(e.target.innerText));
+                        if (attachmentFile && attachmentFile.length > 0) {
+                            attachmentFile.forEach((item) => {
+                                addToWorkTable(item.ItemId, selectedTask);
                             });
-                        }
-                    }
-                    
-                }
+                        } 
+                        if(selectedTask.Source ==="Portal"){
     
-           });
+                            if (PortalDocumentShow && PortalDocumentShow.length > 0) {
+                                PortalDocumentShow.forEach((item) => {
+                                    if(item.ItemID) {
+                                        addToWorkTable(item.ItemID,selectedTask);
+                                    }
+                                });
+                            }
+                        }
+                        
+                    }
+        
+               });
+               
+            } else {
+                Json_UpdateTaskField("Status", e.target.innerText, returnMessageStatus(e.target.innerText));
+            }
+          
     
            
         }

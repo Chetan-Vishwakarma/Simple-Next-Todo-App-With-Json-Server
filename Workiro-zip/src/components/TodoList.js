@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef,useCallback } from 'react';
 import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, TextField, Autocomplete, ToggleButton, ToggleButtonGroup, FormControl, Select, InputLabel, } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import user from "../images/user.jpg";
@@ -13,6 +13,9 @@ import moment from 'moment';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import CustomLoader from './CustomLoader';
+import * as XLSX from 'xlsx';
+ import {Workbook} from 'exceljs';
+ import saveAs from "file-saver";
 // import { data } from 'jquery';
 import MergeIcon from '@mui/icons-material/Merge';
 import AttachEmailIcon from '@mui/icons-material/AttachEmail';
@@ -142,6 +145,7 @@ function TodoList() {
     console.log("fdlkgjgljroirreotudfn", globalSearchTask.map(itm => itm.mstatus));
     const Json_CRM_GetOutlookTask = () => {
         if (globalSearchTask.length > 0) {
+            console.log("globalSearchTask", globalSearchTask);
             const formattedTasks = globalSearchTask.map((task) => {
                 let timestamp;
                 if (task.EndDateTime) {
@@ -184,6 +188,7 @@ function TodoList() {
                         let json = JSON.parse(data);
                         console.log("Json_CRM_GetOutlookTask111", json);
                         let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
+                       
                         const formattedTasks = result.map((task) => {
                             let timestamp;
                             if (task.EndDateTime) {
@@ -733,6 +738,26 @@ function TodoList() {
         }
 
     }
+    const exportexcel = (data) => {
+        let workbook = new Workbook();
+        let worksheet = workbook.addWorksheet("SheetName");
+        console.log(data,"worksheetdat");
+        data.forEach((item, index) => {
+          // Add your logic to populate the worksheet with data from the items
+          worksheet.addRow([item["Actioned Date"], item.Comments, item["ForwardedBy"]]);
+        });
+      
+        workbook.xlsx.writeBuffer().then(function (buffer) {
+          saveAs(
+            new Blob([buffer], { type: "application/octet-stream" }),
+            "dataGrid.xlsx"
+          );
+        });
+      };
+
+      const ExportData = useCallback(() => {
+          //exportexcel(getAudit ? getAudit : tempdatafilter); // Export data from 
+      }, []);
 
     const FilterAgs = (item) => {
         const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
@@ -1029,7 +1054,7 @@ function TodoList() {
                         </FormControl>
 
                         <ToggleButtonGroup className='ms-3' size='small'>
-                            <ToggleButton value="left" aria-label="left aligned">
+                            <ToggleButton value="left" aria-label="left aligned"  onClick={ExportData}>
                                 <DownloadIcon />
                             </ToggleButton>
                         </ToggleButtonGroup>
