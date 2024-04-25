@@ -40,6 +40,7 @@ import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { red, yellow, green } from '@mui/material/colors';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 import {
     List,
@@ -2483,12 +2484,13 @@ setAddUser([]);
                     aria-haspopup="true"
                     aria-expanded={open4 ? 'true' : undefined}
                     onClick={handleClick4}
-                    className="btn-blue btn-round btn-block add-new-btn"
+                    className="btn-blue btn-round btn-block add-new-btn justify-content-start"
                     variant="text"
                 >
-                    <span className="material-symbols-outlined font-18">edit_square</span>{" "}
-                    <span className="ps-2 font-13 create-text">Add New </span>
+                    {/* <span className="material-symbols-outlined font-18">edit_square</span>{" "} */}
 
+                    <AddCircleOutlineIcon className="font-26 ms-1" />
+                    <span className="ps-4 font-13 create-text">Add New </span>
                 </Button>
                 <Menu
                     id="basic-menu"

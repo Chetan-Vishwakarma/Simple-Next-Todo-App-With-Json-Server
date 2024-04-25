@@ -294,7 +294,7 @@ export default function SidebarNav() {
           if (data) {
             console.log("Json_CRM_GetOutlookTask", JSON.parse(data));
             let tasks = JSON.parse(data).Table;
-            let myTasks = tasks.filter((item) => item.AssignedToID.split(",").includes(userId) && (item.Source === "CRM" || item.Source === "Portal") && item.mstatus!=="Completed");
+            let myTasks = tasks.filter((item) => item.AssignedToID.split(",").includes(userId) && (item.Source === "CRM" || item.Source === "Portal"));
             let fltDouble = [];
             [...myTasks].map(itm => itm.Subject).filter(subject => {
               if (!fltDouble.includes(subject)) {
@@ -434,7 +434,7 @@ export default function SidebarNav() {
               <Box className="d-flex align-items-center justify-content-between w-100">
 
                 <Box className='d-flex flex-wrap'>
-                  <Box className="search-box ms-4 me-4">
+                  <Box className="search-box ms-2 me-3">
                     <Layout>
                       <AutocompleteWrapper>
                         <AutocompleteRoot
