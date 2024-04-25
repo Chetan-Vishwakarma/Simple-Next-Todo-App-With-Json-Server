@@ -464,18 +464,17 @@ export default function SidebarNav() {
                               }
                             });
                             setSearchInputForGlobalSearch("");
-                          }} >
+                          }} 
+                          className='w-100'>
                             <Input
                               onChange={(e) => handleGlobalSearch(e.target.value)}
                               // onBlur={() => setIsSearch(false)}
                               value={searchInputForGlobalSearch}
-                              placeholder='Search'
-                              className='ps-0' />
+                              placeholder='Search for Tasks or Documents'
+                              className='ps-0  w-100' />
                           </form>
 
                         </AutocompleteRoot>
-
-
 
                         {isSearch && <Listbox sx={{ zIndex: 1 }}>
 

@@ -8,8 +8,8 @@ import DataGrid, {
 } from 'devextreme-react/data-grid';
 import 'devextreme/dist/css/dx.light.css';
 
-import {Workbook} from 'exceljs';
- import saveAs from "file-saver";
+import { Workbook } from 'exceljs';
+import saveAs from "file-saver";
 import SelectBox, { SelectBoxTypes } from 'devextreme-react/select-box';
 import CheckBox, { CheckBoxTypes } from 'devextreme-react/check-box';
 import CommanCLS from '../../services/CommanService';
@@ -20,7 +20,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import ToggleButton from '@mui/material/ToggleButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; 
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 const saleAmountEditorOptions = { format: 'currency', showClearButton: true };
 const filterLabel = { 'aria-label': 'Filter' };
 
@@ -85,8 +85,8 @@ const orderHeaderFilter = (data) => {
 };
 
 let exportTaskData = [];
-function Contact({clientId}) {
-console.log("fjdsfjerio",typeof clientId);
+function Contact({ clientId }) {
+  console.log("fjdsfjerio", typeof clientId);
   const navigate = useNavigate();
 
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -134,13 +134,13 @@ console.log("fjdsfjerio",typeof clientId);
             let js = JSON.parse(data);
             console.log("Json_GetContactListByFolder", js?.Table);
             if (js && js?.Table.length > 0) {
-              let res = js.Table.map((el)=>{
-             el["Date Of Birth"]=cls.DateFormateDate(el["Date Of Birth"]);
+              let res = js.Table.map((el) => {
+                el["Date Of Birth"] = cls.DateFormateDate(el["Date Of Birth"]);
                 return el;
-              }).filter(itm=>itm.OriginatorNo===clientId);
+              }).filter(itm => itm.OriginatorNo === clientId);
               exportTaskData = [...res];
               setAllContactList(res)
-              if(res.length===0){
+              if (res.length === 0) {
                 setDataNotFound(true);
               }
             }
@@ -160,14 +160,14 @@ console.log("fjdsfjerio",typeof clientId);
   const handleRowDoubleClick = (e) => {
     navigate('/dashboard/ContactDetails', {
       state: {
-          agrno: agrno,
-          Email: Email,
-          password: password,
-          folderId: folderId,
-          originatorNo: e.data.OriginatorNo,
-          contactNo: e.data.ContactNo
+        agrno: agrno,
+        Email: Email,
+        password: password,
+        folderId: folderId,
+        originatorNo: e.data.OriginatorNo,
+        contactNo: e.data.ContactNo
       }
-  })
+    })
     // Handle double click event on the row
     console.log('Row double-clicked sdaskldjsajlaj:', e.data);
     // if(selectedChoice==="All" || selectedChoice==="Contacts"){
@@ -181,67 +181,68 @@ console.log("fjdsfjerio",typeof clientId);
   };
   const handleMenuOpen = (event) => {
     setAnchorElDown(event.currentTarget);
-};
+  };
 
-const handleMenuClose = () => {
+  const handleMenuClose = () => {
     setAnchorElDown(null);
-};
-const exportexcel = (data) => {
-  let workbook = new Workbook();
-  let worksheet = workbook.addWorksheet("SheetName");
-  console.log(data,"worksheetdata");
-   // Add column headers
-const headerRow = worksheet.addRow(["OriginatorNo", "First Name", "Last Name", "Main Contact", "ManagerName", "Folder","Note","Date Of Birth"]);
+  };
+  const exportexcel = (data) => {
+    let workbook = new Workbook();
+    let worksheet = workbook.addWorksheet("SheetName");
+    console.log(data, "worksheetdata");
+    // Add column headers
+    const headerRow = worksheet.addRow(["OriginatorNo", "First Name", "Last Name", "Main Contact", "ManagerName", "Folder", "Note", "Date Of Birth"]);
 
-// Apply bold formatting to header row
-headerRow.eachCell((cell, colNumber) => {
-cell.font = { bold: true };
-});
+    // Apply bold formatting to header row
+    headerRow.eachCell((cell, colNumber) => {
+      cell.font = { bold: true };
+    });
 
-// Add data rows
-data.forEach((item, index) => {
-let timestamp;
-let date;
-// if (item["EndDateTime"]) {
-// timestamp = parseInt(item["EndDateTime"].slice(6, -2));
-// date = startFormattingDate(timestamp);
-// } else {
-// date = '';
-// }
-worksheet.addRow([
-item?.OriginatorNo,
-item["First Name"],
-item["Last Name"],
-item["Main Contact"],
-item?.ManagerName,
-item?.Folder,
-item?.Note,
-item["Date Of Birth"]
-]);
-});
+    // Add data rows
+    data.forEach((item, index) => {
+      let timestamp;
+      let date;
+      // if (item["EndDateTime"]) {
+      // timestamp = parseInt(item["EndDateTime"].slice(6, -2));
+      // date = startFormattingDate(timestamp);
+      // } else {
+      // date = '';
+      // }
+      worksheet.addRow([
+        item?.OriginatorNo,
+        item["First Name"],
+        item["Last Name"],
+        item["Main Contact"],
+        item?.ManagerName,
+        item?.Folder,
+        item?.Note,
+        item["Date Of Birth"]
+      ]);
+    });
 
-// Set column widths to add space between columns (in pixels)
-worksheet.columns.forEach(column => {
-column.width = 30; // Adjust as needed
-});
+    // Set column widths to add space between columns (in pixels)
+    worksheet.columns.forEach(column => {
+      column.width = 30; // Adjust as needed
+    });
 
-  workbook.xlsx.writeBuffer().then(function (buffer) {
-    saveAs(
-      new Blob([buffer], { type: "application/octet-stream" }),
-      "dataGrid.xlsx"
-    );
-  });
-};
+    workbook.xlsx.writeBuffer().then(function (buffer) {
+      saveAs(
+        new Blob([buffer], { type: "application/octet-stream" }),
+        "dataGrid.xlsx"
+      );
+    });
+  };
 
-const ExportData = useCallback(() => {
-    console.log("exportData",exportTaskData);
+  const ExportData = useCallback(() => {
+    console.log("exportData", exportTaskData);
     exportexcel(exportTaskData ? exportTaskData : []); // Export data from 
     setAnchorElDown(null);
-}, []);
-console.log(allContactList,"exportData1");
+  }, []);
+  console.log(allContactList, "exportData1");
   return (
-    <div className='table-responsive table-grid table-grid-2'>
-      <ToggleButton
+    <>
+      <div className='btn-downloads'>
+        <ToggleButton
           size='small'
           value="check" className='mx-2'
           onClick={handleMenuOpen}
@@ -252,12 +253,14 @@ console.log(allContactList,"exportData1");
           open={Boolean(anchorElDown)}
           onClose={handleMenuClose}
         >
-            <MenuItem onClick={ExportData}><InsertDriveFileIcon />  Export to Excel</MenuItem>
+          <MenuItem onClick={ExportData}><InsertDriveFileIcon />  Export to Excel</MenuItem>
+        </Menu>
+      </div>
+      <div className='table-responsive table-grid table-grid-2'>
 
 
-          </Menu>
-      { dataNotFound ? <DataNotFound/> : ( allContactList.length>0 ? 
-       <><DataGrid
+        {dataNotFound ? <DataNotFound /> : (allContactList.length > 0 ?
+          <><DataGrid
             id="gridContainer"
             className='client-card-contact-grid'
             ref={dataGridRef}
@@ -310,8 +313,9 @@ console.log(allContactList,"exportData1");
               dataType="date"
               caption="Date Of Birth"
               format="M/d/yyyy, HH:mm" />
-          </DataGrid></>:<CustomLoader/>)}
-    </div>
+          </DataGrid></> : <CustomLoader />)}
+      </div>
+    </>
   )
 }
 
