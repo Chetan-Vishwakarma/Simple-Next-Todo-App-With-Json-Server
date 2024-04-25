@@ -12,6 +12,7 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import moment from 'moment';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; 
 import CustomLoader from './CustomLoader';
 import * as XLSX from 'xlsx';
  import {Workbook} from 'exceljs';
@@ -55,6 +56,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20' />, <PublishedWithChangesIcon color='primary' className='me-1 font-20' />, <HourglassBottomIcon color='primary' className='me-1 font-20' />, <CheckCircleOutlineIcon color='success' className='me-1 font-20' />];
 let attatmentdata = [];
+let exportTaskData = [];
 function TodoList() {
     const location = useLocation();
     const reduxData = useSelector((data) => data.counter.myTasks);
@@ -64,7 +66,7 @@ function TodoList() {
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
-    const [allPortalAttachments, setAllPortalAttachments] = React.useState([]);
+    const [ExporttoExcel, setExporttoExcel] = React.useState([]);
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
     const [userId, setUserId] = useState(localStorage.getItem("UserId"));
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -78,7 +80,7 @@ function TodoList() {
 
     let ClsSms = new CommanCLS(baseUrl, agrno, Email, password);
 
-
+    const [anchorElDown, setAnchorElDown] = useState(null);
     const [allTask, setAllTask] = useState([...reduxData]);
     const [actualData, setActualData] = useState([...reduxData]);
     const [selectedTask, setSelectedTask] = useState({});
@@ -120,6 +122,13 @@ function TodoList() {
     };
     const handleClose = () => {
         setAnchorEl(null);
+    };
+    const handleMenuOpen = (event) => {
+        setAnchorElDown(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorElDown(null);
     };
     function Json_GetFolders() {
         let obj = {
@@ -188,7 +197,11 @@ function TodoList() {
                         let json = JSON.parse(data);
                         console.log("Json_CRM_GetOutlookTask111", json);
                         let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
-                       
+                        console.log("resultoutlook", result);
+                        if(result && result.length > 0){
+                            setExporttoExcel(result);
+                            
+                        }
                         const formattedTasks = result.map((task) => {
                             let timestamp;
                             if (task.EndDateTime) {
@@ -744,7 +757,7 @@ function TodoList() {
         console.log(data,"worksheetdat");
         data.forEach((item, index) => {
           // Add your logic to populate the worksheet with data from the items
-          worksheet.addRow([item["Actioned Date"], item.Comments, item["ForwardedBy"]]);
+          worksheet.addRow([item["Actioned Date"], item.Subject, item["ForwardedBy"]]);
         });
       
         workbook.xlsx.writeBuffer().then(function (buffer) {
@@ -756,7 +769,8 @@ function TodoList() {
       };
 
       const ExportData = useCallback(() => {
-          //exportexcel(getAudit ? getAudit : tempdatafilter); // Export data from 
+          exportexcel(ExporttoExcel ? ExporttoExcel : []); // Export data from 
+          setAnchorElDown(null);
       }, []);
 
     const FilterAgs = (item) => {
@@ -1054,9 +1068,18 @@ function TodoList() {
                         </FormControl>
 
                         <ToggleButtonGroup className='ms-3' size='small'>
-                            <ToggleButton value="left" aria-label="left aligned"  onClick={ExportData}>
+                            <ToggleButton value="left" aria-label="left aligned"   onClick={handleMenuOpen}>
                                 <DownloadIcon />
                             </ToggleButton>
+                            <Menu
+                anchorEl={anchorElDown}
+                open={Boolean(anchorElDown)}
+                onClose={handleMenuClose}
+            >
+                <MenuItem onClick={ExportData}><InsertDriveFileIcon />  Export to Excel</MenuItem>
+                
+                
+            </Menu>
                         </ToggleButtonGroup>
 
                     </Box>

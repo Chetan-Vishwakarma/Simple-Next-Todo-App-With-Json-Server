@@ -94,13 +94,15 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
         if (sts) {
           if (data) {
             let json = JSON.parse(data);
-            console.log(json.Table,"Json_GetClientAddresses");
+            console.log(json.Table,"Json_GetClientAddresses111");
             setClientAddress(json.Table);
             let mainAddress, billingAddress, registeredAddress;
 
             // Iterate through the Table data to find Main, Billing, and Registered addresses
-            json.Table.forEach(element => {
+            if(json && json.Table.length > 0) {
+              json.Table.forEach(element => {
                 if (element.AddressType == "Main Address") {
+                  console.log(element,"main_address");
                     mainAddress = element;
                 } else if (element.AddressType == "Billing Address") {
                     billingAddress = element;
@@ -108,13 +110,10 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                     registeredAddress = element;
                 }
             });
+            }
+            
             console.log(mainAddress,"Mainaddress");
-            // Create an updatedUserDetail object with the values from the respective addresses
-      //       if(mainAddress){
-      //         let data = { ...userDetail };
-      // data = { ...data, ["Line1"]: mainAddress.Add1 };
-      // setUserDetail(data);
-      //       }
+          
             const updatedUserDetail = {
                 ...userDetail,
                 Line1: mainAddress ? mainAddress.Add1 : "test",
