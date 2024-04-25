@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,useRef,useCallback } from 'react'
 import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Popover, Tabs, Tab, Checkbox, Grid, Autocomplete, TextField, } from '@mui/material';
 
 import { useAutocomplete } from '@mui/base/useAutocomplete';
@@ -17,6 +17,19 @@ import WarningIcon from '@mui/icons-material/Warning';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import DescriptionIcon from '@mui/icons-material/Description';
 import FormControl from '@mui/material/FormControl';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; // Import Excel icon
+import * as XLSX from 'xlsx';
+ import {Workbook} from 'exceljs';
+//  import DataGrid from "devextreme-react/data-grid";
+import DataGrid, {
+    Column, FilterRow, Search, SearchPanel, Selection,
+    HeaderFilter, Scrolling,
+    FilterPanel,
+    Pager, Paging, DataGridTypes, FormGroup,
+  } from 'devextreme-react/data-grid';
+ //import { Button } from "devextreme-react";
+
+// import { saveAs } from 'file-saver';
 import Select from '@mui/material/Select';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
@@ -26,7 +39,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { ToastContainer, toast } from 'react-toastify';
 import Activitygrid from './Activitygrid';
-
+import { exportDataGrid } from "devextreme/excel_exporter";
+import saveAs from "file-saver";
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
 ))(({ theme }) => ({
@@ -65,6 +79,8 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     const [ForwardUser, setForwardUser] = useState("");
     const [selectedComments, setSelectedComments] = React.useState('');
     const [sortByProperty, setSortByProperty] = useState("");
+    const [anchorElDown, setAnchorElDown] = useState(null);
+
     const [selectedDocudata, setselectedDocument] = useState({});
     const [userAddComment, setAddComment] = useState({
         CommentId: "",
@@ -143,6 +159,34 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
         data = { ...data, ["TextAddComment"]: e.target.value };
         setAddComment(data);
       }
+      const handleMenuOpen = (event) => {
+        setAnchorElDown(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorElDown(null);
+    };
+    const dataGridRef = useRef(null);
+    const employees = []; // Initialize your employees data here
+    
+
+    const exportToExcel = () => {
+        const dataArray = [
+            { id: 1, name: 'John Doe', age: 30, email: 'john@example.com' },
+            { id: 2, name: 'Jane Smith', age: 25, email: 'jane@example.com' },
+            { id: 3, name: 'Alice Johnson', age: 35, email: 'alice@example.com' }
+          ];
+        if (dataArray && dataArray.length > 0) {
+          const workbook = XLSX.utils.book_new();
+          const worksheet = XLSX.utils.json_to_sheet(dataArray);
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+          XLSX.writeFile(workbook, 'exportedData.xlsx');
+        } else {
+          console.error("Data array is empty or not provided.");
+        }
+      };
+      
+     
     function addToWorkTable() {
        
         let obj = {  agrno: agrno, Email: Email, password: password,ItemId: selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : "", comment:userAddComment.TextAddComment};
@@ -499,8 +543,94 @@ const handleRemoveOption = (optionToRemove) => {
 };
 
     console.log(searchValuesArr,"groupedOptions");
+
+
+    const grid = useRef();
+    const browserdata = useRef();
+    const exportexcel = (data) => {
+        let workbook = new Workbook();
+        let worksheet = workbook.addWorksheet("SheetName");
+        console.log(data,"worksheetdat");
+        data.forEach((item, index) => {
+          // Add your logic to populate the worksheet with data from the items
+          worksheet.addRow([item["Actioned Date"], item.Comments, item["ForwardedBy"]]);
+        });
+      
+        workbook.xlsx.writeBuffer().then(function (buffer) {
+          saveAs(
+            new Blob([buffer], { type: "application/octet-stream" }),
+            "dataGrid.xlsx"
+          );
+        });
+      };
+
+      const ExportData = useCallback(() => {
+        if (grid.current && grid.current.instance) {
+            console.log("sonamcurrenttempdatafilter",grid.current.instance.getDataSource()._items)
+          exportexcel(grid.current.instance.getDataSource()._items);
+          setAnchorElDown(null);
+        } else {
+            console.log(tempdatafilter,"sonamtempdatafilter",getAudit);
+          exportexcel(getAudit ? getAudit : tempdatafilter); // Export data from tempdatafilter if available, otherwise export data from getAudit
+          setAnchorElDown(null);
+        }
+      }, [grid, tempdatafilter, getAudit]);
+    // const ExportData = useCallback(() => {
+    //     let workbook = new Workbook();
+    //     let worksheet = workbook.addWorksheet("SheetName");
+      
+    //         console.log(grid,"sonamdxdatagrid_view");
+    //         if(grid.current){
+    //             exportDataGrid({
+    //                 component: grid.current.instance,
+    //                 worksheet: worksheet
+    //               }).then(function () {
+    //                 workbook.xlsx.writeBuffer().then(function (buffer) {
+    //                   saveAs(
+    //                     new Blob([buffer], { type: "application/octet-stream" }),
+    //                     "dataGrid.xlsx"
+    //                   );
+    //                 });
+    //               });
+    //         } else {
+    //             console.log("browserview_data");
+    //         }
+       
+       
+    //   }, []);
+
+      let columns = [
+        { dataField: "Employee", alignment: "left" },
+        { caption: "City", dataField: "CustomerStoreCity", alignment: "left" },
+        { caption: "State", dataField: "CustomerStoreState", alignment: "left" },
+        { dataField: "SaleAmount", alignment: "right" }
+      ];
+      let orders = [
+        {
+          ID: 1,
+          OrderNumber: 35703,
+          OrderDate: new Date(2014, 3, 10),
+          SaleAmount: 11800,
+          Terms: "15 Days",
+          TotalAmount: 12175,
+          CustomerStoreState: "California",
+          CustomerStoreCity: "Los Angeles",
+          Employee: "Harv Mudd",
+          HyperLink: "www.mylink.com"
+        }
+      ];
+
+
     return (
         <>
+         {/* <DataGrid
+        ref={grid}
+        dataSource={orders}
+        showBorders={true}
+        columns={columns}
+      /> */}
+      {/* <Button onClick={ExportData}>Export Data</Button> */}
+
             <Box class="ml-auto mr-auto">
 
                 <Box className='d-flex justify-content-between my-1 mb-2 align-items-start'>
@@ -568,9 +698,20 @@ const handleRemoveOption = (optionToRemove) => {
                         </ToggleButton>
                         <ToggleButton
                             size='small'
-                            value="check" className='mx-2'>
+                            value="check" className='mx-2'
+                            onClick={handleMenuOpen}
+                            >
                             <DownloadIcon />
                         </ToggleButton>
+                        <Menu
+                anchorEl={anchorElDown}
+                open={Boolean(anchorElDown)}
+                onClose={handleMenuClose}
+            >
+                <MenuItem onClick={ExportData}><InsertDriveFileIcon />  Export to Excel</MenuItem>
+                
+                
+            </Menu>
 
                         <Box>
                             <ToggleButton
@@ -807,40 +948,40 @@ const handleRemoveOption = (optionToRemove) => {
         }
     })()}
                    
-
-                        {/* {selectedOptions ? selectedOptions.map((item, index) => {
-                            return (
-                                <>
-                                    <li key={index}>
-                                        <Box class="datetime">
-                                            <span>{item["Actioned Date"]}</span>
-                                            <span>{ }</span>
-                                        </Box>
-                                        <Box class="line-dotted">
-                                            <Box class="line-time"></Box>
-                                            <Box class="circle-time"></Box>
-
-                                            <Box class="circle-border"></Box>
-                                        </Box>
-                                        <Box class="timeline-details">
-                                            <Box class="icon-time-status"></Box>
-                                            <Box class="content-time">
-                                                <h5>{item.Comments}</h5>
-                                                <Box className='user-name pt-2 mt-2 d-flex align-items-center'>
-                                                    <PersonIcon className='me-1' /> <p className='mb-0'>{item["ForwardedBy"]}</p>
-                                                </Box>
-                                            </Box>
-                                        </Box>
-                                    </li>
-                                </>
-                            )
-
-                        }) : ""} */}
                     </ul>
                     
                 </Box>
                  :(
-                    <div><Activitygrid getAudit={getAudit} selectedDocument={selectedDocument} call_Json_GetAudit={call_Json_GetAudit} tempdatafilter={tempdatafilter}/></div>
+                    <div>
+                        {/* <Activitygrid  grid={grid} getAudit={getAudit} selectedDocument={selectedDocument} call_Json_GetAudit={call_Json_GetAudit} tempdatafilter={tempdatafilter}/> */}
+                        <div><Box className=''>
+    <DataGrid
+        ref={grid}
+        id="dataGrid"
+        className='table-grid'
+        // style={{ width: "100%" }}
+        dataSource={tempdatafilter.length > 0 ? tempdatafilter : getAudit.length > 0 ? getAudit : []}
+        keyExpr="Activity ID"
+        columnAutoWidth={true}
+        showBorders={true}>
+        <Column dataField="Actioned Date" dataType="date" caption="Date"  format="M/d/yyyy, HH:mm" />
+        <Column dataField="Comments" dataType="string" caption="Activity" />
+        <Column dataField="ForwardedBy" dataType="string" caption="User" />
+        <HeaderFilter visible={true} />
+        <Scrolling mode="standard" />
+        <Selection
+            mode="multiple"
+        />
+        <Paging defaultPageSize={20} />
+        <Pager
+            visible={true} />
+        <SearchPanel
+            visible={true}
+            width={240}
+            placeholder="Search..." />
+    </DataGrid>
+</Box></div>
+                        </div>
                  )}
             </Box>
 
