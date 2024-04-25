@@ -877,7 +877,7 @@ function TodoList() {
                                         value={searchInput}
                                     />
 
-                                    <span onClick={() => {
+                                    { searchInput !== "" && <span onClick={() => {
                                         handleFilterDeletion("Subject");
                                         setIsSearch(false);
                                         setSearchInput("");
@@ -885,7 +885,7 @@ function TodoList() {
                                         className='btn-clear'
                                     >
                                         <ClearIcon />
-                                    </span>
+                                    </span> }
 
                                 </AutocompleteRoot>
 

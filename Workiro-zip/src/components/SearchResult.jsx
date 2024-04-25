@@ -20,6 +20,8 @@ import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import DocDetails from './DocDetails';
 import DocumentsVewModal from '../client/utils/DocumentsVewModal';
+import Tooltip from '@mui/material/Tooltip';
+import BootstrapTooltip from '../utils/BootstrapTooltip';
 
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
@@ -352,9 +354,25 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                             className='edit-input'
                                         />
                                     ) : (
+                                        <BootstrapTooltip title={ item.Description ? item.Description : "" } arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
+                                        >
                                         <Typography variant="h4" >
-                                            { Object.keys(test).includes(String(index)) ? test[index] : item.Description ? item.Description : "No Name" }
+                                            { Object.keys(test).includes(String(index)) ? test[index] : (item.Description && item.Description.length > 35) ? item.Description.substr(0,35)+"..." : item.Description ? item.Description : "No Name" }
                                         </Typography>
+                                        </BootstrapTooltip>
                                     )}
                                         <Typography variant="body1">
                                             {/* Size:  <span className='sembold'>{item.FileSize? item.FileSize: ""}</span> |  */}
