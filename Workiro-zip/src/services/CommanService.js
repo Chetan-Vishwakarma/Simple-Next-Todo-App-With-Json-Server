@@ -54,6 +54,22 @@ Json_GetContactListByFolder(obj,callBack) {
 
     ////////////////////////////////////////Portal Methods
    
+    Json_GetVersionByItemId(obj,callBack) {
+        try {
+            super.CreateNewServiceParamObject("Json_GetVersionByItemId",obj,true);
+            super.CallNewService("Json_GetVersionByItemId", function (status, Data) {
+                if (status) {
+                    return callBack(true, Data);
+                }
+                else {
+                    return callBack(false, []);
+                }
+            })
+        } catch (error) {
+            console.log("network error",error)
+        }
+       
+    }
     Json_ExplorerSearchDoc(obj,callBack) {
         super.CreateNewServiceParamObject("Json_ExplorerSearchDoc",obj,true);
         super.CallNewService("Json_ExplorerSearchDoc", function (status, Data) {
@@ -1145,6 +1161,20 @@ console.log("formattedDate",formattedDate)
             }
         })
     }
+    Json_GetClientAddressesAdd(obj,callback) {
+        super.CreateNewServiceParamObject("Json_GetClientAddresses",obj,true);
+        super.CallNewService("Json_GetClientAddresses", function (status, Data) {
+            if (status) {
+                if (Data !== "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+
     Json_GetClientAssignedUnassignedFolderList(obj,callback) {
         super.CreateNewServiceParamObject("Json_GetClientAssignedUnassignedFolderList",obj,false);
         super.CallNewService("Json_GetClientAssignedUnassignedFolderList", function (status, Data) {

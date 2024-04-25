@@ -88,6 +88,7 @@ function ClientDetails() {
     const [txtSectionData, setTxtSectionData] = useState(null);
     const [TaskType, setTaskType] = useState(null);
     const [openModal, setOpenModal] = useState(null);
+    
 
     const handleClickOpenUploadDocument = () => {
         dispatch(setOpenDocumentModalByRedux(true));
@@ -205,9 +206,14 @@ function ClientDetails() {
             console.log("Error while calling Json_GetClientCardDetails", err)
         }
     }
+   
+
+
+
 
     useEffect(() => {
         Json_GetClientCardDetails();
+      
     }, []);
 
 
@@ -322,7 +328,7 @@ function ClientDetails() {
                         </TabPanel>
 
                         <TabPanel value="2" className='p-0'>
-                            <ClientAddress></ClientAddress>
+                            <ClientAddress originatorNo={originatorNo}></ClientAddress>
                         </TabPanel>
                         <TabPanel value="3" className='p-0'>
                             <Contact clientId={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorNo}></Contact>
