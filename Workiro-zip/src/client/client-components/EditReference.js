@@ -31,6 +31,7 @@ function EditReference({ companyEditDetails }) {
   const [selectedFolderID, setSelectedFolderID] = useState(null);
   const [dataFromChild, setDataFromChild] = useState([]);
   const [dataCompanyHouse, setDataCompanyHouse] = useState([]);
+  const [SendPorjectId, setSendPorjectId] = useState(null);
   const [activeStep, setActiveStep] = React.useState(0);
   const [userDetail, setUserDetail] = useState({
     Clientname: companyEditDetails[0]?.OriginatorName,
@@ -281,7 +282,7 @@ function EditReference({ companyEditDetails }) {
       "Email": Email,
       "password": password,
       "OriginatorNo": userDetail.Clientid ? userDetail.Clientid : "",
-      "ProjectIdList": userDetail.FolderId ? userDetail.FolderId : -1
+      "ProjectIdList": userDetail.FolderId ? userDetail.FolderId : SendPorjectId
     }
 
     Cls.Json_AssignProjectsToClient(changeidObj, (sts, data) => {
@@ -474,6 +475,7 @@ function EditReference({ companyEditDetails }) {
               // setDataCompanyHouse={setDataCompanyHouse}
               setUserDetail={setUserDetail}
               //
+             
               companyEditDetails={companyEditDetails}
               setDataCompanyHouse={setDataCompanyHouse}
               setSelectedFolderID={setSelectedFolderID}

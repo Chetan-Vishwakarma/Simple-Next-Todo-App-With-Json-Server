@@ -298,7 +298,12 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
     Json_GetFolders();
     Json_GetConfiguration();
     Json_GetClientAssignedUnassignedFolderList();
-
+    //  if(defaultFoldefr){
+    //   const projectIDs = defaultFoldefr.map(item => item.FolderID);
+    //   const joinedIDs = projectIDs.join(', ');
+    //   console.log(joinedIDs,"joinddd ");
+    //   setSendPorjectId(joinedIDs);
+    //  }
   }, []);
   useEffect(() => {
     if (folders && folders.length > 0) {
