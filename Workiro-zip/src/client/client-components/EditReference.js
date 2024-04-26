@@ -33,10 +33,10 @@ function EditReference({ companyEditDetails }) {
   const [dataCompanyHouse, setDataCompanyHouse] = useState([]);
   const [activeStep, setActiveStep] = React.useState(0);
   const [userDetail, setUserDetail] = useState({
-    Clientname: "",
-    Clientid: companyEditDetails[0].OriginatorNo,
-    Mobile: "",
-    Telephone: "",
+    Clientname: companyEditDetails[0]?.OriginatorName,
+    Clientid: companyEditDetails[0]?.OriginatorNo,
+    Mobile: companyEditDetails[0]?.AltTelNo,
+    Telephone: companyEditDetails[0]?.TelNo,
     Line1: "",
     Line2: "",
     Line3: "",
@@ -66,7 +66,7 @@ function EditReference({ companyEditDetails }) {
     Status: "",
     Source: "",
     Manager: "",
-    Email: "",
+    Email: companyEditDetails[0]?.Email,
     folderId: localStorage.getItem("FolderId"),
     BussId: companyEditDetails[0].BussID,
     UserId: -1,

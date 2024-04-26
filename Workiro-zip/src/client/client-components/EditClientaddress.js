@@ -83,9 +83,11 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  
+  let mainAddress = null,
+  billingAddress = null,
+  registeredAddress = null;
   const Json_GetClientAddresses
- = async () => {
+ = () => {
     let requestBody = {
       agrno: agrno,
       Email: Email,
@@ -102,56 +104,57 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
               setClientAddress(json.Table);
               
               // Initialize address variables
-              let mainAddress = null,
-                  billingAddress = null,
-                  registeredAddress = null;
+             
           
               // Iterate through the addresses to find the specific types
-              json.Table.forEach(element => {
-                switch (element.AddressType) {
-                  case "Main Address":
-                    mainAddress = element;
-                    break;
-                  case "Billing Address":
-                    billingAddress = element;
-                    break;
-                  case "Registered Address":
-                    registeredAddress = element;
-                    break;
-                  default:
-                    // Handle any other address types if necessary
-                    break;
-                }
-              });
-          
-              // Update the userDetail state with the found addresses
-              const updatedUserDetail = {
-                ...userDetail,
-                Line1: mainAddress?.Add1 || "test",
-                Line2: mainAddress?.Add2 || "",
-                Line3: mainAddress?.Add3 || "",
-                Town: mainAddress?.Town || "",
-                MCounty: mainAddress?.County || "",
-                Postcode: mainAddress?.Postcode || "",
-                BilLine1: billingAddress?.Add1 || "",
-                BilLine2: billingAddress?.Add2 || "",
-                BilLine3: billingAddress?.Add3 || "",
-                BilTown: billingAddress?.Town || "",
-                BilCountry: billingAddress?.County || "",
-                BilPostcode: billingAddress?.Postcode || "",
-                regLine1: registeredAddress?.Add1 || "",
-                regLine2: registeredAddress?.Add2 || "",
-                regLine3: registeredAddress?.Add3 || "",
-                regTown: registeredAddress?.Town || "",
-                regCountry: registeredAddress?.County || "",
-                regPostcode: registeredAddress?.Postcode || "",
-                fullAddress: mainAddress 
-                    ? `${mainAddress.Add1}\n${mainAddress.Add2}\n${mainAddress.Add3}\n${mainAddress.Town}\n${mainAddress.County}\n${mainAddress.Postcode}`
-                    : ""
-              };
-          
-              // Set the updatedUserDetail to state
-              setUserDetail(updatedUserDetail);
+              if(json.Table && json.Table.length > 0){
+                json.Table.forEach(element => {
+                  switch (element.AddressType) {
+                    case "Main Address":
+                      mainAddress = element;
+                      break;
+                    case "Billing Address":
+                      billingAddress = element;
+                      break;
+                    case "Registered Address":
+                      registeredAddress = element;
+                      break;
+                    default:
+                      // Handle any other address types if necessary
+                      break;
+                  }
+                });
+            
+                // Update the userDetail state with the found addresses
+                const updatedUserDetail = {
+                  ...userDetail,
+                  Line1: mainAddress?.Add1 || "test",
+                  Line2: mainAddress?.Add2 || "",
+                  Line3: mainAddress?.Add3 || "",
+                  Town: mainAddress?.Town || "",
+                  MCounty: mainAddress?.County || "",
+                  Postcode: mainAddress?.Postcode || "",
+                  BilLine1: billingAddress?.Add1 || "",
+                  BilLine2: billingAddress?.Add2 || "",
+                  BilLine3: billingAddress?.Add3 || "",
+                  BilTown: billingAddress?.Town || "",
+                  BilCountry: billingAddress?.County || "",
+                  BilPostcode: billingAddress?.Postcode || "",
+                  regLine1: registeredAddress?.Add1 || "",
+                  regLine2: registeredAddress?.Add2 || "",
+                  regLine3: registeredAddress?.Add3 || "",
+                  regTown: registeredAddress?.Town || "",
+                  regCountry: registeredAddress?.County || "",
+                  regPostcode: registeredAddress?.Postcode || "",
+                  fullAddress: mainAddress 
+                      ? `${mainAddress.Add1}\n${mainAddress.Add2}\n${mainAddress.Add3}\n${mainAddress.Town}\n${mainAddress.County}\n${mainAddress.Postcode}`
+                      : ""
+                };
+            
+                // Set the updatedUserDetail to state
+                setUserDetail(updatedUserDetail);
+              }
+            
             } catch (error) {
               console.error(error);
               // Handle parsing error if necessary
@@ -164,7 +167,6 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
       console.log("Error while calling Json_GetToFavourites", err);
     }
   };
-  Json_GetClientAddresses();
   useEffect(() => {
     
     if(dataCompanyHouse){
@@ -201,9 +203,9 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
     setEmail(localStorage.getItem("Email"));
     // setFolderId(localStorage.getItem("FolderId"));
     // setIntUserid(localStorage.getItem("UserId"));
-    
-      
-   
+    setTimeout(() => {
+      Json_GetClientAddresses();
+    }, 3000);
     
   }, [dataCompanyHouse]);
   console.log(userDetail,"userDetaildata111")
