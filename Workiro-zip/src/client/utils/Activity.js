@@ -982,11 +982,6 @@ const handleRemoveOption = (optionToRemove) => {
         keyExpr="Activity ID"
         columnAutoWidth={true}
         showBorders={true}>
-<<<<<<< HEAD
-        <FilterRow visible={true} />
-        <FilterPanel visible={true} />
-        <HeaderFilter visible={true} />
-=======
         <HeaderFilter visible={true} />
         <FilterRow visible={true} />
     <FilterPanel visible={true} />
@@ -994,7 +989,6 @@ const handleRemoveOption = (optionToRemove) => {
         <Column dataField="Comments" dataType="string" caption="Activity" />
         <Column dataField="ForwardedBy" dataType="string" caption="User" />
        
->>>>>>> 85c3b7c4f8d41921dedf1221dbdd0413ad8bb9b8
         <Scrolling mode="standard" />
         <Selection
             mode="multiple"
