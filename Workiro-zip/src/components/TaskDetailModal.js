@@ -832,6 +832,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                });
                
             } else {
+                
                 Json_UpdateTaskField("Status", e.target.innerText, returnMessageStatus(e.target.innerText));
             }
           
