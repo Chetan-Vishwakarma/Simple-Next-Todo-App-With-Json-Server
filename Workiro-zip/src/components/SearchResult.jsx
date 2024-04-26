@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Box, Button, Typography, Radio, Menu, MenuItem, ListItemIcon } from '@mui/material';
+import { Box, Button, Typography, Radio, Menu, MenuItem, ListItemIcon, Badge } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -22,6 +22,9 @@ import DocDetails from './DocDetails';
 import DocumentsVewModal from '../client/utils/DocumentsVewModal';
 import Tooltip from '@mui/material/Tooltip';
 import BootstrapTooltip from '../utils/BootstrapTooltip';
+import Fileformat from '../images/files-icon/pdf.png';
+import IconButton from '@mui/material/IconButton';
+
 
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
@@ -73,7 +76,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     const [editingIndex, setEditingIndex] = useState(null);
     const [updatedSubject, setUpdatedSubject] = useState('');
     const [test, setTest] = useState({});
-    
+
     const handleEdit = (index) => {
         console.log("Editing index:", index);
         setEditingIndex(index);
@@ -96,12 +99,12 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                 if (data) {
                     let json = JSON.parse(data);
                     console.log("Json_RenameDocument", json);
-                    if(json.Status==="Success"){
+                    if (json.Status === "Success") {
                         // Json_getRecentDocumentList();
                         toast.success(json.Message);
                         setEditingIndex(null);
-                        setTest({...test, [index]:newDesc});
-                    }else{
+                        setTest({ ...test, [index]: newDesc });
+                    } else {
                         toast.error("Unable to rename this document");
                     }
                 }
@@ -110,7 +113,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     }
 
     const handleSave = (newDesc, oldDesc, doc, index) => {
-        if(oldDesc===newDesc) return;
+        if (oldDesc === newDesc) return;
         Json_RenameDocument(doc, newDesc, index);
     };
 
@@ -221,7 +224,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         let fltTasks = myTotalTasks.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
         setFilteredTasks(fltTasks);
         let fltDocuments = myDocuments.filter(itm => {
-            if(itm.Description && target){
+            if (itm.Description && target) {
                 return itm.Description.toLowerCase().includes(target.toLowerCase());
             }
         });
@@ -256,73 +259,8 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     }
     return (
         <>
-        <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
+            <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
             <DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList} />
-            <Box className='mb-5'>
-                <h3 className='font-20 mt-1'><SearchIcon /> We found the following Tasks matching <span className='text-blue bold'>"{target}"</span></h3>
-                <Grid className='mt-0' container spacing={2} >
-                    {filteredTasks.length > 0 ? filteredTasks.slice(0, 9).map(item => {
-                        return <Grid className='pt-0' item xs={12} lg={4} md={4} sm={12}>
-                            <Box className='todo-list-box white-box relative w-100'>
-                                <Box className='clearfix'>
-                                    <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
-                                        sx={{
-                                            '&.Mui-checked': {
-                                                color: "secondary",
-                                            },
-                                        }}
-                                    />
-                                    {/* <PushPinIcon className='pinicon'></PushPinIcon> */}
-                                </Box>
-                                <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> {item.Source}</Typography>
-                                <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
-                                <Box className='d-flex align-items-center justify-content-between'>
-                                    <Typography variant='subtitle1' ><pan className='text-gray'>
-                                        {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
-                                        {/* <a href='#'>Patrick</a>, */}
-                                        <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +2</a></Typography>
-                                    <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
-                                </Box>
-                                <Box className='d-flex align-items-center justify-content-between'>
-                                    <Typography variant='subtitle1'>{item.Client}</Typography>
-                                    <Typography variant='subtitle1'>
-                                        <Box>
-                                            <Button
-                                                id="basic-button"
-                                            >
-                                                {item.Status}
-                                            </Button>
-                                        </Box>
-                                    </Typography>
-                                </Box>
-                                <Box className='mt-2'>
-                                    <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)}>Mark Complete</Button>
-                                    <DateRangePicker initialSettings={{
-                                        singleDatePicker: true,
-                                        showDropdowns: true,
-                                        startDate: new Date(parseInt(/\d+/.exec(item["EndDateTime"]))),
-                                        minYear: 1901,
-                                        maxYear: 2100,
-                                    }}
-                                        onCallback={(start) => {
-                                            const date = start.format('YYYY/MM/DD');
-                                            Json_UpdateTaskField("EndDateTime", date, item);
-                                        }}
-                                    >
-                                        <Button variant="outlined" className='btn-outlin-2'>
-                                            Defer
-                                        </Button>
-                                    </DateRangePicker>
-                                </Box>
-                            </Box>
-                        </Grid>
-
-                    }) : <DataNotFound />}
-                </Grid>
-
-                {filteredTasks.length > 9 && <Box className='text-center'><Button onClick={handleMyTaskNavigation} variant="text" className='btn-blue-2 mt-4 mb-4' size='small'>View More</Button></Box>}
-            </Box>
-
 
             <Box className='clearfix'>
                 <h3 className='font-20'><SearchIcon />  We found the following Documents matching <span className='text-blue bold'>"{target}"</span></h3>
@@ -330,50 +268,53 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                 <Grid className='mt-0' container spacing={2}>
                     {filteredDocuments.length > 0 ? filteredDocuments.slice(0, 9).map((item, index) => {
                         return <Grid key={index} className='pt-0' item xs={12} lg={4} md={4} sm={12}><Box className="file-uploads">
-                            <label className="file-uploads-label file-uploads-document" onClick={(event)=>{
-                                    event.stopPropagation();
-                                    event.preventDefault();
-                                    handleCloseDocument(event, index);
-                                }} onDoubleClick={(e) => ViewerDocument(item)}>
+                            <label className="file-uploads-label file-uploads-document" onClick={(event) => {
+                                event.stopPropagation();
+                                event.preventDefault();
+                                handleCloseDocument(event, index);
+                            }} onDoubleClick={(e) => ViewerDocument(item)}>
                                 <Box className="d-flex align-items-center">
-                                    <DescriptionIcon
+                                    {/* <DescriptionIcon
                                         sx={{
                                             fontSize: 32,
                                         }}
                                         className='me-2 ms-0'
-                                    />
+                                    /> */}
+                                    <div className='img-format'>
+                                        <img src={Fileformat} />
+                                    </div>
                                     <Box className="upload-content pe-3">
-                                    {editingIndex == index ? (
-                                        <input
-                                            type="text"
-                                            defaultValue={item.Description}
-                                            value={updatedSubject}
-                                            onChange={handleChange}
-                                            autoFocus
-                                            onBlur={(e)=>handleSave(e.target.value, item.Description, item, index)}
-                                            className='edit-input'
-                                        />
-                                    ) : (
-                                        <BootstrapTooltip title={ item.Description ? item.Description : "" } arrow
-                                            placement="bottom-start"
-                                            slotProps={{
-                                                popper: {
-                                                    modifiers: [
-                                                        {
-                                                            name: 'offset',
-                                                            options: {
-                                                                offset: [0, -10],
+                                        {editingIndex == index ? (
+                                            <input
+                                                type="text"
+                                                defaultValue={item.Description}
+                                                value={updatedSubject}
+                                                onChange={handleChange}
+                                                autoFocus
+                                                onBlur={(e) => handleSave(e.target.value, item.Description, item, index)}
+                                                className='edit-input'
+                                            />
+                                        ) : (
+                                            <BootstrapTooltip title={item.Description ? item.Description : ""} arrow
+                                                placement="bottom-start"
+                                                slotProps={{
+                                                    popper: {
+                                                        modifiers: [
+                                                            {
+                                                                name: 'offset',
+                                                                options: {
+                                                                    offset: [0, -10],
+                                                                },
                                                             },
-                                                        },
-                                                    ],
-                                                },
-                                            }}
-                                        >
-                                        <Typography variant="h4" >
-                                            { Object.keys(test).includes(String(index)) ? test[index] : (item.Description && item.Description.length > 35) ? item.Description.substr(0,35)+"..." : item.Description ? item.Description : "No Name" }
-                                        </Typography>
-                                        </BootstrapTooltip>
-                                    )}
+                                                        ],
+                                                    },
+                                                }}
+                                            >
+                                                <Typography variant="h4" >
+                                                    {Object.keys(test).includes(String(index)) ? test[index] : (item.Description && item.Description.length > 35) ? item.Description.substr(0, 35) + "..." : item.Description ? item.Description : "No Name"}
+                                                </Typography>
+                                            </BootstrapTooltip>
+                                        )}
                                         <Typography variant="body1">
                                             {/* Size:  <span className='sembold'>{item.FileSize? item.FileSize: ""}</span> |  */}
                                             Date <span className='sembold'>{item["Item Date"] !== "NaN/NaN/NaN" ? formatDate(item["Item Date"]) : "01/01/2000"}</span>
@@ -456,6 +397,80 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                     }) : <DataNotFound />}</Grid>
 
                 {filteredDocuments.length > 9 && <Box className='text-center mt-5'><Button onClick={handleDocumentNavigation} variant="text" className='btn-blue-2 mb-4' size='small'>View More</Button></Box>}
+            </Box>
+
+            <Box className='mb-5'>
+                <h3 className='font-20 mt-1'><SearchIcon /> We found the following Tasks matching <span className='text-blue bold'>"{target}"</span></h3>
+                <Grid className='mt-0' container spacing={2} >
+                    {filteredTasks.length > 0 ? filteredTasks.slice(0, 9).map(item => {
+                        return <Grid className='pt-0' item xs={12} lg={4} md={4} sm={12}>
+                            <Box className='todo-list-box white-box relative w-100'>
+                                <Box className='clearfix'>
+                                    <Box className='check-todo'>
+
+                                        <Badge badgeContent={4} color="primary">
+                                            <IconButton color="action" />
+                                        </Badge>
+
+                                        <Radio className={item.Priority === 1 ? 'text-red ' : item.Priority === 2 ? 'text-green' : 'text-grey'} checked
+                                            sx={{
+                                                '&.Mui-checked': {
+                                                    color: "secondary",
+                                                },
+                                            }}
+                                            size='small'
+                                        />
+                                    </Box>
+
+                                    {/* <PushPinIcon className='pinicon'></PushPinIcon> */}
+                                </Box>
+                                <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> {item.Source}</Typography>
+                                <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
+                                <Box className='d-flex align-items-center justify-content-between'>
+                                    <Typography variant='subtitle1' ><pan className='text-gray'>
+                                        {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
+                                        {/* <a href='#'>Patrick</a>, */}
+                                        <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +2</a></Typography>
+                                    <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
+                                </Box>
+                                <Box className='d-flex align-items-center justify-content-between'>
+                                    <Typography variant='subtitle1'>{item.Client}</Typography>
+                                    <Typography variant='subtitle1'>
+                                        <Box>
+                                            <Button
+                                                id="basic-button"
+                                            >
+                                                {item.Status}
+                                            </Button>
+                                        </Box>
+                                    </Typography>
+                                </Box>
+                                <Box className='mt-2'>
+                                    <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)}>Mark Complete</Button>
+                                    <DateRangePicker initialSettings={{
+                                        singleDatePicker: true,
+                                        showDropdowns: true,
+                                        startDate: new Date(parseInt(/\d+/.exec(item["EndDateTime"]))),
+                                        minYear: 1901,
+                                        maxYear: 2100,
+                                    }}
+                                        onCallback={(start) => {
+                                            const date = start.format('YYYY/MM/DD');
+                                            Json_UpdateTaskField("EndDateTime", date, item);
+                                        }}
+                                    >
+                                        <Button variant="outlined" className='btn-outlin-2'>
+                                            Defer
+                                        </Button>
+                                    </DateRangePicker>
+                                </Box>
+                            </Box>
+                        </Grid>
+
+                    }) : <DataNotFound />}
+                </Grid>
+
+                {filteredTasks.length > 9 && <Box className='text-center'><Button onClick={handleMyTaskNavigation} variant="text" className='btn-blue-2 mt-4 mb-4' size='small'>View More</Button></Box>}
             </Box>
         </>
     )

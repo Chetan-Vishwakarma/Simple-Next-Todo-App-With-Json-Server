@@ -1266,6 +1266,13 @@ span.tox-statusbar__branding {
   justify-content: space-between;
 }
 
+.file-uploads .file-uploads-label .img-format > img {
+  width: 36px;
+}
+.file-uploads .file-uploads-label .img-format {
+  margin-right: 10px;
+}
+
 .file-uploads .file-uploads-label .icon {
   font-size: 26px;
   font-weight: 200 !important;
@@ -1637,7 +1644,7 @@ span.tox-statusbar__branding {
 }
 
 .check-todo svg {
-  font-size: 32px;
+  font-size: 26px;
 }
 
 .check-todo {
@@ -2251,7 +2258,7 @@ span.tox-statusbar__branding {
   }
 
   .check-todo svg {
-    font-size: 22px;
+    font-size: 18px;
   }
 
   .user-img-list.admin {

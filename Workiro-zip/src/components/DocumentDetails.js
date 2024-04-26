@@ -35,6 +35,7 @@ import TaskDetailModal from "./TaskDetailModal";
 import CreateNewModalTask from "./CreateNewModal";
 import { useDispatch } from "react-redux";
 import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux } from "../redux/reducers/counterSlice";
+import Fileformat from '../images/files-icon/pdf.png';
 
 
 // sadik code start
@@ -128,15 +129,15 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         setAnchorElDocumentList(newAnchorElDocumentList);
     };
 
-    const [editField,setEditField] = useState("");
-    const [testForEdit,setTestForEdit] = useState("");
-    const [renderTest,setRenderTest] = useState({});
+    const [editField, setEditField] = useState("");
+    const [testForEdit, setTestForEdit] = useState("");
+    const [renderTest, setRenderTest] = useState({});
 
     const [editingIndex, setEditingIndex] = useState(null);
     const [updatedSubject, setUpdatedSubject] = useState('');
     const [test, setTest] = useState({});
 
-    const handleEdit = (index,data) => {
+    const handleEdit = (index, data) => {
         console.log("Editing index:", index);
         setEditingIndex(index);
         setUpdatedSubject(data.Description);
@@ -160,12 +161,12 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                 if (data) {
                     let json = JSON.parse(data);
                     console.log("Json_RenameDocument", json);
-                    if(json.Status==="Success"){
+                    if (json.Status === "Success") {
                         // Json_getRecentDocumentList();
                         toast.success(json.Message);
                         setEditingIndex(null);
-                        setTest({...test, [index]: newDesc});
-                    }else{
+                        setTest({ ...test, [index]: newDesc });
+                    } else {
                         toast.error("Unable to rename this document");
                     }
                 }
@@ -174,7 +175,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     }
 
     const handleSave = (newDesc, oldDesc, doc, index) => {
-        if(oldDesc===newDesc) return;
+        if (oldDesc === newDesc) return;
         Json_RenameDocument(doc, newDesc, index);
     };
 
@@ -233,10 +234,10 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                         return { ...task, EndDateTime: date, CreationDate: date2 };
                     });
                     // console.log("ertiretufjhjfg",formattedTasks);
-                    if( formattedTasks.length > 0 ){
+                    if (formattedTasks.length > 0) {
                         setSelectedTask(formattedTasks[0]);
                         handleClickDetailOpen(formattedTasks[0]);
-                    }else if( formattedTasks.length === 0 ){
+                    } else if (formattedTasks.length === 0) {
                         toast.error("Unable to open this task due to internal issue");
                     }
                 }
@@ -365,7 +366,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                         let tempFolderData = { Folder: item.Folder, FolderID: item.ProjectId };
 
                         dispatch(setClientAndDocDataForTaskModalRedux({ TaskType: tskType, createNewFileObj: filesData, txtClientData: tempTxtClientData, txtSectionData: tempTxtSectionData, txtFolderData: tempFolderData, }));
-                        console.log("dgjkdlgjroeti",tskType);
+                        console.log("dgjkdlgjroeti", tskType);
                         dispatch(handleOpenModalRedux(tskType));
                     }
                     else {
@@ -389,7 +390,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
             delete newAnchorElDocumentList[rowData.key];
             setAnchorElDocumentList(newAnchorElDocumentList);
             let res = Json_GetItemBase64DataById(rowData.data, "Portal");
-            if(res){
+            if (res) {
                 dispatch(handleOpenModalRedux("Portal"));
             }
         }
@@ -403,7 +404,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
             const newAnchorElDocumentList = { ...anchorElDocumentList };
             delete newAnchorElDocumentList[rowData.key];
             setAnchorElDocumentList(newAnchorElDocumentList);
-            Json_GetItemBase64DataById(rowData.data, "CRM"); 
+            Json_GetItemBase64DataById(rowData.data, "CRM");
         }
     };
 
@@ -470,7 +471,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         }
     };
 
-    
+
 
 
     return (
@@ -537,22 +538,25 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
 
                                         {/* <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" />  */}
 
-                                        <DescriptionIcon
+                                        {/* <DescriptionIcon
                                             sx={{
                                                 fontSize: 32,
                                             }}
                                             className='me-2 ms-0'
-                                        />
+                                        /> */}
+                                        <div className='img-format'>
+                                            <img src={Fileformat} />
+                                        </div>
                                         <Box className="upload-content pe-3">
-                                            {editingIndex===data.key?<input
-                                            type="text"
-                                            defaultValue={data.data.Description}
-                                            value={updatedSubject}
-                                            onChange={handleEditChange}
-                                            autoFocus
-                                            onBlur={(e)=>handleSave(e.target.value, data.data.Description, data.data, data.key)}
-                                            className='edit-input'
-                                        />:<Typography variant="h4" >
+                                            {editingIndex === data.key ? <input
+                                                type="text"
+                                                defaultValue={data.data.Description}
+                                                value={updatedSubject}
+                                                onChange={handleEditChange}
+                                                autoFocus
+                                                onBlur={(e) => handleSave(e.target.value, data.data.Description, data.data, data.key)}
+                                                className='edit-input'
+                                            /> : <Typography variant="h4" >
                                                 {test[data.key] ? test[data.key] : data.data.Description ? data.data.Description : "Demo"}
                                             </Typography>}
                                             <Typography variant="body1">
@@ -620,7 +624,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             <MenuItem
                                                 onClick={(event) => {
                                                     // handleEditField(event, data.key);
-                                                    handleEdit(data.key,data.data);
+                                                    handleEdit(data.key, data.data);
                                                     handleCloseDocument(event, data);
                                                 }}
                                             >
@@ -700,7 +704,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             </TableHead>
                                             <TableBody>
                                                 {Object.keys(docForDetails).length > 0 && Object.keys(docForDetails).map((itm, i) => {
-                                                    if ( [ "Registration No.", "Folder", "Client", "Section", "Received Date", "Item Date", "FileSize", "Notes", "Category", "Attach", "Type", "Version", "Received By", "Item ID" ].includes(itm) ) {
+                                                    if (["Registration No.", "Folder", "Client", "Section", "Received Date", "Item Date", "FileSize", "Notes", "Category", "Attach", "Type", "Version", "Received By", "Item ID"].includes(itm)) {
                                                         return <TableRow
                                                             key={i}
                                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -739,12 +743,15 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                         <Box className="file-uploads">
                                             <label className="file-uploads-label file-uploads-document">
                                                 <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
+                                                    {/* <DescriptionIcon
                                                         sx={{
                                                             fontSize: 32,
                                                         }}
                                                         className='me-2'
-                                                    />
+                                                    /> */}
+                                                    <div className='img-format'>
+                                                        <img src={Fileformat} />
+                                                    </div>
                                                     <Box className="upload-content pe-3">
                                                         <Typography variant="h4" >
                                                             This File is Test Files.pdf 2
@@ -761,12 +768,15 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                         <Box className="file-uploads">
                                             <label className="file-uploads-label file-uploads-document">
                                                 <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
+                                                    {/* <DescriptionIcon
                                                         sx={{
                                                             fontSize: 32,
                                                         }}
                                                         className='me-2'
-                                                    />
+                                                    /> */}
+                                                    <div className='img-format'>
+                                                        <img src={Fileformat} />
+                                                    </div>
                                                     <Box className="upload-content pe-3">
                                                         <Typography variant="h4" >
                                                             test doc file.doc
@@ -783,12 +793,15 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                         <Box className="file-uploads">
                                             <label className="file-uploads-label file-uploads-document">
                                                 <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
+                                                    {/* <DescriptionIcon
                                                         sx={{
                                                             fontSize: 32,
                                                         }}
                                                         className='me-2'
-                                                    />
+                                                    /> */}
+                                                    <div className='img-format'>
+                                                        <img src={Fileformat} />
+                                                    </div>
                                                     <Box className="upload-content pe-3">
                                                         <Typography variant="h4" >
                                                             loremipsomedolorsite.pdf
@@ -805,12 +818,15 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                         <Box className="file-uploads">
                                             <label className="file-uploads-label file-uploads-document">
                                                 <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
+                                                    {/* <DescriptionIcon
                                                         sx={{
                                                             fontSize: 32,
                                                         }}
                                                         className='me-2'
-                                                    />
+                                                    /> */}
+                                                    <div className='img-format'>
+                                                        <img src={Fileformat} />
+                                                    </div>
                                                     <Box className="upload-content pe-3">
                                                         <Typography variant="h4" >
                                                             This File is Test Files.pdf

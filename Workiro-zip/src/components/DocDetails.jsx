@@ -5,6 +5,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import Activity from '../client/utils/Activity';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import TaskDetailModal from './TaskDetailModal';
+import Fileformat from '../images/files-icon/pdf.png';
 
 // sadik code start
 function createData(document, details) {
@@ -108,7 +109,7 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
         const dateObject = new Date(timeStamp);
         return `${dateObject.getDate()}/${dateObject.getMonth() + 1}/${dateObject.getFullYear()}`;
     }
-    const Json_GetAudit = (sDoc=docForDetails) => {
+    const Json_GetAudit = (sDoc = docForDetails) => {
         try {
             let obj = {
                 itemid: sDoc["Registration No."],
@@ -129,9 +130,9 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
         }
 
     }
-    useEffect(()=>{
+    useEffect(() => {
         Json_GetAudit(docForDetails);
-    },[]);
+    }, []);
 
     return (
         <>
@@ -196,27 +197,27 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
 
 
                                                 {
-                                                Object.keys(docForDetails).length > 0 && (!Object.keys(docForDetails).includes("RecentDate") )
-                                                ? Object.keys(docForDetails).map((itm, i) => {
-                                                    if (itm !== "StickyNotes") {
-                                                        return <TableRow
-                                                            key={i}
-                                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                        >
-                                                            <TableCell align="left" className='bold'>{itm}</TableCell>
-                                                            <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date", "Item Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
-                                                        </TableRow>
-                                                    }
-                                                }): Object.keys(docForDetails).map((itm, i) => {
-                                                        return <TableRow
-                                                            key={i}
-                                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                        >
-                                                            <TableCell align="left" className='bold'>{itm}</TableCell>
-                                                            <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["RecentDate"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
-                                                        </TableRow>
-                                                })
-                                            }
+                                                    Object.keys(docForDetails).length > 0 && (!Object.keys(docForDetails).includes("RecentDate"))
+                                                        ? Object.keys(docForDetails).map((itm, i) => {
+                                                            if (itm !== "StickyNotes") {
+                                                                return <TableRow
+                                                                    key={i}
+                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                >
+                                                                    <TableCell align="left" className='bold'>{itm}</TableCell>
+                                                                    <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date", "Item Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
+                                                                </TableRow>
+                                                            }
+                                                        }) : Object.keys(docForDetails).map((itm, i) => {
+                                                            return <TableRow
+                                                                key={i}
+                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                            >
+                                                                <TableCell align="left" className='bold'>{itm}</TableCell>
+                                                                <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["RecentDate"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
+                                                            </TableRow>
+                                                        })
+                                                }
 
                                             </TableBody>
                                         </Table>
@@ -238,12 +239,15 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                         <Box className="file-uploads">
                                             <label className="file-uploads-label file-uploads-document">
                                                 <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
+                                                    {/* <DescriptionIcon
                                                         sx={{
                                                             fontSize: 32,
                                                         }}
                                                         className='me-2'
-                                                    />
+                                                    /> */}
+                                                    <div className='img-format'>
+                                                        <img src={Fileformat} />
+                                                    </div>
                                                     <Box className="upload-content pe-3">
                                                         <Typography variant="h4" >
                                                             This File is Test Files.pdf 2
@@ -260,12 +264,15 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                         <Box className="file-uploads">
                                             <label className="file-uploads-label file-uploads-document">
                                                 <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
+                                                    {/* <DescriptionIcon
                                                         sx={{
                                                             fontSize: 32,
                                                         }}
                                                         className='me-2'
-                                                    />
+                                                    /> */}
+                                                    <div className='img-format'>
+                                                        <img src={Fileformat} />
+                                                    </div>
                                                     <Box className="upload-content pe-3">
                                                         <Typography variant="h4" >
                                                             test doc file.doc
@@ -282,12 +289,15 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                         <Box className="file-uploads">
                                             <label className="file-uploads-label file-uploads-document">
                                                 <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
+                                                    {/* <DescriptionIcon
                                                         sx={{
                                                             fontSize: 32,
                                                         }}
                                                         className='me-2'
-                                                    />
+                                                    /> */}
+                                                    <div className='img-format'>
+                                                        <img src={Fileformat} />
+                                                    </div>
                                                     <Box className="upload-content pe-3">
                                                         <Typography variant="h4" >
                                                             loremipsomedolorsite.pdf
@@ -304,12 +314,15 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                         <Box className="file-uploads">
                                             <label className="file-uploads-label file-uploads-document">
                                                 <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
+                                                    {/* <DescriptionIcon
                                                         sx={{
                                                             fontSize: 32,
                                                         }}
                                                         className='me-2'
-                                                    />
+                                                    /> */}
+                                                    <div className='img-format'>
+                                                        <img src={Fileformat} />
+                                                    </div>
                                                     <Box className="upload-content pe-3">
                                                         <Typography variant="h4" >
                                                             This File is Test Files.pdf

@@ -77,7 +77,7 @@ import DocumentList from "../client/client-components/DocumentList";
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import Activity from "../client/utils/Activity";
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
-
+import Fileformat from '../images/files-icon/pdf.png';
 import moment from 'moment';
 
 const Demo = styled('div')(({ theme }) => ({
@@ -88,8 +88,8 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 let addItemdata = [];
-function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,attachmentFileTodo }) {
-    console.log(attachmentFileTodo,"TaskDetailModal2222", selectedTask);
+function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, attachmentFileTodo }) {
+    console.log(attachmentFileTodo, "TaskDetailModal2222", selectedTask);
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
     const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
     const baseUrlSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -107,7 +107,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
     const [anchorEl4, setAnchorEl4] = React.useState(null);
     const [selectedEmailForComment, setSelectedEmailForComment] = React.useState({});
     // const [NumPriority, setNumPriority] = React.useState(selectedTask.Priority);
-    const [NumPriority, setNumPriority] = React.useState( ( selectedTask && selectedTask.Priority ) ? selectedTask.Priority: "" );
+    const [NumPriority, setNumPriority] = React.useState((selectedTask && selectedTask.Priority) ? selectedTask.Priority : "");
 
     const [folderList, setFolderList] = useState([]);
     const [portalComments, setPortalComments] = useState([]);
@@ -115,20 +115,20 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
     const [copyLink, setCopyLink] = useState("");
     const pageSizes = [10, 25, 50, 100];
     // const [txtFolder, settxtFolder] = useState(selectedTask.Folder);
-    const [txtFolder, settxtFolder] = useState( ( selectedTask && selectedTask.Folder ) ? selectedTask.Folder: "" );
+    const [txtFolder, settxtFolder] = useState((selectedTask && selectedTask.Folder) ? selectedTask.Folder : "");
     // const [txtFolderId, setTxtFolderId] = useState(selectedTask.FolderID);
-    const [txtFolderId, setTxtFolderId] = useState( ( selectedTask && selectedTask.FolderID ) ? selectedTask.FolderID: "" );
+    const [txtFolderId, setTxtFolderId] = useState((selectedTask && selectedTask.FolderID) ? selectedTask.FolderID : "");
     const [dmsDocumentList, setDMSDocumentList] = React.useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
     const [secondary, setSecondary] = React.useState(false);
     const [getCRMSaved, setGetCRMSaved] = React.useState([]);
 
     // const [txtSection, settxtSection] = React.useState(selectedTask.Section);
-    const [txtSection, settxtSection] = React.useState( ( selectedTask && selectedTask.Section ) ? selectedTask.Section: "" );
+    const [txtSection, settxtSection] = React.useState((selectedTask && selectedTask.Section) ? selectedTask.Section : "");
     // const [txtClient, setTxtClient] = React.useState(selectedTask.Client);
-    const [txtClient, setTxtClient] = React.useState( ( selectedTask && selectedTask.Client ) ? selectedTask.Client: "" );
+    const [txtClient, setTxtClient] = React.useState((selectedTask && selectedTask.Client) ? selectedTask.Client : "");
     // const [txtClientId, setTxtClientId] = React.useState(selectedTask.Client);
-    const [txtClientId, setTxtClientId] = React.useState( ( selectedTask && selectedTask.Client ) ? selectedTask.Client: "" );
+    const [txtClientId, setTxtClientId] = React.useState((selectedTask && selectedTask.Client) ? selectedTask.Client : "");
 
     const [txtSectionId, settxtSectionId] = React.useState(null);
 
@@ -411,17 +411,17 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
     function formatDate(inputDate) {
         // Parse the input date string into a Date object
         const date = new Date(inputDate);
-        
+
         // Get day, month, and year components
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1
         const year = date.getFullYear().toString();
-        
+
         // Construct the formatted date string in "dd/mm/yyyy" format
         const formattedDate = `${day}/${month}/${year}`;
-        
+
         return formattedDate;
-      }
+    }
     async function Json_Get_CRM_SavedTask_ByTaskId(taskid) {
         setAttachmentFile([]);
         let obj = {};
@@ -447,10 +447,10 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                         const date = new Date(timestamp);
                         const formatedate = formatDate(date)
                         // console.log(formatDate(date),"dateformattingdate");
-                        return { ...activity, Item_Date: formatedate};
+                        return { ...activity, Item_Date: formatedate };
                     });
 
-                   
+
                     setAttachmentFile(formattedActivity);
                     // setTimeout(() => {
                     //     console.log("attachmentFile", attachmentFile);
@@ -654,7 +654,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
 
     // const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
     // let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
-    const GetMessageAttachments_Json = (mgsId,e) => {
+    const GetMessageAttachments_Json = (mgsId, e) => {
         let o = {
             accid: agrno,
             email: Email,
@@ -663,16 +663,16 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
         };
 
         ClsPortal.GetMessageAttachments_Json(o, function (sts, data) {
-            
+
             if (sts && data) {
                 let arrayOfObjects = JSON.parse(data);
                 console.log("GetMessageAttachments_Json11", arrayOfObjects);
-                if(arrayOfObjects && arrayOfObjects.length > 0) {
+                if (arrayOfObjects && arrayOfObjects.length > 0) {
                     setPortalDocumentShow(arrayOfObjects);
-                   
+
                 }
             }
-       });
+        });
     }
 
     useEffect(() => {
@@ -687,7 +687,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
         settxtSection(selectedTask.Section);
         setTxtClient(selectedTask.Client);
         setTxtClient(selectedTask.Client)
-        GetMessageAttachments_Json(selectedTask.PubMessageId,selectedTask);
+        GetMessageAttachments_Json(selectedTask.PubMessageId, selectedTask);
         settxtSectionId(selectedTask.SectionId);
         setTxtClientId(selectedTask.ClientNo);
         setNotesMessage("");
@@ -799,15 +799,15 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
 
 
     const handleCloseStatus = (e) => {
-        console.log(PortalDocumentShow,"top_status_changed",selectedTask);
-        
+        console.log(PortalDocumentShow, "top_status_changed", selectedTask);
+
         console.log(e.target.innerText);
         setStatus(e.target.innerText);
         setanchorElStatus(null);
         setSelectedIndexStatus(null); // Reset the selected index after closing the menu
         if (e.target.innerText) {
-            console.log(e.target.innerText,"innerText");
-            if(e.target.innerText=="Completed"){
+            console.log(e.target.innerText, "innerText");
+            if (e.target.innerText == "Completed") {
                 Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
                     if (res) {
                         Json_UpdateTaskField("Status", e.target.innerText, returnMessageStatus(e.target.innerText));
@@ -815,29 +815,29 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                             attachmentFile.forEach((item) => {
                                 addToWorkTable(item.ItemId, selectedTask);
                             });
-                        } 
-                        if(selectedTask.Source ==="Portal"){
-    
+                        }
+                        if (selectedTask.Source === "Portal") {
+
                             if (PortalDocumentShow && PortalDocumentShow.length > 0) {
                                 PortalDocumentShow.forEach((item) => {
-                                    if(item.ItemID) {
-                                        addToWorkTable(item.ItemID,selectedTask);
+                                    if (item.ItemID) {
+                                        addToWorkTable(item.ItemID, selectedTask);
                                     }
                                 });
                             }
                         }
-                        
+
                     }
-        
-               });
-               
+
+                });
+
             } else {
-                
+
                 Json_UpdateTaskField("Status", e.target.innerText, returnMessageStatus(e.target.innerText));
             }
-          
-    
-           
+
+
+
         }
 
     };
@@ -1254,7 +1254,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                             Json_AddSupplierActivity(mgs, "sys")
                         }
 
-                       
+
 
                     }
                     else {
@@ -1453,8 +1453,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
         });
     }
     const handleChangeStatus = (event) => {
-        console.log("change_statusevent",selectedTask);
-       
+        console.log("change_statusevent", selectedTask);
+
         setChecked(event.target.checked);
         if (event.target.checked) {
             Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
@@ -1465,22 +1465,22 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                             addToWorkTable(item.ItemId, selectedTask);
                         });
                     }
-                    if(selectedTask.Source ==="Portal"){
+                    if (selectedTask.Source === "Portal") {
                         if (PortalDocumentShow && PortalDocumentShow.length > 0) {
                             PortalDocumentShow.forEach((item) => {
-                                if(item.ItemID) {
-                                    addToWorkTable(item.ItemID,selectedTask);
+                                if (item.ItemID) {
+                                    addToWorkTable(item.ItemID, selectedTask);
                                 }
                             });
                         }
                     }
-                  
+
                     setStatus("Completed");
                 }
-    
-    });
-            
-            
+
+            });
+
+
         }
         else {
             setStatus(selectedTask.mstatus)
@@ -1780,7 +1780,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                                 )} */}
 
                             </Button>
-                            { selectedTask && selectedTask.Source === "CRM" && (<>
+                            {selectedTask && selectedTask.Source === "CRM" && (<>
                                 <Menu
                                     id="basic-menu"
                                     anchorEl={anchorEl4}
@@ -1863,8 +1863,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                                 }
                                 aria-haspopup="true"
                                 aria-expanded={anchorElStatus ? "true" : undefined}
-                                onClick={(event) =>{
-                                    if(selectedTask && selectedTask.ID){
+                                onClick={(event) => {
+                                    if (selectedTask && selectedTask.ID) {
                                         handleClickStatus(event, selectedTask.ID)
                                     }
                                 }
@@ -1919,14 +1919,14 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
 
                             </Button>
                             <Menu
-                                id={`fade-menu-${ selectedTask && selectedTask.ID}`} // Use unique IDs for each menu
+                                id={`fade-menu-${selectedTask && selectedTask.ID}`} // Use unique IDs for each menu
                                 MenuListProps={{
                                     "aria-labelledby": `fade-button-${selectedTask && selectedTask.ID}`,
                                 }}
                                 anchorEl={anchorElStatus}
                                 open={
                                     selectedTask && (selectedIndexStatus === selectedTask.ID &&
-                                    Boolean(anchorElStatus))
+                                        Boolean(anchorElStatus))
                                 } // Open menu if selectedIndex matches
                                 onClose={handleCloseStatus}
                             >
@@ -1985,8 +1985,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                                 }
                                 aria-haspopup="true"
                                 aria-expanded={anchorElProfile ? "true" : undefined}
-                                onClick={(event) =>{
-                                    if(selectedTask && selectedTask.ID ){
+                                onClick={(event) => {
+                                    if (selectedTask && selectedTask.ID) {
                                         handleClickProfile(event, selectedTask.ID)
                                     }
                                 }
@@ -2003,7 +2003,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                                 anchorEl={anchorElProfile}
                                 open={
                                     selectedTask && (selectedIndexProfile === selectedTask.ID &&
-                                    Boolean(anchorElProfile))
+                                        Boolean(anchorElProfile))
                                 } // Open menu if selectedIndex matches
                                 onClose={handleCloseProfile}
                             >
@@ -2223,7 +2223,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                                     aria-expanded={openSection ? 'true' : undefined}
                                     onClick={handleClickSection}
                                 >
-                                    {txtSection ? txtSection :selectedTask && selectedTask.Section}
+                                    {txtSection ? txtSection : selectedTask && selectedTask.Section}
                                 </Button>
                                 {selectedTask && selectedTask.Source === "CRM" && (<Menu
                                     id="fade-menu"
@@ -2969,7 +2969,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                                             // Set the groupIndex to 0 to enable grouping by this column
                                             dataType="string"  // Set the data type to "string" for proper grouping
                                             cellRender={(data) => {
-                                                console.log(data,"datadms")
+                                                console.log(data, "datadms")
                                                 return <Box className="file-uploads">
                                                     <label className="file-uploads-label file-uploads-document" onClick={(event) => {
                                                         event.stopPropagation();
@@ -2983,12 +2983,15 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
 
                                                             {/* <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" />  */}
 
-                                                            <DescriptionIcon
+                                                            {/* <DescriptionIcon
                                                                 sx={{
                                                                     fontSize: 32,
                                                                 }}
                                                                 className='me-2 ms-0'
-                                                            />
+                                                            /> */}
+                                                            <div className='img-format'>
+                                                                <img src={Fileformat} />
+                                                            </div>
                                                             <Box className="upload-content pe-3">
                                                                 <Typography variant="h4" >
                                                                     {data.data.FileName ? data.data.FileName : "Demo"}
@@ -3286,12 +3289,15 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                                         <Box className="file-uploads">
                                             <label className="file-uploads-label file-uploads-document">
                                                 <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
+                                                    {/* <DescriptionIcon
                                                         sx={{
                                                             fontSize: 32,
                                                         }}
                                                         className='me-2'
-                                                    />
+                                                    /> */}
+                                                    <div className='img-format'>
+                                                        <img src={Fileformat} />
+                                                    </div>
                                                     <Box className="upload-content pe-3">
                                                         <Typography variant="h4" >
                                                             This File is Test Files.pdf 2
@@ -3308,12 +3314,15 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                                         <Box className="file-uploads">
                                             <label className="file-uploads-label file-uploads-document">
                                                 <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
+                                                    {/* <DescriptionIcon
                                                         sx={{
                                                             fontSize: 32,
                                                         }}
                                                         className='me-2'
-                                                    />
+                                                    /> */}
+                                                    <div className='img-format'>
+                                                        <img src={Fileformat} />
+                                                    </div>
                                                     <Box className="upload-content pe-3">
                                                         <Typography variant="h4" >
                                                             test doc file.doc
@@ -3330,12 +3339,15 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                                         <Box className="file-uploads">
                                             <label className="file-uploads-label file-uploads-document">
                                                 <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
+                                                    {/* <DescriptionIcon
                                                         sx={{
                                                             fontSize: 32,
                                                         }}
                                                         className='me-2'
-                                                    />
+                                                    /> */}
+                                                    <div className='img-format'>
+                                                        <img src={Fileformat} />
+                                                    </div>
                                                     <Box className="upload-content pe-3">
                                                         <Typography variant="h4" >
                                                             loremipsomedolorsite.pdf
@@ -3352,12 +3364,15 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                                         <Box className="file-uploads">
                                             <label className="file-uploads-label file-uploads-document">
                                                 <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
+                                                    {/* <DescriptionIcon
                                                         sx={{
                                                             fontSize: 32,
                                                         }}
                                                         className='me-2'
-                                                    />
+                                                    /> */}
+                                                    <div className='img-format'>
+                                                        <img src={Fileformat} />
+                                                    </div>
                                                     <Box className="upload-content pe-3">
                                                         <Typography variant="h4" >
                                                             This File is Test Files.pdf
@@ -3389,11 +3404,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen,att
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <Box className='mt-3'>
-                                        {associatedTask.length > 0 ? associatedTask.map((itm,i) => {
+                                        {associatedTask.length > 0 ? associatedTask.map((itm, i) => {
                                             return <>
                                                 <Link key={i} href="#" className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />{itm.Subject}</Link>
                                             </>
-                                        }): <Typography>Not Available</Typography>}
+                                        }) : <Typography>Not Available</Typography>}
                                         {/* {Array(5).fill("").map(() => {
                                             return <>
                                                 <Link href="#" className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />Contact agreement</Link>
