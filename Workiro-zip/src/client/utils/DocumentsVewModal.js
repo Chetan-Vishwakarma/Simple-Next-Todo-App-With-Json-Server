@@ -250,7 +250,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
             Json_GetItemStickyNotes();
             Json_getAssociatedTaskListByDocumentId();
             setSeletedFileData([]);
-            setopenModal(false)
+            setopenModal(false) 
             Json_GetVersionByItemId();
 
         }
