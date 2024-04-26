@@ -975,9 +975,8 @@ const handleRemoveOption = (optionToRemove) => {
         keyExpr="Activity ID"
         columnAutoWidth={true}
         showBorders={true}>
-        <Column dataField="Actioned Date" dataType="date" caption="Date"  format="M/d/yyyy, HH:mm" />
-        <Column dataField="Comments" dataType="string" caption="Activity" />
-        <Column dataField="ForwardedBy" dataType="string" caption="User" />
+        <FilterRow visible={true} />
+        <FilterPanel visible={true} />
         <HeaderFilter visible={true} />
         <Scrolling mode="standard" />
         <Selection
@@ -990,6 +989,11 @@ const handleRemoveOption = (optionToRemove) => {
             visible={true}
             width={240}
             placeholder="Search..." />
+        <Column dataField="Actioned Date" dataType="date" caption="Date"  format="M/d/yyyy, HH:mm"/>
+        <Column dataField="Comments" dataType="string" caption="Activity" />
+        <Column dataField="ForwardedBy" dataType="string" caption="User" />
+       
+        
     </DataGrid>
 </Box></div>
                         </div>
