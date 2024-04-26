@@ -92,6 +92,7 @@ function TestForDetails() {
     const [clientList, setClientList] = useState([]);
     const [selectedClient, setSelectedClient] = useState("");
 
+    const [isClientField, setIsClientField] = useState(false);
     const [isDocIdField, setIsDocIdField] = useState(false);
     const [documentId, setDocumentId] = useState("");
 
@@ -209,7 +210,8 @@ function TestForDetails() {
                     if (data) {
                         let json = JSON.parse(data);
                         const clients_data = json?.Table;
-                        setClientList(clients_data);
+                        let client_list = clients_data.filter((v, i, a) => a.findIndex(v2 => (v2["Company Name"] === v["Company Name"])) === i);
+                        setClientList(client_list);
 
                         // console.log("gjjflsdjuroiu",clients_data);
                     }
@@ -260,6 +262,30 @@ function TestForDetails() {
             });
         } catch (err) {
             console.log("Error while calling Json_AdvanceSearchDoc", err);
+        }
+    }
+
+    const Json_SearchDocById = () => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ItemId: documentId
+        }
+        try {
+            ClsSms.Json_SearchDocById(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_SearchDocById", json[""]);
+
+                        navigate("/dashboard/DocumentList", { state: { globalSearchDocs: json[""], strGlobal: documentData.Description } });
+                        handleClose();
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_SearchDocById", err);
         }
     }
 
@@ -478,40 +504,27 @@ function TestForDetails() {
 
                         {/* <hr /> */}
                         <Box className='d-flex'>
-                            <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border'>
-                                <BootstrapTooltip title="Select Reference" arrow
-                                    placement="bottom-start"
-                                    slotProps={{
-                                        popper: {
-                                            modifiers: [
-                                                {
-                                                    name: 'offset',
-                                                    options: {
-                                                        offset: [0, -10],
-                                                    },
-                                                },
-                                            ],
-                                        },
-                                    }}
-                                >
-                                    <Select
-                                        value={selectedClient}
-                                        name='ClientId'
-                                        onChange={(e) => {
-                                            handleInputChange(e);
-                                            setSelectedClient(e.target.value);
-                                        }}
-                                        displayEmpty
-                                        inputProps={{ 'aria-label': 'Without label' }}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem value="" style={{ display: "none" }}>
-                                            Select Reference
-                                        </MenuItem>
-                                        {clientList.length > 0 && clientList.map(itm => <MenuItem value={itm["OriginatorNo"]}>{itm["Company Name"]}</MenuItem>)}
-                                    </Select>
-                                </BootstrapTooltip>
-                            </FormControl>
+                            {isClientField ? <Autocomplete
+                                disablePortal
+                                id="combo-box-demo"
+                                onChange={(e,newValue)=>{
+                                    console.log("djskfjlkfj",e.target.value);
+                                    console.log("djskfjlkfj",newValue);
+                                    if(newValue){
+                                        setSelectedClient(newValue["Company Name"]);
+                                    }
+                                }}
+                                options={clientList}
+                                getOptionLabel={(option) => {
+                                    return option["Company Name"];
+                                }}
+                                sx={{ width: 300 }}
+                                renderInput={(params) => <TextField autoFocus={true} onBlur={()=>setIsClientField(false)} {...params} size="small" />}
+                            /> : <Button onClick={()=>{
+                                setIsClientField(true);
+                            }}>
+                            {selectedClient!==""?selectedClient:"Reference"}
+                        </Button>}
 
                             <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border'>
                                 <BootstrapTooltip title="Document ID" arrow
@@ -532,7 +545,7 @@ function TestForDetails() {
                                     {!isDocIdField ? <Button onClick={handleDocIdField}>
                                         {documentId !== "" ? documentId : "Document ID"}
                                     </Button> : <TextField autoFocus={true} name="Description" type='number' value={documentId} onChange={(e) => setDocumentId(e.target.value)} onBlur={(e) => {
-                                            setIsDocIdField(false);
+                                        setIsDocIdField(false);
                                     }} id="outlined-basic" placeholder='Document ID...' size="small" variant="outlined" />}
                                 </BootstrapTooltip>
                             </FormControl>
@@ -552,6 +565,12 @@ function TestForDetails() {
                         }} variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
                             Apply
                         </Typography>
+
+                        {documentId !== "" && <Typography onClick={() => {
+                            Json_SearchDocById();
+                        }} variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
+                            By ID
+                        </Typography>}
 
                         {/*
                                 <Box className='d-flex'>
