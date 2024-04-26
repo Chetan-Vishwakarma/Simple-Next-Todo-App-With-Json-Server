@@ -293,13 +293,17 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                             itm["Actioned Date"] = new Date(timeStamp1);
                             //const timeStamp2 = parseInt(itm["Start"].match(/\d+/)[0]);
                             //itm["Start"] = new Date(timeStamp2);
+                            return itm;
                           })
 
+                          if(formattedActivity.length>0){
+                            const filteredArray = formattedActivity.filter(item => item.Comments !== null);
 
-                        const filteredArray = formattedActivity.filter(item => item.Comments !== null);
+                            setGetAudit(filteredArray);
+                            console.log("Json_GetAudit", filteredArray)
+                          }
 
-                        setGetAudit(filteredArray);
-                        console.log("Json_GetAudit", filteredArray)
+                       
                     }
                 }
             })
