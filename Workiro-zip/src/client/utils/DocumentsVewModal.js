@@ -125,8 +125,10 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                         //     return { ...Actioned, ["Actioned Date"]: ActioneddATE };
                         // });
                         const formattedActivity = table.map(itm => {
-                            const timeStamp1 = parseInt(itm["Actioned Date"].match(/\d+/)[0]);
-                            itm["Actioned Date"] = new Date(timeStamp1);
+                            if(itm["Actioned Date"]){
+                                const timeStamp1 = parseInt(itm["Actioned Date"].match(/\d+/)[0]);
+                                itm["Actioned Date"] = new Date(timeStamp1);
+                            }                          
                             //const timeStamp2 = parseInt(itm["Start"].match(/\d+/)[0]);
                             //itm["Start"] = new Date(timeStamp2);
                             return itm;

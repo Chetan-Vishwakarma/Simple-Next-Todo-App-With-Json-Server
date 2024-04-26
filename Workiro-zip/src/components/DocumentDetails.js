@@ -289,8 +289,11 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                         // });
 
                       const formattedActivity = table.map(itm => {
+                        if(itm["Actioned Date"]){
                             const timeStamp1 = parseInt(itm["Actioned Date"].match(/\d+/)[0]);
                             itm["Actioned Date"] = new Date(timeStamp1);
+                        }
+                           
                             //const timeStamp2 = parseInt(itm["Start"].match(/\d+/)[0]);
                             //itm["Start"] = new Date(timeStamp2);
                             return itm;
@@ -321,8 +324,39 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         event.stopPropagation();
         setOpenDocumentDetailsList(true);
         Json_GetAudit(sDoc);
+        console.log("selected document data obj",sDoc)
+        Json_GetVersionByItemId(sDoc)
 
     };
+
+    const [getVertion, setGetVertion] = React.useState([]);
+    
+    function Json_GetVersionByItemId(data) {
+        console.log("selected document data obj333",data)
+        try {           
+            let obj = {};
+           obj.itemId = data["Registration No."];
+            Cls.Json_GetVersionByItemId(obj, function (sts, data) {
+                if (sts) {   
+                    if(data){
+                        let js = JSON.parse(data);
+                        let tbl = js.Table;
+                        if(tbl.length>0){
+                            console.log("Json_GetVersionByItemId",tbl)
+                            setGetVertion(tbl)
+                        }
+                       
+                    }                
+
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetVersionByItemId error", error)
+        }
+    }
+
+
     const handleCloseDocumentDetailsList = (event) => {
         event.stopPropagation();
         setOpenDocumentDetailsList(false);
@@ -747,95 +781,31 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <Box className='table-responsive'>
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            This File is Test Files.pdf 2
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            12:36PM 28/12/2023 | File uploaded by Patrick
-                                                        </Typography>
+                                    {getVertion.length>0 ? getVertion.map((item,index) => {
+                                            return <>
+                                            <Box className="file-uploads" key={index}>
+                                                <label className="file-uploads-label file-uploads-document">
+                                                    <Box className="d-flex align-items-center">
+                                                        <DescriptionIcon
+                                                            sx={{
+                                                                fontSize: 32,
+                                                            }}
+                                                            className='me-2'
+                                                        />
+                                                        <Box className="upload-content pe-3">
+                                                            <Typography variant="h4" >
+                                                            Version No {item.VersionNo} 
+                                                            </Typography>
+                                                            <Typography variant="body1">
+                                                            {moment(item["VDate"]).format("DD/MM/YYYY HH:mm:ss")} | Updated by {item.UserName.toUpperCase()}
+                                                            </Typography>
+                                                        </Box>
                                                     </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            test doc file.doc
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            11:16PM 09/012/2024 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            loremipsomedolorsite.pdf
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            02:36PM 06/05/2023 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            This File is Test Files.pdf
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            02:36PM 06/05/2023 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
+                                                </label>
+                                            </Box>
+                                            </>
+                                        }):""}
+                                  
 
                                     </Box>
                                 </AccordionDetails>
