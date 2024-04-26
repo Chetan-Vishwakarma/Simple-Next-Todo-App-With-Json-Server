@@ -279,14 +279,22 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                     let parse = JSON.parse(data);
                     let table = parse.Table;
                     if (table.length > 0) {
-                        const formattedActivity = table.map((Actioned) => {
-                            let ActioneddATE;
-                            if (Actioned["Actioned Date"]) {
-                                ActioneddATE = moment(Actioned["Actioned Date"]).format("DD/MM/YYYY HH:mm:ss");
-                            }
-                            // const date = new Date(ActivityDate);
-                            return { ...Actioned, ["Actioned Date"]: ActioneddATE };
-                        });
+                        // const formattedActivity = table.map((Actioned) => {
+                        //     let ActioneddATE;
+                        //     if (Actioned["Actioned Date"]) {
+                        //         ActioneddATE = moment(Actioned["Actioned Date"]).format("YYYY/MM/DD HH:mm:ss");
+                        //     }
+                        //     // const date = new Date(ActivityDate);
+                        //     return { ...Actioned, ["Actioned Date"]: ActioneddATE };
+                        // });
+
+                      const formattedActivity = table.map(itm => {
+                            const timeStamp1 = parseInt(itm["Actioned Date"].match(/\d+/)[0]);
+                            itm["Actioned Date"] = new Date(timeStamp1);
+                            //const timeStamp2 = parseInt(itm["Start"].match(/\d+/)[0]);
+                            //itm["Start"] = new Date(timeStamp2);
+                          })
+
 
                         const filteredArray = formattedActivity.filter(item => item.Comments !== null);
 

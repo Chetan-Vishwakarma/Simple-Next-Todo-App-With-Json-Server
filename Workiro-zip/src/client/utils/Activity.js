@@ -41,6 +41,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import Activitygrid from './Activitygrid';
 import { exportDataGrid } from "devextreme/excel_exporter";
 import saveAs from "file-saver";
+import moment from 'moment';
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
 ))(({ theme }) => ({
@@ -917,7 +918,7 @@ const handleRemoveOption = (optionToRemove) => {
                 return tempdatafilter.map((item, index) => (
                     <li key={index}>
                         <Box class="datetime">
-                            <span>{item["Actioned Date"]}</span>
+                            <span>{moment(item["Actioned Date"]).format("DD/MM/YYYY HH:mm:ss")}</span>
                             <span>{ }</span>
                         </Box>
                         <Box class="line-dotted">
@@ -940,7 +941,7 @@ const handleRemoveOption = (optionToRemove) => {
                 return getAudit.map((item, index) => (
                     <li key={index}>
                         <Box class="datetime">
-                            <span>{item["Actioned Date"]}</span>
+                            <span>{moment(item["Actioned Date"]).format("DD/MM/YYYY HH:mm:ss")}</span>
                             <span>{ }</span>
                         </Box>
                         <Box class="line-dotted">
@@ -985,7 +986,7 @@ const handleRemoveOption = (optionToRemove) => {
         <HeaderFilter visible={true} />
         <FilterRow visible={true} />
     <FilterPanel visible={true} />
-        <Column dataField="Actioned Date" dataType="date" caption="Date"  />
+        <Column dataField="Actioned Date" dataType="date" caption="Date"  format="d/M/yyyy"  />
         <Column dataField="Comments" dataType="string" caption="Activity" />
         <Column dataField="ForwardedBy" dataType="string" caption="User" />
        
