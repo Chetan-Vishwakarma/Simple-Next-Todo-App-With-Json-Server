@@ -19,7 +19,7 @@ const UserDetailContext = createContext();
 let folderArray;
 let dynamicArray;
 const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompanyHouse, dataCompanyHouse, companyEditDetails }) => {
-  console.log(companyEditDetails, "EditcompanyEditDetails");
+  console.log(companyEditDetails, "EditcompanyEditDetails",userDetail);
   const [defaultClient, setDefaultClient] = useState([]);
   const [DynamicId, setDynamicId] = useState([]);
   const [Setaarray, setSetaarray] = useState([]);
@@ -174,7 +174,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
             console.log(defaultUser1, "defaulttManager");
             setDefaultUser(defaultUser1);
             setStatus(json.Table);
-            if (companyEditDetails) {
+            if (companyEditDetails && companyEditDetails.length > 0) {
               const statusObject = json.Table.find((item) => item.StatusId === companyEditDetails[0].StatusId);
               const sourceObj = json.Table2.find((item) => item.SourceId === companyEditDetails[0].SourceId);
               const bussineObj = json.Table1.find((item) => item.BussId === companyEditDetails[0].BussID);
@@ -191,19 +191,23 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
               if (bussineObj) {
                 setDefaultBussiness(bussineObj);
               }
-
-              const updatedUserDetail = {
-                ...userDetail,
-                CHNumber: "",
-                Clientname: companyEditDetails[0].OriginatorName,
-                Clientid: companyEditDetails[0].OriginatorNo,
-                StatusId: statusObject, // Set default status name
-                UserId: "",
-                Mobile: companyEditDetails[0].AltTelNo,
-                Telephone: companyEditDetails[0].TelNo,
-                Email: companyEditDetails[0].Email
-              };
-              setUserDetail(updatedUserDetail);
+            
+                const updatedUserDetail = {
+                  ...userDetail,
+                  CHNumber: "",
+                  Clientname: companyEditDetails[0].OriginatorName,
+                  Clientid: companyEditDetails[0].OriginatorNo,
+                  StatusId: statusObject, // Set default status name
+                  UserId: "",
+                  Mobile: companyEditDetails[0].AltTelNo,
+                  Telephone: companyEditDetails[0].TelNo,
+                  Email: companyEditDetails[0].Email
+                };
+                setUserDetail(updatedUserDetail);
+             
+              
+            
+            
             }
           }
         }

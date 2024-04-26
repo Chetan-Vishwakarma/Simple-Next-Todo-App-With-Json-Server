@@ -85,7 +85,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
   };
   
   const Json_GetClientAddresses
- = () => {
+ = async () => {
     let requestBody = {
       agrno: agrno,
       Email: Email,
@@ -164,6 +164,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
       console.log("Error while calling Json_GetToFavourites", err);
     }
   };
+  Json_GetClientAddresses();
   useEffect(() => {
     
     if(dataCompanyHouse){
@@ -200,9 +201,9 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
     setEmail(localStorage.getItem("Email"));
     // setFolderId(localStorage.getItem("FolderId"));
     // setIntUserid(localStorage.getItem("UserId"));
-    setTimeout(() => {
-      Json_GetClientAddresses();
-    }, 3000);
+    
+      
+   
     
   }, [dataCompanyHouse]);
   console.log(userDetail,"userDetaildata111")

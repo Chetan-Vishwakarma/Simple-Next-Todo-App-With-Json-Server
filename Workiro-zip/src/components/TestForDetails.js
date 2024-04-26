@@ -310,7 +310,7 @@ function TestForDetails() {
     }
 
     return (
-        <div style={{ top: globalSearchDocs.length > 0 && "85px", right: globalSearchDocs.length > 0 && "20px" }} className=''>
+        <div style={{ top: globalSearchDocs && globalSearchDocs.length > 0 && "85px", right: globalSearchDocs && globalSearchDocs.length > 0 && "20px" }} className=''>
             <Button aria-describedby={id} variant="" className='min-width-auto btn-blue px-0' onClick={handleClick}>
                 <TuneIcon />
             </Button>
