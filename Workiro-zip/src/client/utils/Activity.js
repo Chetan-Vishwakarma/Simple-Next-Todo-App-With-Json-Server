@@ -66,6 +66,9 @@ let temp= [];
 function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     // let { getAudit } = props;
     // const [open, setOpen] = React.useState(false);
+    //  getAudit = getAudit.map((Actioned)=>{
+    //     return { ...Actioned, ["Actioned Date"]: new Date() };
+    // })
     console.log(getAudit,`ActivityselectedDocument`,selectedDocument);
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -375,6 +378,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
 const [tempdata, setTemp] = useState([]);
 
 const [tempdatafilter, setTempdatafilter] = useState([]);
+
 const [IsActivity, setIsActivity] = useState(false);
 const handleEnterKeyPress = (event) => {
     let dataFilter = [];
@@ -396,6 +400,9 @@ const handleEnterKeyPress = (event) => {
             });
             
             if(filteredArr && filteredArr.length > 0){
+
+  console.log('handleEnterKeyPress1111:', filteredArr);
+
                 setTempdatafilter(filteredArr);
             }
           
@@ -975,9 +982,19 @@ const handleRemoveOption = (optionToRemove) => {
         keyExpr="Activity ID"
         columnAutoWidth={true}
         showBorders={true}>
+<<<<<<< HEAD
         <FilterRow visible={true} />
         <FilterPanel visible={true} />
         <HeaderFilter visible={true} />
+=======
+        <HeaderFilter visible={true} />
+        <FilterRow visible={true} />
+    <FilterPanel visible={true} />
+        <Column dataField="Actioned Date" dataType="date" caption="Date"  />
+        <Column dataField="Comments" dataType="string" caption="Activity" />
+        <Column dataField="ForwardedBy" dataType="string" caption="User" />
+       
+>>>>>>> 85c3b7c4f8d41921dedf1221dbdd0413ad8bb9b8
         <Scrolling mode="standard" />
         <Selection
             mode="multiple"

@@ -165,6 +165,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
     }
   };
   useEffect(() => {
+    
     if(dataCompanyHouse){
       let data1 = { ...userDetail };
       data1 = { 
@@ -199,7 +200,10 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
     setEmail(localStorage.getItem("Email"));
     // setFolderId(localStorage.getItem("FolderId"));
     // setIntUserid(localStorage.getItem("UserId"));
-    Json_GetClientAddresses();
+    setTimeout(() => {
+      Json_GetClientAddresses();
+    }, 3000);
+    
   }, [dataCompanyHouse]);
   console.log(userDetail,"userDetaildata111")
   return (
