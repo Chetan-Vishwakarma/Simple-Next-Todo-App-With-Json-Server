@@ -330,10 +330,10 @@ function ClientDetails() {
                         <TabPanel value="2" className='p-0'>
                             <ClientAddress originatorNo={originatorNo}></ClientAddress>
                         </TabPanel>
-                        <TabPanel value="3" className='p-0'>
+                        <TabPanel value="3" className='p-0 relative'>
                             <Contact clientId={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorNo}></Contact>
                         </TabPanel>
-                        <TabPanel value="4" className='p-0'>
+                        <TabPanel value="4" className='p-0 relative'>
                             <TaskList clientName={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}></TaskList>
                         </TabPanel>
 
