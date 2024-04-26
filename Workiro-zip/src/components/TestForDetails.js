@@ -36,7 +36,7 @@ import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 // import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import moment from 'moment';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 // import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
 // import CustomLoader from '../../components/CustomLoader';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -57,6 +57,8 @@ let folderId = localStorage.getItem("FolderId");
 
 function TestForDetails() {
     const location = useLocation();
+    const navigate = useNavigate();
+
     const { globalSearchDocs, strGlobal } = location.state ? location.state : { globalSearchDocs: [], strGlobal: "" };
     const baseUrlSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -89,22 +91,25 @@ function TestForDetails() {
 
     const [clientList, setClientList] = useState([]);
     const [selectedClient, setSelectedClient] = useState("");
-    
+
+    const [isDocIdField, setIsDocIdField] = useState(false);
+    const [documentId, setDocumentId] = useState("");
+
     const [documentData, setDocumentData] = useState({
-        ClientId:"",
-        Description:"",
-        Email:Email,
-        IsUDF:"F",
-        ItemFDate:"01/01/1900",
-        ItemTDate:"01/01/1900",
-        ItemrecFDate:"01/01/1900",
-        ItemrecTDate:"01/01/1900",
-        ProjectId:folderId,
-        agrno:agrno,
-        password:password,
-        sectionId:"1",
-        udflist:[],
-        udfvalueList:[]
+        ClientId: "",
+        Description: "",
+        Email: Email,
+        IsUDF: "F",
+        ItemFDate: "01/01/1900",
+        ItemTDate: "01/01/1900",
+        ItemrecFDate: "01/01/1900",
+        ItemrecTDate: "01/01/1900",
+        ProjectId: folderId,
+        agrno: agrno,
+        password: password,
+        sectionId: "1",
+        udflist: [],
+        udfvalueList: []
     });
 
 
@@ -219,42 +224,64 @@ function TestForDetails() {
         Json_GetFolders();
         Json_GetSupplierListByProject();
     }, []);
-    const format_YYYY_MM_DD=(dateString)=>{
+    const format_YYYY_MM_DD = (dateString) => {
         const date = new Date(dateString);
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month starts from 0
         const day = date.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-    const handleInputChange=(e)=>{
+    const handleInputChange = (e) => {
         let name = e.target.name;
         let value = e.target.value;
-        setDocumentData({...documentData,[name]:value});
+        setDocumentData({ ...documentData, [name]: value });
     }
     const Json_AdvanceSearchDoc = (obj) => {
-          try {
+        try {
             ClsSms.Json_AdvanceSearchDoc(obj, (sts, data) => {
-              if (sts) {
-                if (data) {
-                  let json = JSON.parse(data);
-                  console.log("Json_AdvanceSearchDoc", json.Table6);
-                  if (json.Table6) {
-                    let fltDouble = [];
-                    json.Table6.map((itm) => itm.Description).filter(item => {
-                      if (!fltDouble.includes(item)) {
-                        fltDouble.push(item);
-                      }
-                    });
-                    // setDocumentsDescription(fltDouble);
-                    // setMyDocuments(json.Table6);
-                  }
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_AdvanceSearchDoc", json.Table6);
+                        if (json.Table6) {
+                            let fltDouble = [];
+                            json.Table6.map((itm) => itm.Description).filter(item => {
+                                if (!fltDouble.includes(item)) {
+                                    fltDouble.push(item);
+                                }
+                            });
+                            navigate("/dashboard/DocumentList", { state: { globalSearchDocs: json.Table6, strGlobal: documentData.Description } });
+                            handleClose();
+                            // setDocumentsDescription(fltDouble);
+                            // setMyDocuments(json.Table6);
+                        }
+                    }
                 }
-              }
             });
-          } catch (err) {
+        } catch (err) {
             console.log("Error while calling Json_AdvanceSearchDoc", err);
-          }
         }
+    }
+
+    const handleDocIdField = () => {
+        setIsDocIdField(true);
+        setDocumentData({
+            ClientId: "",
+            Description: "",
+            Email: Email,
+            IsUDF: "F",
+            ItemFDate: "01/01/1900",
+            ItemTDate: "01/01/1900",
+            ItemrecFDate: "01/01/1900",
+            ItemrecTDate: "01/01/1900",
+            ProjectId: folderId,
+            agrno: agrno,
+            password: password,
+            sectionId: "1",
+            udflist: [],
+            udfvalueList: []
+        });
+    }
 
     return (
         <div style={{ top: globalSearchDocs.length > 0 && "85px", right: globalSearchDocs.length > 0 && "20px" }} className=''>
@@ -276,7 +303,7 @@ function TestForDetails() {
                 <Box className='client-details-filter p-2'>
 
                     <Box className='mb-0'>
-                    <TextField name="Description" onChange={(e)=>handleInputChange(e)} id="outlined-basic" placeholder='Description...' size="small" variant="outlined" />
+                        <TextField name="Description" onChange={(e) => handleInputChange(e)} id="outlined-basic" placeholder='Description...' size="small" variant="outlined" />
                         {/* sadik */}
                         <Box sx={{ m: 1 }} className='pt-2'>
                             <DateRangePicker
@@ -362,7 +389,7 @@ function TestForDetails() {
                                     }}
                                 >
                                     <Select
-                                        value={selectedSection}
+                                        value={documentData.sectionId}
                                         name='sectionId'
                                         onChange={(e) => {
                                             handleInputChange(e);
@@ -383,7 +410,6 @@ function TestForDetails() {
                                     >
 
                                         <MenuItem value="" style={{ display: "none" }}>
-
                                             Sections
                                         </MenuItem>
                                         <MenuItem value="Section" >00. Clear Filter</MenuItem>
@@ -414,7 +440,7 @@ function TestForDetails() {
                                     }}
                                 >
                                     <Select
-                                        value={selectedFolder}
+                                        value={documentData.ProjectId}
                                         name='ProjectId'
                                         onChange={(e) => {
                                             handleInputChange(e);
@@ -486,6 +512,30 @@ function TestForDetails() {
                                     </Select>
                                 </BootstrapTooltip>
                             </FormControl>
+
+                            <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border'>
+                                <BootstrapTooltip title="Document ID" arrow
+                                    placement="bottom-start"
+                                    slotProps={{
+                                        popper: {
+                                            modifiers: [
+                                                {
+                                                    name: 'offset',
+                                                    options: {
+                                                        offset: [0, -10],
+                                                    },
+                                                },
+                                            ],
+                                        },
+                                    }}
+                                >
+                                    {!isDocIdField ? <Button onClick={handleDocIdField}>
+                                        {documentId !== "" ? documentId : "Document ID"}
+                                    </Button> : <TextField autoFocus={true} name="Description" type='number' value={documentId} onChange={(e) => setDocumentId(e.target.value)} onBlur={(e) => {
+                                            setIsDocIdField(false);
+                                    }} id="outlined-basic" placeholder='Document ID...' size="small" variant="outlined" />}
+                                </BootstrapTooltip>
+                            </FormControl>
                         </Box>
 
                         <Typography onClick={() => {
@@ -493,8 +543,8 @@ function TestForDetails() {
                             let formated_start_date = format_YYYY_MM_DD(start._d);
                             let formated_end_date = format_YYYY_MM_DD(end._d);
 
-                            let obj = {...documentData, ItemFDate:formated_start_date, ItemTDate: formated_end_date};
-                            setDocumentData({...documentData, ItemFDate:formated_start_date, ItemTDate: formated_end_date});
+                            let obj = { ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date };
+                            setDocumentData({ ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date });
 
                             Json_AdvanceSearchDoc(obj);
 
