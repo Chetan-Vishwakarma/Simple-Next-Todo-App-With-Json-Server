@@ -89,6 +89,24 @@ function TestForDetails() {
 
     const [clientList, setClientList] = useState([]);
     const [selectedClient, setSelectedClient] = useState("");
+    
+    const [documentData, setDocumentData] = useState({
+        ClientId:"",
+        Description:"",
+        Email:Email,
+        IsUDF:"F",
+        ItemFDate:"01/01/1900",
+        ItemTDate:"01/01/1900",
+        ItemrecFDate:"01/01/1900",
+        ItemrecTDate:"01/01/1900",
+        ProjectId:folderId,
+        agrno:agrno,
+        password:password,
+        sectionId:"1",
+        udflist:[],
+        udfvalueList:[]
+    });
+
 
     // for date datepicker
     const [state, setState] = useState({
@@ -154,26 +172,26 @@ function TestForDetails() {
     }
     function Json_GetFolders() {
         let obj = {
-          agrno: agrno,
-          Email: Email,
-          password: password
+            agrno: agrno,
+            Email: Email,
+            password: password
         }
         try {
-          ClsSms.Json_GetFolders(obj, function (sts, data) {
-            if (sts) {
-              if (data) {
-                let js = JSON.parse(data);
-                let tbl = js.Table;
-                // console.log("Json_GetFolders", tbl);
-                setFolders(tbl);
-              }
-            }
-          });
+            ClsSms.Json_GetFolders(obj, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        let tbl = js.Table;
+                        console.log("Json_GetFolders", tbl);
+                        setFolders(tbl);
+                    }
+                }
+            });
         } catch (err) {
-          console.log("Error while calling Json_GetFolders", err);
+            console.log("Error while calling Json_GetFolders", err);
         }
-      }
-      const Json_GetSupplierListByProject = (folder_id = folderId) => {
+    }
+    const Json_GetSupplierListByProject = (folder_id = folderId) => {
         let obj = {
             agrno: agrno,
             Email: Email,
@@ -196,11 +214,48 @@ function TestForDetails() {
             console.log("Error while calling Json_GetSupplierListByProject", err);
         }
     }
-    useEffect(()=>{
+    useEffect(() => {
         Json_GetFolderData();
         Json_GetFolders();
         Json_GetSupplierListByProject();
-    },[]);
+    }, []);
+    const format_YYYY_MM_DD=(dateString)=>{
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month starts from 0
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    const handleInputChange=(e)=>{
+        let name = e.target.name;
+        let value = e.target.value;
+        setDocumentData({...documentData,[name]:value});
+    }
+    const Json_AdvanceSearchDoc = (obj) => {
+          try {
+            ClsSms.Json_AdvanceSearchDoc(obj, (sts, data) => {
+              if (sts) {
+                if (data) {
+                  let json = JSON.parse(data);
+                  console.log("Json_AdvanceSearchDoc", json.Table6);
+                  if (json.Table6) {
+                    let fltDouble = [];
+                    json.Table6.map((itm) => itm.Description).filter(item => {
+                      if (!fltDouble.includes(item)) {
+                        fltDouble.push(item);
+                      }
+                    });
+                    // setDocumentsDescription(fltDouble);
+                    // setMyDocuments(json.Table6);
+                  }
+                }
+              }
+            });
+          } catch (err) {
+            console.log("Error while calling Json_AdvanceSearchDoc", err);
+          }
+        }
+
     return (
         <div style={{ top: globalSearchDocs.length > 0 && "85px", right: globalSearchDocs.length > 0 && "20px" }} className=''>
             <Button aria-describedby={id} variant="" className='min-width-auto btn-blue px-0' onClick={handleClick}>
@@ -221,6 +276,7 @@ function TestForDetails() {
                 <Box className='client-details-filter p-2'>
 
                     <Box className='mb-0'>
+                    <TextField name="Description" onChange={(e)=>handleInputChange(e)} id="outlined-basic" placeholder='Description...' size="small" variant="outlined" />
                         {/* sadik */}
                         <Box sx={{ m: 1 }} className='pt-2'>
                             <DateRangePicker
@@ -307,7 +363,9 @@ function TestForDetails() {
                                 >
                                     <Select
                                         value={selectedSection}
+                                        name='sectionId'
                                         onChange={(e) => {
+                                            handleInputChange(e);
                                             setSelectedSection(e.target.value);
                                             if (e.target.value === "Section") {
                                                 // handleFilterDeletion('Section');
@@ -330,7 +388,7 @@ function TestForDetails() {
                                         </MenuItem>
                                         <MenuItem value="Section" >00. Clear Filter</MenuItem>
                                         {sections.length > 0 && sections.map((itm) => {
-                                            return <MenuItem value={itm.Sec}>{itm.Sec}</MenuItem>
+                                            return <MenuItem value={itm.SecID}>{itm.Sec}</MenuItem>
                                         })}
 
                                         {/* <MenuItem value={10}>Section 1</MenuItem>
@@ -357,7 +415,9 @@ function TestForDetails() {
                                 >
                                     <Select
                                         value={selectedFolder}
+                                        name='ProjectId'
                                         onChange={(e) => {
+                                            handleInputChange(e);
                                             setSelectedFolder(e.target.value);
                                             if (e.target.value === "Folder") {
                                                 // handleFilterDeletion("Folder");
@@ -380,7 +440,7 @@ function TestForDetails() {
                                             Clear Filters</MenuItem>
 
                                         {folders.length > 0 && folders.map((itm) => {
-                                            return <MenuItem value={itm.Folder} className='ps-1'>
+                                            return <MenuItem value={itm.FolderID} className='ps-1'>
                                                 <FolderSharedIcon className='font-18 me-1' />
                                                 {itm.Folder}</MenuItem>
                                         })}
@@ -410,7 +470,11 @@ function TestForDetails() {
                                 >
                                     <Select
                                         value={selectedClient}
-                                        onChange={(e)=>setSelectedClient(e.target.value)}
+                                        name='ClientId'
+                                        onChange={(e) => {
+                                            handleInputChange(e);
+                                            setSelectedClient(e.target.value);
+                                        }}
                                         displayEmpty
                                         inputProps={{ 'aria-label': 'Without label' }}
                                         className='custom-dropdown'
@@ -424,18 +488,22 @@ function TestForDetails() {
                             </FormControl>
                         </Box>
 
-                         <Typography onClick={()=>{
-                             console.log("fsdlfjsdljeroi selectedClient", selectedClient);
-                             console.log("fsdlfjsdljeroi selectedFolder", selectedFolder);
-                             console.log("fsdlfjsdljeroi selectedSection", selectedSection);
-                             console.log("fsdlfjsdljeroi start", start._d);
-                             console.log("fsdlfjsdljeroi end", end._d);
+                        <Typography onClick={() => {
 
-                         }} variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
-                                    Apply
-                                </Typography>
+                            let formated_start_date = format_YYYY_MM_DD(start._d);
+                            let formated_end_date = format_YYYY_MM_DD(end._d);
 
-{/*
+                            let obj = {...documentData, ItemFDate:formated_start_date, ItemTDate: formated_end_date};
+                            setDocumentData({...documentData, ItemFDate:formated_start_date, ItemTDate: formated_end_date});
+
+                            Json_AdvanceSearchDoc(obj);
+
+
+                        }} variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
+                            Apply
+                        </Typography>
+
+                        {/*
                                 <Box className='d-flex'>
                                     <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 '>
                                         <BootstrapTooltip title="Group By" arrow
