@@ -7,7 +7,7 @@ import DataGrid, {
   Pager, Paging, DataGridTypes,
 } from 'devextreme-react/data-grid';
 import 'devextreme/dist/css/dx.light.css';
-
+import { useSelector } from 'react-redux';
 import ToggleButton from '@mui/material/ToggleButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -85,7 +85,8 @@ const orderHeaderFilter = (data) => {
 
 let exportTaskData = [];
 function TaskList({ clientName }) {
-
+  const reduxData = useSelector((state) => state.counter.reduxData);
+  console.log(reduxData,"reduxdatasonam");
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -101,6 +102,7 @@ function TaskList({ clientName }) {
 
   const [anchorElDown, setAnchorElDown] = useState(null);
   const [outlookTaskList, setOutlookTaskList] = useState([]);
+  const [ExportTaskListData, setExportTaskListData] = useState([]);
   const [dataNotFound, setDataNotFound] = useState(false);
 
   const dataGridRef = useRef(null);
@@ -130,7 +132,7 @@ function TaskList({ clientName }) {
         if (sts) {
           if (data) {
             let json = JSON.parse(data);
-            console.log("Json_CRM_GetOutlookTask", json?.Table);
+            console.log("Json_CRM_GetOutlookTasksonam", json?.Table);
             if (json?.Table.length > 0) {
               let filteredData = json.Table.filter(itm => itm["EndDateTime"] !== null && !itm["EndDateTime"].split("").includes("-") && itm["Start"] !== null && !itm["Start"].split("").includes("-") && itm.Client === clientName);
               filteredData.map(itm => {
@@ -145,6 +147,7 @@ function TaskList({ clientName }) {
               console.log("filteredData", filteredData)
               setOutlookTaskList(filteredData);
               exportTaskData = [...filteredData];
+              setExportTaskListData([...filteredData]);
             }
 
           }
@@ -239,10 +242,10 @@ function TaskList({ clientName }) {
   };
 
   const ExportData = useCallback(() => {
-    console.log("exportData", exportTaskData);
-    exportexcel(exportTaskData ? exportTaskData : []); // Export data from 
+    console.log("exportData", ExportTaskListData);
+    exportexcel(ExportTaskListData ? ExportTaskListData : []); // Export data from 
     setAnchorElDown(null);
-  }, []);
+  }, [ExportTaskListData]);
   const handleRowDoubleClick = (e) => {
     // Handle double click event on the row
     console.log('Row double-clicked sdaskldjsajlaj:', e.data);
