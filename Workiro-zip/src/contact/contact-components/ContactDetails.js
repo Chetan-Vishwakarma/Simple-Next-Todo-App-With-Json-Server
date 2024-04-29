@@ -17,7 +17,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import user from "../../images/user.jpg";
+import user from "../../images/user-2.png";
 import country from "../../images/uk.png";
 import KeyIcon from "@mui/icons-material/Key";
 import RequestQuoteIcon from "@mui/icons-material/RequestQuote";
@@ -647,7 +647,7 @@ function ContactDetails() {
                           <Box className="d-flex align-items-center">
                             <Box className="relative m-0 me-4">
                               <Box className="client-img">
-                                <img src={user} />
+                                <img src={item.imgPath ? item.imgPath : user} />
                               </Box>
 
                               <Tooltip title={contactDetails[0].Country ? contactDetails[0].Country : ""} arrow>
@@ -1017,7 +1017,7 @@ function ContactDetails() {
                         <p className="mb-0 font-14 text-gray">
                         {contactDetails.length > 0
               ? contactDetails[0]["Note"]
-              : "Loading..."}
+              : ""}
                           
                         </p>
                       </Box>
