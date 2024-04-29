@@ -303,7 +303,7 @@ function TestForDetails() {
                         navigate("/dashboard/DocumentList", { state: { globalSearchDocs: json[""], strGlobal: documentData.Description } });
                         handleClose();
                         setDocumentId("");
-                    }else{
+                    } else {
                         toast.error("Document not found please check entered Id");
                     }
                 }
@@ -353,7 +353,12 @@ function TestForDetails() {
                 <Box className='client-details-filter p-2'>
 
                     <Box className='mb-0'>
-                        <TextField name="Description" onChange={(e) => handleInputChange(e)} id="outlined-basic" placeholder='Description...' size="small" variant="outlined" />
+
+                        <Box className="input-search ms-2 me-3">
+                            <TextField name="Description" onChange={(e) => handleInputChange(e)} id="outlined-basic" placeholder='Description...' size="small" variant="outlined" className='ps-0' />
+                            <span className="material-symbols-outlined search-icon">search</span>
+                        </Box>
+
                         {/* sadik */}
                         <Box sx={{ m: 1 }} className='pt-2'>
                             <DateRangePicker
@@ -531,7 +536,7 @@ function TestForDetails() {
                             {isClientField ? <Autocomplete
                                 disablePortal
                                 id="combo-box-demo"
-                                defaultValue={Object.keys(selectedClient).length > 0 ? selectedClient : {"Company Name":"Select"}}
+                                defaultValue={Object.keys(selectedClient).length > 0 ? selectedClient : { "Company Name": "Select" }}
                                 onChange={(e, newValue) => {
                                     // console.log("djskfjlkfj",e.target.value);
                                     console.log("djskfjlkfj", newValue);

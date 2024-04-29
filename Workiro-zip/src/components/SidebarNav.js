@@ -436,7 +436,7 @@ export default function SidebarNav() {
               <Box className="d-flex align-items-center justify-content-between w-100">
 
                 <Box className='d-flex flex-wrap'>
-                  <Box className="search-box ms-2 me-3">
+                  <Box className="search-box mt-2">
                     <Layout>
                       <AutocompleteWrapper>
                         <AutocompleteRoot

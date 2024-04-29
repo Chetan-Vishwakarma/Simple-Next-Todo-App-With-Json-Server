@@ -471,8 +471,6 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     const disableDueDate = (date) => {
         const today = currentDate;
         return date.isSameOrAfter(today, 'day'); // Disable past dates
-
-
     };
 
     function SetFileataByItemId(itemid) {
