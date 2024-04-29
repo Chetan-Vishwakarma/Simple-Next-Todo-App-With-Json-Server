@@ -665,6 +665,7 @@ function AddContacts({ addContactData,contactDetails}) {
       ["MainLine2Name"]: item["Address 2"],
       ["MainLine3Name"]: item["Address 3"],
       ["MainTownName"]: item.Town,
+      ["Notes"]: item.Note,
       ["MainPostcodeName"]: item.Postcode,
       ["Maincontactcountry"]: "",
       ["MainTelephoneName"]: item.Tel,
@@ -711,6 +712,7 @@ function AddContacts({ addContactData,contactDetails}) {
                   className="form-control textarea-2 mt-3"
                   placeholder="Notes.."
                   name="Notes"
+                  value={userContactDetails?.Notes}
                   onChange={handleChangeTextArea} 
                 ></textarea>
               </Box>
