@@ -332,7 +332,7 @@ function ClientDetails() {
                             <ClientAddress originatorNo={originatorNo}></ClientAddress>
                         </TabPanel>
                         <TabPanel value="3" className='p-0 relative'>
-                            <Contact clientId={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorNo}></Contact>
+                            <Contact clientId={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorNo} clientName={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}></Contact>
                         </TabPanel>
                         <TabPanel value="4" className='p-0 relative'>
                             <TaskList clientName={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}></TaskList>

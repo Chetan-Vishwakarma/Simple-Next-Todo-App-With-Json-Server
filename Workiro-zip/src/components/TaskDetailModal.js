@@ -79,6 +79,7 @@ import Activity from "../client/utils/Activity";
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import Fileformat from '../images/files-icon/pdf.png';
 import moment from 'moment';
+import GetFileType from "./FileType";
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -2997,7 +2998,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                             // Set the groupIndex to 0 to enable grouping by this column
                                             dataType="string"  // Set the data type to "string" for proper grouping
                                             cellRender={(data) => {
-                                                console.log(data, "datadms")
+                                               // console.log(data, "datadms")
+                                               let rowdata = data.data;
+                                               let rd = ClsSms.getFileExtension(rowdata.FileName);
                                                 return <Box className="file-uploads">
                                                     <label className="file-uploads-label file-uploads-document" onClick={(event) => {
                                                         event.stopPropagation();
@@ -3018,7 +3021,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                                 className='me-2 ms-0'
                                                             /> */}
                                                             <div className='img-format'>
-                                                                <img src={Fileformat} />
+                                                                {/* <img src={Fileformat} /> */}
+                                                                {<GetFileType Type={rd?rd.toLowerCase():null}></GetFileType>}
                                                             </div>
                                                             <Box className="upload-content pe-3">
                                                                 <Typography variant="h4" >

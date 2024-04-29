@@ -50,6 +50,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import BootstrapTooltip from '../../utils/BootstrapTooltip';
 import Fileformat from '../../images/files-icon/pdf.png';
+import GetFileType from '../../components/FileType';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -1180,6 +1181,7 @@ export default function DocumentList({ clientId }) {
                                 <Box className='row'>
                                     {advFilteredResult.length > 0 ? (
                                         advFilteredResult.map((itm) => {
+                                            console.log("file type 1122",itm)
                                             return <>
                                                 <Box className='col-xxl-3 col-xl-4 col-md-6'>
                                                     <Box className="file-uploads">
@@ -1192,7 +1194,8 @@ export default function DocumentList({ clientId }) {
                                                                     className='me-2'
                                                                 /> */}
                                                                 <div className='img-format'>
-                                                                    <img src={Fileformat} />
+                                                                    {/* <img src={Fileformat} /> */}
+                                                                    {/* {<GetFileType row={itm?itm.toLowerCase():null}></GetFileType>} */}
                                                                 </div>
                                                                 <Box className="upload-content pe-3">
                                                                     <Typography variant="h4" >
@@ -1211,6 +1214,7 @@ export default function DocumentList({ clientId }) {
                                             </>
                                         })
                                     ) : (documents.length > 0 && documents.map((itm) => {
+
                                         return <>
                                             <Box className='col-xxl-3 col-xl-4 col-md-6'>
                                                 <Box className="file-uploads">
@@ -1223,7 +1227,8 @@ export default function DocumentList({ clientId }) {
                                                                 className='me-2'
                                                             /> */}
                                                             <div className='img-format'>
-                                                                <img src={Fileformat} />
+                                                                {/* <img src={Fileformat} /> */}
+                                                                {/* {<GetFileType row={itm?itm:null}></GetFileType>} */}
                                                             </div>
                                                             <Box className="upload-content pe-3">
                                                                 <Typography variant="h4" >

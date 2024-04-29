@@ -13,7 +13,6 @@ function UdfCard({ data }) {
                   };
                 const [month, day, year] = itm.UdfValue.trim().split(/\s+/);
                 itm.UdfValue = `${day}/${months[month]}/${year}`;
-                console.log("djkdskjetuu", itm.UdfValue, "----", `${day}/${months[month]}/${year}`);
             }
         });
     }, []);

@@ -22,6 +22,7 @@ import CustomLoader from './CustomLoader';
 // import DocumentRenameModal from './DocumentRenameModal';
 import Fileformat from '../images/files-icon/pdf.png';
 import InsertLinkIcon from '@mui/icons-material/InsertLink';
+import GetFileType from './FileType';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -1071,6 +1072,7 @@ function NewTodoList() {
 
                     <Box className='row'>
                         {recentDocument.length > 0 ? recentDocument.map((item, index) => {
+                        // console.log("file data type",item.type)
                             return <>
 
                                 <Box className='col-xxl-3 col-xl-4 col-md-6 d-flex' key={index}>
@@ -1087,7 +1089,8 @@ function NewTodoList() {
                                                     className='me-2 ms-0'
                                                 /> */}
                                                 <div className='img-format'>
-                                                    <img src={Fileformat} />
+                                                    {/* <img src={Fileformat} /> */}
+                                                   {<GetFileType Type={item.type?item.type.toLowerCase():null}></GetFileType>}
                                                 </div>
                                                 <Box className="upload-content pe-3" onDoubleClick={(e) => ViewerDocument(item)}>
                                                     {editingIndex == index ? (
@@ -1102,7 +1105,7 @@ function NewTodoList() {
                                                         />
                                                     ) : (
                                                         <Typography variant="h4">
-                                                            {Object.keys(test).includes(String(index)) ? test[index] : item.Subject ? item.Subject : ""}
+                                                            {Object.keys(test).includes(String(index)) ? test[index] : item.Subject && item.Subject.length>18 ? item.Subject.substr(0,18)+"..." : item.Subject.length<=18 ? item.Subject : ""}
                                                         </Typography>
                                                     )}
                                                     <Typography variant="body1">

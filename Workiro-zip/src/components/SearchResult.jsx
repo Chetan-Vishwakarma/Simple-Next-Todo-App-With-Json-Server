@@ -268,6 +268,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
                 <Grid className='mt-0' container spacing={2}>
                     {filteredDocuments.length > 0 ? filteredDocuments.slice(0, 9).map((item, index) => {
+                        console.log("search result file data",item)
                         return <Grid key={index} className='pt-0' item xs={12} lg={4} md={4} sm={12}><Box className="file-uploads">
                             <label className="file-uploads-label file-uploads-document" onClick={(event) => {
                                 event.stopPropagation();
