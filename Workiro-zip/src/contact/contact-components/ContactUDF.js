@@ -9,7 +9,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Unstable_NumberInput as NumberInput } from '@mui/base/Unstable_NumberInput';
 import dayjs from "dayjs";
-const ContactUDF = React.memo(({ data, setDataFromChild }) => {
+const ContactUDF = React.memo(({ data, setDataFromChild,contactDetails}) => {
+  console.log(contactDetails,"ContactUDFEdit","clientdetails",data);
   console.log(data?.Table, "sdfsdTEST", data.Table1);
   const [selectManager, setselectManagers] = useState([]);
   const [selectedDatetest, setSelectedDatetest] = useState([]);
@@ -80,53 +81,53 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
   }, [selectedDatetest]);
   console.log("selectedDatetestsonamoutside", selectedDatetest);
   const renderDynamicInput = (data) => {
-    console.log(selectManager, "selectManagerselectManager",data);
+    console.log(data,"datetypedata");
     let renderedContent;
     switch (data?.UserDefFieldTypeID) {
       case 1:
         switch (data?.TextControlValue) {
           case "Integer":
             if (data && data.UdfValue) {
-                renderedContent = (
-              <TextField
-                fullWidth
-                label={data.Name}
-                variant="outlined"
-                type="number"
-                name="regLine1"
-                id={
-                  data.UserDefFieldID +
-                  "_" +
-                  data.UserDefFieldTypeID +
-                  "_" +
-                  data.TextControlValue +
-                  "_UDF"
-                }
-                // value={data.UdfValue}
-                onChange={handleInputChange}
-              />
-                );
-            } else {
-                renderedContent = (
-              <TextField
-                fullWidth
-                label={data.Name}
-                variant="outlined"
-                type="number"
-                name="regLine1"
-                id={
-                  data.UserDefFieldID +
-                  "_" +
-                  data.UserDefFieldTypeID +
-                  "_" +
-                  data.TextControlValue +
-                  "_UDF"
-                }
-                //   value={data.UdfValue}
-                onChange={handleInputChange}
-              />
-                )
-            }
+              renderedContent = (
+            <TextField
+              fullWidth
+              label={data.Name}
+              variant="outlined"
+              type="number"
+              name="regLine1"
+              id={
+                data.UserDefFieldID +
+                "_" +
+                data.UserDefFieldTypeID +
+                "_" +
+                data.TextControlValue +
+                "_UDF"
+              }
+              value={data.UdfValue}
+              onChange={handleInputChange}
+            />
+              );
+          } else {
+              renderedContent = (
+            <TextField
+              fullWidth
+              label={data.Name}
+              variant="outlined"
+              type="number"
+              name="regLine1"
+              id={
+                data.UserDefFieldID +
+                "_" +
+                data.UserDefFieldTypeID +
+                "_" +
+                data.TextControlValue +
+                "_UDF"
+              }
+              //   value={data.UdfValue}
+              onChange={handleInputChange}
+            />
+              )
+          }
             break;
           case "String":
             if (data && data.UdfValue) {
@@ -136,7 +137,8 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
                   fullWidth
                   label={data.Name}
                   variant="outlined"
-                  name="regLine1"
+                  name="stringtype"
+                  key={`stringtype`}
                   id={
                     data.UserDefFieldID +
                     "_" +
@@ -145,7 +147,7 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  // value={data.UdfValue}
+                  defaultValue={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -156,7 +158,8 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
                   fullWidth
                   label={data.Name}
                   variant="outlined"
-                  name="regLine1"
+                  name="stringtype"
+                  key={`stringtype`}
                   id={
                     data.UserDefFieldID +
                     "_" +
@@ -173,35 +176,51 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
             break;
           case "Date":
             if (data && data.UdfValue) {
-              renderedContent = (
+              const defaultDateObject = dayjs(data.UdfValue, "DD-MM-YYYY");     
+             // const formattedDefaultDate = defaultDateObject.format("YYYY-MM-DD");
+if (defaultDateObject.isValid()) {
+ 
+  //const formattedDate = defaultDateObject.format('YYYY-MM-DD');  
+  renderedContent = (
 
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer
-                    components={[
-                      "DatePicker",
-                      "TimePicker",
-                      "DateTimePicker",
-                      "DateRangePicker",
-                    ]}
-                  >
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DemoContainer
+        components={[
+          "DatePicker",
+          "TimePicker",
+          "DateTimePicker",
+          "DateRangePicker",
+        ]}
+      >
 
-                    <DatePicker
-                      // dateFormat="DD/MM/YYYY"
-                      // value={currentDate}
-                      id={
-                        data.UserDefFieldID +
-                        "_" +
-                        data.UserDefFieldTypeID +
-                        "_" +
-                        data.TextControlValue +
-                        "_UDF"
-                      }
-                      onChange={handleInputChange}
-                    />
+        <DatePicker
+          // dateFormat="DD/MM/YYYY"
+          // value={currentDate}
+        //   dateFormat="DD/MM/YYYY"
+        //   value={currentDate}
+          defaultValue={defaultDateObject}
+          // defaultValue={formattedDefaultDate}
+          label={data.Name}
+          id={
+            data.UserDefFieldID +
+            "_" +
+            data.UserDefFieldTypeID +
+            "_" +
+            data.TextControlValue +
+            "_UDF"
+          }
+          onChange={(e) => handleInputOnDateChage(e, `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}_UDF`)}
+        />
 
-                  </DemoContainer>
-                </LocalizationProvider>
-              );
+      </DemoContainer>
+    </LocalizationProvider>
+  );
+} else {
+  // The date is invalid
+  console.log('Invalid date');
+}
+
+             
             } else {
               renderedContent = (
 
@@ -218,6 +237,7 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
                     <DatePicker
                       // dateFormat="DD/MM/YYYY"
                       // value={currentDate}
+                      label={data.Name}
                       id={
                         data.UserDefFieldID +
                         "_" +
@@ -227,6 +247,7 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
                         "_UDF"
                       }
                       onChange={(e) => handleInputOnDateChage(e, `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_${data.TextControlValue}_UDF`)}
+                     
                     />
 
                   </DemoContainer>
@@ -251,7 +272,7 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  // value={data.UdfValue}
+                  value={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -294,7 +315,7 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  // value={data.UdfValue}
+                  value={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -314,7 +335,7 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  //   value={data.UdfValue}
+                    // value={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -337,7 +358,7 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  // value={data.UdfValue}
+                  value={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -370,14 +391,20 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
           const optionsArray = data.Options.split("@;");
           console.log(
             data,
-            "optionsArray",
+            "optionsArray11",optionsArray,
             `${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`
           );
+          const optionsArray1 = data.Options.split('@;').filter(option => option.trim() !== '');
+
+          // Set default value to the first option in the array
+        //   const defaultValue = optionsArray1.length > 0 ? optionsArray1[0] : null;
+        
           if (optionsArray.length > 0) {
             renderedContent = (
               <Autocomplete
                 id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
                 options={optionsArray} // Pass optionsArray as options
+                defaultValue={data.UdfValue}
                 name={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
                 clearOnEscape
                 onChange={(event, value) => handleInputOnSelect(event, value)}
@@ -438,6 +465,7 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
         } else {
           renderedContent = (
 
+
             <FormControlLabel
               required
               control={
@@ -458,49 +486,7 @@ const ContactUDF = React.memo(({ data, setDataFromChild }) => {
           );
         }
         break;
-      case 15:
-        // case "ComboBox":
-        if (data && data.UdfValue) {
-          renderedContent = (
-           
-              <Autocomplete
-                options={selectManager} // Pass optionsArray as options
-                id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
-                onChange={(event, value) => handleInputOnSelect(event, value)}
-                clearOnEscape
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    name="selectManager"
-                    label="Client List"
-                  />
-                )}
-              />
-           
-          );
-        } else {
-          renderedContent = (
-        
-              <Autocomplete
-                options={selectManager.map((option) => option.ForwardTo)} // Pass optionsArray as options
-                id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
-                onChange={(event, value) => handleInputOnSelect(event, value)}
-                clearOnEscape
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    name="Selectclient"
-                    id={`${data.UserDefFieldID}_${data.UserDefFieldTypeID}_UDF`}
-                    label={data.Name}
-                  />
-                )}
-              />
-          
-          );
-        }
-        break;
+     
     }
     return renderedContent;
   };
