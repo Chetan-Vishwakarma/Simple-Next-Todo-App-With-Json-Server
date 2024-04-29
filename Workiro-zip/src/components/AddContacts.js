@@ -124,7 +124,7 @@ function AddContacts({ addContactData,contactDetails}) {
       password: password,
       ProjectId: folderId,
       // ClientId: localStorage.getItem("origiNator") ? localStorage.getItem("origiNator") : userContactDetails.ReferenceID,
-      ClientId: "0007",
+      ClientId: clientIddata ? clientIddata : "",
       ContactId: "-1",
     };
     try {
@@ -854,6 +854,13 @@ function AddContacts({ addContactData,contactDetails}) {
                         clearOnEscape
                         value={defaultClient || null}
                         onChange={onChangebussines}
+                        filterOptions={(options, { inputValue }) =>
+                        options.filter(option =>
+                          option.Client.toLowerCase().includes(inputValue.toLowerCase())
+                        )
+                      }
+                      autoHighlight  // Highlight the first suggestion
+                      selectOnFocus  // Select suggestion when input is focused
                         renderInput={(params) => (
                           <TextField
                             {...params}

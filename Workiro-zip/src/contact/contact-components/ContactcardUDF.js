@@ -1,21 +1,9 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import React, { useEffect } from 'react';
+import React from 'react';
 
-function UdfCard({ data }) {
-    console.log("sdfsd", data.Table3);
-    useEffect(() => {
-        data?.Table3.map(itm => {
-            if (itm.TextControlValue === "Date" && itm.UdfValue) {
-                const months = {
-                    Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
-                    Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12'
-                  };
-                const [month, day, year] = itm.UdfValue.trim().split(/\s+/);
-                itm.UdfValue = `${day}/${months[month]}/${year}`;
-            }
-        });
-    }, []);
+function ContactcardUDF({ data }) {
+    console.log(data,"sonamcontactudfsdfsd", data.Table1);
     return (
         <>
             {
@@ -33,8 +21,8 @@ function UdfCard({ data }) {
                             <Box className='table-responsive'>
                                 <table className='table'>
                                     <tbody>
-                                        {data?.Table3.map((data, i) => {
-                                            if (item.TagId === data.Tag) {
+                                        {data?.Table1.map((data, i) => {
+                                            if (item.TagID === data.Tag) {
                                                 return <tr>
                                                     <th>{data.Name}</th>
                                                     <td>{data.UdfValue === "undefined" ? "" : data.UdfValue}</td>
@@ -52,4 +40,4 @@ function UdfCard({ data }) {
     )
 }
 
-export default UdfCard
+export default ContactcardUDF
