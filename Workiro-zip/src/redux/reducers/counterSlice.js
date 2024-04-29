@@ -9,7 +9,8 @@ const counterSlices = createSlice({
         myTasks:[],
         openTaskModal:false,
         clientAndDocDataForTaskModal: null,
-        openDocumentModalByRedux: false
+        openDocumentModalByRedux: false,
+        reduxDataSonam: []
     },
     reducers: {
         //sonam state start
@@ -35,10 +36,13 @@ const counterSlices = createSlice({
           setOpenDocumentModalByRedux: (state, action) => {
             state.openDocumentModalByRedux = action.payload;
           }, // chetan state end
+          updateReduxDataSonam: (state, action) => {
+            state.reduxData = action.payload;
+          }
     }
 });
 
-export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux } = counterSlices.actions;
+export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux,updateReduxDataSonam } = counterSlices.actions;
 
 // export const getUsers = () => async(dispatch) => {
 //     const response = await axios.get("https://jsonplaceholder.typicode.com/users");

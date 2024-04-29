@@ -52,14 +52,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setMyTasks } from '../redux/reducers/counterSlice';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-
+import { updateReduxDataSonam } from '../redux/reducers/counterSlice';
 
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20' />, <PublishedWithChangesIcon color='primary' className='me-1 font-20' />, <HourglassBottomIcon color='primary' className='me-1 font-20' />, <CheckCircleOutlineIcon color='success' className='me-1 font-20' />];
 let attatmentdata = [];
 let exportTaskData = [];
+let filterExportData = [];
 function TodoList() {
     const location = useLocation();
     const reduxData = useSelector((data) => data.counter.myTasks);
+    const reduxDataSonam = useSelector((state) => state.counter.reduxData);
+    console.log(reduxDataSonam,"reduxdatasonam");
+    console.log(reduxData,"datatasklist");
     const dispatch = useDispatch();
     let dddd = location.state !== null ? location.state : { globalSearchTask: [] };
     const { globalSearchTask, strGlobal } = dddd;
@@ -418,6 +422,7 @@ function TodoList() {
         console.log("fltData2222", fltData)
 
         setAllTask([...fltData]);
+        filterExportData = [...fltData];
         if (Object.keys(dataInGroup).length > 0) {
 
             let gData = groupByProperty(fltData, selectedGroupBy);
@@ -755,9 +760,34 @@ function TodoList() {
     const exportexcel = (data) => {
         let workbook = new Workbook();
         let worksheet = workbook.addWorksheet("SheetName");
-        console.log(data, "worksheetdata", data[0]["EndDateTime"]);
-        // Add column headers
-        const headerRow = worksheet.addRow(["Source", "Subject", "Forwarded By", "End Date", "Client", "Status"]);
+        console.log(data,"worksheetdata",data[0]["EndDateTime"]);
+         // Add column headers
+  const headerRow = worksheet.addRow(["Source", "Subject", "Forwarded By", "End Date", "Client", "Status"]);
+  
+  // Apply bold formatting to header row
+  headerRow.eachCell((cell, colNumber) => {
+    cell.font = { bold: true };
+  });
+  
+  // Add data rows
+  data.forEach((item, index) => {
+    let timestamp;
+    let date;
+    // if (item && item["EndDateTime"]) {
+    //   timestamp = parseInt(item["EndDateTime"].slice(6, -2));
+    //   date = startFormattingDate(timestamp);
+    // } else {
+    //   date = '';
+    // }
+    worksheet.addRow([
+      item?.Source,
+      item?.Subject,
+      item["Forwarded By"],
+      item["EndDateTime"],      
+      item?.Client,
+      item?.Status
+    ]);
+  });
 
         // Apply bold formatting to header row
         headerRow.eachCell((cell, colNumber) => {
@@ -797,11 +827,16 @@ function TodoList() {
         });
     };
 
-    const ExportData = useCallback(() => {
-        console.log("exportData", exportTaskData);
-        exportexcel(exportTaskData ? exportTaskData : []); // Export data from 
-        setAnchorElDown(null);
-    }, []);
+      const ExportData = useCallback(() => {
+          console.log(filterExportData,"11exportData",exportTaskData);
+          if(filterExportData && filterExportData.length > 0) {
+            exportexcel(filterExportData);
+          }else {
+            exportexcel(exportTaskData); // Export data from 
+          }
+         
+          setAnchorElDown(null);
+      }, []);
 
     const FilterAgs = (item) => {
         const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
@@ -825,7 +860,8 @@ function TodoList() {
     useEffect(() => {
         setAllTask([...reduxData]);
         setActualData([...reduxData]);
-    }, [reduxData]);
+        dispatch(updateReduxDataSonam(reduxData));
+    }, [reduxData,dispatch]);
 
     return (
         <>

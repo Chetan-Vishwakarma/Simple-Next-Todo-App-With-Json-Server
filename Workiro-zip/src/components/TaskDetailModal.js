@@ -438,6 +438,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                 }
 
                 let table6 = json.T6;
+                
                 if (table6 && table6.length > 0) {
                     const formattedActivity = table6.map((activity) => {
                         let timestamp;
@@ -449,8 +450,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                         // console.log(formatDate(date),"dateformattingdate");
                         return { ...activity, Item_Date: formatedate };
                     });
-
-
+           
                     setAttachmentFile(formattedActivity);
                     // setTimeout(() => {
                     //     console.log("attachmentFile", attachmentFile);
