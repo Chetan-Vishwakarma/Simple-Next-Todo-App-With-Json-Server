@@ -231,7 +231,7 @@ function Contact({ clientId,clientName }) {
     workbook.xlsx.writeBuffer().then(function (buffer) {
       saveAs(
         new Blob([buffer], { type: "application/octet-stream" }),
-        `${clientName ? clientName : ""}.xlsx`
+        `${clientName+"_Contacts" ? clientName+"_Contacts" : ""}.xlsx`
       );
     });
   };
