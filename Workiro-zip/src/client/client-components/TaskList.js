@@ -238,7 +238,7 @@ function TaskList({ clientName }) {
     workbook.xlsx.writeBuffer().then(function (buffer) {
       saveAs(
         new Blob([buffer], { type: "application/octet-stream" }),
-        "dataGrid.xlsx"
+        `${clientName ? clientName : ""}.xlsx`
       );
     });
   };

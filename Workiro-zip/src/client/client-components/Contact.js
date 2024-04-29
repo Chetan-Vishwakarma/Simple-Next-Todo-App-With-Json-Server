@@ -87,8 +87,8 @@ const orderHeaderFilter = (data) => {
 };
 
 let exportTaskData = [];
-function Contact({ clientId }) {
-  console.log("fjdsfjerio", typeof clientId);
+function Contact({ clientId,clientName }) {
+  console.log(clientName,"clientNamefjdsfjerio", typeof clientId);
   const navigate = useNavigate();
 
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -141,6 +141,7 @@ function Contact({ clientId }) {
                 return el;
               }).filter(itm => itm.OriginatorNo === clientId);
               exportTaskData = [...res];
+              console.log(res,"resdata");
               setAllContactList(res)
               if (res.length === 0) {
                 setDataNotFound(true);
@@ -230,7 +231,7 @@ function Contact({ clientId }) {
     workbook.xlsx.writeBuffer().then(function (buffer) {
       saveAs(
         new Blob([buffer], { type: "application/octet-stream" }),
-        "dataGrid.xlsx"
+        `${clientName ? clientName : ""}.xlsx`
       );
     });
   };
