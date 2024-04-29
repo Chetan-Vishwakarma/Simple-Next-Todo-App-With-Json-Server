@@ -237,7 +237,7 @@ const ContactMainform = React.memo(
       setEmail(localStorage.getItem("Email"));
       setFolderId(localStorage.getItem("FolderId"));
       Json_GetConfiguration();
-      console.log(contact, "contactlistsona");
+      console.log(contact, "contactlistsona",userContactDetails);
   
       if (contact) {
         // setContactDetails(null);

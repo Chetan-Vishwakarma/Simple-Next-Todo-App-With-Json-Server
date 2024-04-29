@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
+import user from "../../images/user-2.png";
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import Stack from '@mui/material/Stack';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -83,7 +84,7 @@ export default function UploadButtons({ userContactDetails, setContactDetails })
           </div>
         ))}
         {images.length === 0 && !previewImage && (
-          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg" alt="Blank Preview" style={{ maxWidth: '100px', maxHeight: '100px', margin: '5px', borderRadius: '90px' }} />
+          <img src={userContactDetails.Base64ImgData ? userContactDetails.Base64ImgData : user} alt="Blank Preview" style={{ maxWidth: '100px', maxHeight: '100px', margin: '5px', borderRadius: '90px' }} />
         )}
       </div>
       <label htmlFor="contained-button-file">
