@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import user from "../../images/user-2.png";
+import user from "../../images/user-2.svg";
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import Stack from '@mui/material/Stack';
 import ClearIcon from '@mui/icons-material/Clear';

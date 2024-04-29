@@ -17,7 +17,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import user from "../../images/user-2.png";
+import user from "../../images/user-2.svg";
 import country from "../../images/uk.png";
 import KeyIcon from "@mui/icons-material/Key";
 import RequestQuoteIcon from "@mui/icons-material/RequestQuote";
