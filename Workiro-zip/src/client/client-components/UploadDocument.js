@@ -4,14 +4,14 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
+
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import DescriptionIcon from '@mui/icons-material/Description';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import FolderIcon from '@mui/icons-material/Folder';
+
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
@@ -19,25 +19,33 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Checkbox, FormControlLabel } from '@mui/material';
 import CommanCLS from '../../services/CommanService';
 import dayjs from 'dayjs';
-import CreateNewModalTask from '../../components/CreateNewModal';
-import { red } from '@mui/material/colors';
 import moment from 'moment';
-import { ToastContainer, toast } from 'react-toastify';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useLocation } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
+
 let originatorNo;
-function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
-    //console.log("location state",localtion.state)
+function UploadDocument({ 
+      openUploadDocument, 
+      setOpenUploadDocument,
+      documentDate, setDocumentDate, receivedDate, setReceivedDate, setCreateNewFileObj, txtFolderData, setTxtFolderData, txtClientData, setTxtClientData, txtSectionData, setTxtSectionData, setTaskType, setOpenModal, handleClickOpen, openDocumentModalByRedux
+    }) {
+        //console.log("location state",localtion.state)
+    const dispatch = useDispatch();
     const localtion = useLocation();
     try {
         originatorNo = localtion.state;
+      //  console.log("originatorNo11",originatorNo )
     }
 
     catch (e) {
-
+        console.log("originatorNo", e)
     }
 
-    console.log("location state1", originatorNo)
+
     const handleCloseDocumentUpload = () => {
+        dispatch(setOpenDocumentModalByRedux(false));
         setOpenUploadDocument(false);
     };
 
@@ -46,8 +54,11 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
     const [txtFolderId, setTxtFolderId] = useState(localStorage.getItem("ProjectId"));
 
-    const [txtFolderData, setTextFolderData] = useState(null);
 
+    // const [txtFolderData, setTextFolderData] = useState(null);
+
+    // const [createNewFileObj, setCreateNewFileObj] = useState([]);
+    const [saveCounter, setSaveCounter] = useState(0);
 
     const [clientList, setClientList] = useState([]);
     const [sectionList, setSectionList] = useState([]);
@@ -63,15 +74,15 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const [txtClientId, setTxtClientId] = useState(originatorNo);/////////////////for clientid set
 
-    const [txtClientData, setTxtClientData] = useState(null);/////////////////for clientid set
+    // const [txtClientData, setTxtClientData] = useState(null);/////////////////for clientid set
 
     const [txtSectionId, setTxtSectionId] = useState(null);//////for sectionid set
 
-    const [txtSectionData, setTxtSectionData] = useState(null);//////for sectionid set
+    // const [txtSectionData, setTxtSectionData] = useState(null);//////for sectionid set
 
-    const [documentDate, setDocumentDate] = useState(null); // Initialize the selected date state
+    // const [documentDate, setDocumentDate] = useState(null); // Initialize the selected date state
 
-    const [receivedDate, setReceivedDate] = useState(null); // Initialize the selected date state
+    // const [receivedDate, setReceivedDate] = useState(null); // Initialize the selected date state
 
     const [standarDescription, setStandarDescription] = useState([]); // Initialize the selected date state
 
@@ -88,17 +99,18 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     const [categoryList, setCategoryList] = useState([])
 
     const [showModalCreateTask, setshowModalCreateTask] = useState(false);
-    const [openModal, setOpenModal] = useState(false);
+    // const [openModal, setOpenModal] = useState(false);
 
-    const [inputValue, setInputValue] = useState(''); // State to manage the input value
+
 
     const [fileLangth, setFileLength] = useState(0);
+    
 
-    const [countval, setCountval] = useState(2);
+
 
     const [validation, setValidation] = useState("");
 
-    const [TaskType, setTaskType] = useState("");
+    // const [TaskType, setTaskType] = useState("");
 
     let count = 2;
 
@@ -112,9 +124,9 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     const handleFileSelect = async (event) => {
         const files = event.target.files;
         const selectedFilesArray = Array.from(files);
-        let couter = 0;
+        ///let couter = 0;
         for (let i = 0; i < selectedFilesArray.length; i++) {
-            couter++;
+            // couter++;
             const file = selectedFilesArray[i];
             const isFileAlreadySelected = selectedFiles.some((selectedFile) => selectedFile.FileName === file.name);
 
@@ -129,8 +141,10 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                             FileSize: file.size,
                             Preview: reader.result, // Data URL for preview
                             DocId: "",
-                            GUID: generateGUID()
+                            Guid: localStorage.getItem("GUID"),
+                            FileType: cls.getFileExtension(file.name).toLowerCase()
                         };
+                        
                         setSelectedFiles((prevUploadedFiles) => [...prevUploadedFiles, fileData]);
                         resolve();
                     };
@@ -138,7 +152,20 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                 });
             }
         }
+
     };
+
+
+    useEffect(() => {
+        setCreateNewFileObj([]);
+        setSaveCounter(0);
+        setStep(1);
+        setSelectedFiles([]);
+        settxtStandarDescription("");
+        setCreateTaskChk(false);
+        setCreatePublishChk(false)
+        setButtonNameText("Submit")
+    }, [openUploadDocument]);
 
     useEffect(() => {
         setTimeout(() => {
@@ -148,41 +175,12 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const RemoveFiles = (id) => {
         // Filter out the object with the specified ID
-        const resutl = selectedFiles.filter(guid => guid.GUID !== id);
+        const resutl = selectedFiles.filter(guid => guid.FileName !== id.FileName);
         setSelectedFiles(resutl);
     };
 
-    function generateGUID() {
-        const cryptoObj = window.crypto || window.msCrypto; // for IE 11 compatibility
 
-        if (cryptoObj && cryptoObj.getRandomValues) {
-            // Use crypto.getRandomValues to generate a GUID if available
-            const buf = new Uint16Array(8);
-            cryptoObj.getRandomValues(buf);
 
-            // Convert to string format
-            return (
-                pad4(buf[0]) + pad4(buf[1]) + '-' + pad4(buf[2]) + '-' + pad4(buf[3]) + '-' +
-                pad4(buf[4]) + '-' + pad4(buf[5]) + pad4(buf[6]) + pad4(buf[7])
-            );
-        } else {
-            // Fallback if crypto.getRandomValues is not supported
-            console.error("crypto.getRandomValues not supported. GUID generation failed.");
-            return null;
-        }
-    }
-
-    function pad4(num) {
-        let ret = num.toString(16);
-        while (ret.length < 4) {
-            ret = '0' + ret;
-        }
-        return ret;
-    }
-
-    useEffect(() => {
-        console.log("selectedFiles", selectedFiles);
-    }, [selectedFiles]);
 
 
     //////////////////////////Get Foder Data
@@ -204,7 +202,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                         setFolderList(tbl);
                         if (result.length > 0) {
                             console.log("get folder list", result);
-                            setTextFolderData(result[0])
+                            // setTextFolderData(result[0])
+                            setTxtFolderData(result[0]);
                         }
                     }
                 }
@@ -218,11 +217,11 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
         }
     }
 
-    function Json_GetFolderData() {
+    function Json_GetFolderData(fid) {
         // console.log("Json_GetFolderData11", txtFolderId);
         try {
             let o = {};
-            o.ProjectId = txtFolderId;
+            o.ProjectId = fid;
             o.SectionId = "-1";
             o.ClientId = "";
             cls.Json_GetFolderData(o, function (sts, data) {
@@ -230,32 +229,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                     let js = JSON.parse(data);
 
                     setGetAllFolderData(js);
-                    let clientList = js.Table1;
 
-                    if (clientList.length > 0) {
-
-                        // let res = clientList.map((el) => {
-                        //     el.Client = el.Client.toLowerCase(); // Modify ClientID property to lowercase
-                        //     return el; // Return the modified object
-                        // });
-
-                        // console.log("Json_GetFolderData", res);
-                        setClientList(clientList);
-                        if (originatorNo) {
-                            let res = clientList.filter((c) => c.ClientID === originatorNo.originatorNo);
-                            if (res.length > 0) {
-                                setTxtClientData(res[0])
-
-                            }
-                        }
-
-
-
-                    }
-                    let sectionList = js.Table;
-                    if (sectionList.length > 0) {
-                        setSectionList(sectionList);
-                    }
                     let udfTable2 = js.Table2;
                     if (udfTable2.length > 0) {
                         setUDFTable(udfTable2);
@@ -268,12 +242,62 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     }
 
 
+    const Json_GetSections = (pid) => {
+        try {
+            let o = { ProjectId: pid }
+            cls.Json_GetSections(o, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        let sectionList = js.Table;
+                        console.log("Json_GetSections", sectionList)
+                        if (sectionList.length > 0) {
+                            setSectionList(sectionList);
+                        }
+                    }
 
+                }
+            })
+        } catch (error) {
+            console.log("Json_GetSections", error);
+        }
+
+    }
+
+    const Json_GetClientsByFolder = (pid) => {
+        try {
+            let o = { ProjectId: pid }
+            cls.Json_GetClientsByFolder(o, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        let clientdata = js.Table1;
+                        console.log("Json_GetClientsByFolder", clientdata)
+                        if (clientdata.length > 0) {
+                            let client_list = clientdata.filter((v, i, a) => a.findIndex(v2 => (v2.Client === v.Client)) === i);
+                            setClientList(client_list);
+                            if (originatorNo) {
+                                let res = clientdata.filter((c) => c.ClientID === originatorNo.originatorNo);
+                                if (res.length > 0) {
+                                    setTxtClientData(res[0])
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+        } catch (error) {
+            console.log("Json_GetClientsByFolder", error);
+        }
+
+    }
 
 
     useEffect(() => {
+        Json_GetSections(localStorage.getItem("ProjectId"))
+        Json_GetClientsByFolder(localStorage.getItem("ProjectId"))
         Json_GetFolders();
-        Json_GetFolderData();
+        Json_GetFolderData(localStorage.getItem("ProjectId"));
         setDocumentDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
         setReceivedDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
         // console.log("GetCurrentDayDate", dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD"));
@@ -283,14 +307,17 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     }, [])
 
     const handleOnFolderClick = (data) => {
-        setInputValue('');
-        console.log("Get Folder On click", data);
+        console.log("Get folder On click", data);
+
         if (data) {
             setTxtFolderId(data.FolderID)
-            setTextFolderData(data)
+            // setTextFolderData(data)
+            setTxtFolderData(data);
+            Json_GetSections(data.FolderID)
+            Json_GetClientsByFolder(data.FolderID)
+            Json_GetFolderData(data.FolderID)
         }
-        Json_GetFolderData()
-
+        // Json_GetFolderData(data.FolderID)
     }
 
     const handleClientChange = (data) => {
@@ -307,27 +334,36 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
 
     const handleSectionChange = (data) => {
-        console.log("Get Clietn On click", data);
-        setTxtSectionId(data.SecID)
-        setTxtSectionData(data)
-        Json_GetCategory(data.SecID)
-        Json_GetSubSections(data.SecID)
+        if (data !== null) {
+            console.log("Get Clietn On click", data);
+            setTxtSectionId(data.SecID)
+            setTxtSectionData(data)
+            Json_GetCategory(data.SecID)
+            Json_GetSubSections(data.SecID)
+        }
+
     }
 
 
 
 
     const handleCategoryChange = (data) => {
-        console.log("Get Clietn On click", data);
-        setCategoryId(data.CatId)
+        if (data) {
+            //console.log("Get Clietn On click", data);
+            setCategoryId(data.CatId)
+        }
+
     }
     const handleStandarDescriptionChange = (data) => {
-        console.log("Get Clietn On click", data);
-        settxtStandarDescription(data.Description)
+        if (data) {
+            //console.log("Get Clietn On click", data);
+            settxtStandarDescription(data.Description)
+        }
+
     }
 
     const handleDescriptionChange = (e) => {
-        console.log("Get Clietn On click", e.target.value);
+        // console.log("Get Clietn On click", e.target.value);
         settxtStandarDescription(e.target.value)
     }
 
@@ -358,8 +394,11 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     }
 
     const handleSubSectionChange = (data) => {
-        console.log("Get Clietn On click", data);
-        setTxtSubSectionData(data);
+        if (data) {
+            console.log("Get Clietn On click", data);
+            setTxtSubSectionData(data);
+        }
+
     }
 
     function Json_GetCategory(SectionId) {
@@ -394,7 +433,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
 
     const handleDateChangeDocument = (date) => {
-        console.log("Get Clietn On click", dayjs(date).format('YYYY/MM/DD'));
+       // console.log("Get Clietn On click", dayjs(date).format('YYYY/MM/DD'));
         setDocumentDate(dayjs(date).format('YYYY/MM/DD')); // Update the selected date state
     };
 
@@ -410,6 +449,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
     const [typeTaskBool, setTypeTaskBool] = useState(false);
 
     const [buttonNameText, setButtonNameText] = useState("Submit");
+
 
 
     const handleCheckboxChangeCreateTask = (event) => {
@@ -444,131 +484,194 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
     const handleNext = () => {
         setStep(step + 1);
+        if(selectedFiles.length===1){
+            settxtStandarDescription(cls.getFileName(selectedFiles[0].FileName));
+        }
+        else{
+            settxtStandarDescription(""); 
+        }
     };
 
     const handlePrevious = () => {
         setStep(step - 1);
     };
 
-    const UploadDocumentCreattTask = async () => {
-        if (selectedFiles.length > 0) {
-            for (let i of selectedFiles) {
-                await Json_RegisterItem(i)
-            }
-            // setOpenUploadDocument(false);
-
-        }
-        else {
-            Json_RegisterItem()
-            // toast.success("Document Uploaded!");
+    const checkAndLog = (value, errorMessage) => {
+        if (value) {
+            console.log(value);
+        } else {
+            toast.error(errorMessage);
         }
     }
 
-    const [createNewFileObj, setCreateNewFileObj] = useState([]);
+   
+
+    const UploadDocumentCreattTask = async () => {
+        try {
+            setCreateNewFileObj([]);
+            if (checkAndLog(txtFolderId, "Please Select a Folder")) return false;
+            if (checkAndLog(txtClientId, "Please Select a Client")) return false;
+            if (checkAndLog(txtSectionId, "Please Select a Section")) return false;
+
+            if (selectedFiles.length > 0) {
+                for (let i of selectedFiles) {
+                    await Json_RegisterItem(i)
+                }
+                // setOpenUploadDocument(false);   
+            }
+            else {
+               // Json_RegisterItem()
+                    toast.error("Please select a document",{
+                        toastStyle: {zIndex:9999},
+                    });
+            }
+
+        } catch (error) {
+            console.log("Json_RegisterItem", error)
+        }
+
+    }
+
+   
+    let counter=0;
 
     function Json_RegisterItem(fileData) {
-        let values;
-        let concatenatedString;
-        if (udfIdWithValue) {
-            values = Object.values(udfIdWithValue);
-            concatenatedString = values.join(', ');
-        }
-
-
-        let validationMessage = '';
-
-        if (!txtFolderData || !txtFolderData.FolderID) {
-            validationMessage += "Please Select Folder. ";
-        }
-
-        if (!txtClientData || !txtClientData.ClientID) {
-            validationMessage += "Please Select Reference. ";
-        }
-
-        if (!txtSectionData || !txtSectionData.SecID) {
-            validationMessage += "Please Select Section. ";
-        }
-        if (validationMessage === '') {
-
-            let obj = {
-                "sectionId": txtSectionData.SecID,
-                "deptId": 0,
-                "folderId": txtFolderData.FolderID,
-                "categoryId": categoryid ? categoryid : 0,
-                "subSectionId": txtSubSectionData ? txtSubSectionData.SubSectionID : 0,
-                "retForMonth": "-1",
-                "deptName": "",
-                "folderName": txtFolderData.Folder,
-                "originatorId": txtClientData.ClientID,
-                "senderId": txtClientData.ClientID,
-                "sectionName": txtSectionData.Sec,
-                "extDescription": "",
-                "docDirection": "Incoming",
-                "description": txtStandarDescription,
-                "priority": "",
-                "stickyNote": "",
-                "fileName": fileData ? fileData.FileName : "",
-                "forActionList": "",
-                "forInformationList": "",
-                "forGroupList": "",
-                "uDFList": concatenatedString,
-                "sUDFList": "",
-                "clientname": txtClientData.Client,
-                "receiveDate": dayjs(receivedDate).format("YYYY/MM/DD"),
-                "actionByDate": "1990/01/01",
-                "actionDate": dayjs(documentDate).format("YYYY/MM/DD"),
-                "docViewedDate": dayjs(documentDate).format("YYYY/MM/DD"),
-                "strb64": fileData ? fileData.Base64 : "",
-                "strtxt64": "",
-                "EmailMessageId": ""
+        try {
+            let values;
+            let concatenatedString;
+            if (udfIdWithValue) {
+                values = Object.values(udfIdWithValue);
+                concatenatedString = values.join(', ');
             }
-            console.log("Json_RegisterItem", obj);
 
 
+            let validationMessage = '';
 
-            setCreateNewFileObj((Previous) => [...Previous, fileData]);
-            //setOpenUploadDocument(false);
-            setshowModalCreateTask(true);
-            setOpenModal(true);
-            //    setTimeout(() => {
-            //     setPassButtonHide(false);
-            // }, 3000);
-            cls.Json_RegisterItem(obj, function (sts, data) {
-                if (sts && data) {
-                    let js = JSON.parse(data)
-                    console.log("Json_RegisterItem", js)
-                    if (js.Status == "true") {
+            if (!txtFolderData || !txtFolderData.FolderID) {
+                validationMessage += "Please Select Folder. ";
+            }
 
-                        if (fileData) {
-                            fileData.DocId = js.ItemId;
-                        }
+            if (!txtClientData || !txtClientData.ClientID) {
+                validationMessage += "Please Select Reference. ";
+            }
 
-                        if (!typeTaskBool) {
-                          //  setOpenUploadDocument(false);
-                        }
+            if (!txtSectionData || !txtSectionData.SecID) {
+                validationMessage += "Please Select Section. ";
+            }
+            // if (!txtStandarDescription) {
+            //     validationMessage += "Description is blank. ";
+            // }
 
-                        setTimeout(() => {
-                            toast.success(selectedFiles.length + "Document(s) Uploaded!");
-                        }, 4000);
+            if (validationMessage === '') {
 
-                    }
-                    else {
-                        toast.success("Faild Please Try Again");
-                    }
-
-
-
+                let obj = {
+                    "sectionId": txtSectionData.SecID,
+                    "deptId": 0,
+                    "folderId": txtFolderData.FolderID,
+                    "categoryId": categoryid ? categoryid : 0,
+                    "subSectionId": txtSubSectionData ? txtSubSectionData.SubSectionID : 0,
+                    "retForMonth": "-1",
+                    "deptName": "",
+                    "folderName": txtFolderData.Folder,
+                    "originatorId": txtClientData.ClientID,
+                    "senderId": txtClientData.ClientID,
+                    "sectionName": txtSectionData.Sec,
+                    "extDescription":validationMessage==="" ? cls.getFileName(fileData.FileName) : txtStandarDescription,
+                    "docDirection": "Incoming",
+                    "description": validationMessage==="" ? cls.getFileName(fileData.FileName) : txtStandarDescription,
+                    "priority": "",
+                    "stickyNote": "",
+                    "fileName": fileData ? fileData.FileName : "",
+                    "forActionList": "",
+                    "forInformationList": "",
+                    "forGroupList": "",
+                    "uDFList": concatenatedString,
+                    "sUDFList": "",
+                    "clientname": txtClientData.Client,
+                    "receiveDate": dayjs(receivedDate).format("YYYY/MM/DD"),
+                    "actionByDate": "1990/01/01",
+                    "actionDate": dayjs(documentDate).format("YYYY/MM/DD"),
+                    "docViewedDate": dayjs(documentDate).format("YYYY/MM/DD"),
+                    "strb64": fileData ? fileData.Base64 : "",
+                    "strtxt64": "",
+                    "EmailMessageId": ""
                 }
-            })
+                
+                console.log("Json_RegisterItem", obj);
 
-        } else {
-            // Data is invalid, set the validation message
-            setValidation(validationMessage);
-            // Hide validation message after 2 seconds
-            setTimeout(() => {
-                setValidation('');
-            }, 3000);
+
+                cls.Json_RegisterItem(obj, function (sts, data) {
+                    if (sts) {
+                        if (data) {
+                            let js = JSON.parse(data)
+                           
+                            if (js.Status === "true") {
+                                counter++;
+                               // console.log("Json_RegisterItem", js,counter)
+                                if (fileData) {
+
+                                    fileData.DocId = js.ItemId;
+                                    setCreateNewFileObj((Previous) => [...Previous, fileData]);
+                                }
+
+                                if(selectedFiles.length===counter){
+                                    let msg =`${selectedFiles.length}  Document(s) Uploaded!`;
+                                    console.log("Json_RegisterItem 222 ",msg)
+                                    toast.success(msg);                      
+                                }
+
+                                if (buttonNameText === "Submit & Create Portal Task" || buttonNameText === "Submit & Create Task") {
+                                    let taskType = buttonNameText === "Submit & Create Portal Task" ? "Portal" : buttonNameText === "Submit & Create Task" ? "CRM" : "";
+                                    setshowModalCreateTask(true)
+                                    setOpenModal(true);
+                                    handleClickOpen("Portal");
+                                    // setOpenUploadDocument(false);
+                                    // setTimeout(() => {
+                                    //     if(openModal){
+                                    //         setOpenUploadDocument(false); 
+                                    //     }
+                                      
+                                    // }, 4000);    
+                                    
+                                    // setOpenModal(true) doring conflict
+                                    // setOpenUploadDocument(false);
+                                   
+                                }
+                                else {
+                                    setOpenUploadDocument(false);
+                                }
+
+
+
+
+                            }
+                            else {
+                                toast.error("Faild Please Try Again");
+                            }
+                        }
+                        else {
+                            toast.error("Faild Please Try Again");
+                        }
+
+
+
+
+                    }
+                })
+
+            } else {
+                // Data is invalid, set the validation message
+                setValidation(validationMessage);
+                // Hide validation message after 2 seconds
+                setTimeout(() => {
+                    setValidation('');
+                }, 3000);
+            }
+        } catch (error) {
+            console.log("Json_RegisterItem Network issue please try again")
         }
+
+
 
 
 
@@ -607,6 +710,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
             [id]: setUdf // Update selected value for a specific ComboBox
         }));
 
+        
         // console.log("newValue",udfIdWithValue);
 
     };
@@ -631,7 +735,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold text-black'>
-                            Upload Document <span className='bold text-blue'>({fileLangth})</span>
+                            Upload Document <span className='bold text-blue'>({fileLangth}) </span>
                         </Typography>
                     </Box>
 
@@ -673,6 +777,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                                 </Box>
                                             </label>
                                         </Box>
+
                                     </Box>
                                 </Box>
 
@@ -680,8 +785,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                     {selectedFiles.map((item, index) => {
                                         return <>
                                             <Box className='uploaded-box' key={index}>
-                                                <CloseIcon className='close-icon' onClick={() => RemoveFiles(item.GUID)} />
-                                                <DescriptionIcon />
+                                                <CloseIcon className='close-icon' onClick={() => RemoveFiles(item)} />
+                                                <DescriptionIcon className='font-32' />
                                                 <Typography variant="body1" className='font-14 uploaded-name'>
                                                     {item.FileName}
                                                 </Typography>
@@ -710,15 +815,30 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                 </Box>
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-                                    <Autocomplete
+                                    {!openDocumentModalByRedux?(<Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
                                         options={clientList}
-                                        getOptionLabel={(option) => option.Client} // assuming "Client" is the property you want to display
+                                        getOptionLabel={(option) => {
+                                            // console.log("ldsfljfd",option.Client);
+                                            return option.Client;
+                                        }} // assuming "Client" is the property you want to display
+                                        //value={originatorNo.originatorNo} // Set default selected option based on the ID
+                                        onChange={(event, newValue) => handleClientChange(newValue)}
+                                        renderInput={(params) => <TextField {...params} label="Reference" />}
+                                    />):(<Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={clientList}
+                                        defaultValue={clientList.filter(itm=>itm.ClientID===originatorNo.originatorNo)[0]}
+                                        getOptionLabel={(option) => {
+                                            // console.log("ldsfljfd",option.Client);
+                                            return option.Client;
+                                        }} // assuming "Client" is the property you want to display
 
                                         onChange={(event, newValue) => handleClientChange(newValue)}
-                                        renderInput={(params) => <TextField {...params} label="Reference1" />}
-                                    />
+                                        renderInput={(params) => <TextField {...params} label="Reference" />}
+                                    />)}
                                 </Box>
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 d-flex align-items-end'>
@@ -820,7 +940,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                     switch (item.ControlType) {
                                         case "ComboBox":
                                             count++;
-                                            console.log("vlaueeee", count)
+                                           // console.log("vlaueeee", count)
                                             let data = getAllFolderData["Table" + count];
                                             if (data && data.length > 0 && item.UDFId === data[0]["UDFID"]) {
                                                 return (
@@ -854,7 +974,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
 
                             </Box>
 
-                            {showModalCreateTask && TaskType && <CreateNewModalTask
+                            {/* {showModalCreateTask && openModal && <CreateNewModalTask
                                 documentDate={documentDate}
                                 receivedDate={receivedDate}
                                 createNewFileObj={createNewFileObj}
@@ -865,7 +985,8 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                                 // setPassButtonHide={setPassButtonHide}
                                 // passButtonHide={passButtonHide}
                                 openModal={openModal}
-                            ></CreateNewModalTask>}
+                                setOpenModal={setOpenModal}
+                            ></CreateNewModalTask>} */}
 
 
                         </>)}
@@ -911,7 +1032,7 @@ function UploadDocument({ openUploadDocument, setOpenUploadDocument }) {
                     </Box>
                 </DialogActions>
             </Dialog>
-            <ToastContainer></ToastContainer>
+            {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
         </React.Fragment>
     )
 }

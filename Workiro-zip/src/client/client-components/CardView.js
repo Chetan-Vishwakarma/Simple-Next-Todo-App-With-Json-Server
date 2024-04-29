@@ -230,7 +230,7 @@ function CardView(props) {
                 {/* <PersonIcon className="me-2" /> */}
                 <Tooltip title="Client" className='my-1'>
                   <IconButton>
-                    <ApartmentIcon />
+                    <PersonIcon />
                   </IconButton>
                 </Tooltip>
                 <Box className='info-details'>
@@ -278,7 +278,7 @@ function CardView(props) {
               <Box className='inner-client-box'>
 
                 <Box className='client-img'>
-                  <img src={user} />
+                <img src={user2} />
                 </Box>
                 <Typography variant="h2">{item["First Name"] && item["First Name"]} {item["Last Name"] && item["Last Name"]}</Typography>
                 <Typography variant='h4'>{item["Company Name"] && item["Company Name"].substr(0.15) + '.'}</Typography>
@@ -356,7 +356,7 @@ function CardView(props) {
           </Box>
         })))
       }
-      <ToastContainer></ToastContainer>
+      {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
     </>
   )
 }

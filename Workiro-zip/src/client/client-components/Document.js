@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import Fileformat from '../../images/files-icon/pdf.png';
 
 const Layout = styled('div')`  display: flex;
   flex-flow: column nowrap;  gap: 4px;
@@ -136,12 +137,9 @@ function DocumentList() {
                                 <Box className="file-uploads">
                                     <label className="file-uploads-label file-uploads-document">
                                         <Box className="d-flex align-items-center">
-                                            <DescriptionIcon
-                                                sx={{
-                                                    fontSize: 32,
-                                                }}
-                                                className='me-2'
-                                            />
+                                            <div className='img-format'>
+                                                <img src={Fileformat} />
+                                            </div>
                                             <Box className="upload-content pe-3">
                                                 <Typography variant="h4" >
                                                     This FilThis File is Test Files.pdfe is Test Files.pdf

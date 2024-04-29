@@ -8,6 +8,22 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 // import {AdapterDayjs,LocalizationProvider,DatePicker} from '@mui/x-date-pickers';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import TextSnippetIcon from '@mui/icons-material/TextSnippet';
+import DataGrid, {
+    Column,
+    Grouping,
+    GroupPanel,
+    FilterRow,
+    Pager,
+    Paging,
+    SearchPanel,
+    Selection,
+    Scrolling,
+    Sorting
+} from 'devextreme-react/data-grid';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import InsertPageBreakIcon from '@mui/icons-material/InsertPageBreak';
 import BallotIcon from '@mui/icons-material/Ballot';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -15,6 +31,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SendIcon from '@mui/icons-material/Send';
 import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
+import FolderIcon from '@mui/icons-material/Folder';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import user from "../images/user.jpg";
@@ -50,6 +67,7 @@ import { HtmlEditor } from "devextreme-react";
 import HtmlEditorDX from "./HtmlEditor";
 import { json } from "react-router-dom";
 import CopyLinkButton from "./CopyLinkButton";
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import PortalMessage from "./PortalMessage";
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import MergeIcon from '@mui/icons-material/Merge';
@@ -59,6 +77,9 @@ import DocumentList from "../client/client-components/DocumentList";
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import Activity from "../client/utils/Activity";
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
+import Fileformat from '../images/files-icon/pdf.png';
+import moment from 'moment';
+import GetFileType from "./FileType";
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -67,9 +88,9 @@ const Demo = styled('div')(({ theme }) => ({
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
-
-function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) {
-    console.log("TaskDetailModal2222", selectedTask);
+let addItemdata = [];
+function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, attachmentFileTodo }) {
+    console.log(attachmentFileTodo, "TaskDetailModal2222", selectedTask);
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
     const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
     const baseUrlSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -86,20 +107,29 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     /////////////////////////////////////////Task Activity
     const [anchorEl4, setAnchorEl4] = React.useState(null);
     const [selectedEmailForComment, setSelectedEmailForComment] = React.useState({});
-    const [NumPriority, setNumPriority] = React.useState(selectedTask.Priority);
+    // const [NumPriority, setNumPriority] = React.useState(selectedTask.Priority);
+    const [NumPriority, setNumPriority] = React.useState((selectedTask && selectedTask.Priority) ? selectedTask.Priority : "");
 
     const [folderList, setFolderList] = useState([]);
     const [portalComments, setPortalComments] = useState([]);
-
-    const [txtFolder, settxtFolder] = useState(selectedTask.Folder);
-    const [txtFolderId, setTxtFolderId] = useState(selectedTask.FolderID);
-
+    const [PortalDocumentShow, setPortalDocumentShow] = useState([]);
+    const [copyLink, setCopyLink] = useState("");
+    const pageSizes = [10, 25, 50, 100];
+    // const [txtFolder, settxtFolder] = useState(selectedTask.Folder);
+    const [txtFolder, settxtFolder] = useState((selectedTask && selectedTask.Folder) ? selectedTask.Folder : "");
+    // const [txtFolderId, setTxtFolderId] = useState(selectedTask.FolderID);
+    const [txtFolderId, setTxtFolderId] = useState((selectedTask && selectedTask.FolderID) ? selectedTask.FolderID : "");
+    const [dmsDocumentList, setDMSDocumentList] = React.useState([]);
+    const [selectedRows, setSelectedRows] = useState([]);
     const [secondary, setSecondary] = React.useState(false);
     const [getCRMSaved, setGetCRMSaved] = React.useState([]);
 
-    const [txtSection, settxtSection] = React.useState(selectedTask.Section);
-    const [txtClient, setTxtClient] = React.useState(selectedTask.Client);
-    const [txtClientId, setTxtClientId] = React.useState(selectedTask.Client);
+    // const [txtSection, settxtSection] = React.useState(selectedTask.Section);
+    const [txtSection, settxtSection] = React.useState((selectedTask && selectedTask.Section) ? selectedTask.Section : "");
+    // const [txtClient, setTxtClient] = React.useState(selectedTask.Client);
+    const [txtClient, setTxtClient] = React.useState((selectedTask && selectedTask.Client) ? selectedTask.Client : "");
+    // const [txtClientId, setTxtClientId] = React.useState(selectedTask.Client);
+    const [txtClientId, setTxtClientId] = React.useState((selectedTask && selectedTask.Client) ? selectedTask.Client : "");
 
     const [txtSectionId, settxtSectionId] = React.useState(null);
 
@@ -131,11 +161,14 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     ////////////////////////////////Attachment files
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [attachmentPath, setAttachmentPath] = useState([]);
-
+    const [selectedDocumentFileDMS, setSelectedDocumentFileDMS] = useState([]);
 
     const [txtdescription, setTxtDescriptin] = React.useState("");
+    const [details, setDetails] = React.useState("");
 
     const [clientList, setClientList] = useState([]);
+
+    const [associatedTask, setAssociatedTask] = useState([]);
 
 
 
@@ -152,13 +185,26 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     const [searchSectionQuery, setSearchSectionQuery] = useState("");
     const [searchClient1Query, setSearchClient1Query] = useState("");
+    const [isvisibleSubject, setisvisibleSubject] = useState(false);
 
     const toggleVisibilityCancle = () => {
         setIsVisible(false); // Toggle visibility
     };
+
     const handalClickEditeSubject = () => {
-        setIsVisible(true); // Toggle visibility
+        setIsVisible(false); // Toggle visibility
+        setisvisibleSubject(true)
     };
+    const handalClickEditeDescription = () => {
+        setIsVisible(true); // Toggle visibility
+        setisvisibleSubject(false)
+    };
+
+    const toggleVisibilityCancleSubject = () => {
+        setisvisibleSubject(false); // Toggle visibility
+        setIsVisible(false); // Toggle visibility
+    };
+
     const handalChangeSetSubject = (e) => {
         setTSubject(e.target.value); // Toggle visibility
     };
@@ -186,7 +232,22 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         Json_UpdateTaskField("TypeOfTaskID", e.SecID, "Section Updated!")
     };
 
+    const handleSelectionChanged = (selectedItems) => {
+        setSelectedRows(selectedItems.selectedRowsData);
+        // You can perform further actions with the selectedRows array
+        console.log("selectedItems11", selectedItems); // Log the selected rows data
+        // Create a Set to store unique data
+        // const uniqueData = new Set(addItemdata);
+        // setOwnerTaskID(selectedItems.selectedRowsData[0]);
+        // // Loop through each selected row data and add it to the uniqueData Set
+        // selectedItems.selectedRowsData.forEach(rowData => {
+        //     uniqueData.add(rowData);
+        // });
 
+        // // Convert the uniqueData Set back to an array and set it to addItemdata
+        // addItemdata = [...uniqueData];
+        console.log(addItemdata, "addItemdata");
+    };
 
 
 
@@ -232,13 +293,13 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                 ActivityDate = parseInt(activity.ActivityDate.slice(6, -2));
                             }
                             const date = new Date(ActivityDate);
-                            return { ...activity, ActivityDate: date,comDate:date,comNotes:activity.Notes };
+                            return { ...activity, ActivityDate: date, comDate: date, comNotes: activity.Notes };
                         });
-                        // console.log(
-                        //     "Json_Get_CRM_Task_ActivityByTaskId",
-                        //     formattedActivity
-                        // );
-                        
+                        console.log(
+                            "sonamJson_Get_CRM_Task_ActivityByTaskId",
+                            formattedActivity
+                        );
+
                         setCRMTaskAcivity(
                             formattedActivity.sort((a, b) => a.ActivityDate - b.ActivityDate)
                         );
@@ -253,11 +314,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         // setCRMTaskAcivity((el) => [...el, obj]);
                         // setAllTask(json.Table);
 
-                        if(selectedTask.Source==="Portal"){
-                            
-                            let margeArr= mergeAndSortByDate(portalComments,formattedActivity,"comDate")
-                  console.log("GetComments_Json111", margeArr);
-                  setPortalComments(margeArr);
+                        if (selectedTask.Source === "Portal") {
+
+                            let margeArr = mergeAndSortByDate(portalComments, formattedActivity, "comDate")
+                            console.log("GetComments_Json111", margeArr);
+                            setPortalComments(margeArr);
                         }
 
                     }
@@ -270,10 +331,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     // Event handler to handle file selection
     const handleFileSelect = (event) => {
+
         const files = event.target.files;
         const selectedFilesArray = Array.from(files);
         const filesData = [];
-
+        console.log(files, "filedatafdfdfdfdfdfdfdfdfd");
         selectedFilesArray.forEach((file, index) => {
             const reader = new FileReader();
             reader.onload = () => {
@@ -347,8 +409,22 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     const [attachmentFile, setAttachmentFile] = useState([]);
 
+    function formatDate(inputDate) {
+        // Parse the input date string into a Date object
+        const date = new Date(inputDate);
 
+        // Get day, month, and year components
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so add 1
+        const year = date.getFullYear().toString();
+
+        // Construct the formatted date string in "dd/mm/yyyy" format
+        const formattedDate = `${day}/${month}/${year}`;
+
+        return formattedDate;
+    }
     async function Json_Get_CRM_SavedTask_ByTaskId(taskid) {
+        setAttachmentFile([]);
         let obj = {};
         obj.TaskId = taskid;
         await Cls.Json_Get_CRM_SavedTask_ByTaskId(obj, function (status, data) {
@@ -357,45 +433,46 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                 console.log("Json_Get_CRM_SavedTask_ByTaskId", json);
                 let table2 = json.T2;
                 // setGetCRMSaved(table2);
-                if (table2.length > 0) {
-                    setTxtDescriptin(table2[0].Details)
+                if (table2 && table2.length > 0) {
+                    setTxtDescriptin(table2[0].Details);
+                    setDetails(table2[0].Details);
                 }
 
                 let table6 = json.T6;
-                if (table6.length > 0) {
-                    // let arrFile = [];
-                    // for (let item of table6) {
-                    //     arrFile.push(getFilePath(item));
-                    // }
-                    setAttachmentFile(table6);
+                
+                if (table6 && table6.length > 0) {
+                    const formattedActivity = table6.map((activity) => {
+                        let timestamp;
+                        if (activity.Item_Date) {
+                            timestamp = parseInt(activity.Item_Date.slice(6, -2));
+                        }
+                        const date = new Date(timestamp);
+                        const formatedate = formatDate(date)
+                        // console.log(formatDate(date),"dateformattingdate");
+                        return { ...activity, Item_Date: formatedate };
+                    });
+           
+                    setAttachmentFile(formattedActivity);
                     // setTimeout(() => {
                     //     console.log("attachmentFile", attachmentFile);
                     // }, 3000);
 
                     for (let item of table6) {
-                        let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };
-                        setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
 
-                        // if(item.DestinationPath && !item.ItemId){
-                        //     let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };                        
-                        //     setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
-                        // }
-                        // else{
-                        //     if(item.ItemId){
-                        //         SetFileataByItemId(item.ItemId);
-                        //     }
-
+                        // if(item.DestinationPath){
+                        //     let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };
+                        //    // setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
                         // }
                     }
-
-
-
-
-
                 }
             }
         });
     }
+
+    const disableDueDate = (date) => {
+        const today = currentDate;
+        return date.isSameOrAfter(today, 'day'); // Disable past dates
+    };
 
     function SetFileataByItemId(itemid) {
         try {
@@ -464,7 +541,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
             let o = {};
             o.ProjectId = secid;
             Cls.Json_GetSections(o, function (sts, data) {
-                if (sts) {
+                if (sts && data) {
                     let js = JSON.parse(data);
 
 
@@ -550,7 +627,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
             o.ProjectId = fid;
             o.SectionId = "-1";
             Cls.Json_GetForwardUserList(o, function (sts, data) {
-                if (sts) {
+                if (sts && data) {
                     let js = JSON.parse(data);
                     let dt = js.Table;
                     if (dt.length > 0) {
@@ -573,35 +650,86 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         }
     }
 
-   
 
+    // const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
+    // let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
+    const GetMessageAttachments_Json = (mgsId, e) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageId: mgsId,
+        };
+
+        ClsPortal.GetMessageAttachments_Json(o, function (sts, data) {
+
+            if (sts && data) {
+                let arrayOfObjects = JSON.parse(data);
+                console.log("GetMessageAttachments_Json11", arrayOfObjects);
+                if (arrayOfObjects && arrayOfObjects.length > 0) {
+                    setPortalDocumentShow(arrayOfObjects);
+
+                }
+            }
+        });
+    }
+
+    const [getVertion, setGetVertion] = React.useState([]);
+
+    function Json_GetVersionByItemId(data) {
+        console.log("selected document data obj111", data)
+        try {
+            let obj = {};
+            obj.itemId = data["Registration No."];
+            ClsSms.Json_GetVersionByItemId(obj, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        let tbl = js.Table;
+                        if (tbl.length > 0) {
+                            console.log("Json_GetVersionByItemId", tbl)
+                            setGetVertion(tbl)
+                        }
+
+                    }
+
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetVersionByItemId error", error)
+        }
+    }
 
 
     useEffect(() => {
 
-        //End PortMethods
+        setAttachmentFile([]);
 
+        setNumPriority(selectedTask.Priority);
+        //End PortMethods
         Json_GetForwardUserList(selectedTask.FolderID);
         setSelectedFiles([]);
         Json_GetFolders();
         settxtSection(selectedTask.Section);
         setTxtClient(selectedTask.Client);
         setTxtClient(selectedTask.Client)
+        GetMessageAttachments_Json(selectedTask.PubMessageId, selectedTask);
         settxtSectionId(selectedTask.SectionId);
         setTxtClientId(selectedTask.ClientNo);
         setNotesMessage("");
         Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
-        setCurrentDate(startFormattingDate(selectedTask.CreationDate));
 
+        //setCurrentDate(startFormattingDate(selectedTask.CreationDate));
+        setCurrentDate(moment(selectedTask.Start, "DD/MM/YYYY").toDate());
+        // console.log("moment11",moment(selectedTask.Start,"DD/MM/YYYY").toDate());
+        //moment(dateString, "DD/MM/YYYY").toDate();
         setNextDate(DateFormet(selectedTask.EndDateTime));
         setRemiderDate(dayjs(Cls.getCurrentDate()));
-
-        Json_GetFolderData(selectedTask.FolderID);
-
+        Json_GetFolderData(selectedTask.FolderID ? selectedTask.FolderID : localStorage.getItem("FolderId"));
         setStatus(selectedTask.mstatus);
         // Json_GetTaskAttachmentList();
         setTSubject(selectedTask.Subject)
-
         Json_GetSections(selectedTask.FolderID)
         // const Json_CRM_GetOutlookTask=async()=>{
         //     let res = await axios.post(`${baseUrl}Json_CRM_GetOutlookTask`,{
@@ -617,12 +745,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         // }
 
 
-        setTimeout(() => {
 
-
-            // console.log("Hello 1s")
+        if (selectedTask.ID) {
             Json_Get_CRM_Task_ActivityByTaskId(selectedTask.ID);
-        }, 2500);
+        }
+
 
         setIsVisible(false)
 
@@ -699,12 +826,45 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
     const handleCloseStatus = (e) => {
+        console.log(PortalDocumentShow, "top_status_changed", selectedTask);
+
         console.log(e.target.innerText);
         setStatus(e.target.innerText);
         setanchorElStatus(null);
         setSelectedIndexStatus(null); // Reset the selected index after closing the menu
         if (e.target.innerText) {
-            Json_UpdateTaskField("Status", e.target.innerText, returnMessageStatus(e.target.innerText))
+            console.log(e.target.innerText, "innerText");
+            if (e.target.innerText == "Completed") {
+                Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
+                    if (res) {
+                        Json_UpdateTaskField("Status", e.target.innerText, returnMessageStatus(e.target.innerText));
+                        if (attachmentFile && attachmentFile.length > 0) {
+                            attachmentFile.forEach((item) => {
+                                addToWorkTable(item.ItemId, selectedTask);
+                            });
+                        }
+                        if (selectedTask.Source === "Portal") {
+
+                            if (PortalDocumentShow && PortalDocumentShow.length > 0) {
+                                PortalDocumentShow.forEach((item) => {
+                                    if (item.ItemID) {
+                                        addToWorkTable(item.ItemID, selectedTask);
+                                    }
+                                });
+                            }
+                        }
+
+                    }
+
+                });
+
+            } else {
+
+                Json_UpdateTaskField("Status", e.target.innerText, returnMessageStatus(e.target.innerText));
+            }
+
+
+
         }
 
     };
@@ -729,7 +889,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         // console.log("folder data",e)
         setanchorElStatus(null);
         setSelectedIndexProfile(null); // Reset the selected index after closing the menu
-
+        setAnchorElFolder(null);
 
         if (e.FolderID) {
             Json_UpdateTaskField("FolderID", e.FolderID, "Folder updated. Please review Reference and Section");
@@ -743,7 +903,95 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         }
 
     };
+    function Json_GetItemBase64DataById(item, callBack) {
+        try {
+            let obj = {};
+            obj.ItemId = item["Registration No."]
+            const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/"; // base url for api
+            //   let dt = new LoginDetails();
 
+            let cls = new CommanCLS(baseUrl, agrno, Email, password);
+            cls.Json_GetItemBase64DataById(obj, function (sts, data) {
+                if (sts) {
+                    if (data !== "No Data Exist") {
+                        // console.log("Json_GetItemBase64DataById data", data)
+                        return callBack(data);
+                    }
+                    else {
+                        toast.error(item.Description + "was not uploaded as it had no data")
+                    }
+
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetItemBase64DataById error", error)
+        }
+
+    }
+    const AddDocuments = () => {
+        let filesData = [];
+        setSelectedRows([]);
+        //setSelectedDocumentFileDMS([]);
+        console.log("AddDocuments11", selectedRows);
+        selectedRows.forEach((row, index) => {
+            Json_GetItemBase64DataById(row, function (base64data) {
+                const fileData = {
+                    FileName: row.Description + "." + row.Type,
+                    Base64: base64data ? base64data : "", // Base64 data of the file
+                    FileSize: "",
+                    Preview: "", // Data URL for preview
+                    DocId: row["Registration No."],
+                    Guid: localStorage.getItem("GUID"),
+                    FileType: row["Type"].toLowerCase(),
+                    Description: row.Description
+
+                };
+                filesData.push(fileData);
+                console.log(filesData, "getfilesdata");
+                //Check if this is the last file
+                if (index === selectedRows.length - 1) {
+                    // Add new files to the uploadedFiles array
+                    setSelectedFiles((prevUploadedFiles) => [
+                        ...prevUploadedFiles,
+                        ...filesData,
+                    ]);
+
+                    setSelectedDocumentFileDMS((prevUploadedFiles) => [
+                        ...prevUploadedFiles,
+                        ...filesData,
+                    ]);
+                }
+            })
+
+
+        })
+        // setTimeout(() => {
+        //     PrepareDocumentsForPublish_Json(filesData, 2)
+        // }, 4000);
+
+
+
+        setOpenDocumentListDMS(false)
+
+    }
+
+    function Json_CRM_TaskDMSAttachmentInsert(TaskID) {
+
+        const ItemId = selectedDocumentFileDMS.map(obj => obj.DocId).join("|");
+        let obj = {
+            TaskID: TaskID,
+            DMSItems: ItemId,
+            Notes: ""
+        };
+        Cls.Json_CRM_TaskDMSAttachmentInsert(obj, function (sts, data) {
+            if (sts && data) {
+                console.log('Json_CRM_TaskDMSAttachmentInsert', data);
+                setAttachmentPath([]);
+                setSelectedFiles([])
+            }
+        })
+    }
     function dateAndTime(dt) {
         // Create a new Date object
         var date = new Date(dt);
@@ -800,12 +1048,13 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
         if (notesMessage) {
             AddTaskComment_Json(notesMessage)
         }
-       
+
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         GetComments_Json(selectedEmailForComment.PortalDocId);
-    },[selectedEmailForComment])
+        setCopyLink(`https://www.sharedocuments.co.uk/login.aspx?Code=${agrno}&message=${selectedEmailForComment.PortalDocId}`);
+    }, [selectedEmailForComment])
 
     const AddTaskComment_Json = (notesMessage) => {
         let o = {
@@ -839,32 +1088,38 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
         ClsPortal.GetComments_Json(o, function (sts, data) {
             if (sts) {
-                let js = JSON.parse(data);               
                 if (data) {
-                    const formattedActivity = js.map((activity) => {
-                        let DateOfRemark;
-                        if (activity.DateOfRemark) {
-                            DateOfRemark = parseInt(activity.DateOfRemark.slice(6, -2));
-                        }
-                        const date = new Date(DateOfRemark);
+                    let js = JSON.parse(data);
+                    if (data) {
+                        const formattedActivity = js.map((activity) => {
+                            // let DateOfRemark;
+                            // if (activity.DateOfRemark) {
+                            //     DateOfRemark = parseInt(activity.DateOfRemark.slice(6, -2));
+                            // }
+                            // const date = new Date(DateOfRemark);
+                            let date = activity.DateOfRemark ? parseInt(activity.DateOfRemark.slice(6, -2)) : activity.DateOfRemark;
 
-                        // let ReadDate;
-                        // if (activity.ReadDate) {
-                        //     ReadDate = parseInt(activity.ReadDate.slice(6, -2));
-                        // }
-                        // const ReadDate1 = new Date(ReadDate);
-                        return { ...activity, DateOfRemark: date,comDate: date,comNotes:activity.Remark};
-                    }); 
-                    console.log("GetComments_Json", formattedActivity);
 
-                 // let arr1 =  formattedActivity.sort((a, b) => a.DateOfRemark - b.DateOfRemark);
+                            // let ReadDate;
+                            // if (activity.ReadDate) {
+                            //     ReadDate = parseInt(activity.ReadDate.slice(6, -2));
+                            // }
+                            // const ReadDate1 = new Date(ReadDate);
+                            return { ...activity, DateOfRemark: date, comDate: date, comNotes: activity.Remark };
+                        });
+                        console.log("GetComments_Json", formattedActivity);
 
-                  let margeArr= mergeAndSortByDate(formattedActivity,crmTaskAcivity,"comDate");
 
-                  console.log("GetComments_Json", margeArr);
-                  setPortalComments(margeArr);
-                   
+                        // let arr1 =  formattedActivity.sort((a, b) => a.DateOfRemark - b.DateOfRemark);
+
+                        let margeArr = mergeAndSortByDate(formattedActivity, crmTaskAcivity, "comDate");
+
+                        //console.log("GetComments_Json", margeArr);
+                        setPortalComments(margeArr);
+
+                    }
                 }
+
                 // setTemplateDataMarkup(data)
             }
         })
@@ -872,16 +1127,19 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     function mergeAndSortByDate(array1, array2, dateField) {
         // Concatenate the two arrays
-        var mergedArray = array2.concat(array1);
-        
-        // Sort the merged array by date field
-        mergedArray.sort(function(a, b) {
-            return new Date(a[dateField]) - new Date(b[dateField]);
-        });
-        
-        return mergedArray;
+        if (array1 && array2) {
+            var mergedArray = array2.concat(array1);
+
+            // Sort the merged array by date field
+            mergedArray.sort(function (a, b) {
+                return new Date(a[dateField]) - new Date(b[dateField]);
+            });
+
+            return mergedArray;
+        }
+
     }
-    
+
 
 
     const Json_AddSupplierActivity = (mgs, sts) => {
@@ -935,7 +1193,20 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     };
 
 
+    const HandleChangeSubjectDetails = () => {
+        Json_UpdateTaskField("Details", txtdescription, "Description Changed")
+        setisvisibleSubject(false);
+        setIsVisible(false);
+    }
+    const HandleChangeSubjectSubject = () => {
+        Json_UpdateTaskField("Subject", tSubject, "Subject Changed")
+        setisvisibleSubject(false);
+        setIsVisible(false);
+
+    }
+
     async function Json_CRM_Task_Update() {
+
         if (addUser.length > 0) {
             const idsString = addUser.map(obj => obj.ID).join(',');
             const attString = attachmentPath.map((obj) => obj.Path).join("|");
@@ -943,7 +1214,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
             let obj = {
                 AssignedToID: idsString,
                 TaskID: selectedTask.ID,
-                DMSItems: "",
+                DMSItems: (selectedDocumentFileDMS && selectedDocumentFileDMS.length > 0) ? selectedDocumentFileDMS.map(obj => obj.DocId).join("|") : "",
                 Attachments: attString ? attString : "",
                 Notes: "",
                 Details: txtdescription,
@@ -954,7 +1225,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                 AssociateWithID: txtClientId ? txtClientId : selectedTask.ClientNo,
                 FolderId: txtFolderId ? txtFolderId : selectedTask.FolderID,
                 Subject: tSubject,
-                TypeofTaskID: txtSectionId,
+                TypeofTaskID: txtSectionId ? txtSectionId : selectedTask.SectionId,
                 EndDateTime: dayjs(nextDate).format("YYYY/MM/DD"),
                 Status: status,
                 Priority: selectedTask.Priority,
@@ -973,6 +1244,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                     let js = JSON.parse(data);
                     if (js.Status === "success") {
                         setSelectedFiles([]);
+
                         setMessageId(js.Message);
                         // setLoading(false);
                         setIsApi(!isApi);
@@ -982,11 +1254,14 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         toast.success("Updated Task !");
                         //setIsVisible(false); // Toggle visibility
                         setTimeout(() => {
-                            setAttachmentPath([]);
+                            // setAttachmentPath([]);
                             Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
                         }, 2000);
                         setIsVisible(false); // Toggle visibility
-
+                        // if (selectedFiles && selectedFiles.length > 0) {
+                        //     console.log(selectedFiles,"selectedDocumentFileDMS")
+                        //     Json_CRM_TaskDMSAttachmentInsert(js.Message);
+                        // }
                         const attString = attachmentPath.map((item) => {
                             let fileName = "";
                             if (item.FileName) {
@@ -996,10 +1271,17 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                             return fileName;
                         });
+                        if (selectedFiles && selectedFiles.length > 0) {
+                            let res = selectedFiles.map((e) => e.FileName).join(',');
+                            let mgs = `Upload File ${res}`;
+                            Json_AddSupplierActivity(mgs, "sys")
+                        } else {
+
+                            let mgs = `Upload File ${attString}`;
+                            Json_AddSupplierActivity(mgs, "sys")
+                        }
 
 
-                        let mgs = `Upload File ${attString}`;
-                        Json_AddSupplierActivity(mgs, "sys")
 
                     }
                     else {
@@ -1070,8 +1352,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
 
-    const handleDownloadDoc = (objdata) => {
-        console.log(objdata)
+    const handleDownloadDoc = (event, objdata) => {
+        handleCloseDocument(event, objdata);
         let o = {
             path: window.btoa(objdata.DestinationPath),
         }
@@ -1153,7 +1435,17 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     const handleSearchInputChangeSection = (event) => {
         setSearchSectionQuery(event.target.value);
     };
+    const renderTypeCell = (data) => {
+        // Define the condition based on which the icon will be rendered
+        if (data.value === 'pdf') {
+            return <PictureAsPdfIcon></PictureAsPdfIcon>;
+        } else if (data.value === 'txt') {
 
+            return <TextSnippetIcon></TextSnippetIcon>;
+        }
+        // You can add more conditions or return default content if needed
+        return data.value;
+    };
     const filtereSectionList = sectionList.filter((item) =>
         item.Sec.toLowerCase().includes(searchSectionQuery.toLowerCase())
     );
@@ -1167,19 +1459,55 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
     );
 
     const handleDelete = (e) => {
-        console.info('You clicked the delete icon.');
+        //console.info('You clicked the delete icon.');
         let res = selectedFiles.filter((file) => file.FileName !== e.FileName);
         setSelectedFiles(res)
     };
 
 
     const [checked, setChecked] = useState(false);
-
+    function addToWorkTable(Itid, e) {
+        console.log(e, "addToWorkTable", Itid);
+        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has completed a task-${e.Subject} . Task ID : ${e.ID}` };
+        console.log("addToWorkTable111", obj);
+        ClsSms.Json_AddToWork(obj, function (status, data) {
+            if (status) {
+                if (data) {
+                    //let json = JSON.parse(data);
+                    console.log("getitemid", data);
+                }
+            }
+        });
+    }
     const handleChangeStatus = (event) => {
+        console.log("change_statusevent", selectedTask);
+
         setChecked(event.target.checked);
         if (event.target.checked) {
-            Json_UpdateTaskField("Status", "Completed", returnMessageStatus("Completed"));
-            setStatus("Completed")
+            Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
+                if (res) {
+                    Json_UpdateTaskField("Status", "Completed", returnMessageStatus("Completed"));
+                    if (attachmentFile && attachmentFile.length > 0) {
+                        attachmentFile.forEach((item) => {
+                            addToWorkTable(item.ItemId, selectedTask);
+                        });
+                    }
+                    if (selectedTask.Source === "Portal") {
+                        if (PortalDocumentShow && PortalDocumentShow.length > 0) {
+                            PortalDocumentShow.forEach((item) => {
+                                if (item.ItemID) {
+                                    addToWorkTable(item.ItemID, selectedTask);
+                                }
+                            });
+                        }
+                    }
+
+                    setStatus("Completed");
+                }
+
+            });
+
+
         }
         else {
             setStatus(selectedTask.mstatus)
@@ -1241,23 +1569,35 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
     // details dropdown
-    const [anchorElDocumentList, setAnchorElDocumentList] = React.useState(null);
-    const DocumentList = Boolean(anchorElDocumentList);
-    const handleClickDocumentList = (event) => {
-        console.log(event.currentTarget);
+    const [anchorElDocumentList, setAnchorElDocumentList] = React.useState({});
+    // const DocumentList = Boolean(anchorElDocumentList);
+    const handleClickDocumentList = (event, rowData) => {
+        // console.log("fjdsfdlsjfljfllj problem detect");
         event.stopPropagation();
-        setAnchorElDocumentList(event.currentTarget);
+        const newAnchorElDocumentList = { ...anchorElDocumentList };
+        newAnchorElDocumentList[rowData.key] = event.currentTarget;
+        setAnchorElDocumentList(newAnchorElDocumentList);
     };
-    const handleCloseDocument = () => {
-        setAnchorElDocumentList(null);
+
+    const handleCloseDocument = (event, rowData) => {
+        event.stopPropagation();
+        const newAnchorElDocumentList = { ...anchorElDocumentList };
+        delete newAnchorElDocumentList[rowData.key];
+        setAnchorElDocumentList(newAnchorElDocumentList);
     };
 
 
 
     // Document details List
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
-    const handleClickOpenDocumentDetailsList = () => {
+    const [docForDetails, setDocForDetails] = useState({});
+    const handleClickOpenDocumentDetailsList = (event, sDoc) => {
+        //console.log("selected document data obj",sDoc)
+        setDocForDetails(sDoc);
+        setExpanded("panel1");
         setOpenDocumentDetailsList(true);
+        Json_getAssociatedTaskListByDocumentId(sDoc);
+        Json_GetVersionByItemId(sDoc)
     };
     const handleCloseDocumentDetailsList = () => {
         setOpenDocumentDetailsList(false);
@@ -1312,6 +1652,119 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
     };
 
+    const [anchorElFolder, setAnchorElFolder] = React.useState(null);
+    const openFolder = Boolean(anchorElFolder);
+    const handleClickFolder = (event) => {
+        setAnchorElFolder(event.currentTarget);
+    };
+    const handleCloseFolder = () => {
+        setAnchorElFolder(null);
+    };
+
+
+    const [anchorElFiles, setAnchorElFiles] = React.useState(null);
+    const openFiles = Boolean(anchorElFiles);
+    const handleClickFiles = (event) => {
+        setAnchorElFiles(event.currentTarget);
+    };
+    const handleCloseFiles = () => {
+        setAnchorElFiles(null);
+    };
+
+    // 
+
+    // const [anchorElAttached, setAnchorElAttached] = React.useState(null);
+    // const openAttached = Boolean(anchorElAttached);
+    // const AttachedhandleClick = (event) => {
+    //     setAnchorElAttached(event.currentTarget);
+    // };
+    // const AttachedhandleClose = () => {
+    //     setAnchorElAttached(null);
+    // };
+
+    const [AttachmentRef, setAttachmentRef] = React.useState(null);
+    const [documentListDMS, setOpenDocumentListDMS] = React.useState(false);
+    //   const open = Boolean(anchorEl);
+    const handleAttachmentClick = (event) => {
+        setAttachmentRef(event.currentTarget);
+    };
+    const handleAttachmentClose = () => {
+        setAttachmentRef(null);
+    };
+
+    const handleDocumentClickOpen = () => {
+        console.log("DocumentClickOpensonam", txtClientId);
+        // setAttachmentRef(null);
+
+        if (txtClientId) {
+
+            Json_ExplorerSearchDoc();
+            setOpenDocumentListDMS(true);
+
+        } else {
+            toast.warn("Select Referece !");
+        }
+        getButtonColor();
+    };
+
+    const handleCloseDocumentListDMS = () => {
+        setOpenDocumentListDMS(false);
+    };
+    const Json_ExplorerSearchDoc = () => {
+        console.log(selectedTask, 'Json_ExplorerSearchDoc', txtClientId);
+        try {
+
+            if (selectedTask.FolderID && txtClientId) {
+                console.log(txtFolderId, 'Json_ExplorerSearchDoctxtClientId', txtClientId);
+                let obj = {};
+                obj.ProjectId = selectedTask.FolderID;
+                obj.ClientId = txtClientId;
+                obj.sectionId = "-1";
+                Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
+                    if (sts && data) {
+                        let json = JSON.parse(data);
+                        console.log("ExplorerSearchDoc", json);
+                        let tble6 = json.Table6;
+                        setDMSDocumentList(tble6);
+                    }
+                })
+            }
+
+        } catch (error) {
+            console.log("ExplorerSearchDoc", error)
+        }
+
+    }
+    const [txtColor, setTxtColor] = useState({ color: "#1976d2" });
+    const getButtonColor = () => {
+        if (txtClientId) {
+            setTxtColor({ color: "#1976d2" }); // Example: Set color to green when conditions met
+        } else {
+            setTxtColor({ color: "red" }); // Example: Set color to blue when conditions not met
+        }
+    };
+
+    const Json_getAssociatedTaskListByDocumentId = (sDoc) => {
+        console.log("sDoc", sDoc);
+        let obj = {
+            Email: localStorage.getItem('Email'),
+            ItemId: sDoc["AttachId"],
+            agrno: localStorage.getItem("agrno"),
+            password: localStorage.getItem("Password")
+        }
+        try {
+            ClsSms.Json_getAssociatedTaskListByDocumentId(obj, (sts, data) => {
+                const res = JSON.parse(data);
+                if (res.Table.length > 0) {
+                    setAssociatedTask(res.Table);
+                } else {
+                    setAssociatedTask([]);
+                }
+            })
+        } catch (err) {
+            console.log("Error while calling Json_getAssociatedTaskListByDocumentId", err);
+        }
+    }
 
     return (
         <React.Fragment>
@@ -1351,12 +1804,12 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     <EjectIcon fontSize="medium" className="text-success rotate-180" />
 
                                 )}
-                                {NumPriority !== 1 && NumPriority !== 2 && NumPriority !== 3 && (
+                                {/* {NumPriority !== 1 && NumPriority !== 2 && NumPriority !== 3 && (
                                     <CheckCircleIcon />
-                                )}
+                                )} */}
 
                             </Button>
-                            {selectedTask.Source === "CRM" && (<>
+                            {selectedTask && selectedTask.Source === "CRM" && (<>
                                 <Menu
                                     id="basic-menu"
                                     anchorEl={anchorEl4}
@@ -1424,23 +1877,26 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                             variant="subtitle1"
                             className="font-16 sembold mb-0"
                         >
-                            {selectedTask.Source}
+                            {selectedTask && selectedTask.Source}
                         </Typography>
                     </Box>
 
                     <Box className="d-flex">
                         <Box>
                             <Button
-                                id={`fade-button-${selectedTask.ID}`} // Use unique IDs for each button
+                                id={`fade-button-${selectedTask && selectedTask.ID}`} // Use unique IDs for each button
                                 aria-controls={
                                     anchorElStatus
-                                        ? `fade-menu-${selectedTask.ID}`
+                                        ? `fade-menu-${selectedTask && selectedTask.ID}`
                                         : undefined
                                 }
                                 aria-haspopup="true"
                                 aria-expanded={anchorElStatus ? "true" : undefined}
-                                onClick={(event) =>
-                                    handleClickStatus(event, selectedTask.ID)
+                                onClick={(event) => {
+                                    if (selectedTask && selectedTask.ID) {
+                                        handleClickStatus(event, selectedTask.ID)
+                                    }
+                                }
                                 } // Pass index to handleClick
                                 className="min-width-auto px-0 text-danger"
                             >
@@ -1466,7 +1922,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     <ListItemIcon className="min-width-auto  me-2 text-primary">
                                         <PublishedWithChangesIcon fontSize="medium" />
                                     </ListItemIcon>
-                                    <span className="text-primary">{status ? status : selectedTask.mstatus}</span>
+                                    <span className="text-primary">{status ? status : selectedTask && selectedTask.mstatus}</span>
                                 </>
 
                                 )}
@@ -1485,21 +1941,21 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     <ListItemIcon className="min-width-auto me-2">
                                         <PublishedWithChangesIcon fontSize="medium" />
                                     </ListItemIcon>
-                                    <span className="text-success">{selectedTask.mstatus}</span>
+                                    <span className="text-success">{selectedTask && selectedTask.mstatus}</span>
                                 </>
 
                                 )}
 
                             </Button>
                             <Menu
-                                id={`fade-menu-${selectedTask.ID}`} // Use unique IDs for each menu
+                                id={`fade-menu-${selectedTask && selectedTask.ID}`} // Use unique IDs for each menu
                                 MenuListProps={{
-                                    "aria-labelledby": `fade-button-${selectedTask.ID}`,
+                                    "aria-labelledby": `fade-button-${selectedTask && selectedTask.ID}`,
                                 }}
                                 anchorEl={anchorElStatus}
                                 open={
-                                    selectedIndexStatus === selectedTask.ID &&
-                                    Boolean(anchorElStatus)
+                                    selectedTask && (selectedIndexStatus === selectedTask.ID &&
+                                        Boolean(anchorElStatus))
                                 } // Open menu if selectedIndex matches
                                 onClose={handleCloseStatus}
                             >
@@ -1550,65 +2006,113 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                         <div className="ps-2">
                             <Button
-                                id={`fade-button-${selectedTask.ID}`} // Use unique IDs for each button
+                                id={`fade-button-${selectedTask && selectedTask.ID}`} // Use unique IDs for each button
                                 aria-controls={
                                     anchorElProfile
-                                        ? `fade-menu-${selectedTask.ID}`
+                                        ? `fade-menu-${selectedTask && selectedTask.ID}`
                                         : undefined
                                 }
                                 aria-haspopup="true"
                                 aria-expanded={anchorElProfile ? "true" : undefined}
-                                onClick={(event) =>
-                                    handleClickProfile(event, selectedTask.ID)
+                                onClick={(event) => {
+                                    if (selectedTask && selectedTask.ID) {
+                                        handleClickProfile(event, selectedTask.ID)
+                                    }
+                                }
                                 } // Pass index to handleClick
                                 className="min-width-auto px-0 text-gray"
                             >
                                 <MoreVertIcon />
                             </Button>
                             <Menu
-                                id={`fade-menu-${selectedTask.ID}`} // Use unique IDs for each menu
+                                id={`fade-menu-${selectedTask && selectedTask.ID}`} // Use unique IDs for each menu
                                 MenuListProps={{
-                                    "aria-labelledby": `fade-button-${selectedTask.ID}`,
+                                    "aria-labelledby": `fade-button-${selectedTask && selectedTask.ID}`,
                                 }}
                                 anchorEl={anchorElProfile}
                                 open={
-                                    selectedIndexProfile === selectedTask.ID &&
-                                    Boolean(anchorElProfile)
+                                    selectedTask && (selectedIndexProfile === selectedTask.ID &&
+                                        Boolean(anchorElProfile))
                                 } // Open menu if selectedIndex matches
                                 onClose={handleCloseProfile}
                             >
-                                {folderList ? folderList.map((item) => {
-                                    return (<>
-                                        <MenuItem onClick={() => handleCloseProfile(item)} className='ps-1'>
-                                            <ListItemIcon>
-                                                <FolderSharedIcon fontSize="medium" />
-                                            </ListItemIcon>
-
-                                            {item.Folder}
-                                        </MenuItem>
-                                    </>)
-                                }) : ""}
 
                                 {/* only for portal */}
-                                <MenuItem className='ps-1'>
-                                    <ListItemIcon>
-                                        <ContentCopyIcon fontSize="medium" />
-                                    </ListItemIcon> Copy Link</MenuItem>
+                                {selectedTask && selectedTask.Source === "Portal" && (
+                                    <>
+                                        <MenuItem className='ps-2' onClick={() => {
+                                            setSelectedIndexProfile(null);
+                                        }}>
+                                            <ListItemIcon >
+                                                <ContentCopyIcon fontSize="medium" className="font-20" />
+                                            </ListItemIcon>
+                                            {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>}
+                                        </MenuItem>
 
-                                <MenuItem className='ps-1'>
-                                    <ListItemIcon>
-                                        <MergeIcon fontSize="medium" />
-                                    </ListItemIcon> Merge</MenuItem>
+                                        <MenuItem className='ps-1'>
+                                            <ListItemIcon>
+                                                <MergeIcon fontSize="medium" />
+                                            </ListItemIcon> Merge</MenuItem>
 
-                                <MenuItem className='ps-1'>
-                                    <ListItemIcon>
-                                        <AttachEmailIcon fontSize="medium" />
-                                    </ListItemIcon> Retract Message (s)</MenuItem>
+                                        <MenuItem className='ps-1'>
+                                            <ListItemIcon>
+                                                <AttachEmailIcon className="font-22" />
+                                            </ListItemIcon> Retract Message (s)</MenuItem>
 
-                                <MenuItem className='ps-1'>
+                                        <MenuItem className='ps-1'>
+                                            <ListItemIcon>
+                                                <DeleteIcon fontSize="medium" />
+                                            </ListItemIcon> Delete Message (s)</MenuItem>
+                                    </>
+                                )}
+
+
+                                {/* <MenuItem className='ps-2'>
                                     <ListItemIcon>
                                         <DeleteIcon fontSize="medium" />
-                                    </ListItemIcon> Delete Message (s)</MenuItem>
+                                    </ListItemIcon> Delete Message (s)</MenuItem> */}
+                                {selectedTask && selectedTask.Source === "CRM" && (<>
+                                    <Button
+                                        id="basic-button"
+                                        aria-controls={openFolder ? 'basic-menu' : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={openFolder ? 'true' : undefined}
+                                        onClick={handleClickFolder}
+                                        className="ps-0 w-100 text-left text-start"
+                                    >
+                                        <MenuItem className='ps-2 w-100'>
+                                            <ListItemIcon>
+                                                <AttachEmailIcon className="font-22" />
+                                            </ListItemIcon>Folder</MenuItem>
+                                    </Button>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={anchorElFolder}
+                                        open={openFolder}
+                                        onClose={handleCloseFolder}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+                                    >
+
+                                        {folderList ? folderList.map((item) => {
+                                            return (<>
+                                                <MenuItem onClick={() => handleCloseProfile(item)}>
+                                                    <ListItemIcon>
+                                                        <FolderIcon fontSize="medium" />
+                                                    </ListItemIcon>
+
+                                                    {item.Folder}
+                                                </MenuItem>
+                                            </>)
+                                        }) : ""}.length
+
+
+                                    </Menu>
+                                </>)}
+
+
+
                             </Menu>
                         </div>
 
@@ -1645,25 +2149,25 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     onChange={handalChangeSetSubject}
                                     onClick={handalClickEditeSubject}
                                     value={tSubject}
-                                    disabled={selectedTask.Source === "Portal"}
+                                    disabled={selectedTask && selectedTask.Source === "Portal"}
                                 />
                             </Box>
 
                             <Box className="mt-2 mb-3">
-                                {selectedTask.Source === "CRM" && (<>
+                                {selectedTask && selectedTask.Source === "CRM" && (<>
                                     <textarea
                                         className="form-control textarea textarea-ony-read resize-none"
                                         placeholder="Description"
                                         value={txtdescription} // Bind the value to the state
                                         onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
-                                        onClick={handalClickEditeSubject}
+                                        onClick={handalClickEditeDescription}
 
                                     ></textarea>
                                 </>)}
 
 
                                 {
-                                    <PortalMessage selectedTask={selectedTask} Json_RegisterItem={Json_RegisterItem} setPortalComments={setPortalComments} setSelectedEmailForComment={setSelectedEmailForComment}></PortalMessage>
+                                    <PortalMessage selectedTask={selectedTask && selectedTask} Json_RegisterItem={Json_RegisterItem} setPortalComments={setPortalComments} setSelectedEmailForComment={setSelectedEmailForComment}></PortalMessage>
                                 }
 
                             </Box>
@@ -1671,19 +2175,30 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
 
 
-                            {isVisible && selectedTask.Source === "CRM" && ( // Show the box if isVisible is true
+                            {isVisible && selectedTask && selectedTask.Source === "CRM" && ( // Show the box if isVisible is true
+
                                 <Box className='mb-3 mt-2'>
                                     <Stack spacing={2} direction="row">
-                                        <Button variant="outlined" onClick={toggleVisibilityCancle}>Cancel</Button>
-                                        <Button variant="contained" onClick={Json_CRM_Task_Update}>Save</Button>
+                                        <Button variant="outlined" onClick={toggleVisibilityCancleSubject}>Cancel</Button>
+                                        <Button variant="contained" onClick={HandleChangeSubjectDetails}>Save</Button>
                                     </Stack>
                                 </Box>
                             )}
+                            {isvisibleSubject && selectedTask && selectedTask.Source === "CRM" && ( // Show the box if isVisible is true
+
+                                <Box className='mb-3 mt-2'>
+                                    <Stack spacing={2} direction="row">
+                                        <Button variant="outlined" onClick={toggleVisibilityCancleSubject}>Cancel</Button>
+                                        <Button variant="contained" onClick={HandleChangeSubjectSubject}>Save</Button>
+                                    </Stack>
+                                </Box>
+                            )}
+
                         </Box>
 
                         <Box className="d-flex flex-wrap justify-content-between">
                             <Box className="d-flex flex-wrap align-items-center">
-                                Client:-
+                                Client
                                 <Button
                                     id="fade-button"
                                     aria-controls={openClient ? 'fade-menu' : undefined}
@@ -1691,9 +2206,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     aria-expanded={openClient ? 'true' : undefined}
                                     onClick={handleClickClick}
                                 >
-                                    {txtClient ? txtClient : selectedTask.Client}
+                                    {txtClient ? txtClient : selectedTask && selectedTask.Client}
                                 </Button>
-                                <Menu
+                                {selectedTask && selectedTask.Source === "CRM" && (<Menu
                                     id="fade-menu11"
                                     MenuListProps={{
                                         'aria-labelledby': 'fade-button',
@@ -1715,13 +2230,21 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     />
 
                                     {filtereClient ? filtereClient.map((item, index) => {
-                                        return <MenuItem key={index} onClick={() => handleCloseClient(item)}>{item.Client}</MenuItem>
+                                        if (selectedTask && selectedTask.Source === "Portal") {
+                                            return <MenuItem key={index} onClick={() => {
+                                                setAnchorClsEl(null);
+                                            }}>{item.Client}</MenuItem>
+                                        }
+                                        else {
+                                            return <MenuItem key={index} onClick={() => handleCloseClient(item)}>{item.Client}</MenuItem>
+                                        }
+
                                     }) : ""}
+                                </Menu>)}
 
-                                </Menu>
 
 
-                                Section:-
+                                Section
                                 <Button
                                     id="fade-button"
                                     aria-controls={openSection ? 'fade-menu' : undefined}
@@ -1729,9 +2252,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     aria-expanded={openSection ? 'true' : undefined}
                                     onClick={handleClickSection}
                                 >
-                                    {txtSection ? txtSection : selectedTask.Section}
+                                    {txtSection ? txtSection : selectedTask && selectedTask.Section}
                                 </Button>
-                                <Menu
+                                {selectedTask && selectedTask.Source === "CRM" && (<Menu
                                     id="fade-menu"
                                     MenuListProps={{
                                         'aria-labelledby': 'fade-button',
@@ -1753,11 +2276,20 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     />
 
                                     {filtereSectionList ? filtereSectionList.map((item, index) => {
-                                        return <MenuItem key={index} onClick={() => handleCloseSection(item)}>{item.Sec}</MenuItem>
+                                        if (selectedTask && selectedTask.Source === "Portal") {
+                                            return <MenuItem key={index} onClick={() => {
+                                                setAnchorSectionEl(null);
+                                            }}>{item.Sec}</MenuItem>
+                                        }
+                                        else {
+                                            return <MenuItem key={index} onClick={() => handleCloseSection(item)}>{item.Sec}</MenuItem>
+                                        }
+
                                     }) : ""}
 
 
-                                </Menu>
+                                </Menu>)}
+
 
 
                             </Box>
@@ -1774,43 +2306,51 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                         </Box>
                     </Box> */}
 
-                            <AssigneeUsers selectedTask={selectedTask} setAddUser={setAddUser} addUser={addUser} setOwnerID={setOwnerID} ownerID={ownerID} Json_UpdateTaskField={Json_UpdateTaskField} ></AssigneeUsers>
-
+                            <AssigneeUsers selectedTask={selectedTask && selectedTask} setAddUser={setAddUser} addUser={addUser} setOwnerID={setOwnerID} ownerID={ownerID} Json_UpdateTaskField={Json_UpdateTaskField} ></AssigneeUsers>
 
                             {/* dropdown end */}
                         </Box>
                         {/*  */}
-                        {selectedTask.Source === "CRM" && (<>
-                            <Box className="d-flex flex-wrap">
-                                <label className='text-decoration-none d-flex'
-                                    onClick={handleClickOpen}
-                                ><BallotIcon className='me-1' /> {attachmentFile.length} Documents</label>
-                                {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
-                            </Box>
-                            <Box className="d-flex mt-3">
-                                <Box className="mb-2 me-3">
-                                    <label className="font-14 text-black mb-1">Start Date</label>
-                                    <Box className='custom-datepicker'>
-                                        <CalendarMonthIcon />
-                                        <DatePicker
-                                            showIcon
-                                            dateFormat="DD/MM/YYYY"
-                                            value={currentDate}
-                                            onChange={(e) => setCurrentDate(e)} // Handle date changes
-                                            timeFormat={false}
-                                            isValidDate={disablePastDt}
-                                            closeOnSelect={true}
-                                            icon="fa fa-calendar"
-                                        />
-                                    </Box>
-                                </Box>
+                        {selectedTask && selectedTask.Source === "CRM" && (<>
+                            <Box className='d-flex align-items-center justify-content-between flex-wrap'>
+                                <Box className="d-flex mt-0">
+                                    <Box className="mb-2 me-1 d-flex">
+                                        <label className="font-14 text-black mb-1 me-1">Start Date</label>
+                                        <Box className='custom-datepicker'
+                                            sx={{
+                                                width: '140px',
+                                            }}>
+                                            <CalendarMonthIcon />
+                                            <DatePicker
+                                                showIcon
+                                                dateFormat="DD/MM/YYYY"
+                                                value={currentDate}
+                                                onChange={(e) => {
+                                                    setCurrentDate(e)
+                                                    setNextDate("");
+                                                }
 
-                                <Box className="mb-2" sx={{ float: "right" }}>
-                                    <Box className="mb-2 ">
-                                        <label className="font-14 semibold text-black mb-1">
+
+                                                } // Handle date changes
+                                                timeFormat={false}
+                                                isValidDate={disablePastDt}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
+                                            // sx={{
+                                            //     width: '140px'
+                                            // }}
+                                            />
+                                        </Box>
+                                    </Box>
+
+                                    <Box className="mb-2 d-flex">
+                                        <label className="font-14 text-black mb-1 me-1">
                                             Due By
                                         </label>
-                                        <Box className='custom-datepicker'>
+                                        <Box className='custom-datepicker'
+                                            sx={{
+                                                width: '140px',
+                                            }}>
                                             <CalendarMonthIcon />
                                             <DatePicker
                                                 showIcon
@@ -1825,54 +2365,132 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                                                 }} // Handle date changes
                                                 timeFormat={false}
-                                                isValidDate={disablePastDt}
+                                                isValidDate={disableDueDate}
                                                 closeOnSelect={true}
                                                 icon="fa fa-calendar"
+                                            // sx={{
+                                            //     width: '140px'
+                                            // }}
+
                                             />
                                         </Box>
                                     </Box>
                                 </Box>
+
+                                <Box className="d-flex flex-wrap">
+                                    <label className='text-decoration-none d-flex pointer'
+                                        onClick={handleClickOpen}
+                                    ><BallotIcon className='me-1' /> {attachmentFile.length} Documents</label>
+                                    {/* <AttachmentView attachmentlist={attachmentFile} setAttOpen={setAttOpen} attOpen={attOpen}></AttachmentView> */}
+                                </Box>
                             </Box>
                         </>)}
 
-
                         <Box className="pb-0 mb-0">
                             <Box className="main-chatbox">
-                            {selectedTask.Source === "Portal" ? (<>
-                                {portalComments
-                                    ? portalComments.map((item, index) => {
-                                     
-                                        // console.log("forwardUser22",forwardUser.ForwardTo)
-                                        if (item.status === "sys") {
-                                            return (
-                                                <>
-                                                    <Box
-                                                        className="text-center py-2 file-uploaded"
-                                                        style={{
-                                                            backgroundColor: "#e5e5e5",
-                                                            marginBottom: "10px",
-                                                            "border-radius": "3px",
-                                                        }}
-                                                    >
-                                                        <Typography key={index} variant="body1" className="font-14 semibold">
+                                {selectedTask && selectedTask.Source === "Portal" ? (<>
+                                    {portalComments
+                                        ? portalComments.map((item, index) => {
+
+                                            // console.log("forwardUser22",forwardUser.ForwardTo)
+                                            if (item.status === "sys") {
+                                                return (
+                                                    <>
+                                                        <Box
+                                                            className="text-center py-2 file-uploaded"
+                                                            style={{
+                                                                backgroundColor: "#e5e5e5",
+                                                                marginBottom: "10px",
+                                                                "border-radius": "3px",
+                                                            }}
+                                                        >
+                                                            <Typography key={index} variant="body1" className="font-14 semibold">
                                                                 {item.Notes} {/* Display each note */}
                                                             </Typography>
-                                                        <Typography variant="body1" className="font-12">
-                                                            {dateAndTime(item.ActivityDate)}
-                                                        </Typography>
-                                                    </Box>
-                                                </>
-                                            );
-                                        }
-                                        else if (item.Type === "response") {
-                                            return (
-                                                <>
+                                                            <Typography variant="body1" className="font-12">
+                                                                {dateAndTime(item.ActivityDate)}
+                                                            </Typography>
+                                                        </Box>
+                                                    </>
+                                                );
+                                            }
+                                            else if (item.Type === "response") {
+                                                return (
+                                                    <>
+                                                        <Box
+                                                            className="chat-box d-flex align-items-end mb-2 sender"
+                                                            justifyContent="flex-end"
+                                                        >
+                                                            <Box class="chat-message">
+                                                                <Box class="inner-chat-message ms-auto">
+                                                                    <Typography variant="body1" className="font-14">
+                                                                        {item.Remark}
+                                                                    </Typography>
+                                                                    <Box className="d-flex align-items-center justify-content-end">
+                                                                        <Typography variant="body1" className="font-10">
+                                                                            {dateAndTime(item.DateOfRemark)}
+                                                                        </Typography>
+
+                                                                        <Box className="">
+                                                                            <Button
+                                                                                id={`fade-button-${index}`} // Use unique IDs for each button
+                                                                                aria-controls={
+                                                                                    anchorEl1
+                                                                                        ? `fade-menu-${index}`
+                                                                                        : undefined
+                                                                                }
+                                                                                aria-haspopup="true"
+                                                                                aria-expanded={
+                                                                                    anchorEl1 ? "true" : undefined
+                                                                                }
+                                                                                onClick={(event) =>
+                                                                                    handleClick2(event, index)
+                                                                                } // Pass index to handleClick
+                                                                                className="min-width-auto px-0 text-gray"
+                                                                            >
+                                                                                <MoreVertIcon />
+                                                                            </Button>
+                                                                            <Menu
+                                                                                id={`fade-menu-${index}`} // Use unique IDs for each menu
+                                                                                MenuListProps={{
+                                                                                    "aria-labelledby": `fade-button-${index}`,
+                                                                                }}
+                                                                                anchorEl={anchorEl1}
+                                                                                open={
+                                                                                    selectedIndex === index &&
+                                                                                    Boolean(anchorEl1)
+                                                                                } // Open menu if selectedIndex matches
+                                                                                onClose={handleClose2}
+                                                                            >
+                                                                                <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                                    <ListItemIcon>
+                                                                                        <EditIcon fontSize="medium" />
+                                                                                    </ListItemIcon> Edit</MenuItem>
+
+                                                                                <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                                    <ListItemIcon>
+                                                                                        <DeleteIcon fontSize="medium" />
+                                                                                    </ListItemIcon> Delete Message</MenuItem>
+                                                                            </Menu>
+                                                                        </Box>
+                                                                    </Box>
+                                                                </Box>
+                                                            </Box>
+                                                        </Box>
+                                                    </>
+                                                );
+                                            }
+                                            else {
+                                                return (
                                                     <Box
-                                                        className="chat-box d-flex align-items-end mb-2 sender"
-                                                        justifyContent="flex-end"
+                                                        className="chat-box d-flex align-items-end mb-2 reciever"
+                                                        key={index}
                                                     >
-                                                        <Box class="chat-message">
-                                                            <Box class="inner-chat-message ms-auto">
+                                                        <Box className="client-img me-3 mb-0 ms-0">
+                                                            <img src={user} alt="User" />
+                                                        </Box>
+                                                        <Box className="chat-message me-2">
+                                                            <Box className="inner-chat-message me-2">
                                                                 <Typography variant="body1" className="font-14">
                                                                     {item.Remark}
                                                                 </Typography>
@@ -1912,128 +2530,132 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                                             } // Open menu if selectedIndex matches
                                                                             onClose={handleClose2}
                                                                         >
-                                                                            <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                            <MenuItem onClick={handleClose2}>
                                                                                 <ListItemIcon>
-                                                                                    <EditIcon fontSize="medium" />
-                                                                                </ListItemIcon> Edit</MenuItem>
-
-                                                                            <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                                    <EditIcon className="font-18" />
+                                                                                </ListItemIcon> Edit
+                                                                            </MenuItem>
+                                                                            <MenuItem onClick={handleClose2}>
                                                                                 <ListItemIcon>
-                                                                                    <DeleteIcon fontSize="medium" />
-                                                                                </ListItemIcon> Delete Message</MenuItem>
+                                                                                    <DeleteIcon className="font-18" />
+                                                                                </ListItemIcon> Delete
+                                                                            </MenuItem>
                                                                         </Menu>
                                                                     </Box>
                                                                 </Box>
                                                             </Box>
                                                         </Box>
                                                     </Box>
-                                                </>
-                                            );
-                                        }
-                                        else {
-                                            return (
-                                                <Box
-                                                    className="chat-box d-flex align-items-end mb-2 reciever"
-                                                    key={index}
-                                                >
-                                                    <Box className="client-img me-3 mb-0 ms-0">
-                                                        <img src={user} alt="User" />
-                                                    </Box>
-                                                    <Box className="chat-message me-2">
-                                                        <Box className="inner-chat-message me-2">
-                                                            <Typography variant="body1" className="font-14">
-                                                                {item.Remark}
-                                                            </Typography>
-                                                            <Box className="d-flex align-items-center justify-content-end">
-                                                                <Typography variant="body1" className="font-12">
-                                                                    {dateAndTime(item.DateOfRemark)}
-                                                                </Typography>
+                                                );
 
-                                                                <Box className="">
-                                                                    <Button
-                                                                        id={`fade-button-${index}`} // Use unique IDs for each button
-                                                                        aria-controls={
-                                                                            anchorEl1
-                                                                                ? `fade-menu-${index}`
-                                                                                : undefined
-                                                                        }
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded={
-                                                                            anchorEl1 ? "true" : undefined
-                                                                        }
-                                                                        onClick={(event) =>
-                                                                            handleClick2(event, index)
-                                                                        } // Pass index to handleClick
-                                                                        className="min-width-auto px-0 text-gray"
-                                                                    >
-                                                                        <MoreVertIcon />
-                                                                    </Button>
-                                                                    <Menu
-                                                                        id={`fade-menu-${index}`} // Use unique IDs for each menu
-                                                                        MenuListProps={{
-                                                                            "aria-labelledby": `fade-button-${index}`,
-                                                                        }}
-                                                                        anchorEl={anchorEl1}
-                                                                        open={
-                                                                            selectedIndex === index &&
-                                                                            Boolean(anchorEl1)
-                                                                        } // Open menu if selectedIndex matches
-                                                                        onClose={handleClose2}
-                                                                    >
-                                                                        <MenuItem onClick={handleClose2}>
-                                                                            Edit
-                                                                        </MenuItem>
-                                                                        <MenuItem onClick={handleClose2}>
-                                                                            Delete
-                                                                        </MenuItem>
-                                                                    </Menu>
+                                            }
+                                        })
+                                        : null}
+                                </>) : (<>
+                                    {crmTaskAcivity
+                                        ? crmTaskAcivity.map((item, index) => {
+                                            const notesArray = item.Notes.split(',');
+                                            // console.log("forwardUser22",forwardUser.ForwardTo)
+                                            if (item.status === "sys") {
+                                                return (
+                                                    <>
+                                                        <Box
+                                                            className="text-center py-2 file-uploaded"
+                                                            style={{
+                                                                backgroundColor: "#e5e5e5",
+                                                                marginBottom: "10px",
+                                                                "border-radius": "3px",
+                                                            }}
+                                                        >
+                                                            {notesArray.map((note, index) => (
+                                                                <Typography key={index} variant="body1" className="font-14 semibold">
+                                                                    {note.trim()} {/* Display each note */}
+                                                                </Typography>
+                                                            ))}
+                                                            <Typography variant="body1" className="font-12">
+                                                                {dateAndTime(item.ActivityDate)}
+                                                            </Typography>
+                                                        </Box>
+                                                    </>
+                                                );
+                                            }
+                                            else if (item.username === forwardUser.ForwardTo) {
+                                                return (
+                                                    <>
+                                                        <Box
+                                                            className="chat-box d-flex align-items-end mb-2 sender"
+                                                            justifyContent="flex-end"
+                                                        >
+                                                            <Box class="chat-message">
+                                                                <Box class="inner-chat-message ms-auto">
+                                                                    <Typography variant="body1" className="font-14">
+                                                                        {item.Notes}
+                                                                    </Typography>
+                                                                    <Box className="d-flex align-items-center justify-content-end">
+                                                                        <Typography variant="body1" className="font-10">
+                                                                            {dateAndTime(item.ActivityDate)}
+                                                                        </Typography>
+
+                                                                        <Box className="">
+                                                                            <Button
+                                                                                id={`fade-button-${index}`} // Use unique IDs for each button
+                                                                                aria-controls={
+                                                                                    anchorEl1
+                                                                                        ? `fade-menu-${index}`
+                                                                                        : undefined
+                                                                                }
+                                                                                aria-haspopup="true"
+                                                                                aria-expanded={
+                                                                                    anchorEl1 ? "true" : undefined
+                                                                                }
+                                                                                onClick={(event) =>
+                                                                                    handleClick2(event, index)
+                                                                                } // Pass index to handleClick
+                                                                                className="min-width-auto px-0 text-gray"
+                                                                            >
+                                                                                <MoreVertIcon />
+                                                                            </Button>
+                                                                            <Menu
+                                                                                id={`fade-menu-${index}`} // Use unique IDs for each menu
+                                                                                MenuListProps={{
+                                                                                    "aria-labelledby": `fade-button-${index}`,
+                                                                                }}
+                                                                                anchorEl={anchorEl1}
+                                                                                open={
+                                                                                    selectedIndex === index &&
+                                                                                    Boolean(anchorEl1)
+                                                                                } // Open menu if selectedIndex matches
+                                                                                onClose={handleClose2}
+                                                                            >
+                                                                                <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                                    <ListItemIcon>
+                                                                                        <EditIcon fontSize="medium" />
+                                                                                    </ListItemIcon> Edit</MenuItem>
+
+                                                                                <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                                    <ListItemIcon>
+                                                                                        <DeleteIcon fontSize="medium" />
+                                                                                    </ListItemIcon> Delete Message</MenuItem>
+                                                                            </Menu>
+                                                                        </Box>
+                                                                    </Box>
                                                                 </Box>
                                                             </Box>
                                                         </Box>
-                                                    </Box>
-                                                </Box>
-                                            );
-
-                                        }
-                                    })
-                                    : null}
-                            </>):(<>
-                                {crmTaskAcivity
-                                    ? crmTaskAcivity.map((item, index) => {
-                                        const notesArray = item.Notes.split(',');
-                                        // console.log("forwardUser22",forwardUser.ForwardTo)
-                                        if (item.status === "sys") {
-                                            return (
-                                                <>
+                                                    </>
+                                                );
+                                            }
+                                            else {
+                                                return (
                                                     <Box
-                                                        className="text-center py-2 file-uploaded"
-                                                        style={{
-                                                            backgroundColor: "#e5e5e5",
-                                                            marginBottom: "10px",
-                                                            "border-radius": "3px",
-                                                        }}
+                                                        className="chat-box d-flex align-items-end mb-2 reciever"
+                                                        key={index}
                                                     >
-                                                        {notesArray.map((note, index) => (
-                                                            <Typography key={index} variant="body1" className="font-14 semibold">
-                                                                {note.trim()} {/* Display each note */}
-                                                            </Typography>
-                                                        ))}
-                                                        <Typography variant="body1" className="font-12">
-                                                            {dateAndTime(item.ActivityDate)}
-                                                        </Typography>
-                                                    </Box>
-                                                </>
-                                            );
-                                        }
-                                        else if (item.username === forwardUser.ForwardTo) {
-                                            return (
-                                                <>
-                                                    <Box
-                                                        className="chat-box d-flex align-items-end mb-2 sender"
-                                                        justifyContent="flex-end"
-                                                    >
-                                                        <Box class="chat-message">
-                                                            <Box class="inner-chat-message ms-auto">
+                                                        <Box className="client-img me-3 mb-0 ms-0">
+                                                            <img src={user} alt="User" />
+                                                        </Box>
+                                                        <Box className="chat-message me-2">
+                                                            <Box className="inner-chat-message me-2">
                                                                 <Typography variant="body1" className="font-14">
                                                                     {item.Notes}
                                                                 </Typography>
@@ -2073,93 +2695,29 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                                             } // Open menu if selectedIndex matches
                                                                             onClose={handleClose2}
                                                                         >
-                                                                            <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                            <MenuItem onClick={handleClose2}>
                                                                                 <ListItemIcon>
-                                                                                    <EditIcon fontSize="medium" />
-                                                                                </ListItemIcon> Edit</MenuItem>
-
-                                                                            <MenuItem className='ps-1' onClick={handleClose2}>
+                                                                                    <EditIcon className="font-18" />
+                                                                                </ListItemIcon> Edit
+                                                                            </MenuItem>
+                                                                            <MenuItem onClick={handleClose2}>
                                                                                 <ListItemIcon>
-                                                                                    <DeleteIcon fontSize="medium" />
-                                                                                </ListItemIcon> Delete Message</MenuItem>
+                                                                                    <DeleteIcon className="font-18" />
+                                                                                </ListItemIcon> Delete
+                                                                            </MenuItem>
                                                                         </Menu>
                                                                     </Box>
                                                                 </Box>
                                                             </Box>
                                                         </Box>
                                                     </Box>
-                                                </>
-                                            );
-                                        }
-                                        else {
-                                            return (
-                                                <Box
-                                                    className="chat-box d-flex align-items-end mb-2 reciever"
-                                                    key={index}
-                                                >
-                                                    <Box className="client-img me-3 mb-0 ms-0">
-                                                        <img src={user} alt="User" />
-                                                    </Box>
-                                                    <Box className="chat-message me-2">
-                                                        <Box className="inner-chat-message me-2">
-                                                            <Typography variant="body1" className="font-14">
-                                                                {item.Notes}
-                                                            </Typography>
-                                                            <Box className="d-flex align-items-center justify-content-end">
-                                                                <Typography variant="body1" className="font-12">
-                                                                    {dateAndTime(item.ActivityDate)}
-                                                                </Typography>
+                                                );
 
-                                                                <Box className="">
-                                                                    <Button
-                                                                        id={`fade-button-${index}`} // Use unique IDs for each button
-                                                                        aria-controls={
-                                                                            anchorEl1
-                                                                                ? `fade-menu-${index}`
-                                                                                : undefined
-                                                                        }
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded={
-                                                                            anchorEl1 ? "true" : undefined
-                                                                        }
-                                                                        onClick={(event) =>
-                                                                            handleClick2(event, index)
-                                                                        } // Pass index to handleClick
-                                                                        className="min-width-auto px-0 text-gray"
-                                                                    >
-                                                                        <MoreVertIcon />
-                                                                    </Button>
-                                                                    <Menu
-                                                                        id={`fade-menu-${index}`} // Use unique IDs for each menu
-                                                                        MenuListProps={{
-                                                                            "aria-labelledby": `fade-button-${index}`,
-                                                                        }}
-                                                                        anchorEl={anchorEl1}
-                                                                        open={
-                                                                            selectedIndex === index &&
-                                                                            Boolean(anchorEl1)
-                                                                        } // Open menu if selectedIndex matches
-                                                                        onClose={handleClose2}
-                                                                    >
-                                                                        <MenuItem onClick={handleClose2}>
-                                                                            Edit
-                                                                        </MenuItem>
-                                                                        <MenuItem onClick={handleClose2}>
-                                                                            Delete
-                                                                        </MenuItem>
-                                                                    </Menu>
-                                                                </Box>
-                                                            </Box>
-                                                        </Box>
-                                                    </Box>
-                                                </Box>
-                                            );
+                                            }
+                                        })
+                                        : null}
+                                </>)}
 
-                                        }
-                                    })
-                                    : null}
-                            </>)}
-                                
 
                                 {/* Reciever Start */}
 
@@ -2203,29 +2761,124 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                             <Box className="d-flex align-items-end main-file-upload  pt-3">
                                 <Box className="w-100">
                                     <Stack direction="row" className='pb-2 custom-chips' spacing={1}>
-                                        {selectedFiles ? selectedFiles.map((item, index) => {
+                                        {console.log(selectedFiles, "selectedFiles11")}
+                                        {
+                                            selectedFiles && selectedFiles.slice(0, 3).map((item, index) => (
+                                                <Chip key={index} label={item.FileName} variant="outlined" onDelete={() => handleDelete(item)} />
+                                            ))
+                                        }
 
-                                            return (<Chip key={index} label={item.FileName} variant="outlined" onDelete={() => handleDelete(item)} />);
-                                        }) : ""}
+                                        {selectedFiles.length > 3 && (<>
+                                            <Button
+                                                id="basic-button"
+                                                aria-controls={openFiles ? 'basic-menu' : undefined}
+                                                aria-haspopup="true"
+                                                aria-expanded={openFiles ? 'true' : undefined}
+                                                onClick={handleClickFiles}
+                                            >
+
+                                                <span>+ {selectedFiles.length - 3}</span>
+
+                                            </Button>
+                                            <Menu
+                                                id="basic-menu"
+                                                anchorEl={anchorElFiles}
+                                                open={openFiles}
+                                                onClose={handleCloseFiles}
+                                                MenuListProps={{
+                                                    'aria-labelledby': 'basic-button',
+                                                }}
+                                            >
+                                                {selectedFiles.length > 3 &&
+                                                    selectedFiles.slice(3, selectedFiles.length).map((item, index) => (
+                                                        <MenuItem key={index} onClick={handleCloseFiles}>{item.FileName}</MenuItem>
+                                                    ))
+                                                }
+                                            </Menu>
+                                        </>)}
+
 
 
                                     </Stack>
 
                                     <Box className='position-relative'>
-                                        {selectedTask.Source === "CRM" && (<>
+                                        {selectedTask && selectedTask.Source === "CRM" && (<>
                                             <Box className='upload-chat-file'>
-                                                <input
+                                                {/* <input
                                                     type="file"
                                                     id={`file-upload ${selectedTask.ID}`}
                                                     multiple
                                                     onChange={handleFileSelect}
                                                     className="file-input"
                                                 />
-                                                <label for={`file-upload ${selectedTask.ID}`} className="pointer"><AttachFileIcon /></label>
+                                                <label for={`file-upload ${selectedTask.ID}`} className="pointer"><AttachFileIcon /></label> */}
+
+
+                                                <div>
+                                                    <Button
+                                                        id="basic-button"
+                                                        aria-controls={Boolean(AttachmentRef) ? 'basic-menu' : undefined}
+                                                        aria-haspopup="true"
+                                                        aria-expanded={Boolean(AttachmentRef) ? 'true' : undefined}
+                                                        onClick={handleAttachmentClick}
+                                                        className="p-0 min-width-auto"
+                                                    >
+                                                        <AttachFileIcon />
+                                                    </Button>
+                                                    <input
+                                                        type="file"
+                                                        id={`file-upload ${selectedTask && selectedTask.ID}`}
+                                                        multiple
+                                                        onChange={handleFileSelect}
+                                                        className="file-input"
+                                                        style={{ display: 'none' }} // Hide the input element
+                                                    />
+                                                    <Menu
+                                                        id="basic-menu"
+                                                        anchorEl={AttachmentRef}
+                                                        open={Boolean(AttachmentRef)}
+                                                        onClose={handleAttachmentClose}
+                                                        MenuListProps={{
+                                                            'aria-labelledby': 'basic-button',
+                                                        }}
+                                                    >
+                                                        <MenuItem onClick={handleAttachmentClose}>
+                                                            <label htmlFor={`file-upload ${selectedTask && selectedTask.ID}`} className="pointer">
+                                                                <FileUploadIcon className="font-20 me-1" /> Upload File(s)
+                                                            </label>
+                                                        </MenuItem>
+                                                        <MenuItem onClick={handleDocumentClickOpen}><InsertPageBreakIcon className="font-20 me-1" /> Select From DMS</MenuItem>
+                                                    </Menu>
+                                                    {/* <Menu
+                                                        id="basic-menu"
+                                                        anchorEl={AttachmentRef}
+                                                        open={Boolean(AttachmentRef)}
+                                                        onClose={handleAttachmentClose}
+                                                        MenuListProps={{
+                                                            'aria-labelledby': 'basic-button',
+                                                        }}
+                                                    > 
+                                                     <input
+                                                    type="file"
+                                                    id={`file-upload ${selectedTask.ID}`}
+                                                    multiple
+                                                onChange={handleFileSelect}
+                                                    className="file-input"
+                                                />
+                                                        <MenuItem onClick={handleAttachmentClose}>
+                                                          
+                                                            <label htmlFor={`file-upload ${selectedTask.ID}`}   className="pointer">
+                                                                Upload File(s)
+                                                            </label>
+                                                        </MenuItem>
+                                                        
+                                                        <MenuItem onClick={handleDocumentClickOpen}>Select From DMS</MenuItem>
+                                                    </Menu> */}
+                                                </div>
+
 
                                             </Box>
                                         </>)}
-
 
                                         <textarea
                                             className="textarea"
@@ -2234,10 +2887,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                             onChange={handleChangeNotes}
                                         ></textarea>
                                     </Box>
-
                                 </Box>
 
-                                {selectedTask.Source === "Portal" ?(<Box className="d-flex d-flex align-items-center ms-3">
+                                {selectedTask && selectedTask.Source === "Portal" ? (<Box className="d-flex d-flex align-items-center ms-3">
                                     <Button
                                         className="btn-blue-2 ms-0 mb-2"
                                         size="small"
@@ -2246,27 +2898,26 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                     >
                                         Send
                                     </Button>
-                                    <ToastContainer></ToastContainer>
-                                </Box>):(
+                                    {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
+                                </Box>) : (
                                     <Box className="d-flex d-flex align-items-center ms-3">
-                                    <Button
-                                        className="btn-blue-2 ms-0 mb-2"
-                                        size="small"
-                                        onClick={addActivitySave}
-                                        startIcon={<SendIcon />}
-                                    >
-                                        Send
-                                    </Button>
-                                    <ToastContainer></ToastContainer>
-                                </Box>
+                                        <Button
+                                            className="btn-blue-2 ms-0 mb-2"
+                                            size="small"
+                                            onClick={addActivitySave}
+                                            startIcon={<SendIcon />}
+                                        >
+                                            Send
+                                        </Button>
+                                        {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
+                                    </Box>
                                 )}
-                                
+
                             </Box>
                         </Box>
                     </DialogContentText>
 
                     {/* <hr /> */}
-
 
                 </DialogContent>
             </Dialog>
@@ -2292,8 +2943,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
-                        <Typography variant="h4" className='font-18 bold mb-2 text-black'>
-                            Document List
+                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                            Attachment List
                         </Typography>
                         {/* <Box className="btn-Select">
                                     <Button className='btn-white'>Action</Button>
@@ -2321,11 +2972,144 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                             <Grid item xs={12} md={6}>
 
                                 <Box className="search-box">
-                                    {attachmentFile.length > 0 ? attachmentFile.map((item, index) => {
+                                    {attachmentFile.length > 0 && <DataGrid
+                                        dataSource={attachmentFile}
+                                        // keyExpr="Guid"
+                                        allowColumnReordering={true}
+                                        rowAlternationEnabled={true}
+                                        showBorders={true}
+                                        width="100%"
+                                        wordWrapEnabled={true}
+                                        className="table-view-files"
+                                    >
+                                        <Grouping autoExpandAll={false} />
+                                        <GroupPanel visible={true} />
+                                        <Sorting mode="single" />
+                                        <Scrolling mode="virtual" />
+                                        <Selection mode="multiple" />
+                                        {/* {selectedGroup === "Type" && <Column dataField="Type" groupIndex={0} dataType="Type" width={75} />}
+                                        {selectedGroup === "Comments" && <Column dataField="Comments" groupIndex={0} dataType="Comments" width={75} visible={false} />}
+                                        {selectedGroup === "Description" && <Column dataField="Description" groupIndex={0} dataType="Description" width={75} visible={false} />}
+                                        {selectedGroup === "CommentBy" && <Column dataField="CommentBy" groupIndex={0} dataType="CommentBy" width={75} visible={false} />} */}
+                                        <Column
+                                            dataField="Description"
+                                            caption="Description"
+
+                                            // Set the groupIndex to 0 to enable grouping by this column
+                                            dataType="string"  // Set the data type to "string" for proper grouping
+                                            cellRender={(data) => {
+                                               // console.log(data, "datadms")
+                                               let rowdata = data.data;
+                                               let rd = ClsSms.getFileExtension(rowdata.FileName);
+                                                return <Box className="file-uploads">
+                                                    <label className="file-uploads-label file-uploads-document" onClick={(event) => {
+                                                        event.stopPropagation();
+                                                        event.preventDefault();
+                                                        handleCloseDocument(event, data);
+                                                    }} onDoubleClick={(event) => {
+                                                        // handleClickOpenPDFView(event, data.data);
+                                                        handleCloseDocument(event, data);
+                                                    }}>
+                                                        <Box className="d-flex align-items-center">
+
+                                                            {/* <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" />  */}
+
+                                                            {/* <DescriptionIcon
+                                                                sx={{
+                                                                    fontSize: 32,
+                                                                }}
+                                                                className='me-2 ms-0'
+                                                            /> */}
+                                                            <div className='img-format'>
+                                                                {/* <img src={Fileformat} /> */}
+                                                                {<GetFileType Type={rd?rd.toLowerCase():null}></GetFileType>}
+                                                            </div>
+                                                            <Box className="upload-content pe-3">
+                                                                <Typography variant="h4" >
+                                                                    {data.data.FileName ? data.data.FileName : "Demo"}
+                                                                </Typography>
+                                                                <Typography variant="body1">
+                                                                    {/* Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span>  */}
+                                                                    Date <span className='sembold'>{data.data["Item_Date"] ? data.data["Item_Date"] : ""}</span> |
+                                                                    Uploaded by <span className='sembold'>Patrick</span>
+                                                                </Typography>
+                                                            </Box>
+                                                        </Box>
+                                                        <Box>
+                                                            <Button
+                                                                id={`basic-button-${data.key}`}
+                                                                aria-controls={anchorElDocumentList[data.key] ? `basic-menu-${data.key}` : undefined}
+                                                                aria-haspopup="true"
+                                                                aria-expanded={Boolean(anchorElDocumentList[data.key])}
+                                                                onClick={(event) => {
+                                                                    handleClickDocumentList(event, data)
+                                                                }}
+                                                                className='min-width-auto'
+                                                            >
+                                                                <MoreVertIcon />
+                                                            </Button>
+                                                            <Menu
+                                                                id={`basic-menu-${data.key}`}
+                                                                anchorEl={anchorElDocumentList[data.key]}
+                                                                open={Boolean(anchorElDocumentList[data.key])}
+                                                                onClose={(event) => handleCloseDocument(event, data)}
+                                                                MenuListProps={{
+                                                                    'aria-labelledby': `basic-button-${data.key}`,
+                                                                }}
+                                                                className='custom-dropdown'
+                                                            >
+                                                                <MenuItem onClick={(event) => {
+                                                                    handleCloseDocument(event, data)
+                                                                    handleClickOpenDocumentDetailsList(event, data.data)
+                                                                }}>
+                                                                    <ListItemIcon>
+                                                                        <ArticleIcon fontSize="medium" />
+                                                                    </ListItemIcon>
+                                                                    Document Details</MenuItem>
+
+                                                                <MenuItem
+                                                                    onClick={(event) => handleCloseDocument(event, data)}
+                                                                >
+                                                                    <ListItemIcon>
+                                                                        <CloudUploadIcon fontSize="medium" />
+                                                                    </ListItemIcon>
+                                                                    Upload New Version</MenuItem>
+                                                                <MenuItem
+                                                                    onClick={(event) => handleCloseDocument(event, data)}
+                                                                >
+                                                                    <ListItemIcon>
+                                                                        <DriveFileRenameOutlineIcon fontSize="medium" />
+                                                                    </ListItemIcon>
+                                                                    Rename Document</MenuItem>
+                                                                <MenuItem
+                                                                // onClick={(event) => handleCloseDocumentOpenDocumentBrowers(event, data)}
+                                                                >
+                                                                    <ListItemIcon>
+                                                                        <TravelExploreIcon fontSize="medium" />
+                                                                    </ListItemIcon>
+                                                                    Open in Browser</MenuItem>
+                                                                <MenuItem
+                                                                    onClick={(event) => handleDownloadDoc(event, data)}
+                                                                >
+                                                                    <ListItemIcon>
+                                                                        <CloudDownloadIcon fontSize="medium" />
+                                                                    </ListItemIcon>
+                                                                    Download</MenuItem>
+                                                            </Menu>
+                                                        </Box>
+                                                    </label>
+                                                </Box>
+                                            }}
+                                        />
+                                    </DataGrid>}
+                                    {/* {attachmentFile.length > 0 ? attachmentFile.map((item, index) => {
                                         let fileName = "";
                                         if (item.FileName) {
                                             let Typest = item.FileName.lastIndexOf("\\");
                                             fileName = item.FileName.slice(Typest + 1);
+                                        }
+                                        else {
+                                            fileName = item.ItemId ? item.ItemId : "";
                                         }
                                         return <>
                                             <Box className="file-uploads">
@@ -2372,7 +3156,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                         >
                                                             <MenuItem onClick={() => {
                                                                 handleCloseDocument()
-                                                                handleClickOpenDocumentDetailsList()
+                                                                handleClickOpenDocumentDetailsList(item)
                                                             }}>
                                                                 <ListItemIcon>
                                                                     <ArticleIcon fontSize="medium" />
@@ -2403,9 +3187,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                     </Box>
                                                 </label>
                                             </Box>
-                                            {/* file upload end */}
+                                            {/* file upload end
                                         </>
-                                    }) : ""}
+                                    }) : ""} */}
                                 </Box>
 
                                 {/* <Demo>
@@ -2505,15 +3289,18 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {rows.map((row) => (
-                                                    <TableRow
-                                                        key={row.name}
-                                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                    >
-                                                        <TableCell align="left" className='bold'>{row.document}</TableCell>
-                                                        <TableCell align="left">{row.details}</TableCell>
-                                                    </TableRow>
-                                                ))}
+                                                {Object.keys(docForDetails).length > 0 && Object.keys(docForDetails).map((itm, i) => {
+                                                    if (itm !== "StickyNotes") {
+                                                        return <TableRow
+                                                            key={i}
+                                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                        >
+                                                            <TableCell align="left" className='bold'>{itm}</TableCell>
+                                                            <TableCell align="left">{docForDetails[itm] ? docForDetails[itm] : "Not Available"}</TableCell>
+                                                            {/* <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date", "Item Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell> */}
+                                                        </TableRow>
+                                                    }
+                                                })}
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
@@ -2531,94 +3318,27 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                 <AccordionDetails>
                                     <Box className='table-responsive'>
 
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            This File is Test Files.pdf 2
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            12:36PM 28/12/2023 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
+                                        {getVertion.length > 0 ? getVertion.map((item, index) => {
+                                            return <>
+                                                <Box className="file-uploads" key={index}>
+                                                    <label className="file-uploads-label file-uploads-document">
+                                                        <Box className="d-flex align-items-center">
+                                                            <div className='img-format'>
+                                                                <img src={Fileformat} />
+                                                            </div>
+                                                            <Box className="upload-content pe-3">
+                                                                <Typography variant="h4" >
+                                                                    Version No {item.VersionNo}
+                                                                </Typography>
+                                                                <Typography variant="body1">
+                                                                    {moment(item["VDate"]).format("DD/MM/YYYY HH:mm:ss")} | Updated by {item.UserName.toUpperCase()}
+                                                                </Typography>
+                                                            </Box>
+                                                        </Box>
+                                                    </label>
                                                 </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            test doc file.doc
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            11:16PM 09/012/2024 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            loremipsomedolorsite.pdf
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            02:36PM 06/05/2023 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            This File is Test Files.pdf
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            02:36PM 06/05/2023 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
+                                            </>
+                                        }) : ""}
 
                                     </Box>
                                 </AccordionDetails>
@@ -2637,12 +3357,16 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <Box className='mt-3'>
-
-                                        {Array(5).fill("").map(() => {
+                                        {associatedTask.length > 0 ? associatedTask.map((itm, i) => {
+                                            return <>
+                                                <Link key={i} href="#" className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />{itm.Subject}</Link>
+                                            </>
+                                        }) : <Typography>Not Available</Typography>}
+                                        {/* {Array(5).fill("").map(() => {
                                             return <>
                                                 <Link href="#" className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />Contact agreement</Link>
                                             </>
-                                        })}
+                                        })} */}
                                     </Box>
                                 </AccordionDetails>
                             </Accordion>
@@ -2684,7 +3408,93 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen }) 
 
             </Dialog>
 
+            <Dialog
+                open={documentListDMS}
+                onClose={handleCloseDocumentListDMS}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal'
 
+                sx={{
+                    maxWidth: 640,
+                    margin: '0 auto'
+                }}
+            >
+                {/* <DialogTitle id="alert-dialog-title">
+                        {"Use Google's location service?"}
+                    </DialogTitle> */}
+
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+
+                    <div>
+                        <Button
+                            id="basic-button"
+                        >
+                            Document List
+                        </Button>
+                    </div>
+
+                    <Button onClick={handleCloseDocumentListDMS} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <DataGrid
+                            dataSource={dmsDocumentList}
+                            allowColumnReordering={true}
+                            rowAlternationEnabled={true}
+                            showBorders={true}
+                            width="100%"
+                            selectedRowKeys={selectedRows}
+                            selection={{ mode: 'multiple' }}
+                            onSelectionChanged={handleSelectionChanged} // Handle selection change event
+                            className="table-grid"
+                        >
+                            <FilterRow visible={true} />
+                            <SearchPanel visible={true} highlightCaseSensitive={true} />
+
+
+                            <Column
+                                dataField="Type"
+                                caption="Type"
+                                cellRender={renderTypeCell} // Render cells based on condition
+                            />
+
+                            <Column
+                                dataField="Description"
+                                caption="Description"
+                            />
+                            <Column
+                                dataField="Section"
+                                caption="Section"
+                            />
+                            <Column
+                                dataField="Client"
+                                caption="Client"
+                            />
+                            <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
+                            <Paging defaultPageSize={10} />
+                        </DataGrid>
+
+                        {/* file upload end */}
+
+                    </DialogContentText>
+                </DialogContent>
+
+                <DialogActions className="p-4 pt-3">
+                    <Button
+                        variant="contained"
+                        onClick={AddDocuments}
+                        className="btn-blue-2"
+                    >
+                        {'Add Document'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </React.Fragment>
     );
 }

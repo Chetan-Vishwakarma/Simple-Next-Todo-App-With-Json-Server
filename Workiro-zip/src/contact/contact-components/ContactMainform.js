@@ -204,24 +204,44 @@ const ContactMainform = React.memo(
         // setSelectedUserId(null);
       }
     };
-    const handleAdvancedSettingChange = (event) => {
-      setAdvancedSettingChecked(event.target.checked);
-      let data = { ...userContactDetails };
-      let name = event.target.name;
-      let val = event.target.checked;
-      data = { ...data, [name]: val };
-      console.log(data, "dataOnchange", event);
-      setContactDetails(data);
-    };
+    // const handleAdvancedSettingChange = (event) => {
+    //   setAdvancedSettingChecked(event.target.checked);
+    //   let data = { ...userContactDetails };
+    //   let name = event.target.name;
+    //   let val = event.target.checked;
+    //   data = { ...data, [name]: val };
+    //   console.log(data, "dataOnchange", event);
+    //   setContactDetails(data);
+    // };
+    // const handleAdvancedInactive = (event) => {
+    //   setAdvancedInactive(event.target.checked);
+    //   let data = { ...userContactDetails };
+    //   let name = event.target.name;
+    //   let val = event.target.checked;
+    //   data = { ...data, [name]: val };
+    //   console.log(data, "dataOnchange", event);
+    //   setContactDetails(data);
+    // };
     const handleAdvancedInactive = (event) => {
-      setAdvancedInactive(event.target.checked);
-      let data = { ...userContactDetails };
-      let name = event.target.name;
-      let val = event.target.checked;
-      data = { ...data, [name]: val };
-      console.log(data, "dataOnchange", event);
-      setContactDetails(data);
+      const isChecked = event.target.checked;
+      const newData = {
+        ...userContactDetails,
+        Inactive: isChecked,
+        MainContact: isChecked ? false : userContactDetails.MainContact // Uncheck the other checkbox if Inactive is checked
+      };
+      setContactDetails(newData);
     };
+    
+    const handleAdvancedSettingChange = (event) => {
+      const isChecked = event.target.checked;
+      const newData = {
+        ...userContactDetails,
+        MainContact: isChecked,
+        Inactive: isChecked ? false : userContactDetails.Inactive // Uncheck the other checkbox if MainContact is checked
+      };
+      setContactDetails(newData);
+    };
+    
     const handleAdvancedCreatePortal = (event) => {
       setCreatePortal(event.target.checked);
       let data = { ...userContactDetails };
@@ -237,7 +257,7 @@ const ContactMainform = React.memo(
       setEmail(localStorage.getItem("Email"));
       setFolderId(localStorage.getItem("FolderId"));
       Json_GetConfiguration();
-      console.log(contact, "contactlistsona");
+      console.log(contact, "contactlistsona",userContactDetails);
   
       if (contact) {
         // setContactDetails(null);
@@ -306,7 +326,7 @@ const ContactMainform = React.memo(
     return (
       <div>
         {" "}
-        <Grid container spacing={3}>
+        <Grid container spacing={2}>
           <Grid item xs={6} md={6}>
             <FormControl fullWidth variant="outlined">
               <Autocomplete
@@ -397,7 +417,7 @@ const ContactMainform = React.memo(
               </DemoContainer>
             </LocalizationProvider>
           </Grid>
-          <Grid item xs={6} md={6}>
+          {/* <Grid item xs={6} md={6}>
             <TextField
               fullWidth
               key={`Referencekey`}
@@ -409,7 +429,7 @@ const ContactMainform = React.memo(
               value={userContactDetails.ReferenceID}
               onChange={onChange}
             />
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={6} md={6} className="d-flex flex-wrap align-items-center">
             <FormControlLabel
@@ -417,7 +437,7 @@ const ContactMainform = React.memo(
               control={
                 <Switch
                   name="Inactive"
-                  checked={advancedInactive}
+                  checked={userContactDetails.Inactive}
                   onChange={handleAdvancedInactive}
                 />
               }
@@ -429,7 +449,7 @@ const ContactMainform = React.memo(
               control={
                 <Switch
                   name="CreatePortal"
-                  checked={createPortal}
+                  checked={userContactDetails.CreatePortal}
                   onChange={handleAdvancedCreatePortal}
                 />
               }
@@ -441,7 +461,7 @@ const ContactMainform = React.memo(
               control={
                 <Switch
                   name="MainContact"
-                  checked={advancedSettingChecked}
+                  checked={userContactDetails.MainContact}
                   onChange={handleAdvancedSettingChange}
                 />
               }

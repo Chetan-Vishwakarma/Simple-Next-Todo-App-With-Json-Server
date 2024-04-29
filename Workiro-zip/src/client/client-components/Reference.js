@@ -14,7 +14,8 @@ import StepLabel from "@mui/material/StepLabel";
 import StepContent from "@mui/material/StepContent";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-function Reference() {
+import CreateNewModalTask from "../../components/CreateNewModal";
+function Reference({open5,setOpen5,setReferance,setAddContact}) {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -26,8 +27,21 @@ function Reference() {
   const [selectedFolderID, setSelectedFolderID] = useState(null);
   const [dataFromChild, setDataFromChild] = useState([]);
   const [dataCompanyHouse, setDataCompanyHouse] = useState([]);
-  // const [activeStep, setActiveStep] = React.useState(0);
 
+  const [defaultUser, setDefaultUser] = useState(null);
+
+  const [defaultClient, setDefaultClient] = useState([]);
+  // const [activeStep, setActiveStep] = React.useState(0);
+  const [contactData, setContactData] = useState("");
+  const handleClickOpen5 = () => {
+    setReferance(false);
+    setOpen5(true);
+    setAddContact(userDetail)
+  };
+
+  const handleClose5 = () => {
+    setOpen5(false);
+  };
   const [userDetail, setUserDetail] = useState({
     Clientname: "",
     Clientid: "",
@@ -93,6 +107,7 @@ function Reference() {
   console.log("userDetailuserDetail", userDetail);
   const [originatorNo, setoriginatorNo] = useState("");
   const [companyDetails, setCompanyDetails] = useState([]);
+  const [activeStep, setActiveStep] = React.useState(0);
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
   let Cls = new CommanCLS(baseUrl, agrno, Email, password);
@@ -188,10 +203,15 @@ function Reference() {
 
     Json_SetClientAddress(obj);
   };
-  const [activeStep, setActiveStep] = React.useState(0);
+
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    if (activeStep === steps.length - 1) {
+    if(localStorage.getItem("ClientName")){
+      localStorage.removeItem("ClientName");
+    } else {
+      console.log("error");
+    }
+    if (activeStep == steps.length - 1) {
       function todayDate() {
         var today = new Date().toJSON().slice(0, 10);
         return today;
@@ -200,7 +220,7 @@ function Reference() {
         agrno: agrno,
         Email: Email,
         password: password,
-        ProjectIdList: userDetail.folderId ? userDetail.folderId : -1,
+        ProjectIdList: userDetail.FolderId ? userDetail.FolderId : localStorage.getItem('ProjectId'),
         OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
         OriginatorName: userDetail.Clientname ? userDetail.Clientname : "",
         Address: userDetail.fullAddress ? userDetail.fullAddress : "",
@@ -238,8 +258,9 @@ function Reference() {
             mainAddress();
             billingAddress();
             ragisterAddress();
+            localStorage.setItem("ClientName",userDetail.Clientname);
           } else {
-            toast.success("Reference ID Already Exists!");
+            toast.error("Reference ID Already Exists!");
           }
         }
       });
@@ -255,7 +276,7 @@ function Reference() {
       agrno: agrno,
       Email: Email,
       password: password,
-      ProjectIdList: userDetail.folderId ? userDetail.folderId : -1,
+      ProjectIdList: userDetail.FolderId ? userDetail.FolderId : -1,
       OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
       OriginatorName: userDetail.Clientname ? userDetail.Clientname : "",
       Address: userDetail.fullAddress ? userDetail.fullAddress : "",
@@ -287,12 +308,14 @@ function Reference() {
       if (sts) {
         if (jsonparse.Status == "Success") {
           console.log("Response", data);
+         
           toast.success("Reference Added Successfully !");
           // Json_InsertContact(); Main contact not need
           saveUDF();
           mainAddress();
           billingAddress();
           ragisterAddress();
+         
         } else {
           toast.success("Reference ID Already Exists!");
         }
@@ -359,7 +382,7 @@ function Reference() {
         if (sts) {
           if (data) {
             console.log("Json_CRMSaveUDFValues", data);
-            toast.success("UDF Saved Successfully !");
+           // toast.success("UDF Saved Successfully !");
           }
         }
       });
@@ -380,7 +403,13 @@ function Reference() {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
   const handleReset = () => {
+     setTimeout(() => {
+      setDefaultUser(null);
+      setDefaultClient(null);
+     },1000);
+    console.log(defaultUser,"defaultUserdefaultUser")
     setActiveStep(0);
+    setUserDetail({});
   };
 
   // Stepper form
@@ -392,14 +421,19 @@ function Reference() {
           {
             <AddClientdetails
               userDetail={userDetail}
+              setDataFromChild={setDataFromChild}
               //
               dataCompanyHouse={dataCompanyHouse}
               // setDataCompanyHouse={setDataCompanyHouse}
               setUserDetail={setUserDetail}
               //
+              defaultClient={defaultClient}
+              setDefaultClient={setDefaultClient}
               setDataCompanyHouse={setDataCompanyHouse}
               setSelectedFolderID={setSelectedFolderID}
               //
+              defaultUser={defaultUser}
+              setDefaultUser={setDefaultUser}
             ></AddClientdetails>
           }
         </Box>
@@ -454,7 +488,7 @@ function Reference() {
 
   return (
     <Box className="container-fluid p-0">
-       <ToastContainer></ToastContainer>
+       {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
       <Box sx={{ width: "100%", typography: "body1" }} className="">
         <Box sx={{ maxWidth: "100%" }}>
           <Stepper activeStep={activeStep} orientation="vertical">
@@ -484,6 +518,10 @@ function Reference() {
                       <Button
                         variant="contained"
                         onClick={handleNext}
+                        disabled={
+                          !userDetail.Clientname || !userDetail.Clientid
+                          
+                        }
                         sx={{ mt: 1, mr: 1 }}
                         className="btn-blue-2"
                         size="small"
@@ -500,15 +538,20 @@ function Reference() {
           </Stepper>
           {activeStep === steps.length && (
             <Paper square elevation={0} sx={{ p: 3 }}>
-              <Typography>
-                Reference Added Successfully!!!
-              </Typography>
-              <Button onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
-                Add Another
+              {/* <Typography className="text-green">
+                References Added Successfully!
+              </Typography> */}
+              <Button className="btn-blue-2 mt-4" onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
+              Add Another Client
+              </Button>
+              <Button className="btn-blue-2 mt-4" sx={{ mt: 1, mr: 1 }} onClick={handleClickOpen5}>
+              Add Contact
               </Button>
             </Paper>
           )}
         </Box>
+        {/* <CreateNewModalTask open={open5} handleClose={handleClose5} /> */}
+
         {/* Stepper end  */}
 
         {/* <Box className="main-accordian">

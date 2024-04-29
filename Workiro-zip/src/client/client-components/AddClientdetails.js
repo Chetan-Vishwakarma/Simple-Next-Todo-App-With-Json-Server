@@ -11,25 +11,30 @@ import Button from '@mui/material/Button';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-
+// import { Toast } from "react-toastify/dist/components";
+import { ToastContainer, toast } from 'react-toastify';
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 const UserDetailContext = createContext();
 // const UserDetailContext = createContext();
-let folderData = [];
-const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompanyHouse, dataCompanyHouse }) => {
+let folderData=[];
+const AddClientdetails = React.memo(({ userDetail, setUserDetail,setDataCompanyHouse,dataCompanyHouse,setDataFromChild,defaultUser,setDefaultUser,defaultClient,setDefaultClient}) => {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
-  const [defaultClient, setDefaultClient] = useState([]);
+  // const [defaultClient, setDefaultClient] = useState([]);
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
   const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   const [folders, setFolders] = useState([]);
+  const [Isfetchdata, setIsfetchdata] = useState(false);
   const [bussiness, setBussiness] = useState([]);
   const [sources, setSources] = useState([]);
   const [mangers, setMangers] = useState([]);
-  const [defaultUser, setDefaultUser] = useState(null);
+  //const [defaultUser, setDefaultUser] = useState(null);
   const [defaultStatus, setDefaultStatus] = useState(null);
+  const [defaultSources, setDefaultSources] = useState(null);
+  const [defaultFolder, setDefaultFolder] = useState(null);
+  const [defaultBussiness, setDefaultBussiness] = useState(null);
   const [status, setStatus] = useState([]);
   const [ImportContact, setImportContact] = useState([]);
   const [ImportCompanyDetails, setImportCompanyDetails] = useState([]);
@@ -64,9 +69,11 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
     event.preventDefault();
     if (value) {
       const folderIds = value.map((folder) => folder.FolderID).join(",");
-      console.log(value, "foldergetdata", folderIds);
+      console.log(value,"foldergetdata",folderIds);
       let data = { ...userDetail };
-      data = { ...data, ["FolderId"]: value.FolderID };
+      data = { ...data, ["FolderId"]: folderIds };
+      setDefaultFolder(value);
+      setDefaultClient(value);
       setUserDetail(data);
     }
   };
@@ -75,6 +82,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
     if (value) {
       let data = { ...userDetail };
       data = { ...data, ["BussId"]: value.BussId };
+      setDefaultBussiness(value);
       setUserDetail(data);
     } else {
     }
@@ -94,6 +102,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
     if (value) {
       let data = { ...userDetail };
       data = { ...data, ["SourceId"]: value.SourceId };
+      setDefaultSources(value);
       setUserDetail(data);
     } else {
     }
@@ -153,8 +162,15 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
             let defaultUser1 = json.Table3.find(
               (manager) => manager.UserId == localStorage.getItem("UserId")
             );
-            console.log(defaultUser1, "defaulttManager");
+
+            console.log(defaultUser1,"defaulttManager",json.Table);
             setDefaultUser(defaultUser1);
+           try{
+            const defaultStatus = json.Table.find(item => item.StatusName === "Active");
+            console.log(defaultStatus,"defaultstatus",json.Table);
+            setDefaultStatus(defaultStatus);
+           } catch(e){};
+
             setStatus(json.Table);
           }
         }
@@ -175,29 +191,29 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
         if (sts) {
           if (data) {
             let json = JSON.parse(data);
-            folderData = json.Table;
+            folderData= json.Table;
             console.log(folderData, "sourceobjector111122222");
-
+              
 
             setFolders(json.Table);
-
+            setIsfetchdata(true);
 
             const sourceObj = folderData.find((item) => item.FolderID == localStorage.getItem("FolderId"));
-            const index = folderData.indexOf(sourceObj);
-            console.log(sourceObj, index, "sourceobjector", folderData);
+            const index = folderData.indexOf(sourceObj); 
+            console.log(sourceObj,index, "sourceobjector", folderData);
             if (sourceObj) {
               const index = folderData.indexOf(sourceObj);
               if (index > -1) {
                 let data = [folderData[index]]
-                console.log(index, "sourceobjector1111", folders[defaultClient]);
-
-                setDefaultClient(index);
+                console.log(data, "sourceobjector1111",folders[defaultClient]);
+              
+                  setDefaultClient(data);
               } else {
-                console.error("Index not found in folderData:", index);
+                  console.error("Index not found in folderData:", index);
               }
-            } else {
+          } else {
               console.error("Folder ID not found in folderData:", localStorage.getItem("FolderId"));
-            }
+          }
 
           }
         }
@@ -207,107 +223,150 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
     }
   };
 
-  const
-    Json_CompanyHouseDetails = (inputValue) => {
-      let requestBody = {
-        CompanyName_Number: inputValue
-      };
-      try {
-        Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
-          if (sts) {
-            if (data) {
-              let json = JSON.parse(data);
-              console.log(json, "Json_CompanyHouseDetails");
-              let jdata = json.CompanyBasicDetails;
-              console.log("Json_CompanyHouseDetails1", jdata);
-              let singledata = json.CompanyDetails;
-              console.log(singledata, "singledatasingledata");
-              // setImportCompanyDetails(singledata[0]);
-              // setContactlistdata(json.Table);
-              if (jdata.length > 0) {
-                setImportContact(jdata);
-              }
-            }
-          }
-        });
-      } catch (err) {
-        console.log("Error while calling Json_GetToFavourites", err);
-      }
+  const 
+  Json_CompanyHouseDetails = (inputValue) => {
+    let requestBody = {
+      CompanyName_Number:inputValue
     };
-  const
-    Json_CompanyDetails = (inputValue) => {
-      let requestBody = {
-        CompanyName_Number: inputValue
-      };
-      try {
-        Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
-          if (sts) {
-            if (data) {
-              let json = JSON.parse(data);
-              console.log(json, "Json_CompanyDetails");
-              let singledata = json.CompanyDetails[0];
-              const defaultCompanyStatus = singledata.company_status;
-              const defaultStatusObject = status.find(status => status.StatusName.toLowerCase() === defaultCompanyStatus.toLowerCase());
-              const defaultStatus = defaultStatusObject || null;
-              console.log(defaultStatus, "defaultStatus22222", singledata);
-              let data1 = { ...userDetail };
-              data1 = {
-                ...data1,
-                CHNumber: singledata.company_number,
-                Clientname: singledata.company_name,
-                StatusId: setDefaultStatus(defaultStatus)
-
-              };
-              setUserDetail(data1);
-              // setImportCompanyDetails(singledata[0]);
-              setDataCompanyHouse(singledata);
-
+    try {
+       Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
+        if (sts) {
+          if (data) {
+            let json = JSON.parse(data);
+            console.log(json,"Json_CompanyHouseDetails");
+            let jdata = json.CompanyBasicDetails;
+            console.log("Json_CompanyHouseDetails1", jdata);
+            let singledata = json.CompanyDetails;
+            console.log(singledata,"singledatasingledata");
+            // setImportCompanyDetails(singledata[0]);
+            // setContactlistdata(json.Table);
+            if(jdata.length > 0){
+              setImportContact(jdata);
+              console.log("companyhousedata", jdata);
+            } else {
+              // toast.error("Unable to fetch Company Details. Failed to receive information from Companies House.");
+              console.log("geterror500");
             }
+          } else{
+            console.log("error ins companyhouse");
+           
+           
           }
-        });
-      } catch (err) {
-        console.log("Error while calling Json_GetToFavourites", err);
-      }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_GetToFavourites", err);
+    }
+  };
+  const 
+  Json_CompanyDetails = (inputValue) => {
+    let requestBody = {
+      CompanyName_Number:inputValue
     };
+    console.log(requestBody,"testbodydata");
+    try {
+       Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
+        if (sts) {
+          console.log(sts,"testcompany");
+          if (data) {
+            let json = JSON.parse(data);
+            console.log(json,"Json_CompanyDetails264");
+let singledata = json.CompanyDetails[0];
+const defaultCompanyStatus = singledata.company_status;
+const defaultStatusObject = status.find(status => status.StatusName.toLowerCase() === defaultCompanyStatus.toLowerCase());
+const defaultStatus = defaultStatusObject || null;
+console.log(defaultStatus,"defaultStatus22222",singledata);
+    let data1 = {...userDetail };
+    data1 = { 
+      ...data1,
+      CHNumber: singledata.company_number,
+      Clientname:singledata.company_name,
+      StatusId:setDefaultStatus(defaultStatus)
+      
+    };
+    setUserDetail(data1);
+            // setImportCompanyDetails(singledata[0]);
+            setDataCompanyHouse(singledata);
+            
+          } else {
+            // console.log("Errordata");
+            toast.error("Unable to fetch Company Details. Failed to receive information from Companies House.");
+          }
+        }
+        else{
+          console.log("errordataget111111111111111111111",sts); 
+        }
+      });
+    } catch (e) {
+      console.log("errordatagetsonam",e);
+      toast.error("Unable to fetch Company Details. Failed to receive information from Companies House.");
+    }
+  };
   const onChangeImportData = (e) => {
 
     e.preventDefault();
     const inputValue = e.target.value;
-    console.log(inputValue, "import_data");
+    console.log(inputValue,"import_data");
     setImportdata(inputValue);
     Json_CompanyHouseDetails(inputValue);
+};
+
+const [txtValue,setTxtValue]=useState(null);
+const [open, setOpen] = useState(false);
+
+const handleOptionClick = (id) => {
+  console.log(id, "onSelectData");
+      setTxtValue(id);
+    setOpen(false); 
+  // Perform actions with the id
+  let data = id.company_number;
+  Json_CompanyDetails(id.title);
+  console.log(data, "onSelectDatacnnumbr");
+
+};
+const clearDataCard = () => {
+  setDefaultClient(null)
+  setDataFromChild(null);
+  
+  console.log(userDetail, "onClearDatacnnumbr",dataCompanyHouse);
+  const updatedUserDetail = { ...userDetail, 
+    CHNumber:"",
+    Clientname: "",
+    Clientid: "",
+    StatusId:setDefaultStatus(null),
+    BussId:setDefaultBussiness(null),
+    SourceId:setDefaultSources(null),
+    UserId:setDefaultUser(null),
+    FolderId:setDefaultClient(null),
+    Mobile:"",
+    Telephone:"",
+    Email:"",
+    Line1: "",
+    Line2:"",
+    Line3:"",
+    Town:"",
+    MCounty:"",
+    Postcode:"",
+    BilLine1:"",
+    BilLine2:"",
+    BilLine3:"",
+    BilTown:"",
+    BilCountry:"",
+    BilPostcode:"",
+    regLine1:"",
+    regLine2:"",
+    regLine3:"",
+    regTown:"",
+    regCountry:"",
+    regPostcode:"",
+    fullAddress:""
   };
-
-  const [txtValue, setTxtValue] = useState(null);
-  const [open, setOpen] = useState(false);
-
-  const handleOptionClick = (id) => {
-    console.log(id, "onSelectData");
-    setTxtValue(id);
-    setOpen(false);
-    // Perform actions with the id
-    let data = id.company_number;
-    Json_CompanyDetails(id.company_number);
-    console.log(data, "onSelectDatacnnumbr");
-
-  };
-  const clearDataCard = () => {
-    console.log(userDetail, "onClearDatacnnumbr", dataCompanyHouse);
-    const updatedUserDetail = {
-      ...userDetail,
-      CHNumber: "",
-      Clientname: "",
-      StatusId: setDefaultStatus(null),
-      Line1: "",
-      Line2: ""
-
-    };
     setUserDetail(updatedUserDetail);
     setDataCompanyHouse(null);
-    console.log("clearDataCard");
-  }
+  console.log("clearDataCard");
+}
 
-  console.log(Importdata, "Importdata", ImportCompanyDetails)
+  console.log(Importdata,"Importdata",ImportCompanyDetails)
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
@@ -317,10 +376,10 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
     //   Json_GetClientCardDetails();
     Json_GetFolders();
     Json_GetConfiguration();
-
+   
     // setUserDetail(data);
   }, []);
-  console.log(defaultClient, "defaultClient")
+  console.log(defaultClient,"defaultClient")
   return (
     <div>
 
@@ -335,67 +394,78 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
                           onChange={onChangeImportData}
                           label="Enter Company Name or Number"
                         /> */}
-            <Autocomplete
-              fullWidth
-              // options={ImportContact.map((option) => option.title)}
-              options={ImportContact} // Pass the entire ImportContact array
-              getOptionLabel={(option) => option.title}
-              onChange={(e, value) => setImportdata(value)}
-              // inputValue={ImportContact}
-              noOptionsText="No matches found"
-              filterOptions={(x) => x}
-              autoComplete
-              includeInputInList
-              value={txtValue}
-              open={open} // Controlled by state
-              onOpen={() => setOpen(true)} // Open the Autocomplete dropdown
-              onClose={() => setOpen(false)} // Close the Autocomplete dropdown
-              renderOption={(props, option) => {
-                // Custom rendering for each option
-                console.log(option, "rendwered dynamic from apifff", props);
-                return (
-                  <li {...props}
-                    onClick={() => {
-
-                      handleOptionClick(option); // Pass the id directly
-                    }}
-                  >
-                    {/* Your custom rendering */}
-                    <Grid container alignItems="center">
-
-                      <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                        {option.title}
-                      </Grid>
-                      <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                        {option.date_of_creation}
-                      </Grid>
-                    </Grid>
-                  </li>
-                );
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  fullWidth
-                  variant="outlined"
-                  name="importclient"
-                  onChange={onChangeImportData}
-                  label="Enter Company Name "
-                />
-              )}
-            />
+                        <Autocomplete
+      fullWidth
+      // options={ImportContact.map((option) => option.title)}
+      options={ImportContact} // Pass the entire ImportContact array
+      getOptionLabel={(option) => option.title}
+      onChange={(e, value) => setImportdata(value)}
+      // inputValue={ImportContact}
+      noOptionsText="No matches found"
+      filterOptions={(x) => x}
+      autoComplete
+      includeInputInList
+    value={txtValue}
+    open={open} // Controlled by state
+    onOpen={() => setOpen(true)} // Open the Autocomplete dropdown
+    onClose={() => setOpen(false)} // Close the Autocomplete dropdown
+      renderOption={(props, option) => {
+        // Custom rendering for each option
+        console.log(option,"rendwered dynamic from apifff",props);
+        return (
+          <li {...props} 
+          onClick={() => {
+            
+            handleOptionClick(option); // Pass the id directly
+          }}
+  >
+            {/* Your custom rendering */}
+            <Grid container alignItems="center">
+            
+              <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                {option.title}          
+              </Grid>
+              <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                {option.date_of_creation}
+              </Grid>
+            </Grid>
+          </li>
+        );
+      }}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          fullWidth
+          variant="outlined"
+          name="importclient"
+          onChange={onChangeImportData}
+          label="Enter Company Name or Number"
+        />
+      )}
+    />
           </Grid>
           <Grid item lg={6} xs={6} md={6} className="d-flex align-items-center">
             <Button className="min-width-auto text-danger">
-              <HighlightOffIcon className="font-32" onClick={clearDataCard} />
+              <HighlightOffIcon className="font-32" onClick={clearDataCard}/>
             </Button>
           </Grid>
-
+          
         </Grid>
       </Box>
 
       <Grid container spacing={3} className="mt-2">
-        <Grid item lg={4} xs={6} md={6}>
+      <Grid item lg={4} xs={6} md={6}>
+          <TextField
+            fullWidth
+            id="standard-basic-id"
+            label="Client ID"
+            variant="outlined"
+            name="Clientid"
+            value={userDetail.Clientid}
+            onChange={onChange}
+          />
+        </Grid>
+      <Grid item lg={4} xs={6} md={6}>
           <TextField
             fullWidth
             id="CHNumber"
@@ -404,7 +474,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
             name="CHNumber"
             value={userDetail.CHNumber}
             disabled={true}
-          // onChange={onChange}
+            // onChange={onChange}
           />
         </Grid>
         <Grid item lg={4} xs={6} md={6}>
@@ -419,44 +489,35 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
           />
         </Grid>
 
-        <Grid item lg={4} xs={6} md={6}>
-          <TextField
-            fullWidth
-            id="standard-basic-id"
-            label="Client ID"
-            variant="outlined"
-            name="Clientid"
-            value={userDetail.Clientid}
-            onChange={onChange}
-          />
-        </Grid>
+       
 
         <Grid item lg={4} xs={6} md={6}>
-
+        {Isfetchdata && (
           <Autocomplete
             multiple
             // {...clientlist}
             options={folders}
-            getOptionLabel={(option) => option.Folder ? option.Folder : ""}
+              getOptionLabel={(option) => option.Folder ? option.Folder: ""}
             //  defaultValue={[def]}
-            // value={[defaultClient] || []}
-            //  defaultValue={defaultClient}
+              // value={defaultFolder || null}
+            // defaultValue={[folders[defaultClient]]}
+            value={defaultClient ? defaultClient : []}
             // defaultValue={defaultClient !== null ? [folders[defaultClient]] : []}
             id="clientlist"
             clearOnEscape
             onChange={onChangeclientlist}
-            renderOption={(props, option, { selected }) => (
-              <li {...props}>
-                <Checkbox
-                  icon={icon}
-                  checkedIcon={checkedIcon}
-                  style={{ marginRight: 8 }}
-                  checked={selected}
-                />
-                {option.Folder}
-              </li>
-            )}
-
+             renderOption={(props, option, { selected }) => (
+        <li {...props}>
+          <Checkbox
+            icon={icon}
+            checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+          />
+          {option.Folder}
+        </li>
+      )}
+      
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -464,15 +525,20 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
                 name="Selectclient"
                 // value={folders[defaultClient] || []}
                 onChange={onChange}
-                label="Client List"
+                label="Assigned Folder List"
               />
             )}
           />
+        )}
+          
         </Grid>
         <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
             <Autocomplete
-              {...bussinesslist}
+              // {...bussinesslist}
+              options={bussiness}
+              getOptionLabel={(option) => option.BussName}
+              value={defaultBussiness || null}
               id="clear-on-escape-bussiness"
               clearOnEscape
               onChange={onChangebussines}
@@ -482,7 +548,7 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
                   name="Bussiness"
                   value={userDetail.Bussiness}
                   onChange={onChange}
-                  label="Bussiness"
+                  label="Nature of Bussiness"
                   variant="outlined"
                 />
               )}
@@ -515,7 +581,10 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
         <Grid item lg={4} xs={6} md={6}>
           <FormControl fullWidth variant="outlined">
             <Autocomplete
-              {...sourcelist}
+              // {...sourcelist}
+              options={sources}
+              getOptionLabel={(option) => option.SourceName}
+              value={defaultSources || null}
               id="clear-on-escape-source"
               clearOnEscape
               onChange={onChangesource}
@@ -588,8 +657,8 @@ const AddClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompany
             value={userDetail.Email}
             onChange={onChange}
             error={!!errors['Email']} // Set error state based on whether there is an error message
-            helperText={errors['Email']} // Display error message if there is one
-
+          helperText={errors['Email']} // Display error message if there is one
+       
           />
         </Grid>
       </Grid>

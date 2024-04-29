@@ -32,16 +32,35 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import EditClientdetails from './EditClientdetails';
 import EditReference from './EditReference';
+import { toast } from 'react-toastify';
+import {useNavigate} from "react-router-dom";
 
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import UploadDocForClient from './UploadDocForClient';
+import CustomLoader from '../../components/CustomLoader';
+import { useDispatch } from "react-redux";
+import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
+import Fileformat from '../../images/files-icon/pdf.png';
+
+const agrno = localStorage.getItem("agrno");
+const Email = localStorage.getItem("Email");
+const password = localStorage.getItem("Password");
+const folderId = localStorage.getItem("FolderId");
 
 function ClientDetails() {
 
     const location = useLocation();
-
-    const [searchParams, setSearchParams] = useSearchParams();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [searchParams,setSearchParams] = useSearchParams();
     const tabValue = searchParams.get("val");
+    // const test = searchParams.get("OrgNo");
 
-    const { agrno, Email, password, folderId, originatorNo, globalSearchDocs } = location.state;
+    const originatorNo = searchParams.get("OrgNo");
+
+
+    const { globalSearchDocs } = location.state!==null? location.state: {globalSearchDocs:[]};
+
     const [selected, setSelected] = React.useState(false);
     const [value, setValue] = React.useState(tabValue ? tabValue : '1');
     const [clientDetails, setClientDetails] = useState({});
@@ -61,7 +80,19 @@ function ClientDetails() {
 
     // upload document modal start
     const [openUploadDocument, setOpenUploadDocument] = React.useState(false);
+
+    const [documentDate, setDocumentDate] = useState(null);
+    const [receivedDate, setReceivedDate] = useState(null);
+    const [createNewFileObj, setCreateNewFileObj] = useState(null);
+    const [txtFolderData, setTxtFolderData] = useState(null);
+    const [txtClientData, setTxtClientData] = useState(null);
+    const [txtSectionData, setTxtSectionData] = useState(null);
+    const [TaskType, setTaskType] = useState(null);
+    const [openModal, setOpenModal] = useState(null);
+    
+
     const handleClickOpenUploadDocument = () => {
+        dispatch(setOpenDocumentModalByRedux(true));
         setOpenUploadDocument(true);
     };
     // upload document modal end
@@ -115,7 +146,8 @@ function ClientDetails() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_RemoveToFavourite", json);
+                        // console.log("Json_RemoveToFavourite", json);
+                        toast.success("Removed from favourites");
                         setSelected(false);
                     }
                 }
@@ -138,8 +170,8 @@ function ClientDetails() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_AddToFavourite", json);
-                        let details = json.Table;
+                        // console.log("Json_AddToFavourite", json);
+                        toast.success("Added to favourites");
                         setSelected(true);
                     }
                 }
@@ -162,7 +194,7 @@ function ClientDetails() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_GetClientCardDetails", json);
+                        console.log("Json_GetClientCardDetailssssss", json);
                         setClientDetails(json);
                         setCompanyDetails(json.Table1);
                         setCompanyEditDetails(json.Table1);
@@ -175,32 +207,40 @@ function ClientDetails() {
             console.log("Error while calling Json_GetClientCardDetails", err)
         }
     }
+   
+
+
+
 
     useEffect(() => {
         Json_GetClientCardDetails();
+      
     }, []);
 
 
     // edit client modal
     const [Referance, setReferance] = React.useState(false);
-    const handleClickReferance = (e,originatorNo) => {
-    
-        console.log(originatorNo,"originatorNossss",clientDetails.Table1);
+    const handleClickReferance = (e, originatorNo) => {
+
+        console.log(originatorNo, "originatorNossss", clientDetails.Table1);
         setReferance(true);
     };
     const EditCLientHandleClose = () => {
         setReferance(false);
     };
-    
+
 
     return (
         <>
             <Box className="container-fluid p-0">
 
-                <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/Connections", tabName: "Connections" }, { tabLink: "/dashboard/clientDetails", tabName: "Client Details" }]} />
+                {/* <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/Connections", tabName: "Connections" }, { tabLink: "/dashboard/clientDetails", tabName: "Client Details" }]} /> */}
 
                 {globalSearchDocs.length === 0 && <Box className="d-flex align-items-center justify-content-between flex-wrap">
                     <Box className='d-flex flex-wrap align-items-center'>
+
+                        <ArrowBackIosIcon className='mb-2 pointer' onClick={()=>navigate("/dashboard/Connections")}/>
+
                         <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
                             {clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}
                         </Typography>
@@ -234,8 +274,31 @@ function ClientDetails() {
                     </Box>
                 </Box>}
 
-                <UploadDocument setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument} localtion={location}
-                ></UploadDocument>
+                {/* <UploadDocForClient setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument} localtion={location}
+                ></UploadDocForClient> */}
+
+{/* <UploadDocument
+                openUploadDocument={openUploadDocument}
+                setOpenUploadDocument={setOpenUploadDocument}
+                documentDate={documentDate}
+                setDocumentDate={setDocumentDate}
+                receivedDate={receivedDate}
+                setReceivedDate={setReceivedDate}
+                createNewFileObj={createNewFileObj}
+                setCreateNewFileObj={setCreateNewFileObj}
+                txtFolderData={txtFolderData}
+                setTxtFolderData={setTxtFolderData}
+                txtClientData={txtClientData}
+                setTxtClientData={setTxtClientData}
+                txtSectionData={txtSectionData}
+                setTxtSectionData={setTxtSectionData}
+                TaskType={TaskType}
+                setTaskType={setTaskType}
+                openModal={openModal}
+                setOpenModal={setOpenModal}
+                handleClickOpen={()=>{console.log("Testing on Add Document button")}}
+            ></UploadDocument> */}
+
                 <hr />
                 <Box sx={{ width: '100%', typography: 'body1' }} className="">
                     <TabContext value={value}>
@@ -251,28 +314,28 @@ function ClientDetails() {
                             </TabList>
                         </Box>
                         <TabPanel value="1" className='p-0'>
-                            <Box className="general-tab white-box">
+                            { ( clientDetails && clientDetails?.Table3?.length > 0 ) ?<><Box className="general-tab white-box">
                                 <Box className="row">
                                     {/* For CompanyDetails */}
-                                    <CompanyDetails companyDetails={companyDetails} />
+                                    <CompanyDetails companyDetails={companyDetails} originatorNo={originatorNo} Cls={Cls}/>
                                     {/* For ClientOverview */}
-                                    <ClientOverview Cls={Cls} webClientCLS={webClientCLS} locationState={location.state} />
+                                    <ClientOverview Cls={Cls} webClientCLS={webClientCLS} locationState={{agrno:agrno, Email:Email, password:password, folderId:folderId, originatorNo:originatorNo}} />
                                 </Box>
                             </Box>
                             <Box className='main-accordian'>
                                 {/* For UDFs */}
                                 <UdfCard data={clientDetails} />
-                            </Box>
+                            </Box></>:<CustomLoader/>}
                         </TabPanel>
 
                         <TabPanel value="2" className='p-0'>
-                            <ClientAddress></ClientAddress>
+                            <ClientAddress originatorNo={originatorNo}></ClientAddress>
                         </TabPanel>
-                        <TabPanel value="3" className='p-0'>
-                            <Contact></Contact>
+                        <TabPanel value="3" className='p-0 relative'>
+                            <Contact clientId={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorNo} clientName={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}></Contact>
                         </TabPanel>
-                        <TabPanel value="4" className='p-0'>
-                            <TaskList></TaskList>
+                        <TabPanel value="4" className='p-0 relative'>
+                            <TaskList clientName={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}></TaskList>
                         </TabPanel>
 
                         <TabPanel value="5" className='p-0 relative'>

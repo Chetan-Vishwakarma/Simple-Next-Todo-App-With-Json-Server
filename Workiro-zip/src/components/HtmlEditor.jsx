@@ -42,11 +42,13 @@ const HtmlEditorDX =({templateDataMarkup,setTemplateDataMarkup,setEditorContentV
 
 return(<>
   <Editor
-        apiKey='foebdh6s9f6mgpr7an0cfkxfggpd92q0e3jqurzedcarlcsn'
+        apiKey='o4y7u8xi67vf7efmqoitw2dd85wgsq7xoh7838djixgfddsl'
         initialValue={templateDataMarkup}
+        
         init={{
             height: "300px",
             menubar: false,
+            readonly: true,
             plugins: [
                 'a11ychecker','advlist','advcode','advtable','autolink','checklist','export',
                 'lists','link','image','charmap','preview','anchor','searchreplace','visualblocks',
@@ -56,7 +58,8 @@ return(<>
                 'alignleft aligncenter alignright alignjustify | ' +
                 'bullist numlist checklist outdent indent | removeformat | a11ycheck code table help',
             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-            resize: true // Enable resizing
+            resize: true, // Enable resizing,
+            
         }}
         onEditorChange={handleEditorChange}
         // onInit={(evt, editor) => {

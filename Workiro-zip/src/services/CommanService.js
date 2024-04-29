@@ -21,6 +21,18 @@ Json_GetContactListByFolder(obj,callBack) {
         }
     })
 }
+
+ getFileExtension = (fileName) => {
+    // Split the file name by the dot (.)
+    const parts = fileName.split('.');
+    // Return the last part, which is the extension
+    return parts[parts.length - 1];
+};
+
+getFileName(x){
+    let parts = x.split(".");
+   return parts[0];
+}
 ///////////////////end all contact
      ConfirmMessage(txt,callBack) {
         Swal.fire({
@@ -46,6 +58,22 @@ Json_GetContactListByFolder(obj,callBack) {
 
     ////////////////////////////////////////Portal Methods
    
+    Json_GetVersionByItemId(obj,callBack) {
+        try {
+            super.CreateNewServiceParamObject("Json_GetVersionByItemId",obj,true);
+            super.CallNewService("Json_GetVersionByItemId", function (status, Data) {
+                if (status) {
+                    return callBack(true, Data);
+                }
+                else {
+                    return callBack(false, []);
+                }
+            })
+        } catch (error) {
+            console.log("network error",error)
+        }
+       
+    }
     Json_ExplorerSearchDoc(obj,callBack) {
         super.CreateNewServiceParamObject("Json_ExplorerSearchDoc",obj,true);
         super.CallNewService("Json_ExplorerSearchDoc", function (status, Data) {
@@ -609,17 +637,7 @@ console.log("formattedDate",formattedDate)
         })
     }
 
-    Json_ExplorerSearchDoc(obj, callBack) {
-        super.CreateNewServiceParamObject("Json_ExplorerSearchDoc", obj, true);
-        super.CallNewService("Json_ExplorerSearchDoc", function (status, Data) {
-            if (status) {
-                return callBack(true, Data);
-            }
-            else {
-                return callBack(false, []);
-            }
-        })
-    }
+    
     Json_GetClientCardDetails(obj, callBack) {
         super.CreateNewServiceParamObject("Json_GetClientCardDetails", obj, false);
         super.CallNewService("Json_GetClientCardDetails", function (status, Data) {
@@ -682,17 +700,7 @@ console.log("formattedDate",formattedDate)
         })
     }
 
-    Json_GetContactListByFolder(obj, callBack) {
-        super.CreateNewServiceParamObject("Json_GetContactListByFolder", obj, true);
-        super.CallNewService("Json_GetContactListByFolder", function (status, Data) {
-            if (status) {
-                callBack(true, Data);
-            }
-            else {
-                callBack(false, []);
-            }
-        })
-    }
+    
 
     ListEditableTemplates(obj, callBack) {
         super.CreateNewServiceParamObject("Json_ListEditableTemplates", obj, true);
@@ -1021,7 +1029,7 @@ console.log("formattedDate",formattedDate)
      }
 
      PortalUserAccountCreated_Json(obj,callBack){   
-        super.CreateNewServiceParamObject("PortalUserAccountCreated_Json",obj,true);
+        super.CreateNewServiceParamObject("PortalUserAccountCreated_Json",obj,false);
         super.CallNewService("PortalUserAccountCreated_Json",function(status,Data){
             if(status){
                 return callBack(true,Data);
@@ -1031,6 +1039,19 @@ console.log("formattedDate",formattedDate)
             }
         })
      }
+
+     PortalUserAccountUpdated_Json(obj,callBack){   
+        super.CreateNewServiceParamObject("PortalUserAccountUpdated_Json",obj,false);
+        super.CallNewService("PortalUserAccountUpdated_Json",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
+
      Json_CRMSaveUDFValues(obj,callBack){   
         super.CreateNewServiceParamObject("Json_CRMSaveUDFValues",obj,true);
         super.CallNewService("Json_CRMSaveUDFValues",function(status,Data){
@@ -1043,8 +1064,8 @@ console.log("formattedDate",formattedDate)
         })
      }
      AddContact(obj,callBack){   
-        super.CreateNewServiceParamObject("AddContact",obj,true);
-        super.CallNewService("AddContact",function(status,Data){
+        super.CreateNewServiceParamObject("Json_AddContact",obj,true);
+        super.CallNewService("Json_AddContact",function(status,Data){
             if(status){
                 return callBack(true,Data);
             }
@@ -1053,7 +1074,17 @@ console.log("formattedDate",formattedDate)
             }
         })
      }
-     
+     UpdateContact(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_UpdateContact",obj,true);
+        super.CallNewService("Json_UpdateContact",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
      Json_SetClientAddress(obj,callBack){   
         super.CreateNewServiceParamObject("Json_SetClientAddress",obj,true);
         super.CallNewService("Json_SetClientAddress",function(status,Data){
@@ -1070,7 +1101,7 @@ console.log("formattedDate",formattedDate)
         super.CreateNewServiceParamObject("Json_GetAllContacts",obj,true);
         super.CallNewService("Json_GetAllContacts", function (status, Data) {
             if (status) {
-                if (Data != "") {
+                if (Data !=="") {
                     return callback(true, Data);
                 }
                 else {
@@ -1083,8 +1114,9 @@ console.log("formattedDate",formattedDate)
     Json_CompanyHouseDetails(obj,callback) {
         super.CreateNewServiceParamObject("Json_CompanyHouseDetails",obj,false);
         super.CallNewService("Json_CompanyHouseDetails", function (status, Data) {
+            // console.log("errordataget111111111111111111111",status,Data);
             if (status) {
-                if (Data != "") {
+                if (Data !=="") {
                     return callback(true, Data);
                 }
                 else {
@@ -1128,9 +1160,132 @@ console.log("formattedDate",formattedDate)
             }
         })
      }
-    Json_CompanyHouseDetails(obj,callback) {
-        super.CreateNewServiceParamObject("Json_CompanyHouseDetails",obj,false);
-        super.CallNewService("Json_CompanyHouseDetails", function (status, Data) {
+   
+
+    Json_GetClientAddresses(obj,callback) {
+        super.CreateNewServiceParamObject("Json_GetClientAddresses",obj,false);
+        super.CallNewService("Json_GetClientAddresses", function (status, Data) {
+            if (status) {
+                if (Data !== "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+    Json_GetClientAddressesAdd(obj,callback) {
+        super.CreateNewServiceParamObject("Json_GetClientAddresses",obj,true);
+        super.CallNewService("Json_GetClientAddresses", function (status, Data) {
+            if (status) {
+                if (Data !== "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+
+    Json_GetClientAssignedUnassignedFolderList(obj,callback) {
+        super.CreateNewServiceParamObject("Json_GetClientAssignedUnassignedFolderList",obj,false);
+        super.CallNewService("Json_GetClientAssignedUnassignedFolderList", function (status, Data) {
+            if (status) {
+                if (Data !=="") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+    Json_UpdateClient(obj,callback) {
+        super.CreateNewServiceParamObject("Json_UpdateClient",obj,false);
+        super.CallNewService("Json_UpdateClient", function (status, Data) {
+            if (status) {
+                if (Data !=="") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+    Json_UpdateClientField(obj,callback) {
+        super.CreateNewServiceParamObject("Json_UpdateClientField",obj,false);
+        super.CallNewService("Json_UpdateClientField", function (status, Data) {
+            if (status) {
+                if (Data !== "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+    Json_ChangeClientID(obj,callback) {
+        super.CreateNewServiceParamObject("Json_ChangeClientID",obj,false);
+        super.CallNewService("Json_ChangeClientID", function (status, Data) {
+            if (status) {
+                if (Data !=="") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+    Json_AssignProjectsToClient(obj,callback) {
+        super.CreateNewServiceParamObject("Json_AssignProjectsToClient",obj,false);
+        super.CallNewService("Json_AssignProjectsToClient", function (status, Data) {
+            if (status) {
+                if (Data !=="") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+
+    Json_GetAllSentMessages(obj,callback) {
+        super.CreateNewServiceParamObject("Json_GetAllSentMessages",obj,false);
+        super.CallNewService("Json_GetAllSentMessages", function (status, Data) {
+            if (status) {
+                if (Data !=="") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+
+    Json_GetAllReceivedMessages(obj,callback) {
+        super.CreateNewServiceParamObject("Json_GetAllReceivedMessages",obj,false);
+        super.CallNewService("Json_GetAllReceivedMessages", function (status, Data) {
+            if (status) {
+                if (Data !== "") {
+                    return callback(true, Data);
+                }
+                else {
+                    return callback(false, []);
+                }
+            }
+        })
+    }
+
+    Json_GetAllClientList(obj,callback) {
+        super.CreateNewServiceParamObject("Json_GetAllClientList",obj,false);
+        super.CallNewService("Json_GetAllClientList", function (status, Data) {
             if (status) {
                 if (Data != "") {
                     return callback(true, Data);
@@ -1141,4 +1296,66 @@ console.log("formattedDate",formattedDate)
             }
         })
     }
+
+    Json_RenameDocument(obj, callBack) {
+        super.CreateNewServiceParamObject("Json_RenameDocument", obj, true);
+        super.CallNewService("Json_RenameDocument", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+
+    Json_AddToWork(obj, callBack) {
+        //let o = { ProjectId: FolderId,SectionId: };
+        super.CreateNewServiceParamObject("Json_AddToWork", obj, true);
+        super.CallNewService("Json_AddToWork", function (status, Data) {
+          if (status) {
+            if (Data != "") {
+              return callBack(true, Data);
+            } else {
+              return callBack(false, []);
+            }
+          } else {
+            // console.log("status", status);
+          }
+        });
+      }
+
+      TeamSolution(obj, callBack) {
+        //let o = { ProjectId: FolderId,SectionId: };
+        super.CreateNewServiceParamObject("TeamSolution", obj, true);
+        super.CallNewService("TeamSolution", function (status, Data) {
+          if (status) {
+            if (Data != "") {
+              return callBack(true, Data);
+            } else {
+              return callBack(false, []);
+            }
+          } else {
+            // console.log("status", status);
+          }
+        });
+      }
+
+
+      Json_GetUserComments(obj, callBack) {
+        //let o = { ProjectId: FolderId,SectionId: };
+        super.CreateNewServiceParamObject("Json_GetUserComments", obj, true);
+        super.CallNewService("Json_GetUserComments", function (status, Data) {
+          if (status) {
+            if (Data != "") {
+              return callBack(true, Data);
+            } else {
+              return callBack(false, []);
+            }
+          } else {
+            // console.log("status", status);
+          }
+        });
+      }
+
 }

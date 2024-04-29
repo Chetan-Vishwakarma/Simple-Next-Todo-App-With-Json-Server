@@ -9,11 +9,13 @@ import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutli
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import moment from 'moment';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import DocumentsVewModal from "../client/utils/DocumentsVewModal";
 import Activity from "../client/utils/Activity";
+import { ToastContainer, toast } from 'react-toastify';
 import DataGrid, {
     Column,
     Grouping,
@@ -30,43 +32,38 @@ import DataGrid, {
 import DataNotFound from "./DataNotFound";
 import CommanCLS from "../services/CommanService";
 import TaskDetailModal from "./TaskDetailModal";
+import CreateNewModalTask from "./CreateNewModal";
+import { useDispatch } from "react-redux";
+import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux } from "../redux/reducers/counterSlice";
 
+
+
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import GetFileType from "./FileType";
 
 // sadik code start
-function createData(document, details) {
-    return { document, details };
-}
-const rows = [
-    createData('Folder', 'Client'),
-    createData('Client', '212121Test'),
-    createData('Section', '01. General Correspondence'),
-    createData('Received Date', '02/03/2024'),
-    createData('Doc. Date', '02/03/2024'),
-    createData('Description', 'General Letter'),
-    createData('Notes', 'Yes'),
-    createData('Category', '1. Received'),
-    createData('DocDirection', 'Incoming'),
-    createData('ItemId', 998301),
-    createData('Tax Year', '18/19'),
-    createData('Financial Year', '2020'),
-    createData('From Email', 'test@gmail.com'),
-    createData('to Email', 'test@gmail.com'),
-    createData('CC', 'test@gmail.com')
-];
+// function createData(document, details) {
+//     return { document, details };
+// }
 
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+
+//const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 // sadik code end
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
-const password = localStorage.getItem("password");
+const password = localStorage.getItem("Password");
+const folderId = localStorage.getItem("FolderId");
 const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
-const baseUrlDocuSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
+const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+//const baseUrlDocuSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
 function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, selectedGroup }) {
-
+    const dispatch = useDispatch();
     const Cls = new CommanCLS(baseUrl, agrno, Email, password);
-    const ClsDocuSms = new CommanCLS(baseUrlDocuSms, agrno, Email, password);
+    const ClsPractice = new CommanCLS(baseUrlPractice, agrno, Email, password);
+
+    //const ClsDocuSms = new CommanCLS(baseUrlDocuSms, agrno, Email, password);
 
     const [openPDFView, setOpenPDFView] = React.useState(false);
 
@@ -77,26 +74,31 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     const [selectedTask, setSelectedTask] = useState({});
     const [isApi, setIsApi] = useState(false);
 
+    const [getAudit, setGetAudit] = useState([]);
+
     // modal
     const [openModal, setOpen] = React.useState(false);
+    const [isLoadingDoc, setIsLoadingDoc] = useState(true);
 
     const handleClickDetailOpen = () => {
         setOpen(true);
     };
 
     const handleClickOpenPDFView = (event, data) => {
-        event.preventDefault();
+        //console.log("fjdsfdlsjfljfllj main function");
+        // event.preventDefault();
         event.stopPropagation();
         setSelectedDocument(data);
         setOpenPDFView(true);
+        setIsLoadingDoc(true);
     };
 
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+    // const [anchorEl, setAnchorEl] = React.useState(null);
+    // const open = Boolean(anchorEl);
+    // const handleClick = (event) => {
+    //     setAnchorEl(event.currentTarget);
+    // };
     // const handleClose = () => {
     //     // setAnchorEl(null);
     //     setOpen(false)
@@ -116,6 +118,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState({});
     const DocumentList = (index) => Boolean(anchorElDocumentList[index]);
     const handleClickDocumentList = (event, rowData) => {
+        // console.log("fjdsfdlsjfljfllj problem detect");
         event.stopPropagation();
         const newAnchorElDocumentList = { ...anchorElDocumentList };
         newAnchorElDocumentList[rowData.key] = event.currentTarget;
@@ -128,6 +131,62 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         delete newAnchorElDocumentList[rowData.key];
         setAnchorElDocumentList(newAnchorElDocumentList);
     };
+
+    const [editField, setEditField] = useState("");
+    const [testForEdit, setTestForEdit] = useState("");
+    const [renderTest, setRenderTest] = useState({});
+
+    const [editingIndex, setEditingIndex] = useState(null);
+    const [updatedSubject, setUpdatedSubject] = useState('');
+    const [test, setTest] = useState({});
+
+    const handleEdit = (index, data) => {
+        console.log("Editing index:", index);
+        setEditingIndex(index);
+        setUpdatedSubject(data.Description);
+    };
+
+    const handleEditChange = (event) => {
+        setUpdatedSubject(event.target.value);
+    };
+
+    const Json_RenameDocument = (doc, newDesc, index) => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ItemId: doc["Registration No."] ? doc["Registration No."] : "",
+            Description: newDesc,
+            FolderId: folderId
+        };
+        Cls.Json_RenameDocument(obj, (sts, data) => {
+            if (sts) {
+                if (data) {
+                    let json = JSON.parse(data);
+                    console.log("Json_RenameDocument", json);
+                    if (json.Status === "Success") {
+                        // Json_getRecentDocumentList();
+                        toast.success(json.Message);
+                        setEditingIndex(null);
+                        setTest({ ...test, [index]: newDesc });
+                    } else {
+                        toast.error("Unable to rename this document");
+                    }
+                }
+            }
+        });
+    }
+
+    const handleSave = (newDesc, oldDesc, doc, index) => {
+        if (oldDesc === newDesc) return;
+        Json_RenameDocument(doc, newDesc, index);
+    };
+
+    const handleEditField = (event, key) => {
+        event.stopPropagation();
+        setEditField(key);
+        setTestForEdit("");
+    }
 
     // const Json_Get_CRM_Task_ActivityByTaskId=(sTask)=>{
     //     let obj = {
@@ -146,7 +205,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     //     }catch(err){
     //         console.log("Error while calling Json_Get_CRM_Task_ActivityByTaskId",err);
     //     }
-    // }
+    // } 
 
     const Json_CRM_GetOutlookTask = (event, sTask) => {
         event.preventDefault();
@@ -156,10 +215,13 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
             password: localStorage.getItem("Password")
         };
         try {
-            Cls.Json_CRM_GetOutlookTask(obj, (sts, data) => {
+            Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
                 const res = JSON.parse(data);
                 if (res.Table) {
+
                     const fltTask = res.Table.filter(itm => itm.ID === sTask.Taskid);
+                    // res.Table.filter(itm =>console.log(`ertiretufjhjfg ${itm.ID}`,itm.ID))
+                    // console.log(`ertiretufjhjfg taskID`,sTask.Taskid);
                     const formattedTasks = fltTask.map((task) => {
                         let timestamp, timestamp2;
                         if (task.EndDateTime) {
@@ -174,8 +236,13 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
 
                         return { ...task, EndDateTime: date, CreationDate: date2 };
                     });
-                    setSelectedTask(formattedTasks[0]);
-                    handleClickDetailOpen(formattedTasks[0]);
+                    // console.log("ertiretufjhjfg",formattedTasks);
+                    if (formattedTasks.length > 0) {
+                        setSelectedTask(formattedTasks[0]);
+                        handleClickDetailOpen(formattedTasks[0]);
+                    } else if (formattedTasks.length === 0) {
+                        toast.error("Unable to open this task due to internal issue");
+                    }
                 }
             });
         } catch (err) {
@@ -204,6 +271,55 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         }
     }
 
+    const Json_GetAudit = (sDoc) => {
+        console.log("Json_GetAudit", sDoc);
+        try {
+            let obj = {
+                itemid: sDoc["Registration No."],
+                password: localStorage.getItem("Password")
+            }
+            Cls.Json_GetAudit(obj, function (sts, data) {
+                if (sts && data) {
+                    let parse = JSON.parse(data);
+                    let table = parse.Table;
+                    if (table.length > 0) {
+                        // const formattedActivity = table.map((Actioned) => {
+                        //     let ActioneddATE;
+                        //     if (Actioned["Actioned Date"]) {
+                        //         ActioneddATE = moment(Actioned["Actioned Date"]).format("YYYY/MM/DD HH:mm:ss");
+                        //     }
+                        //     // const date = new Date(ActivityDate);
+                        //     return { ...Actioned, ["Actioned Date"]: ActioneddATE };
+                        // });
+
+                        const formattedActivity = table.map(itm => {
+                            if (itm["Actioned Date"]) {
+                                const timeStamp1 = parseInt(itm["Actioned Date"].match(/\d+/)[0]);
+                                itm["Actioned Date"] = new Date(timeStamp1);
+                            }
+
+                            //const timeStamp2 = parseInt(itm["Start"].match(/\d+/)[0]);
+                            //itm["Start"] = new Date(timeStamp2);
+                            return itm;
+                        })
+
+                        if (formattedActivity.length > 0) {
+                            const filteredArray = formattedActivity.filter(item => item.Comments !== null);
+
+                            setGetAudit(filteredArray);
+                            console.log("Json_GetAudit", filteredArray)
+                        }
+
+
+                    }
+                }
+            })
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
+        }
+
+    }
+
     // Document details List
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
     const handleClickOpenDocumentDetailsList = (event, sDoc) => {
@@ -211,7 +327,40 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         setDocForDetails(sDoc);
         event.stopPropagation();
         setOpenDocumentDetailsList(true);
+        Json_GetAudit(sDoc);
+        console.log("selected document data obj", sDoc)
+        Json_GetVersionByItemId(sDoc)
+
     };
+
+    const [getVertion, setGetVertion] = React.useState([]);
+
+    function Json_GetVersionByItemId(data) {
+        console.log("selected document data obj333", data)
+        try {
+            let obj = {};
+            obj.itemId = data["Registration No."];
+            Cls.Json_GetVersionByItemId(obj, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        let tbl = js.Table;
+                        if (tbl.length > 0) {
+                            console.log("Json_GetVersionByItemId", tbl)
+                            setGetVertion(tbl)
+                        }
+
+                    }
+
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetVersionByItemId error", error)
+        }
+    }
+
+
     const handleCloseDocumentDetailsList = (event) => {
         event.stopPropagation();
         setOpenDocumentDetailsList(false);
@@ -226,7 +375,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
 
     // end
     const customSortingMethod = (a, b) => {
-        console.log("dffdsf", a, b);
+        //console.log("dffdsf", a, b);
         const dateA = new Date(a);
         const dateB = new Date(b);
         return dateA - dateB;
@@ -237,12 +386,161 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         return `${dateObject.getDate()}/${dateObject.getMonth() + 1}/${dateObject.getFullYear()}`;
     }
 
+    function Json_GetItemBase64DataById(item, tskType) {
+        try {
+            let filesData = [];
+            let obj = {};
+            obj.ItemId = item["Registration No."]
+            // console.log("handle change fileData1", obj);
+
+            Cls.Json_GetItemBase64DataById(obj, function (sts, base64data) {
+                if (sts) {
+                    if (base64data !== "No Data Exist") {
+                        const fileData = {
+                            FileName: item.Description + "." + item.Type,
+                            Base64: base64data ? base64data : "", // Base64 data of the file
+                            FileSize: "",
+                            Preview: "", // Data URL for preview
+                            DocId: item["Registration No."],
+                            Guid: "",
+                            FileType: item["Type"].toLowerCase(),
+                            Description: item.Description
+
+                        };
+                        console.log("handle change fileData", fileData)
+                        filesData.push(fileData);
+
+                        let tempTxtClientData = { Client: item.Client, ClientID: item.SenderId };
+                        let tempTxtSectionData = { Sec: item.Section, SecID: item.PostItemTypeID };
+                        let tempFolderData = { Folder: item.Folder, FolderID: item.ProjectId };
+
+                        dispatch(setClientAndDocDataForTaskModalRedux({ TaskType: tskType, createNewFileObj: filesData, txtClientData: tempTxtClientData, txtSectionData: tempTxtSectionData, txtFolderData: tempFolderData, }));
+                        console.log("dgjkdlgjroeti", tskType);
+                        dispatch(handleOpenModalRedux(tskType));
+                    }
+                    else {
+                        toast.error(item.Description + "was not uploaded as it had no data")
+                    }
+
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetItemBase64DataById error", error)
+        }
+
+    }
+
+    const handleCloseDocumentPublish = (event, rowData) => {
+        if (rowData) {
+            console.log("row selected data", rowData)
+            event.stopPropagation();
+            const newAnchorElDocumentList = { ...anchorElDocumentList };
+            delete newAnchorElDocumentList[rowData.key];
+            setAnchorElDocumentList(newAnchorElDocumentList);
+            let res = Json_GetItemBase64DataById(rowData.data, "Portal");
+            if (res) {
+                dispatch(handleOpenModalRedux("Portal"));
+            }
+        }
+    };
+
+
+    const handleCloseDocumentCreateTask = (event, rowData) => {
+        if (rowData) {
+            // console.log("row selected data", rowData)
+            event.stopPropagation();
+            const newAnchorElDocumentList = { ...anchorElDocumentList };
+            delete newAnchorElDocumentList[rowData.key];
+            setAnchorElDocumentList(newAnchorElDocumentList);
+            Json_GetItemBase64DataById(rowData.data, "CRM");
+        }
+    };
+
+    const handleCloseDocumentDownload = (event, rowData) => {
+        if (rowData) {
+            console.log("row selected data", rowData)
+            event.stopPropagation();
+            const newAnchorElDocumentList = { ...anchorElDocumentList };
+            delete newAnchorElDocumentList[rowData.key];
+            setAnchorElDocumentList(newAnchorElDocumentList);
+            downloadFile(rowData.data)
+        }
+    };
+
+    function downloadFile(item) {
+
+        try {
+            let obj = {};
+            obj.ItemId = item["Registration No."]
+            console.log("handle change fileData1", obj)
+
+            Cls.Json_GetItemBase64DataById(obj, function (sts, base64data) {
+                if (sts) {
+                    if (base64data !== "No Data Exist") {
+                        let ankr = document.createElement("a");
+                        ankr.href = `data:application/octet-stream;base64,${base64data}`;
+                        ankr.download = item.Path;
+                        ankr.click();
+                    }
+                    else {
+                        toast.error(item.Description + "was not uploaded as it had no data")
+                    }
+
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetItemBase64DataById error", error)
+        }
+
+
+
+    }
+
+    const handleCloseDocumentOpenDocumentBrowers = (event, rowData) => {
+        if (rowData) {
+            event.stopPropagation();
+            let selectedDocument = rowData.data;
+            const newAnchorElDocumentList = { ...anchorElDocumentList };
+            delete newAnchorElDocumentList[rowData.key];
+            setAnchorElDocumentList(newAnchorElDocumentList);
+            var IsApproved = selectedDocument["IsApproved"];
+            var PortalDocId = selectedDocument["PortalDocId"];
+            let IsApp = "";
+            let PortalID = "";
+            if (IsApproved === "SIG" && PortalDocId !== "") {
+                IsApp = IsApproved;
+                PortalID = PortalDocId;
+            }
+            let ViwerUrl = `https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${selectedDocument["Registration No."]}&ext=${selectedDocument.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
+            window.open(ViwerUrl)
+
+
+        }
+    };
+
+
+    // Function to get file type icon based on row data
+    
+
+
     return (
         <>
             <Box>
+                {/* {openModals && openModals && <CreateNewModalTask                              
+                               TaskType={TaskType}
+                               createNewFileObj={createNewFileObj}
+                               txtClientData={txtClientData}
+                               txtSectionData={txtSectionData}
+                               txtFolderData={txtFolderData}
+                               openModal={openModals}
+                               setOpenModal={setopenModal}
+                           ></CreateNewModalTask>} */}
+
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
-                <DocumentsVewModal openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
+                <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument} Json_CRM_GetOutlookTask={Json_CRM_GetOutlookTask}></DocumentsVewModal>
                 {/* <Box className='d-flex mb-3 mt-2'>
                     {/* <FormControlLabel control={<Checkbox />} className="p-0 m-0 ms-2 ps-1" size="small"/> 
 
@@ -278,22 +576,38 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                         // Set the groupIndex to 0 to enable grouping by this column
                         dataType="string"  // Set the data type to "string" for proper grouping
                         cellRender={(data) => {
+                            let rd = data.data; 
+                          // console.log("file type11",data)
                             return <Box className="file-uploads">
-                                <label className="file-uploads-label file-uploads-document" onClick={(event) => handleClickOpenPDFView(event, data.data)}>
+                                <label className="file-uploads-label file-uploads-document" onClick={(event) => {
+                                    event.stopPropagation();
+                                    event.preventDefault();
+                                    handleCloseDocument(event, data);
+                                }} onDoubleClick={(event) => {
+                                    handleClickOpenPDFView(event, data.data);
+                                    handleCloseDocument(event, data);
+                                }}>
                                     <Box className="d-flex align-items-center">
 
                                         {/* <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" />  */}
 
-                                        <DescriptionIcon
-                                            sx={{
-                                                fontSize: 32,
-                                            }}
-                                            className='me-2 ms-0'
-                                        />
+                                        {/* <div className='img-format'>
+                                            <img src={Fileformat} />
+                                        </div> */}
+
+                                        <GetFileType Type={rd.Type?rd.Type.toLowerCase():null}></GetFileType>
                                         <Box className="upload-content pe-3">
-                                            <Typography variant="h4" >
-                                                {data.data.Description ? data.data.Description : "Demo"}
-                                            </Typography>
+                                            {editingIndex === data.key ? <input
+                                                type="text"
+                                                defaultValue={data.data.Description}
+                                                value={updatedSubject}
+                                                onChange={handleEditChange}
+                                                autoFocus
+                                                onBlur={(e) => handleSave(e.target.value, data.data.Description, data.data, data.key)}
+                                                className='edit-input'
+                                            /> : <Typography variant="h4" >
+                                                {test[data.key] ? test[data.key] : data.data.Description ? data.data.Description : "Demo"}
+                                            </Typography>}
                                             <Typography variant="body1">
                                                 {/* Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span>  */}
                                                 Date <span className='sembold'>{data.data["Item Date"] ? data.data["Item Date"] : ""}</span> |
@@ -307,7 +621,9 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             aria-controls={anchorElDocumentList[data.key] ? `basic-menu-${data.key}` : undefined}
                                             aria-haspopup="true"
                                             aria-expanded={Boolean(anchorElDocumentList[data.key])}
-                                            onClick={(event) => handleClickDocumentList(event, data)}
+                                            onClick={(event) => {
+                                                handleClickDocumentList(event, data)
+                                            }}
                                             className='min-width-auto'
                                         >
                                             <MoreVertIcon />
@@ -322,6 +638,22 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             }}
                                             className='custom-dropdown'
                                         >
+                                            <MenuItem
+                                                onClick={(event) => handleCloseDocumentCreateTask(event, data)}
+                                            >
+                                                <ListItemIcon>
+                                                    <CloudUploadIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Create Task</MenuItem>
+                                            <MenuItem
+                                                onClick={(event) => handleCloseDocumentPublish(event, data)}
+                                            >
+                                                <ListItemIcon>
+                                                    <CloudUploadIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Publish
+                                            </MenuItem>
+
                                             <MenuItem onClick={(event) => {
                                                 handleCloseDocument(event, data)
                                                 handleClickOpenDocumentDetailsList(event, data.data)
@@ -339,21 +671,25 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                                 </ListItemIcon>
                                                 Upload New Version</MenuItem>
                                             <MenuItem
-                                                onClick={(event) => handleCloseDocument(event, data)}
+                                                onClick={(event) => {
+                                                    // handleEditField(event, data.key);
+                                                    handleEdit(data.key, data.data);
+                                                    handleCloseDocument(event, data);
+                                                }}
                                             >
                                                 <ListItemIcon>
                                                     <DriveFileRenameOutlineIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Rename Document</MenuItem>
                                             <MenuItem
-                                                onClick={(event) => handleCloseDocument(event, data)}
+                                                onClick={(event) => handleCloseDocumentOpenDocumentBrowers(event, data)}
                                             >
                                                 <ListItemIcon>
                                                     <TravelExploreIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Open in Browser</MenuItem>
                                             <MenuItem
-                                                onClick={(event) => handleCloseDocument(event, data)}
+                                                onClick={(event) => handleCloseDocumentDownload(event, data)}
                                             >
                                                 <ListItemIcon>
                                                     <CloudDownloadIcon fontSize="medium" />
@@ -366,592 +702,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                         }}
                     />
                 </DataGrid>}
-
-
-                {/* {!isGroupBy&&advFilteredResult.length>0 ? (advFilteredResult.map((item) => {
-                    return <>
-                        <Box className="file-uploads">
-                            <label className="file-uploads-label file-uploads-document" onClick={() => handleClickOpenPDFView(item)}>
-                                <Box className="d-flex align-items-center">
-
-                                    <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" />
-
-                                    <DescriptionIcon
-                                        sx={{
-                                            fontSize: 32,
-                                        }}
-                                        className='me-2 ms-0'
-                                    />
-                                    <Box className="upload-content pe-3">
-                                        <Typography variant="h4" >
-                                        {item.Description ? item.Description : "Demo"}
-                                        </Typography>
-                                        <Typography variant="body1">
-                                            Size:  <span className='sembold'>{item["FileSize"] ? item["FileSize"] : ""}</span> | Date <span className='sembold'>{item["Item Date"] ? item["Item Date"] : ""}</span>
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                                <Box>
-                                    <Button
-                                        id="basic-button"
-                                        aria-controls={DocumentList ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={DocumentList ? 'true' : undefined}
-                                        onClick={handleClickDocumentList}
-                                        className='min-width-auto'
-                                    >
-                                        <MoreVertIcon />
-                                    </Button>
-                                    {/* <Menu
-                                        id="basic-menu"
-                                        anchorEl={anchorElDocumentList}
-                                        open={DocumentList}
-                                        onClose={handleCloseDocument}
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem onClick={() => {
-                                            handleCloseDocument()
-                                            handleClickOpenDocumentDetailsList()
-                                        }}>
-                                            <ListItemIcon>
-                                                <ArticleIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Document Details</MenuItem>
-
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <CloudUploadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Upload New Version</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <DriveFileRenameOutlineIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Rename Document</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <TravelExploreIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Open in Browser</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <CloudDownloadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Download</MenuItem>
-                                    </Menu> }
-                                </Box>
-                            </label>
-                        </Box>
-                        {/* file upload end }
-                    </>
-                })):isGroupBy?(
-                    <TreeView
-                    aria-label="multi-select"
-                    defaultCollapseIcon={<ExpandMoreIcon />}
-                    defaultExpandIcon={<ChevronRightIcon />}
-                    multiSelect
-                >
-                    {Object.entries(groupByFilterResult).length>0 && Object.keys(groupByFilterResult).map((key)=>{
-                        return <TreeItem key={key} nodeId={key} label={key!==""?key:"Demo"}>
-                        {groupByFilterResult[key].map((item, index) => (
-                        //   <TreeItem key={index} nodeId={`${key}-${index}`} label={item["Description"]}>
-                            <Box className="file-uploads">
-                                        <label className="file-uploads-label file-uploads-document">
-                                            <Box className="d-flex align-items-center">
-
-                                                <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
-
-                                                <DescriptionIcon
-                                                    sx={{
-                                                        fontSize: 32,
-                                                    }}
-                                                    className='me-2 ms-0'
-                                                />
-                                                <Box className="upload-content pe-3">
-                                                    <Typography variant="h4" >
-                                                        {item["Description"]!=="" ? item["Description"]: "Demo"}
-                                                    </Typography>
-                                                    <Typography variant="body1">
-                                                        Size:  <span className='sembold'>{item["FileSize"]!==""?item["FileSize"]:""}</span> | Date <span className='sembold'>{item["Item Date"]!==""?item["Item Date"]:""}</span>
-                                                    </Typography>
-                                                </Box>
-                                            </Box>
-                                            <Box>
-                                                <Button
-                                                    id="basic-button"
-                                                    aria-controls={DocumentList ? 'basic-menu' : undefined}
-                                                    aria-haspopup="true"
-                                                    aria-expanded={DocumentList ? 'true' : undefined}
-                                                    onClick={handleClickDocumentList}
-                                                    className='min-width-auto'
-                                                >
-                                                    <MoreVertIcon />
-                                                </Button>
-                                                <Menu
-                                                    id="basic-menu"
-                                                    anchorEl={anchorElDocumentList}
-                                                    open={DocumentList}
-                                                    onClose={handleCloseDocument}
-                                                    MenuListProps={{
-                                                        'aria-labelledby': 'basic-button',
-                                                    }}
-                                                    className='custom-dropdown'
-                                                >
-                                                    <MenuItem onClick={() => {
-                                                        handleCloseDocument()
-                                                        handleClickOpenDocumentDetailsList()
-                                                    }}>
-                                                        <ListItemIcon>
-                                                            <ArticleIcon fontSize="medium" />
-                                                        </ListItemIcon>
-                                                        Document Details</MenuItem>
-
-                                                    <MenuItem onClick={handleCloseDocument}>
-                                                        <ListItemIcon>
-                                                            <CloudUploadIcon fontSize="medium" />
-                                                        </ListItemIcon>
-                                                        Upload New Version</MenuItem>
-                                                    <MenuItem onClick={handleCloseDocument}>
-                                                        <ListItemIcon>
-                                                            <DriveFileRenameOutlineIcon fontSize="medium" />
-                                                        </ListItemIcon>
-                                                        Rename Document</MenuItem>
-                                                    <MenuItem onClick={handleCloseDocument}>
-                                                        <ListItemIcon>
-                                                            <TravelExploreIcon fontSize="medium" />
-                                                        </ListItemIcon>
-                                                        Open in Browser</MenuItem>
-                                                    <MenuItem onClick={handleCloseDocument}>
-                                                        <ListItemIcon>
-                                                            <CloudDownloadIcon fontSize="medium" />
-                                                        </ListItemIcon>
-                                                        Download</MenuItem>
-                                                </Menu>
-                                            </Box>
-                                        </label>
-                                    </Box>
-                        //   </TreeItem>
-                        ))}
-                      </TreeItem>
-                    })}
-                    {/* <TreeItem nodeId="1" label="Applications">
-                        <TreeItem nodeId="2" label="CLient Group A" />
-                        <TreeItem nodeId="3" label="CLient Group B" />
-                        <TreeItem nodeId="4" label="CLient Group C" />
-                    </TreeItem> */}
-
-                {/* <TreeItem nodeId="5" label="Documents">
-                        <TreeItem nodeId="6" label="CLient Group">
-
-                            {Array(4).fill("").map(() => {
-                                return <>
-                                    <Box className="file-uploads">
-                                        <label className="file-uploads-label file-uploads-document">
-                                            <Box className="d-flex align-items-center">
-
-                                                <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
-
-                                                <DescriptionIcon
-                                                    sx={{
-                                                        fontSize: 32,
-                                                    }}
-                                                    className='me-2 ms-0'
-                                                />
-                                                <Box className="upload-content pe-3">
-                                                    <Typography variant="h4" >
-                                                        thisisTest.pdf iu
-                                                    </Typography>
-                                                    <Typography variant="body1">
-                                                        Size:  <span className='sembold'>10MB</span> | Uploaded by <span className='sembold'>Patrick</span>
-                                                    </Typography>
-                                                </Box>
-                                            </Box>
-                                            <Box>
-                                                <Button
-                                                    id="basic-button"
-                                                    aria-controls={DocumentList ? 'basic-menu' : undefined}
-                                                    aria-haspopup="true"
-                                                    aria-expanded={DocumentList ? 'true' : undefined}
-                                                    onClick={handleClickDocumentList}
-                                                    className='min-width-auto'
-                                                >
-                                                    <MoreVertIcon />
-                                                </Button>
-                                                <Menu
-                                                    id="basic-menu"
-                                                    anchorEl={anchorElDocumentList}
-                                                    open={DocumentList}
-                                                    onClose={handleCloseDocument}
-                                                    MenuListProps={{
-                                                        'aria-labelledby': 'basic-button',
-                                                    }}
-                                                    className='custom-dropdown'
-                                                >
-                                                    <MenuItem onClick={() => {
-                                                        handleCloseDocument()
-                                                        handleClickOpenDocumentDetailsList()
-                                                    }}>
-                                                        <ListItemIcon>
-                                                            <ArticleIcon fontSize="medium" />
-                                                        </ListItemIcon>
-                                                        Document Details</MenuItem>
-
-                                                    <MenuItem onClick={handleCloseDocument}>
-                                                        <ListItemIcon>
-                                                            <CloudUploadIcon fontSize="medium" />
-                                                        </ListItemIcon>
-                                                        Upload New Version</MenuItem>
-                                                    <MenuItem onClick={handleCloseDocument}>
-                                                        <ListItemIcon>
-                                                            <DriveFileRenameOutlineIcon fontSize="medium" />
-                                                        </ListItemIcon>
-                                                        Rename Document</MenuItem>
-                                                    <MenuItem onClick={handleCloseDocument}>
-                                                        <ListItemIcon>
-                                                            <TravelExploreIcon fontSize="medium" />
-                                                        </ListItemIcon>
-                                                        Open in Browser</MenuItem>
-                                                    <MenuItem onClick={handleCloseDocument}>
-                                                        <ListItemIcon>
-                                                            <CloudDownloadIcon fontSize="medium" />
-                                                        </ListItemIcon>
-                                                        Download</MenuItem>
-                                                </Menu>
-                                            </Box>
-                                        </label>
-                                    </Box>
-                                    {/* file upload end 
-                                </>
-                            })}
-
-                        </TreeItem>
-                    </TreeItem> }
-                </TreeView> 
-                ):(documents.length>0 && documents.map((item) => {
-                    return <>
-                        <Box className="file-uploads">
-                            <label className="file-uploads-label file-uploads-document" onClick={() => handleClickOpenPDFView(item)}>
-                                <Box className="d-flex align-items-center">
-
-                                    <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
-
-                                    <DescriptionIcon
-                                        sx={{
-                                            fontSize: 32,
-                                        }}
-                                        className='me-2 ms-0'
-                                    />
-                                    <Box className="upload-content pe-3">
-                                        <Typography variant="h4" >
-                                        {item.Description ? item.Description : "Demo"}
-                                        </Typography>
-                                        <Typography variant="body1">
-                                            Size:  <span className='sembold'>{item["FileSize"] ? item["FileSize"] : ""}</span> | Date <span className='sembold'>{item["Item Date"] ? item["Item Date"] : "Demo"}</span>
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                                <Box>
-                                    <Button
-                                        id="basic-button"
-                                        aria-controls={DocumentList ? 'basic-menu' : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={DocumentList ? 'true' : undefined}
-                                        onClick={handleClickDocumentList}
-                                        className='min-width-auto'
-                                    >
-                                        <MoreVertIcon />
-                                    </Button>
-                                    <Menu
-                                        id="basic-menu"
-                                        anchorEl={anchorElDocumentList}
-                                        open={DocumentList}
-                                        onClose={handleCloseDocument}
-                                        MenuListProps={{
-                                            'aria-labelledby': 'basic-button',
-                                        }}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem onClick={() => {
-                                            handleCloseDocument()
-                                            handleClickOpenDocumentDetailsList()
-                                        }}>
-                                            <ListItemIcon>
-                                                <ArticleIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Document Details</MenuItem>
-
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <CloudUploadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Upload New Version</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <DriveFileRenameOutlineIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Rename Document</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <TravelExploreIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Open in Browser</MenuItem>
-                                        <MenuItem onClick={handleCloseDocument}>
-                                            <ListItemIcon>
-                                                <CloudDownloadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Download</MenuItem>
-                                    </Menu>
-                                </Box>
-                            </label>
-                        </Box>
-                        {/* file upload end }
-                    </>
-                }))} */}
-
-
-
-
-
-
-                {/* loop end */}
-
-
-                {/* when data is grouped by */}
-                {/* <TreeView
-                    aria-label="multi-select"
-                    defaultCollapseIcon={<ExpandMoreIcon />}
-                    defaultExpandIcon={<ChevronRightIcon />}
-                    multiSelect
-                >
-                    <TreeItem nodeId="1" label="Applications">
-                        <TreeItem nodeId="2" label="CLient Group A" />
-                        <TreeItem nodeId="3" label="CLient Group B" />
-                        <TreeItem nodeId="4" label="CLient Group C" />
-                    </TreeItem>
-                    <TreeItem nodeId="5" label="Documents">
-                        <TreeItem nodeId="6" label="CLient Group">
-
-                            {Array(4).fill("").map(() => {
-                                return <>
-                                    <Box className="file-uploads">
-                                        <label className="file-uploads-label file-uploads-document">
-                                            <Box className="d-flex align-items-center">
-
-                                                <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
-
-                                                <DescriptionIcon
-                                                    sx={{
-                                                        fontSize: 32,
-                                                    }}
-                                                    className='me-2 ms-0'
-                                                />
-                                                <Box className="upload-content pe-3">
-                                                    <Typography variant="h4" >
-                                                        thisisTest.pdf iu
-                                                    </Typography>
-                                                    <Typography variant="body1">
-                                                        Size:  <span className='sembold'>10MB</span> | Uploaded by <span className='sembold'>Patrick</span>
-                                                    </Typography>
-                                                </Box>
-                                            </Box>
-                                            <Box>
-                                                <Button
-                                                    id="basic-button"
-                                                    aria-controls={DocumentList ? 'basic-menu' : undefined}
-                                                    aria-haspopup="true"
-                                                    aria-expanded={DocumentList ? 'true' : undefined}
-                                                    onClick={handleClickDocumentList}
-                                                    className='min-width-auto'
-                                                >
-                                                    <MoreVertIcon />
-                                                </Button>
-                                                <Menu
-                                                    id="basic-menu"
-                                                    anchorEl={anchorElDocumentList}
-                                                    open={DocumentList}
-                                                    onClose={handleCloseDocument}
-                                                    MenuListProps={{
-                                                        'aria-labelledby': 'basic-button',
-                                                    }}
-                                                    className='custom-dropdown'
-                                                >
-                                                    <MenuItem onClick={() => {
-                                                        handleCloseDocument()
-                                                        handleClickOpenDocumentDetailsList()
-                                                    }}>
-                                                        <ListItemIcon>
-                                                            <ArticleIcon fontSize="medium" />
-                                                        </ListItemIcon>
-                                                        Document Details</MenuItem>
-
-                                                    <MenuItem onClick={handleCloseDocument}>
-                                                        <ListItemIcon>
-                                                            <CloudUploadIcon fontSize="medium" />
-                                                        </ListItemIcon>
-                                                        Upload New Version</MenuItem>
-                                                    <MenuItem onClick={handleCloseDocument}>
-                                                        <ListItemIcon>
-                                                            <DriveFileRenameOutlineIcon fontSize="medium" />
-                                                        </ListItemIcon>
-                                                        Rename Document</MenuItem>
-                                                    <MenuItem onClick={handleCloseDocument}>
-                                                        <ListItemIcon>
-                                                            <TravelExploreIcon fontSize="medium" />
-                                                        </ListItemIcon>
-                                                        Open in Browser</MenuItem>
-                                                    <MenuItem onClick={handleCloseDocument}>
-                                                        <ListItemIcon>
-                                                            <CloudDownloadIcon fontSize="medium" />
-                                                        </ListItemIcon>
-                                                        Download</MenuItem>
-                                                </Menu>
-                                            </Box>
-                                        </label>
-                                    </Box>
-                                    {/* file upload end 
-                                </>
-                            })}
-
-                        </TreeItem>
-                    </TreeItem>
-                </TreeView> */}
             </Box >
-
-
-
-            {/* sadik new modal start  */}
-            {/* // document list modal */}
-
-            <Dialog
-                open={documentLis}
-                onClose={handleCloseDocumentList}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                className='custom-modal'
-
-                sx={{
-                    maxWidth: 640,
-                    margin: '0 auto'
-                }}
-            >
-                <Box className="d-flex align-items-center justify-content-between modal-head">
-                    <Box className="dropdown-box">
-                        <Typography variant="h4" className='font-18 bold mb-2 text-black'>
-                            Document List
-                        </Typography>
-                        {/* <Box className="btn-Select">
-                                    <Button className='btn-white'>Action</Button>
-                                    <Button className='btn-white'>Ser</Button>
-                                    <Button className='btn-white'>Custom</Button>
-
-                                    <hr />
-
-                                    <Button className='btn-blue-2' size="small">Apply Now</Button>
-                                </Box> */}
-                    </Box>
-
-                    {/*  */}
-                    <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
-                        <span className="material-symbols-outlined text-black">
-                            cancel
-                        </span>
-                    </Button>
-                </Box>
-                {/* <DialogTitle id="alert-dialog-title">
-                        {"Use Google's location service?"}
-                    </DialogTitle> */}
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-
-
-
-
-                        {Array(5).fill("").map(() => {
-                            return <>
-                                <Box className="file-uploads">
-                                    <label className="file-uploads-label file-uploads-document">
-                                        <Box className="d-flex align-items-center">
-                                            <DescriptionIcon
-                                                sx={{
-                                                    fontSize: 32,
-                                                }}
-                                                className='me-2'
-                                            />
-                                            <Box className="upload-content pe-3">
-                                                <Typography variant="h4" >
-                                                    thisisTest.pdf
-                                                </Typography>
-                                                <Typography variant="body1">
-                                                    Size:  <span className='sembold'>10MB</span> | Uploaded by <span className='sembold'>Patrick</span>
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-
-                                        <Box>
-                                            <Button
-                                                id="basic-button"
-                                                aria-controls={DocumentList ? 'basic-menu' : undefined}
-                                                aria-haspopup="true"
-                                                aria-expanded={DocumentList ? 'true' : undefined}
-                                                onClick={handleClickDocumentList}
-                                                className='min-width-auto'
-                                            >
-                                                <MoreVertIcon />
-                                            </Button>
-                                            <Menu
-                                                id="basic-menu"
-                                                anchorEl={anchorElDocumentList}
-                                                open={DocumentList}
-                                                onClose={handleCloseDocument}
-                                                MenuListProps={{
-                                                    'aria-labelledby': 'basic-button',
-                                                }}
-                                                className='custom-dropdown'
-                                            >
-                                                <MenuItem onClick={() => {
-                                                    handleCloseDocument()
-                                                    handleClickOpenDocumentDetailsList()
-                                                }}>
-                                                    <ListItemIcon>
-                                                        <ArticleIcon fontSize="medium" />
-                                                    </ListItemIcon>
-                                                    Document Details</MenuItem>
-
-                                                <MenuItem onClick={handleCloseDocument}>
-                                                    <ListItemIcon>
-                                                        <CloudUploadIcon fontSize="medium" />
-                                                    </ListItemIcon>
-                                                    Upload New Version</MenuItem>
-                                                <MenuItem onClick={handleCloseDocument}>
-                                                    <ListItemIcon>
-                                                        <DriveFileRenameOutlineIcon fontSize="medium" />
-                                                    </ListItemIcon>
-                                                    Rename Document</MenuItem>
-                                                <MenuItem onClick={handleCloseDocument}>
-                                                    <ListItemIcon>
-                                                        <TravelExploreIcon fontSize="medium" />
-                                                    </ListItemIcon>
-                                                    Open in Browser</MenuItem>
-                                                <MenuItem onClick={handleCloseDocument}>
-                                                    <ListItemIcon>
-                                                        <CloudDownloadIcon fontSize="medium" />
-                                                    </ListItemIcon>
-                                                    Download</MenuItem>
-                                            </Menu>
-                                        </Box>
-                                    </label>
-                                </Box>
-                                {/* file upload end */}
-                            </>
-                        })}
-
-                    </DialogContentText>
-                </DialogContent>
-            </Dialog>
-
 
             {/* document modal list details */}
             <Dialog
@@ -997,18 +748,18 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             <TableHead>
                                                 <TableRow>
                                                     <TableCell className='bold'>Document</TableCell>
-                                                    <TableCell className='bold' align="right">Details</TableCell>
+                                                    <TableCell className='bold'>Details</TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
                                                 {Object.keys(docForDetails).length > 0 && Object.keys(docForDetails).map((itm, i) => {
-                                                    if (itm !== "StickyNotes") {
+                                                    if (["Registration No.", "Folder", "Client", "Section", "Received Date", "Item Date", "FileSize", "Notes", "Category", "Attach", "Type", "Version", "Received By", "Item ID"].includes(itm)) {
                                                         return <TableRow
                                                             key={i}
                                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                                         >
                                                             <TableCell align="left" className='bold'>{itm}</TableCell>
-                                                            <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
+                                                            <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? docForDetails[itm] : ""}</TableCell>
                                                         </TableRow>
                                                     }
                                                 })}
@@ -1037,94 +788,27 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <Box className='table-responsive'>
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            This File is Test Files.pdf 2
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            12:36PM 28/12/2023 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
+                                        {getVertion.length > 0 ? getVertion.map((item, index) => {
+                                            return <>
+                                                <Box className="file-uploads" key={index}>
+                                                    <label className="file-uploads-label file-uploads-document">
+                                                        <Box className="d-flex align-items-center">
+                                                            <div className='img-format'>
+                                                                {/* <img src={Fileformat} /> */}
+                                                            </div>
+                                                            <Box className="upload-content pe-3">
+                                                                <Typography variant="h4" >
+                                                                    Version No {item.VersionNo}
+                                                                </Typography>
+                                                                <Typography variant="body1">
+                                                                    {moment(item["VDate"]).format("DD/MM/YYYY HH:mm:ss")} | Updated by {item.UserName.toUpperCase()}
+                                                                </Typography>
+                                                            </Box>
+                                                        </Box>
+                                                    </label>
                                                 </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            test doc file.doc
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            11:16PM 09/012/2024 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            loremipsomedolorsite.pdf
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            02:36PM 06/05/2023 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            This File is Test Files.pdf
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            02:36PM 06/05/2023 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
+                                            </>
+                                        }) : ""}
 
 
                                     </Box>
@@ -1164,7 +848,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                 </AccordionSummary>
                                 <AccordionDetails>
 
-                                    <Activity></Activity>
+                                    <Activity getAudit={getAudit} selectedDocument={docForDetails} ></Activity>
 
 
                                     {/* {Array(5).fill("").map(() => {

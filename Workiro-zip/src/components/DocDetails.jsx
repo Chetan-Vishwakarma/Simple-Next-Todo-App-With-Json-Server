@@ -5,7 +5,9 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import Activity from '../client/utils/Activity';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import TaskDetailModal from './TaskDetailModal';
+import Fileformat from '../images/files-icon/pdf.png';
 
+import moment from 'moment';
 // sadik code start
 function createData(document, details) {
     return { document, details };
@@ -33,6 +35,7 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
     const [associatedTask, setAssociatedTask] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
     const [openModal, setOpen] = React.useState(false);
+    const [getAudit, setGetAudit] = useState([]);
     const handleClickDetailOpen = () => {
         setOpen(true);
     };
@@ -107,6 +110,59 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
         const dateObject = new Date(timeStamp);
         return `${dateObject.getDate()}/${dateObject.getMonth() + 1}/${dateObject.getFullYear()}`;
     }
+    const Json_GetAudit = (sDoc = docForDetails) => {
+        try {
+            let obj = {
+                itemid: sDoc["Registration No."],
+                password: localStorage.getItem("Password"),
+            }
+            ClsSms.Json_GetAudit(obj, function (sts, data) {
+                if (sts && data) {
+                    let parse = JSON.parse(data);
+                    let table = parse.Table;
+                    if (table.length > 0) {
+                        setGetAudit(table);
+                    }
+                    console.log("Json_GetAudit", table)
+                }
+            })
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
+        }
+
+    }
+    useEffect(() => {
+        Json_GetAudit(docForDetails);
+        Json_GetVersionByItemId(docForDetails)
+    }, []);
+
+    const [getVertion, setGetVertion] = React.useState([]);
+
+    function Json_GetVersionByItemId(data) {
+        console.log("selected document data obj111", data)
+        try {
+            let obj = {};
+            obj.itemId = data["Registration No."];
+            ClsSms.Json_GetVersionByItemId(obj, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        let tbl = js.Table;
+                        if (tbl.length > 0) {
+                            console.log("Json_GetVersionByItemId", tbl)
+                            setGetVertion(tbl)
+                        }
+
+                    }
+
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetVersionByItemId error", error)
+        }
+    }
+
 
     return (
         <>
@@ -154,7 +210,7 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                             <TableHead>
                                                 <TableRow>
                                                     <TableCell className='bold'>Document</TableCell>
-                                                    <TableCell className='bold' align="right">Details</TableCell>
+                                                    <TableCell className='bold text-start'>Details</TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
@@ -167,17 +223,34 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                                     <TableCell align="left">{row.details}</TableCell>
                                                 </TableRow>
                                             ))} */}
-                                                {Object.keys(docForDetails).length > 0 && Object.keys(docForDetails).map((itm, i) => {
-                                                    if (itm !== "StickyNotes") {
-                                                        return <TableRow
-                                                            key={i}
-                                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                        >
-                                                            <TableCell align="left" className='bold'>{itm}</TableCell>
-                                                            <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date", "Item Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
-                                                        </TableRow>
-                                                    }
-                                                })}
+
+
+
+                                                {
+                                                    Object.keys(docForDetails).length > 0 && (!Object.keys(docForDetails).includes("RecentDate"))
+                                                        ? Object.keys(docForDetails).map((itm, i) => {
+                                                            if (["Registration No.", "Folder", "Client", "Section", "Received Date", "Item Date", "FileSize", "Notes", "Category", "Attach", "Type", "Version", "Received By", "Item ID"].includes(itm)) {
+                                                                return <TableRow
+                                                                    key={i}
+                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                >
+                                                                    <TableCell align="left" className='bold'>{itm}</TableCell>
+                                                                    <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date", "Item Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
+                                                                </TableRow>
+                                                            }
+                                                        }) : Object.keys(docForDetails).map((itm, i) => {
+                                                            if (itm !== "type" && itm !== "guid") {
+                                                                return <TableRow
+                                                                    key={i}
+                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                >
+                                                                    <TableCell align="left" className='bold'>{itm}</TableCell>
+                                                                    <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["RecentDate"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
+                                                                </TableRow>
+                                                            }
+                                                        })
+                                                }
+
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
@@ -195,101 +268,31 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                 <AccordionDetails>
                                     <Box className='table-responsive'>
 
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            This File is Test Files.pdf 2
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            12:36PM 28/12/2023 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
+                                        {getVertion.length > 0 ? getVertion.map((item, index) => {
+                                            return <>
+                                                <Box className="file-uploads" key={index}>
+                                                    <label className="file-uploads-label file-uploads-document">
+                                                        <Box className="d-flex align-items-center">
+                                                            <div className='img-format'>
+                                                                <img src={Fileformat} />
+                                                            </div>
+                                                            <Box className="upload-content pe-3">
+                                                                <Typography variant="h4" >
+                                                                    Version No {item.VersionNo}
+                                                                </Typography>
+                                                                <Typography variant="body1">
+                                                                    {moment(item["VDate"]).format("DD/MM/YYYY HH:mm:ss")} | Updated by {item.UserName.toUpperCase()}
+                                                                </Typography>
+                                                            </Box>
+                                                        </Box>
+                                                    </label>
                                                 </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            test doc file.doc
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            11:16PM 09/012/2024 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            loremipsomedolorsite.pdf
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            02:36PM 06/05/2023 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-                                        <Box className="file-uploads">
-                                            <label className="file-uploads-label file-uploads-document">
-                                                <Box className="d-flex align-items-center">
-                                                    <DescriptionIcon
-                                                        sx={{
-                                                            fontSize: 32,
-                                                        }}
-                                                        className='me-2'
-                                                    />
-                                                    <Box className="upload-content pe-3">
-                                                        <Typography variant="h4" >
-                                                            This File is Test Files.pdf
-                                                        </Typography>
-                                                        <Typography variant="body1">
-                                                            02:36PM 06/05/2023 | File uploaded by Patrick
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </label>
-                                        </Box>
-                                        {/* file upload end */}
-
-
+                                            </>
+                                        }) : ""}
                                     </Box>
                                 </AccordionDetails>
                             </Accordion>
                             {/* end */}
-
-
 
                             <Accordion onClick={() => Json_getAssociatedTaskListByDocumentId(docForDetails)} className='accordian-box' expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
                                 <AccordionSummary
@@ -321,8 +324,7 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                 </AccordionSummary>
                                 <AccordionDetails>
 
-                                    <Activity></Activity>
-
+                                    <Activity getAudit={getAudit}></Activity>
 
                                     {/* {Array(5).fill("").map(() => {
                                         return <> */}

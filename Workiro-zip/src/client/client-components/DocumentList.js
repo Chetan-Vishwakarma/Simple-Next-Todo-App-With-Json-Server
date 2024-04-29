@@ -48,20 +48,9 @@ import WarningIcon from '@mui/icons-material/Warning';
 import Popover from '@mui/material/Popover';
 import TuneIcon from '@mui/icons-material/Tune';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
-import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
-
-
-const BootstrapTooltip = styled(({ className, ...props }) => (
-    <Tooltip {...props} arrow classes={{ popper: className }} />
-))(({ theme }) => ({
-    [`& .${tooltipClasses.arrow}`]: {
-        color: theme.palette.common.black,
-    },
-    [`& .${tooltipClasses.tooltip}`]: {
-        backgroundColor: theme.palette.common.black,
-    },
-}));
-
+import BootstrapTooltip from '../../utils/BootstrapTooltip';
+import Fileformat from '../../images/files-icon/pdf.png';
+import GetFileType from '../../components/FileType';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -156,7 +145,7 @@ const MenuProps = {
 
 export default function DocumentList({ clientId }) {
     const location = useLocation();
-    const { globalSearchDocs, strGlobal } = location.state;
+    const { globalSearchDocs, strGlobal } = location.state ? location.state : { globalSearchDocs: [], strGlobal: "" };
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -273,7 +262,7 @@ export default function DocumentList({ clientId }) {
 
     const Json_GetFolderData = () => {
         let obj = {
-            ClientId: "", Email: Email, ProjectId: folderId, SectionId: "-1", agrno: agrno, password: password
+            ClientId: "", Email: Email, ProjectId: folderId ? folderId : localStorage.getItem("FolderId"), SectionId: "-1", agrno: agrno, password: password
         };
         try {
             Cls.Json_GetFolderData(obj, function (sts, data) {
@@ -318,6 +307,8 @@ export default function DocumentList({ clientId }) {
                 setTimeout(() => {
                     let docKeys = Object.keys(globalSearchDocs[0]);
                     // console.log("documentKeys",docKeys);
+                    globalSearchDocs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
+                    globalSearchDocs.map((itm) => itm["Received Date"] = formatDate(itm["Received Date"]));
                     setDocumentKeys(docKeys);
                     setDocuments(globalSearchDocs);
                     // handleDocumentsFilter(globalSearchDocs);
@@ -330,7 +321,7 @@ export default function DocumentList({ clientId }) {
                 // return;
             } else {
                 Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
-                    if(data==="" || JSON.parse(data)?.Table[0]?.Message){  // for data loading issue (api response issue)
+                    if (data === "" || JSON.parse(data)?.Table[0]?.Message) {  // for data loading issue (api response issue)
                         Json_ExplorerSearchDoc();
                         return;
                     }
@@ -343,8 +334,9 @@ export default function DocumentList({ clientId }) {
                                     let docKeys = Object.keys(docs[0]);
                                     setDocumentKeys(docKeys);
                                     docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
+                                    docs.map((itm) => itm["Received Date"] = formatDate(itm["Received Date"]));
                                     setDocuments(docs);
-                                    if(docs[0].Message){   // for data loading issue (api response issue)
+                                    if (docs[0].Message) {   // for data loading issue (api response issue)
                                         Json_ExplorerSearchDoc();
                                         return;
                                     }
@@ -357,7 +349,7 @@ export default function DocumentList({ clientId }) {
                                 }
                                 Json_GetFolderData();
                             }
-                        }else{
+                        } else {
                             setIsLoading(false);
                             setDataNotFoundBoolean(true);
                         }
@@ -379,12 +371,12 @@ export default function DocumentList({ clientId }) {
     }, []);
     const handleSearch = (text) => {
         if (documents.length > 0) {
-            let fltDesc = documents.filter(itm=>itm.Description!=="");
+            let fltDesc = documents.filter(itm => itm.Description !== "");
             let filteredDocuments = fltDesc.filter((item) => {
                 return item.Description.toLowerCase().includes(text.toLowerCase());
             });
-            if(text!==""){
-                setFilterCriteria({...filterCriteria,Description:[text]});
+            if (text !== "") {
+                setFilterCriteria({ ...filterCriteria, Description: [text] });
             }
             setFilteredDocResult(filteredDocuments);
         }
@@ -595,7 +587,7 @@ export default function DocumentList({ clientId }) {
         setIsLoading(false);
     }
     useEffect(() => {
-        if(documents.length>0){
+        if (documents.length > 0) {
             handleDocumentsFilter(documents);
         }
     }, [filterCriteria]);
@@ -635,10 +627,8 @@ export default function DocumentList({ clientId }) {
 
             {isLoading ? <CustomLoader /> : <>
 
-
-
-                <div style={{top:globalSearchDocs.length>0&&"80px"}} className='main-client-details-filter'>
-                    <Button aria-describedby={id} variant="" className='min-width-auto btn-blue px-0' onClick={handleClick}>
+                <div style={{ top: globalSearchDocs.length > 0 && "85px", right: globalSearchDocs.length > 0 && "20px" }} className='main-client-details-filter'>
+                    <Button aria-describedby={id} variant="" className='btn-blue' onClick={handleClick}>
                         <TuneIcon />
                     </Button>
                     <Popover
@@ -659,13 +649,13 @@ export default function DocumentList({ clientId }) {
                             </Typography>
 
                             <div className='text-center mb-2 client-details-filter-btn d-flex'>
-                                <ToggleButton className='w-100 active' value="left" aria-label="left aligned" onClick={() => setToggleScreen({ singleCardView: true, multipleCardView: false, tableGridView: false })}>
+                                <ToggleButton className={toggleScreen.singleCardView ? 'w-100 active' : 'w-100'} value="left" aria-label="left aligned" onClick={() => setToggleScreen({ singleCardView: true, multipleCardView: false, tableGridView: false })}>
                                     <DnsIcon />
                                 </ToggleButton>
-                                <ToggleButton className='w-100' value="center" aria-label="centered" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: true, tableGridView: false })}>
+                                <ToggleButton className={toggleScreen.multipleCardView ? 'w-100 active' : 'w-100'} value="center" aria-label="centered" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: true, tableGridView: false })}>
                                     <AppsIcon />
                                 </ToggleButton>
-                                <ToggleButton className='w-100' value="right" aria-label="right aligned" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: false, tableGridView: true })}>
+                                <ToggleButton className={toggleScreen.tableGridView ? 'w-100 active' : 'w-100'} value="right" aria-label="right aligned" onClick={() => setToggleScreen({ singleCardView: false, multipleCardView: false, tableGridView: true })}>
                                     <TableRowsIcon />
                                 </ToggleButton>
                             </div>
@@ -739,7 +729,7 @@ export default function DocumentList({ clientId }) {
 
                                 <Box className='d-flex'>
 
-                                    <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0'>
+                                    <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 mb-0'>
                                         <BootstrapTooltip title="Sections" arrow
                                             placement="bottom-start"
                                             slotProps={{
@@ -797,7 +787,7 @@ export default function DocumentList({ clientId }) {
                                         </BootstrapTooltip>
                                     </FormControl>
 
-                                    <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0'>
+                                    <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 mb-0'>
                                         <BootstrapTooltip title="Folders" arrow
                                             placement="bottom-start"
                                             slotProps={{
@@ -858,9 +848,78 @@ export default function DocumentList({ clientId }) {
                                             </Select>
                                         </BootstrapTooltip>
                                     </FormControl>
+                                </Box>
+
+                                {/* <hr /> */}
+                                <Box className='d-flex'>
+                                    {globalSearchDocs.length > 0 && <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border'>
+                                        <BootstrapTooltip title="Select Reference" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
+                                        >
+                                            <Select
+                                                value={selectedClient}
+                                                onChange={handleFilterOnClientSelection}
+                                                displayEmpty
+                                                inputProps={{ 'aria-label': 'Without label' }}
+                                                className='custom-dropdown'
+                                            >
+                                                <MenuItem value="" style={{ display: "none" }}>
+                                                    Select Reference
+                                                </MenuItem>
+                                                {clientList.length > 0 && clientList.map(itm => <MenuItem value={itm}>{itm}</MenuItem>)}
+                                            </Select>
+                                        </BootstrapTooltip>
+                                    </FormControl>}
+
+
+                                    <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border'>
+                                        <BootstrapTooltip title="Select Reference" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
+                                        >
+                                            <Select
+                                                value={selectedClient}
+                                                // onChange={handleFilterOnClientSelection}
+                                                displayEmpty
+                                                inputProps={{ 'aria-label': 'Without label' }}
+                                                className='custom-dropdown'
+                                            >
+                                                <MenuItem value="" style={{ display: "none" }}>
+                                                    Document ID
+                                                </MenuItem>
+
+                                                <MenuItem>
+                                                    <input className='form-control' />
+                                                </MenuItem>
+
+                                            </Select>
+                                        </BootstrapTooltip>
+                                    </FormControl>
 
                                 </Box>
-                                {/* <hr /> */}
 
                                 <Typography variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
                                     Sort By
@@ -956,7 +1015,7 @@ export default function DocumentList({ clientId }) {
                                                     <CalendarMonthIcon className='pe-1' />
                                                     By Date</MenuItem>
                                                 <MenuItem value={"Description"} className='ps-1'><DescriptionIcon className='pe-1' />
-                                                    By Description dsfaaa</MenuItem>
+                                                    By Description</MenuItem>
                                             </Select>
                                         </BootstrapTooltip>
                                     </FormControl>
@@ -976,22 +1035,6 @@ export default function DocumentList({ clientId }) {
                                     />}
                                 </Box>
 
-                                {globalSearchDocs.length > 0 && <FormControl sx={{ m: 1, width: '110px' }} size="small" className='select-border'>
-                                    <Select
-                                        value={selectedClient}
-                                        onChange={handleFilterOnClientSelection}
-                                        displayEmpty
-                                        inputProps={{ 'aria-label': 'Without label' }}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem value="" style={{ display: "none" }}>
-                                            Select Reference
-                                        </MenuItem>
-                                        {clientList.length > 0 && clientList.map(itm => <MenuItem value={itm}>{itm}</MenuItem>)}
-                                    </Select>
-                                </FormControl>}
-
-
                                 {/* <Button className='btn-blue-2 mb-1 ms-1' onClick={() => handleDocumentsFilter("LastMonth")}>Save View</Button> */}
 
                                 {/* <FormControlLabel control={<Switch />} label="Save View" className='ms-2' /> */}
@@ -999,8 +1042,6 @@ export default function DocumentList({ clientId }) {
                             </Box>
 
                         </Box>
-
-
                     </Popover>
                 </div>
 
@@ -1011,9 +1052,9 @@ export default function DocumentList({ clientId }) {
                         dataSource={dataNotFoundBoolean ? [] : advFilteredResult.length > 0 ? advFilteredResult : documents}
                         columnAutoWidth={true}
                         showBorders={true}>
-                        <Column dataField="Description" dataType="string" caption="Discount" />
+                        <Column dataField="Description" dataType="string" caption="Document Name" />
                         <Column dataField="Section" dataType="string" caption="Section" />
-                        <Column dataField="SubSection" dataType="string" caption="Sub" />
+                        <Column dataField="SubSection" dataType="string" caption="Sub Section" />
                         <Column dataField="Item Date" dataType="date" caption="Doc. Date" />
                         <Column dataField="Received Date" dataType="date" caption="Received Date" />
                         <Column dataField="Category" dataType="string" caption="Category" />
@@ -1140,17 +1181,22 @@ export default function DocumentList({ clientId }) {
                                 <Box className='row'>
                                     {advFilteredResult.length > 0 ? (
                                         advFilteredResult.map((itm) => {
+                                            console.log("file type 1122",itm)
                                             return <>
                                                 <Box className='col-xxl-3 col-xl-4 col-md-6'>
                                                     <Box className="file-uploads">
                                                         <label className="file-uploads-label file-uploads-document">
                                                             <Box className="d-flex align-items-center">
-                                                                <DescriptionIcon
+                                                                {/* <DescriptionIcon
                                                                     sx={{
                                                                         fontSize: 32,
                                                                     }}
                                                                     className='me-2'
-                                                                />
+                                                                /> */}
+                                                                <div className='img-format'>
+                                                                    {/* <img src={Fileformat} /> */}
+                                                                    {/* {<GetFileType row={itm?itm.toLowerCase():null}></GetFileType>} */}
+                                                                </div>
                                                                 <Box className="upload-content pe-3">
                                                                     <Typography variant="h4" >
                                                                         {itm.Description ? itm.Description : "Demo"}
@@ -1168,17 +1214,22 @@ export default function DocumentList({ clientId }) {
                                             </>
                                         })
                                     ) : (documents.length > 0 && documents.map((itm) => {
+
                                         return <>
                                             <Box className='col-xxl-3 col-xl-4 col-md-6'>
                                                 <Box className="file-uploads">
-                                                    <label className="file-uploads-label file-uploads-document">
+                                                    <label className="file-uploads-label file-uploads-document sadik">
                                                         <Box className="d-flex align-items-center">
-                                                            <DescriptionIcon
+                                                            {/* <DescriptionIcon
                                                                 sx={{
                                                                     fontSize: 32,
                                                                 }}
                                                                 className='me-2'
-                                                            />
+                                                            /> */}
+                                                            <div className='img-format'>
+                                                                {/* <img src={Fileformat} /> */}
+                                                                {/* {<GetFileType row={itm?itm:null}></GetFileType>} */}
+                                                            </div>
                                                             <Box className="upload-content pe-3">
                                                                 <Typography variant="h4" >
                                                                     {itm.Description ? itm.Description : "Demo"}

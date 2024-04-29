@@ -8,9 +8,11 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import CommanCLS from "../../services/CommanService";
+import { Height } from "@mui/icons-material";
 
 const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHouse })=>{
-  console.log(dataCompanyHouse,"dataCompanyHouse");
+  console.log(dataCompanyHouse,"dataCompanyHouse",userDetail);
   const [mainCountry, setMainCountry] = useState(
     countries.find((country) => country.label === "United Kingdom")?.label
   );
@@ -22,7 +24,16 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
   );
   // tabs
   const [value, setValue] = React.useState('1');
-
+  const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
+  const [password, setPassword] = useState(localStorage.getItem("Password"));
+  const [Email, setEmail] = useState(localStorage.getItem("Email"));
+  const [ClientAddress, setClientAddress] = useState([]);
+  const [MainAddress, setMainAddress] = useState(null);
+  const [BillingAddress, setBillingAddress] = useState(null);
+  const [RegisteredAddress, setRegisteredAddress] = useState(null);
+  const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+  const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
+  let Cls = new CommanCLS(baseUrl, agrno, Email, password);
   const onChange = (e) => {
     e.preventDefault();
     let data = { ...userDetail };
@@ -72,7 +83,92 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  let mainAddress = null,
+  billingAddress = null,
+  registeredAddress = null;
+  const Json_GetClientAddresses
+ = () => {
+    let requestBody = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      clientId:userDetail.Clientid
+    };
+    try {
+      Cls.Json_GetClientAddresses(requestBody, (sts, data) => {
+        if (sts) {
+          if (data) {
+            try {
+              let json = JSON.parse(data);
+              console.log(json.Table, "Json_GetClientAddresses111");
+              setClientAddress(json.Table);
+              
+              // Initialize address variables
+             
+          
+              // Iterate through the addresses to find the specific types
+              if(json.Table && json.Table.length > 0){
+                json.Table.forEach(element => {
+                  switch (element.AddressType) {
+                    case "Main Address":
+                      mainAddress = element;
+                      break;
+                    case "Billing Address":
+                      billingAddress = element;
+                      break;
+                    case "Registered Address":
+                      registeredAddress = element;
+                      break;
+                    default:
+                      // Handle any other address types if necessary
+                      break;
+                  }
+                });
+            
+                // Update the userDetail state with the found addresses
+                const updatedUserDetail = {
+                  ...userDetail,
+                  Line1: mainAddress?.Add1 || "test",
+                  Line2: mainAddress?.Add2 || "",
+                  Line3: mainAddress?.Add3 || "",
+                  Town: mainAddress?.Town || "",
+                  MCounty: mainAddress?.County || "",
+                  Postcode: mainAddress?.Postcode || "",
+                  BilLine1: billingAddress?.Add1 || "",
+                  BilLine2: billingAddress?.Add2 || "",
+                  BilLine3: billingAddress?.Add3 || "",
+                  BilTown: billingAddress?.Town || "",
+                  BilCountry: billingAddress?.County || "",
+                  BilPostcode: billingAddress?.Postcode || "",
+                  regLine1: registeredAddress?.Add1 || "",
+                  regLine2: registeredAddress?.Add2 || "",
+                  regLine3: registeredAddress?.Add3 || "",
+                  regTown: registeredAddress?.Town || "",
+                  regCountry: registeredAddress?.County || "",
+                  regPostcode: registeredAddress?.Postcode || "",
+                  fullAddress: mainAddress 
+                      ? `${mainAddress.Add1}\n${mainAddress.Add2}\n${mainAddress.Add3}\n${mainAddress.Town}\n${mainAddress.County}\n${mainAddress.Postcode}`
+                      : ""
+                };
+            
+                // Set the updatedUserDetail to state
+                setUserDetail(updatedUserDetail);
+              }
+            
+            } catch (error) {
+              console.error(error);
+              // Handle parsing error if necessary
+            }
+          }
+          
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_GetToFavourites", err);
+    }
+  };
   useEffect(() => {
+    
     if(dataCompanyHouse){
       let data1 = { ...userDetail };
       data1 = { 
@@ -102,8 +198,17 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
       };
       setUserDetail(data1);
     }
-   
+    setAgrNo(localStorage.getItem("agrno"));
+    setPassword(localStorage.getItem("Password"));
+    setEmail(localStorage.getItem("Email"));
+    // setFolderId(localStorage.getItem("FolderId"));
+    // setIntUserid(localStorage.getItem("UserId"));
+    setTimeout(() => {
+      Json_GetClientAddresses();
+    }, 3000);
+    
   }, [dataCompanyHouse]);
+  console.log(userDetail,"userDetaildata111")
   return (
     
     <div>
@@ -187,7 +292,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                     <TextField
                       fullWidth
                       id="standard-basic"
-                      type="number"
+                      // type="number"
                       label="Postcode"
                       variant="outlined"
                       name="Postcode"
@@ -310,7 +415,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                     <TextField
                       fullWidth
                       id="standard-basic"
-                      type="number"
+                      // type="number"
                       label="Postcode"
                       variant="outlined"
                       name="BilPostcode"
@@ -432,7 +537,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                     <TextField
                       fullWidth
                       id="standard-basic"
-                      type="number"
+                      // type="number"
                       label="Postcode"
                       variant="outlined"
                       name="regPostcode"
@@ -495,8 +600,9 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                   name="fullAddress"
                   value={userDetail.fullAddress}
                   onChange={onChange}
-                  className="form-control textarea"
+                  className="form-control textarea textarea-2"
                   placeholder="Full Address"
+                  // xl={{ minHeight: '400px', Height: '600px', }}
                 />
               </Box>
             </TabPanel>

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 function CustomBreadCrumbs({ tabs }) {
     return (
-        <div role="presentation" className='mb-2 mb-3 d-none'>
+        <div role="presentation" className='mb-2 mb-3'>
             <Breadcrumbs aria-label="breadcrumb">
                 {tabs.length > 0 && tabs.slice(0, tabs.length - 1).map(itm => (
                     <Link underline="hover" color="inherit" to={itm.tabLink}>

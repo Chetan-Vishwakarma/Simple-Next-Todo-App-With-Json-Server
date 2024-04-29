@@ -1,52 +1,76 @@
 import React, { useEffect, useState } from 'react';
-import user from "../../images/01.png";
-import { Box, Button, Typography, Dialog, DialogActions, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Link, MenuItem, Menu } from '@mui/material';
+
+import { Box, Button, Typography, Dialog, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Menu, MenuItem } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
+
 import TabPanel from '@mui/lab/TabPanel';
 import DescriptionIcon from '@mui/icons-material/Description';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import Activity from '../../client/utils/Activity';
-import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
-import CategoryIcon from '@mui/icons-material/Category';
-import GradingIcon from '@mui/icons-material/Grading';
-import InsertLinkIcon from '@mui/icons-material/InsertLink';
-import AddIcon from '@mui/icons-material/Add';
-import AlarmOnIcon from '@mui/icons-material/AlarmOn';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+
+import LockIcon from '@mui/icons-material/Lock';
+
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import CommanCLS from '../../services/CommanService';
-import { json } from 'react-router-dom';
 
 import HtmlEditorDX from '../../components/HtmlEditor';
-
+import moment from 'moment';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 import CreateNewModalTask from '../../components/CreateNewModal';
 
+import { useDispatch } from "react-redux";
+import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux } from "../../redux/reducers/counterSlice"
+
 import $ from 'jquery';
+import Fileformat from '../../images/files-icon/pdf.png';
+import ListIcon from '@mui/icons-material/List';
+import RedeemIcon from '@mui/icons-material/Redeem';
+import CategoryIcon from '@mui/icons-material/Category';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import AddToDriveIcon from '@mui/icons-material/AddToDrive';
+import DvrIcon from '@mui/icons-material/Dvr';
+import InsertPageBreakIcon from '@mui/icons-material/InsertPageBreak';
+import LanguageIcon from '@mui/icons-material/Language';
+import PublishIcon from '@mui/icons-material/Publish';
+import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
+import MarkunreadIcon from '@mui/icons-material/Markunread';
+import DownloadIcon from '@mui/icons-material/Download';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import CreateIcon from '@mui/icons-material/Create';
+import ShareIcon from '@mui/icons-material/Share';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 
-function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
-
+function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument, Json_CRM_GetOutlookTask }) {
+    const dispatch = useDispatch();
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
-    const [txtFolderId, setFolderId] = useState(localStorage.getItem("FolderId"));
+    // const [txtFolderId, setFolderId] = useState(localStorage.getItem("FolderId"));
     const [ViewerToken, setViewerToken] = useState(localStorage.getItem("ViewerToken"));
     const [getAudit, setGetAudit] = useState([]);
+
     const [getAttachment, setGetAttachment] = useState([]);
+
+    const [txtClientData, setTxtClientData] = useState({});
+    const [txtSectionData, setTxtSectionData] = useState({});
+    const [txtFolderData, setTxtFolderData] = useState({});
+
     //const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
-    const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/"; // base url for api
+    const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+    const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+    // base url for api
     //   let dt = new LoginDetails();
     let cls = new CommanCLS(baseUrl, agrno, Email, password);
+    let clsPractice = new CommanCLS(baseUrlPractice, agrno, Email, password);
+
     // const [value, setValue] = React.useState(1);
     // const handleChange = (event, newValue) => {
     //     setValue(newValue);
@@ -64,6 +88,7 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
     const [value, setValue] = React.useState('1');
     const [viewerUrl, setViwerUrl] = React.useState('');
     const [seletedFileData, setSeletedFileData] = React.useState([]);
+    const [getVertion, setGetVertion] = React.useState([]);
     const [selectedFiles, setSelectedFiles] = React.useState([]);
 
     const [templateDataMarkup, setTemplateDataMarkup] = React.useState([]);
@@ -71,11 +96,14 @@ function DocumentsVewModal({ openPDFView, setOpenPDFView, selectedDocument }) {
     const [getAssociatedTaskList, setGetAssociatedTaskList] = React.useState([]);
 
 
-    const [documentdata,setDocumentData]=useState();
-const [openModal,setopenModal]=useState(false);
-const [TaskType,setTaskType]=useState("CRM");
 
-const [createNewFileObj, setCreateNewFileObj] = useState([]);
+    const [documentdata, setDocumentData] = useState();
+    const [openModal, setopenModal] = useState(false);
+    const [TaskType, setTaskType] = useState("");
+
+    const [isLoading, setIsLoading] = useState(true);
+
+    const [createNewFileObj, setCreateNewFileObj] = useState([]);
 
 
     const handleChange = (event, newValue) => {
@@ -85,6 +113,12 @@ const [createNewFileObj, setCreateNewFileObj] = useState([]);
     const handleClosePDFView = () => {
         setOpenPDFView(false);
     };
+
+    const call_Json_GetAudit = () => {
+        Json_GetAudit();
+    }
+
+
 
     const Json_GetAudit = () => {
         try {
@@ -97,9 +131,34 @@ const [createNewFileObj, setCreateNewFileObj] = useState([]);
                     let parse = JSON.parse(data);
                     let table = parse.Table;
                     if (table.length > 0) {
-                        setGetAudit(table);
+                        // const formattedActivity = table.map((Actioned) => {
+                        //     let ActioneddATE;
+                        //     if (Actioned["Actioned Date"]) {
+                        //         ActioneddATE = moment(Actioned["Actioned Date"]).format("DD/MM/YYYY HH:mm:ss");
+                        //     }
+                        //     // const date = new Date(ActivityDate);
+                        //     return { ...Actioned, ["Actioned Date"]: ActioneddATE };
+                        // });
+                        const formattedActivity = table.map(itm => {
+                            if (itm["Actioned Date"]) {
+                                const timeStamp1 = parseInt(itm["Actioned Date"].match(/\d+/)[0]);
+                                itm["Actioned Date"] = new Date(timeStamp1);
+                            }
+                            //const timeStamp2 = parseInt(itm["Start"].match(/\d+/)[0]);
+                            //itm["Start"] = new Date(timeStamp2);
+                            return itm;
+                        })
+                        if (formattedActivity.length > 0) {
+                            const filteredArray = formattedActivity.filter(item => item.Comments !== null);
+
+                            setGetAudit(filteredArray);
+                            console.log("Json_GetAudit", filteredArray)
+                        }
+
+
                     }
-                    console.log("Json_GetAudit", table)
+
+
                 }
             })
         } catch (error) {
@@ -129,6 +188,8 @@ const [createNewFileObj, setCreateNewFileObj] = useState([]);
         }
 
     }
+
+
     const Json_GetItemStickyNotes = () => {
         try {
             let obj = {
@@ -138,7 +199,7 @@ const [createNewFileObj, setCreateNewFileObj] = useState([]);
                 if (sts && data) {
 
                     let atob = window.atob(data);
-                    console.log("Json_GetItemStickyNotes", atob);
+                    // console.log("Json_GetItemStickyNotes", atob);
                     setTemplateDataMarkup(atob)
                 }
             })
@@ -175,39 +236,122 @@ const [createNewFileObj, setCreateNewFileObj] = useState([]);
         document.documentElement.style.setProperty('--main-bg-color', '#d42027');
         setGetAttachment([]);
         setAgrNo(localStorage.getItem("agrno"));
-        setFolderId(localStorage.getItem("FolderId"));
+
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
         setViewerToken(localStorage.getItem("ViewerToken"));
 
         if (selectedDocument) {
+            
+            
+            // console.log("selectedDocument", selectedDocument)
+
+            setTxtClientData({ Client: selectedDocument.Client, ClientID: selectedDocument.SenderId })
+            setTxtSectionData({ Sec: selectedDocument.Section, SecID: selectedDocument.PostItemTypeID })
+            setTxtFolderData({ Folder: selectedDocument.Folder, FolderID: selectedDocument.ProjectId })
+
+            Json_GetItemBase64DataById(selectedDocument)
+
             var IsApproved = selectedDocument["IsApproved"];
+            
             var PortalDocId = selectedDocument["PortalDocId"];
+
             let IsApp = "";
             let PortalID = "";
-
             if (IsApproved === "SIG" && PortalDocId !== "") {
                 IsApp = IsApproved;
                 PortalID = PortalDocId;
             }
-
             setViwerUrl(`https://mydocusoft.com/ViewerNew.aspx?AgreementNo=${localStorage.getItem("agrno")}&ItemId=${selectedDocument["Registration No."]}&ext=${selectedDocument.Type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`);
+
             Json_GetAudit();
             Json_GetAttachmentsByItemId();
             Json_GetItemStickyNotes();
             Json_getAssociatedTaskListByDocumentId();
+            setSeletedFileData([]);
+            setopenModal(false)
+            Json_GetVersionByItemId();
+
         }
-        setSeletedFileData([]);
 
     }, [selectedDocument])
 
     const handeleAttachmentChange = (el) => {
-        console.log("handle change", el)
         setSeletedFileData((pre) => [...pre, el]);
 
     }
 
 
+    function Json_GetVersionByItemId() {
+        try {
+            let obj = {};
+            obj.itemId = selectedDocument["Registration No."];
+            cls.Json_GetVersionByItemId(obj, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        let tbl = js.Table;
+                        if (tbl.length > 0) {
+                            console.log("Json_GetVersionByItemId", tbl)
+                            setGetVertion(tbl)
+                        }
+
+                    }
+
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetVersionByItemId error", error)
+        }
+    }
+
+
+    function Json_GetItemBase64DataById(item) {
+        try {
+            let filesData = [];
+            let obj = {};
+            obj.ItemId = item["Registration No."]
+            cls.Json_GetItemBase64DataById(obj, function (sts, base64data) {
+                if (sts) {
+                    if (base64data !== "No Data Exist") {
+                        const fileData = {
+                            FileName: item.Description + "." + item.Type,
+                            Base64: base64data ? base64data : "", // Base64 data of the file
+                            FileSize: "",
+                            Preview: "", // Data URL for preview
+                            DocId: item["Registration No."],
+                            Guid: "",
+                            FileType: item["Type"],
+                            Description: item.Description
+
+                        };
+                        console.log("handle change fileData", fileData)
+                        filesData.push(fileData);
+
+
+                        // let tempTxtClientData = { Client: item.Client, ClientID: item.SenderId };
+                        // let tempTxtSectionData = { Sec: item.Section, SecID: item.PostItemTypeID };
+                        // let tempFolderData = { Folder: item.Folder, FolderID: item.ProjectId };
+
+                        // dispatch(setClientAndDocDataForTaskModalRedux({ TaskType: "CRM", createNewFileObj: filesData, txtClientData: tempTxtClientData, txtSectionData: tempTxtSectionData, txtFolderData: tempFolderData, }));
+                        // // console.log("dgjkdlgjroeti",tskType);
+                        // dispatch(handleOpenModalRedux("CRM"));
+
+
+                        setCreateNewFileObj(filesData);
+                    }
+                    else {
+                        toast.error(item.Description + "was not uploaded as it had no data")
+                    }
+
+                }
+
+            })
+        } catch (error) {
+            console.log("Json_GetItemBase64DataById error", error)
+        }
+    }
 
     function DowloadSingleFileOnClick() {
         try {
@@ -240,8 +384,6 @@ const [createNewFileObj, setCreateNewFileObj] = useState([]);
         } catch (error) {
             console.log({ Status: false, mgs: "Data not found", Error: error });
         }
-
-
     }
 
     function Json_DownloadZip() {
@@ -272,8 +414,6 @@ const [createNewFileObj, setCreateNewFileObj] = useState([]);
         } catch (error) {
             console.log({ Status: false, mgs: "Data not found", Error: error });
         }
-
-
     }
 
     function DeleteDocumentAttachment() {
@@ -390,50 +530,181 @@ const [createNewFileObj, setCreateNewFileObj] = useState([]);
 
     }
 
-const createTask=()=>{
-    setopenModal(true)
-console.log("Create New Task")
-}
+    const handleTaskModalOpening = (taskType) => {
+        if (selectedDocument && createNewFileObj) {
+            let tempTxtClientData = { Client: selectedDocument.Client, ClientID: selectedDocument.SenderId };
+            let tempTxtSectionData = { Sec: selectedDocument.Section, SecID: selectedDocument.PostItemTypeID };
+            let tempFolderData = { Folder: selectedDocument.Folder, FolderID: selectedDocument.ProjectId };
 
+            console.log("handle change fileData", createNewFileObj);
+
+            dispatch(setClientAndDocDataForTaskModalRedux({ TaskType: taskType, createNewFileObj: createNewFileObj, txtClientData: tempTxtClientData, txtSectionData: tempTxtSectionData, txtFolderData: tempFolderData, }));
+            // console.log("dgjkdlgjroeti",tskType);
+            dispatch(handleOpenModalRedux(taskType));
+        }
+    }
+
+    const createTask = () => {
+        setTaskType("CRM")
+        // setopenModal(true)
+        handleTaskModalOpening("CRM");
+    }
+
+    const createTaskForPublish = () => {
+        setTaskType("Portal")
+        // setopenModal(true)
+        handleTaskModalOpening("Portal");
+    }
+
+
+    // 
+    const [CreateTaskanchorEl, setCreateTaskAnchorEl] = React.useState(null);
+    const openCreateTask = Boolean(CreateTaskanchorEl);
+    const createTaskhandleClick = (event) => {
+        setCreateTaskAnchorEl(event.currentTarget);
+    };
+    const CreateTaskhandleClose = () => {
+        setCreateTaskAnchorEl(null);
+    };
+
+
+    // 
+    const [ShareanchorEl, setShareAnchorEl] = React.useState(null);
+    const openShare = Boolean(ShareanchorEl);
+    const SharehandleClick = (event) => {
+        setShareAnchorEl(event.currentTarget);
+    };
+    const SharehandleClose = () => {
+        setShareAnchorEl(null);
+    };
 
     return (
+        <>
+            <Dialog
+                open={openPDFView}
+                onClose={handleClosePDFView}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal full-modal
+                '
+                sx={{ width: '100%', maxWidth: '100%' }}
+            >
 
-        <Dialog
-            open={openPDFView}
-            onClose={handleClosePDFView}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-            className='custom-modal full-modal'
-            sx={{ width: '100%', maxWidth: '100%' }}
-        >
-            <Box className="d-flex align-items-center justify-content-between modal-head">
-                <Box className="dropdown-box">
-                    <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                        Document List
-                    </Typography>
-                </Box>
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                            Document Viewer
+                        </Typography>
+                    </Box>
 
-                {/*  */}
+                    {/*  */}
 
-                <Box className="d-flex align-items-center justify-content-between flex-wrap">
+                    <Box className="d-flex align-items-center justify-content-between flex-wrap">
 
-                    <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTask} >Create Task</Button>
-                    <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
-                    {/* <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button> */}
+                        <Box className='text-end relative me-3'>
+                            <DownloadForOfflineIcon className='text-red pointer font-32 btn-download' />
+                        </Box>
 
-                    <Box>
-                        <Button
-                            id="basic-button"
-                            aria-controls={ChangeIndex ? 'basic-menu' : undefined}
-                            aria-haspopup="true"
-                            aria-expanded={ChangeIndex ? 'true' : undefined}
-                            onClick={handleClickChangeIndex}
-                            className='btn-blue-2 me-2 mb-1'
-                        >
-                            Category
-                            {/* <KeyboardArrowDownIcon className='ms-1' /> */}
-                        </Button>
-                        {/* <Menu
+                        <div>
+                            <Button
+                                id="basic-button"
+                                aria-controls={openCreateTask ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={openCreateTask ? 'true' : undefined}
+                                onClick={createTaskhandleClick}
+                                className='btn-blue-2 me-2 mb-1'
+                                startIcon={<BorderColorIcon />}
+                            >
+                                Create Task
+                            </Button>
+                            <Menu
+                                id="basic-menu"
+                                anchorEl={CreateTaskanchorEl}
+                                open={openCreateTask}
+                                onClose={CreateTaskhandleClose}
+                                MenuListProps={{
+                                    'aria-labelledby': 'basic-button',
+                                }}
+                            >
+                                <MenuItem
+                                    onClick={() => {
+                                        CreateTaskhandleClose();
+                                        createTask();
+                                    }}
+                                ><DvrIcon className='me-1' /> CRM Task</MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        CreateTaskhandleClose();
+                                        createTask();
+                                    }}
+                                ><InsertPageBreakIcon className='me-1' /> DMS Task</MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        CreateTaskhandleClose();
+                                        createTask();
+                                    }}
+                                ><LanguageIcon className='me-1' /> Portal Task</MenuItem>
+                            </Menu>
+                        </div>
+
+                        <div>
+                            <Button
+                                id="basic-button"
+                                aria-controls={openShare ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={openShare ? 'true' : undefined}
+                                onClick={SharehandleClick}
+                                className='btn-blue-2 me-2 mb-1'
+                                startIcon={<ShareIcon />}
+                            >
+                                Share
+                            </Button>
+                            <Menu
+                                id="basic-menu"
+                                anchorEl={ShareanchorEl}
+                                open={openShare}
+                                onClose={SharehandleClose}
+                                MenuListProps={{
+                                    'aria-labelledby': 'basic-button',
+                                }}
+                            >
+                                <MenuItem
+                                    onClick={() => {
+                                        SharehandleClose();
+                                        createTaskForPublish();
+                                    }}
+                                >
+                                    <PublishIcon className='me-1' />
+                                    Publish</MenuItem>
+                                <MenuItem onClick={SharehandleClose}>
+                                    <ForwardToInboxIcon className='me-1' />
+                                    Send as Form</MenuItem>
+                                <MenuItem onClick={SharehandleClose}>
+                                    <MarkunreadIcon className='me-1' />
+                                    Email</MenuItem>
+                                <MenuItem onClick={SharehandleClose}>
+                                    <DownloadIcon className='me-1' />
+                                    Download</MenuItem>
+                            </Menu>
+                        </div>
+
+                        {/* <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTask} >Create Task</Button>
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTaskForPublish} >Publish</Button> */}
+                        <Box>
+                            <Button
+                                id="basic-button"
+                                aria-controls={ChangeIndex ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={ChangeIndex ? 'true' : undefined}
+                                onClick={handleClickChangeIndex}
+                                className='btn-blue-2 me-2 mb-1'
+                                startIcon={<CreateIcon />}
+
+                            >
+                                Edit
+                                {/* <KeyboardArrowDownIcon className='ms-1' /> */}
+                            </Button>
+                            <Menu
                                 id="basic-menu"
                                 className='custom-dropdown'
                                 anchorEl={anchorElChangeIndex}
@@ -443,204 +714,218 @@ console.log("Create New Task")
                                     'aria-labelledby': 'basic-button',
                                 }}
                             >
-                                <MenuItem onClick={handleCloseChangeIndex}> <CategoryIcon className='me-2' /> Category</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <GradingIcon className='me-2' /> Refile</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <InsertLinkIcon className='me-2' /> Links</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <AddIcon className='me-2' /> </MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <AlarmOnIcon className='me-2' /> Add Activity </MenuItem>
-                            </Menu> */}
+
+                                <MenuItem onClick={handleCloseChangeIndex}> <ListIcon className='me-1' />  Re-index</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <RedeemIcon className='me-1' /> Check-Out</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <CategoryIcon className='me-1' /> Category</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <DriveFileRenameOutlineIcon className='me-1' /> Rename</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <AddToDriveIcon className='me-1' /> Upload to Drive</MenuItem>
+                            </Menu>
+                        </Box>
+
+                        <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
+                            <span className="material-symbols-outlined text-black">
+                                cancel
+                            </span>
+                        </Button>
+
                     </Box>
-
-                    <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
-                        <span className="material-symbols-outlined text-black">
-                            cancel
-                        </span>
-                    </Button>
-
                 </Box>
-            </Box>
 
-            <DialogContent className='full-height-modal'>
+                <DialogContent className='clearfix'>
 
-                <DialogContentText id="alert-dialog-description">
-                    <Box sx={{ width: '100%', typography: 'body1' }}>
-                        <TabContext value={value}>
-                            <Box>
-                                <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
-                                    <Tab label="Documents" value="1" />
-                                    <Tab label="Versions" value="2" />
-                                    <Tab label="Notes" value="3" />
-                                    <Tab label="Associated Tasks" value="4" />
-                                    <Tab label="Activity" value="5" />
-                                    <Tab label="Attachments" value="6" />
-                                </TabList>
-                            </Box>
-                            <TabPanel value="1" className='p-0'>
-                                <Box className='white-box relative'>
-                                    <Box className='text-end mb-3 btn-download'>
-                                        <DownloadForOfflineIcon className='text-red pointer font-32' />
+                    <DialogContentText id="alert-dialog-description">
+                        <Box className="mt-3 full-height-modal">
+                            <TabContext value={value}>
+                                <Box>
+                                    <Tabs onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
+                                        <Tab label="Documents" value="1" />
+                                        <Tab label="Versions" value="2" />
+                                        <Tab label="Notes" value="3" />
+                                        <Tab label="Associated Tasks" value="4" />
+                                        <Tab label="Activity" value="5" />
+                                        <Tab label="Attachments" value="6" />
+                                    </Tabs>
+                                </Box>
+                                <TabPanel value="1" className='p-0'>
+                                    <Box className='white-box'>
+
+                                        {viewerUrl && (
+                                            <iframe
+                                                src={isLoadingDoc ? "https://6612849d1f1acaa676039a99--amazing-haupia-bf1c0b.netlify.app/" : viewerUrl} // Specify the URL of the iframe
+                                                // src={"http://127.0.0.1:5501/src/client/utils/test/test.html"}
+                                                onLoad={() => {
+                                                    setIsLoadingDoc(false);
+                                                }}
+                                                width="100%" // Set the width
+                                                height="700px" // Set the height
+                                                frameBorder="0" // Set frameborder to 0
+                                                allowFullScreen // Allow fullscreen mode
+                                                title="Embedded Content" // Set the title for accessibility
+                                            />
+
+                                        )}
+
                                     </Box>
-                                    <iframe
-                                        src={viewerUrl} // Specify the URL of the iframe
-                                        width="100%" // Set the width
-                                        height="700px" // Set the height
-                                        frameBorder="0" // Set frameborder to 0
-                                        allowFullScreen // Allow fullscreen mode
-                                        title="Embedded Content" // Set the title for accessibility
-                                    />
+                                </TabPanel>
 
-                             <CreateNewModalTask
-                                // documentDate={documentDate}
-                                // receivedDate={receivedDate}
-                                // createNewFileObj={createNewFileObj}
-                                // txtFolderData={txtFolderData}
-                                // txtClientData={txtClientData}
-                                // txtSectionData={txtSectionData}
-                                // TaskType={TaskType}
-                                // // setPassButtonHide={setPassButtonHide}
-                                // // passButtonHide={passButtonHide}
-                                // openModal={openModal}
-                            ></CreateNewModalTask>
+                                <TabPanel value="2" className='p-0'>
+                                    <Box className='row'>
 
-                                </Box>
-                            </TabPanel>
+                                        {getVertion.length > 0 ? getVertion.map((item, index) => {
+                                            return <>
+                                                <Box className='col-lg-3' key={index}>
+                                                    <Box className="file-uploads">
+                                                        <label className="file-uploads-label file-uploads-document">
+                                                            <Box className="d-flex align-items-center">
+                                                                {/* <DescriptionIcon
+                                                                    sx={{
+                                                                        fontSize: 32,
+                                                                    }}
+                                                                    className='me-2'
+                                                                /> */}
+                                                                <div className='img-format'>
+                                                                    <img src={Fileformat} />
+                                                                </div>
+                                                                <Box className="upload-content pe-3">
+                                                                    <Typography variant="h4" className='d-flex align-items-center justify-content-between' >
+                                                                        Version No {item.VersionNo} {item.IsLocked && (<>
 
-                            <TabPanel value="2">
-                                <Box className='row'>
-                                    {Array(12).fill("").map(() => {
-                                        return <>
-                                            <Box className='col-lg-3'>
-                                                <Box className="file-uploads">
-                                                    <label className="file-uploads-label file-uploads-document">
-                                                        <Box className="d-flex align-items-center">
-                                                            <DescriptionIcon
-                                                                sx={{
-                                                                    fontSize: 32,
-                                                                }}
-                                                                className='me-2'
-                                                            />
-                                                            <Box className="upload-content pe-3">
-                                                                <Typography variant="h4" >
-                                                                    This File is Test Files.pdf 2
-                                                                </Typography>
-                                                                <Typography variant="body1">
-                                                                    12:36PM 28/12/2023 | File uploaded by Patrick
-                                                                </Typography>
+                                                                            <LockIcon size="small"></LockIcon>
+
+                                                                        </>)}
+                                                                    </Typography>
+                                                                    <Typography variant="body1">
+                                                                        {moment(item["VDate"]).format("DD/MM/YYYY HH:mm:ss")} | Updated by {item.UserName.toUpperCase()}
+                                                                    </Typography>
+                                                                </Box>
                                                             </Box>
-                                                        </Box>
-                                                    </label>
+                                                        </label>
+                                                    </Box>
+                                                    {/* file upload end */}
                                                 </Box>
-                                                {/* file upload end */}
-                                            </Box>
-                                        </>
-                                    })}
-                                </Box>
-                            </TabPanel>
+                                            </>
+                                        }) : ""}
+                                    </Box>
+                                </TabPanel>
 
-                            <TabPanel value="3" className='p-0'>
-                                {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
-                                <Box className='text-end'>
-                                    <Button onClick={SaveStickyNotes} variant="contained" className='mt-3'>Save Notes</Button>
+                                <TabPanel value="3" className='p-0'>
+                                    {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+                                    <Box className='text-end'>
+                                        <Button onClick={SaveStickyNotes} variant="contained" className='mt-3'>Save Notes</Button>
 
-                                    <ToastContainer></ToastContainer>
+                                        {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
 
-                                </Box>
-                            </TabPanel>
+                                    </Box>
+                                </TabPanel>
 
-                            <TabPanel value="4">
+                                <TabPanel value="4" className='p-0'>
+                                    <Box className='text-center mt-3'>
+                                        {getAssociatedTaskList && getAssociatedTaskList.map((item, index) => {
+                                            let str = item?.AssignedToID;
+                                            let arr = str?.split(',').map(Number);
+                                            let isUserAssigned = arr?.includes(parseInt(localStorage.getItem('UserId')));
+                                            console.log("isUserAssigned", isUserAssigned)
+                                            return (
+                                                <label key={index} onClick={(e) => Json_CRM_GetOutlookTask(e, item)} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex">
+                                                    <RadioButtonUncheckedIcon className={`me-1 ${isUserAssigned ? 'green' : 'disabled'}`} />
+                                                    {item.Subject}
+                                                </label>
+                                            );
+                                        })}
 
-                                <Box className='text-center'>
-                                    {getAssociatedTaskList && getAssociatedTaskList.map((item, index) => {
-                                        let str = item?.AssignedToID;
-                                        let arr = str?.split(',').map(Number);
-                                        let isUserAssigned = arr?.includes(parseInt(localStorage.getItem('UserId')));
-                                        console.log("isUserAssigned", isUserAssigned)
-                                        return (
-                                            <label key={index} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex">
-                                                <RadioButtonUncheckedIcon className={`me-1 ${isUserAssigned ? 'green' : 'disabled'}`} />
-                                                {item.Subject}
-                                            </label>
-                                        );
-                                    })}
+                                    </Box>
+                                </TabPanel>
 
-                                </Box>
+                                <TabPanel value="5" className='p-0'>
+                                    <Activity getAudit={getAudit} selectedDocument={selectedDocument} call_Json_GetAudit={call_Json_GetAudit}></Activity>
+                                </TabPanel>
 
-                            </TabPanel>
-
-                            <TabPanel value="5" className='p-0'>
-                                <Activity getAudit={getAudit}></Activity>
-                            </TabPanel>
-
-                            {/* <TabPanel value="5">
+                                {/* <TabPanel value="5">
                         <DocumentList/>
                     </TabPanel> */}
-                            <TabPanel value="6">
+                                <TabPanel value="6">
 
-                                <Box className='d-flex mb-3 mt-2'>
-                                    {/* <FormControlLabel control={<Checkbox />} className="p-0 m-0 ms-2 ps-1" size="small"/> */}
-                                    <Checkbox {...label} defaultChecked size="small" />
+                                    <Box className='d-flex mb-3 mt-2'>
+                                        {/* <FormControlLabel control={<Checkbox />} className="p-0 m-0 ms-2 ps-1" size="small"/> */}
+                                        <Checkbox {...label} defaultChecked size="small" />
 
-                                    <Button className='btn-blue-2 me-2 mb-1 pointer' for='file-upload' startIcon={<AttachFileIcon />}>
-                                        <input type='file' id='file-upload' multiple onChange={handleFileSelect} className='file-input' />
-                                        <label for='file-upload' className='pointer '>Upload Your File</label>
-                                    </Button>
+                                        <Button className='btn-blue-2 me-2 mb-1 pointer' for='file-upload' startIcon={<AttachFileIcon />}>
+                                            <input type='file' id='file-upload' multiple onChange={handleFileSelect} className='file-input' />
+                                            <label for='file-upload' className='pointer '>Upload Your File</label>
+                                        </Button>
 
-                                    <Button className='btn-red me-2 mb-1' onClick={DeleteDocumentAttachment} startIcon={<AttachFileIcon />}>Delete</Button>
+                                        <Button className='btn-red me-2 mb-1 ps-1' onClick={DeleteDocumentAttachment} startIcon={<AttachFileIcon />}>Delete</Button>
 
-                                    <Button className='btn-blue-2 me-2 mb-1' onClick={DowloadSingleFileOnClick} startIcon={<AttachFileIcon />}>Download</Button>
+                                        <Button className='btn-blue-2 me-2 mb-1 ps-1' onClick={DowloadSingleFileOnClick} startIcon={<AttachFileIcon />}>Download</Button>
 
-                                </Box>
+                                    </Box>
 
-                                <hr />
+                                    <hr />
 
-                                <Box className='row'>
+                                    <Box className='row'>
 
-                                    {getAttachment ? getAttachment.map((el, index) => {
-                                        return (<>
-                                            <Box className='col-xxl-3 col-xl-4 col-md-6'>
-                                                <Box className="file-uploads">
-                                                    <label className="file-uploads-label file-uploads-document">
-                                                        <Box className="d-flex align-items-center">
-                                                            <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" onChange={() => handeleAttachmentChange(el)} />
+                                        {getAttachment ? getAttachment.map((el, index) => {
+                                            return (<>
+                                                <Box className='col-xxl-3 col-xl-4 col-md-6'>
+                                                    <Box className="file-uploads">
+                                                        <label className="file-uploads-label file-uploads-document">
+                                                            <Box className="d-flex align-items-center">
+                                                                <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" onChange={() => handeleAttachmentChange(el)} />
 
-                                                            <DescriptionIcon
-                                                                sx={{
-                                                                    fontSize: 32,
-                                                                }}
-                                                                className='me-2'
-                                                            />
-                                                            <Box className="upload-content pe-3">
-                                                                <Typography variant="h4" >
-                                                                    {el.Description}
-                                                                </Typography>
-                                                                <Typography variant="body1">
-                                                                    {cls.DateForMate(el.DateAssigned)}
-                                                                </Typography>
+                                                                {/* <DescriptionIcon
+                                                                    sx={{
+                                                                        fontSize: 32,
+                                                                    }}
+                                                                    className='me-2'
+                                                                /> */}
+                                                                <div className='img-format'>
+                                                                    <img src={Fileformat} />
+                                                                </div>
+                                                                <Box className="upload-content pe-3">
+                                                                    <Typography variant="h4" >
+                                                                        {el.Description}
+                                                                    </Typography>
+                                                                    <Typography variant="body1">
+                                                                        {cls.DateForMate(el.DateAssigned)}
+                                                                    </Typography>
+                                                                </Box>
                                                             </Box>
-                                                        </Box>
-                                                    </label>
+                                                        </label>
+                                                    </Box>
+                                                    {/* file upload end */}
                                                 </Box>
-                                                {/* file upload end */}
-                                            </Box>
-                                        </>)
-                                    }) : ""}
+                                            </>)
+                                        }) : ""}
 
-                                </Box>
+                                    </Box>
 
-                            </TabPanel>
-                        </TabContext>
+                                </TabPanel>
+                            </TabContext>
 
-                    </Box>
-                </DialogContentText>
-            </DialogContent>
 
-            {/* <DialogActions>
+                            {/* {openModal && openModal && <CreateNewModalTask
+                                TaskType={TaskType}
+                                createNewFileObj={createNewFileObj}
+                                txtClientData={txtClientData}
+                                txtSectionData={txtSectionData}
+                                txtFolderData={txtFolderData}
+                                openModal={openModal}
+                                setOpenModal={setopenModal}
+                            ></CreateNewModalTask>} */}
+                        </Box>
+                    </DialogContentText>
+                </DialogContent>
+
+                {/* <DialogActions>
                 <Button onClick={handleClosePDFView}>Disagree</Button>
                 <Button onClick={handleClosePDFView} autoFocus>
                     Agree
                 </Button>
             </DialogActions> */}
-        </Dialog>
+            </Dialog>
+        </>
+
 
     )
 }

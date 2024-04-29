@@ -18,8 +18,8 @@ import EditClientdetails from "./EditClientdetails";
 import EditUDFClientcard from "./EditUDFClientcard";
 import EditClientaddress from "./EditClientaddress";
 import { connect } from 'react-redux';
-function EditReference({companyEditDetails}) {
-    console.log(companyEditDetails,"companyEditDetails");
+function EditReference({ companyEditDetails }) {
+  console.log(companyEditDetails, "companyEditDetails");
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -31,12 +31,13 @@ function EditReference({companyEditDetails}) {
   const [selectedFolderID, setSelectedFolderID] = useState(null);
   const [dataFromChild, setDataFromChild] = useState([]);
   const [dataCompanyHouse, setDataCompanyHouse] = useState([]);
+  const [SendPorjectId, setSendPorjectId] = useState(null);
   const [activeStep, setActiveStep] = React.useState(0);
   const [userDetail, setUserDetail] = useState({
-    Clientname: "",
-    Clientid: "",
-    Mobile: "",
-    Telephone: "",
+    Clientname: companyEditDetails[0]?.OriginatorName,
+    Clientid: companyEditDetails[0]?.OriginatorNo,
+    Mobile: companyEditDetails[0]?.AltTelNo,
+    Telephone: companyEditDetails[0]?.TelNo,
     Line1: "",
     Line2: "",
     Line3: "",
@@ -66,12 +67,12 @@ function EditReference({companyEditDetails}) {
     Status: "",
     Source: "",
     Manager: "",
-    Email: "",
+    Email: companyEditDetails[0]?.Email,
     folderId: localStorage.getItem("FolderId"),
-    BussId: -1,
+    BussId: companyEditDetails[0].BussID,
     UserId: -1,
-    SourceId: -1,
-    StatusId: -1,
+    SourceId: companyEditDetails[0].SourceId,
+    StatusId: companyEditDetails[0].StatusId,
     Title: "",
     FirstName: "",
     LastName: "",
@@ -92,7 +93,9 @@ function EditReference({companyEditDetails}) {
     mainCountry: "",
     billingsCountry: "",
     ragistersCountry: "",
-    CHNumber: ""
+    CHNumber: "",
+    InActiveData:false,
+    HideData:false
   });
   console.log("userDetailuserDetail", userDetail);
   const [originatorNo, setoriginatorNo] = useState("");
@@ -107,7 +110,7 @@ function EditReference({companyEditDetails}) {
       agrno: agrno,
       intProjectId: folderId,
       password: password,
-      strOrignatorNumber: originatorNo,
+      strOrignatorNumber: companyEditDetails[0].OriginatorNo ? companyEditDetails[0].OriginatorNo : "",
     };
     try {
       webClientCLS.Json_GetClientCardDetails(obj, (sts, data) => {
@@ -147,9 +150,9 @@ function EditReference({companyEditDetails}) {
       Town: userDetail.Town ? userDetail.Town : "",
       County: userDetail.MCounty ? userDetail.MCounty : "",
       Postcode: userDetail.Postcode ? userDetail.Postcode : "",
-      Country: userDetail.mainCountry,
+      Country: userDetail.mainCountry ? userDetail.mainCountry : "United Kingdom",
     };
-    console.log(obj, "mainaddress");
+    console.log(obj, "mainaddress",userDetail.mainCountry);
     Json_SetClientAddress(obj);
   };
 
@@ -167,7 +170,7 @@ function EditReference({companyEditDetails}) {
       Town: userDetail.BilTown ? userDetail.BilTown : "",
       County: userDetail.BilCountry ? userDetail.BilCountry : "",
       Postcode: userDetail.BilPostcode ? userDetail.BilPostcode : "",
-      Country: userDetail.billingsCountry,
+      Country: userDetail.billingsCountry ? userDetail.billingsCountry : "United Kingdom",
     };
     console.log(obj, "mainaddress11");
     Json_SetClientAddress(obj);
@@ -178,7 +181,7 @@ function EditReference({companyEditDetails}) {
       Email: Email,
       password: password,
       OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
-      AddressId: 1,
+      AddressId: 3,
       AddressType: "Registered Address",
       Add1: userDetail.regLine1 ? userDetail.regLine1 : "",
       Add2: userDetail.regLine2 ? userDetail.regLine2 : "",
@@ -186,23 +189,127 @@ function EditReference({companyEditDetails}) {
       Town: userDetail.regTown ? userDetail.regTown : "",
       County: userDetail.regCountry ? userDetail.regCountry : "",
       Postcode: userDetail.regPostcode ? userDetail.regPostcode : "",
-      Country: userDetail.ragistersCountry,
+      Country: userDetail.ragistersCountry ? userDetail.ragtersCountry : "United Kingdom",
     };
     console.log(obj, "mainaddress22");
 
     Json_SetClientAddress(obj);
   };
+
+  const Json_UpdateClientField = () => {
+    let contactData =
+    {
+      "fieldName": "CompanyNo",
+      "fieldFile": "Email"
+    }
+    console.log(contactData, "contactData");
+    if (contactData.fieldName == "CompanyNo") {
+      let birthdayObj = {
+        "agrno": agrno,
+        "Email": Email,
+        "password": password,
+        "ClientId": userDetail.Clientid ? userDetail.Clientid : "",
+        "projectid": folderId,
+        "fieldName": "CompanyNo",
+        "fieldValue": userDetail.CHNumber ? userDetail.CHNumber : ""
+      }
+      Cls.Json_UpdateClientField(birthdayObj, (sts, data) => {
+        if (sts) {
+          console.log(sts, data, "Json_UpdateClientFieldcompanyno");
+          // let jsonparse = JSON.parse(data);
+          // if (jsonparse) {
+          //     console.log(jsonparse,"successcontact");
+
+
+          // }
+        }
+
+      });
+    }
+    if (contactData.fieldFile == "Email") {
+      let profileObj = {
+        "agrno": agrno,
+        "Email": Email,
+        "password": password,
+        "ClientId": userDetail.Clientid ? userDetail.Clientid : "",
+        "projectid": folderId,
+        "fieldName": "Email",
+        "fieldValue": userDetail.Email ? userDetail.Email : ""
+      }
+
+      Cls.Json_UpdateClientField(profileObj, (sts, data) => {
+        if (sts) {
+          console.log(sts, data, "Json_UpdateClientFieldEmail");
+          // let jsonparse = JSON.parse(data);
+          // if (jsonparse) {
+          //     console.log(jsonparse,"successcontact");
+
+
+          // }
+        }
+
+      });
+    }
+  };
+
+  const Json_ChangeClientID = () => {
+    let changeidObj = {
+      "agrno": agrno,
+      "Email": Email,
+      "password": password,
+      "oldID": companyEditDetails[0].OriginatorNo ? companyEditDetails[0].OriginatorNo : "",
+      "NewId": userDetail.Clientid ? userDetail.Clientid : "",
+      "ClientName": userDetail.Clientname ? userDetail.Clientname : ""
+    }
+
+    Cls.Json_ChangeClientID(changeidObj, (sts, data) => {
+      if (sts) {
+        console.log(sts, data, "Json_ChangeClientID");
+        // let jsonparse = JSON.parse(data);
+        // if (jsonparse) {
+        //     console.log(jsonparse,"successcontact");
+
+
+        // }
+      }
+
+    });
+  }
+
+  const Json_AssignProjectsToClient = () => {
+    let changeidObj = {
+      "agrno": agrno,
+      "Email": Email,
+      "password": password,
+      "OriginatorNo": userDetail.Clientid ? userDetail.Clientid : "",
+      "ProjectIdList": userDetail.FolderId ? userDetail.FolderId : SendPorjectId
+    }
+
+    Cls.Json_AssignProjectsToClient(changeidObj, (sts, data) => {
+      if (sts) {
+        console.log(sts, data, "Json_AssignProjectsToClient");
+        // let jsonparse = JSON.parse(data);
+        // if (jsonparse) {
+        //     console.log(jsonparse,"successcontact");
+
+
+        // }
+      }
+
+    });
+  }
   const handleSubmit = (event) => {
     event.preventDefault();
     function todayDate() {
       var today = new Date().toJSON().slice(0, 10);
       return today;
     }
+    
     let clientdata = {
       agrno: agrno,
       Email: Email,
       password: password,
-      ProjectIdList: userDetail.folderId ? userDetail.folderId : -1,
+      // ProjectIdList: userDetail.folderId ? userDetail.folderId : -1,
       OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
       OriginatorName: userDetail.Clientname ? userDetail.Clientname : "",
       Address: userDetail.fullAddress ? userDetail.fullAddress : "",
@@ -210,38 +317,43 @@ function EditReference({companyEditDetails}) {
       AlteTelNo: userDetail.Mobile ? userDetail.Mobile : "",
       Faxno: "",
       ContactName: "",
-      UDF1: "",
-      UDF2: "",
-      UDF3: "",
+      OrgActive: userDetail.InActiveData==true ? "No" : userDetail.HideData==true ? "HID" : "Yes",
       StickyNote: "",
       ContactEmail: userDetail.Email ? userDetail.Email : "",
-      MParameter: "",
-      CDate: todayDate(),
+      // MParameter: "",
+      // CDate: todayDate(),
       BussId: userDetail.BussId ? userDetail.BussId : -1,
       SourceId: userDetail.SourceId ? userDetail.SourceId : -1,
       StatusId: userDetail.StatusId ? userDetail.StatusId : -1,
       Description: "",
       OrgPassword: "",
       ManagerId: userDetail.UserId ? userDetail.UserId : parseInt(intUserid),
-      OrgActive: "Yes",
+      CCode: userDetail.Clientid ? userDetail.Clientid : ""
     };
     // toast.success("Reference Added Successfully !");
     // Json_InsertContact();
-    console.log(clientdata, "clientdata");
-    Cls.Json_AddClient(clientdata, (sts, data) => {
-      console.log(sts, data, "newclientdata");
-      let jsonparse = JSON.parse(data);
+    console.log(clientdata, "updateclientdata");
+    Cls.Json_UpdateClient(clientdata, (sts, data) => {
+      console.log(sts, data, "Json_UpdateClient");
+      // let jsonparse = JSON.parse(data);
       if (sts) {
-        if (jsonparse.Status == "Success") {
-          console.log("Response", data);
-          toast.success("Reference Added Successfully !");
-          // Json_InsertContact(); Main contact not need
-          saveUDF();
-          mainAddress();
-          billingAddress();
-          ragisterAddress();
-        } else {
-          toast.success("Reference ID Already Exists!");
+        if(data){
+          if (data == "Success") {
+            console.log("Response", data);
+            toast.success("Client Updated Successfully !");
+            // Json_InsertContact(); Main contact not need
+            Json_ChangeClientID();
+            Json_UpdateClientField();
+            Json_AssignProjectsToClient();
+            saveUDF();
+            mainAddress();
+            billingAddress();
+            ragisterAddress();
+          }
+          else {
+            // toast.success("Reference ID Already Exists!");
+            console.log("Faild Json_UpdateClient");
+          }
         }
       }
     });
@@ -284,12 +396,14 @@ function EditReference({companyEditDetails}) {
       }
     });
   };
+
+
   const saveUDF = () => {
     const result = Object.entries(dataFromChild)
       .map(([key, value]) => `${key}: ${value}`)
       .join(", ");
 
-    
+
     let requestBody = {
       agrno: agrno,
       Email: Email,
@@ -300,7 +414,7 @@ function EditReference({companyEditDetails}) {
       ContactUDFString: "",
       ContactNo: "",
     };
-    console.log(result, "resultresult_requestBody",requestBody);
+    console.log(result, "resultresult_requestBody", requestBody);
     try {
       Cls.Json_CRMSaveUDFValues(requestBody, (sts, data) => {
         if (sts) {
@@ -310,7 +424,7 @@ function EditReference({companyEditDetails}) {
           }
         }
       });
-    } catch (e) {}
+    } catch (e) { }
   };
   const mapStateToProps = (state) => ({
     userDetail: state.userDetail,
@@ -325,8 +439,8 @@ function EditReference({companyEditDetails}) {
     mapStateToProps,
     mapDispatchToProps
   )(EditClientdetails);
-  
- 
+
+
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
@@ -361,12 +475,12 @@ function EditReference({companyEditDetails}) {
               // setDataCompanyHouse={setDataCompanyHouse}
               setUserDetail={setUserDetail}
               //
+             
               companyEditDetails={companyEditDetails}
               setDataCompanyHouse={setDataCompanyHouse}
               setSelectedFolderID={setSelectedFolderID}
-              //
+            //
             ></EditClientdetails>
-          
           }
         </Box>
       ),
@@ -398,7 +512,7 @@ function EditReference({companyEditDetails}) {
               //
               dataCompanyHouse={dataCompanyHouse}
               setUserDetail={setUserDetail}
-              //
+            //
             ></EditClientaddress>
           }
         </Box>
@@ -420,9 +534,56 @@ function EditReference({companyEditDetails}) {
 
   return (
     <Box className="container-fluid p-0">
-       <ToastContainer></ToastContainer>
+      {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
       <Box sx={{ width: "100%", typography: "body1" }} className="">
-        <Box sx={{ maxWidth: "100%" }}>
+
+        <Box className="clearfix">
+          <h2 className="font-20 bold text-black mb-0">Client Details</h2>
+          {
+            <EditClientdetails
+              userDetail={userDetail}
+              //
+              dataCompanyHouse={dataCompanyHouse}
+              // setDataCompanyHouse={setDataCompanyHouse}
+              setUserDetail={setUserDetail}
+              //
+              companyEditDetails={companyEditDetails}
+              setDataCompanyHouse={setDataCompanyHouse}
+              setSelectedFolderID={setSelectedFolderID}
+            //
+            ></EditClientdetails>
+          }
+        </Box>
+
+        <hr />
+
+        <Box className="mt-4">
+          <h2 className="font-20 bold text-black mb-4">Address</h2>
+          {
+            <EditClientaddress
+              userDetail={userDetail}
+              //
+              dataCompanyHouse={dataCompanyHouse}
+              setUserDetail={setUserDetail}
+            //
+            ></EditClientaddress>
+          }
+        </Box>
+
+        <hr />
+
+        <Box className="mt-3">
+          {/* <h2 className="font-20 bold text-black mb-4">Details</h2> */}
+          <EditUDFClientcard
+            data={clientDetails}
+            setDataFromChild={setDataFromChild}
+          />
+        </Box>
+
+
+
+
+        <Box sx={{ maxWidth: "100%" }} className='d-none'>
           <Stepper activeStep={activeStep} orientation="vertical">
             {steps.map((step, index) => (
               <Step key={step.label}>
@@ -475,6 +636,8 @@ function EditReference({companyEditDetails}) {
         </Box>
         {/* Stepper end  */}
 
+
+
         <Box className="main-accordian">
           {/* <UDFClientcard data={clientDetails} setDataFromChild={setDataFromChild} /> */}
 
@@ -487,8 +650,9 @@ function EditReference({companyEditDetails}) {
                 !userDetail.Clientname || !userDetail.Clientid
                 // !folderData
               }
+              className="btn-blue-2"
             >
-              Add Client
+              Update Client
             </Button>{" "}
           </div>
         </Box>

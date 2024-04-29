@@ -179,10 +179,11 @@
         /*================ preloader css ====================*/
         #preloader {
             background: #fff;
-            height: 100%;
+            height: 80vh;
             bottom: 0;
             left: 0;
-            position: fixed;
+            /* position: fixed; */
+            /* position: absolute; */
             right: 0;
             top: 0;
             z-index: 999;
@@ -190,7 +191,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-
+            padding: 90px 0;
             .loading {
                 display: flex;
             }
@@ -208,10 +209,10 @@
                 border-top-color: #D41B20;
                 margin: 0 auto 0em auto;
                 position: absolute;
-                left: -40px;
-                right: -40px;
-                bottom: -40px;
-                top: -40px;
+                left: -30px;
+                right: -30px;
+                bottom: -30px;
+                top: -30px;
 
                 &:before {
                     content: "";
@@ -238,8 +239,8 @@
                 border-radius: 50%;
                 background-color: rgb(253, 253, 253);
                 box-shadow: 0 0 100px 0 rgba(4, 46, 56, 0.14);
-                width: 170px;
-                height: 170px;
+                width: 120px;
+                height: 120px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -247,7 +248,7 @@
                 margin: 40px auto 80px;
 
                 img {
-                    width: 34px;
+                    width: 26px;
                     margin-bottom: 10px;
                 }
 
@@ -257,7 +258,7 @@
                 }
 
                 h4 {
-                    font-size: 18px;
+                    font-size: 16px;
                     font-weight: 400;
                     margin-bottom: 0;
                     color: #1d2746;

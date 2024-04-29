@@ -7,7 +7,18 @@ import Grid from '@mui/material/Grid';
 import { Accordion, AccordionDetails, AccordionSummary, Box } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ListItem from '@mui/material/ListItem';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CircleIcon from '@mui/icons-material/Circle';
+import SignpostIcon from '@mui/icons-material/Signpost';
+import ApartmentIcon from '@mui/icons-material/Apartment';
+import WrapTextIcon from '@mui/icons-material/WrapText';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import HomeWorkIcon from '@mui/icons-material/HomeWork';
+import FactCheckIcon from '@mui/icons-material/FactCheck';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import HistoryIcon from '@mui/icons-material/History';
+import EventRepeatIcon from '@mui/icons-material/EventRepeat';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 function CompaniesHouse() {
     return (
@@ -29,7 +40,7 @@ function CompaniesHouse() {
                         <ul className='address-list'>
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <CheckCircleIcon className='me-2' />
+                                    <ApartmentIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Company number
                                     </Typography>
@@ -43,7 +54,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <CheckCircleIcon className='me-2' />
+                                    <ApartmentIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Company name
                                     </Typography>
@@ -55,9 +66,11 @@ function CompaniesHouse() {
                                 </Box>
                             </ListItem>
 
+
+
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <CheckCircleIcon className='me-2' />
+                                    <WrapTextIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Type
                                     </Typography>
@@ -71,7 +84,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <CheckCircleIcon className='me-2' />
+                                    <VerifiedIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Status
                                     </Typography>
@@ -85,7 +98,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <CheckCircleIcon className='me-2' />
+                                    <HomeWorkIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Registered Office
                                     </Typography>
@@ -99,7 +112,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <CheckCircleIcon className='me-2' />
+                                    <SignpostIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Postcode
                                     </Typography>
@@ -113,7 +126,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <CheckCircleIcon className='me-2' />
+                                    <FactCheckIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Confirmation statement next due
                                     </Typography>
@@ -127,7 +140,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <CheckCircleIcon className='me-2' />
+                                    <CalendarMonthIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Date of creation
                                     </Typography>
@@ -146,7 +159,7 @@ function CompaniesHouse() {
                         <ul className='address-list'>
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <CheckCircleIcon className='me-2' />
+                                    <InsertDriveFileIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Can File
                                     </Typography>
@@ -158,9 +171,12 @@ function CompaniesHouse() {
                                 </Box>
                             </ListItem>
 
+
+
+
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <CheckCircleIcon className='me-2' />
+                                    <HistoryIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Has insolvency history
                                     </Typography>
@@ -174,7 +190,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <CheckCircleIcon className='me-2' />
+                                    <ManageAccountsIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Accounts next made up to
                                     </Typography>
@@ -188,7 +204,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <CheckCircleIcon className='me-2' />
+                                    <EventRepeatIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Accounts next due
                                     </Typography>
@@ -196,14 +212,13 @@ function CompaniesHouse() {
                                 <Box className='add-details'>
                                     <Typography variant="body2" className='font-13 sembold'>
                                         30/09/2024
-
                                     </Typography>
                                 </Box>
                             </ListItem>
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <CheckCircleIcon className='me-2' />
+                                    <FactCheckIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Confirmation statement next made up to
                                     </Typography>
@@ -217,7 +232,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <CheckCircleIcon className='me-2' />
+                                    <FactCheckIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Next Statement Date
                                     </Typography>
@@ -232,7 +247,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <CheckCircleIcon className='me-2' />
+                                    <CalendarMonthIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Due By
                                     </Typography>
@@ -246,7 +261,7 @@ function CompaniesHouse() {
 
                             <ListItem>
                                 <Box className='add-heading add-heading-client'>
-                                    <CheckCircleIcon className='me-2' />
+                                    <CalendarMonthIcon className='me-2' />
                                     <Typography variant="body2" className='font-13 sembold'>
                                         Last Statement Date
                                     </Typography>

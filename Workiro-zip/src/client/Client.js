@@ -18,7 +18,8 @@ import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CustomLoader from '../components/CustomLoader';
-
+import SyncIcon from '@mui/icons-material/Sync';
+import Tooltip from '@mui/material/Tooltip';
 
 const CommonFilters = [
     { key: "Company Name", val: "Company Name" }, { key: "Address 1", val: "Address Line 1" },
@@ -65,7 +66,6 @@ const ClientFilters = [
     { key: "CompanyNo", val: "CompanyNo" }
 ];
 
-
 function Client() {
 
     const navigate = useNavigate();
@@ -99,7 +99,7 @@ function Client() {
     const [selectedProperty, setSelectedProperty] = useState("");
     const [selectedPropertyValue, setSelectedPropertyValue] = useState("");
 
-    const [isLoading,setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
     const colorArr = ["#e26124", "#20aedb", "#075adb", "#be1de8", "#00983b", "#ed32b3"];
 
 
@@ -196,7 +196,7 @@ function Client() {
         }
     }
 
-    const Json_GetSupplierListByProject = (folder_id = folderId) => {
+    const Json_GetSupplierListByProject = (folder_id = folderId, favouriteClients = favourites) => {
         let obj = {
             agrno: agrno,
             Email: Email,
@@ -208,8 +208,26 @@ function Client() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
+                        const clients_data = json?.Table;
+
+                        // sorting functionality start
+                        const fvClient = favouriteClients.map(itm => itm.OriginatorNo);   // getting favourite clients org number
+                        const filterFvClient = [...new Set(fvClient)];  // filtering duplicate favourite client
+                        const dddd = [...clients_data].filter(itm => itm["Company Name"] !== '').sort((a, b) => a["Company Name"].localeCompare(b["Company Name"]));
+                        let dtaa = [...dddd].sort((a, b) => {
+                            let cpm = 0;
+                            if (filterFvClient.includes(a.OriginatorNo)) {
+                                cpm = -1;
+                            } else {
+                                cpm = 1;
+                            }
+                            return cpm;
+                        });
+                        // sorting functionality completed
+
                         console.log("Json_GetSupplierListByProject", json);
-                        setClients(json?.Table);
+                        // setClients(json?.Table);  // old code 
+                        setClients(dtaa);
                         setClientKeys(Object.keys(json.Table[0]));
                         setIsLoading(false);
                         Json_GetContactListByFolder(folder_id);
@@ -246,12 +264,34 @@ function Client() {
             setLoadMore((preValue) => preValue + 20);
         }
     }
+    const Json_GetToFavourites = () => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password
+        };
+        try {
+            Cls.Json_GetToFavourites(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        Json_GetSupplierListByProject(folderId, json.Table);
+                        setFavourites(json.Table);
+                        console.log("Json_GetToFavourites", json.Table);
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_GetToFavourites", err);
+        }
+    }
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
-        Json_GetSupplierListByProject();
+        // Json_GetSupplierListByProject();
+        Json_GetToFavourites();
         window.addEventListener('scroll', eventHandler)
     }, []);
     const basedOnClientContactAndAll = (target) => {
@@ -461,13 +501,26 @@ function Client() {
             setObjFilter(obj);
             return;
         } else if (selectedChoice === "All") {
-            // console.log("Obj for Contact: ",obj);
-            // console.log("Obj for Client: ",objFilterClient);
 
-            let fltClients = handleSearchBy(clients, obj);
+            const mappingObj = CommonFilters.reduce((obj1, item) => {
+                obj1[item.key] = item.val;
+                return obj1;
+            }, {});
+
+            const updatedData = {};
+            for (const key in obj) {
+                if (mappingObj.hasOwnProperty(key)) {
+                    updatedData[mappingObj[key]] = obj[key];
+                } else {
+                    updatedData[key] = obj[key];
+                }
+            }
+
+
+            // let fltClients = handleSearchBy(clients, obj);
+            let fltClients = handleSearchBy(clients, updatedData);
             let fltContacts = handleSearchBy(contacts, obj);
-            // console.log("FilteredClient: ",fltClients);
-            // console.log("FilteredContact: ",fltContacts);
+
             setFilteredClients(fltClients);
             setFilteredContacts(fltContacts);
             if (Object.keys(obj).length === 0) {
@@ -595,20 +648,22 @@ function Client() {
         })
     }
     const handleClientNavigation = (clientId) => {
-        navigate('/dashboard/clientDetails', {
+        navigate(`/dashboard/clientDetails?OrgNo=${clientId}`, {
             state: {
                 agrno: agrno,
                 Email: Email,
                 password: password,
                 folderId: folderId,
                 originatorNo: clientId,
-                globalSearchDocs:[]
+                globalSearchDocs: []
             }
         })
     }
     const [isGridView, setIsGridView] = useState(false);
     const [isCardView, setIsCardView] = useState(true);
     const [suggestionList, setSuggestionList] = useState([]);
+    const [favourites, setFavourites] = useState([]);
+
 
     const createSuggestionList = (value, data) => {
         let fltRepeatData = [];
@@ -652,6 +707,37 @@ function Client() {
 
 
         } else if (selectedChoice === "All") {
+
+
+            if (filteredClients.length > 0 && filteredContacts.length > 0) {
+                let list1 = createSuggestionList(label, filteredClients);
+                let list2 = createSuggestionList(value, filteredContacts);
+                let fltRepeatData = [...list1];
+
+                list2.filter((itm) => {
+                    if (!fltRepeatData.includes(itm)) {
+                        fltRepeatData.push(itm);
+                    }
+                });
+                setSuggestionList(fltRepeatData);
+                return;
+            } else if (filteredClients.length > 0 && filteredContacts.length === 0) {
+                let list1 = createSuggestionList(label, filteredClients);
+
+                let fltRepeatData = [...list1];
+
+                setSuggestionList(fltRepeatData);
+                return;
+            } else if (filteredClients.length === 0 && filteredContacts.length > 0) {
+                let list2 = createSuggestionList(value, filteredContacts);
+
+                let fltRepeatData = [...list2];
+
+                setSuggestionList(fltRepeatData);
+                return;
+            }
+
+
             let list1 = createSuggestionList(label, clients);
             let list2 = createSuggestionList(value, contacts);
             let fltRepeatData = [...list1];
@@ -671,13 +757,30 @@ function Client() {
     const handleAlignment = (event, newAlignment) => {
         setAlignment(newAlignment);
     };
+    const SyncFunctionData = () => {
+        console.log('SyncFunctionData');
+        let obj = {};
+        obj.agrno = agrno;
+        obj.Email = Email;
+        obj.password = password;
 
+        try {
+            Cls.TeamSolution(obj, function (sts, data) {
+                if (sts && data) {
+                    console.log({ status: true, messages: "Success", res: data });
+
+                }
+            });
+        } catch (error) {
+            console.log({ status: false, messages: "Faild Please Try again" });
+        }
+    }
 
 
     return (
         <Box className='container-fluid p-0' onClick={handleClick}>
 
-            {isLoading? <CustomLoader/> :<Box className='row'>
+            {isLoading ? <CustomLoader /> : <Box className='row'>
                 <Box className='col-lg-12'>
                     <Box className='d-flex main-search-box mb-2 align-items-center justify-content-between'>
                         <Box className='d-flex'>
@@ -692,10 +795,10 @@ function Client() {
                                             className={isSearch ? 'Mui-focused' : ''}>
                                             <span className="material-symbols-outlined search-icon">search</span>
 
-                                            <Input 
-                                                onClick={(e) => handleDialogsOpen(e, "Search")} 
-                                                onChange={(e) => handleSearch(e.target.value)} 
-                                                placeholder='Search' 
+                                            <Input
+                                                onClick={(e) => handleDialogsOpen(e, "Search")}
+                                                onChange={(e) => handleSearch(e.target.value)}
+                                                placeholder='Search'
                                                 className='ps-0' />
                                         </AutocompleteRoot>
 
@@ -924,13 +1027,21 @@ function Client() {
                             </>}
                         </Box>
 
-                        <Box className=''>
+                        <Box className='d-flex'>
+
+                            {/* <Button variant="text" onClick={SyncFunctionData}>Sync</Button> */}
+
                             <ToggleButtonGroup
                                 value={alignment}
                                 exclusive
-                                onChange={handleAlignment}
-                                aria-label="text alignment"
+                            // onChange={handleAlignment}
                             >
+                                <Tooltip title="Sync">
+                                    <ToggleButton value="left" aria-label="left aligned"
+                                        onClick={SyncFunctionData}
+                                    >
+                                        <SyncIcon />
+                                    </ToggleButton></Tooltip>
 
                                 {isGridView &&
                                     <ToggleButton value="left" aria-label="left aligned"
@@ -954,6 +1065,7 @@ function Client() {
 
 
                             </ToggleButtonGroup>
+
                         </Box>
 
 

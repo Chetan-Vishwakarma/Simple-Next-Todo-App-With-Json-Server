@@ -33,17 +33,22 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import GroupIcon from '@mui/icons-material/Group';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import InsertPageBreakIcon from '@mui/icons-material/InsertPageBreak';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { red, yellow, green } from '@mui/material/colors';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 import {
     List,
     ListItem,
     ListItemText,
     TextField,
-    responsiveFontSizes,
 } from "@mui/material";
 import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-
 
 import dayjs from 'dayjs';
 import DataGrid, {
@@ -53,7 +58,6 @@ import DataGrid, {
     Paging,
     SearchPanel,
 } from 'devextreme-react/data-grid';
-
 
 // import LoginDetails from "../services/Utils";
 import CommanCLS from "../services/CommanService";
@@ -65,21 +69,18 @@ import { styled } from '@mui/material/styles';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { renderTimeViewClock } from "@mui/x-date-pickers";
-import moment from "moment";
-import { Toast } from "devextreme-react";
+
 import Reference from "../client/client-components/Reference";
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { data } from "jquery";
 import EditReference from "../client/client-components/EditReference";
 import UploadDocument from "../client/client-components/UploadDocument";
 import AddContacts from "./AddContacts";
-import { setMyTasks } from "../redux/reducers/counterSlice";
-import { useDispatch } from "react-redux";
+import { handleOpenModalRedux, setMyTasks } from "../redux/reducers/counterSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -102,39 +103,46 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } };
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='font-20' />, <PublishedWithChangesIcon color='primary' className='font-20' />, <HourglassBottomIcon color='primary' className='font-20' />, <CheckCircleOutlineIcon color='success' className='font-20' />];
 
 const userId = localStorage.getItem("UserId");
-
+let addItemdata = [];
 function CreateNewModalTask({ ...props }) {
     const dispatch = useDispatch();
-    let {
+    const reduxRefForTaskModal = useSelector((state=>state.counter.openTaskModal));
+    const reduxRefClientAndDoc = useSelector((state=>state.counter.clientAndDocDataForTaskModal));
+    const openDocumentModalByRedux = useSelector((state=>state.counter.openDocumentModalByRedux));
 
-        documentDate,
-        receivedDate,
-        createNewFileObj,
-        txtFolderData,
-        txtClientData,
-        txtSectionData,
-        TaskType,
-        // passButtonHide,
-        // setPassButtonHide,
-        openModal,
+    // const {
+    //     documentDate = null,
+    //     receivedDate = null,
+    //     createNewFileObj = null,
+    //     txtFolderData = null,
+    //     txtClientData = null,
+    //     txtSectionData = null,
+    //     TaskType = null,
+    //     openModal = null,
+    //     setOpenModal = null,
+    // } = props || {};
 
+    const [documentDate, setDocumentDate] = useState(null);
+    const [receivedDate, setReceivedDate] = useState(null);
+    const [createNewFileObj, setCreateNewFileObj] = useState(null);
+    const [txtFolderData, setTxtFolderData] = useState(null);
+    const [txtClientData, setTxtClientData] = useState(null);
+    const [txtSectionData, setTxtSectionData] = useState(null);
+    const [TaskType, setTaskType] = useState(null);
+    const [openModal, setOpenModal] = useState(null);
 
-    } = props;
-
-    console.log("documentDate txtSectionId1", documentDate,
-        receivedDate, createNewFileObj)
+    // console.log("documentDate txtSectionId1", documentDate,
+    //     receivedDate, createNewFileObj)
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
 
-
-    const [guid, setGuid] = useState('');
-
     //const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/"; // base url for api
     //   let dt = new LoginDetails();
+    const [addContactData, setAddContact] = useState({});
 
     let cls = new CommanCLS(baseUrl, agrno, Email, password);
 
@@ -147,10 +155,11 @@ function CreateNewModalTask({ ...props }) {
     const [filterText, setFilterText] = React.useState("");
 
     const [userFilter, setUserFilter] = React.useState([]);
-    const [userListData, setUserListData] = React.useState([]);
+    //const [userListData, setUserListData] = React.useState([]);
 
     const [userList, setUserList] = React.useState([]);
     const [addUser, setAddUser] = useState([]);
+    const [clearData, setClearData] = useState([]);
     const [ownerRighClick, setOwnerRighClick] = useState(null)
 
     const folderListRef = React.useRef(null);
@@ -158,15 +167,19 @@ function CreateNewModalTask({ ...props }) {
     const sectionListRef = React.useRef(null);
 
     const [searchQuery, setSearchQuery] = useState("");
-    const [anchorel, setAnchorel] = React.useState(null);
+    //const [anchorel, setAnchorel] = React.useState(null);
 
     const [ownerID, setOwnerID] = React.useState("");
-    const [messageId, setMessageId] = React.useState("");
+    const [ownerName, setOwnerName] = React.useState("");
+    const [ownerMessage, setOwnerMessage] = React.useState("");
+    const [ownerTaskID, setOwnerTaskID] = React.useState([]);
+    //const [messageId, setMessageId] = React.useState("");
 
     const [txtdescription, setTxtDescriptin] = React.useState("");
     // const [txtcomment, setTxtComment] = React.useState("");
     ///////////////////////////////////////////client Data
     const [clientList, setClientList] = useState([]);
+    const [PortalSelectDoc, setPortalSelectDoc] = useState([]);
     const [txtClient, settxtClient] = useState("Select Client");
     const [textClientId, setTextClientId] = useState("");
 
@@ -177,7 +190,7 @@ function CreateNewModalTask({ ...props }) {
     ////////////////////////////////////////Folder list
     const [folderList, setFolderList] = useState([]);
     const [searchFolderQuery, setSearchFolderQuery] = useState("");
-    const [txtFolder, settxtFolder] = useState("Select Folder");
+
     const [txtFolderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
     const [folderAnchorEl, setFolderAnchorEl] = React.useState(null);
@@ -188,6 +201,8 @@ function CreateNewModalTask({ ...props }) {
 
     //////////////////////////////////////////////////Section data
     const [txtSection, settxtSection] = useState("Select Section");
+    const [txtFolder, settxtFolder] = useState("Select Folder");
+
     const [txtSectionId, setTxtSectionId] = useState("");
     const [sectionAnchorEl, setSectionAnchorEl] = React.useState(null);
     const [selectedSectionMenu, setSelectedSectionMenu] = useState(null);
@@ -202,7 +217,7 @@ function CreateNewModalTask({ ...props }) {
     ////////////////////////////////Attachment files
     const [selectedFiles, setSelectedFiles] = useState([]);
 
-    const [selectedFilesFromBrower, setSelectedFilesFromBrower] = useState([]);
+    //const [selectedFilesFromBrower, setSelectedFilesFromBrower] = useState([]);
 
     const [attachmentPath, setAttachmentPath] = useState([]);
 
@@ -216,7 +231,7 @@ function CreateNewModalTask({ ...props }) {
     const [nextDate, setNextDate] = useState("");
     const [remiderDate, setRemiderDate] = useState("");
     const [expireDate, setExpireDate] = useState("");
-    const [startDate, setStartDate] = useState(new Date());
+
 
 
     ///////////////////////////////////////end date set
@@ -229,32 +244,36 @@ function CreateNewModalTask({ ...props }) {
 
     const [txtPriorityId, setTxtPriorityId] = useState(2);
 
-    const [prioriyAnchorEl, setPrioriyAnchorEl] = React.useState(null);
-    const [selectedPrioriyMenu, setSelectedPrioriyMenu] = useState(null);
-    const boolPriority = Boolean(prioriyAnchorEl);
+    //const [prioriyAnchorEl, setPrioriyAnchorEl] = React.useState(null);
+    //const [selectedPrioriyMenu, setSelectedPrioriyMenu] = useState(null);
 
-    const [statusAnchorEl, setStatusAnchorEl] = React.useState(null);
-    const [selectedStatusMenu, setSelectedStatusMenu] = useState(null);
+    //const boolPriority = Boolean(prioriyAnchorEl);
 
-    const boolStatus = Boolean(statusAnchorEl);
+    // const [statusAnchorEl, setStatusAnchorEl] = React.useState(null);
+    //const [selectedStatusMenu, setSelectedStatusMenu] = useState(null);
+
+    //const boolStatus = Boolean(statusAnchorEl);
 
     //////////////////////End Priority
 
 
 
-    const open2 = Boolean(anchorel);
-    const handleClick = (event) => {
-        //setAnchorel(event.currentTarget);
-    };
-    const handleClose2 = () => {
-        setAnchorel(null);
-    };
+    // const open2 = Boolean(anchorel);
+    // const handleClick = (event) => {
+    //     //setAnchorel(event.currentTarget);
+    // };
+    // const handleClose2 = () => {
+    //     setAnchorel(null);
+    // };
     //
 
     const [open, setOpen] = React.useState(false);
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
+    const [txtTaskType, settxtTaskType] = React.useState("");
+    const [isVisibleByTypeCRM, setIsVisibleByTypeCRM] = React.useState(false);
+    const [textSubject, setTextSubject] = useState("");
     const handleClickOpen = (vl) => {
         console.log("Type show 1111", vl)
         if (vl === "Portal") {
@@ -268,10 +287,51 @@ function CreateNewModalTask({ ...props }) {
 
         setOpen(true);
 
+        ClearForm();
     };
+
+    // React.useMemo(()=>{
+    //     if(reduxRefForTaskModal){
+    //         handleClickOpen("CRM");
+    //         setCreateNewFileObj(reduxRefClientAndDoc.createNewFileObj);
+    //         setTxtClientData(reduxRefClientAndDoc.txtClientData);
+    //         setTxtFolderData(reduxRefClientAndDoc.txtFolderData);
+    //         setTxtSectionData(reduxRefClientAndDoc.txtSectionData);
+    //         console.log("djskfdjeiurwio",reduxRefClientAndDoc);
+    //     }else{
+    //         return;
+    //     }
+    // },[reduxRefForTaskModal,reduxRefClientAndDoc]);
+    useEffect(()=>{
+        console.log("dfdksfoier",reduxRefForTaskModal);
+        if(reduxRefForTaskModal){
+            setTaskType(reduxRefClientAndDoc.TaskType);
+            setCreateNewFileObj(reduxRefClientAndDoc.createNewFileObj);
+            setTxtClientData(reduxRefClientAndDoc.txtClientData);
+            setTxtFolderData(reduxRefClientAndDoc.txtFolderData);
+            setTxtSectionData(reduxRefClientAndDoc.txtSectionData);
+            // console.log("djskfdjeiurwio",reduxRefClientAndDoc);
+            if(reduxRefForTaskModal==="CRM"){
+                setOpenUploadDocument(false);
+                handleClickOpen("CRM");
+            }else if(reduxRefForTaskModal==="Portal"){
+                handleClickOpen("Portal");
+            }
+        } else {
+            handleClose();
+        }
+    },[reduxRefForTaskModal]);
+
+    useEffect(()=>{
+        setOpenUploadDocument(openDocumentModalByRedux);
+    },[openDocumentModalByRedux]);
+
+    
+
 
     const handleClose = () => {
         setOpen(false);
+        dispatch(handleOpenModalRedux(false));
     };
 
     // dropdown add
@@ -281,7 +341,7 @@ function CreateNewModalTask({ ...props }) {
     const UserDropdownopen = Boolean(userDropdownanchorEl);
 
 
-    const [selectedMenu, setSelectedMenu] = useState(null);
+    //const [selectedMenu, setSelectedMenu] = useState(null);
 
     const [userDropdownanchorElRight, setuserDropdownAnchorElRight] = React.useState(null);
     const UserDropdownopenRight = Boolean(userDropdownanchorElRight);
@@ -320,7 +380,7 @@ function CreateNewModalTask({ ...props }) {
 
 
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const Select2 = Boolean(anchorEl);
+    //const Select2 = Boolean(anchorEl);
 
     const handleClick3 = (event, menuType) => {
         console.log(menuType);
@@ -335,30 +395,30 @@ function CreateNewModalTask({ ...props }) {
             setSelectedSectionMenu(menuType); // Set the selected menu type for folder
         }
         else if (menuType === "priority") {
-            setPrioriyAnchorEl(event.currentTarget); // Set the anchor element for the folder menu
-            setSelectedPrioriyMenu(menuType); // Set the selected menu type for folder
+            // setPrioriyAnchorEl(event.currentTarget); // Set the anchor element for the folder menu
+            // setSelectedPrioriyMenu(menuType); // Set the selected menu type for folder
         }
         else if (menuType === "status") {
-            setStatusAnchorEl(event.currentTarget); // Set the anchor element for the folder menu
-            setSelectedStatusMenu(menuType); // Set the selected menu type for folder
+            // setStatusAnchorEl(event.currentTarget); // Set the anchor element for the folder menu
+            // setSelectedStatusMenu(menuType); // Set the selected menu type for folder
         }
     };
 
-    const handleClose3 = (menuType) => {
-        if (menuType === "client") {
-            setClientAnchorEl(null); // Close the client menu by setting the anchor element to null
-        }
-        else if (menuType === "folder") {
-            setFolderAnchorEl(null); // Close the folder menu by setting the anchor element to null
-        }
-        else if (menuType === "section") {
-            setSectionAnchorEl(null); // Close the folder menu by setting the anchor element to null
-        }
-        else if (menuType === "priority") {
-            setPrioriyAnchorEl(null); // Close the folder menu by setting the anchor element to null
-        }
+    // const handleClose3 = (menuType) => {
+    //     if (menuType === "client") {
+    //         setClientAnchorEl(null); // Close the client menu by setting the anchor element to null
+    //     }
+    //     else if (menuType === "folder") {
+    //         setFolderAnchorEl(null); // Close the folder menu by setting the anchor element to null
+    //     }
+    //     else if (menuType === "section") {
+    //         setSectionAnchorEl(null); // Close the folder menu by setting the anchor element to null
+    //     }
+    //     else if (menuType === "priority") {
+    //        // setPrioriyAnchorEl(null); // Close the folder menu by setting the anchor element to null
+    //     }
 
-    };
+    // };
 
     const [anchorSelectFileEl, setAnchorSelectFileEl] = React.useState(null);
 
@@ -417,7 +477,7 @@ function CreateNewModalTask({ ...props }) {
     };
 
 
-    const userAdd = Boolean(anchorel);
+    //const userAdd = Boolean(anchorel);
 
     function Json_GetForwardUserList(fid) {
         setAddUser([])
@@ -436,11 +496,12 @@ function CreateNewModalTask({ ...props }) {
                         if (result.length > 0) {
                             result.map((el) => {
                                 if (el.ID === parseInt(localStorage.getItem("UserId"))) {
-                                    // console.log("Json_GetForwardUserList11", addUser);
+                                    console.log("Json_GetForwardUserList11", el);
                                     setOwnerID(el.ID);
+                                    setOwnerName(el.ForwardTo);
                                     setOwnerRighClick(el);
+                                    setClearData(el);
                                     setAddUser((pre) => [...pre, el])
-
                                 }
                             })
                         }
@@ -449,7 +510,7 @@ function CreateNewModalTask({ ...props }) {
                         let removeuser = result.filter((e) => e.ID !== localStorage.getItem("UserId"));
 
 
-                        setUserListData(removeuser);
+                        // setUserListData(removeuser);
                         setUserFilter(removeuser);
 
                         let commanuser = result.filter((e) => e.ID === parseInt(localStorage.getItem("UserId")));
@@ -473,20 +534,20 @@ function CreateNewModalTask({ ...props }) {
             // If it doesn't exist, add it to the 'addUser' array
             setAddUser([...addUser, e]);
             let res = userFilter.filter((user) => user.ID !== e.ID);
-            setUserListData(res);
+            // setUserListData(res);
             setUserFilter(res);
         }
 
 
         setTimeout(() => {
-            console.log(addUser);
+            console.log("handalClickAddUser",addUser);
         }, 2000);
     };
 
 
-    const handleSaveTask = (e) => {
-        console.error("get user list", addUser);
-    };
+    // const handleSaveTask = (e) => {
+    //     console.error("get user list", addUser);
+    // };
 
     const kbToMb = (kb) => {
         let t = kb / 2024;
@@ -495,9 +556,9 @@ function CreateNewModalTask({ ...props }) {
     };
 
     // Function to handle button click
-    const handleClickClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+    // const handleClickClick = (event) => {
+    //     setAnchorEl(event.currentTarget);
+    // };
 
     // Function to handle menu item click
     const handleCloseClient = () => {
@@ -514,10 +575,12 @@ function CreateNewModalTask({ ...props }) {
             cls.Json_GetFolderData(o, function (sts, data) {
                 if (sts) {
                     let js = JSON.parse(data);
-                    console.log("Json_GetFolderData", js);
+
                     let clientList = js.Table1;
                     if (clientList.length > 0) {
-                        setClientList(clientList);
+                        let resutl = clientList.filter((el) => el.Client !== "" && el.Client !== null)
+                        setClientList(resutl);
+                        console.log("Json_GetFolderData", resutl);
                     }
                     // let sectionList = js.Table;
                     // if (sectionList.length > 0) {
@@ -583,28 +646,28 @@ function CreateNewModalTask({ ...props }) {
         return formattedDate;
     }
 
-    function getNextDate() {
-        let currentDate = new Date();
-        if (receivedDate) {
-            currentDate = new Date(receivedDate);
-        }
+    // function getNextDate() {
+    //     let currentDate = new Date();
+    //     if (receivedDate) {
+    //         currentDate = new Date(receivedDate);
+    //     }
 
 
-        currentDate.setDate(currentDate.getDate() + 1); // Increment the day by 1 to get the next day's date
-        const day = currentDate.getDate().toString().padStart(2, '0'); // Get the day and pad with 0 if needed
-        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Get the month (Note: January is 0)
-        const year = currentDate.getFullYear(); // Get the full year
-        // Construct the date string in "yyyy/mm/dd" format
-        const formattedDate = `${year}-${month}-${day}`;
-        return formattedDate;
-    }
+    //     currentDate.setDate(currentDate.getDate() + 1); // Increment the day by 1 to get the next day's date
+    //     const day = currentDate.getDate().toString().padStart(2, '0'); // Get the day and pad with 0 if needed
+    //     const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Get the month (Note: January is 0)
+    //     const year = currentDate.getFullYear(); // Get the full year
+    //     // Construct the date string in "yyyy/mm/dd" format
+    //     const formattedDate = `${year}-${month}-${day}`;
+    //     return formattedDate;
+    // }
 
     // Function to close the folder list
-    const closeFolderList = (e) => {
-        if (folderListRef.current && !folderListRef.current.contains(e.target)) {
-            setFolderAnchorEl(null);
-        }
-    };
+    // const closeFolderList = (e) => {
+    //     if (folderListRef.current && !folderListRef.current.contains(e.target)) {
+    //         setFolderAnchorEl(null);
+    //     }
+    // };
 
     // Function to close the client list
 
@@ -700,16 +763,25 @@ function CreateNewModalTask({ ...props }) {
 
 
     useEffect(() => {
+        ClearForm();
         // if(passButtonHide){
         //     setPassButtonHide(passButtonHide)
         // }
-
+        console.log(txtTaskType, "tasktypeee");
         if (createNewFileObj) {
-
-            //console.log("createNewFileObj1111", createNewFileObj)
+            console.log("createNewFileObj111122222", createNewFileObj)
             setSelectedFiles(createNewFileObj);
+            // setSelectedDocumentFile((prevUploadedFiles) => [
+            //     ...prevUploadedFiles,
+            //     ...createNewFileObj,
+            // ]);
             setSelectedDocumentFile(createNewFileObj);
+            setTimeout(() => {
+                if (TaskType === "Portal") {
+                    PrepareDocumentsForPublish_Json(createNewFileObj, 2);
+                }
 
+            }, 3000);
         }
         if (txtFolderData) {
             settxtFolder(txtFolderData.Folder);
@@ -726,6 +798,7 @@ function CreateNewModalTask({ ...props }) {
             setTxtSectionId(txtSectionData.SecID);
         }
         if (TaskType) {
+            console.log(TaskType, "dmstask");
             if (TaskType === "CRM") {
                 setIsVisibleByTypeCRM(false);
                 settxtTaskType("CRM")
@@ -746,26 +819,40 @@ function CreateNewModalTask({ ...props }) {
     }, [createNewFileObj]);
 
 
+
+    let FilderDataList = userFilter.filter((item) => {
+        // Check if item and its properties are defined before accessing them
+        // console.log("filterText", filterText);
+        if (item && item.ForwardTo) {
+            // You can customize the filtering logic here based on your requirements
+            return item.ForwardTo.toLowerCase().includes(filterText.toLowerCase());
+        } else {
+            return false; // Return false if any required property is undefined
+        }
+    });
+
+
+
     useEffect(() => {
         // Filter the userList based on filterText
-        console.log("userFilter", userFilter)
-        let res = userListData.filter((item) => {
-            // Check if item and its properties are defined before accessing them
-            // console.log("filterText", filterText);
-            if (item && item.ForwardTo) {
-                // You can customize the filtering logic here based on your requirements
-                return item.ForwardTo.toLowerCase().includes(filterText.toLowerCase());
-            } else {
-                return false; // Return false if any required property is undefined
-            }
-        });
+        // console.log("userFilter", userFilter)
+        // let res = userListData.filter((item) => {
+        //     // Check if item and its properties are defined before accessing them
+        //     // console.log("filterText", filterText);
+        //     if (item && item.ForwardTo) {
+        //         // You can customize the filtering logic here based on your requirements
+        //         return item.ForwardTo.toLowerCase().includes(filterText.toLowerCase());
+        //     } else {
+        //         return false; // Return false if any required property is undefined
+        //     }
+        // });
 
-        setUserFilter(res);
+        // setUserFilter(res);
     }, [filterText])
 
     const CurrentDateChange = (e) => {
         setCurrentDate(e);
-        // setNextDate(formattedDate);
+        setNextDate("");
     }
 
     const [selectedDate, setSelectedDate] = useState(null); // State for selected date
@@ -778,11 +865,14 @@ function CreateNewModalTask({ ...props }) {
     }, [currentDate]);
 
     useEffect(() => {
-        setLoading(false);
+
         let strGuid = uuidv4().replace(/-/g, '');
         localStorage.setItem("GUID", strGuid)
+
+        setLoading(false);
+
         setAnchorSelectFileEl(null);
-        if(openModal){
+        if (openModal) {
             setOpen(openModal);
         }
 
@@ -798,9 +888,9 @@ function CreateNewModalTask({ ...props }) {
         setExpireDate(dayjs(getCurrentDate()));
 
         Json_GetFolders();
-        Json_GetForwardUserList(txtFolderId);
+        Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("FolderId"));
         Json_GetFolderData();
-        Json_GetSections(txtFolderId);
+        Json_GetSections(txtFolderId ? txtFolderId : localStorage.getItem("FolderId"));
         //console.log(nextDate, currentDate)
 
         //document.addEventListener('mousedown', closeFolderList);
@@ -898,8 +988,12 @@ function CreateNewModalTask({ ...props }) {
         const files = event.target.files;
         const selectedFilesArray = Array.from(files);
         const filesData = [];
+
+        let completeCounter = 0;
+
         selectedFilesArray.forEach((file, index) => {
             const reader = new FileReader();
+            completeCounter++;
             reader.onload = () => {
                 let fileByte = reader.result.split(";")[1].replace("base64,", "");
 
@@ -912,11 +1006,11 @@ function CreateNewModalTask({ ...props }) {
                     Guid: localStorage.getItem("GUID"),
                     FileType: getFileExtension(file.name).toLowerCase()
                 };
-                console.log("get folder list 2222222222", fileData);
+
                 filesData.push(fileData);
 
                 if (txtTaskType === "CRM") {
-                    UploadAttachment(fileData)
+                    UploadAttachment(fileData);
                 }
 
                 // Check if this is the last file
@@ -927,28 +1021,29 @@ function CreateNewModalTask({ ...props }) {
                         ...filesData,
                     ]);
 
-                    setSelectedFilesFromBrower((prevUploadedFiles) => [
-                        ...prevUploadedFiles,
-                        ...filesData,
-                    ]);
+                    // Call PrepareDocumentsForPublish_Json after all files data are processed
+                    if (completeCounter === selectedFilesArray.length) {
+
+                        if (txtTaskType === "Portal") {
+                            PrepareDocumentsForPublish_Json(filesData, 1);
+                        }
+
+                    }
 
                 }
             };
             reader.readAsDataURL(file); // Read file as data URL (base64)
         });
-
-        setTimeout(() => {
-
-            if (txtTaskType === "Portal") {
-                PrepareDocumentsForPublish_Json(filesData, 1);
-            }
-        }, 3000);
     };
+
 
     function PrepareDocumentsForPublish_Json(filedata, ids) {
         try {
             // let myNewArr = [...selectedFilesFromBrower, ...selectedDocumentFile];
             // console.log("myNewArr", myNewArr)
+            if(filedata){
+                setPortalSelectDoc(filedata);
+            }
             console.log("PrepareDocumentsForPublish_Json22", filedata);
             const ItemId = filedata.map(obj => obj.DocId);
             const fileNames = filedata.map(obj => obj["FileName"]);
@@ -984,34 +1079,34 @@ function CreateNewModalTask({ ...props }) {
     }
 
 
-    const SETDate = (date) => {
-        var d = new Date(date);
-        var dd = d.getDate();
-        var mm = d.getMonth() + 1;
+    // const SETDate = (date) => {
+    //     var d = new Date(date);
+    //     var dd = d.getDate();
+    //     var mm = d.getMonth() + 1;
 
-        var yy = d.getFullYear();
-        var DateVal;
-        if (dd < "10" || mm < "10") {
-            if (dd < "10" && mm < '10') {
-                return date = yy + "/0" + mm + "/0" + dd;
-            } else if (dd < "10") {
-                return date = yy + "/" + mm + "/0" + dd;
-            } else if (mm < "10") {
-                return date = yy + "/0" + mm + "/" + dd;
-            }
+    //     var yy = d.getFullYear();
+    //     var DateVal;
+    //     if (dd < "10" || mm < "10") {
+    //         if (dd < "10" && mm < '10') {
+    //             return date = yy + "/0" + mm + "/0" + dd;
+    //         } else if (dd < "10") {
+    //             return date = yy + "/" + mm + "/0" + dd;
+    //         } else if (mm < "10") {
+    //             return date = yy + "/0" + mm + "/" + dd;
+    //         }
 
-        } else {
-            return DateVal = yy + "/" + mm + "/" + dd;
-        }
-    }
+    //     } else {
+    //         return DateVal = yy + "/" + mm + "/" + dd;
+    //     }
+    // }
 
-    const handleSuccess = (mgsid) => {
-        Swal.fire({
-            icon: 'success',
-            title: 'Success!',
-            text: 'Your task has been created successfully.' + mgsid,
-        });
-    };
+    // const handleSuccess = (mgsid) => {
+    //     Swal.fire({
+    //         icon: 'success',
+    //         title: 'Success!',
+    //         text: 'Your task has been created successfully.' + mgsid,
+    //     });
+    // };
 
 
     async function UploadAttachment(filedata) {
@@ -1155,15 +1250,21 @@ function CreateNewModalTask({ ...props }) {
     }
 
     async function Json_CRM_Task_Save() {
-        setLoading(true);
+
         if (txtSection) {
-            setLoading(false);
+            setLoading(true);
         }
         else {
-            toast.error("Please Select a Section !")
+            toast.error("Please Select a Section !");
+            setLoading(false);
+            return false
         }
         const isaddUser = addUser.map(obj => obj.ID).join(',');
-        const attString = attachmentPath.map(obj => obj.Path).join('|');
+        let attString = "";
+        if (attachmentPath.length > 0) {
+            attString = attachmentPath.map(obj => obj.Path).join('|');
+        }
+
 
         //console.log("nextDate1", currentDate)
         let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
@@ -1187,7 +1288,7 @@ function CreateNewModalTask({ ...props }) {
             "ClientWeekDays": "1",
             "ClientWeekOfMonth": "1",
             "OwnerID": ownerID.toString(),
-            "AssignedToID": isaddUser,
+            "AssignedToID": isaddUser?isaddUser:ownerID,
             "AssociateWithID": textClientId,
             "FolderId": txtFolderId.toString(),
             "Subject": textSubject,
@@ -1210,7 +1311,7 @@ function CreateNewModalTask({ ...props }) {
             "Notes": "",
             "TaskSource": "CRM"
         }
-        console.log("final save data obj", ooo);
+        console.log(selectedRows,"finalattStringsave data obj", attString);
         cls.Json_CRM_Task_Save(ooo, function (sts, data) {
             if (sts) {
                 if (data) {
@@ -1219,20 +1320,43 @@ function CreateNewModalTask({ ...props }) {
                     console.log("save task rerurn value", js);
 
                     if (js.Status === "success") {
+                       
+                        setOwnerMessage(js.Message);
+                      
+                        if (selectedRows && selectedRows.length > 0) {
+                            selectedRows.forEach((item) => {
+                                addToWorkTable(item.ItemId, js.Message);
+                            });
+                        }
+                        let strGuid = uuidv4().replace(/-/g, '');
+                        localStorage.setItem("GUID", strGuid)
+
                         Json_CRM_GetOutlookTask_ForTask();
                         setLoading(false);
                         toast.success("Created Task !");
-                        setMessageId(js.Message);
-                        console.log("selectedDocumentFile", selectedDocumentFile)
-                        if (selectedDocumentFile.length > 0) {
+                        // setMessageId(js.Message);
+                      
+                        if (selectedDocumentFile && selectedDocumentFile.length > 0) {
+                            selectedDocumentFile.map((item) => {
+                                addToWorkTable(item.DocId, js.Message,textSubject);
+                            });
+                            // addToWorkTable(selectedDocumentFile.map(obj => obj.DocId), js.Message,textSubject);
                             Json_CRM_TaskDMSAttachmentInsert(js.Message);
                         }
+
                         setOpen(false);
+                        try {
+                            setOpenModal(false)
+                        } catch (e) { }
+                        ClearForm();
                         // setIsApi(!isApi);
 
                         // Inside your function or event handler where you want to show the success message
                         //handleSuccess(js.Message);
                         // setOpen(false);
+
+                        // setAttachmentPath([]);
+                        //setSelectedFiles([])
                     }
                     else {
                         toast.error("Task Not Created Please Try Again");
@@ -1251,8 +1375,61 @@ function CreateNewModalTask({ ...props }) {
 
     }
 
-    function Json_CRM_TaskDMSAttachmentInsert(TaskID) {
+   
 
+
+    function ClearForm() {
+       // console.log("Add User List11", addUser);  
+//setAddUser(clearData)
+       
+//setAddUser([]);
+
+Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("FolderId"));
+
+        setCurrentDate(new Date())
+        setTextSubject("");
+        settxtClient("Select Client");
+        // settxtFolder("Select Folder");
+        setFolderId(localStorage.getItem("FolderId"));
+        settxtSection("Select Section");
+        setTxtSectionId("");
+        setTxtDescriptin("");
+        setTextClientId("")
+
+        setSelectedFiles([]);
+
+        setTxtPriority("Normal");
+        setTxtStatus("Not Started");
+
+
+        const currentDate1 = new Date(currentDate);
+        const nextDate = new Date(currentDate1); // Copy the current date        
+        nextDate.setDate(currentDate1.getDate() + 1); // Increment the day by 1 to get the next day's date    
+        // Get the day, month, and year
+        const day = nextDate.getDate().toString().padStart(2, '0');
+        const month = (nextDate.getMonth() + 1).toString().padStart(2, '0');
+        const year = nextDate.getFullYear();
+        // Construct the date string in "yyyy/mm/dd" format
+        const formattedDate = `${day}/${month}/${year}`;
+        // console.log("formattedDate", formattedDate);
+        setNextDate(formattedDate); // Set nextDate with formatted date
+
+        // if (userList.length > 0) {
+        //     userList.map((el) => {
+        //         if (el.ID === parseInt(localStorage.getItem("UserId"))) {
+        //             // console.log("Json_GetForwardUserList11", addUser);
+        //             setOwnerID(el.ID);
+        //             setOwnerRighClick(el);
+        //             setAddUser((pre) => [...pre, el])
+        //         }
+        //     })
+        // }
+
+
+    }
+
+    function Json_CRM_TaskDMSAttachmentInsert(TaskID) {
+        setOpenUploadDocument(false);  // to close the upload documents modal
         const ItemId = selectedDocumentFile.map(obj => obj.DocId).join("|");
         let obj = {
             TaskID: TaskID,
@@ -1261,7 +1438,9 @@ function CreateNewModalTask({ ...props }) {
         };
         cls.Json_CRM_TaskDMSAttachmentInsert(obj, function (sts, data) {
             if (sts && data) {
-                console.log('Json_CRM_TaskDMSAttachmentInsert', DataTransferItem);
+                console.log('Json_CRM_TaskDMSAttachmentInsert', data);
+                setAttachmentPath([]);
+                setSelectedFiles([])
             }
         })
     }
@@ -1287,30 +1466,30 @@ function CreateNewModalTask({ ...props }) {
 
     };
     /////////////////////////////End Remove Assignee
-    function rearrangeName(fullName) {
-        // Split the full name into an array of words
-        const words = fullName.split(' ');
+    // function rearrangeName(fullName) {
+    //     // Split the full name into an array of words
+    //     const words = fullName.split(' ');
 
-        // Extract the first letter of the first name and capitalize it
-        const firstLetterFirstName = words[0].charAt(0).toUpperCase();
+    //     // Extract the first letter of the first name and capitalize it
+    //     const firstLetterFirstName = words[0].charAt(0).toUpperCase();
 
-        // Extract the first letter of the last name and capitalize it
-        const firstLetterLastName = words[words.length - 1].charAt(0).toUpperCase();
+    //     // Extract the first letter of the last name and capitalize it
+    //     const firstLetterLastName = words[words.length - 1].charAt(0).toUpperCase();
 
-        // Concatenate the first letters
-        const result = firstLetterFirstName + firstLetterLastName;
-        console.log("final save data2222222222", result);
-    }
+    //     // Concatenate the first letters
+    //     const result = firstLetterFirstName + firstLetterLastName;
+    //     console.log("final save data2222222222", result);
+    // }
 
     ////////////////////////////////////DMS Document
     const [documentLisdoc, setOpenDocumentList] = React.useState(false);
     const [dmsDocumentList, setDMSDocumentList] = React.useState([]);
-    const [allMode, setAllMode] = useState('allPages');
+    //const [allMode, setAllMode] = useState('allPages');
     const [selectedRows, setSelectedRows] = useState([]);
 
-    const onAllModeChanged = React.useCallback(({ value }) => {
-        setAllMode(value);
-    }, []);
+    // const onAllModeChanged = React.useCallback(({ value }) => {
+    //     setAllMode(value);
+    // }, []);
 
     const Json_ExplorerSearchDoc = () => {
         try {
@@ -1354,6 +1533,9 @@ function CreateNewModalTask({ ...props }) {
     };
 
     const handleDocumentClickOpen = () => {
+        setDMSDocumentList([])
+
+
         setAnchorSelectFileEl(null);
 
         if (textClientId) {
@@ -1384,10 +1566,6 @@ function CreateNewModalTask({ ...props }) {
     const [portalUserCC, setPortalUserCC] = React.useState([]);
     const [portalUserTo, setPortalUserTo] = React.useState([]);
 
-    const [txtTaskType, settxtTaskType] = React.useState("");
-
-    const [isVisibleByTypeCRM, setIsVisibleByTypeCRM] = React.useState(false);
-
 
 
 
@@ -1397,31 +1575,31 @@ function CreateNewModalTask({ ...props }) {
 
     };
 
-    const handleCloseTastkType = (e) => {
-        setAnchorElTastkType(null);
+    // const handleCloseTastkType = (e) => {
+    //     setAnchorElTastkType(null);
 
-        // setCreateTaskButton(e.target.textContent)
-        let txt = e.target.innerText;
-        if (txt === "CRM") {
-            setIsVisibleByTypeCRM(false);
-            settxtTaskType(txt);
-        }
-        else if (txt === "Portal") {
-            setIsVisibleByTypeCRM(true);
-            settxtTaskType(txt);
-        }
-        else {
-            console.log("Else Part");
-        }
+    //     // setCreateTaskButton(e.target.textContent)
+    //     let txt = e.target.innerText;
+    //     if (txt === "CRM") {
+    //         setIsVisibleByTypeCRM(false);
+    //         settxtTaskType(txt);
+    //     }
+    //     else if (txt === "Portal") {
+    //         setIsVisibleByTypeCRM(true);
+    //         settxtTaskType(txt);
+    //     }
+    //     else {
+    //         console.log("Else Part");
+    //     }
 
-    };
+    // };
 
     ////////////////// Priority
-    let priorityarr = [{ id: 1, "name": "High" }, { id: 2, "name": "Normal" }, { id: 3, "name": "Low" }];
+    let priorityarr = [{ id: 1, "name": "High", icon: <PriorityHighIcon className='font-20' sx={{ color: red[900] }} /> }, { id: 2, "name": "Normal", icon: <ReportProblemIcon className='font-20' color="secondary" /> }, { id: 3, "name": "Low", icon: <ArrowDownwardIcon className='font-20' sx={{ color: green[500] }} /> }];
     let statusarr = [
-        { id: 1, "name": "Not Started" },
+        { id: 1, "name": "Not Started  " },
         { id: 2, "name": "In Progress" },
-        { id: 3, "name": "On Hold" },
+        { id: 3, "name": "On Hold"  },
         { id: 4, "name": "Completed" },
         // { id: 5, "name": "Done" },
         // { id: 6, "name": "Completed" },
@@ -1432,8 +1610,31 @@ function CreateNewModalTask({ ...props }) {
         setSelectedRows(selectedItems.selectedRowsData);
         // You can perform further actions with the selectedRows array
         console.log("selectedItems11", selectedItems); // Log the selected rows data
+        // Create a Set to store unique data
+        // const uniqueData = new Set(addItemdata);
+        // setOwnerTaskID(selectedItems.selectedRowsData[0]);
+        // // Loop through each selected row data and add it to the uniqueData Set
+        // selectedItems.selectedRowsData.forEach(rowData => {
+        //     uniqueData.add(rowData);
+        // });
 
+        // // Convert the uniqueData Set back to an array and set it to addItemdata
+        // addItemdata = [...uniqueData];
+        console.log(addItemdata, "addItemdata");
     };
+    function addToWorkTable(Itid, taskID,textSubject) {
+        console.log(taskID, "addToWorkTable", Itid);
+        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${ownerName} has initiated a task-${textSubject} . Task ID : ${taskID}` };
+        console.log("addToWorkTable111", obj);
+        clsSms.Json_AddToWork(obj, function (status, data) {
+            if (status) {
+                if (data) {
+                    //let json = JSON.parse(data);
+                    console.log("getitemid", data);
+                }
+            }
+        });
+    }
     const Json_GetClientCardDetails = (cid) => {
         try {
             if (txtFolderId && cid) {
@@ -1481,13 +1682,13 @@ function CreateNewModalTask({ ...props }) {
         return data.value;
     };
 
-    const getPortalUser = () => {
+    // const getPortalUser = () => {
 
-        Json_GetClientCardDetails();
+    //     Json_GetClientCardDetails();
 
-    }
+    // }
 
-    const [selectedValues, setSelectedValues] = useState([]);
+    //const [selectedValues, setSelectedValues] = useState([]);
     const [selectedEmail, setSelectedEmail] = useState([]);
 
     const handleAutocompleteChange = (event, newValue) => {
@@ -1533,8 +1734,12 @@ function CreateNewModalTask({ ...props }) {
 
     const AddDocuments = () => {
         let filesData = [];
-        selectedRows.forEach((row, index) => {
+        console.log("AddDocuments11", selectedRows);
 
+        // Counter to keep track of completed asynchronous operations
+        let completedOperations = 0;
+
+        selectedRows.forEach((row, index) => {
             Json_GetItemBase64DataById(row, function (base64data) {
                 const fileData = {
                     FileName: row.Description + "." + row.Type,
@@ -1545,11 +1750,13 @@ function CreateNewModalTask({ ...props }) {
                     Guid: localStorage.getItem("GUID"),
                     FileType: row["Type"].toLowerCase(),
                     Description: row.Description
-
                 };
                 filesData.push(fileData);
-                // Check if this is the last file
-                if (index === selectedRows.length - 1) {
+
+                completedOperations++; // Increment the completed operations counter
+
+                // Check if all operations are completed
+                if (completedOperations === selectedRows.length) {
                     // Add new files to the uploadedFiles array
                     setSelectedFiles((prevUploadedFiles) => [
                         ...prevUploadedFiles,
@@ -1560,20 +1767,16 @@ function CreateNewModalTask({ ...props }) {
                         ...prevUploadedFiles,
                         ...filesData,
                     ]);
+
+                    // Call PrepareDocumentsForPublish_Json after all files data are processed
+                    PrepareDocumentsForPublish_Json(filesData, 2);
+
+                    setOpenDocumentList(false);
                 }
-            })
+            });
+        });
+    };
 
-
-        })
-
-        setTimeout(() => {
-            PrepareDocumentsForPublish_Json(filesData, 2)
-        }, 3000);
-
-
-        setOpenDocumentList(false)
-
-    }
 
     function Json_GetItemBase64DataById(item, callBack) {
         try {
@@ -1604,12 +1807,12 @@ function CreateNewModalTask({ ...props }) {
 
 
 
-    const [editorContent, setEditorContent] = useState('');
+    //const [editorContent, setEditorContent] = useState('');
 
     // Handler function to update the editor content
-    const handleContentChange = (e) => {
-        setEditorContent(e.value);
-    };
+    // const handleContentChange = (e) => {
+    //     setEditorContent(e.value);
+    // };
     //////////////////////////Template Start
     const [txtTemplateId, setTxtTempId] = useState(null);
     const [errorMgs, setErrorMgs] = useState(false);
@@ -1633,27 +1836,27 @@ function CreateNewModalTask({ ...props }) {
 
     };
 
-    function GetTemplateData(data) {
-        try {
-            let obj = {};
-            obj.agrno = agrno;
-            obj.UserEmail = Email;
-            obj.password = password;
-            obj.strFolderId = data[0].ProjectID;;
-            obj.strClientId = textClientId;
-            obj.strSectionId = data[0].ItemTypeId;
-            obj.strTemplateId = data[0].TemplateID;
+    // function GetTemplateData(data) {
+    //     try {
+    //         let obj = {};
+    //         obj.agrno = agrno;
+    //         obj.UserEmail = Email;
+    //         obj.password = password;
+    //         obj.strFolderId = data[0].ProjectID;;
+    //         obj.strClientId = textClientId;
+    //         obj.strSectionId = data[0].ItemTypeId;
+    //         obj.strTemplateId = data[0].TemplateID;
 
-            cls.Json_GetTemplateData(obj, function (sts, data) {
-                if (sts && data) {
-                    console.log("Template Data ", data)
-                    Json_GetHtmlFromRtf(data);
-                }
-            })
-        } catch (error) {
-            console.log("Error for Tempalte", error)
-        }
-    }
+    //         cls.Json_GetTemplateData(obj, function (sts, data) {
+    //             if (sts && data) {
+    //                 console.log("Template Data ", data)
+    //                 Json_GetHtmlFromRtf(data);
+    //             }
+    //         })
+    //     } catch (error) {
+    //         console.log("Error for Tempalte", error)
+    //     }
+    // }
 
     const [templateDataMarkup, setTemplateDataMarkup] = useState(null);
 
@@ -1749,9 +1952,9 @@ function CreateNewModalTask({ ...props }) {
 
     useEffect(() => {
         GetSMSTemplate();
-    }, [setTxtTempId])
+    }, [txtTemplateId])
 
-    const [textSubject, setTextSubject] = useState("");
+    
     const [editorContentValue, setEditorContentValue] = useState(null);
 
     // Handle selection change
@@ -1767,99 +1970,116 @@ function CreateNewModalTask({ ...props }) {
         }
     };
 
-    // Function to generate and set the GUID without hyphens
-    const generateGuid = () => {
-        const newGuid = uuidv4().replace(/-/g, ''); // Removing hyphens from the generated GUID
-        setGuid(newGuid);
-    };
 
 
 
     function CreatePortalTask() {
-        setLoading(true);
-        // console.log("nextDate1", currentDate)
-        ////console.log("nextDate", nextDate)
 
-        let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
-        if (nxtdd === "Invalid Date") {
-            let dd = nextDate.split("/");//30/03/2024
-            nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
-        }
-
-
-        try {
-            const isaddUser = addUser.map(obj => obj.ID).join(',');
-            let ooo = {
-                "ClientIsRecurrence": false,
-                "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-                "ClientEnd": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
-                "ClientDayNumber": "1",
-                "ClientMonth": "1",
-                "ClientOccurrenceCount": "1",
-                "ClientPeriodicity": "1",
-                "ClientRecurrenceRange": "0",
-                "ClientRecurrenceType": "0",
-                "ClientWeekDays": "1",
-                "ClientWeekOfMonth": "1",
-                "OwnerID": ownerID.toString(),
-                "AssignedToID": isaddUser,
-                "AssociateWithID": textClientId,
-                "FolderId": txtFolderId.toString(),
-                "Subject": textSubject,
-                "TypeofTaskID": txtSectionId.toString(),
-                "EndDateTime": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
-                "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
-                "Status": txtStatus,
-                "Priority": txtPriorityId.toString(),
-                "PercentComplete": "1",
-                "ReminderSet": false,
-                "ReminderDateTime": remiderDate ? dayjs(remiderDate).format("YYYY/MM/DD") : "1900/01/01",
-                "TaskNo": "0",
-                "Attachments": "",
-                "Details": txtdescription,
-                "YEDate": "1900/01/01",
-                "SubDeadline": "1900/01/01",
-                "DocRecdate": "1900/01/01",
-                "ElectronicFile": false,
-                "PaperFile": false,
-                "Notes": "",
-                "TaskSource": txtTaskType
-            }
-            console.log("final save data obj", ooo);
-            clsSms.Json_CRM_Task_Save(ooo, function (sts, data) {
-                if (sts) {
-                    if (data) {
-                        setLoading(false);
-                        let js = JSON.parse(data);
-                        console.log("Json_CRM_Task_Save ", js);
-                        if (js.Status === "success") {
-                            setMessageId(js.Message);
-                            CreatePortalMessage(js.Message)
-                            toast.success("Created Task");
-                            setOpen(false);
-                            // setIsApi(!isApi);
-                        }
-                        else {
-                            toast.error("Task Not Created Please Try Again");
-                            console.log("Response final", data)
-                        }
-                    } else {
-                        setLoading(false);
-                        toast.error("Faild Created Task Try again !");
-                    }
-
-
-
-                    // setLoading(false);
+        if (selectedEmail) {
+            try {
+                if (txtSection) {
+                    setLoading(true);
                 }
-            })
-        } catch (error) {
-            console.log({
-                status: false,
-                message: "Faild Portal task Try again",
-                error: error,
-            });
+                else {
+                    toast.error("Please Select a Section !");
+                    setLoading(false);
+                    return false
+                }
+
+
+                let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
+                if (nxtdd === "Invalid Date") {
+                    let dd = nextDate.split("/");//30/03/2024
+                    nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
+                }
+
+                const isaddUser = addUser.map(obj => obj.ID).join(',');
+                let ooo = {
+                    "ClientIsRecurrence": false,
+                    "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
+                    "ClientEnd": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
+                    "ClientDayNumber": "1",
+                    "ClientMonth": "1",
+                    "ClientOccurrenceCount": "1",
+                    "ClientPeriodicity": "1",
+                    "ClientRecurrenceRange": "0",
+                    "ClientRecurrenceType": "0",
+                    "ClientWeekDays": "1",
+                    "ClientWeekOfMonth": "1",
+                    "OwnerID": ownerID.toString(),
+                    "AssignedToID": isaddUser?isaddUser:ownerID,
+                    "AssociateWithID": textClientId,
+                    "FolderId": txtFolderId.toString(),
+                    "Subject": textSubject,
+                    "TypeofTaskID": txtSectionId.toString(),
+                    "EndDateTime": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
+                    "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
+                    "Status": txtStatus,
+                    "Priority": txtPriorityId.toString(),
+                    "PercentComplete": "1",
+                    "ReminderSet": false,
+                    "ReminderDateTime": remiderDate ? dayjs(remiderDate).format("YYYY/MM/DD") : "1900/01/01",
+                    "TaskNo": "0",
+                    "Attachments": "",
+                    "Details": txtdescription,
+                    "YEDate": "1900/01/01",
+                    "SubDeadline": "1900/01/01",
+                    "DocRecdate": "1900/01/01",
+                    "ElectronicFile": false,
+                    "PaperFile": false,
+                    "Notes": "",
+                    "TaskSource": txtTaskType
+                }
+                console.log(txtSectionId.toString(), "final save data obj", ooo);
+                clsSms.Json_CRM_Task_Save(ooo, function (sts, data) {
+                    if (sts) {
+                        if (data) {
+                            setLoading(false);
+                            let js = JSON.parse(data);
+                            console.log(selectedDocumentFile,"Json_CRM_Task_Saveportal ", js);
+                            if (js.Status === "success") {
+
+                                // setMessageId(js.Message);
+                                if (selectedDocumentFile && selectedDocumentFile.length > 0) {
+                                    selectedDocumentFile.map((item) => {
+                                        addToWorkTable(item.DocId, js.Message,textSubject);
+                                    });
+                                  }
+                                CreatePortalMessage(js.Message)
+                                // toast.success("Created Task");
+                                setOpen(false);
+                                // setIsApi(!isApi);
+                            }
+                            else {
+                                toast.error("Task Not Created Please Try Again");
+                                console.log("Response final", data)
+                            }
+                        } else {
+                            setLoading(false);
+                            toast.error("Faild Created Task Try again !");
+                        }
+
+
+
+                        // setLoading(false);
+                    }
+                })
+            } catch (error) {
+                console.log({
+                    status: false,
+                    message: "Faild Portal task Try again",
+                    error: error,
+                });
+            }
         }
+        else {
+            toast.error("Please Select a Email in To")
+        }
+
+
+
+
+
     }
 
 
@@ -1908,7 +2128,7 @@ function CreateNewModalTask({ ...props }) {
 
 
                 }
-                console.log("final save data obj", obj);
+                console.log(PortalSelectDoc,"final save data obj", obj);
 
                 var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
                 let cls = new CommanCLS(urlLetter, agrno, Email, password);
@@ -1918,6 +2138,18 @@ function CreateNewModalTask({ ...props }) {
                         console.log("MessagePublished_Json", data)
                         if (!data) {
                             toast.success("Task Created");
+                            setOpenUploadDocument(false);
+                            Json_CRM_GetOutlookTask_ForTask();
+                            if (createNewFileObj) {
+                                setOpenModal(false);
+                            }
+                            setSelectedFiles([]);
+                            ClearForm();
+                            //setAttachmentPath([]);
+                            //setSelectedFiles([])
+                            let strGuid = uuidv4().replace(/-/g, '');
+                            localStorage.setItem("GUID", strGuid)
+
                         }
                         setOpen(false);
 
@@ -1945,7 +2177,7 @@ function CreateNewModalTask({ ...props }) {
         }
     }
 
-    const [isCheckedForApproval, setIsCheckedForApproval] = useState(false);
+    const [isCheckedForApproval, setIsCheckedForApproval] = useState(true);
     const [isDisabledForApproval, setIsDisabledForApproval] = useState(false);
 
     const handleCheckboxChangeForAppoval = (event) => {
@@ -1985,10 +2217,10 @@ function CreateNewModalTask({ ...props }) {
     }
 
 
-    const removeItemById = (array, idToRemove) => {
-        // Filter out the item with the specified id
-        return array.filter(item => item.ID !== idToRemove);
-    };
+    // const removeItemById = (array, idToRemove) => {
+    //     // Filter out the item with the specified id
+    //     return array.filter(item => item.ID !== idToRemove);
+    // };
 
 
     const handleItemClick = (e) => {
@@ -2017,9 +2249,9 @@ function CreateNewModalTask({ ...props }) {
 
     };
 
-    const closeDropdown = () => {
-        setDropdownVisible(false);
-    };
+    // const closeDropdown = () => {
+    //     setDropdownVisible(false);
+    // };
 
 
     const [isRemindMe, setIsRemindMe] = useState(false);
@@ -2032,11 +2264,19 @@ function CreateNewModalTask({ ...props }) {
 
 
     const SigningMethods = (e) => {
-        setIsCheckedForApproval(true);
-        setIsDisabledForApproval(true);
-        const ToEmail = selectedEmail.map(obj => obj["E-Mail"]).join(",");
-        let url = `https://signing.docusms.uk/Signing.aspx?accid=${agrno}&email=${Email}&password=${password}&sendclient=${textClientId}&sendemail=&clientname=${txtClient}&option=upload&file=${agrno}-${localStorage.getItem("GUID")}/${e.FileName}&to=${ToEmail}&rwndrnd=0.8166129123678032`;
-        window.open(url);
+        console.log("file name ", e)
+        if (e.FileType === "pdf") {
+            setIsCheckedForApproval(true);
+            setIsDisabledForApproval(true);
+            const ToEmail = selectedEmail.map(obj => obj["E-Mail"]).join(",");
+            let url = `https://signing.docusms.uk/Signing.aspx?accid=${agrno}&email=${Email}&password=${password}&sendclient=${textClientId}&sendemail=&clientname=${txtClient}&option=upload&file=${agrno}-${localStorage.getItem("GUID")}/${e.FileName}&to=${ToEmail}&rwndrnd=0.8166129123678032`;
+            window.open(url);
+        }
+        else {
+            console.log("file name ", e)
+            // toast.error("Please convert to pdf");
+        }
+
     }
 
     const [anchorElDoc, setAnchorElDoc] = React.useState(null);
@@ -2075,7 +2315,7 @@ function CreateNewModalTask({ ...props }) {
                 accid: agrno,
                 email: Email,
                 password: password,
-                uploadID: d.Guid,
+                uploadID: localStorage.getItem("GUID"),
                 filename: d.FileName
             }
             var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
@@ -2116,7 +2356,7 @@ function CreateNewModalTask({ ...props }) {
                 accid: agrno,
                 email: Email,
                 password: password,
-                Guid: d.Guid,
+                Guid: localStorage.getItem("GUID"),
                 FileName: d.FileName
             }
             var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
@@ -2128,7 +2368,7 @@ function CreateNewModalTask({ ...props }) {
                         let fname = getFileName(data);
                         let res = selectedFiles.map((file) => {
                             if (getFileName(file.FileName) === fname) {
-                                return { ...file, FileName: data };
+                                return { ...file, FileName: data, FileType: cls.FileType(data).toLowerCase() };
                             }
                             else {
                                 return file;
@@ -2176,9 +2416,9 @@ function CreateNewModalTask({ ...props }) {
     const DocumentHandleClose = () => {
         setReferance(false);
     };
-    const handleClickEditReferance = () => {
-        setReferanceEdit(true);
-    };
+    // const handleClickEditReferance = () => {
+    //     setReferanceEdit(true);
+    // };
     const EditDocumentHandleClose = () => {
         setReferanceEdit(false);
     };
@@ -2193,6 +2433,16 @@ function CreateNewModalTask({ ...props }) {
 
     const handleClose5 = () => {
         setOpen5(false);
+        setAddContact(null);
+    };
+
+    const [anchorElFiles, setAnchorElFiles] = React.useState(null);
+    const openFiles = Boolean(anchorElFiles);
+    const handleClickFiles = (event) => {
+        setAnchorElFiles(event.currentTarget);
+    };
+    const handleCloseFiles = () => {
+        setAnchorElFiles(null);
     };
 
     return (
@@ -2204,8 +2454,29 @@ function CreateNewModalTask({ ...props }) {
                 <span className="material-symbols-outlined">edit_square</span>{" "}
                 <span className="ps-2 create-text">Create New  </span>
             </Button> */}
-            <UploadDocument openUploadDocument={openUploadDocument} setOpenUploadDocument={setOpenUploadDocument}></UploadDocument>
-            
+            <UploadDocument
+                openUploadDocument={openUploadDocument}
+                setOpenUploadDocument={setOpenUploadDocument}
+                documentDate={documentDate}
+                setDocumentDate={setDocumentDate}
+                receivedDate={receivedDate}
+                setReceivedDate={setReceivedDate}
+                createNewFileObj={createNewFileObj}
+                setCreateNewFileObj={setCreateNewFileObj}
+                txtFolderData={txtFolderData}
+                setTxtFolderData={setTxtFolderData}
+                txtClientData={txtClientData}
+                setTxtClientData={setTxtClientData}
+                txtSectionData={txtSectionData}
+                setTxtSectionData={setTxtSectionData}
+                TaskType={TaskType}
+                setTaskType={setTaskType}
+                openModal={openModal}
+                setOpenModal={setOpenModal}
+                handleClickOpen={handleClickOpen}
+                openDocumentModalByRedux={openDocumentModalByRedux}
+            ></UploadDocument>
+
             <div className="select-border">
                 <Button
                     id="basic-button"
@@ -2213,12 +2484,13 @@ function CreateNewModalTask({ ...props }) {
                     aria-haspopup="true"
                     aria-expanded={open4 ? 'true' : undefined}
                     onClick={handleClick4}
-                    className="btn-blue btn-round btn-block add-new-btn"
+                    className="btn-blue btn-round btn-block add-new-btn justify-content-start"
                     variant="text"
                 >
-                    <span className="material-symbols-outlined font-18">edit_square</span>{" "}
-                    <span className="ps-2 font-13 create-text">Add New </span>
+                    {/* <span className="material-symbols-outlined font-18">edit_square</span>{" "} */}
 
+                    <AddCircleOutlineIcon className="font-26 ms-1" />
+                    <span className="ps-4 font-13 create-text">Add New </span>
                 </Button>
                 <Menu
                     id="basic-menu"
@@ -2238,7 +2510,10 @@ function CreateNewModalTask({ ...props }) {
                     {/* <MenuItem 
                     onClick={handleClickEditReferance}
                     >Edit Reference</MenuItem> */}
-                    <MenuItem onClick={() => handleClickOpen("CRM")
+                    <MenuItem onClick={() => {
+                        handleClickOpen("CRM")
+                        handleClose4()
+                    }
                     }>
                         {/* <ListItemIcon>
                             <EjectIcon fontSize="medium" className="text-red rotate-180" />
@@ -2248,10 +2523,23 @@ function CreateNewModalTask({ ...props }) {
                         </ListItemIcon> CRM Task
                     </MenuItem>
 
-                    <MenuItem onClick={() => handleClickOpen("Portal")}><ListItemIcon>
-                        <LanguageIcon className="font-20" />
-                    </ListItemIcon>
-                        Portal Task</MenuItem>
+                    <MenuItem onClick={() => {
+                        handleClickOpen("Portal")
+                        handleClose4()
+                    }
+                    }><ListItemIcon>
+                            <LanguageIcon className="font-20" />
+                        </ListItemIcon>
+                        Portal Task </MenuItem>
+
+                    {/* <MenuItem onClick={() => {
+                        handleClickOpen("Portal")
+                        handleClose4()
+                    }
+                    }><ListItemIcon>
+                            <LanguageIcon className="font-20" />
+                        </ListItemIcon>
+                        DMS Task </MenuItem> */}
 
                     <MenuItem onClick={() => {
                         handleClickReferance()
@@ -2259,7 +2547,7 @@ function CreateNewModalTask({ ...props }) {
                     }}>
                         <ListItemIcon>
                             <GroupIcon className="font-20" />
-                        </ListItemIcon> Reference
+                        </ListItemIcon> Add Reference
                     </MenuItem>
 
                     <MenuItem onClick={() => {
@@ -2292,7 +2580,7 @@ function CreateNewModalTask({ ...props }) {
             <Dialog
                 fullScreen={fullScreen}
                 open={open}
-                onClose={handleClose}
+                // onClose={handleClose}
                 aria-labelledby="responsive-dialog-title"
                 className="custom-modal custom-modal-1200"
             >
@@ -2310,7 +2598,7 @@ function CreateNewModalTask({ ...props }) {
                         >
                             {txtTaskType}
                         </Button>
-                        <Menu
+                        {/* <Menu
                             id="basic-menu"
                             anchorEl={anchorElTastkType}
                             open={TastkType}
@@ -2332,7 +2620,7 @@ function CreateNewModalTask({ ...props }) {
                                 </ListItemIcon>
                                 Portal
                             </MenuItem>
-                        </Menu>
+                        </Menu> */}
                     </Box>
 
                     {/* <Box className="dropdown-box">
@@ -2541,7 +2829,10 @@ function CreateNewModalTask({ ...props }) {
 
                                                 </>
                                             )}
-                                            {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+                                            {txtTaskType === "Portal" && (
+                                                <HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
+                                            )}
+
                                         </Box>
 
                                         {!isVisibleByTypeCRM && (<>
@@ -2555,237 +2846,287 @@ function CreateNewModalTask({ ...props }) {
                                             </Box>
                                         </>)}
 
-                                        <div className="mt-2">
-                                            <Button
-                                                id="basic-button5"
-                                                aria-controls={
-                                                    UserDropdownopen ? "basic-menu5" : undefined
-                                                }
-                                                aria-haspopup="true"
-                                                aria-expanded={UserDropdownopen ? "true" : undefined}
-                                                onClick={handleUserClick}
-                                                onContextMenu={handleRightClick}
-                                                className="p-0 w-auto d-inline-block"
-                                            >
+                                        <div className="mt-1 mb-2">
 
-                                                <Box className="d-flex align-items-center">
-                                                    {ownerRighClick && (<>
-                                                        <Box
-                                                            className="user-img-list me-2 admin"
-                                                            title={ownerRighClick.ForwardTo}
-                                                            key={ownerRighClick.ID}
-                                                        >
-                                                            <p>{firsorScandCtr(ownerRighClick)}</p>
-                                                        </Box> <ArrowForwardIosIcon className='me-1' />
-                                                    </>)}
-
-                                                    {addUser.length > 1
-                                                        ? addUser.map((item) => {
-                                                            const words = item.ForwardTo.split(" ");
-                                                            // Extract the first letter of each word and concatenate them
-                                                            let result = "";
-                                                            for (
-                                                                let i = 0;
-                                                                i < words.length && i < 2;
-                                                                i++
-                                                            ) {
-                                                                result += words[i].charAt(0);
-                                                            }
-                                                            if (item.ID !== ownerID) {
-                                                                return (
-                                                                    <>
-                                                                        <Box
-                                                                            className="user-img-list me-2 admin"
-                                                                            title={item.ForwardTo}
-                                                                            key={item.ID}
-                                                                        >
-                                                                            <p>{result}</p>
-                                                                        </Box>
-                                                                    </>
-                                                                );
-                                                            }
-                                                        })
-                                                        : null}
-
-                                                    <Box className="d-flex">
-                                                        <span class="material-symbols-outlined">
-                                                            person_add
-                                                        </span>
-                                                    </Box>
-
-                                                </Box>
-
-                                            </Button>
-
-                                            {dropdownVisible && (<Menu
-                                                id="basic-menu5"
-                                                anchorEl={userDropdownanchorElRight}
-                                                open={UserDropdownopenRight}
-                                                onClose={handleUserClose}
-                                                MenuListProps={{
-                                                    "aria-labelledby": "basic-button5",
-                                                }}
-                                                className="user-list-dropdown"
-                                            >
-
-                                                <Box
-                                                    className="inner-user-list-dropdown"
-                                                    style={{ maxHeight: "200px", overflowY: "auto" }}
-                                                >
-                                                    <p className="sembold">Assigned11</p>
-
-                                                    <Box className="box-user-list-dropdown">
+<Button
+    id="basic-button5"
+    aria-controls={
+        UserDropdownopen ? "basic-menu5" : undefined
+    }
+    aria-haspopup="true"
+    aria-expanded={UserDropdownopen ? "true" : undefined}
+    onContextMenu={handleRightClick}
+    className="p-0 w-auto d-inline-block"
 
 
+>
+    <Box className="d-flex align-items-center">
+        {ownerRighClick && (<>
+            <Box
+                className="user-img-list me-1 admin"
+                title={ownerRighClick.ForwardTo}
+                key={ownerRighClick.ID}
+            >
+                <p>{firsorScandCtr(ownerRighClick)}</p>
+            </Box> <ArrowForwardIosIcon className='me-1 font-20' />
+        </>)}
 
-                                                        {addUser
-                                                            ? addUser.map((item, ind) => {
-                                                                if (item.ID === ownerID) {
-                                                                    return (
-                                                                        <React.Fragment key={ind}>
-                                                                            <button type="button"
-                                                                                id={item.ID}
-                                                                            >
-                                                                                <Box className="user-img-list me-2">
-                                                                                    <img src={user} alt="User" />
-                                                                                </Box>
-                                                                                <p>{item.ForwardTo}</p>
-                                                                            </button>
-                                                                        </React.Fragment>
-                                                                    );
-                                                                } else {
-                                                                    return (
-                                                                        <React.Fragment key={ind}>
-                                                                            <button type="button" id={item.ID}
-                                                                                onClick={() => handleItemClick(item)}
-                                                                            >
-                                                                                <Box className="user-img-list me-2">
-                                                                                    <img src={user} alt="User" />
-                                                                                </Box>
-                                                                                <p>{item.ForwardTo}</p>
-                                                                                {/* <span
-                                                                                    className="close"
-                                                                                    onClick={() => handleRemoveUser(item.ID)}
-                                                                                    role="button" // Adding role="button" to indicate this element is clickable
-                                                                                    tabIndex="0" // Adding tabIndex to make the element focusable
-                                                                                >
-                                                                                    <span className="material-symbols-outlined">
-                                                                                        close
-                                                                                    </span>
-                                                                                </span> */}
-                                                                            </button>
-                                                                        </React.Fragment>
-                                                                    );
-                                                                }
-                                                            })
-                                                            : null}
-                                                    </Box>
-                                                </Box>
-                                            </Menu>)}
 
-                                            <Menu
-                                                id="basic-menu5"
-                                                anchorEl={userDropdownanchorEl}
-                                                open={UserDropdownopen}
-                                                onClose={handleUserClose}
-                                                MenuListProps={{
-                                                    "aria-labelledby": "basic-button5",
-                                                }}
-                                                className="user-list-dropdown"
-                                            >
+        {addUser.length > 1
+            ? addUser.slice(1, 3).map((item) => {
+                const words = item.ForwardTo.split(" ");
+                // Extract the first letter of each word and concatenate them
+                let result = "";
+                for (
+                    let i = 0;
+                    i < words.length && i < 2;
+                    i++
+                ) {
+                    result += words[i].charAt(0);
+                }
+                if (item.ID !== ownerID) {
+                    return (
+                        <>
+                            <Box
+                                className="user-img-list me-1 admin"
+                                title={item.ForwardTo}
+                                key={item.ID}
+                            >
+                                <p>{result}</p>
+                            </Box>
 
-                                                <Box
-                                                    className="inner-user-list-dropdown"
-                                                    style={{ maxHeight: "200px", overflowY: "auto" }}
-                                                >
-                                                    <p className="sembold">Assigned</p>
 
-                                                    <Box className="box-user-list-dropdown">
+                        </>
+                    );
+                }
+
+
+            })
+            : null}
+
+    </Box>
+</Button>
+
+
+{dropdownVisible && (<Menu
+    id="basic-menu5"
+    anchorEl={userDropdownanchorElRight}
+    open={UserDropdownopenRight}
+    onClose={handleUserClose}
+    MenuListProps={{
+        "aria-labelledby": "basic-button5",
+    }}
+    className="user-list-dropdown"
+>
+
+    <Box
+        className="inner-user-list-dropdown"
+        style={{ maxHeight: "200px", overflowY: "auto" }}
+    >
+        <p className="sembold">Transfer Ownership To:</p>
+
+        <Box className="box-user-list-dropdown">
 
 
 
-                                                        {addUser
-                                                            ? addUser.map((item, ind) => {
-                                                                if (item.ID === ownerID) {
-                                                                    return (
-                                                                        <React.Fragment key={ind}>
-                                                                            <button type="button" id={item.ID} >
-                                                                                <Box className="user-img-list me-2">
-                                                                                    <img src={user} alt="User" />
-                                                                                </Box>
-                                                                                <p>{item.ForwardTo}</p>
-                                                                            </button>
-                                                                        </React.Fragment>
-                                                                    );
-                                                                } else {
-                                                                    return (
-                                                                        <React.Fragment key={ind}>
-                                                                            <button type="button" id={item.ID}>
-                                                                                <Box className="user-img-list me-2">
-                                                                                    <img src={user} alt="User" />
-                                                                                </Box>
-                                                                                <p>{item.ForwardTo}</p>
-                                                                                <span
-                                                                                    className="close"
-                                                                                    onClick={() => handleRemoveUser(item.ID)}
-                                                                                    role="button" // Adding role="button" to indicate this element is clickable
-                                                                                    tabIndex="0" // Adding tabIndex to make the element focusable
-                                                                                >
-                                                                                    <span className="material-symbols-outlined">
-                                                                                        close
-                                                                                    </span>
-                                                                                </span>
-                                                                            </button>
-                                                                        </React.Fragment>
-                                                                    );
-                                                                }
-                                                            })
-                                                            : null}
-                                                    </Box>
-                                                </Box>
+            {addUser
+                ? addUser.map((item, ind) => {
+                    if (item.ID === ownerID) {
+                        return (
+                            <React.Fragment key={ind}>
+                                <button type="button"
+                                    id={item.ID}
+                                >
+                                    <Box className="user-img-list me-2">
+                                        <img src={user} alt="User" />
+                                    </Box>
+                                    <p>{item.ForwardTo}</p>
+                                </button>
+                            </React.Fragment>
+                        );
+                    } else {
+                        return (
+                            <React.Fragment key={ind}>
+                                <button type="button" id={item.ID}
+                                    onClick={() => handleItemClick(item)}
+                                >
+                                    <Box className="user-img-list me-2">
+                                        <img src={user} alt="User" />
+                                    </Box>
+                                    <p>{item.ForwardTo}</p>
+                                    {/* <span
+                                        className="close"
+                                        onClick={() => handleRemoveUser(item.ID)}
+                                        role="button" // Adding role="button" to indicate this element is clickable
+                                        tabIndex="0" // Adding tabIndex to make the element focusable
+                                    >
+                                        <span className="material-symbols-outlined">
+                                            close
+                                        </span>
+                                    </span> */}
+                                </button>
+                            </React.Fragment>
+                        );
+                    }
+                })
+                : null}
+        </Box>
+    </Box>
+</Menu>)}
 
-                                                <Box className="inner-user-list-dropdown">
-                                                    <p className="sembold mb-0">My Team</p>
+{addUser.length > 4 && (<>
+    <Button
+        id="basic-button"
+        aria-controls={openFiles ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={openFiles ? 'true' : undefined}
+        onClick={handleClickFiles}
+        className="p-0 min-width-auto"
+    >
+        <Box
+            className="user-img-list me-1 admin"
+        >
+            <p>+{addUser.length - 3}</p>
+        </Box>
+    </Button>
+    <Menu
+        id="basic-menu"
+        anchorEl={anchorElFiles}
+        open={openFiles}
+        onClose={handleCloseFiles}
+        MenuListProps={{
+            'aria-labelledby': 'basic-button',
+        }}
+        className="custom-menu"
+    >
+        {addUser.length > 3 &&
+            addUser.slice(3, addUser.length).map((item, index) => (
+                <MenuItem key={index} onClick={handleCloseFiles}>{item.ForwardTo}</MenuItem>
+            ))
+        }
+    </Menu>
+</>)}
 
-                                                    <Box className="box-user-list-dropdown" style={{ maxHeight: "200px", overflowY: "auto" }}>
-                                                        <Box className="mb-1 mt-3 px-3">
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                placeholder="Search..."
-                                                                size='small'
-                                                                value={filterText}
-                                                                onChange={(e) => setFilterText(e.target.value)}
-                                                            />
-                                                        </Box>
-                                                        <Box className="box-user-list-dropdown">
+<Button
+    id="basic-button5"
+    aria-controls={
+        UserDropdownopen ? "basic-menu5" : undefined
+    }
+    aria-haspopup="true"
+    aria-expanded={UserDropdownopen ? "true" : undefined}
+    onClick={handleUserClick}
+    className="p-0 w-auto d-inline-block"
+>
 
-                                                            {userFilter.map((item, ind) => (
-                                                                <React.Fragment key={ind}>
-                                                                    <button
-                                                                        type="button"
-                                                                        id={item.ID}
-                                                                        onClick={() => handalClickAddUser(item)}
-                                                                    >
-                                                                        <Box className="user-img-list me-2">
-                                                                            <img src={user} alt="User" />
-                                                                        </Box>
-                                                                        <p>{item.ForwardTo}</p>
-                                                                        {/* <a href="" className="close">
-                                    <span className="material-symbols-outlined">
-                                      close
+    <Box className="d-flex">
+        <span class="material-symbols-outlined">
+            person_add
+        </span>
+    </Box>
+
+</Button>
+
+<Menu
+    id="basic-menu5"
+    anchorEl={userDropdownanchorEl}
+    open={UserDropdownopen}
+    onClose={handleUserClose}
+    MenuListProps={{
+        "aria-labelledby": "basic-button5",
+    }}
+    className="user-list-dropdown"
+>
+
+    <Box
+        className="inner-user-list-dropdown"
+        style={{ maxHeight: "200px", overflowY: "auto" }}
+    >
+        <p className="sembold">Assigned</p>
+        <Box className="box-user-list-dropdown">
+            {addUser
+                ? addUser.map((item, ind) => {
+                    if (item.ID === ownerID) {
+                        return (
+                            <React.Fragment key={ind}>
+                                <button type="button" id={item.ID} >
+                                    <Box className="user-img-list me-2">
+                                        <img src={user} alt="User" />
+                                    </Box>
+                                    <p>{item.ForwardTo}</p>
+                                </button>
+                            </React.Fragment>
+                        );
+                    } else {
+                        return (
+                            <React.Fragment key={ind}>
+                                <button type="button" id={item.ID}>
+                                    <Box className="user-img-list me-2">
+                                        <img src={user} alt="User" />
+                                    </Box>
+                                    <p>{item.ForwardTo}</p>
+                                    <span
+                                        className="close"
+                                        onClick={() => handleRemoveUser(item.ID)}
+                                        role="button" // Adding role="button" to indicate this element is clickable
+                                        tabIndex="0" // Adding tabIndex to make the element focusable
+                                    >
+                                        <span className="material-symbols-outlined">
+                                            close
+                                        </span>
                                     </span>
-                                  </a> */}
-                                                                    </button>
-                                                                </React.Fragment>
-                                                            ))}
-                                                        </Box>
-                                                    </Box>
-                                                </Box>
-                                            </Menu>
+                                </button>
+                            </React.Fragment>
+                        );
+                    }
+                })
+                : null}
+        </Box>
+    </Box>
+
+    <Box className="inner-user-list-dropdown">
+        <p className="sembold mb-0">My Team</p>
+
+        <Box className="box-user-list-dropdown" style={{ maxHeight: "200px", overflowY: "auto" }}>
+            <Box className="mb-1 mt-3 px-3">
+                <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search..."
+                    value={filterText}
+                    onChange={(e) => setFilterText(e.target.value)}
+                />
+            </Box>
+            <Box className="box-user-list-dropdown">
+
+                {FilderDataList.map((item, ind) => (
+                    <React.Fragment key={ind}>
+                        <button
+                            type="button"
+                            id={item.ID}
+                            onClick={() => handalClickAddUser(item)}
+                        >
+                            <Box className="user-img-list me-2">
+                                <img src={user} alt="User" />
+                            </Box>
+                            <p>{item.ForwardTo}</p>
+                            {/* <a href="" className="close">
+                        <span className="material-symbols-outlined">
+                          close
+                        </span>
+                      </a> */}
+                        </button>
+                    </React.Fragment>
+                ))}
+            </Box>
+        </Box>
+    </Box>
+</Menu>
 
 
-                                        </div>
+</div>
+
+
+                                        
                                     </Box>
                                 </Box>
 
@@ -2835,15 +3176,75 @@ function CreateNewModalTask({ ...props }) {
                                             }}
                                             className="custom-dropdown"
                                         >
-                                            <label onClick={handleSelectFileClose} htmlFor="file-upload">
-                                                <MenuItem>Upload File(s)</MenuItem>
+                                            <label onClick={handleSelectFileClose} htmlFor="file-upload" className="d-block">
+                                                <MenuItem><FileUploadIcon className="font-20 me-1" /> Upload File(s)</MenuItem>
                                             </label>
-                                            <MenuItem onClick={handleDocumentClickOpen}>Select From DMS</MenuItem>
+                                            <MenuItem onClick={handleDocumentClickOpen}><InsertPageBreakIcon className="font-20 me-1" /> Select From DMS</MenuItem>
 
                                         </Menu>
 
                                     </label>
                                 </Box>
+
+
+                                {/* DMS Start 
+                                <Box className="file-uploads">
+                                    <input
+                                        type="file"
+                                        id="file-upload"
+                                        multiple
+                                        onChange={handleFileSelect}
+                                    />
+                                    <label className="file-uploads-label">
+                                        <Box className="d-flex align-items-center">
+                                            <span className="material-symbols-outlined icon">
+                                                cloud_upload
+                                            </span>
+                                            <Box className="upload-content pe-3">
+                                                <Typography variant="h4">
+                                                    Main Document
+                                                </Typography>
+                                                <Typography variant="body1">
+                                                    JPG, PNG or PDF, file size no more than 10MB
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+
+                                        <Button
+                                            id="basic-button"
+                                            variant="contained"
+                                            aria-controls={openSelectFile ? 'basic-menu' : undefined}
+                                            aria-haspopup="true"
+                                            aria-expanded={openSelectFile ? 'true' : undefined}
+                                            onClick={handleClickSelectFile}
+                                            className="btn-blue-2"
+                                        >
+                                            Select file
+                                        </Button>
+                                        <Menu
+                                            id="basic-menu"
+                                            anchorEl={anchorSelectFileEl}
+                                            open={openSelectFile}
+                                            onClose={handleSelectFileClose}
+                                            MenuListProps={{
+                                                'aria-labelledby': 'basic-button',
+                                            }}
+                                            className="custom-dropdown"
+                                        >
+                                            <label onClick={handleSelectFileClose} htmlFor="file-upload" className="d-block">
+                                                <MenuItem><FileUploadIcon className="font-20 me-1" /> 
+                                                Select DMS Document
+                                                </MenuItem>
+                                            </label>
+                                            <MenuItem onClick={handleDocumentClickOpen}><InsertPageBreakIcon className="font-20 me-1" /> Upload new document</MenuItem>
+
+                                        </Menu>
+
+                                    </label>
+                                </Box>
+                                 DMS End */}
+
+
 
                                 <Box className="file-uploads file-upload-height">
                                     {selectedFiles.length > 0
@@ -2868,6 +3269,7 @@ function CreateNewModalTask({ ...props }) {
                                                         </Box>
 
                                                         <Box className="d-flex align-items-center">
+
                                                             {txtTaskType === "Portal" && (<>
                                                                 <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
                                                                     Sign
@@ -2898,16 +3300,77 @@ function CreateNewModalTask({ ...props }) {
                                                                     onClose={handleCloseDoc}
                                                                     MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
                                                                 >
-                                                                    <MenuItem onClick={() => DeleteFile(file)}>Delete</MenuItem>
+                                                                    <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Delete</MenuItem>
                                                                     {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
-                                                                        <MenuItem onClick={(e) => ConvertToPdf_Json(file)}>Convert To Pdf</MenuItem>
+                                                                        <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
                                                                     )}
-
-
                                                                 </Menu>
 
+                                                            </Box>
+                                                        </Box>
+                                                        {/* <Button variant="text" className='btn-blue-2'>Select file</Button> */}
+                                                    </label>
+                                                </>
+                                            );
+                                        })
+                                        : (createNewFileObj && createNewFileObj.length > 0)
+                                        ? createNewFileObj.map((file, index) => {
+                                            // console.log("Uploadin", file);
 
+                                            return (
+                                                <>
+                                                    <label className="file-uploads-label mb-2" key={index}>
+                                                        <Box className="d-flex align-items-center">
+                                                            <span className="material-symbols-outlined icon">
+                                                                description
+                                                            </span>
+                                                            <Box className="upload-content pe-3">
+                                                                <Typography variant="h4">
+                                                                    {file ? file.FileName : ""}
+                                                                </Typography>
+                                                                <Typography variant="body1">
+                                                                    {file ? kbToMb(file.FileSize) : ""} MB
+                                                                </Typography>
+                                                            </Box>
+                                                        </Box>
 
+                                                        <Box className="d-flex align-items-center">
+
+                                                            {txtTaskType === "Portal" && (<>
+                                                                <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
+                                                                    Sign
+                                                                </Button>
+                                                            </>)}
+
+                                                            <Box className="ps-2">
+
+                                                                <Button
+                                                                    id="basic-button"
+                                                                    aria-controls={openDoc ? 'basic-menu' : undefined}
+                                                                    aria-haspopup="true"
+                                                                    aria-expanded={openDoc ? 'true' : undefined}
+                                                                    onClick={(event) => handleClickDoc(event, index)} // Pass index to handleClickDoc
+                                                                    className="min-width-auto"
+
+                                                                >
+                                                                    <span className="material-symbols-outlined">
+                                                                        more_vert
+                                                                    </span>
+                                                                </Button>
+
+                                                                <Menu
+                                                                    id="basic-menu"
+                                                                    className="custom-dropdown"
+                                                                    anchorEl={anchorElDoc}
+                                                                    open={openDoc && selectedFileIndex === index} // Ensure the menu opens only for the selected file
+                                                                    onClose={handleCloseDoc}
+                                                                    MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
+                                                                >
+                                                                    <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Delete</MenuItem>
+                                                                    {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
+                                                                        <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
+                                                                    )}
+                                                                </Menu>
 
                                                             </Box>
                                                         </Box>
@@ -2931,11 +3394,11 @@ function CreateNewModalTask({ ...props }) {
                                     <Button
                                         variant="contained"
                                         onClick={Json_CRM_Task_Save}
-                                        disabled={!textSubject || loading}
+                                        disabled={loading || !textSubject}
                                         className="btn-blue-2 mt-3"
 
                                     >
-                                        {'CRM Task'}
+                                        {'Create Task'}
                                     </Button>
                                 )}
 
@@ -2943,7 +3406,7 @@ function CreateNewModalTask({ ...props }) {
                                     <Button
                                         variant="contained"
                                         onClick={CreatePortalTask}
-                                        disabled={!textSubject || loading}
+                                        disabled={loading || !textSubject}
 
                                         className="btn-blue-2 mt-1"
                                     >
@@ -3109,6 +3572,7 @@ function CreateNewModalTask({ ...props }) {
                                                         : undefined
                                                 }
                                                 onClick={(event) => handleClick3(event, "client")}
+                                                className={textClientId ? "" : "text-danger"}
                                             >
                                                 {txtClient}
                                                 <KeyboardArrowDownIcon />
@@ -3156,6 +3620,7 @@ function CreateNewModalTask({ ...props }) {
                                                                 setClientAnchorEl(null);
                                                                 Json_GetClientCardDetails(item.ClientID)
                                                                 setTxtColor({ color: "#1976d2" });
+                                                                setLoading(false)
 
                                                             }}
                                                             className="search-list"
@@ -3184,6 +3649,7 @@ function CreateNewModalTask({ ...props }) {
                                                                     </React.Fragment>
                                                                 }
                                                             />
+
                                                         </ListItem>
                                                         {/* <Divider variant="inset" component="li" /> */}
                                                     </React.Fragment>
@@ -3222,6 +3688,7 @@ function CreateNewModalTask({ ...props }) {
                                                         : undefined
                                                 }
                                                 onClick={(event) => handleClick3(event, "section")}
+                                                className={txtSectionId ? "" : "text-danger"}
                                             >
                                                 {txtSection}
                                                 <KeyboardArrowDownIcon />
@@ -3266,6 +3733,7 @@ function CreateNewModalTask({ ...props }) {
                                                                     settxtSection(item.Sec); // Assuming item.Client holds the value you want
                                                                     setTxtSectionId(item.SecID); // Assuming item.Client holds the value you want
                                                                     setSectionAnchorEl(null);
+                                                                    setLoading(false)
                                                                 }}
                                                                 className="search-list"
                                                                 ref={sectionListRef}
@@ -3316,7 +3784,13 @@ function CreateNewModalTask({ ...props }) {
                                                     showIcon
                                                     dateFormat="DD/MM/YYYY"
                                                     value={currentDate}
-                                                    onChange={(e) => CurrentDateChange(e)} // Handle date changes
+                                                    onChange={(e) => {
+                                                        console.log("hello,111111")
+                                                        CurrentDateChange(e);
+                                                        setNextDate("");
+                                                    }
+
+                                                    } // Handle date changes
                                                     timeFormat={false}
                                                     isValidDate={disablePastDt}
                                                     closeOnSelect={true}
@@ -3341,21 +3815,18 @@ function CreateNewModalTask({ ...props }) {
 
                                 {/* <Box className="border-bottom">
                                     <label>Index</label>
-                                    
                                 </Box> */}
 
                                 <Box className="mb-3">
                                     <label className="font-14 semibold mb-1">Due By </label>
-
                                     <Box className='custom-datepicker'>
-
                                         <LocalizationProvider
                                             className="pe-0"
                                             dateAdapter={AdapterDayjs}
                                         >
                                             <CalendarMonthIcon />
                                             <DatePicker className=" w-100"
-                                                selected={selectedDate}
+                                                //selected={selectedDate}
                                                 showIcon
                                                 dateFormat="DD/MM/YYYY"
                                                 value={nextDate}
@@ -3367,11 +3838,7 @@ function CreateNewModalTask({ ...props }) {
                                                 isClearable
                                             />
                                         </LocalizationProvider>
-
-
                                     </Box>
-
-
                                 </Box>
 
                                 <Box className="mb-2">
@@ -3411,7 +3878,6 @@ function CreateNewModalTask({ ...props }) {
 
                                     </>)}
 
-
                                     {txtTaskType === "Portal" && (<>
                                         <label className="font-14 d-block">Expires On</label>
                                         <LocalizationProvider
@@ -3430,9 +3896,6 @@ function CreateNewModalTask({ ...props }) {
                                                 icon="fa fa-calendar"
 
                                             />
-
-
-
                                         </LocalizationProvider>
                                     </>)}
 
@@ -3486,7 +3949,7 @@ function CreateNewModalTask({ ...props }) {
                                                         className='ps-2'
                                                     >
                                                         <ListItemIcon>
-                                                            <PanoramaFishEyeIcon fontSize="medium" />
+                                                            {item.icon}
                                                         </ListItemIcon>
 
                                                         {item.name}</MenuItem>
@@ -3495,8 +3958,6 @@ function CreateNewModalTask({ ...props }) {
                                             ))
                                             : null}
                                     </Menu>
-
-
                                 </Box>
 
                                 <Box className="select-dropdown">
@@ -3562,17 +4023,8 @@ function CreateNewModalTask({ ...props }) {
                             </Box>
                             {/* col end */}
 
-
-
-
-
-
-
-
                         </Box>
                     </DialogContentText>
-
-
 
                     <DialogActions className="px-0 w-100 p-0">
                         <Box className="d-flex align-items-center justify-content-end w-100">
@@ -3610,7 +4062,7 @@ function CreateNewModalTask({ ...props }) {
 
             <Dialog
                 open={documentLisdoc}
-                onClose={handleCloseDocumentList}
+                // onClose={handleCloseDocumentList}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 className='custom-modal'
@@ -3632,7 +4084,6 @@ function CreateNewModalTask({ ...props }) {
                         >
                             Document List
                         </Button>
-
                     </div>
 
                     <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
@@ -3683,16 +4134,18 @@ function CreateNewModalTask({ ...props }) {
 
                         {/* file upload end */}
 
-                        <Button
-                            variant="contained"
-                            onClick={AddDocuments}
-                            className="btn-blue-2 mt-3"
-                        >
-                            {'Add Document'}
-                        </Button>
-
                     </DialogContentText>
                 </DialogContent>
+
+                <DialogActions className="p-4 pt-3">
+                    <Button
+                        variant="contained"
+                        onClick={AddDocuments}
+                        className="btn-blue-2"
+                    >
+                        {'Add Document'}
+                    </Button>
+                </DialogActions>
             </Dialog>
             {/* end */}
 
@@ -3700,7 +4153,7 @@ function CreateNewModalTask({ ...props }) {
             {/* create new modal */}
             <Dialog
                 open={Referance}
-                onClose={DocumentHandleClose}
+                // onClose={DocumentHandleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 className="custom-modal full-modal"
@@ -3708,7 +4161,7 @@ function CreateNewModalTask({ ...props }) {
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <div>
                         <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                            Reference
+                            Add Reference
                         </Typography>
                     </div>
                     <Button onClick={DocumentHandleClose} autoFocus sx={{ minWidth: 30 }}>
@@ -3720,7 +4173,7 @@ function CreateNewModalTask({ ...props }) {
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
 
-                        <Reference />
+                        <Reference open5={open5} setOpen5={setOpen5} setReferance={setReferance} setAddContact={setAddContact} />
 
                     </DialogContentText>
                 </DialogContent>
@@ -3731,7 +4184,7 @@ function CreateNewModalTask({ ...props }) {
 
             <Dialog
                 open={ReferanceEdit}
-                onClose={EditDocumentHandleClose}
+                // onClose={EditDocumentHandleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 className="custom-modal full-modal"
@@ -3763,7 +4216,7 @@ function CreateNewModalTask({ ...props }) {
 
             <Dialog
                 open={open5}
-                onClose={handleClose5}
+                // onClose={handleClose5}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 className="custom-modal full-modal"
@@ -3775,7 +4228,7 @@ function CreateNewModalTask({ ...props }) {
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                            Add Client
+                            Add Contact
                         </Typography>
                     </Box>
 
@@ -3792,7 +4245,7 @@ function CreateNewModalTask({ ...props }) {
                 <DialogContent className="pt-0">
                     <DialogContentText id="alert-dialog-description">
 
-                        <AddContacts />
+                        <AddContacts addContactData={addContactData} />
 
                     </DialogContentText>
                 </DialogContent>
@@ -3805,7 +4258,7 @@ function CreateNewModalTask({ ...props }) {
             </Dialog>
 
 
-            <ToastContainer></ToastContainer>
+            {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
 
         </React.Fragment >
 

@@ -57,6 +57,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import ToggleButton from '@mui/material/ToggleButton';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import TestForDetails from './TestForDetails';
 
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -148,6 +149,9 @@ export default function SidebarNav() {
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
   const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
   const [userId, setUserId] = useState(localStorage.getItem("UserId"));
+  const [globalSearch, setGlobalSearch] = useState(localStorage.getItem("globalSearchKey"));
+
+  console.log("fueteuiuert", window.location.pathname);
 
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -214,6 +218,7 @@ export default function SidebarNav() {
   }
 
   const Json_AdvanceSearchDoc = (f_id = folderId) => {
+    console.log("Json_AdvanceSearchDoc forDocuments", forDocuments);
     if (forDocuments !== "") {
       let obj = {
         ClientId: "",
@@ -239,13 +244,11 @@ export default function SidebarNav() {
               console.log("Json_AdvanceSearchDoc", json.Table6);
               if (json.Table6) {
                 let fltDouble = [];
-                let allDescriptions = json.Table6.map((itm) => itm.Description).filter(item => {
+                json.Table6.map((itm) => itm.Description).filter(item => {
                   if (!fltDouble.includes(item)) {
                     fltDouble.push(item);
                   }
                 });
-                console.log("Json_AdvanceSearchDoc", allDescriptions);
-                // options = fltDouble;
                 setDocumentsDescription(fltDouble);
                 setMyDocuments(json.Table6);
               }
@@ -292,7 +295,7 @@ export default function SidebarNav() {
           if (data) {
             console.log("Json_CRM_GetOutlookTask", JSON.parse(data));
             let tasks = JSON.parse(data).Table;
-            let myTasks = tasks.filter((item) => item.AssignedToID.split(",").includes(userId) && (item.Source === "CRM" || item.Source === "Portal") && item.mstatus!=="Completed");
+            let myTasks = tasks.filter((item) => item.AssignedToID.split(",").includes(userId) && (item.Source === "CRM" || item.Source === "Portal"));
             let fltDouble = [];
             [...myTasks].map(itm => itm.Subject).filter(subject => {
               if (!fltDouble.includes(subject)) {
@@ -336,10 +339,11 @@ export default function SidebarNav() {
   }
 
   const [tabs, setTabs] = useState([{
-    tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon: <DashboardIcon />}, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon: <AccountBoxIcon /> }, { tabLink: "/dashboard/TodoList", tabName: 'Todo List', active: false, tabIcon: <AssignmentIcon /> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon: <GroupIcon /> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon: <ViewCarouselIcon /> }, 
+    tabLink: "/dashboard", tabName: 'Dashboard', active: false, tabIcon: <DashboardIcon />
+  }, { tabLink: "/dashboard/MyTask", tabName: 'My Tasks', active: false, tabIcon: <AccountBoxIcon /> }, { tabLink: "/dashboard/TodoList", tabName: 'To-do List', active: false, tabIcon: <AssignmentIcon /> }, { tabLink: "/dashboard/Connections", tabName: 'Connections', active: false, tabIcon: <GroupIcon /> }, { tabLink: "/dashboard/SmartViews", tabName: 'Smart Views', active: false, tabIcon: <ViewCarouselIcon /> },
     // { tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: false, tabIcon: <ContentPasteSearchIcon /> },
-  // { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false, tabIcon: <PersonAddIcon /> },
-]);
+    // { tabLink: "/dashboard/AddContacts", tabName: 'Add Contacts', active: false, tabIcon: <PersonAddIcon /> },
+  ]);
   const [searchInputForGlobalSearch, setSearchInputForGlobalSearch] = useState("");
 
   React.useEffect(() => {
@@ -356,8 +360,18 @@ export default function SidebarNav() {
       } else {
         itm.active = false;
       }
-    })
-
+    });
+    if (window.location.pathname === "/dashboard/SearchResult" && tabs.every(itm => itm.tabName !== "Search Result")) {
+      navigate("/dashboard/TodoList");
+      tabs.length > 0 && tabs.map(itm => {
+        if (itm.tabLink === "/dashboard/TodoList") {
+          itm.active = true;
+        } else {
+          itm.active = false;
+        }
+      });
+      // setTabs([...tabs, { tabLink: `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${localStorage.getItem("FolderId")}`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
+    } // when we load page on search result tab this functionality will work but it is only temp.
   }, []);
 
   const handleGlobalSearch = (val) => {
@@ -390,6 +404,19 @@ export default function SidebarNav() {
     setAnchorEl4(null);
   };
 
+  useEffect(() => {
+    setGlobalSearch(localStorage.getItem("globalSearchKey"));
+    tabs.map(itm => {
+      if (itm.tabName === "Search Result") {
+        itm.tabLink = `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${folderId}`;
+      } else {
+        itm.tabLink = itm.tabLink;
+      }
+    });
+    // setTabs([...tabs,{ tabLink: `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${folderId}`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
+
+  }, [globalSearch, window.location.pathname]);
+
   return (
     <>
       <Box className='d-block d-md-flex' onClick={() => setIsSearch(false)}>
@@ -408,8 +435,8 @@ export default function SidebarNav() {
 
               <Box className="d-flex align-items-center justify-content-between w-100">
 
-                <Box className='d-flex flex-wrap'>
-                  <Box className="search-box ms-4 me-4">
+                <Box className='d-flex flex-wrap align-items-center'>
+                  <Box className="search-box ms-3 me-2">
                     <Layout>
                       <AutocompleteWrapper>
                         <AutocompleteRoot
@@ -421,9 +448,10 @@ export default function SidebarNav() {
                           <span className="material-symbols-outlined search-icon">search</span>
 
                           <form onSubmit={(e) => {
-                            const isAlready = tabs.map(itm=>itm.tabName).some(item=>item==="Search Result");
-                            if(!isAlready){
-                              setTabs([...tabs,{ tabLink: "/dashboard/SearchResult?str=test", tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
+                            localStorage.setItem("globalSearchKey", searchInputForGlobalSearch);
+                            const isAlready = tabs.map(itm => itm.tabName).some(item => item === "Search Result");
+                            if (!isAlready) {
+                              setTabs([...tabs, { tabLink: `/dashboard/SearchResult?str=${globalSearch}&folder=${folderId}`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
                             }
                             e.preventDefault();
                             navigate(`/dashboard/SearchResult?str=${forDocuments}&folder=${selectedFolder}`);
@@ -435,18 +463,18 @@ export default function SidebarNav() {
                                 itm.active = false;
                               }
                             });
-                          }} >
+                            setSearchInputForGlobalSearch("");
+                          }} 
+                          className='w-100'>
                             <Input
                               onChange={(e) => handleGlobalSearch(e.target.value)}
                               // onBlur={() => setIsSearch(false)}
                               value={searchInputForGlobalSearch}
-                              placeholder='Search'
-                              className='ps-0' />
+                              placeholder='Search for Tasks or Documents'
+                              className='ps-0  w-100' />
                           </form>
 
                         </AutocompleteRoot>
-
-
 
                         {isSearch && <Listbox sx={{ zIndex: 1 }}>
 
@@ -510,8 +538,11 @@ export default function SidebarNav() {
                     </Select>
                   </FormControl> */}
 
-
                   <div>
+                    <TestForDetails folderList={folders}/>
+                  </div>
+
+                  {/* <div>
 
                     <ToggleButton
                       // value="check"
@@ -548,7 +579,7 @@ export default function SidebarNav() {
                       })}
 
                     </Menu>
-                  </div>
+                  </div> */}
 
                 </Box>
 
@@ -783,49 +814,49 @@ export default function SidebarNav() {
               </ListItem>
             ))}
             <ListItem className={''} disablePadding sx={{ display: 'block' }}>
-                <ListItemButton
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                }}
+                onClick={() => {
+                  navigate("/dashboard/LogOut");
+                }}
+              >
+
+                <ListItemIcon
                   sx={{
-                    minHeight: 48,
-                    justifyContent: open ? 'initial' : 'center',
-                    px: 2.5,
-                  }}
-                  onClick={() => {
-                    navigate("/dashboard/LogOut");
+                    minWidth: 0,
+                    mr: open ? 2 : 'auto',
+                    justifyContent: 'center',
                   }}
                 >
 
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 2 : 'auto',
-                      justifyContent: 'center',
+
+                  <BootstrapTooltip title={"Logout"} arrow
+                    placement="bottom-start"
+                    slotProps={{
+                      popper: {
+                        modifiers: [
+                          {
+                            name: 'offset',
+                            options: {
+                              offset: [0, 5],
+                            },
+                          },
+                        ],
+                      },
                     }}
                   >
+                    <LogoutIcon />
+                  </BootstrapTooltip>
 
+                </ListItemIcon>
 
-                    <BootstrapTooltip title={"Logout"} arrow
-                      placement="bottom-start"
-                      slotProps={{
-                        popper: {
-                          modifiers: [
-                            {
-                              name: 'offset',
-                              options: {
-                                offset: [0, 5],
-                              },
-                            },
-                          ],
-                        },
-                      }}
-                    >
-                      <LogoutIcon />
-                    </BootstrapTooltip>
-
-                  </ListItemIcon>
-
-                  <ListItemText primary={"Log Out"} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
-              </ListItem>
+                <ListItemText primary={"Log Out"} sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
           </List>
         </Drawer>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>

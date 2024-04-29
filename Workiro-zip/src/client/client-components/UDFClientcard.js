@@ -10,7 +10,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Unstable_NumberInput as NumberInput } from '@mui/base/Unstable_NumberInput';
 import dayjs from "dayjs";
 const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
-  console.log(data?.Table, "sdfsd", data.Table3);
+  console.log(data?.Table, "sdfsdfdfdfdfd", data.Table3);
   const [selectManager, setselectManagers] = useState([]);
   const [selectedDatetest, setSelectedDatetest] = useState([]);
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -188,6 +188,7 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
                     <DatePicker
                       // dateFormat="DD/MM/YYYY"
                       // value={currentDate}
+                      label={data.Name}
                       id={
                         data.UserDefFieldID +
                         "_" +
@@ -218,6 +219,7 @@ const UDFClientcard = React.memo(({ data, setDataFromChild }) => {
                     <DatePicker
                       // dateFormat="DD/MM/YYYY"
                       // value={currentDate}
+                      label={data.Name}
                       id={
                         data.UserDefFieldID +
                         "_" +
