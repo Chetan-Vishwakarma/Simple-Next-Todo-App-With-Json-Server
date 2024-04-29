@@ -2580,7 +2580,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
             <Dialog
                 fullScreen={fullScreen}
                 open={open}
-                onClose={handleClose}
+                // onClose={handleClose}
                 aria-labelledby="responsive-dialog-title"
                 className="custom-modal custom-modal-1200"
             >
@@ -4062,7 +4062,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
 
             <Dialog
                 open={documentLisdoc}
-                onClose={handleCloseDocumentList}
+                // onClose={handleCloseDocumentList}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 className='custom-modal'
@@ -4153,7 +4153,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
             {/* create new modal */}
             <Dialog
                 open={Referance}
-                onClose={DocumentHandleClose}
+                // onClose={DocumentHandleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 className="custom-modal full-modal"
@@ -4184,7 +4184,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
 
             <Dialog
                 open={ReferanceEdit}
-                onClose={EditDocumentHandleClose}
+                // onClose={EditDocumentHandleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 className="custom-modal full-modal"
@@ -4216,7 +4216,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
 
             <Dialog
                 open={open5}
-                onClose={handleClose5}
+                // onClose={handleClose5}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 className="custom-modal full-modal"
