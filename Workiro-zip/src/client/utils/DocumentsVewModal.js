@@ -228,6 +228,8 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         setViewerToken(localStorage.getItem("ViewerToken"));
 
         if (selectedDocument) {
+            
+            
             // console.log("selectedDocument", selectedDocument)
 
             setTxtClientData({ Client: selectedDocument.Client, ClientID: selectedDocument.SenderId })
@@ -237,7 +239,9 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
             Json_GetItemBase64DataById(selectedDocument)
 
             var IsApproved = selectedDocument["IsApproved"];
+            
             var PortalDocId = selectedDocument["PortalDocId"];
+
             let IsApp = "";
             let PortalID = "";
             if (IsApproved === "SIG" && PortalDocId !== "") {
