@@ -95,6 +95,7 @@ function TestForDetails() {
 
     const [isClientField, setIsClientField] = useState(false);
     const [isDocIdField, setIsDocIdField] = useState(false);
+    const [isDocDateShow, setIsDocDateShow] = useState(false);
     const [documentId, setDocumentId] = useState("");
 
     const [documentData, setDocumentData] = useState({
@@ -109,7 +110,7 @@ function TestForDetails() {
         ProjectId: folderId,
         agrno: agrno,
         password: password,
-        sectionId: "",
+        sectionId: "-1",
         udflist: [],
         udfvalueList: []
     });
@@ -146,6 +147,9 @@ function TestForDetails() {
         //     let endDate = formatDatePickerDate(end._d);
         //     setFilterCriteria({ ...filterCriteria, "Item Date": [startDate, endDate] });
         // }
+        let formated_start_date = format_YYYY_MM_DD(start._d);
+        let formated_end_date = format_YYYY_MM_DD(end._d);
+        setDocumentData({ ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date });
         setState({ start, end });
     };
 
@@ -265,7 +269,7 @@ function TestForDetails() {
                                 ProjectId: folderId,
                                 agrno: agrno,
                                 password: password,
-                                sectionId: "",
+                                sectionId: "-1",
                                 udflist: [],
                                 udfvalueList: []
                             });
@@ -327,7 +331,7 @@ function TestForDetails() {
             ProjectId: folderId,
             agrno: agrno,
             password: password,
-            sectionId: "",
+            sectionId: "-1",
             udflist: [],
             udfvalueList: []
         });
@@ -361,7 +365,7 @@ function TestForDetails() {
 
                         {/* sadik */}
                         <Box sx={{ m: 1 }} className='pt-2'>
-                            <DateRangePicker
+                            {isDocDateShow?<DateRangePicker
                                 initialSettings={{
                                     startDate: start.toDate(),
                                     endDate: end.toDate(),
@@ -416,7 +420,7 @@ function TestForDetails() {
                                 <i className="fa fa-calendar"></i>&nbsp;
                                 <span>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
                             </div> */}
-                            </DateRangePicker>
+                            </DateRangePicker>:<Button size="small" onClick={()=>setIsDocDateShow(true)}>Document Date</Button>}
                         </Box>
 
                         <hr className='mt-1' />
@@ -464,7 +468,7 @@ function TestForDetails() {
                                         className='custom-dropdown'
                                     >
 
-                                        <MenuItem value="" style={{ display: "none" }}>
+                                        <MenuItem value="-1" style={{ display: "none" }}>
                                             Sections
                                         </MenuItem>
                                         <MenuItem value="Section" >00. Clear Filter</MenuItem>
@@ -585,13 +589,15 @@ function TestForDetails() {
                             </FormControl>
                         </Box>
 
-                        <Button disabled={documentData.ClientId && documentData.Description && documentData.ProjectId && documentData.sectionId ? false : true} variant="contained" size="small" onClick={() => {
+                        <Button variant="contained" size="small" onClick={() => {
+                            let obj = {...documentData};
+                            if(isDocDateShow){
+                                let formated_start_date = format_YYYY_MM_DD(start._d);
+                                let formated_end_date = format_YYYY_MM_DD(end._d);
 
-                            let formated_start_date = format_YYYY_MM_DD(start._d);
-                            let formated_end_date = format_YYYY_MM_DD(end._d);
-
-                            let obj = { ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date };
-                            setDocumentData({ ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date });
+                                obj = { ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date };
+                                setDocumentData({ ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date });
+                            }
                             Json_AdvanceSearchDoc(obj);
 
                         }}>
