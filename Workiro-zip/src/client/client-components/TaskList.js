@@ -88,7 +88,7 @@ const orderHeaderFilter = (data) => {
 let exportTaskData = [];
 function TaskList({ clientName }) {
   const reduxData = useSelector((state) => state.counter.reduxData);
-  console.log(reduxData,"reduxdatasonam");
+  console.log(reduxData, "reduxdatasonam");
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -238,7 +238,7 @@ function TaskList({ clientName }) {
     workbook.xlsx.writeBuffer().then(function (buffer) {
       saveAs(
         new Blob([buffer], { type: "application/octet-stream" }),
-        `${clientName+"_Tasks" ? clientName+"_Tasks" : ""}.xlsx`
+        `${clientName + "_Tasks" ? clientName + "_Tasks" : ""}.xlsx`
       );
     });
   };
@@ -304,45 +304,43 @@ function TaskList({ clientName }) {
             width={240}
             placeholder="Search..." />
 
-
-          <Column
-            dataField="ID"
-            caption="Client ID">
-            {/* <HeaderFilter groupInterval={10000} /> */}
-          </Column>
-          <Column
-            dataField="Section"
-            // alignment="right"
-            caption="Section"
-          // format="M/d/yyyy, HH:mm"
-          />
-
-          <Column
-            dataField="Forwarded By"
-            // alignment="right"
-            caption="Forwarded By"
-          // format="M/d/yyyy, HH:mm"
-          />
-
-
+          <Column dataField="Subject" />
           <Column
             dataField="Start"
             dataType="date"
             format="d/M/yyyy"
           />
           <Column dataField="EndDateTime"
+          caption="End"
             dataType="date"
             format="d/M/yyyy"
           />
-          <Column dataField="Subject" />
           <Column
             dataField="mstatus"
             cellRender={cellRender}
           />
           <Column
+            dataField="Forwarded By"
+            // alignment="right"
+            caption="Forwarded By"
+          // format="M/d/yyyy, HH:mm"
+          />
+          <Column
+            dataField="Section"
+            // alignment="right"
+            caption="Section"
+          // format="M/d/yyyy, HH:mm"
+          />
+          <Column
             dataField="Source"
           />
-
+          
+          {/* <Column
+            dataField="ID"
+            caption="Client ID">
+            {/* <HeaderFilter groupInterval={10000} /> *
+          </Column> */}
+          
         </DataGrid> : <CustomLoader />)}
       </div>
     </>
