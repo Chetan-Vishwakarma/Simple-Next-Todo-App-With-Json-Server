@@ -66,6 +66,7 @@ import Switch from "@mui/material/Switch";
 import DialogActions from '@mui/material/DialogActions';
 import AddContacts from "../../components/AddContacts";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ContactcardUDF from "./ContactcardUDF";
 const label = { inputProps: { "aria-label": "Switch demo" } };
 // const [nextDate, setNextDate] = useState("");
 
@@ -95,6 +96,7 @@ function ContactDetails() {
   const [LastMsgSend, setLastMsgSend] = useState("");
   const [ToBeApproved, setToBeApproved] = useState(0);
   const [open5, setOpen5] = React.useState(false);
+  const [clientDetails, setClientDetails] = useState({});
   const [amlDetails, setAmlDetails] = useState({
     bankAccNo: "",
     bankSrNo: "",
@@ -137,6 +139,31 @@ function ContactDetails() {
   
     return formattedDate;
   }
+
+  const Json_GetCRMContactUDFValues = () => {
+    let obj = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      ProjectId: folderId,
+      // ClientId: localStorage.getItem("origiNator") ? localStorage.getItem("origiNator") : userContactDetails.ReferenceID,
+      ClientId: originatorNo ? originatorNo : "",
+      ContactId: contactNo ? contactNo : "-1"
+    };
+    try {
+      Cls.Json_GetCRMContactUDFValues(obj, (sts, data) => {
+        if (sts) {
+          if (data) {
+            let json = JSON.parse(data);
+            console.log("Json_GetCRMContactUDFValues", json);
+            setClientDetails(json);
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_GetCRMContactUDFValues", err);
+    }
+  };
   const Json_GetAllSentMessages = () => {
     let obj = {
         agrno: agrno,
@@ -250,6 +277,7 @@ function ContactDetails() {
     } catch (err) {
       console.log("Error while calling Json_GetAllContactsByClientID", err);
     }
+    Json_GetCRMContactUDFValues();
     Json_GetAllSentMessages();
     Json_GetAllReceivedMessages();
   }, []);
@@ -987,16 +1015,10 @@ function ContactDetails() {
                       <Box className="">
                         <p className="font-16 bold mb-1 text-black">Notes</p>
                         <p className="mb-0 font-14 text-gray">
-                          Lorem Ipsum is simply dummy text of the printing and
-                          typesetting industry. Lorem Ipsum has been the
-                          industry standard dummy text ever since the when an
-                          unknown printer took a galley of type and scrambled it
-                          to make simply dummy text of the printing and
-                          typesetting industry. Lorem Ipsum has been the
-                          industry standard dummy text ever since the when an
-                          unknown printer took a galley of type the industry
-                          standard dummy text ever since the when an unknown p
-                          and scrambled it to make a type specimen book.
+                        {contactDetails.length > 0
+              ? contactDetails[0]["Note"]
+              : "Loading..."}
+                          
                         </p>
                       </Box>
                     </Box>
@@ -1011,231 +1033,7 @@ function ContactDetails() {
             {/* white box end */}
 
             <Box className="main-accordian">
-              <Accordion className="accordian-box" defaultExpanded>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1-content"
-                  id="panel1-header"
-                >
-                  Key Facts - Team
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Box className="table-responsive">
-                    <table className="table">
-                      <tbody>
-                        <tr>
-                          <th>Key Facts - Team</th>
-                          <td>Key Facts - Team</td>
-                        </tr>
-                        <tr>
-                          <th>Key Facts - Team</th>
-                          <td>Patrick</td>
-                        </tr>
-                        <tr>
-                          <th>Investigations manager Name</th>
-                          <td>Jones</td>
-                        </tr>
-                        <tr>
-                          <th>Assistant Manager Date</th>
-                          <td>Jones@gmail.com</td>
-                        </tr>
-                        <tr>
-                          <th>Investigations manager Date</th>
-                          <td>Admin</td>
-                        </tr>
-                        <tr>
-                          <th>Closures Manager Date</th>
-                          <td>Key</td>
-                        </tr>
-                        <tr>
-                          <th>Administrator 1 Date</th>
-                          <td>01/10/2001</td>
-                        </tr>
-                        <tr>
-                          <th>Administrator 1 Date</th>
-                          <td>01/10/2001</td>
-                        </tr>
-                        <tr>
-                          <th>Assistant Manager Name</th>
-                          <td>98756465464</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </Box>
-                </AccordionDetails>
-              </Accordion>
-              <Accordion className="accordian-box">
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel2-content"
-                  id="panel2-header"
-                >
-                  Fee Data
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Box className="table-responsive">
-                    <table className="table">
-                      <tbody>
-                        <tr>
-                          <th>Key Facts - Team</th>
-                          <td>Key Facts - Team</td>
-                        </tr>
-                        <tr>
-                          <th>Key Facts - Team</th>
-                          <td>Patrick</td>
-                        </tr>
-                        <tr>
-                          <th>Investigations manager Name</th>
-                          <td>Jones</td>
-                        </tr>
-                        <tr>
-                          <th>Assistant Manager Date</th>
-                          <td>Jones@gmail.com</td>
-                        </tr>
-                        <tr>
-                          <th>Investigations manager Date</th>
-                          <td>Admin</td>
-                        </tr>
-                        <tr>
-                          <th>Closures Manager Date</th>
-                          <td>Key</td>
-                        </tr>
-                        <tr>
-                          <th>Administrator 1 Date</th>
-                          <td>01/10/2001</td>
-                        </tr>
-                        <tr>
-                          <th>Administrator 1 Date</th>
-                          <td>01/10/2001</td>
-                        </tr>
-                        <tr>
-                          <th>Assistant Manager Name</th>
-                          <td>98756465464</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </Box>
-                </AccordionDetails>
-              </Accordion>
-              <Accordion className="accordian-box">
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel3-content"
-                  id="panel3-header"
-                >
-                  Key Facts - Team
-                </AccordionSummary>
-                <AccordionDetails>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                  eget.
-                </AccordionDetails>
-              </Accordion>
-
-              <Accordion className="accordian-box">
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel4-content"
-                  id="panel4-header"
-                >
-                  Key Facts - Team
-                </AccordionSummary>
-                <AccordionDetails>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                  eget.
-                </AccordionDetails>
-              </Accordion>
-
-              <Accordion className="accordian-box">
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel5-content"
-                  id="panel5-header"
-                >
-                  WIP - Fee Approval
-                </AccordionSummary>
-                <AccordionDetails>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                  eget.
-                </AccordionDetails>
-              </Accordion>
-
-              <Accordion className="accordian-box">
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel6-content"
-                  id="panel6-header"
-                >
-                  PreFee
-                </AccordionSummary>
-                <AccordionDetails>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                  eget.
-                </AccordionDetails>
-              </Accordion>
-
-              <Accordion className="accordian-box">
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel7-content"
-                  id="panel7-header"
-                >
-                  Bonding
-                </AccordionSummary>
-                <AccordionDetails>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                  eget.
-                </AccordionDetails>
-              </Accordion>
-
-              <Accordion className="accordian-box">
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel9-content"
-                  id="panel7-header"
-                >
-                  Next Actions
-                </AccordionSummary>
-                <AccordionDetails>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                  eget.
-                </AccordionDetails>
-              </Accordion>
-
-              <Accordion className="accordian-box">
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel8-content"
-                  id="panel8-header"
-                >
-                  WIP - Current
-                </AccordionSummary>
-                <AccordionDetails>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                  eget.
-                </AccordionDetails>
-              </Accordion>
-
-              <Accordion className="accordian-box">
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel9-content"
-                  id="panel9-header"
-                >
-                  Bonding
-                </AccordionSummary>
-                <AccordionDetails>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                  eget.
-                </AccordionDetails>
-              </Accordion>
+            <ContactcardUDF data={clientDetails} />
             </Box>
           </TabPanel>
           {/* tab end */}
