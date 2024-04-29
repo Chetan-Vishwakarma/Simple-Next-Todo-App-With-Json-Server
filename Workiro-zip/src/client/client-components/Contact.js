@@ -315,7 +315,9 @@ function Contact({ clientId,clientName }) {
               // alignment="right"
               dataType="date"
               caption="Date Of Birth"
-              format="M/d/yyyy, HH:mm" />
+              // format="M/d/yyyy, HH:mm" 
+              format="d/M/yyyy" 
+              />
           </DataGrid></> : <CustomLoader />)}
       </div>
     </>

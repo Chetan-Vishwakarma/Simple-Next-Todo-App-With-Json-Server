@@ -1073,7 +1073,7 @@ function NewTodoList() {
                                                         />
                                                     ) : (
                                                         <Typography variant="h4">
-                                                            {Object.keys(test).includes(String(index)) ? test[index] : item.Subject ? item.Subject : ""}
+                                                            {Object.keys(test).includes(String(index)) ? test[index] : item.Subject && item.Subject.length>18 ? item.Subject.substr(0,18)+"..." : item.Subject.length<=18 ? item.Subject : ""}
                                                         </Typography>
                                                     )}
                                                     <Typography variant="body1">

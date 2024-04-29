@@ -311,12 +311,6 @@ function TaskList({ clientName }) {
             {/* <HeaderFilter groupInterval={10000} /> */}
           </Column>
           <Column
-            dataField="Client"
-            // alignment="right"
-            caption="Client Name"
-          // format="M/d/yyyy, HH:mm"
-          />
-          <Column
             dataField="Section"
             // alignment="right"
             caption="Section"
