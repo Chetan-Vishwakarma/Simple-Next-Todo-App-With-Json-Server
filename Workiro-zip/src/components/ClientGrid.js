@@ -78,6 +78,7 @@ const ClientGrid = ({selectedChoice,data,handleContactNavigattion,handleClientNa
                 columnAutoWidth={true}
                 onRowDblClick={handleRowDoubleClick}
                 showBorders={true}>
+                    {/* <Column dataField="Tel" caption="Telephone" /> */}
                 {/* onSelectionChanged={onSelectionChanged} */}
                 <FilterRow visible={true} />
                 <FilterPanel visible={true} />

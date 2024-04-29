@@ -210,7 +210,7 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                             <TableHead>
                                                 <TableRow>
                                                     <TableCell className='bold'>Document</TableCell>
-                                                    <TableCell className='bold' align="right">Details</TableCell>
+                                                    <TableCell className='bold text-start'>Details</TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
@@ -239,13 +239,15 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                                                 </TableRow>
                                                             }
                                                         }) : Object.keys(docForDetails).map((itm, i) => {
-                                                            return <TableRow
-                                                                key={i}
-                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                            >
-                                                                <TableCell align="left" className='bold'>{itm}</TableCell>
-                                                                <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["RecentDate"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
-                                                            </TableRow>
+                                                            if (itm !== "type" && itm !== "guid") {
+                                                                return <TableRow
+                                                                    key={i}
+                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                >
+                                                                    <TableCell align="left" className='bold'>{itm}</TableCell>
+                                                                    <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["RecentDate"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
+                                                                </TableRow>
+                                                            }
                                                         })
                                                 }
 

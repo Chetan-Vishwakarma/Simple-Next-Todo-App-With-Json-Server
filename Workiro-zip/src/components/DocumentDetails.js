@@ -748,7 +748,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             <TableHead>
                                                 <TableRow>
                                                     <TableCell className='bold'>Document</TableCell>
-                                                    <TableCell className='bold' align="right">Details</TableCell>
+                                                    <TableCell className='bold'>Details</TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
