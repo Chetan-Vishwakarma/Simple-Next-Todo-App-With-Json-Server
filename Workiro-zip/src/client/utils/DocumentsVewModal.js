@@ -117,19 +117,31 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                     let parse = JSON.parse(data);
                     let table = parse.Table;
                     if (table.length > 0) {
-                        const formattedActivity = table.map((Actioned) => {
-                            let ActioneddATE;
-                            if (Actioned["Actioned Date"]) {
-                                ActioneddATE = moment(Actioned["Actioned Date"]).format("DD/MM/YYYY HH:mm:ss");
-                            }
-                            // const date = new Date(ActivityDate);
-                            return { ...Actioned, ["Actioned Date"]: ActioneddATE };
-                        });
+                        // const formattedActivity = table.map((Actioned) => {
+                        //     let ActioneddATE;
+                        //     if (Actioned["Actioned Date"]) {
+                        //         ActioneddATE = moment(Actioned["Actioned Date"]).format("DD/MM/YYYY HH:mm:ss");
+                        //     }
+                        //     // const date = new Date(ActivityDate);
+                        //     return { ...Actioned, ["Actioned Date"]: ActioneddATE };
+                        // });
+                        const formattedActivity = table.map(itm => {
+                            if(itm["Actioned Date"]){
+                                const timeStamp1 = parseInt(itm["Actioned Date"].match(/\d+/)[0]);
+                                itm["Actioned Date"] = new Date(timeStamp1);
+                            }                          
+                            //const timeStamp2 = parseInt(itm["Start"].match(/\d+/)[0]);
+                            //itm["Start"] = new Date(timeStamp2);
+                            return itm;
+                          })
+                          if(formattedActivity.length>0){
+                            const filteredArray = formattedActivity.filter(item => item.Comments !== null);
 
-                        const filteredArray = formattedActivity.filter(item => item.Comments !== null);
+                            setGetAudit(filteredArray);
+                            console.log("Json_GetAudit", filteredArray)
+                          }
 
-                        setGetAudit(filteredArray);
-                        console.log("Json_GetAudit", filteredArray)
+                       
                     }
 
 
@@ -239,7 +251,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
             Json_GetItemStickyNotes();
             Json_getAssociatedTaskListByDocumentId();
             setSeletedFileData([]);
-            setopenModal(false)
+            setopenModal(false) 
             Json_GetVersionByItemId();
 
         }

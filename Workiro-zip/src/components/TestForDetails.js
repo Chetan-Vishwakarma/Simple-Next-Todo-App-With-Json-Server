@@ -36,7 +36,7 @@ import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 // import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import moment from 'moment';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 // import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
 // import CustomLoader from '../../components/CustomLoader';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -49,6 +49,7 @@ import Popover from '@mui/material/Popover';
 import TuneIcon from '@mui/icons-material/Tune';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import BootstrapTooltip from '../utils/BootstrapTooltip';
+import { toast } from 'react-toastify';
 
 let agrno = localStorage.getItem("agrno");
 let password = localStorage.getItem("Password");
@@ -57,6 +58,8 @@ let folderId = localStorage.getItem("FolderId");
 
 function TestForDetails() {
     const location = useLocation();
+    const navigate = useNavigate();
+
     const { globalSearchDocs, strGlobal } = location.state ? location.state : { globalSearchDocs: [], strGlobal: "" };
     const baseUrlSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -88,23 +91,27 @@ function TestForDetails() {
     const [isLoading, setIsLoading] = useState(true);
 
     const [clientList, setClientList] = useState([]);
-    const [selectedClient, setSelectedClient] = useState("");
-    
+    const [selectedClient, setSelectedClient] = useState({});
+
+    const [isClientField, setIsClientField] = useState(false);
+    const [isDocIdField, setIsDocIdField] = useState(false);
+    const [documentId, setDocumentId] = useState("");
+
     const [documentData, setDocumentData] = useState({
-        ClientId:"",
-        Description:"",
-        Email:Email,
-        IsUDF:"F",
-        ItemFDate:"01/01/1900",
-        ItemTDate:"01/01/1900",
-        ItemrecFDate:"01/01/1900",
-        ItemrecTDate:"01/01/1900",
-        ProjectId:folderId,
-        agrno:agrno,
-        password:password,
-        sectionId:"1",
-        udflist:[],
-        udfvalueList:[]
+        ClientId: "",
+        Description: "",
+        Email: Email,
+        IsUDF: "F",
+        ItemFDate: "01/01/1900",
+        ItemTDate: "01/01/1900",
+        ItemrecFDate: "01/01/1900",
+        ItemrecTDate: "01/01/1900",
+        ProjectId: folderId,
+        agrno: agrno,
+        password: password,
+        sectionId: "",
+        udflist: [],
+        udfvalueList: []
     });
 
 
@@ -204,7 +211,8 @@ function TestForDetails() {
                     if (data) {
                         let json = JSON.parse(data);
                         const clients_data = json?.Table;
-                        setClientList(clients_data);
+                        let client_list = clients_data.filter((v, i, a) => a.findIndex(v2 => (v2["Company Name"] === v["Company Name"])) === i);
+                        setClientList(client_list);
 
                         // console.log("gjjflsdjuroiu",clients_data);
                     }
@@ -219,42 +227,111 @@ function TestForDetails() {
         Json_GetFolders();
         Json_GetSupplierListByProject();
     }, []);
-    const format_YYYY_MM_DD=(dateString)=>{
+    const format_YYYY_MM_DD = (dateString) => {
         const date = new Date(dateString);
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month starts from 0
         const day = date.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
-    const handleInputChange=(e)=>{
+    const handleInputChange = (e) => {
         let name = e.target.name;
         let value = e.target.value;
-        setDocumentData({...documentData,[name]:value});
+        setDocumentData({ ...documentData, [name]: value });
     }
     const Json_AdvanceSearchDoc = (obj) => {
-          try {
+        try {
             ClsSms.Json_AdvanceSearchDoc(obj, (sts, data) => {
-              if (sts) {
-                if (data) {
-                  let json = JSON.parse(data);
-                  console.log("Json_AdvanceSearchDoc", json.Table6);
-                  if (json.Table6) {
-                    let fltDouble = [];
-                    json.Table6.map((itm) => itm.Description).filter(item => {
-                      if (!fltDouble.includes(item)) {
-                        fltDouble.push(item);
-                      }
-                    });
-                    // setDocumentsDescription(fltDouble);
-                    // setMyDocuments(json.Table6);
-                  }
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_AdvanceSearchDoc", json.Table6);
+                        if (json.Table6 && json.Table6.length > 0) {
+                            let fltDouble = [];
+                            json.Table6.map((itm) => itm.Description).filter(item => {
+                                if (!fltDouble.includes(item)) {
+                                    fltDouble.push(item);
+                                }
+                            });
+                            setDocumentData({
+                                ClientId: "",
+                                Description: "",
+                                Email: Email,
+                                IsUDF: "F",
+                                ItemFDate: "01/01/1900",
+                                ItemTDate: "01/01/1900",
+                                ItemrecFDate: "01/01/1900",
+                                ItemrecTDate: "01/01/1900",
+                                ProjectId: folderId,
+                                agrno: agrno,
+                                password: password,
+                                sectionId: "",
+                                udflist: [],
+                                udfvalueList: []
+                            });
+                            setSelectedClient({});
+                            handleClose();
+                            navigate("/dashboard/DocumentList", { state: { globalSearchDocs: json.Table6, strGlobal: documentData.Description } });
+                            // setDocumentsDescription(fltDouble);
+                            // setMyDocuments(json.Table6);
+                        } else {
+                            toast.error("Documents not found for this criteria");
+                            handleClose();
+                        }
+                    }
                 }
-              }
             });
-          } catch (err) {
+        } catch (err) {
             console.log("Error while calling Json_AdvanceSearchDoc", err);
-          }
         }
+    }
+
+    const Json_SearchDocById = () => {
+        let obj = {
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            ItemId: documentId
+        }
+        try {
+            ClsSms.Json_SearchDocById(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        console.log("Json_SearchDocById", json[""]);
+
+                        navigate("/dashboard/DocumentList", { state: { globalSearchDocs: json[""], strGlobal: documentData.Description } });
+                        handleClose();
+                        setDocumentId("");
+                    }else{
+                        toast.error("Document not found please check entered Id");
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_SearchDocById", err);
+        }
+    }
+
+    const handleDocIdField = () => {
+        setIsDocIdField(true);
+        setDocumentData({
+            ClientId: "",
+            Description: "",
+            Email: Email,
+            IsUDF: "F",
+            ItemFDate: "01/01/1900",
+            ItemTDate: "01/01/1900",
+            ItemrecFDate: "01/01/1900",
+            ItemrecTDate: "01/01/1900",
+            ProjectId: folderId,
+            agrno: agrno,
+            password: password,
+            sectionId: "",
+            udflist: [],
+            udfvalueList: []
+        });
+    }
 
     return (
         <div style={{ top: globalSearchDocs.length > 0 && "85px", right: globalSearchDocs.length > 0 && "20px" }} className=''>
@@ -276,7 +353,7 @@ function TestForDetails() {
                 <Box className='client-details-filter p-2'>
 
                     <Box className='mb-0'>
-                    <TextField name="Description" onChange={(e)=>handleInputChange(e)} id="outlined-basic" placeholder='Description...' size="small" variant="outlined" />
+                        <TextField name="Description" onChange={(e) => handleInputChange(e)} id="outlined-basic" placeholder='Description...' size="small" variant="outlined" />
                         {/* sadik */}
                         <Box sx={{ m: 1 }} className='pt-2'>
                             <DateRangePicker
@@ -362,7 +439,7 @@ function TestForDetails() {
                                     }}
                                 >
                                     <Select
-                                        value={selectedSection}
+                                        value={documentData.sectionId}
                                         name='sectionId'
                                         onChange={(e) => {
                                             handleInputChange(e);
@@ -383,7 +460,6 @@ function TestForDetails() {
                                     >
 
                                         <MenuItem value="" style={{ display: "none" }}>
-
                                             Sections
                                         </MenuItem>
                                         <MenuItem value="Section" >00. Clear Filter</MenuItem>
@@ -414,7 +490,7 @@ function TestForDetails() {
                                     }}
                                 >
                                     <Select
-                                        value={selectedFolder}
+                                        value={documentData.ProjectId}
                                         name='ProjectId'
                                         onChange={(e) => {
                                             handleInputChange(e);
@@ -452,8 +528,35 @@ function TestForDetails() {
 
                         {/* <hr /> */}
                         <Box className='d-flex'>
+                            {isClientField ? <Autocomplete
+                                disablePortal
+                                id="combo-box-demo"
+                                defaultValue={Object.keys(selectedClient).length > 0 ? selectedClient : {"Company Name":"Select"}}
+                                onChange={(e, newValue) => {
+                                    // console.log("djskfjlkfj",e.target.value);
+                                    console.log("djskfjlkfj", newValue);
+                                    if (newValue === null) {
+                                        setSelectedClient({});
+                                    }
+                                    if (newValue) {
+                                        setSelectedClient(newValue);
+                                        setDocumentData({ ...documentData, ClientId: newValue.OriginatorNo });
+                                    }
+                                }}
+                                options={clientList}
+                                getOptionLabel={(option) => {
+                                    return option["Company Name"];
+                                }}
+                                sx={{ width: 300 }}
+                                renderInput={(params) => <TextField value={selectedClient ? selectedClient["Company Name"] : ""} autoFocus={true} onBlur={() => setIsClientField(false)} {...params} size="small" />}
+                            /> : <Button onClick={() => {
+                                setIsClientField(true);
+                            }}>
+                                {Object.keys(selectedClient).length > 0 ? selectedClient["Company Name"] : "Reference"}
+                            </Button>}
+
                             <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border'>
-                                <BootstrapTooltip title="Select Reference" arrow
+                                <BootstrapTooltip title="Document ID" arrow
                                     placement="bottom-start"
                                     slotProps={{
                                         popper: {
@@ -468,40 +571,33 @@ function TestForDetails() {
                                         },
                                     }}
                                 >
-                                    <Select
-                                        value={selectedClient}
-                                        name='ClientId'
-                                        onChange={(e) => {
-                                            handleInputChange(e);
-                                            setSelectedClient(e.target.value);
-                                        }}
-                                        displayEmpty
-                                        inputProps={{ 'aria-label': 'Without label' }}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem value="" style={{ display: "none" }}>
-                                            Select Reference
-                                        </MenuItem>
-                                        {clientList.length > 0 && clientList.map(itm => <MenuItem value={itm["OriginatorNo"]}>{itm["Company Name"]}</MenuItem>)}
-                                    </Select>
+                                    {!isDocIdField ? <Button onClick={handleDocIdField}>
+                                        {documentId !== "" ? documentId : "Document ID"}
+                                    </Button> : <TextField autoFocus={true} name="Description" type='number' value={documentId} onChange={(e) => setDocumentId(e.target.value)} onBlur={(e) => {
+                                        setIsDocIdField(false);
+                                    }} id="outlined-basic" placeholder='Document ID...' size="small" variant="outlined" />}
                                 </BootstrapTooltip>
                             </FormControl>
                         </Box>
 
-                        <Typography onClick={() => {
+                        <Button disabled={documentData.ClientId && documentData.Description && documentData.ProjectId && documentData.sectionId ? false : true} variant="contained" size="small" onClick={() => {
 
                             let formated_start_date = format_YYYY_MM_DD(start._d);
                             let formated_end_date = format_YYYY_MM_DD(end._d);
 
-                            let obj = {...documentData, ItemFDate:formated_start_date, ItemTDate: formated_end_date};
-                            setDocumentData({...documentData, ItemFDate:formated_start_date, ItemTDate: formated_end_date});
-
+                            let obj = { ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date };
+                            setDocumentData({ ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date });
                             Json_AdvanceSearchDoc(obj);
 
-
-                        }} variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
+                        }}>
                             Apply
-                        </Typography>
+                        </Button>
+
+                        {documentId !== "" && <Typography onClick={() => {
+                            Json_SearchDocById();
+                        }} variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
+                            By ID
+                        </Typography>}
 
                         {/*
                                 <Box className='d-flex'>
