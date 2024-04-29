@@ -1074,7 +1074,17 @@ console.log("formattedDate",formattedDate)
             }
         })
      }
-     
+     UpdateContact(obj,callBack){   
+        super.CreateNewServiceParamObject("Json_UpdateContact",obj,true);
+        super.CallNewService("Json_UpdateContact",function(status,Data){
+            if(status){
+                return callBack(true,Data);
+            }
+            else{
+                return callBack(false,[]);
+            }
+        })
+     }
      Json_SetClientAddress(obj,callBack){   
         super.CreateNewServiceParamObject("Json_SetClientAddress",obj,true);
         super.CallNewService("Json_SetClientAddress",function(status,Data){

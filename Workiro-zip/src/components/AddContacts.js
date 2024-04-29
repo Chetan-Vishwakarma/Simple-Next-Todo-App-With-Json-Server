@@ -393,77 +393,153 @@ function AddContacts({ addContactData,contactDetails}) {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(userContactDetails, "createportal");
-    let contactData = {
-      agrno: agrno,
-      Email: Email,
-      password: password,
-      FirstName: userContactDetails.FirstName
-        ? userContactDetails.FirstName
-        : "",
-      LastName: userContactDetails.LastName ? userContactDetails.LastName : "",
-      Add1: userContactDetails.MainLine1Name
-        ? userContactDetails.MainLine1Name
-        : "",
-      Add2: userContactDetails.MainLine2Name
-        ? userContactDetails.MainLine2Name
-        : "",
-      Add3: userContactDetails.MainLine3Name
-        ? userContactDetails.MainLine3Name
-        : "",
-      Town: userContactDetails.MainTownName
-        ? userContactDetails.MainTownName
-        : "",
-      PostCode: userContactDetails.MainPostcodeName
-        ? userContactDetails.MainPostcodeName
-        : "",
-      Country: userContactDetails.mainCountry
-        ? userContactDetails.mainCountry
-        : "United Kingdom",
-      ManagerName:
-        userContactDetails.FirstName + " " + userContactDetails.LastName,
-      Role: userContactDetails.RolesData ? userContactDetails.RolesData : "",
-      Tel: userContactDetails.MainTelephoneName
-        ? userContactDetails.MainTelephoneName
-        : "",
-      Mobile: userContactDetails.MainMobileName
-        ? userContactDetails.MainMobileName
-        : "",
-      greeting: userContactDetails.GreetingName
-        ? userContactDetails.GreetingName
-        : "",
-        Contactemail: userContactDetails.EmailName ? userContactDetails.EmailName : "",
-      note: userContactDetails.Notes ? userContactDetails.Notes : "",
-      emailupdate: userContactDetails.EmailName
-        ? userContactDetails.EmailName
-        : "",
-      CActive: userContactDetails.Inactive === true ? "Yes" : "No",
-      AssignedManager: userContactDetails.MainUserId
-        ? userContactDetails.MainUserId
-        : -1,
-      maincontact: userContactDetails.MainContact
-        ? userContactDetails.MainContact
-        : false,
-      CCode: clientIddata ? clientIddata : defaultclientData,
-      Salutation: userContactDetails.Title ? userContactDetails.Title : "",
-      accid: agrno,
-    };
-    console.log(contactData, "contactData");
-    Cls.AddContact(contactData, (sts, data) => {
-      if (sts) {
-        if (data) {
-          if (data == "Success") {
-            console.log(data, "successcontact");
-            if (userContactDetails.CreatePortal == true) {
-              PortalUserAccountCreated_Json();
+    
+    // console.log(contactData, "contactData");
+    if(contactDetails && contactDetails.length > 0) {
+      let contactData = {
+        agrno: agrno,
+        Email: Email,
+        password: password,
+        FirstName: userContactDetails.FirstName
+          ? userContactDetails.FirstName
+          : "",
+        LastName: userContactDetails.LastName ? userContactDetails.LastName : "",
+        Add1: userContactDetails.MainLine1Name
+          ? userContactDetails.MainLine1Name
+          : "",
+        Add2: userContactDetails.MainLine2Name
+          ? userContactDetails.MainLine2Name
+          : "",
+        Add3: userContactDetails.MainLine3Name
+          ? userContactDetails.MainLine3Name
+          : "",
+        Town: userContactDetails.MainTownName
+          ? userContactDetails.MainTownName
+          : "",
+        PostCode: userContactDetails.MainPostcodeName
+          ? userContactDetails.MainPostcodeName
+          : "",
+        Country: userContactDetails.mainCountry
+          ? userContactDetails.mainCountry
+          : "United Kingdom",
+        ManagerName:
+          userContactDetails.FirstName + " " + userContactDetails.LastName,
+        Role: userContactDetails.RolesData ? userContactDetails.RolesData : "",
+        Tel: userContactDetails.MainTelephoneName
+          ? userContactDetails.MainTelephoneName
+          : "",
+        Mobile: userContactDetails.MainMobileName
+          ? userContactDetails.MainMobileName
+          : "",
+        greeting: userContactDetails.GreetingName
+          ? userContactDetails.GreetingName
+          : "",
+          Contactemail: userContactDetails.EmailName ? userContactDetails.EmailName : "",
+        note: userContactDetails.Notes ? userContactDetails.Notes : "",
+        emailupdate: userContactDetails.EmailName
+          ? userContactDetails.EmailName
+          : "",
+        CActive: userContactDetails.Inactive === true ? "Yes" : "No",
+        AssignedManager: userContactDetails.MainUserId
+          ? userContactDetails.MainUserId
+          : -1,
+        maincontact: userContactDetails.MainContact
+          ? userContactDetails.MainContact
+          : false,
+        CCode: contactDetails[0].OriginatorNo ? contactDetails[0].OriginatorNo : "-1",
+        emailupdate: userContactDetails.EmailName ? userContactDetails.EmailName : "",
+        Salutation: userContactDetails.Title ? userContactDetails.Title : "",
+        accid: agrno,
+      };
+      Cls.UpdateContact(contactData, (sts, data) => {
+        if (sts) {
+          if (data) {
+            if (data == "Success") {
+              console.log(data, "successcontact");
+              // if (userContactDetails.CreatePortal == true) {
+              //   PortalUserAccountCreated_Json();
+              // }
+              // Json_GetContactNumber();
+              toast.success("Contact Updated Successfully !");
+  
+              // toast.success("Reference ID Already Exists!");
             }
-            Json_GetContactNumber();
-            toast.success("Contact Added Successfully !");
-
-            // toast.success("Reference ID Already Exists!");
           }
         }
-      }
-    });
+      });
+    } else {
+      let contactData = {
+        agrno: agrno,
+        Email: Email,
+        password: password,
+        FirstName: userContactDetails.FirstName
+          ? userContactDetails.FirstName
+          : "",
+        LastName: userContactDetails.LastName ? userContactDetails.LastName : "",
+        Add1: userContactDetails.MainLine1Name
+          ? userContactDetails.MainLine1Name
+          : "",
+        Add2: userContactDetails.MainLine2Name
+          ? userContactDetails.MainLine2Name
+          : "",
+        Add3: userContactDetails.MainLine3Name
+          ? userContactDetails.MainLine3Name
+          : "",
+        Town: userContactDetails.MainTownName
+          ? userContactDetails.MainTownName
+          : "",
+        PostCode: userContactDetails.MainPostcodeName
+          ? userContactDetails.MainPostcodeName
+          : "",
+        Country: userContactDetails.mainCountry
+          ? userContactDetails.mainCountry
+          : "United Kingdom",
+        ManagerName:
+          userContactDetails.FirstName + " " + userContactDetails.LastName,
+        Role: userContactDetails.RolesData ? userContactDetails.RolesData : "",
+        Tel: userContactDetails.MainTelephoneName
+          ? userContactDetails.MainTelephoneName
+          : "",
+        Mobile: userContactDetails.MainMobileName
+          ? userContactDetails.MainMobileName
+          : "",
+        greeting: userContactDetails.GreetingName
+          ? userContactDetails.GreetingName
+          : "",
+          Contactemail: userContactDetails.EmailName ? userContactDetails.EmailName : "",
+        note: userContactDetails.Notes ? userContactDetails.Notes : "",
+        emailupdate: userContactDetails.EmailName
+          ? userContactDetails.EmailName
+          : "",
+        CActive: userContactDetails.Inactive === true ? "Yes" : "No",
+        AssignedManager: userContactDetails.MainUserId
+          ? userContactDetails.MainUserId
+          : -1,
+        maincontact: userContactDetails.MainContact
+          ? userContactDetails.MainContact
+          : false,
+        CCode: clientIddata ? clientIddata : defaultclientData,
+        Salutation: userContactDetails.Title ? userContactDetails.Title : "",
+        accid: agrno,
+      };
+      Cls.AddContact(contactData, (sts, data) => {
+        if (sts) {
+          if (data) {
+            if (data == "Success") {
+              console.log(data, "successcontact");
+              if (userContactDetails.CreatePortal == true) {
+                PortalUserAccountCreated_Json();
+              }
+              Json_GetContactNumber();
+              toast.success("Contact Added Successfully !");
+  
+              // toast.success("Reference ID Already Exists!");
+            }
+          }
+        }
+      });
+    }
+   
   };
   const handleListItemClick = (item) => {
     console.log("Selecteditem:", item);
@@ -954,7 +1030,7 @@ function AddContacts({ addContactData,contactDetails}) {
                     variant="contained"
                     // disabled={!clientData || !selectedFolderID}
                     // disabled={!defaultclientData}
-                    // onClick={handleSubmit}
+                    onClick={handleSubmit}
                     className="btn-blue-2"
                   >
                     Update Contact
