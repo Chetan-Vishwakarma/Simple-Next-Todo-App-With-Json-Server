@@ -2081,12 +2081,12 @@ span.tox-statusbar__branding {
 .custom-chips {
   overflow-x: auto;
 }
-
+/* 
 .btn-download {
   position: absolute;
   right: 50px;
   top: 20px;
-}
+} */
 
 .date-unerline {
   font-weight: 600;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Box, Button, Typography, Dialog, DialogContent, DialogContentText, Tabs, Tab, Checkbox } from '@mui/material';
+import { Box, Button, Typography, Dialog, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Menu, MenuItem } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 
 import TabPanel from '@mui/lab/TabPanel';
@@ -27,7 +27,21 @@ import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux } from "../.
 
 import $ from 'jquery';
 import Fileformat from '../../images/files-icon/pdf.png';
-
+import ListIcon from '@mui/icons-material/List';
+import RedeemIcon from '@mui/icons-material/Redeem';
+import CategoryIcon from '@mui/icons-material/Category';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import AddToDriveIcon from '@mui/icons-material/AddToDrive';
+import DvrIcon from '@mui/icons-material/Dvr';
+import InsertPageBreakIcon from '@mui/icons-material/InsertPageBreak';
+import LanguageIcon from '@mui/icons-material/Language';
+import PublishIcon from '@mui/icons-material/Publish';
+import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
+import MarkunreadIcon from '@mui/icons-material/Markunread';
+import DownloadIcon from '@mui/icons-material/Download';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import CreateIcon from '@mui/icons-material/Create';
+import ShareIcon from '@mui/icons-material/Share';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -126,22 +140,22 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                         //     return { ...Actioned, ["Actioned Date"]: ActioneddATE };
                         // });
                         const formattedActivity = table.map(itm => {
-                            if(itm["Actioned Date"]){
+                            if (itm["Actioned Date"]) {
                                 const timeStamp1 = parseInt(itm["Actioned Date"].match(/\d+/)[0]);
                                 itm["Actioned Date"] = new Date(timeStamp1);
-                            }                          
+                            }
                             //const timeStamp2 = parseInt(itm["Start"].match(/\d+/)[0]);
                             //itm["Start"] = new Date(timeStamp2);
                             return itm;
-                          })
-                          if(formattedActivity.length>0){
+                        })
+                        if (formattedActivity.length > 0) {
                             const filteredArray = formattedActivity.filter(item => item.Comments !== null);
 
                             setGetAudit(filteredArray);
                             console.log("Json_GetAudit", filteredArray)
-                          }
+                        }
 
-                       
+
                     }
 
 
@@ -251,7 +265,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
             Json_GetItemStickyNotes();
             Json_getAssociatedTaskListByDocumentId();
             setSeletedFileData([]);
-            setopenModal(false) 
+            setopenModal(false)
             Json_GetVersionByItemId();
 
         }
@@ -538,6 +552,28 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         handleTaskModalOpening("Portal");
     }
 
+
+    // 
+    const [CreateTaskanchorEl, setCreateTaskAnchorEl] = React.useState(null);
+    const openCreateTask = Boolean(CreateTaskanchorEl);
+    const createTaskhandleClick = (event) => {
+        setCreateTaskAnchorEl(event.currentTarget);
+    };
+    const CreateTaskhandleClose = () => {
+        setCreateTaskAnchorEl(null);
+    };
+
+
+    // 
+    const [ShareanchorEl, setShareAnchorEl] = React.useState(null);
+    const openShare = Boolean(ShareanchorEl);
+    const SharehandleClick = (event) => {
+        setShareAnchorEl(event.currentTarget);
+    };
+    const SharehandleClose = () => {
+        setShareAnchorEl(null);
+    };
+
     return (
         <>
             <Dialog
@@ -561,11 +597,95 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
                     <Box className="d-flex align-items-center justify-content-between flex-wrap">
 
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTask} >Create Task</Button>
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTaskForPublish} >Publish</Button>
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" >Send as Email</Button>
-                        {/* <Button className='btn-blue-2 me-2 mb-1' size="small" >Downloads</Button> */}
+                        <Box className='text-end relative me-3'>
+                            <DownloadForOfflineIcon className='text-red pointer font-32 btn-download' />
+                        </Box>
 
+                        <div>
+                            <Button
+                                id="basic-button"
+                                aria-controls={openCreateTask ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={openCreateTask ? 'true' : undefined}
+                                onClick={createTaskhandleClick}
+                                className='btn-blue-2 me-2 mb-1'
+                                startIcon={<BorderColorIcon />}
+                            >
+                                Create Task
+                            </Button>
+                            <Menu
+                                id="basic-menu"
+                                anchorEl={CreateTaskanchorEl}
+                                open={openCreateTask}
+                                onClose={CreateTaskhandleClose}
+                                MenuListProps={{
+                                    'aria-labelledby': 'basic-button',
+                                }}
+                            >
+                                <MenuItem
+                                    onClick={() => {
+                                        CreateTaskhandleClose();
+                                        createTask();
+                                    }}
+                                ><DvrIcon className='me-1' /> CRM Task</MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        CreateTaskhandleClose();
+                                        createTask();
+                                    }}
+                                ><InsertPageBreakIcon className='me-1' /> DMS Task</MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        CreateTaskhandleClose();
+                                        createTask();
+                                    }}
+                                ><LanguageIcon className='me-1' /> Portal Task</MenuItem>
+                            </Menu>
+                        </div>
+
+                        <div>
+                            <Button
+                                id="basic-button"
+                                aria-controls={openShare ? 'basic-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={openShare ? 'true' : undefined}
+                                onClick={SharehandleClick}
+                                className='btn-blue-2 me-2 mb-1'
+                                startIcon={<ShareIcon />}
+                            >
+                                Share
+                            </Button>
+                            <Menu
+                                id="basic-menu"
+                                anchorEl={ShareanchorEl}
+                                open={openShare}
+                                onClose={SharehandleClose}
+                                MenuListProps={{
+                                    'aria-labelledby': 'basic-button',
+                                }}
+                            >
+                                <MenuItem
+                                    onClick={() => {
+                                        SharehandleClose();
+                                        createTaskForPublish();
+                                    }}
+                                >
+                                    <PublishIcon className='me-1' />
+                                    Publish</MenuItem>
+                                <MenuItem onClick={SharehandleClose}>
+                                    <ForwardToInboxIcon className='me-1' />
+                                    Send as Form</MenuItem>
+                                <MenuItem onClick={SharehandleClose}>
+                                    <MarkunreadIcon className='me-1' />
+                                    Email</MenuItem>
+                                <MenuItem onClick={SharehandleClose}>
+                                    <DownloadIcon className='me-1' />
+                                    Download</MenuItem>
+                            </Menu>
+                        </div>
+
+                        {/* <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTask} >Create Task</Button>
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" onClick={createTaskForPublish} >Publish</Button> */}
                         <Box>
                             <Button
                                 id="basic-button"
@@ -573,12 +693,14 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 aria-haspopup="true"
                                 aria-expanded={ChangeIndex ? 'true' : undefined}
                                 onClick={handleClickChangeIndex}
-                                className='btn-blue-2 mb-1'
+                                className='btn-blue-2 me-2 mb-1'
+                                startIcon={<CreateIcon />}
+
                             >
-                                Category
+                                Edit
                                 {/* <KeyboardArrowDownIcon className='ms-1' /> */}
                             </Button>
-                            {/* <Menu
+                            <Menu
                                 id="basic-menu"
                                 className='custom-dropdown'
                                 anchorEl={anchorElChangeIndex}
@@ -588,12 +710,13 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                     'aria-labelledby': 'basic-button',
                                 }}
                             >
-                                <MenuItem onClick={handleCloseChangeIndex}> <CategoryIcon className='me-2' /> Category</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <GradingIcon className='me-2' /> Refile</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <InsertLinkIcon className='me-2' /> Links</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <AddIcon className='me-2' /> </MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <AlarmOnIcon className='me-2' /> Add Activity </MenuItem>
-                            </Menu> */}
+
+                                <MenuItem onClick={handleCloseChangeIndex}> <ListIcon className='me-1' />  Re-index</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <RedeemIcon className='me-1' /> Check-Out</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <CategoryIcon className='me-1' /> Category</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <DriveFileRenameOutlineIcon className='me-1' /> Rename</MenuItem>
+                                <MenuItem onClick={handleCloseChangeIndex}> <AddToDriveIcon className='me-1' /> Upload to Drive</MenuItem>
+                            </Menu>
                         </Box>
 
                         <Button onClick={handleClosePDFView} autoFocus sx={{ minWidth: 30 }}>
@@ -622,9 +745,6 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 </Box>
                                 <TabPanel value="1" className='p-0'>
                                     <Box className='white-box'>
-                                        <Box className='text-end mb-3 relative'>
-                                            <DownloadForOfflineIcon className='text-red pointer font-32 btn-download' />
-                                        </Box>
 
                                         {viewerUrl && (
                                             <iframe
