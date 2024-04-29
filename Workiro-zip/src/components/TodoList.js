@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, TextField, Autocomplete, ToggleButton, ToggleButtonGroup, FormControl, Select, InputLabel, } from '@mui/material';
+import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, TextField, Autocomplete, ToggleButton, ToggleButtonGroup, FormControl, Select, InputLabel,Badge } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import user from "../images/user.jpg";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -53,6 +53,8 @@ import { setMyTasks } from '../redux/reducers/counterSlice';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { updateReduxDataSonam } from '../redux/reducers/counterSlice';
+import InsertLinkIcon from '@mui/icons-material/InsertLink';
+
 
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20' />, <PublishedWithChangesIcon color='primary' className='me-1 font-20' />, <HourglassBottomIcon color='primary' className='me-1 font-20' />, <CheckCircleOutlineIcon color='success' className='me-1 font-20' />];
 let attatmentdata = [];
@@ -62,8 +64,8 @@ function TodoList() {
     const location = useLocation();
     const reduxData = useSelector((data) => data.counter.myTasks);
     const reduxDataSonam = useSelector((state) => state.counter.reduxData);
-    console.log(reduxDataSonam,"reduxdatasonam");
-    console.log(reduxData,"datatasklist");
+    console.log(reduxDataSonam, "reduxdatasonam");
+    console.log(reduxData, "datatasklist");
     const dispatch = useDispatch();
     let dddd = location.state !== null ? location.state : { globalSearchTask: [] };
     const { globalSearchTask, strGlobal } = dddd;
@@ -760,34 +762,34 @@ function TodoList() {
     const exportexcel = (data) => {
         let workbook = new Workbook();
         let worksheet = workbook.addWorksheet("SheetName");
-        console.log(data,"worksheetdata",data[0]["EndDateTime"]);
-         // Add column headers
-  const headerRow = worksheet.addRow(["Source", "Subject", "Forwarded By", "End Date", "Client", "Status"]);
-  
-  // Apply bold formatting to header row
-  headerRow.eachCell((cell, colNumber) => {
-    cell.font = { bold: true };
-  });
-  
-  // Add data rows
-  data.forEach((item, index) => {
-    let timestamp;
-    let date;
-    // if (item && item["EndDateTime"]) {
-    //   timestamp = parseInt(item["EndDateTime"].slice(6, -2));
-    //   date = startFormattingDate(timestamp);
-    // } else {
-    //   date = '';
-    // }
-    worksheet.addRow([
-      item?.Source,
-      item?.Subject,
-      item["Forwarded By"],
-      item["EndDateTime"],      
-      item?.Client,
-      item?.Status
-    ]);
-  });
+        console.log(data, "worksheetdata", data[0]["EndDateTime"]);
+        // Add column headers
+        const headerRow = worksheet.addRow(["Source", "Subject", "Forwarded By", "End Date", "Client", "Status"]);
+
+        // Apply bold formatting to header row
+        headerRow.eachCell((cell, colNumber) => {
+            cell.font = { bold: true };
+        });
+
+        // Add data rows
+        data.forEach((item, index) => {
+            let timestamp;
+            let date;
+            // if (item && item["EndDateTime"]) {
+            //   timestamp = parseInt(item["EndDateTime"].slice(6, -2));
+            //   date = startFormattingDate(timestamp);
+            // } else {
+            //   date = '';
+            // }
+            worksheet.addRow([
+                item?.Source,
+                item?.Subject,
+                item["Forwarded By"],
+                item["EndDateTime"],
+                item?.Client,
+                item?.Status
+            ]);
+        });
 
         // Apply bold formatting to header row
         headerRow.eachCell((cell, colNumber) => {
@@ -827,16 +829,16 @@ function TodoList() {
         });
     };
 
-      const ExportData = useCallback(() => {
-          console.log(filterExportData,"11exportData",exportTaskData);
-          if(filterExportData && filterExportData.length > 0) {
+    const ExportData = useCallback(() => {
+        console.log(filterExportData, "11exportData", exportTaskData);
+        if (filterExportData && filterExportData.length > 0) {
             exportexcel(filterExportData);
-          }else {
+        } else {
             exportexcel(exportTaskData); // Export data from 
-          }
-         
-          setAnchorElDown(null);
-      }, []);
+        }
+
+        setAnchorElDown(null);
+    }, []);
 
     const FilterAgs = (item) => {
         const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
@@ -861,7 +863,7 @@ function TodoList() {
         setAllTask([...reduxData]);
         setActualData([...reduxData]);
         dispatch(updateReduxDataSonam(reduxData));
-    }, [reduxData,dispatch]);
+    }, [reduxData, dispatch]);
 
     return (
         <>
@@ -1169,15 +1171,26 @@ function TodoList() {
                                             return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                                 <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
-                                                    <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
-                                                        sx={{
-                                                            '&.Mui-checked': {
-                                                                color: "secondary",
-                                                            },
-                                                        }}
-                                                        size='small'
+                                                    {/*  */}
 
-                                                    />
+                                                    <Box className='check-todo'>
+                                                        <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
+                                                            <InsertLinkIcon />
+                                                        </Badge>
+
+                                                        <Radio className={item.Priority === 1 ? 'text-red' : item.Priority === 2 ? 'text-green' : 'text-grey'} checked
+                                                            sx={{
+                                                                '&.Mui-checked': {
+                                                                    color: "secondary",
+                                                                },
+                                                            }}
+                                                            size='small'
+
+                                                        />
+
+                                                        {/* <PushPinIcon className='pinicon'></PushPinIcon> */}
+
+                                                    </Box>
 
                                                     <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> {item.Source}</Typography>
 
@@ -1268,14 +1281,23 @@ function TodoList() {
                                     return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                         <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
-                                            <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
-                                                sx={{
-                                                    '&.Mui-checked': {
-                                                        color: "secondary",
-                                                    },
-                                                }}
-                                                size='small'
-                                            />
+                                            <Box className='check-todo'>
+                                                <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
+                                                    <InsertLinkIcon />
+                                                </Badge>
+
+                                                <Radio className={item.Priority === 1 ? 'text-red' : item.Priority === 2 ? 'text-green' : 'text-grey'} checked
+                                                    sx={{
+                                                        '&.Mui-checked': {
+                                                            color: "secondary",
+                                                        },
+                                                    }}
+                                                    size='small'
+                                                />
+
+                                                {/* <PushPinIcon className='pinicon'></PushPinIcon> */}
+
+                                            </Box>
 
                                             <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> {item.Source}</Typography>
 

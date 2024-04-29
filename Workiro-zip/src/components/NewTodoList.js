@@ -4,7 +4,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommanCLS from '../services/CommanService';
 import TaskDetailModal from './TaskDetailModal';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-import { Box, Button, Typography, Menu, MenuItem, ListItemIcon, Radio, Checkbox } from '@mui/material';
+import { Box, Button, Typography, Menu, MenuItem, ListItemIcon, Radio, Checkbox, Badge } from '@mui/material';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ArticleIcon from '@mui/icons-material/Article';
@@ -21,6 +21,7 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import CustomLoader from './CustomLoader';
 // import DocumentRenameModal from './DocumentRenameModal';
 import Fileformat from '../images/files-icon/pdf.png';
+import InsertLinkIcon from '@mui/icons-material/InsertLink';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -730,15 +731,26 @@ function NewTodoList() {
                                 <Box className='todo-list-box white-box relative w-100'
                                     onDoubleClick={() => handleClickOpen(item)}>
 
-                                    <Radio className='check-todo'
-                                        checked
-                                        sx={{
-                                            '&.Mui-checked': {
-                                                color: item.Priority === 1 ? "red" : item.Priority === 2 ? "secondary" : item.Priority === 3 ? "green" : "primary"
-                                            }
-                                        }}
-                                        size='small'
-                                    />
+                                    <Box className='check-todo'>
+                                        <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
+                                            <InsertLinkIcon />
+                                        </Badge>
+
+                                        <Radio
+                                            checked
+                                            sx={{
+                                                '&.Mui-checked': {
+                                                    color: item.Priority === 1 ? "red" : item.Priority === 2 ? "secondary" : item.Priority === 3 ? "green" : "primary"
+                                                }
+                                            }}
+                                            size='small'
+                                        />
+
+                                        {/* <PushPinIcon className='pinicon'></PushPinIcon> */}
+
+                                    </Box>
+
+
 
                                     <Typography variant='subtitle1 mb-3 d-block'><strong>Type: </strong> {item.Source} </Typography>
 
@@ -851,18 +863,29 @@ function NewTodoList() {
                                 <Box className='todo-list-box white-box relative w-100'
                                     onClick={() => handleClickOpen()}>
 
-                                    <Radio className='text-red check-todo'
-                                        // {...label}
-                                        // icon={<RadioButtonUncheckedIcon />}
-                                        // checkedIcon={<CheckCircleIcon />}
-                                        checked
-                                        sx={{
-                                            '&.Mui-checked': {
-                                                color: "secondary",
-                                            },
-                                        }}
-                                        size='small'
-                                    />
+                                    <Box className='check-todo'>
+                                        <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
+                                            <InsertLinkIcon />
+                                        </Badge>
+
+                                        <Radio className='text-red'
+                                            // {...label}
+                                            // icon={<RadioButtonUncheckedIcon />}
+                                            // checkedIcon={<CheckCircleIcon />}
+                                            checked
+                                            sx={{
+                                                '&.Mui-checked': {
+                                                    color: "secondary",
+                                                },
+                                            }}
+                                            size='small'
+                                        />
+
+                                        {/* <PushPinIcon className='pinicon'></PushPinIcon> */}
+
+                                    </Box>
+
+
 
                                     <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> Signature Tast</Typography>
 
@@ -952,8 +975,13 @@ function NewTodoList() {
                                 <Box className='todo-list-box white-box relative w-100'
                                     onClick={() => handleClickOpen()}>
 
-                                    <Box className='clearfix'>
-                                        <Radio className='text-red check-todo'
+
+                                    <Box className='check-todo'>
+                                        <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
+                                            <InsertLinkIcon />
+                                        </Badge>
+
+                                        <Radio className='text-red'
                                             // {...label}
                                             // icon={<RadioButtonUncheckedIcon />}
                                             // checkedIcon={<CheckCircleIcon />}
@@ -968,7 +996,11 @@ function NewTodoList() {
 
                                         <PushPinIcon className='pinicon'></PushPinIcon>
 
+                                        {/* <PushPinIcon className='pinicon'></PushPinIcon> */}
+
                                     </Box>
+
+
 
                                     <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> Signature Tast</Typography>
 
@@ -1146,8 +1178,6 @@ function NewTodoList() {
 
                     </Box>
                 </div>
-
-
 
             </Box>
         </Box>

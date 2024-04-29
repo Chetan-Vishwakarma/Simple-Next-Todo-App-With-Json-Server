@@ -259,7 +259,7 @@ button {
 }
 
 .table-grid-2 .dx-datagrid-rowsview .dx-datagrid-content:not(.dx-datagrid-content-fixed) {
-  height: calc(100vh - 450px);
+  height: calc(100vh - 410px);
   overflow-y: auto;
 }
 
@@ -1001,9 +1001,11 @@ span.tox-statusbar__branding {
   left: 0;
   top: 8px;
 }
+
 .input-search input {
   padding-left: 34px;
 }
+
 .search-box .Mui-focused {
   box-shadow: none !important;
 }
@@ -1241,10 +1243,11 @@ span.tox-statusbar__branding {
 }
 
 .css-2dum1v-MuiDrawer-docked .MuiDrawer-paper .btn-blue {
-  min-width: 40px;
+  min-width: 45px;
   display: flex !important;
   align-items: center;
   justify-content: center;
+  padding-left: 6px !important;
 }
 
 .css-2dum1v-MuiDrawer-docked .MuiDrawer-paper .btn-blue span {
@@ -1282,9 +1285,10 @@ span.tox-statusbar__branding {
   justify-content: space-between;
 }
 
-.file-uploads .file-uploads-label .img-format > img {
+.file-uploads .file-uploads-label .img-format>img {
   width: 36px;
 }
+
 .file-uploads .file-uploads-label .img-format {
   margin-right: 10px;
 }
@@ -1671,10 +1675,10 @@ span.tox-statusbar__branding {
 }
 
 .pinicon {
-  position: absolute !important;
+  /* position: absolute !important;
   right: 58px;
   top: 20px;
-  font-size: 32px !important;
+  font-size: 32px !important; */
   color: #d6192c;
 }
 
@@ -2081,6 +2085,7 @@ span.tox-statusbar__branding {
 .custom-chips {
   overflow-x: auto;
 }
+
 /* 
 .btn-download {
   position: absolute;
@@ -2169,19 +2174,34 @@ span.tox-statusbar__branding {
   right: 10px;
   top: 8px;
 }
+
 .btn-clear svg {
   font-size: 22px !important;
   color: #d42027;
 }
+
 .btn-downloads {
   position: absolute;
   right: 0;
   top: -52px;
 }
+
 .btn-downloads .MuiButtonBase-root {
   background: #6177fa;
   color: #fff;
   border-color: #6177fa;
+}
+
+.custom-budget svg {
+  color: #4780FF;
+  font-size: 30px;
+}
+
+.custom-budget .MuiBadge-badge {
+  background: #4780FF;
+  top: 5px;
+  min-width: 16px;
+  height: 16px;
 }
 
 @media only screen and (max-width: 1366px) {

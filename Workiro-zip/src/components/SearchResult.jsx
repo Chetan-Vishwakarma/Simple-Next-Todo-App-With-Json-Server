@@ -24,6 +24,7 @@ import Tooltip from '@mui/material/Tooltip';
 import BootstrapTooltip from '../utils/BootstrapTooltip';
 import Fileformat from '../images/files-icon/pdf.png';
 import IconButton from '@mui/material/IconButton';
+import InsertLinkIcon from '@mui/icons-material/InsertLink';
 
 
 const agrno = localStorage.getItem("agrno");
@@ -405,25 +406,27 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                     {filteredTasks.length > 0 ? filteredTasks.slice(0, 9).map(item => {
                         return <Grid className='pt-0' item xs={12} lg={4} md={4} sm={12}>
                             <Box className='todo-list-box white-box relative w-100'>
-                                <Box className='clearfix'>
-                                    <Box className='check-todo'>
 
-                                        <Badge badgeContent={4} color="primary">
-                                            <IconButton color="action" />
-                                        </Badge>
+                                <Box className='check-todo'>
+                                    <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
+                                        <InsertLinkIcon />
+                                    </Badge>
 
-                                        <Radio className={item.Priority === 1 ? 'text-red ' : item.Priority === 2 ? 'text-green' : 'text-grey'} checked
-                                            sx={{
-                                                '&.Mui-checked': {
-                                                    color: "secondary",
-                                                },
-                                            }}
-                                            size='small'
-                                        />
-                                    </Box>
+                                    <Radio className={item.Priority === 1 ? 'text-red ' : item.Priority === 2 ? 'text-green' : 'text-grey'} checked
+                                        sx={{
+                                            '&.Mui-checked': {
+                                                color: "secondary",
+                                            },
+                                        }}
+                                        size='small'
+                                    />
 
                                     {/* <PushPinIcon className='pinicon'></PushPinIcon> */}
+                                    
                                 </Box>
+
+                                
+
                                 <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> {item.Source}</Typography>
                                 <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
                                 <Box className='d-flex align-items-center justify-content-between'>
