@@ -155,7 +155,7 @@ function AddContacts({ addContactData,contactDetails}) {
           if (data) {
             let json = JSON.parse(data);
             console.log("Json_GetClientCardDetails", json);
-            setClientDetails(json);
+            //setClientDetails(json);
             setCompanyDetails(json.Table1);
           }
         }
@@ -910,7 +910,7 @@ function AddContacts({ addContactData,contactDetails}) {
 
               {/* <hr /> */}
 
-              <Box className="well mb-4">
+              <Box className="well mb-4" style={{"display":"none"}}>
                 <h2 className="font-20 mb-3 text-black">AML Details</h2>
               </Box>
 
