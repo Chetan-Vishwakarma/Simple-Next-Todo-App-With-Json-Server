@@ -26,6 +26,7 @@ import { useDispatch } from "react-redux";
 import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux } from "../../redux/reducers/counterSlice"
 
 import $ from 'jquery';
+import Fileformat from '../../images/files-icon/pdf.png';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -51,7 +52,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
-     // base url for api
+    // base url for api
     //   let dt = new LoginDetails();
     let cls = new CommanCLS(baseUrl, agrno, Email, password);
     let clsPractice = new CommanCLS(baseUrlPractice, agrno, Email, password);
@@ -264,20 +265,20 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
 
     function Json_GetVersionByItemId() {
-        try {           
+        try {
             let obj = {};
             obj.itemId = selectedDocument["Registration No."];
             cls.Json_GetVersionByItemId(obj, function (sts, data) {
-                if (sts) {   
-                    if(data){
+                if (sts) {
+                    if (data) {
                         let js = JSON.parse(data);
                         let tbl = js.Table;
-                        if(tbl.length>0){
-                            console.log("Json_GetVersionByItemId",tbl)
+                        if (tbl.length > 0) {
+                            console.log("Json_GetVersionByItemId", tbl)
                             setGetVertion(tbl)
                         }
-                       
-                    }                
+
+                    }
 
                 }
 
@@ -647,25 +648,28 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 <TabPanel value="2" className='p-0'>
                                     <Box className='row'>
 
-                                        {getVertion.length>0 ? getVertion.map((item,index) => {
+                                        {getVertion.length > 0 ? getVertion.map((item, index) => {
                                             return <>
                                                 <Box className='col-lg-3' key={index}>
                                                     <Box className="file-uploads">
                                                         <label className="file-uploads-label file-uploads-document">
                                                             <Box className="d-flex align-items-center">
-                                                                <DescriptionIcon
+                                                                {/* <DescriptionIcon
                                                                     sx={{
                                                                         fontSize: 32,
                                                                     }}
                                                                     className='me-2'
-                                                                />
+                                                                /> */}
+                                                                <div className='img-format'>
+                                                                    <img src={Fileformat} />
+                                                                </div>
                                                                 <Box className="upload-content pe-3">
                                                                     <Typography variant="h4" className='d-flex align-items-center justify-content-between' >
-                                                                      Version No {item.VersionNo} {item.IsLocked && (<>
-                                                                      
-                                                                      <LockIcon size="small"></LockIcon>
-                                                                      
-                                                                      </>)}
+                                                                        Version No {item.VersionNo} {item.IsLocked && (<>
+
+                                                                            <LockIcon size="small"></LockIcon>
+
+                                                                        </>)}
                                                                     </Typography>
                                                                     <Typography variant="body1">
                                                                         {moment(item["VDate"]).format("DD/MM/YYYY HH:mm:ss")} | Updated by {item.UserName.toUpperCase()}
@@ -677,7 +681,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                                     {/* file upload end */}
                                                 </Box>
                                             </>
-                                        }):""}
+                                        }) : ""}
                                     </Box>
                                 </TabPanel>
 
@@ -745,12 +749,15 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                                             <Box className="d-flex align-items-center">
                                                                 <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" onChange={() => handeleAttachmentChange(el)} />
 
-                                                                <DescriptionIcon
+                                                                {/* <DescriptionIcon
                                                                     sx={{
                                                                         fontSize: 32,
                                                                     }}
                                                                     className='me-2'
-                                                                />
+                                                                /> */}
+                                                                <div className='img-format'>
+                                                                    <img src={Fileformat} />
+                                                                </div>
                                                                 <Box className="upload-content pe-3">
                                                                     <Typography variant="h4" >
                                                                         {el.Description}

@@ -20,6 +20,7 @@ import DocDetails from './DocDetails';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import CustomLoader from './CustomLoader';
 // import DocumentRenameModal from './DocumentRenameModal';
+import Fileformat from '../images/files-icon/pdf.png';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -70,11 +71,11 @@ function NewTodoList() {
     // };
     const handleEditClick = () => {
         setIsEditing(true);
-      };
-    
-      const handleBlur = () => {
+    };
+
+    const handleBlur = () => {
         setIsEditing(false);
-      };
+    };
     const Json_Get_CRM_UserByProjectId = () => {
         let obj = {
             agrno: agrno,
@@ -98,7 +99,7 @@ function NewTodoList() {
     }
 
     const Json_CRM_GetOutlookTask = (e, toOpen) => {
-        
+
         try {
             Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
                 if (sts) {
@@ -119,8 +120,8 @@ function NewTodoList() {
                         // Sorting by EndDateTime
                         formattedTasks.sort((a, b) => b.EndDateTime - a.EndDateTime);
 
-                        if(toOpen){
-                            let forTaskDetailModal = formattedTasks.filter(itm=>itm.ID===toOpen.Taskid);
+                        if (toOpen) {
+                            let forTaskDetailModal = formattedTasks.filter(itm => itm.ID === toOpen.Taskid);
                             setSelectedTask(forTaskDetailModal[0]);
                             setOpen(true);
                             console.log("sdfdskjfksdjkhwe filter",)
@@ -130,8 +131,8 @@ function NewTodoList() {
 
                         // console.log("Json_CRM_GetOutlookTask", filtredTask);
                         setAllTask(filtredTask);
-                        console.log("sdfdskjfksdjkhwe",filtredTask,"toOpen",toOpen);
-                        
+                        console.log("sdfdskjfksdjkhwe", filtredTask, "toOpen", toOpen);
+
                     }
                 }
             });
@@ -141,27 +142,27 @@ function NewTodoList() {
     }
 
     const Json_Get_CRM_Task_ActivityByTaskId = (item) => {
-            
-            try {
-                let obj = {};
-                obj.TaskID = item.TaskID;
-                return new Promise((resolve, reject) => {
-                    Cls.Json_Get_CRM_Task_ActivityByTaskId(obj, (sts, data) => {
-                        let json = JSON.parse(data);
-                        let tbl = json.Table;
-                        if (sts && tbl.length > 0) {
-                            //console.log("Error while calling Json_CRM_GetOutlookTask", tbl[tbl.length - 1]);
-                            resolve(tbl[tbl.length - 1].Notes);
-                        } else {
-                            reject("No data or Notes found");
-                        }
-                    });
+
+        try {
+            let obj = {};
+            obj.TaskID = item.TaskID;
+            return new Promise((resolve, reject) => {
+                Cls.Json_Get_CRM_Task_ActivityByTaskId(obj, (sts, data) => {
+                    let json = JSON.parse(data);
+                    let tbl = json.Table;
+                    if (sts && tbl.length > 0) {
+                        //console.log("Error while calling Json_CRM_GetOutlookTask", tbl[tbl.length - 1]);
+                        resolve(tbl[tbl.length - 1].Notes);
+                    } else {
+                        reject("No data or Notes found");
+                    }
                 });
-               
-            } catch (err) {
-                console.log("Error while calling Json_CRM_GetOutlookTask", err);
-            }
-        };
+            });
+
+        } catch (err) {
+            console.log("Error while calling Json_CRM_GetOutlookTask", err);
+        }
+    };
 
     const Json_getRecentTaskList = () => {
 
@@ -248,11 +249,11 @@ function NewTodoList() {
                                 } else {
                                     date = el["RecentDate"];
                                 }
-                                return { ...el, ["RecentDate"]: date, ["Registration No."]: el.ItemId, ["Description"]: el.Subject,["Type"]: el.type };
+                                return { ...el, ["RecentDate"]: date, ["Registration No."]: el.ItemId, ["Description"]: el.Subject, ["Type"]: el.type };
                             });
                             setRecentDocument(mapMethod);
                             // const itemIdSet = new Set(tbl.map(item => item.ItemId));
-                           // console.log("Json_getRecentDocumentList", mapMethod);
+                            // console.log("Json_getRecentDocumentList", mapMethod);
                         }
 
 
@@ -297,8 +298,8 @@ function NewTodoList() {
     }, [isApi])
 
     const handleScroll = (e) => {
-        
-        if(parseInt(window.innerHeight)+parseInt(e.target.documentElement.scrollTop)>=e.target.documentElement.scrollHeight){
+
+        if (parseInt(window.innerHeight) + parseInt(e.target.documentElement.scrollTop) >= e.target.documentElement.scrollHeight) {
             setActiveSectionList("section4");
             return;
         }
@@ -525,12 +526,12 @@ function NewTodoList() {
                 if (data) {
                     let json = JSON.parse(data);
                     console.log("Json_RenameDocument", json);
-                    if(json.Status==="Success"){
+                    if (json.Status === "Success") {
                         // Json_getRecentDocumentList();
                         toast.success(json.Message);
                         setEditingIndex(null);
-                        setTest({...test, [index]: newDesc});
-                    }else{
+                        setTest({ ...test, [index]: newDesc });
+                    } else {
                         toast.error("Unable to rename this document");
                     }
                 }
@@ -539,7 +540,7 @@ function NewTodoList() {
     }
 
     const handleSave = (newDesc, oldDesc, doc, index) => {
-        if(oldDesc===newDesc) return;
+        if (oldDesc === newDesc) return;
         Json_RenameDocument(doc, newDesc, index);
     };
 
@@ -736,6 +737,7 @@ function NewTodoList() {
                                                 color: item.Priority === 1 ? "red" : item.Priority === 2 ? "secondary" : item.Priority === 3 ? "green" : "primary"
                                             }
                                         }}
+                                        size='small'
                                     />
 
                                     <Typography variant='subtitle1 mb-3 d-block'><strong>Type: </strong> {item.Source} </Typography>
@@ -814,7 +816,7 @@ function NewTodoList() {
                             {/* col end */}
 
                         </>
-                    }) : <CustomLoader/>}
+                    }) : <CustomLoader />}
                 </Box>
 
                 <Box id="section2" className='py-4 text-center'>
@@ -832,17 +834,17 @@ function NewTodoList() {
 
                 <Box className='row'>
                     {recentTaskList.length > 0 ? recentTaskList.slice(0, 20).map((item, index) => {
-                //   let notesshow;
-                //   Json_Get_CRM_Task_ActivityByTaskId(item).then((notes) => {
-                //     console.log("Hello Notes",notes)
-                //     notesshow=notes;
-                // })
-                // .catch((error) => {
-                //     // Handle errors here
-                // });
-                  
-                //      console.log("Hello Notes1",notesshow);
-                       
+                        //   let notesshow;
+                        //   Json_Get_CRM_Task_ActivityByTaskId(item).then((notes) => {
+                        //     console.log("Hello Notes",notes)
+                        //     notesshow=notes;
+                        // })
+                        // .catch((error) => {
+                        //     // Handle errors here
+                        // });
+
+                        //      console.log("Hello Notes1",notesshow);
+
                         return <>
 
                             <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
@@ -859,6 +861,7 @@ function NewTodoList() {
                                                 color: "secondary",
                                             },
                                         }}
+                                        size='small'
                                     />
 
                                     <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> Signature Tast</Typography>
@@ -918,9 +921,9 @@ function NewTodoList() {
                                         <Box className="user-content text-start">
                                             <Typography variant='h2'>{'user name'}</Typography>
                                             <Typography variant='body1'>
-                                            {
-                                              "" 
-                                            }
+                                                {
+                                                    ""
+                                                }
                                             </Typography>
                                         </Box>
                                     </Box>
@@ -930,7 +933,7 @@ function NewTodoList() {
                             {/* col end */}
 
                         </>
-                    }) : <CustomLoader/>}
+                    }) : <CustomLoader />}
                 </Box>
                 <Box id="section3" className='py-4 text-center'>
                     <Button variant="outlined" onClick={handleLoadMoreRecentTask} className='btn-outlin-2'>View More</Button>
@@ -960,6 +963,7 @@ function NewTodoList() {
                                                     color: "secondary",
                                                 },
                                             }}
+                                            size='small'
                                         />
 
                                         <PushPinIcon className='pinicon'></PushPinIcon>
@@ -1044,28 +1048,31 @@ function NewTodoList() {
 
                                                 <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
 
-                                                <DescriptionIcon
+                                                {/* <DescriptionIcon
                                                     sx={{
                                                         fontSize: 32,
                                                     }}
                                                     className='me-2 ms-0'
-                                                />
+                                                /> */}
+                                                <div className='img-format'>
+                                                    <img src={Fileformat} />
+                                                </div>
                                                 <Box className="upload-content pe-3" onDoubleClick={(e) => ViewerDocument(item)}>
-                                                {editingIndex == index ? (
-                                        <input
-                                            type="text"
-                                            defaultValue={item.Subject}
-                                            value={updatedSubject}
-                                            onChange={handleChange}
-                                            autoFocus
-                                            onBlur={(e)=>handleSave(e.target.value, item.Subject, item, index)}
-                                            className='edit-input'
-                                        />
-                                    ) : (
-                                        <Typography variant="h4">
-                                            { Object.keys(test).includes(String(index)) ? test[index] : item.Subject? item.Subject : ""}
-                                        </Typography>
-                                    )}
+                                                    {editingIndex == index ? (
+                                                        <input
+                                                            type="text"
+                                                            defaultValue={item.Subject}
+                                                            value={updatedSubject}
+                                                            onChange={handleChange}
+                                                            autoFocus
+                                                            onBlur={(e) => handleSave(e.target.value, item.Subject, item, index)}
+                                                            className='edit-input'
+                                                        />
+                                                    ) : (
+                                                        <Typography variant="h4">
+                                                            {Object.keys(test).includes(String(index)) ? test[index] : item.Subject ? item.Subject : ""}
+                                                        </Typography>
+                                                    )}
                                                     <Typography variant="body1">
                                                         {/* Size:  <span className='sembold'>{item.FileSize}</span> |   */}
                                                         <span className='sembold'>{moment(item["RecentDate"]).format("DD/MM/YYYY") !== "Invalid date" ? moment(item["RecentDate"]).format("DD/MM/YYYY") : "01/01/2000"}</span>
@@ -1109,11 +1116,11 @@ function NewTodoList() {
                                                         </ListItemIcon>
                                                         Upload New Version</MenuItem>
                                                     <MenuItem onClick={() => {
-                                                          handleCloseDocument(index)
+                                                        handleCloseDocument(index)
                                                         //   setOpenRenameModal(true);
                                                         handleEdit(index);
-                                                          console.log("lkdgjewerwe",item);
-                                                        }}>
+                                                        console.log("lkdgjewerwe", item);
+                                                    }}>
                                                         <ListItemIcon>
                                                             <DriveFileRenameOutlineIcon fontSize="medium" />
                                                         </ListItemIcon>
@@ -1135,7 +1142,7 @@ function NewTodoList() {
                                 </Box>
 
                             </>
-                        }) : <CustomLoader/>}
+                        }) : <CustomLoader />}
 
                     </Box>
                 </div>

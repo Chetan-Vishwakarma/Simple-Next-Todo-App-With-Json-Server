@@ -984,10 +984,26 @@ span.tox-statusbar__branding {
   color: #c9c9c9;
 }
 
+.input-search {
+  position: relative;
+}
+
+.input-search .MuiFormControl-root {
+  width: 100%;
+}
+
 .search-box {
   z-index: 1;
 }
 
+.input-search .search-icon {
+  position: absolute;
+  left: 0;
+  top: 8px;
+}
+.input-search input {
+  padding-left: 34px;
+}
 .search-box .Mui-focused {
   box-shadow: none !important;
 }
@@ -1264,6 +1280,13 @@ span.tox-statusbar__branding {
   align-items: center;
   cursor: pointer;
   justify-content: space-between;
+}
+
+.file-uploads .file-uploads-label .img-format > img {
+  width: 36px;
+}
+.file-uploads .file-uploads-label .img-format {
+  margin-right: 10px;
 }
 
 .file-uploads .file-uploads-label .icon {
@@ -1637,7 +1660,7 @@ span.tox-statusbar__branding {
 }
 
 .check-todo svg {
-  font-size: 32px;
+  font-size: 26px;
 }
 
 .check-todo {
@@ -2251,7 +2274,7 @@ span.tox-statusbar__branding {
   }
 
   .check-todo svg {
-    font-size: 22px;
+    font-size: 18px;
   }
 
   .user-img-list.admin {

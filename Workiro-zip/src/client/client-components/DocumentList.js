@@ -49,7 +49,7 @@ import Popover from '@mui/material/Popover';
 import TuneIcon from '@mui/icons-material/Tune';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import BootstrapTooltip from '../../utils/BootstrapTooltip';
-
+import Fileformat from '../../images/files-icon/pdf.png';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -626,10 +626,8 @@ export default function DocumentList({ clientId }) {
 
             {isLoading ? <CustomLoader /> : <>
 
-
-
                 <div style={{ top: globalSearchDocs.length > 0 && "85px", right: globalSearchDocs.length > 0 && "20px" }} className='main-client-details-filter'>
-                    <Button aria-describedby={id} variant="" className='min-width-auto btn-blue px-0' onClick={handleClick}>
+                    <Button aria-describedby={id} variant="" className='btn-blue' onClick={handleClick}>
                         <TuneIcon />
                     </Button>
                     <Popover
@@ -1036,9 +1034,6 @@ export default function DocumentList({ clientId }) {
                                     />}
                                 </Box>
 
-
-
-
                                 {/* <Button className='btn-blue-2 mb-1 ms-1' onClick={() => handleDocumentsFilter("LastMonth")}>Save View</Button> */}
 
                                 {/* <FormControlLabel control={<Switch />} label="Save View" className='ms-2' /> */}
@@ -1190,12 +1185,15 @@ export default function DocumentList({ clientId }) {
                                                     <Box className="file-uploads">
                                                         <label className="file-uploads-label file-uploads-document">
                                                             <Box className="d-flex align-items-center">
-                                                                <DescriptionIcon
+                                                                {/* <DescriptionIcon
                                                                     sx={{
                                                                         fontSize: 32,
                                                                     }}
                                                                     className='me-2'
-                                                                />
+                                                                /> */}
+                                                                <div className='img-format'>
+                                                                    <img src={Fileformat} />
+                                                                </div>
                                                                 <Box className="upload-content pe-3">
                                                                     <Typography variant="h4" >
                                                                         {itm.Description ? itm.Description : "Demo"}
@@ -1216,14 +1214,17 @@ export default function DocumentList({ clientId }) {
                                         return <>
                                             <Box className='col-xxl-3 col-xl-4 col-md-6'>
                                                 <Box className="file-uploads">
-                                                    <label className="file-uploads-label file-uploads-document">
+                                                    <label className="file-uploads-label file-uploads-document sadik">
                                                         <Box className="d-flex align-items-center">
-                                                            <DescriptionIcon
+                                                            {/* <DescriptionIcon
                                                                 sx={{
                                                                     fontSize: 32,
                                                                 }}
                                                                 className='me-2'
-                                                            />
+                                                            /> */}
+                                                            <div className='img-format'>
+                                                                <img src={Fileformat} />
+                                                            </div>
                                                             <Box className="upload-content pe-3">
                                                                 <Typography variant="h4" >
                                                                     {itm.Description ? itm.Description : "Demo"}

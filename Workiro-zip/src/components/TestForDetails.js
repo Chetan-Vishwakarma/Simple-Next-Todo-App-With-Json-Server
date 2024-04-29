@@ -49,6 +49,7 @@ import Popover from '@mui/material/Popover';
 import TuneIcon from '@mui/icons-material/Tune';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import BootstrapTooltip from '../utils/BootstrapTooltip';
+import { toast } from 'react-toastify';
 
 let agrno = localStorage.getItem("agrno");
 let password = localStorage.getItem("Password");
@@ -90,7 +91,7 @@ function TestForDetails() {
     const [isLoading, setIsLoading] = useState(true);
 
     const [clientList, setClientList] = useState([]);
-    const [selectedClient, setSelectedClient] = useState("");
+    const [selectedClient, setSelectedClient] = useState({});
 
     const [isClientField, setIsClientField] = useState(false);
     const [isDocIdField, setIsDocIdField] = useState(false);
@@ -108,7 +109,7 @@ function TestForDetails() {
         ProjectId: folderId,
         agrno: agrno,
         password: password,
-        sectionId: "1",
+        sectionId: "",
         udflist: [],
         udfvalueList: []
     });
@@ -245,17 +246,37 @@ function TestForDetails() {
                     if (data) {
                         let json = JSON.parse(data);
                         console.log("Json_AdvanceSearchDoc", json.Table6);
-                        if (json.Table6) {
+                        if (json.Table6 && json.Table6.length > 0) {
                             let fltDouble = [];
                             json.Table6.map((itm) => itm.Description).filter(item => {
                                 if (!fltDouble.includes(item)) {
                                     fltDouble.push(item);
                                 }
                             });
-                            navigate("/dashboard/DocumentList", { state: { globalSearchDocs: json.Table6, strGlobal: documentData.Description } });
+                            setDocumentData({
+                                ClientId: "",
+                                Description: "",
+                                Email: Email,
+                                IsUDF: "F",
+                                ItemFDate: "01/01/1900",
+                                ItemTDate: "01/01/1900",
+                                ItemrecFDate: "01/01/1900",
+                                ItemrecTDate: "01/01/1900",
+                                ProjectId: folderId,
+                                agrno: agrno,
+                                password: password,
+                                sectionId: "",
+                                udflist: [],
+                                udfvalueList: []
+                            });
+                            setSelectedClient({});
                             handleClose();
+                            navigate("/dashboard/DocumentList", { state: { globalSearchDocs: json.Table6, strGlobal: documentData.Description } });
                             // setDocumentsDescription(fltDouble);
                             // setMyDocuments(json.Table6);
+                        } else {
+                            toast.error("Documents not found for this criteria");
+                            handleClose();
                         }
                     }
                 }
@@ -281,6 +302,9 @@ function TestForDetails() {
 
                         navigate("/dashboard/DocumentList", { state: { globalSearchDocs: json[""], strGlobal: documentData.Description } });
                         handleClose();
+                        setDocumentId("");
+                    } else {
+                        toast.error("Document not found please check entered Id");
                     }
                 }
             });
@@ -303,7 +327,7 @@ function TestForDetails() {
             ProjectId: folderId,
             agrno: agrno,
             password: password,
-            sectionId: "1",
+            sectionId: "",
             udflist: [],
             udfvalueList: []
         });
@@ -311,7 +335,7 @@ function TestForDetails() {
 
     return (
         <div style={{ top: globalSearchDocs && globalSearchDocs.length > 0 && "85px", right: globalSearchDocs && globalSearchDocs.length > 0 && "20px" }} className=''>
-            <Button aria-describedby={id} variant="" className='min-width-auto btn-blue px-0' onClick={handleClick}>
+            <Button aria-describedby={id} variant="" className='min-width-auto btn-blu px-2' size='small' onClick={handleClick}>
                 <TuneIcon />
             </Button>
             <Popover
@@ -329,7 +353,12 @@ function TestForDetails() {
                 <Box className='client-details-filter p-2'>
 
                     <Box className='mb-0'>
-                        <TextField name="Description" onChange={(e) => handleInputChange(e)} id="outlined-basic" placeholder='Description...' size="small" variant="outlined" />
+
+                        <Box className="input-search">
+                            <TextField name="Description" onChange={(e) => handleInputChange(e)} id="outlined-basic" placeholder='Description...' size="small" variant="outlined" className='ps-0' />
+                            <span className="material-symbols-outlined search-icon">search</span>
+                        </Box>
+
                         {/* sadik */}
                         <Box sx={{ m: 1 }} className='pt-2'>
                             <DateRangePicker
@@ -507,11 +536,16 @@ function TestForDetails() {
                             {isClientField ? <Autocomplete
                                 disablePortal
                                 id="combo-box-demo"
-                                onChange={(e,newValue)=>{
-                                    console.log("djskfjlkfj",e.target.value);
-                                    console.log("djskfjlkfj",newValue);
-                                    if(newValue){
-                                        setSelectedClient(newValue["Company Name"]);
+                                defaultValue={Object.keys(selectedClient).length > 0 ? selectedClient : { "Company Name": "Select" }}
+                                onChange={(e, newValue) => {
+                                    // console.log("djskfjlkfj",e.target.value);
+                                    console.log("djskfjlkfj", newValue);
+                                    if (newValue === null) {
+                                        setSelectedClient({});
+                                    }
+                                    if (newValue) {
+                                        setSelectedClient(newValue);
+                                        setDocumentData({ ...documentData, ClientId: newValue.OriginatorNo });
                                     }
                                 }}
                                 options={clientList}
@@ -519,12 +553,12 @@ function TestForDetails() {
                                     return option["Company Name"];
                                 }}
                                 sx={{ width: 300 }}
-                                renderInput={(params) => <TextField autoFocus={true} onBlur={()=>setIsClientField(false)} {...params} size="small" />}
-                            /> : <Button onClick={()=>{
+                                renderInput={(params) => <TextField value={selectedClient ? selectedClient["Company Name"] : ""} autoFocus={true} onBlur={() => setIsClientField(false)} {...params} size="small" />}
+                            /> : <Button onClick={() => {
                                 setIsClientField(true);
                             }}>
-                            {selectedClient!==""?selectedClient:"Reference"}
-                        </Button>}
+                                {Object.keys(selectedClient).length > 0 ? selectedClient["Company Name"] : "Reference"}
+                            </Button>}
 
                             <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border'>
                                 <BootstrapTooltip title="Document ID" arrow
@@ -551,20 +585,18 @@ function TestForDetails() {
                             </FormControl>
                         </Box>
 
-                        <Typography onClick={() => {
+                        <Button disabled={documentData.ClientId && documentData.Description && documentData.ProjectId && documentData.sectionId ? false : true} variant="contained" size="small" onClick={() => {
 
                             let formated_start_date = format_YYYY_MM_DD(start._d);
                             let formated_end_date = format_YYYY_MM_DD(end._d);
 
                             let obj = { ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date };
                             setDocumentData({ ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date });
-
                             Json_AdvanceSearchDoc(obj);
 
-
-                        }} variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
+                        }}>
                             Apply
-                        </Typography>
+                        </Button>
 
                         {documentId !== "" && <Typography onClick={() => {
                             Json_SearchDocById();

@@ -5,6 +5,8 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import Activity from '../client/utils/Activity';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import TaskDetailModal from './TaskDetailModal';
+import Fileformat from '../images/files-icon/pdf.png';
+
 import moment from 'moment';
 // sadik code start
 function createData(document, details) {
@@ -108,7 +110,7 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
         const dateObject = new Date(timeStamp);
         return `${dateObject.getDate()}/${dateObject.getMonth() + 1}/${dateObject.getFullYear()}`;
     }
-    const Json_GetAudit = (sDoc=docForDetails) => {
+    const Json_GetAudit = (sDoc = docForDetails) => {
         try {
             let obj = {
                 itemid: sDoc["Registration No."],
@@ -129,29 +131,29 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
         }
 
     }
-    useEffect(()=>{
+    useEffect(() => {
         Json_GetAudit(docForDetails);
         Json_GetVersionByItemId(docForDetails)
-    },[]);
+    }, []);
 
     const [getVertion, setGetVertion] = React.useState([]);
-    
+
     function Json_GetVersionByItemId(data) {
-        console.log("selected document data obj111",data)
-        try {           
+        console.log("selected document data obj111", data)
+        try {
             let obj = {};
-           obj.itemId = data["Registration No."];
+            obj.itemId = data["Registration No."];
             ClsSms.Json_GetVersionByItemId(obj, function (sts, data) {
-                if (sts) {   
-                    if(data){
+                if (sts) {
+                    if (data) {
                         let js = JSON.parse(data);
                         let tbl = js.Table;
-                        if(tbl.length>0){
-                            console.log("Json_GetVersionByItemId",tbl)
+                        if (tbl.length > 0) {
+                            console.log("Json_GetVersionByItemId", tbl)
                             setGetVertion(tbl)
                         }
-                       
-                    }                
+
+                    }
 
                 }
 
@@ -225,27 +227,27 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
 
 
                                                 {
-                                                Object.keys(docForDetails).length > 0 && (!Object.keys(docForDetails).includes("RecentDate") )
-                                                ? Object.keys(docForDetails).map((itm, i) => {
-                                                    if (itm !== "StickyNotes") {
-                                                        return <TableRow
-                                                            key={i}
-                                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                        >
-                                                            <TableCell align="left" className='bold'>{itm}</TableCell>
-                                                            <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date", "Item Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
-                                                        </TableRow>
-                                                    }
-                                                }): Object.keys(docForDetails).map((itm, i) => {
-                                                        return <TableRow
-                                                            key={i}
-                                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                        >
-                                                            <TableCell align="left" className='bold'>{itm}</TableCell>
-                                                            <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["RecentDate"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
-                                                        </TableRow>
-                                                })
-                                            }
+                                                    Object.keys(docForDetails).length > 0 && (!Object.keys(docForDetails).includes("RecentDate"))
+                                                        ? Object.keys(docForDetails).map((itm, i) => {
+                                                            if (itm !== "StickyNotes") {
+                                                                return <TableRow
+                                                                    key={i}
+                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                >
+                                                                    <TableCell align="left" className='bold'>{itm}</TableCell>
+                                                                    <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date", "Item Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
+                                                                </TableRow>
+                                                            }
+                                                        }) : Object.keys(docForDetails).map((itm, i) => {
+                                                            return <TableRow
+                                                                key={i}
+                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                            >
+                                                                <TableCell align="left" className='bold'>{itm}</TableCell>
+                                                                <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["RecentDate"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell>
+                                                            </TableRow>
+                                                        })
+                                                }
 
                                             </TableBody>
                                         </Table>
@@ -264,38 +266,31 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                 <AccordionDetails>
                                     <Box className='table-responsive'>
 
-                                    {getVertion.length>0 ? getVertion.map((item,index) => {
+                                        {getVertion.length > 0 ? getVertion.map((item, index) => {
                                             return <>
-                                            <Box className="file-uploads" key={index}>
-                                                <label className="file-uploads-label file-uploads-document">
-                                                    <Box className="d-flex align-items-center">
-                                                        <DescriptionIcon
-                                                            sx={{
-                                                                fontSize: 32,
-                                                            }}
-                                                            className='me-2'
-                                                        />
-                                                        <Box className="upload-content pe-3">
-                                                            <Typography variant="h4" >
-                                                            Version No {item.VersionNo} 
-                                                            </Typography>
-                                                            <Typography variant="body1">
-                                                            {moment(item["VDate"]).format("DD/MM/YYYY HH:mm:ss")} | Updated by {item.UserName.toUpperCase()}
-                                                            </Typography>
+                                                <Box className="file-uploads" key={index}>
+                                                    <label className="file-uploads-label file-uploads-document">
+                                                        <Box className="d-flex align-items-center">
+                                                            <div className='img-format'>
+                                                                <img src={Fileformat} />
+                                                            </div>
+                                                            <Box className="upload-content pe-3">
+                                                                <Typography variant="h4" >
+                                                                    Version No {item.VersionNo}
+                                                                </Typography>
+                                                                <Typography variant="body1">
+                                                                    {moment(item["VDate"]).format("DD/MM/YYYY HH:mm:ss")} | Updated by {item.UserName.toUpperCase()}
+                                                                </Typography>
+                                                            </Box>
                                                         </Box>
-                                                    </Box>
-                                                </label>
-                                            </Box>
+                                                    </label>
+                                                </Box>
                                             </>
-                                        }):""}
-
-
+                                        }) : ""}
                                     </Box>
                                 </AccordionDetails>
                             </Accordion>
                             {/* end */}
-
-
 
                             <Accordion onClick={() => Json_getAssociatedTaskListByDocumentId(docForDetails)} className='accordian-box' expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
                                 <AccordionSummary
@@ -328,7 +323,6 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                 <AccordionDetails>
 
                                     <Activity getAudit={getAudit}></Activity>
-
 
                                     {/* {Array(5).fill("").map(() => {
                                         return <> */}

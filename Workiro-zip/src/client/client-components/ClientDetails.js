@@ -40,6 +40,7 @@ import UploadDocForClient from './UploadDocForClient';
 import CustomLoader from '../../components/CustomLoader';
 import { useDispatch } from "react-redux";
 import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
+import Fileformat from '../../images/files-icon/pdf.png';
 
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");

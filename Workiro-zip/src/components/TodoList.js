@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef,useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, TextField, Autocomplete, ToggleButton, ToggleButtonGroup, FormControl, Select, InputLabel, } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import user from "../images/user.jpg";
@@ -12,11 +12,11 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import moment from 'moment';
 import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; 
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CustomLoader from './CustomLoader';
 import * as XLSX from 'xlsx';
- import {Workbook} from 'exceljs';
- import saveAs from "file-saver";
+import { Workbook } from 'exceljs';
+import saveAs from "file-saver";
 // import { data } from 'jquery';
 import MergeIcon from '@mui/icons-material/Merge';
 import AttachEmailIcon from '@mui/icons-material/AttachEmail';
@@ -202,10 +202,10 @@ function TodoList() {
                         console.log("Json_CRM_GetOutlookTask111", json);
                         let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
                         console.log("resultoutlook", result);
-                        if(result && result.length > 0){
+                        if (result && result.length > 0) {
                             setExporttoExcel(result);
                             exportTaskData = [...result];
-                            
+
                         }
                         const formattedTasks = result.map((task) => {
                             let timestamp;
@@ -789,18 +789,43 @@ function TodoList() {
     ]);
   });
 
-  // Set column widths to add space between columns (in pixels)
-  worksheet.columns.forEach(column => {
-    column.width = 30; // Adjust as needed
-  });
+        // Apply bold formatting to header row
+        headerRow.eachCell((cell, colNumber) => {
+            cell.font = { bold: true };
+        });
+
+        // Add data rows
+        data.forEach((item, index) => {
+            let timestamp;
+            let date;
+            if (item["EndDateTime"]) {
+                timestamp = parseInt(item["EndDateTime"].slice(6, -2));
+                date = startFormattingDate(timestamp);
+            } else {
+                date = '';
+            }
+            worksheet.addRow([
+                item?.Source,
+                item?.Subject,
+                item["Forwarded By"],
+                date,
+                item?.Client,
+                item?.Status
+            ]);
+        });
+
+        // Set column widths to add space between columns (in pixels)
+        worksheet.columns.forEach(column => {
+            column.width = 30; // Adjust as needed
+        });
 
         workbook.xlsx.writeBuffer().then(function (buffer) {
-          saveAs(
-            new Blob([buffer], { type: "application/octet-stream" }),
-            "dataGrid.xlsx"
-          );
+            saveAs(
+                new Blob([buffer], { type: "application/octet-stream" }),
+                "dataGrid.xlsx"
+            );
         });
-      };
+    };
 
       const ExportData = useCallback(() => {
           console.log(filterExportData,"11exportData",exportTaskData);
@@ -888,7 +913,7 @@ function TodoList() {
                                         value={searchInput}
                                     />
 
-                                    { searchInput !== "" && <span onClick={() => {
+                                    {searchInput !== "" && <span onClick={() => {
                                         handleFilterDeletion("Subject");
                                         setIsSearch(false);
                                         setSearchInput("");
@@ -896,7 +921,7 @@ function TodoList() {
                                         className='btn-clear'
                                     >
                                         <ClearIcon />
-                                    </span> }
+                                    </span>}
 
                                 </AutocompleteRoot>
 
@@ -1109,18 +1134,18 @@ function TodoList() {
                         </FormControl>
 
                         <ToggleButtonGroup className='ms-3' size='small'>
-                            <ToggleButton value="left" aria-label="left aligned"   onClick={handleMenuOpen}>
+                            <ToggleButton value="left" aria-label="left aligned" onClick={handleMenuOpen}>
                                 <DownloadIcon />
                             </ToggleButton>
                             <Menu
-                anchorEl={anchorElDown}
-                open={Boolean(anchorElDown)}
-                onClose={handleMenuClose}
-            >
-                <MenuItem onClick={ExportData}><InsertDriveFileIcon />  Export to Excel</MenuItem>
-                
-                
-            </Menu>
+                                anchorEl={anchorElDown}
+                                open={Boolean(anchorElDown)}
+                                onClose={handleMenuClose}
+                            >
+                                <MenuItem onClick={ExportData}><InsertDriveFileIcon />  Export to Excel</MenuItem>
+
+
+                            </Menu>
                         </ToggleButtonGroup>
 
                     </Box>
@@ -1150,6 +1175,8 @@ function TodoList() {
                                                                 color: "secondary",
                                                             },
                                                         }}
+                                                        size='small'
+
                                                     />
 
                                                     <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> {item.Source}</Typography>
@@ -1247,6 +1274,7 @@ function TodoList() {
                                                         color: "secondary",
                                                     },
                                                 }}
+                                                size='small'
                                             />
 
                                             <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> {item.Source}</Typography>
