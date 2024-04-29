@@ -56,6 +56,7 @@ function AddContacts({ addContactData,contactDetails}) {
   const [clientNames, setclientNames] = useState("");
   const [clientIddata, setClientIddata] = useState("");
   const [ImportContact, setImportContact] = useState([]);
+  const [ContactUDFEdit, setContactUDFEdit] = useState([]);
   const [contactlistdata, setContactlistdata] = useState([]);
   const [bussiness, setBussiness] = useState([]); // State to hold folders data
   const [defaultClient, setdefaultClient] = useState(null);
@@ -124,8 +125,8 @@ function AddContacts({ addContactData,contactDetails}) {
       password: password,
       ProjectId: folderId,
       // ClientId: localStorage.getItem("origiNator") ? localStorage.getItem("origiNator") : userContactDetails.ReferenceID,
-      ClientId: clientIddata ? clientIddata : "",
-      ContactId: "-1",
+      ClientId: (contactDetails && contactDetails.length > 0 ) ? contactDetails[0]?.OriginatorNo ? contactDetails[0]?.OriginatorNo : "" : "",
+      ContactId: (contactDetails && contactDetails.length > 0 ) ? contactDetails[0]?.ContactNo ? contactDetails[0]?.ContactNo : "-1" : "-1",
     };
     try {
       Cls.Json_GetCRMContactUDFValues(obj, (sts, data) => {
@@ -157,6 +158,7 @@ function AddContacts({ addContactData,contactDetails}) {
             console.log("Json_GetClientCardDetails", json);
             //setClientDetails(json);
             setCompanyDetails(json.Table1);
+            setContactUDFEdit(json.Table5);
           }
         }
       });
@@ -929,7 +931,9 @@ function AddContacts({ addContactData,contactDetails}) {
                 <h2 className="font-20 mb-3 text-black">UDF Details</h2>
                 <ContactUDF
                   data={clientDetails}
+                  contactDetails={contactDetails}
                   setDataFromChild={setDataFromChild}
+                  ContactUDFEdit={ContactUDFEdit}
                 ></ContactUDF>
               </Box>
               {addContactData && addContactData=={} ? (
