@@ -626,8 +626,6 @@ export default function DocumentList({ clientId }) {
 
             {isLoading ? <CustomLoader /> : <>
 
-
-
                 <div style={{ top: globalSearchDocs.length > 0 && "85px", right: globalSearchDocs.length > 0 && "20px" }} className='main-client-details-filter'>
                     <Button aria-describedby={id} variant="" className='min-width-auto btn-blue px-0' onClick={handleClick}>
                         <TuneIcon />

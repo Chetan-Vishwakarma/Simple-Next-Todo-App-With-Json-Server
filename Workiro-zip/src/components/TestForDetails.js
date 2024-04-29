@@ -335,7 +335,7 @@ function TestForDetails() {
 
     return (
         <div style={{ top: globalSearchDocs && globalSearchDocs.length > 0 && "85px", right: globalSearchDocs && globalSearchDocs.length > 0 && "20px" }} className=''>
-            <Button aria-describedby={id} variant="" className='min-width-auto btn-blue px-0' onClick={handleClick}>
+            <Button aria-describedby={id} variant="" className='min-width-auto btn-blu px-0' size='small' onClick={handleClick}>
                 <TuneIcon />
             </Button>
             <Popover
@@ -354,7 +354,7 @@ function TestForDetails() {
 
                     <Box className='mb-0'>
 
-                        <Box className="input-search ms-2 me-3">
+                        <Box className="input-search">
                             <TextField name="Description" onChange={(e) => handleInputChange(e)} id="outlined-basic" placeholder='Description...' size="small" variant="outlined" className='ps-0' />
                             <span className="material-symbols-outlined search-icon">search</span>
                         </Box>
