@@ -95,7 +95,6 @@ function TestForDetails() {
 
     const [isClientField, setIsClientField] = useState(false);
     const [isDocIdField, setIsDocIdField] = useState(false);
-    const [isDocDateShow, setIsDocDateShow] = useState(false);
     const [documentId, setDocumentId] = useState("");
 
     const [documentData, setDocumentData] = useState({
@@ -110,7 +109,7 @@ function TestForDetails() {
         ProjectId: folderId,
         agrno: agrno,
         password: password,
-        sectionId: "-1",
+        sectionId: "",
         udflist: [],
         udfvalueList: []
     });
@@ -147,9 +146,6 @@ function TestForDetails() {
         //     let endDate = formatDatePickerDate(end._d);
         //     setFilterCriteria({ ...filterCriteria, "Item Date": [startDate, endDate] });
         // }
-        let formated_start_date = format_YYYY_MM_DD(start._d);
-        let formated_end_date = format_YYYY_MM_DD(end._d);
-        setDocumentData({ ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date });
         setState({ start, end });
     };
 
@@ -269,7 +265,7 @@ function TestForDetails() {
                                 ProjectId: folderId,
                                 agrno: agrno,
                                 password: password,
-                                sectionId: "-1",
+                                sectionId: "",
                                 udflist: [],
                                 udfvalueList: []
                             });
@@ -331,7 +327,7 @@ function TestForDetails() {
             ProjectId: folderId,
             agrno: agrno,
             password: password,
-            sectionId: "-1",
+            sectionId: "",
             udflist: [],
             udfvalueList: []
         });
@@ -339,7 +335,7 @@ function TestForDetails() {
 
     return (
         <div style={{ top: globalSearchDocs && globalSearchDocs.length > 0 && "85px", right: globalSearchDocs && globalSearchDocs.length > 0 && "20px" }} className=''>
-            <Button aria-describedby={id} variant="" className='min-width-auto btn-blu px-0' size='small' onClick={handleClick}>
+            <Button aria-describedby={id} variant="" className='min-width-auto btn-blu px-2' size='small' onClick={handleClick}>
                 <TuneIcon />
             </Button>
             <Popover
@@ -365,7 +361,7 @@ function TestForDetails() {
 
                         {/* sadik */}
                         <Box sx={{ m: 1 }} className='pt-2'>
-                            {isDocDateShow?<DateRangePicker
+                            <DateRangePicker
                                 initialSettings={{
                                     startDate: start.toDate(),
                                     endDate: end.toDate(),
@@ -420,7 +416,7 @@ function TestForDetails() {
                                 <i className="fa fa-calendar"></i>&nbsp;
                                 <span>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
                             </div> */}
-                            </DateRangePicker>:<Button size="small" onClick={()=>setIsDocDateShow(true)}>Document Date</Button>}
+                            </DateRangePicker>
                         </Box>
 
                         <hr className='mt-1' />
@@ -468,7 +464,7 @@ function TestForDetails() {
                                         className='custom-dropdown'
                                     >
 
-                                        <MenuItem value="-1" style={{ display: "none" }}>
+                                        <MenuItem value="" style={{ display: "none" }}>
                                             Sections
                                         </MenuItem>
                                         <MenuItem value="Section" >00. Clear Filter</MenuItem>
@@ -589,15 +585,13 @@ function TestForDetails() {
                             </FormControl>
                         </Box>
 
-                        <Button variant="contained" size="small" onClick={() => {
-                            let obj = {...documentData};
-                            if(isDocDateShow){
-                                let formated_start_date = format_YYYY_MM_DD(start._d);
-                                let formated_end_date = format_YYYY_MM_DD(end._d);
+                        <Button disabled={documentData.ClientId && documentData.Description && documentData.ProjectId && documentData.sectionId ? false : true} variant="contained" size="small" onClick={() => {
 
-                                obj = { ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date };
-                                setDocumentData({ ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date });
-                            }
+                            let formated_start_date = format_YYYY_MM_DD(start._d);
+                            let formated_end_date = format_YYYY_MM_DD(end._d);
+
+                            let obj = { ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date };
+                            setDocumentData({ ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date });
                             Json_AdvanceSearchDoc(obj);
 
                         }}>
