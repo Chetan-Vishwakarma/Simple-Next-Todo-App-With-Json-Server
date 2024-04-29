@@ -615,6 +615,7 @@ function AddContacts({ addContactData,contactDetails}) {
   const [open, setOpen] = useState(false);
   const handleOptionClick = (item) => {
     console.log(item, "onSelectData");
+    setImportcontactdata("");
     setTxtValue(item);
     setOpen(false);
     setImportcontactdata(item);
@@ -947,16 +948,29 @@ function AddContacts({ addContactData,contactDetails}) {
  Add New Contact
 </Button>
               ):(
-                <Button
-                style={{ marginTop: "5px" }}
-                variant="contained"
-                // disabled={!clientData || !selectedFolderID}
-                disabled={!defaultclientData}
-                onClick={handleSubmit}
-                className="btn-blue-2"
-              >
-                Add New Contact
-              </Button>
+                contactDetails && contactDetails.length > 0 ? (
+                  <Button
+                    style={{ marginTop: "5px" }}
+                    variant="contained"
+                    // disabled={!clientData || !selectedFolderID}
+                    // disabled={!defaultclientData}
+                    // onClick={handleSubmit}
+                    className="btn-blue-2"
+                  >
+                    Update Contact
+                  </Button>
+                ) : (
+                  <Button
+                    style={{ marginTop: "5px" }}
+                    variant="contained"
+                    // disabled={!clientData || !selectedFolderID}
+                    disabled={!defaultclientData}
+                    onClick={handleSubmit}
+                    className="btn-blue-2"
+                  >
+                    Add New Contact
+                  </Button>
+                )
               )}
              
             </Box>
