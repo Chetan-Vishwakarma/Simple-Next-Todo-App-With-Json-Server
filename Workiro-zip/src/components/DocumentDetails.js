@@ -35,9 +35,11 @@ import TaskDetailModal from "./TaskDetailModal";
 import CreateNewModalTask from "./CreateNewModal";
 import { useDispatch } from "react-redux";
 import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux } from "../redux/reducers/counterSlice";
-import Fileformat from '../images/files-icon/pdf.png';
+
+
 
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import GetFileType from "./FileType";
 
 // sadik code start
 // function createData(document, details) {
@@ -519,55 +521,8 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     };
 
 
-   // Function to get file type icon based on row data
-const GetFileType = (row) => {
-    let rd = row.data; // Extracting data object from row
-console.log("file type",rd.Type)
-    let img; // Variable to hold the icon
-
-    // Checking the Type property of the data object
-    if (rd.Type === "pdf") {
-        // If Type is "pdf", assign PDF icon
-        img = (
-            <PictureAsPdfIcon
-                sx={{
-                    fontSize: 32,
-                }}
-                className='me-2 ms-0'
-            />
-        );
-    } 
-    else if (rd.Type === "excel") {
-        <img
-        src="https://icons8.com/icon/85417/microsoft-excel"
-        alt="Excel Icon"
-        style={{ width: 32, height: 32, marginRight: 8 }}
-    />
-    }
-    else if (rd.Type === "doc") {
-        <img
-        src="https://icons8.com/icon/10419/doc"
-        alt="Excel Icon"
-        style={{ width: 32, height: 32, marginRight: 8 }}
-    />
-    }
-    else if (rd.Type === "docx") {
-        <img
-        src="https://icons8.com/icon/10419/doc"
-        alt="Excel Icon"
-        style={{ width: 32, height: 32, marginRight: 8 }}
-    />
-    }
-    else if (rd.Type === "msg") {
-        <img
-        src="https://icons8.com/icon/10419/doc"
-        alt="Excel Icon"
-        style={{ width: 32, height: 32, marginRight: 8 }}
-    />
-    }
-
-    return img; // Returning the icon
-}
+    // Function to get file type icon based on row data
+    
 
 
     return (
@@ -621,7 +576,8 @@ console.log("file type",rd.Type)
                         // Set the groupIndex to 0 to enable grouping by this column
                         dataType="string"  // Set the data type to "string" for proper grouping
                         cellRender={(data) => {
-                            let fileType = GetFileType(data);
+                            let rd = data.data; 
+                          // console.log("file type11",data)
                             return <Box className="file-uploads">
                                 <label className="file-uploads-label file-uploads-document" onClick={(event) => {
                                     event.stopPropagation();
@@ -639,7 +595,7 @@ console.log("file type",rd.Type)
                                             <img src={Fileformat} />
                                         </div> */}
 
-                                        {fileType}
+                                        <GetFileType Type={rd.Type?rd.Type.toLowerCase():null}></GetFileType>
                                         <Box className="upload-content pe-3">
                                             {editingIndex === data.key ? <input
                                                 type="text"
@@ -838,7 +794,7 @@ console.log("file type",rd.Type)
                                                     <label className="file-uploads-label file-uploads-document">
                                                         <Box className="d-flex align-items-center">
                                                             <div className='img-format'>
-                                                                <img src={Fileformat} />
+                                                                {/* <img src={Fileformat} /> */}
                                                             </div>
                                                             <Box className="upload-content pe-3">
                                                                 <Typography variant="h4" >
