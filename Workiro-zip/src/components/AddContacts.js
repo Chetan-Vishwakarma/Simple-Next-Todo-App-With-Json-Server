@@ -315,7 +315,7 @@ function AddContacts({ addContactData,contactDetails}) {
         agrno: agrno,
         Email: Email,
         password: password,
-        ClientId: clientIddata ? clientIddata : -1,
+        ClientId: clientIddata ? clientIddata : (contactDetails && contactDetails.length > 0 ) ? contactDetails[0].OriginatorNo : "-1",
         projectid: folderId,
         ContactNo: contactNumber,
         fieldName: "BirthDate",
@@ -337,7 +337,7 @@ function AddContacts({ addContactData,contactDetails}) {
         agrno: agrno,
         Email: Email,
         password: password,
-        ClientId: clientIddata ? clientIddata : -1,
+        ClientId: clientIddata ? clientIddata : (contactDetails && contactDetails.length > 0 ) ? contactDetails[0].OriginatorNo : "-1",
         projectid: folderId,
         ContactNo: contactNumber,
         fieldName: "imgPath",
@@ -456,6 +456,10 @@ function AddContacts({ addContactData,contactDetails}) {
           if (data) {
             if (data == "Success") {
               console.log(data, "successcontact");
+              if(contactDetails && contactDetails[0].ContactNo){
+                Json_UpdateContactField(contactDetails[0].ContactNo);
+              }
+             
               // if (userContactDetails.CreatePortal == true) {
               //   PortalUserAccountCreated_Json();
               // }
