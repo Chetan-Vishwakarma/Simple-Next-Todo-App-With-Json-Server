@@ -229,7 +229,7 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                                 {
                                                     Object.keys(docForDetails).length > 0 && (!Object.keys(docForDetails).includes("RecentDate"))
                                                         ? Object.keys(docForDetails).map((itm, i) => {
-                                                            if (itm !== "StickyNotes") {
+                                                            if (["Registration No.", "Folder", "Client", "Section", "Received Date", "Item Date", "FileSize", "Notes", "Category", "Attach", "Type", "Version", "Received By", "Item ID"].includes(itm)) {
                                                                 return <TableRow
                                                                     key={i}
                                                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
