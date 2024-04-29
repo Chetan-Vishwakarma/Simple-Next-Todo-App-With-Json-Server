@@ -460,7 +460,27 @@ function NewTodoList() {
         })
     };
 
+
+    
+        useEffect(() => {
+          // Retrieve the CSS theme from local storage
+          const cssTheme = localStorage.getItem("cssTheme");
+      
+          // Set a default background color
+          document.documentElement.style.setProperty('--main-bg-color', '#d42027');
+      
+          // Check if a CSS theme is stored in local storage
+          if (cssTheme !== null && cssTheme !== "") {
+            // Apply the stored CSS theme
+            document.documentElement.style.setProperty('--main-bg-color', cssTheme);
+          }
+        }, []); // Empty dependency array to run the effect only once when the component mounts
+      
+
+
+
     const handleOpenBrower = (e, index) => {
+        
         handleCloseDocument(index);
         //setAnchorElDocumentList(null);
         console.log("document object", e);
