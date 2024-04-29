@@ -578,7 +578,7 @@ const handleRemoveOption = (optionToRemove) => {
         workbook.xlsx.writeBuffer().then(function (buffer) {
           saveAs(
             new Blob([buffer], { type: "application/octet-stream" }),
-            "dataGrid.xlsx"
+            `${selectedDocument.Client+"_Activity" ? selectedDocument.Client+"_Activity" : ""}.xlsx`
           );
         });
       };
