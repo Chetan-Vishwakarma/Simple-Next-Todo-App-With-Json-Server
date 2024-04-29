@@ -409,7 +409,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                     <Box className='check-todo'>
 
                                         <Badge badgeContent={4} color="primary">
-                                            <IconButton color="action" />
+                                            <IconButton color="primary" />
                                         </Badge>
 
                                         <Radio className={item.Priority === 1 ? 'text-red ' : item.Priority === 2 ? 'text-green' : 'text-grey'} checked
