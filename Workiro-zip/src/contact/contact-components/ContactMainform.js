@@ -20,6 +20,8 @@ const ContactMainform = React.memo(
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
     const [Dataset, setDataset] = useState("");
+    const [SetDefaultTitle, setSetDefaultTitle] = useState("");
+    const [SetDefaultRole, setSetDefaultRole] = useState("");
     const [errors, setErrors] = useState({});
     const [checkboxfeb, setCheckboxfeb] = useState(false);
     const [advancedSettingChecked, setAdvancedSettingChecked] = useState(false);
@@ -55,6 +57,17 @@ const ContactMainform = React.memo(
               setMangers(json.Table3);
               setRoles(json.Table4);
               //   setStatus(json.Table);
+                
+                  if(contactDetails && contactDetails.length > 0) {
+                    if(json && json.Table4.length > 0) {
+                      const defaultRole = json.Table4.find(
+                        (obj) => obj.RoleName == contactDetails[0].Role
+                      );
+                      console.log("filtercontactdataRole",defaultRole);
+                      setSetDefaultRole(defaultRole);
+                   }
+                }
+              
 
               let defaultUser1 = json.Table3.find(
                 (manager) => manager.UserId == localStorage.getItem("UserId")
@@ -163,6 +176,7 @@ const ContactMainform = React.memo(
         data = { ...data, ["Title"]: value.label };
         console.log(data, "onChangetitle");
         setContactDetails(data);
+        setSetDefaultTitle(value);
       } else {
       }
     };
@@ -173,6 +187,7 @@ const ContactMainform = React.memo(
         data = { ...data, ["RolesData"]: value.RoleName };
         console.log(data, "onChangeRoles");
         setContactDetails(data);
+        setSetDefaultRole(value);
       } else {
       }
     };
@@ -321,6 +336,14 @@ const ContactMainform = React.memo(
           };
           setContactDetails(data);
       }
+      if(contactDetails && contactDetails.length > 0) {
+        const filtercontact = titleData.find(
+          (obj) => obj.label == contactDetails[0].Title
+        );
+       
+        setSetDefaultTitle(filtercontact);
+      }
+      
   }, [contact, Importcontactdata]);
   
     return (
@@ -332,7 +355,7 @@ const ContactMainform = React.memo(
               <Autocomplete
                 options={titleData}
                 key={`uniques-manager`}
-                // value={defaultUser || null}
+                value={SetDefaultTitle || null}
                 onChange={onChangetitle}
                 clearOnEscape
                 renderInput={(params) => (
@@ -379,7 +402,7 @@ const ContactMainform = React.memo(
                 key={`uniques-roles`}
                 options={Roles}
                 getOptionLabel={(option) => option.RoleName}
-                // value={defaultUser || null}
+                value={SetDefaultRole || null}
                 onChange={onChangeRoles}
                 clearOnEscape
                 renderInput={(params) => (

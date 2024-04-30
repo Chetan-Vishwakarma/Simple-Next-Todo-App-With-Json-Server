@@ -265,7 +265,7 @@ function AddContacts({ addContactData,contactDetails}) {
       agrno: agrno,
       Email: Email,
       password: password,
-      OriginatorNo: clientIddata ? clientIddata : "",
+      OriginatorNo: clientIddata ? clientIddata : (contactDetails && contactDetails.length > 0 ) ? contactDetails[0].OriginatorNo : "-1",
       ProjectId: folderId ? folderId : -1,
       ClientUDFString: "",
       ContactUDFString: result ? result : "",
@@ -458,6 +458,7 @@ function AddContacts({ addContactData,contactDetails}) {
               console.log(data, "successcontact");
               if(contactDetails && contactDetails[0].ContactNo){
                 Json_UpdateContactField(contactDetails[0].ContactNo);
+                saveUDF(contactDetails[0].ContactNo);
               }
               // if (userContactDetails.CreatePortal == true) {
               //   console.log("UpdatePortal");
