@@ -270,7 +270,7 @@ const ContactMainform = React.memo(
               ["LastName"]: contact.LastName,
               ["ReferenceName"]: "",
               ["MainContact"]: contact.MainContact,
-              ["Inactive"]: contact.CActive,
+              ["Inactive"]: contact.CActive ==="Yes" ? false : true,
               ["GreetingName"]: contact.Greeting,
               ["EmailName"]: contact.EMailId,
               ["MainUserId"]: -1,
