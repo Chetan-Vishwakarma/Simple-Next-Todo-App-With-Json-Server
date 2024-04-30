@@ -444,7 +444,7 @@ const ContactMainform = React.memo(
               label="In Active"
             />
 
-{!userContactDetails.CreatePortal==true && (
+{!(contactDetails && contactDetails.length>0 && contactDetails[0]["Portal User"]) && (
   <FormControlLabel
     key={`createportal`}
     control={
