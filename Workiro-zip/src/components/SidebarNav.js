@@ -57,7 +57,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import ToggleButton from '@mui/material/ToggleButton';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
-import TestForDetails from './TestForDetails';
+import AdvanceSearch from './AdvanceSearch';
 
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -539,7 +539,7 @@ export default function SidebarNav() {
                   </FormControl> */}
 
                   <div>
-                    <TestForDetails folderList={folders}/>
+                    <AdvanceSearch folderList={folders}/>
                   </div>
 
                   {/* <div>

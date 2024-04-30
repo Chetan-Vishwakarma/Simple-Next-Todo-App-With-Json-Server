@@ -56,7 +56,7 @@ let password = localStorage.getItem("Password");
 let Email = localStorage.getItem("Email");
 let folderId = localStorage.getItem("FolderId");
 
-function TestForDetails() {
+function AdvanceSearch() {
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -109,7 +109,7 @@ function TestForDetails() {
         ProjectId: folderId,
         agrno: agrno,
         password: password,
-        sectionId: "",
+        sectionId: "-1",
         udflist: [],
         udfvalueList: []
     });
@@ -265,7 +265,7 @@ function TestForDetails() {
                                 ProjectId: folderId,
                                 agrno: agrno,
                                 password: password,
-                                sectionId: "",
+                                sectionId: "-1",
                                 udflist: [],
                                 udfvalueList: []
                             });
@@ -327,7 +327,7 @@ function TestForDetails() {
             ProjectId: folderId,
             agrno: agrno,
             password: password,
-            sectionId: "",
+            sectionId: "-1",
             udflist: [],
             udfvalueList: []
         });
@@ -585,7 +585,7 @@ function TestForDetails() {
                             </FormControl>
                         </Box>
 
-                        <Button disabled={documentData.ClientId && documentData.Description && documentData.ProjectId && documentData.sectionId ? false : true} variant="contained" size="small" onClick={() => {
+                        <Button variant="contained" size="small" onClick={() => {
 
                             let formated_start_date = format_YYYY_MM_DD(start._d);
                             let formated_end_date = format_YYYY_MM_DD(end._d);
@@ -725,4 +725,4 @@ function TestForDetails() {
     )
 }
 
-export default TestForDetails
+export default AdvanceSearch
