@@ -459,7 +459,10 @@ function AddContacts({ addContactData,contactDetails}) {
               if(contactDetails && contactDetails[0].ContactNo){
                 Json_UpdateContactField(contactDetails[0].ContactNo);
               }
-             
+              // if (userContactDetails.CreatePortal == true) {
+              //   console.log("UpdatePortal");
+              //   //PortalUserAccountCreated_Json();
+              // }
               // if (userContactDetails.CreatePortal == true) {
               //   PortalUserAccountCreated_Json();
               // }
@@ -995,6 +998,7 @@ function AddContacts({ addContactData,contactDetails}) {
                       setContactDetails={setContactDetails}
                       Importcontactdata={Importcontactdata}
                       setImportcontactdata={setImportcontactdata}
+                      contactDetails={contactDetails}
                     />
                   </Grid>
                 </Grid>

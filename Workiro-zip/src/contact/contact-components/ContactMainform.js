@@ -13,8 +13,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { toast } from 'react-toastify';
 const ContactMainform = React.memo(
-  ({ setContact,contact, clientNames, userContactDetails, setContactDetails, contactlistdata,Importcontactdata,setImportcontactdata }) => {
-    console.log(contactlistdata, "contactlistdata",Importcontactdata);
+  ({ setContact,contact, clientNames, userContactDetails, setContactDetails, contactlistdata,Importcontactdata,setImportcontactdata,contactDetails }) => {
+    console.log(contactDetails, "contactlistdatasonam1",Importcontactdata);
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -444,17 +444,20 @@ const ContactMainform = React.memo(
               label="In Active"
             />
 
-            <FormControlLabel
-              key={`createportal`}
-              control={
-                <Switch
-                  name="CreatePortal"
-                  checked={userContactDetails.CreatePortal}
-                  onChange={handleAdvancedCreatePortal}
-                />
-              }
-              label="Create Portal"
-            />
+{!userContactDetails.CreatePortal==true && (
+  <FormControlLabel
+    key={`createportal`}
+    control={
+      <Switch
+        name="CreatePortal"
+        checked={userContactDetails.CreatePortal}
+        onChange={handleAdvancedCreatePortal}
+      />
+    }
+    label="Create Portal"
+  />
+)}
+
 
             <FormControlLabel
               key={`maincheckbox`}
