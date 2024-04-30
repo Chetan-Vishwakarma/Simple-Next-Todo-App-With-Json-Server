@@ -636,7 +636,8 @@ function Client() {
         setIsSearch(false);
     }
     const handleContactNavigattion = (originator_no, contact_no) => {
-        navigate('/dashboard/ContactDetails', {
+        // navigate(`/dashboard/ContactDetails?originatorNo=${originator_no}&contactNo=${contact_no}`);
+        navigate(`/dashboard/ContactDetails?originatorNo=${originator_no}&contactNo=${contact_no}`, {
             state: {
                 agrno: agrno,
                 Email: Email,
