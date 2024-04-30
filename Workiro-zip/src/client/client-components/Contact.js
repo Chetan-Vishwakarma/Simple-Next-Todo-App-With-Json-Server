@@ -161,7 +161,7 @@ function Contact({ clientId,clientName }) {
   }, [])
 
   const handleRowDoubleClick = (e) => {
-    navigate('/dashboard/ContactDetails', {
+    navigate(`/dashboard/ContactDetails?originatorNo=${e.data.OriginatorNo}&contactNo=${e.data.ContactNo}`, {
       state: {
         agrno: agrno,
         Email: Email,
