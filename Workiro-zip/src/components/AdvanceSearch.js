@@ -23,24 +23,18 @@ let folderId = localStorage.getItem("FolderId");
 function AdvanceSearch() {
     const location = useLocation();
     const navigate = useNavigate();
-
-    const { globalSearchDocs, strGlobal } = location.state ? location.state : { globalSearchDocs: [], strGlobal: "" };
+    const { globalSearchDocs } = location.state ? location.state : { globalSearchDocs: [], strGlobal: "" };
     const baseUrlSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
     let ClsSms = new CommanCLS(baseUrlSms, agrno, Email, password);
-    
-
     const [sections, setSections] = useState([]);
     const [folders, setFolders] = useState([]);
-
     const [clientList, setClientList] = useState([]);
     const [selectedClient, setSelectedClient] = useState({});
-
     const [isClientField, setIsClientField] = useState(false);
     const [isDocIdField, setIsDocIdField] = useState(false);
     const [documentId, setDocumentId] = useState("");
-
     const [documentData, setDocumentData] = useState({
         ClientId: "",
         Description: "",
@@ -57,27 +51,21 @@ function AdvanceSearch() {
         udflist: [],
         udfvalueList: []
     });
-
-
     // for date datepicker
     const [state, setState] = useState({
         start: moment().subtract(29, 'days'),
         end: moment(),
     });
     const { start, end } = state;
-
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
-
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
-
     const handleClose = () => {
         setAnchorEl(null);
     };
-
 
     const label =
         start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY');
@@ -85,7 +73,6 @@ function AdvanceSearch() {
     const handleCallback = (start, end) => {
         setState({ start, end });
     };
-
     const Json_GetFolderData = () => {
         let obj = {
             ClientId: "", Email: Email, ProjectId: folderId ? folderId : localStorage.getItem("FolderId"), SectionId: "-1", agrno: agrno, password: password
@@ -148,7 +135,6 @@ function AdvanceSearch() {
                         const clients_data = json?.Table;
                         let client_list = clients_data.filter((v, i, a) => a.findIndex(v2 => (v2["Company Name"] === v["Company Name"])) === i);
                         setClientList(client_list);
-
                         // console.log("gjjflsdjuroiu",clients_data);
                     }
                 }
@@ -218,7 +204,6 @@ function AdvanceSearch() {
             console.log("Error while calling Json_AdvanceSearchDoc", err);
         }
     }
-
     const Json_SearchDocById = () => {
         let obj = {
             agrno: agrno,
@@ -232,7 +217,6 @@ function AdvanceSearch() {
                     if (data) {
                         let json = JSON.parse(data);
                         // console.log("Json_SearchDocById", json[""]);
-
                         navigate("/dashboard/DocumentList", { state: { globalSearchDocs: json[""], strGlobal: documentData.Description } });
                         handleClose();
                         setDocumentId("");
@@ -245,7 +229,6 @@ function AdvanceSearch() {
             console.log("Error while calling Json_SearchDocById", err);
         }
     }
-
     const handleDocIdField = () => {
         setIsDocIdField(true);
         setDocumentData({
@@ -265,7 +248,6 @@ function AdvanceSearch() {
             udfvalueList: []
         });
     }
-
     return (
         <div style={{ top: globalSearchDocs && globalSearchDocs.length > 0 && "85px", right: globalSearchDocs && globalSearchDocs.length > 0 && "20px" }} className=''>
             <Button aria-describedby={id} variant="" className='min-width-auto btn-blu px-2' size='small' onClick={handleClick}>
@@ -284,15 +266,11 @@ function AdvanceSearch() {
                 className='p-5'
             >
                 <Box className='client-details-filter p-2'>
-
                     <Box className='mb-0'>
-
                         <Box className="input-search">
                             <TextField name="Description" onChange={(e) => handleInputChange(e)} id="outlined-basic" placeholder='Description...' size="small" variant="outlined" className='ps-0' />
                             <span className="material-symbols-outlined search-icon">search</span>
                         </Box>
-
-                        {/* sadik */}
                         <Box sx={{ m: 1 }} className='pt-2'>
                             <DateRangePicker
                                 initialSettings={{
@@ -328,7 +306,6 @@ function AdvanceSearch() {
                                 }}
                                 onCallback={handleCallback}
                             >
-
                                 <div className='pointer d-flex align-items-center custom-datepicker-bordered' id="reportrange">
                                     <i className="fa fa-calendar"></i>
                                     <CalendarMonthIcon className='me-2 text-red' />
@@ -336,15 +313,11 @@ function AdvanceSearch() {
                                 </div>
                             </DateRangePicker>
                         </Box>
-
                         <hr className='mt-1' />
-
                         <Typography variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
                             Filter By
                         </Typography>
-
                         <Box className='d-flex'>
-
                             <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 mb-0'>
                                 <BootstrapTooltip title="Sections" arrow
                                     placement="bottom-start"
@@ -374,8 +347,7 @@ function AdvanceSearch() {
                                         inputProps={{ 'aria-label': 'Without label' }}
                                         className='custom-dropdown'
                                     >
-
-                                        <MenuItem value="" style={{ display: "none" }}>
+                                        <MenuItem value="-1" style={{ display: "none" }}>
                                             Sections
                                         </MenuItem>
                                         <MenuItem value="Section" >00. Clear Filter</MenuItem>
@@ -385,7 +357,6 @@ function AdvanceSearch() {
                                     </Select>
                                 </BootstrapTooltip>
                             </FormControl>
-
                             <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 mb-0'>
                                 <BootstrapTooltip title="Folders" arrow
                                     placement="bottom-start"
