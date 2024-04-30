@@ -186,6 +186,7 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
           case "Date":
             if (data && data.UdfValue) {
                 let datatest = data.UdfValue;
+              console.log(datatest,"datasetfirst");
                 const defaultDateObject = dayjs(datatest, "MMM D YYYY h:mma");
 // const formattedDefaultDate = dayjs(defaultDateObject).format("MM/DD/YYYY");
 const formattedDefaultDate = defaultDateObject.format("YYYY-MM-DD");

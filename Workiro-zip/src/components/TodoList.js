@@ -770,32 +770,6 @@ function TodoList() {
         headerRow.eachCell((cell, colNumber) => {
             cell.font = { bold: true };
         });
-
-        // Add data rows
-        data.forEach((item, index) => {
-            let timestamp;
-            let date;
-            // if (item && item["EndDateTime"]) {
-            //   timestamp = parseInt(item["EndDateTime"].slice(6, -2));
-            //   date = startFormattingDate(timestamp);
-            // } else {
-            //   date = '';
-            // }
-            worksheet.addRow([
-                item?.Source,
-                item?.Subject,
-                item["Forwarded By"],
-                item["EndDateTime"],
-                item?.Client,
-                item?.Status
-            ]);
-        });
-
-        // Apply bold formatting to header row
-        headerRow.eachCell((cell, colNumber) => {
-            cell.font = { bold: true };
-        });
-
         // Add data rows
         data.forEach((item, index) => {
             // let timestamp;

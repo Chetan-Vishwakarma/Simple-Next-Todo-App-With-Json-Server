@@ -432,7 +432,7 @@ const ContactMainform = React.memo(
                 <DatePicker
                   // dateFormat="DD/MM/YYYY"
                   // value={currentDate}
-
+                  
                   onChange={(e) => handleInputOnDateChage(e)}
                   label="Birth date"
                 />
