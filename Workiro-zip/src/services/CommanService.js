@@ -290,6 +290,19 @@ getFileName(x){
             }
         })
     }
+
+    DeleteTasksAttachment_useCreateTask(obj, callBack) {
+        super.CreateNewServiceParamObject("DeleteTasksAttachment", obj, false);
+        super.CallNewService("DeleteTasksAttachment", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+
     Json_UpdateTaskField(obj, callBack) {
         super.CreateNewServiceParamObject("Json_UpdateTaskField", obj, false);
         super.CallNewService("Json_UpdateTaskField", function (status, Data) {
