@@ -11,7 +11,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+import moment from 'moment';
 import { toast } from 'react-toastify';
+let datesend ="";
 const ContactMainform = React.memo(
   ({ setContact,contact, clientNames, userContactDetails, setContactDetails, contactlistdata,Importcontactdata,setImportcontactdata,contactDetails }) => {
     console.log(contactDetails, "contactlistdatasonam1",Importcontactdata);
@@ -22,6 +24,7 @@ const ContactMainform = React.memo(
     const [Dataset, setDataset] = useState("");
     const [SetDefaultTitle, setSetDefaultTitle] = useState("");
     const [SetDefaultRole, setSetDefaultRole] = useState("");
+    const [SetDefaultDate, setSetDefaultDate] = useState("");
     const [errors, setErrors] = useState({});
     const [checkboxfeb, setCheckboxfeb] = useState(false);
     const [advancedSettingChecked, setAdvancedSettingChecked] = useState(false);
@@ -266,6 +269,45 @@ const ContactMainform = React.memo(
       console.log(data, "dataOnchange", event);
       setContactDetails(data);
     };
+    
+function formatDate(dateString) {
+    // Extract milliseconds from the dateString
+    const milliseconds = parseInt(dateString.match(/-?\d+/)[0]);
+    
+    // Create a new Date object
+    const date = new Date(milliseconds);
+    
+    // Get the month, day, and year
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const year = date.getFullYear();
+
+    // Format the date as mm/dd/yyyy
+    const formattedDate = `${month}/${day}/${year}`;
+
+    return formattedDate;
+}
+const [defaultDate, setDefaultDate] = useState(() => {
+  // Extract timestamp from the date string
+  if(contactDetails && contactDetails.length > 0 && contactDetails[0]["Date Of Birth"]) {
+    const timestamp = parseInt(contactDetails[0]["Date Of Birth"].slice(6, -2));
+  
+    // Create a new Date object from the timestamp
+    const datetimestamp = new Date(timestamp);
+    
+    // Convert the Date object to dayjs
+    const defaultDateObject = dayjs(datetimestamp);
+    
+    // Check if the dayjs object is valid
+    if (defaultDateObject.isValid()) {
+        return defaultDateObject;
+    } else {
+        console.log("Invalid date.");
+        return null; // or any default value
+    }
+  }
+
+});
     useEffect(() => {
       setAgrNo(localStorage.getItem("agrno"));
       setPassword(localStorage.getItem("Password"));
@@ -342,10 +384,54 @@ const ContactMainform = React.memo(
         );
        
         setSetDefaultTitle(filtercontact);
+        // var date11 = new Date(contactDetails[0]["Date Of Birth"]);
+        // let momentdata = moment(contactDetails[0]["Date Of Birth"]).format("MM/DD/YYYY");
+        // console.log(momentdata,"momentdata",date11,"date11",formatDate(contactDetails[0]["Date Of Birth"]));
+        // if(contactDetails[0]["Date Of Birth"]){
+        //   let timestamp;
+        //   timestamp = parseInt(contactDetails[0]["Date Of Birth"].slice(6, -2));
+        //   const datetimestamp = new Date(timestamp);
+        //   console.log(datetimestamp,"323232323datetimestamp",timestamp);
+        //   if(datetimestamp){
+        //     const defaultDateObject = dayjs(datetimestamp, "DD-MM-YYYY");  
+        //     if (defaultDateObject.isValid()) {
+        //       console.log(defaultDateObject,"11datetimestamp"); 
+        //       datesend = defaultDateObject;
+        //       setSetDefaultDate(defaultDateObject);
+        //     } 
+        //   }
+        // }
+        if (contactDetails[0]["Date Of Birth"]) {
+          // Extract timestamp from the date string
+          const timestamp = parseInt(contactDetails[0]["Date Of Birth"].slice(6, -2));
+          
+          // Create a new Date object from the timestamp
+          const datetimestamp = new Date(timestamp);
+      
+          // Check if the Date object is valid
+          if (!isNaN(datetimestamp)) {
+              // Convert the Date object to dayjs
+              const defaultDateObject = dayjs(datetimestamp);
+              
+              // Check if the dayjs object is valid
+              if (defaultDateObject.isValid()) {
+                  console.log(defaultDateObject,"defaultDateObject"); // Output the default date object
+                  // Set the default date object
+                  setSetDefaultDate(defaultDateObject);
+              } else {
+                  console.log("Invalid date."); // Log an error message if the date is invalid
+              }
+          } else {
+              console.log("Invalid timestamp."); // Log an error message if the timestamp is invalid
+          }
+      }
+       
+       
+       
       }
       
   }, [contact, Importcontactdata]);
-  
+  console.log(SetDefaultDate,"SetDefaultDate")
     return (
       <div>
         {" "}
@@ -428,11 +514,13 @@ const ContactMainform = React.memo(
                   "DateRangePicker",
                 ]}
               >
-
+{console.log(SetDefaultDate,"SetDefaultDate",datesend)}
                 <DatePicker
-                  // dateFormat="DD/MM/YYYY"
+                 // dateFormat="MM/DD/YYYY"
                   // value={currentDate}
-                  
+                  // defaultValue={SetDefaultDate}
+                  dateFormat="MM/DD/YYYY"
+                  value={defaultDate}
                   onChange={(e) => handleInputOnDateChage(e)}
                   label="Birth date"
                 />

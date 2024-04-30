@@ -176,7 +176,8 @@ const ContactUDF = React.memo(({ data, setDataFromChild,contactDetails}) => {
             break;
           case "Date":
             if (data && data.UdfValue) {
-              const defaultDateObject = dayjs(data.UdfValue, "DD-MM-YYYY");     
+              const defaultDateObject = dayjs(data.UdfValue, "DD-MM-YYYY");  
+              console.log(defaultDateObject,"defaultDateObject");   
              // const formattedDefaultDate = defaultDateObject.format("YYYY-MM-DD");
 if (defaultDateObject.isValid()) {
  
