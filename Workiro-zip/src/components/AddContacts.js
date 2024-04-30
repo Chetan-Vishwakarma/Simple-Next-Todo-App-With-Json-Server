@@ -439,7 +439,7 @@ function AddContacts({ addContactData,contactDetails}) {
         emailupdate: userContactDetails.EmailName
           ? userContactDetails.EmailName
           : "",
-        CActive: userContactDetails.Inactive === true ? "Yes" : "No",
+        CActive: userContactDetails.Inactive === false ? "Yes" : "No",
         AssignedManager: userContactDetails.MainUserId
           ? userContactDetails.MainUserId
           : -1,
@@ -472,7 +472,7 @@ function AddContacts({ addContactData,contactDetails}) {
         }
       });
     } else {
-      let contactData = {
+      let contactDataAdd = {
         agrno: agrno,
         Email: Email,
         password: password,
@@ -512,10 +512,10 @@ function AddContacts({ addContactData,contactDetails}) {
           : "",
           Contactemail: userContactDetails.EmailName ? userContactDetails.EmailName : "",
         note: userContactDetails.Notes ? userContactDetails.Notes : "",
-        emailupdate: userContactDetails.EmailName
-          ? userContactDetails.EmailName
-          : "",
-        CActive: userContactDetails.Inactive === true ? "Yes" : "No",
+        // emailupdate: userContactDetails.EmailName
+        //   ? userContactDetails.EmailName
+        //   : "",
+        CActive: userContactDetails.Inactive === false ? "Yes" : "No",
         AssignedManager: userContactDetails.MainUserId
           ? userContactDetails.MainUserId
           : -1,
@@ -526,7 +526,7 @@ function AddContacts({ addContactData,contactDetails}) {
         Salutation: userContactDetails.Title ? userContactDetails.Title : "",
         accid: agrno,
       };
-      Cls.AddContact(contactData, (sts, data) => {
+      Cls.AddContact(contactDataAdd, (sts, data) => {
         if (sts) {
           if (data) {
             if (data == "Success") {
@@ -740,7 +740,7 @@ function AddContacts({ addContactData,contactDetails}) {
       ["LastName"]: item["Last Name"],
       ["ReferenceName"]: "",
       ["MainContact"]: item["Main Contact"],
-      ["Inactive"]: item.CActive,
+      ["Inactive"]: item.Active==="Yes" ? false : true,
       ["GreetingName"]: item.Greeting,
       ["EmailName"]: item["E-Mail"],
       ["MainUserId"]: -1,
