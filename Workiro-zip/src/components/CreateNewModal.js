@@ -106,9 +106,9 @@ const userId = localStorage.getItem("UserId");
 let addItemdata = [];
 function CreateNewModalTask({ ...props }) {
     const dispatch = useDispatch();
-    const reduxRefForTaskModal = useSelector((state=>state.counter.openTaskModal));
-    const reduxRefClientAndDoc = useSelector((state=>state.counter.clientAndDocDataForTaskModal));
-    const openDocumentModalByRedux = useSelector((state=>state.counter.openDocumentModalByRedux));
+    const reduxRefForTaskModal = useSelector((state => state.counter.openTaskModal));
+    const reduxRefClientAndDoc = useSelector((state => state.counter.clientAndDocDataForTaskModal));
+    const openDocumentModalByRedux = useSelector((state => state.counter.openDocumentModalByRedux));
 
     // const {
     //     documentDate = null,
@@ -229,6 +229,7 @@ function CreateNewModalTask({ ...props }) {
 
     const [currentDate, setCurrentDate] = useState(new Date()); // Initialize with the current date in "dd/mm/yyyy" format
     const [nextDate, setNextDate] = useState("");
+    const [nextDateclear, setNextDateClear] = useState(false);
     const [remiderDate, setRemiderDate] = useState("");
     const [expireDate, setExpireDate] = useState("");
 
@@ -302,31 +303,31 @@ function CreateNewModalTask({ ...props }) {
     //         return;
     //     }
     // },[reduxRefForTaskModal,reduxRefClientAndDoc]);
-    useEffect(()=>{
-        console.log("dfdksfoier",reduxRefForTaskModal);
-        if(reduxRefForTaskModal){
+    useEffect(() => {
+        console.log("dfdksfoier", reduxRefForTaskModal);
+        if (reduxRefForTaskModal) {
             setTaskType(reduxRefClientAndDoc.TaskType);
             setCreateNewFileObj(reduxRefClientAndDoc.createNewFileObj);
             setTxtClientData(reduxRefClientAndDoc.txtClientData);
             setTxtFolderData(reduxRefClientAndDoc.txtFolderData);
             setTxtSectionData(reduxRefClientAndDoc.txtSectionData);
             // console.log("djskfdjeiurwio",reduxRefClientAndDoc);
-            if(reduxRefForTaskModal==="CRM"){
+            if (reduxRefForTaskModal === "CRM") {
                 setOpenUploadDocument(false);
                 handleClickOpen("CRM");
-            }else if(reduxRefForTaskModal==="Portal"){
+            } else if (reduxRefForTaskModal === "Portal") {
                 handleClickOpen("Portal");
             }
         } else {
             handleClose();
         }
-    },[reduxRefForTaskModal]);
+    }, [reduxRefForTaskModal]);
 
-    useEffect(()=>{
+    useEffect(() => {
         setOpenUploadDocument(openDocumentModalByRedux);
-    },[openDocumentModalByRedux]);
+    }, [openDocumentModalByRedux]);
 
-    
+
 
 
     const handleClose = () => {
@@ -540,7 +541,7 @@ function CreateNewModalTask({ ...props }) {
 
 
         setTimeout(() => {
-            console.log("handalClickAddUser",addUser);
+            console.log("handalClickAddUser", addUser);
         }, 2000);
     };
 
@@ -853,6 +854,8 @@ function CreateNewModalTask({ ...props }) {
     const CurrentDateChange = (e) => {
         setCurrentDate(e);
         setNextDate("");
+        setNextDateClear(true);
+        console.log("get folder list112222", nextDate);
     }
 
     const [selectedDate, setSelectedDate] = useState(null); // State for selected date
@@ -860,7 +863,7 @@ function CreateNewModalTask({ ...props }) {
 
 
     useEffect(() => {
-        console.log("get folder list112222", selectedDate);
+        // console.log("get folder list112222", selectedDate);
         setSelectedDate(null); // Set the selected date to null to clear it
     }, [currentDate]);
 
@@ -1041,7 +1044,7 @@ function CreateNewModalTask({ ...props }) {
         try {
             // let myNewArr = [...selectedFilesFromBrower, ...selectedDocumentFile];
             // console.log("myNewArr", myNewArr)
-            if(filedata){
+            if (filedata) {
                 setPortalSelectDoc(filedata);
             }
             console.log("PrepareDocumentsForPublish_Json22", filedata);
@@ -1124,7 +1127,7 @@ function CreateNewModalTask({ ...props }) {
                         let path = window.atob(res.Message);
                         let index = path.lastIndexOf("\\");
                         let fileName = path.slice(index + 1);
-                        let o = { Path: path, FileName: fileName }
+                        let o = { Path: path, FileName: filedata.FileName }
 
                         setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
 
@@ -1288,7 +1291,7 @@ function CreateNewModalTask({ ...props }) {
             "ClientWeekDays": "1",
             "ClientWeekOfMonth": "1",
             "OwnerID": ownerID.toString(),
-            "AssignedToID": isaddUser?isaddUser:ownerID,
+            "AssignedToID": isaddUser ? isaddUser : ownerID,
             "AssociateWithID": textClientId,
             "FolderId": txtFolderId.toString(),
             "Subject": textSubject,
@@ -1311,7 +1314,7 @@ function CreateNewModalTask({ ...props }) {
             "Notes": "",
             "TaskSource": "CRM"
         }
-        console.log(selectedRows,"finalattStringsave data obj", attString);
+        console.log(selectedRows, "finalattStringsave data obj", attString);
         cls.Json_CRM_Task_Save(ooo, function (sts, data) {
             if (sts) {
                 if (data) {
@@ -1320,9 +1323,9 @@ function CreateNewModalTask({ ...props }) {
                     console.log("save task rerurn value", js);
 
                     if (js.Status === "success") {
-                       
+
                         setOwnerMessage(js.Message);
-                      
+
                         if (selectedRows && selectedRows.length > 0) {
                             selectedRows.forEach((item) => {
                                 addToWorkTable(item.ItemId, js.Message);
@@ -1335,10 +1338,10 @@ function CreateNewModalTask({ ...props }) {
                         setLoading(false);
                         toast.success("Created Task !");
                         // setMessageId(js.Message);
-                      
+
                         if (selectedDocumentFile && selectedDocumentFile.length > 0) {
                             selectedDocumentFile.map((item) => {
-                                addToWorkTable(item.DocId, js.Message,textSubject);
+                                addToWorkTable(item.DocId, js.Message, textSubject);
                             });
                             // addToWorkTable(selectedDocumentFile.map(obj => obj.DocId), js.Message,textSubject);
                             Json_CRM_TaskDMSAttachmentInsert(js.Message);
@@ -1356,7 +1359,12 @@ function CreateNewModalTask({ ...props }) {
                         // setOpen(false);
 
                         // setAttachmentPath([]);
-                        //setSelectedFiles([])
+                        //setSelectedFiles([])                       
+
+                        setSelectedFiles([]);
+                        setSelectedDocumentFile([]);
+                        setAttachmentPath([]);
+
                     }
                     else {
                         toast.error("Task Not Created Please Try Again");
@@ -1364,7 +1372,7 @@ function CreateNewModalTask({ ...props }) {
                     }
                 }
                 else {
-                    toast.error("Faild Created Task Try again !");
+                    toast.error("Failed Created Task Try again !");
                     setLoading(false);
                 }
 
@@ -1375,16 +1383,17 @@ function CreateNewModalTask({ ...props }) {
 
     }
 
-   
+
 
 
     function ClearForm() {
-       // console.log("Add User List11", addUser);  
-//setAddUser(clearData)
-       
-//setAddUser([]);
+        // console.log("Add User List11", addUser);  
+        //setAddUser(clearData)
 
-Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("FolderId"));
+        //setAddUser([]);
+        setAttachmentPath([]);
+
+        Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("FolderId"));
 
         setCurrentDate(new Date())
         setTextSubject("");
@@ -1599,7 +1608,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
     let statusarr = [
         { id: 1, "name": "Not Started  " },
         { id: 2, "name": "In Progress" },
-        { id: 3, "name": "On Hold"  },
+        { id: 3, "name": "On Hold" },
         { id: 4, "name": "Completed" },
         // { id: 5, "name": "Done" },
         // { id: 6, "name": "Completed" },
@@ -1622,7 +1631,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
         // addItemdata = [...uniqueData];
         console.log(addItemdata, "addItemdata");
     };
-    function addToWorkTable(Itid, taskID,textSubject) {
+    function addToWorkTable(Itid, taskID, textSubject) {
         console.log(taskID, "addToWorkTable", Itid);
         let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${ownerName} has initiated a task-${textSubject} . Task ID : ${taskID}` };
         console.log("addToWorkTable111", obj);
@@ -1631,6 +1640,8 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                 if (data) {
                     //let json = JSON.parse(data);
                     console.log("getitemid", data);
+
+
                 }
             }
         });
@@ -1769,7 +1780,10 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                     ]);
 
                     // Call PrepareDocumentsForPublish_Json after all files data are processed
-                    PrepareDocumentsForPublish_Json(filesData, 2);
+                    if (TaskType === "Portal") {
+                        PrepareDocumentsForPublish_Json(filesData, 2);
+                    }
+                    // PrepareDocumentsForPublish_Json(filesData, 2);
 
                     setOpenDocumentList(false);
                 }
@@ -1954,7 +1968,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
         GetSMSTemplate();
     }, [txtTemplateId])
 
-    
+
     const [editorContentValue, setEditorContentValue] = useState(null);
 
     // Handle selection change
@@ -2007,7 +2021,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                     "ClientWeekDays": "1",
                     "ClientWeekOfMonth": "1",
                     "OwnerID": ownerID.toString(),
-                    "AssignedToID": isaddUser?isaddUser:ownerID,
+                    "AssignedToID": isaddUser ? isaddUser : ownerID,
                     "AssociateWithID": textClientId,
                     "FolderId": txtFolderId.toString(),
                     "Subject": textSubject,
@@ -2036,19 +2050,21 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                         if (data) {
                             setLoading(false);
                             let js = JSON.parse(data);
-                            console.log(selectedDocumentFile,"Json_CRM_Task_Saveportal ", js);
+                            console.log(selectedDocumentFile, "Json_CRM_Task_Saveportal ", js);
                             if (js.Status === "success") {
 
                                 // setMessageId(js.Message);
                                 if (selectedDocumentFile && selectedDocumentFile.length > 0) {
                                     selectedDocumentFile.map((item) => {
-                                        addToWorkTable(item.DocId, js.Message,textSubject);
+                                        addToWorkTable(item.DocId, js.Message, textSubject);
                                     });
-                                  }
+                                }
                                 CreatePortalMessage(js.Message)
                                 // toast.success("Created Task");
                                 setOpen(false);
                                 // setIsApi(!isApi);
+
+
                             }
                             else {
                                 toast.error("Task Not Created Please Try Again");
@@ -2056,7 +2072,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                             }
                         } else {
                             setLoading(false);
-                            toast.error("Faild Created Task Try again !");
+                            toast.error("Failed Created Task Try again !");
                         }
 
 
@@ -2095,8 +2111,6 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                 // const ItemId = selectedDocumentFile.map(obj => obj.DocId);
                 // const fileNames = myNewArr.map(obj => obj["FileName"]);
                 // const fileDataBase64 = myNewArr.filter(obj => obj["Base64"] !== "").map(obj => obj["Base64"]);
-
-
                 let obj = {
                     "accid": agrno,
                     "email": Email,
@@ -2125,14 +2139,10 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                     "approvalResponse": "",
                     "uploadID": localStorage.getItem("GUID"),
                     "PubTaskid": taskid
-
-
                 }
-                console.log(PortalSelectDoc,"final save data obj", obj);
-
+                console.log(PortalSelectDoc, "final save data obj", obj);
                 var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
                 let cls = new CommanCLS(urlLetter, agrno, Email, password);
-
                 cls.MessagePublishedPortalTask_Json(obj, function (sts, data) {
                     if (sts) {
                         console.log("MessagePublished_Json", data)
@@ -2143,12 +2153,17 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                             if (createNewFileObj) {
                                 setOpenModal(false);
                             }
-                            setSelectedFiles([]);
+
                             ClearForm();
                             //setAttachmentPath([]);
                             //setSelectedFiles([])
                             let strGuid = uuidv4().replace(/-/g, '');
                             localStorage.setItem("GUID", strGuid)
+
+                            setSelectedFiles([]);
+                            setSelectedDocumentFile([]);
+                            setAttachmentPath([]);
+
 
                         }
                         setOpen(false);
@@ -2302,11 +2317,67 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
             confirmButtonText: "Yes, delete it!"
         }).then((result) => {
             if (result.isConfirmed) {
-                RemoveFilesForUpload_Json(d)
+                if (selectedFiles.length > 0) {
+                    let res = selectedFiles.filter((el) => el.FileName !== d.FileName);
+                    setSelectedFiles(res);
+                }
+                if (selectedDocumentFile.length > 0) {
+                    let doc = selectedDocumentFile.filter((el) => el.FileName !== d.FileName);
+                    setSelectedDocumentFile(doc);
+                }
+                if (attachmentPath.length > 0) {
+                    let att = attachmentPath.filter((el) => el.FileName !== d.FileName);
+                    setAttachmentPath(att);
+                }
+
+                if (TaskType === "Portal") {
+                    RemoveFilesForUpload_Json(d)
+                }
+                else {
+                    DeleteTasksAttachment(d);
+                }
+
             }
         });
     }
 
+    function DeleteTasksAttachment(d) {
+        console.log("DeleteTasksAttachment", selectedFiles)
+        let res = attachmentPath.length > 0 ? attachmentPath.filter((el) => el.FileName === d.FileName) : toast.error("File name is not found !");
+
+        try {
+            let o = {
+                agrno: agrno,
+                EmailId: Email,
+                password: password,
+                //uploadID: localStorage.getItem("GUID"),
+                fileName: res[0].Path,
+                TaskId: "0"
+
+            }
+
+            clsSms.DeleteTasksAttachment_useCreateTask(o, function (sts, data) {
+                if (sts && data) {
+                    let js = JSON.parse(data);
+                    console.log("DeleteTasksAttachment", data)
+                    if (js.Status === "Success") {
+                        toast.success("Deleted Attachment");
+                        // Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
+
+
+
+                    }
+
+                }
+            })
+        } catch (error) {
+            console.log({
+                status: false,
+                message: "Folder is Blank Try again",
+                error: error,
+            });
+        }
+    }
 
     function RemoveFilesForUpload_Json(d) {
         console.log("RemoveFilesForUpload_Json", selectedFiles)
@@ -2322,12 +2393,24 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
             let cls = new CommanCLS(urlLetter, agrno, Email, password);
             cls.RemoveFilesForUpload_Json(o, function (sts, data) {
                 if (sts && data) {
-
                     if (data === "Success") {
                         toast.success("Removed File !");
-                        const updatedFiles = selectedFiles.filter(e => e.FileName !== d.FileName);
-                        console.log("updatedFiles", updatedFiles);
-                        setSelectedFiles(updatedFiles);
+                        //const updatedFiles = selectedFiles.filter(e => e.FileName !== d.FileName);
+                        // console.log("updatedFiles", updatedFiles);
+                        // setSelectedFiles(updatedFiles);
+                        if (selectedFiles.length > 0) {
+                            let res = selectedFiles.filter((el) => el.FileName !== d.FileName);
+                            setSelectedFiles(res);
+                        }
+                        if (selectedDocumentFile.length > 0) {
+                            let doc = selectedDocumentFile.filter((el) => el.FileName !== d.FileName);
+                            setSelectedDocumentFile(doc);
+                        }
+                        if (attachmentPath.length > 0) {
+                            let att = attachmentPath.filter((el) => el.FileName !== d.FileName);
+                            setAttachmentPath(att);
+                        }
+
                     }
                 }
             })
@@ -2444,6 +2527,12 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
     const handleCloseFiles = () => {
         setAnchorElFiles(null);
     };
+
+    // useEffect(() => {
+    //     setNextDate("");
+    //     setNextDateClear(true);
+    //     console.log("nextDate", nextDate)
+    // }, [currentDate]);
 
     return (
         <React.Fragment>
@@ -2848,113 +2937,113 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
 
                                         <div className="mt-1 mb-2">
 
-<Button
-    id="basic-button5"
-    aria-controls={
-        UserDropdownopen ? "basic-menu5" : undefined
-    }
-    aria-haspopup="true"
-    aria-expanded={UserDropdownopen ? "true" : undefined}
-    onContextMenu={handleRightClick}
-    className="p-0 w-auto d-inline-block"
+                                            <Button
+                                                id="basic-button5"
+                                                aria-controls={
+                                                    UserDropdownopen ? "basic-menu5" : undefined
+                                                }
+                                                aria-haspopup="true"
+                                                aria-expanded={UserDropdownopen ? "true" : undefined}
+                                                onContextMenu={handleRightClick}
+                                                className="p-0 w-auto d-inline-block"
 
 
->
-    <Box className="d-flex align-items-center">
-        {ownerRighClick && (<>
-            <Box
-                className="user-img-list me-1 admin"
-                title={ownerRighClick.ForwardTo}
-                key={ownerRighClick.ID}
-            >
-                <p>{firsorScandCtr(ownerRighClick)}</p>
-            </Box> <ArrowForwardIosIcon className='me-1 font-20' />
-        </>)}
+                                            >
+                                                <Box className="d-flex align-items-center">
+                                                    {ownerRighClick && (<>
+                                                        <Box
+                                                            className="user-img-list me-1 admin"
+                                                            title={ownerRighClick.ForwardTo}
+                                                            key={ownerRighClick.ID}
+                                                        >
+                                                            <p>{firsorScandCtr(ownerRighClick)}</p>
+                                                        </Box> <ArrowForwardIosIcon className='me-1 font-20' />
+                                                    </>)}
 
 
-        {addUser.length > 1
-            ? addUser.slice(1, 3).map((item) => {
-                const words = item.ForwardTo.split(" ");
-                // Extract the first letter of each word and concatenate them
-                let result = "";
-                for (
-                    let i = 0;
-                    i < words.length && i < 2;
-                    i++
-                ) {
-                    result += words[i].charAt(0);
-                }
-                if (item.ID !== ownerID) {
-                    return (
-                        <>
-                            <Box
-                                className="user-img-list me-1 admin"
-                                title={item.ForwardTo}
-                                key={item.ID}
-                            >
-                                <p>{result}</p>
-                            </Box>
+                                                    {addUser.length > 1
+                                                        ? addUser.slice(1, 3).map((item) => {
+                                                            const words = item.ForwardTo.split(" ");
+                                                            // Extract the first letter of each word and concatenate them
+                                                            let result = "";
+                                                            for (
+                                                                let i = 0;
+                                                                i < words.length && i < 2;
+                                                                i++
+                                                            ) {
+                                                                result += words[i].charAt(0);
+                                                            }
+                                                            if (item.ID !== ownerID) {
+                                                                return (
+                                                                    <>
+                                                                        <Box
+                                                                            className="user-img-list me-1 admin"
+                                                                            title={item.ForwardTo}
+                                                                            key={item.ID}
+                                                                        >
+                                                                            <p>{result}</p>
+                                                                        </Box>
 
 
-                        </>
-                    );
-                }
+                                                                    </>
+                                                                );
+                                                            }
 
 
-            })
-            : null}
+                                                        })
+                                                        : null}
 
-    </Box>
-</Button>
-
-
-{dropdownVisible && (<Menu
-    id="basic-menu5"
-    anchorEl={userDropdownanchorElRight}
-    open={UserDropdownopenRight}
-    onClose={handleUserClose}
-    MenuListProps={{
-        "aria-labelledby": "basic-button5",
-    }}
-    className="user-list-dropdown"
->
-
-    <Box
-        className="inner-user-list-dropdown"
-        style={{ maxHeight: "200px", overflowY: "auto" }}
-    >
-        <p className="sembold">Transfer Ownership To:</p>
-
-        <Box className="box-user-list-dropdown">
+                                                </Box>
+                                            </Button>
 
 
+                                            {dropdownVisible && (<Menu
+                                                id="basic-menu5"
+                                                anchorEl={userDropdownanchorElRight}
+                                                open={UserDropdownopenRight}
+                                                onClose={handleUserClose}
+                                                MenuListProps={{
+                                                    "aria-labelledby": "basic-button5",
+                                                }}
+                                                className="user-list-dropdown"
+                                            >
 
-            {addUser
-                ? addUser.map((item, ind) => {
-                    if (item.ID === ownerID) {
-                        return (
-                            <React.Fragment key={ind}>
-                                <button type="button"
-                                    id={item.ID}
-                                >
-                                    <Box className="user-img-list me-2">
-                                        <img src={user} alt="User" />
-                                    </Box>
-                                    <p>{item.ForwardTo}</p>
-                                </button>
-                            </React.Fragment>
-                        );
-                    } else {
-                        return (
-                            <React.Fragment key={ind}>
-                                <button type="button" id={item.ID}
-                                    onClick={() => handleItemClick(item)}
-                                >
-                                    <Box className="user-img-list me-2">
-                                        <img src={user} alt="User" />
-                                    </Box>
-                                    <p>{item.ForwardTo}</p>
-                                    {/* <span
+                                                <Box
+                                                    className="inner-user-list-dropdown"
+                                                    style={{ maxHeight: "200px", overflowY: "auto" }}
+                                                >
+                                                    <p className="sembold">Transfer Ownership To:</p>
+
+                                                    <Box className="box-user-list-dropdown">
+
+
+
+                                                        {addUser
+                                                            ? addUser.map((item, ind) => {
+                                                                if (item.ID === ownerID) {
+                                                                    return (
+                                                                        <React.Fragment key={ind}>
+                                                                            <button type="button"
+                                                                                id={item.ID}
+                                                                            >
+                                                                                <Box className="user-img-list me-2">
+                                                                                    <img src={user} alt="User" />
+                                                                                </Box>
+                                                                                <p>{item.ForwardTo}</p>
+                                                                            </button>
+                                                                        </React.Fragment>
+                                                                    );
+                                                                } else {
+                                                                    return (
+                                                                        <React.Fragment key={ind}>
+                                                                            <button type="button" id={item.ID}
+                                                                                onClick={() => handleItemClick(item)}
+                                                                            >
+                                                                                <Box className="user-img-list me-2">
+                                                                                    <img src={user} alt="User" />
+                                                                                </Box>
+                                                                                <p>{item.ForwardTo}</p>
+                                                                                {/* <span
                                         className="close"
                                         onClick={() => handleRemoveUser(item.ID)}
                                         role="button" // Adding role="button" to indicate this element is clickable
@@ -2964,169 +3053,169 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                                             close
                                         </span>
                                     </span> */}
-                                </button>
-                            </React.Fragment>
-                        );
-                    }
-                })
-                : null}
-        </Box>
-    </Box>
-</Menu>)}
+                                                                            </button>
+                                                                        </React.Fragment>
+                                                                    );
+                                                                }
+                                                            })
+                                                            : null}
+                                                    </Box>
+                                                </Box>
+                                            </Menu>)}
 
-{addUser.length > 4 && (<>
-    <Button
-        id="basic-button"
-        aria-controls={openFiles ? 'basic-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={openFiles ? 'true' : undefined}
-        onClick={handleClickFiles}
-        className="p-0 min-width-auto"
-    >
-        <Box
-            className="user-img-list me-1 admin"
-        >
-            <p>+{addUser.length - 3}</p>
-        </Box>
-    </Button>
-    <Menu
-        id="basic-menu"
-        anchorEl={anchorElFiles}
-        open={openFiles}
-        onClose={handleCloseFiles}
-        MenuListProps={{
-            'aria-labelledby': 'basic-button',
-        }}
-        className="custom-menu"
-    >
-        {addUser.length > 3 &&
-            addUser.slice(3, addUser.length).map((item, index) => (
-                <MenuItem key={index} onClick={handleCloseFiles}>{item.ForwardTo}</MenuItem>
-            ))
-        }
-    </Menu>
-</>)}
+                                            {addUser.length > 4 && (<>
+                                                <Button
+                                                    id="basic-button"
+                                                    aria-controls={openFiles ? 'basic-menu' : undefined}
+                                                    aria-haspopup="true"
+                                                    aria-expanded={openFiles ? 'true' : undefined}
+                                                    onClick={handleClickFiles}
+                                                    className="p-0 min-width-auto"
+                                                >
+                                                    <Box
+                                                        className="user-img-list me-1 admin"
+                                                    >
+                                                        <p>+{addUser.length - 3}</p>
+                                                    </Box>
+                                                </Button>
+                                                <Menu
+                                                    id="basic-menu"
+                                                    anchorEl={anchorElFiles}
+                                                    open={openFiles}
+                                                    onClose={handleCloseFiles}
+                                                    MenuListProps={{
+                                                        'aria-labelledby': 'basic-button',
+                                                    }}
+                                                    className="custom-menu"
+                                                >
+                                                    {addUser.length > 3 &&
+                                                        addUser.slice(3, addUser.length).map((item, index) => (
+                                                            <MenuItem key={index} onClick={handleCloseFiles}>{item.ForwardTo}</MenuItem>
+                                                        ))
+                                                    }
+                                                </Menu>
+                                            </>)}
 
-<Button
-    id="basic-button5"
-    aria-controls={
-        UserDropdownopen ? "basic-menu5" : undefined
-    }
-    aria-haspopup="true"
-    aria-expanded={UserDropdownopen ? "true" : undefined}
-    onClick={handleUserClick}
-    className="p-0 w-auto d-inline-block"
->
+                                            <Button
+                                                id="basic-button5"
+                                                aria-controls={
+                                                    UserDropdownopen ? "basic-menu5" : undefined
+                                                }
+                                                aria-haspopup="true"
+                                                aria-expanded={UserDropdownopen ? "true" : undefined}
+                                                onClick={handleUserClick}
+                                                className="p-0 w-auto d-inline-block"
+                                            >
 
-    <Box className="d-flex">
-        <span class="material-symbols-outlined">
-            person_add
-        </span>
-    </Box>
+                                                <Box className="d-flex">
+                                                    <span class="material-symbols-outlined">
+                                                        person_add
+                                                    </span>
+                                                </Box>
 
-</Button>
+                                            </Button>
 
-<Menu
-    id="basic-menu5"
-    anchorEl={userDropdownanchorEl}
-    open={UserDropdownopen}
-    onClose={handleUserClose}
-    MenuListProps={{
-        "aria-labelledby": "basic-button5",
-    }}
-    className="user-list-dropdown"
->
+                                            <Menu
+                                                id="basic-menu5"
+                                                anchorEl={userDropdownanchorEl}
+                                                open={UserDropdownopen}
+                                                onClose={handleUserClose}
+                                                MenuListProps={{
+                                                    "aria-labelledby": "basic-button5",
+                                                }}
+                                                className="user-list-dropdown"
+                                            >
 
-    <Box
-        className="inner-user-list-dropdown"
-        style={{ maxHeight: "200px", overflowY: "auto" }}
-    >
-        <p className="sembold">Assigned</p>
-        <Box className="box-user-list-dropdown">
-            {addUser
-                ? addUser.map((item, ind) => {
-                    if (item.ID === ownerID) {
-                        return (
-                            <React.Fragment key={ind}>
-                                <button type="button" id={item.ID} >
-                                    <Box className="user-img-list me-2">
-                                        <img src={user} alt="User" />
-                                    </Box>
-                                    <p>{item.ForwardTo}</p>
-                                </button>
-                            </React.Fragment>
-                        );
-                    } else {
-                        return (
-                            <React.Fragment key={ind}>
-                                <button type="button" id={item.ID}>
-                                    <Box className="user-img-list me-2">
-                                        <img src={user} alt="User" />
-                                    </Box>
-                                    <p>{item.ForwardTo}</p>
-                                    <span
-                                        className="close"
-                                        onClick={() => handleRemoveUser(item.ID)}
-                                        role="button" // Adding role="button" to indicate this element is clickable
-                                        tabIndex="0" // Adding tabIndex to make the element focusable
-                                    >
-                                        <span className="material-symbols-outlined">
-                                            close
-                                        </span>
-                                    </span>
-                                </button>
-                            </React.Fragment>
-                        );
-                    }
-                })
-                : null}
-        </Box>
-    </Box>
+                                                <Box
+                                                    className="inner-user-list-dropdown"
+                                                    style={{ maxHeight: "200px", overflowY: "auto" }}
+                                                >
+                                                    <p className="sembold">Assigned</p>
+                                                    <Box className="box-user-list-dropdown">
+                                                        {addUser
+                                                            ? addUser.map((item, ind) => {
+                                                                if (item.ID === ownerID) {
+                                                                    return (
+                                                                        <React.Fragment key={ind}>
+                                                                            <button type="button" id={item.ID} >
+                                                                                <Box className="user-img-list me-2">
+                                                                                    <img src={user} alt="User" />
+                                                                                </Box>
+                                                                                <p>{item.ForwardTo}</p>
+                                                                            </button>
+                                                                        </React.Fragment>
+                                                                    );
+                                                                } else {
+                                                                    return (
+                                                                        <React.Fragment key={ind}>
+                                                                            <button type="button" id={item.ID}>
+                                                                                <Box className="user-img-list me-2">
+                                                                                    <img src={user} alt="User" />
+                                                                                </Box>
+                                                                                <p>{item.ForwardTo}</p>
+                                                                                <span
+                                                                                    className="close"
+                                                                                    onClick={() => handleRemoveUser(item.ID)}
+                                                                                    role="button" // Adding role="button" to indicate this element is clickable
+                                                                                    tabIndex="0" // Adding tabIndex to make the element focusable
+                                                                                >
+                                                                                    <span className="material-symbols-outlined">
+                                                                                        close
+                                                                                    </span>
+                                                                                </span>
+                                                                            </button>
+                                                                        </React.Fragment>
+                                                                    );
+                                                                }
+                                                            })
+                                                            : null}
+                                                    </Box>
+                                                </Box>
 
-    <Box className="inner-user-list-dropdown">
-        <p className="sembold mb-0">My Team</p>
+                                                <Box className="inner-user-list-dropdown">
+                                                    <p className="sembold mb-0">My Team</p>
 
-        <Box className="box-user-list-dropdown" style={{ maxHeight: "200px", overflowY: "auto" }}>
-            <Box className="mb-1 mt-3 px-3">
-                <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search..."
-                    value={filterText}
-                    onChange={(e) => setFilterText(e.target.value)}
-                />
-            </Box>
-            <Box className="box-user-list-dropdown">
+                                                    <Box className="box-user-list-dropdown" style={{ maxHeight: "200px", overflowY: "auto" }}>
+                                                        <Box className="mb-1 mt-3 px-3">
+                                                            <input
+                                                                type="text"
+                                                                className="form-control"
+                                                                placeholder="Search..."
+                                                                value={filterText}
+                                                                onChange={(e) => setFilterText(e.target.value)}
+                                                            />
+                                                        </Box>
+                                                        <Box className="box-user-list-dropdown">
 
-                {FilderDataList.map((item, ind) => (
-                    <React.Fragment key={ind}>
-                        <button
-                            type="button"
-                            id={item.ID}
-                            onClick={() => handalClickAddUser(item)}
-                        >
-                            <Box className="user-img-list me-2">
-                                <img src={user} alt="User" />
-                            </Box>
-                            <p>{item.ForwardTo}</p>
-                            {/* <a href="" className="close">
+                                                            {FilderDataList.map((item, ind) => (
+                                                                <React.Fragment key={ind}>
+                                                                    <button
+                                                                        type="button"
+                                                                        id={item.ID}
+                                                                        onClick={() => handalClickAddUser(item)}
+                                                                    >
+                                                                        <Box className="user-img-list me-2">
+                                                                            <img src={user} alt="User" />
+                                                                        </Box>
+                                                                        <p>{item.ForwardTo}</p>
+                                                                        {/* <a href="" className="close">
                         <span className="material-symbols-outlined">
                           close
                         </span>
                       </a> */}
-                        </button>
-                    </React.Fragment>
-                ))}
-            </Box>
-        </Box>
-    </Box>
-</Menu>
+                                                                    </button>
+                                                                </React.Fragment>
+                                                            ))}
+                                                        </Box>
+                                                    </Box>
+                                                </Box>
+                                            </Menu>
 
 
-</div>
+                                        </div>
 
 
-                                        
+
                                     </Box>
                                 </Box>
 
@@ -3314,72 +3403,72 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                                             );
                                         })
                                         : (createNewFileObj && createNewFileObj.length > 0)
-                                        ? createNewFileObj.map((file, index) => {
-                                            // console.log("Uploadin", file);
+                                            ? createNewFileObj.map((file, index) => {
+                                                // console.log("Uploadin", file);
 
-                                            return (
-                                                <>
-                                                    <label className="file-uploads-label mb-2" key={index}>
-                                                        <Box className="d-flex align-items-center">
-                                                            <span className="material-symbols-outlined icon">
-                                                                description
-                                                            </span>
-                                                            <Box className="upload-content pe-3">
-                                                                <Typography variant="h4">
-                                                                    {file ? file.FileName : ""}
-                                                                </Typography>
-                                                                <Typography variant="body1">
-                                                                    {file ? kbToMb(file.FileSize) : ""} MB
-                                                                </Typography>
+                                                return (
+                                                    <>
+                                                        <label className="file-uploads-label mb-2" key={index}>
+                                                            <Box className="d-flex align-items-center">
+                                                                <span className="material-symbols-outlined icon">
+                                                                    description
+                                                                </span>
+                                                                <Box className="upload-content pe-3">
+                                                                    <Typography variant="h4">
+                                                                        {file ? file.FileName : ""}
+                                                                    </Typography>
+                                                                    <Typography variant="body1">
+                                                                        {file ? kbToMb(file.FileSize) : ""} MB
+                                                                    </Typography>
+                                                                </Box>
                                                             </Box>
-                                                        </Box>
 
-                                                        <Box className="d-flex align-items-center">
+                                                            <Box className="d-flex align-items-center">
 
-                                                            {txtTaskType === "Portal" && (<>
-                                                                <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
-                                                                    Sign
-                                                                </Button>
-                                                            </>)}
+                                                                {txtTaskType === "Portal" && (<>
+                                                                    <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
+                                                                        Sign
+                                                                    </Button>
+                                                                </>)}
 
-                                                            <Box className="ps-2">
+                                                                <Box className="ps-2">
 
-                                                                <Button
-                                                                    id="basic-button"
-                                                                    aria-controls={openDoc ? 'basic-menu' : undefined}
-                                                                    aria-haspopup="true"
-                                                                    aria-expanded={openDoc ? 'true' : undefined}
-                                                                    onClick={(event) => handleClickDoc(event, index)} // Pass index to handleClickDoc
-                                                                    className="min-width-auto"
+                                                                    <Button
+                                                                        id="basic-button"
+                                                                        aria-controls={openDoc ? 'basic-menu' : undefined}
+                                                                        aria-haspopup="true"
+                                                                        aria-expanded={openDoc ? 'true' : undefined}
+                                                                        onClick={(event) => handleClickDoc(event, index)} // Pass index to handleClickDoc
+                                                                        className="min-width-auto"
 
-                                                                >
-                                                                    <span className="material-symbols-outlined">
-                                                                        more_vert
-                                                                    </span>
-                                                                </Button>
+                                                                    >
+                                                                        <span className="material-symbols-outlined">
+                                                                            more_vert
+                                                                        </span>
+                                                                    </Button>
 
-                                                                <Menu
-                                                                    id="basic-menu"
-                                                                    className="custom-dropdown"
-                                                                    anchorEl={anchorElDoc}
-                                                                    open={openDoc && selectedFileIndex === index} // Ensure the menu opens only for the selected file
-                                                                    onClose={handleCloseDoc}
-                                                                    MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
-                                                                >
-                                                                    <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Delete</MenuItem>
-                                                                    {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
-                                                                        <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
-                                                                    )}
-                                                                </Menu>
+                                                                    <Menu
+                                                                        id="basic-menu"
+                                                                        className="custom-dropdown"
+                                                                        anchorEl={anchorElDoc}
+                                                                        open={openDoc && selectedFileIndex === index} // Ensure the menu opens only for the selected file
+                                                                        onClose={handleCloseDoc}
+                                                                        MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
+                                                                    >
+                                                                        <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Delete</MenuItem>
+                                                                        {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
+                                                                            <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
+                                                                        )}
+                                                                    </Menu>
 
+                                                                </Box>
                                                             </Box>
-                                                        </Box>
-                                                        {/* <Button variant="text" className='btn-blue-2'>Select file</Button> */}
-                                                    </label>
-                                                </>
-                                            );
-                                        })
-                                        : null}
+                                                            {/* <Button variant="text" className='btn-blue-2'>Select file</Button> */}
+                                                        </label>
+                                                    </>
+                                                );
+                                            })
+                                            : null}
                                 </Box>
 
                                 {/* <Box className="mt-3 mb-3">
@@ -3780,17 +3869,15 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                                                 dateAdapter={AdapterDayjs}
                                             >
                                                 <CalendarMonthIcon />
+                                                
                                                 <DatePicker
                                                     showIcon
                                                     dateFormat="DD/MM/YYYY"
                                                     value={currentDate}
-                                                    onChange={(e) => {
-                                                        console.log("hello,111111")
-                                                        CurrentDateChange(e);
-                                                        setNextDate("");
-                                                    }
-
-                                                    } // Handle date changes
+                                                    onChange={(date) => {
+                                                        CurrentDateChange(date);
+                                                        console.log("nextDate33333", nextDate);
+                                                    }}
                                                     timeFormat={false}
                                                     isValidDate={disablePastDt}
                                                     closeOnSelect={true}
@@ -3825,7 +3912,20 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                                             dateAdapter={AdapterDayjs}
                                         >
                                             <CalendarMonthIcon />
-                                            <DatePicker className=" w-100"
+                                            <DatePicker
+                                                showIcon
+                                                dateFormat="DD/MM/YYYY"
+                                                value={nextDate}
+                                                onChange={(date) => setNextDate(date)} // Handle date changes
+                                                timeFormat={false}
+                                                isValidDate={disableDueDate}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
+                                                isClearable={nextDateclear}
+                                            />
+
+
+                                            {/* <DatePicker className=" w-100"
                                                 //selected={selectedDate}
                                                 showIcon
                                                 dateFormat="DD/MM/YYYY"
@@ -3835,8 +3935,8 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                                                 isValidDate={disableDueDate}
                                                 closeOnSelect={true}
                                                 icon="fa fa-calendar"
-                                                isClearable
-                                            />
+                                                isClearable={nextDateclear}
+                                            /> */}
                                         </LocalizationProvider>
                                     </Box>
                                 </Box>
