@@ -39,7 +39,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import { useEffect } from "react";
 import CommanCLS from "../../services/CommanService";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -70,12 +70,24 @@ import ContactcardUDF from "./ContactcardUDF";
 const label = { inputProps: { "aria-label": "Switch demo" } };
 // const [nextDate, setNextDate] = useState("");
 
+const agrno = localStorage.getItem("agrno");
+const Email = localStorage.getItem("Email");
+const password = localStorage.getItem("Password");
+const folderId = localStorage.getItem("FolderId");
 function ContactDetails() {
   const location = useLocation();
+  const [searchParams,setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const { agrno, Email, password, folderId, originatorNo, contactNo } =
-    location.state;
+  const originatorNo = searchParams.get("originatorNo");
+  const contactNo = searchParams.get("contactNo");
+
+
+  // const { originatorNo, contactNo } =
+    // location.state;
+
+  console.log("djfdjfljfdj searchParams",{originatorNo: searchParams.get("originatorNo"), contactNo:searchParams.get("contactNo")});
+  console.log("djfdjfljfdj",{originatorNo: originatorNo, contactNo:contactNo});
 
   const [value, setValue] = React.useState("1");
 
@@ -239,7 +251,7 @@ function ContactDetails() {
             console.log("Json_GetAllContactsByClientID", json);
             let details = json.Table;
             setContactDetails(
-              details.filter((item) => item.ContactNo === contactNo)
+              details.filter((item) => item.ContactNo === Number(contactNo))
             );
             let contactdata = details.filter(
               (item) => item.ContactNo === contactNo
