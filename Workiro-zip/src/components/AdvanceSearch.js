@@ -35,7 +35,7 @@ function AdvanceSearch() {
     const [isClientField, setIsClientField] = useState(false);
     const [isDocIdField, setIsDocIdField] = useState(false);
     const [documentId, setDocumentId] = useState("");
-    const [isDateShow, setIsDateShow] = useState(true);
+    const [isDateShow, setIsDateShow] = useState(false);
 
     const [documentData, setDocumentData] = useState({
         ClientId: "",
