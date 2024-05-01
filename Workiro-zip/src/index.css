@@ -2810,7 +2810,6 @@ input[type=number] {
 
 .cd-vertical-nav {
   position: fixed;
-  z-index: 1;
   right: 5%;
   bottom: 30px;
   width: 90%;
@@ -2831,7 +2830,8 @@ input[type=number] {
   -moz-transition: -moz-transform .2s;
   transition: transform .2s;
   border-radius: .25em;
-  background-color: rgba(234, 242, 227, .9)
+  background-color: rgba(234, 242, 227, .9);
+  z-index: 9999;
 }
 
 .cd-vertical-nav a {
