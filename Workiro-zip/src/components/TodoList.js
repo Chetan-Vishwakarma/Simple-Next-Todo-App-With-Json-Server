@@ -111,6 +111,7 @@ function TodoList() {
     const [suggestionList, setSuggestionList] = useState([]);
 
     const [searchInput, setSearchInput] = useState("");
+    const [isDateShow, setIsDateShow] = useState(false);
 
 
 
@@ -444,6 +445,11 @@ function TodoList() {
         setTaskFilter(obj);
     }
     const handleCallback = (start, end) => {
+        if(start._i==="Clear"){
+            setIsDateShow(false);
+            handleFilterDeletion("EndDateTime");
+            return;
+        }
         setTaskFilter({ ...taskFilter, "EndDateTime": [start._d, end._d] });
         setState({ start, end });
     };
@@ -1010,11 +1016,14 @@ function TodoList() {
 
                     <Box className='d-flex align-items-end'>
                         <Box className='date-unerline'>
-                            <DateRangePicker
+                            {isDateShow ? <DateRangePicker
                                 initialSettings={{
                                     startDate: start.toDate(),
                                     endDate: end.toDate(),
                                     ranges: {
+                                        'Clear Filter': [
+                                            'Clear', 'Clear'
+                                        ],
                                         'All': [
                                             moment({ year: 1990, month: 0, day: 1 }).toDate(),
                                             moment().toDate()
@@ -1052,7 +1061,9 @@ function TodoList() {
 
                                     <span>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
                                 </div>
-                            </DateRangePicker>
+                            </DateRangePicker> : <Button onClick={()=>setIsDateShow(true)}>
+                                            {"Select Date"}
+                                        </Button>}
                         </Box>
 
                         <FormControl size="small" className='select-border ms-3'>
