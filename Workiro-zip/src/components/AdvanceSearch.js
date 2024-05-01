@@ -283,7 +283,7 @@ function AdvanceSearch() {
 
                         <Box className='d-flex'>
                             <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 mb-0'>
-                                <BootstrapTooltip title="Sections" arrow
+                                <BootstrapTooltip title="Section" arrow
                                     placement="bottom-start"
                                     slotProps={{
                                         popper: {
@@ -314,7 +314,7 @@ function AdvanceSearch() {
                                         MenuProps={{ PaperProps: { sx: { maxHeight: '260px !important' } } }}
                                     >
                                         <MenuItem value="-1" style={{ display: "none" }}>
-                                            Sections
+                                            Section
                                         </MenuItem>
                                         <MenuItem value="Section" >00. Clear Filter</MenuItem>
                                         {sections.length > 0 && sections.map((itm) => {

@@ -117,7 +117,7 @@ function TodoList() {
 
     // for date datepicker
     const [state, setState] = useState({
-        start: moment().subtract(29, 'days'),
+        start: moment({ year: 1990, month: 0, day: 1 }),
         end: moment(),
     });
     const { start, end } = state;
@@ -452,6 +452,7 @@ function TodoList() {
         }
         setTaskFilter({ ...taskFilter, "EndDateTime": [start._d, end._d] });
         setState({ start, end });
+        setIsDateShow(true);
     };
 
     const label =
@@ -1016,7 +1017,7 @@ function TodoList() {
 
                     <Box className='d-flex align-items-end'>
                         <Box className='date-unerline'>
-                            {isDateShow ? <DateRangePicker
+                            <DateRangePicker
                                 initialSettings={{
                                     startDate: start.toDate(),
                                     endDate: end.toDate(),
@@ -1059,11 +1060,9 @@ function TodoList() {
                                     <i className="fa fa-calendar"></i>
                                     <CalendarMonthIcon className='me-2 text-red' />
 
-                                    <span>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
+                                    <span>{isDateShow ? label : "Select Due Date"}</span> <i className="fa fa-caret-down"></i>
                                 </div>
-                            </DateRangePicker> : <Button onClick={()=>setIsDateShow(true)}>
-                                            {"Select Date"}
-                                        </Button>}
+                            </DateRangePicker>
                         </Box>
 
                         <FormControl size="small" className='select-border ms-3'>
