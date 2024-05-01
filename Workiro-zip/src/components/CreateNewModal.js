@@ -81,6 +81,7 @@ import UploadDocument from "../client/client-components/UploadDocument";
 import AddContacts from "./AddContacts";
 import { handleOpenModalRedux, setMyTasks } from "../redux/reducers/counterSlice";
 import { useDispatch, useSelector } from "react-redux";
+import moment from "moment";
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -551,7 +552,9 @@ function CreateNewModalTask({ ...props }) {
     // };
 
     const kbToMb = (kb) => {
-        let t = kb / 2024;
+       
+
+        let t = kb /(1024 * 1024);
 
         return t.toFixed(2);
     };
@@ -855,7 +858,7 @@ function CreateNewModalTask({ ...props }) {
         setCurrentDate(e);
         setNextDate("");
         setNextDateClear(true);
-        console.log("get folder list112222", nextDate);
+        console.log("get folder list112222", moment(e).format("YYYY/MM/DD"));
     }
 
     const [selectedDate, setSelectedDate] = useState(null); // State for selected date
@@ -863,7 +866,7 @@ function CreateNewModalTask({ ...props }) {
 
 
     useEffect(() => {
-        // console.log("get folder list112222", selectedDate);
+       // console.log("get folder list112222", selectedDate);
         setSelectedDate(null); // Set the selected date to null to clear it
     }, [currentDate]);
 
@@ -995,6 +998,7 @@ function CreateNewModalTask({ ...props }) {
         let completeCounter = 0;
 
         selectedFilesArray.forEach((file, index) => {
+            console.log(file.size,"file size check")
             const reader = new FileReader();
             completeCounter++;
             reader.onload = () => {
@@ -1130,6 +1134,12 @@ function CreateNewModalTask({ ...props }) {
                         let o = { Path: path, FileName: filedata.FileName }
 
                         setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+
+                        // setSelectedFiles((prevUploadedFiles) => [
+                        //     ...prevUploadedFiles,
+                        //     ...filedata,
+                        // ]);
+
 
                     }
                 }
@@ -1267,21 +1277,28 @@ function CreateNewModalTask({ ...props }) {
         if (attachmentPath.length > 0) {
             attString = attachmentPath.map(obj => obj.Path).join('|');
         }
-
+if(nextDate){
+ // setLoading(true);
+}
+else{
+toast.error("Please Select a Due Date");
+ setLoading(false);
+            return false
+}
 
         //console.log("nextDate1", currentDate)
-        let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
-        if (nxtdd === "Invalid Date") {
-            let dd = nextDate.split("/");//30/03/2024
-            nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
-        }
+        // let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
+        // if (nxtdd === "Invalid Date") {
+        //     let dd = nextDate.split("/");//30/03/2024
+        //     nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
+        // }
 
         //console.log("nextDate",dayjs(nxtdd).format("YYYY/MM/DD"))
         let ooo = {
 
             "ClientIsRecurrence": false,
-            "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-            "ClientEnd": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
+            "StartDate":currentDate? moment(currentDate).format("YYYY/MM/DD"): "1900/01/01",
+            "ClientEnd":nextDate?moment(nextDate).format("YYYY/MM/DD") : "1900/01/01",
             "ClientDayNumber": "1",
             "ClientMonth": "1",
             "ClientOccurrenceCount": "1",
@@ -1296,13 +1313,13 @@ function CreateNewModalTask({ ...props }) {
             "FolderId": txtFolderId.toString(),
             "Subject": textSubject,
             "TypeofTaskID": txtSectionId.toString(),
-            "EndDateTime": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
-            "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
+            "EndDateTime": nextDate ? moment(nextDate).format("YYYY/MM/DD") : "1900/01/01",
+            "StartDateTime": moment(currentDate).format("YYYY/MM/DD"),// dayjs(currentDate).format("YYYY/MM/DD"),
             "Status": txtStatus,
             "Priority": txtPriorityId.toString(),
             "PercentComplete": "1",
             "ReminderSet": false,
-            "ReminderDateTime": remiderDate ? dayjs(remiderDate).format("YYYY/MM/DD") : "1900/01/01",
+            "ReminderDateTime": remiderDate ? moment(remiderDate).format("YYYY/MM/DD") : "1900/01/01",
             "TaskNo": "0",
             "Attachments": attString ? attString : "",
             "Details": txtdescription,
@@ -1314,7 +1331,7 @@ function CreateNewModalTask({ ...props }) {
             "Notes": "",
             "TaskSource": "CRM"
         }
-        console.log(selectedRows, "finalattStringsave data obj", attString);
+        console.log(ooo, "Json_CRM_Task_Save obj");
         cls.Json_CRM_Task_Save(ooo, function (sts, data) {
             if (sts) {
                 if (data) {
@@ -1389,7 +1406,7 @@ function CreateNewModalTask({ ...props }) {
     function ClearForm() {
         // console.log("Add User List11", addUser);  
         //setAddUser(clearData)
-
+        setFilterText("");
         //setAddUser([]);
         setAttachmentPath([]);
 
@@ -1999,19 +2016,27 @@ function CreateNewModalTask({ ...props }) {
                     setLoading(false);
                     return false
                 }
+                if(nextDate){
+ // setLoading(true);
+}
+else{
+toast.error("Please Select a Due Date");
+ setLoading(false);
+            return false
+}
 
 
-                let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
-                if (nxtdd === "Invalid Date") {
-                    let dd = nextDate.split("/");//30/03/2024
-                    nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
-                }
+                // let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
+                // if (nxtdd === "Invalid Date") {
+                //     let dd = nextDate.split("/");//30/03/2024
+                //     nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
+                // }
 
                 const isaddUser = addUser.map(obj => obj.ID).join(',');
                 let ooo = {
                     "ClientIsRecurrence": false,
-                    "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-                    "ClientEnd": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
+                    "StartDate":currentDate? moment(currentDate).format("YYYY/MM/DD"):"1900/01/01",
+                    "ClientEnd": nextDate ? moment(nextDate).format("YYYY/MM/DD") : "1900/01/01",
                     "ClientDayNumber": "1",
                     "ClientMonth": "1",
                     "ClientOccurrenceCount": "1",
@@ -2026,13 +2051,13 @@ function CreateNewModalTask({ ...props }) {
                     "FolderId": txtFolderId.toString(),
                     "Subject": textSubject,
                     "TypeofTaskID": txtSectionId.toString(),
-                    "EndDateTime": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
-                    "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
+                    "EndDateTime": nextDate ? moment(nextDate).format("YYYY/MM/DD") : "1900/01/01",
+                    "StartDateTime":currentDate? moment(currentDate).format("YYYY/MM/DD"):"1900/01/01",
                     "Status": txtStatus,
                     "Priority": txtPriorityId.toString(),
                     "PercentComplete": "1",
                     "ReminderSet": false,
-                    "ReminderDateTime": remiderDate ? dayjs(remiderDate).format("YYYY/MM/DD") : "1900/01/01",
+                    "ReminderDateTime": remiderDate ? moment(remiderDate).format("YYYY/MM/DD") : "1900/01/01",
                     "TaskNo": "0",
                     "Attachments": "",
                     "Details": txtdescription,
@@ -2528,11 +2553,11 @@ function CreateNewModalTask({ ...props }) {
         setAnchorElFiles(null);
     };
 
-    // useEffect(() => {
-    //     setNextDate("");
-    //     setNextDateClear(true);
-    //     console.log("nextDate", nextDate)
-    // }, [currentDate]);
+    useEffect(() => {
+    setNextDate("");
+    setNextDateClear(true);
+    console.log("nextDate",nextDate)
+}, [currentDate]);
 
     return (
         <React.Fragment>
@@ -3869,14 +3894,12 @@ function CreateNewModalTask({ ...props }) {
                                                 dateAdapter={AdapterDayjs}
                                             >
                                                 <CalendarMonthIcon />
-                                                
                                                 <DatePicker
                                                     showIcon
                                                     dateFormat="DD/MM/YYYY"
                                                     value={currentDate}
                                                     onChange={(date) => {
-                                                        CurrentDateChange(date);
-                                                        console.log("nextDate33333", nextDate);
+                                                        CurrentDateChange(date);                                                       
                                                     }}
                                                     timeFormat={false}
                                                     isValidDate={disablePastDt}
@@ -3915,15 +3938,17 @@ function CreateNewModalTask({ ...props }) {
                                             <DatePicker
                                                 showIcon
                                                 dateFormat="DD/MM/YYYY"
-                                                value={nextDate}
-                                                onChange={(date) => setNextDate(date)} // Handle date changes
+                                                value={nextDate?nextDate:""}
+                                                onChange={(e) => setNextDate(e)} // Handle date changes
                                                 timeFormat={false}
                                                 isValidDate={disableDueDate}
                                                 closeOnSelect={true}
                                                 icon="fa fa-calendar"
-                                                isClearable={nextDateclear}
-                                            />
+                                            // sx={{
+                                            //     width: '140px'
+                                            // }}
 
+                                            />
 
                                             {/* <DatePicker className=" w-100"
                                                 //selected={selectedDate}

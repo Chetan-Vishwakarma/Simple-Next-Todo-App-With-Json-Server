@@ -447,6 +447,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                             timestamp = parseInt(activity.Item_Date.slice(6, -2));
                         }
                         const date = new Date(timestamp);
+                        
                         const formatedate = formatDate(date)
                         // console.log(formatDate(date),"dateformattingdate");
                         return { ...activity, Item_Date: formatedate };
@@ -511,20 +512,15 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     }
 
     function startFormattingDate(dt) {
-        //console.log("kjdhdsjhsdf", dt)
+        console.log("kjdhdsjhsdf", dt)
         if (dt) {
             // let fullDate = new Date(parseInt(dt.substr(6)));
-            let fullDate = new Date(dt);
+          //  let fullDate = new Date(dt);
 
-            // if(dt.includes("/Date")){
-            //     let fullDate = new Date(parseInt(dt.substr(6)));
-            //     console.log("date formet111", fullDate);
-            //     return fullDate;
-            // }
-            // else{
-            //     return fullDate;
-            // }
+            let fullDate = new Date(parseInt(dt.substr(6)));
+            console.log("date formet111", fullDate);
             return fullDate;
+           // return fullDate;
 
         }
         else {
@@ -720,9 +716,12 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
         setNotesMessage("");
         Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
 
-        //setCurrentDate(startFormattingDate(selectedTask.CreationDate));
-        setCurrentDate(moment(selectedTask.Start, "DD/MM/YYYY").toDate());
-        // console.log("moment11",moment(selectedTask.Start,"DD/MM/YYYY").toDate());
+        setCurrentDate(startFormattingDate(selectedTask.Start));
+
+       // setCurrentDate(moment(selectedTask.Start, "DD/MM/YYYY").toDate());
+        
+        console.log("moment122222221",moment(selectedTask.Start,"DD/MM/YYYY").toDate());
+
         //moment(dateString, "DD/MM/YYYY").toDate();
         setNextDate(DateFormet(selectedTask.EndDateTime));
         setRemiderDate(dayjs(Cls.getCurrentDate()));
@@ -3030,8 +3029,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                                 </Typography>
                                                                 <Typography variant="body1">
                                                                     {/* Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span>  */}
-                                                                    Date <span className='sembold'>{data.data["Item_Date"] ? data.data["Item_Date"] : ""}</span> |
-                                                                    Uploaded by <span className='sembold'>Patrick</span>
+                                                                    {/* Date <span className='sembold'>{data.data["Item_Date"] ? data.data["Item_Date"] : ""}</span> | */}
+                                                                    Uploaded by <span className='sembold'>{forwardUser.ForwardTo}</span>
                                                                 </Typography>
                                                             </Box>
                                                         </Box>

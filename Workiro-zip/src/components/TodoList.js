@@ -53,7 +53,7 @@ import { setMyTasks } from '../redux/reducers/counterSlice';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { updateReduxDataSonam } from '../redux/reducers/counterSlice';
-import InsertLinkIcon from '@mui/icons-material/InsertLink';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 
 
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20' />, <PublishedWithChangesIcon color='primary' className='me-1 font-20' />, <HourglassBottomIcon color='primary' className='me-1 font-20' />, <CheckCircleOutlineIcon color='success' className='me-1 font-20' />];
@@ -111,12 +111,13 @@ function TodoList() {
     const [suggestionList, setSuggestionList] = useState([]);
 
     const [searchInput, setSearchInput] = useState("");
+    const [isDateShow, setIsDateShow] = useState(false);
 
 
 
     // for date datepicker
     const [state, setState] = useState({
-        start: moment().subtract(29, 'days'),
+        start: moment({ year: 1990, month: 0, day: 1 }),
         end: moment(),
     });
     const { start, end } = state;
@@ -444,8 +445,14 @@ function TodoList() {
         setTaskFilter(obj);
     }
     const handleCallback = (start, end) => {
+        if(start._i==="Clear"){
+            setIsDateShow(false);
+            handleFilterDeletion("EndDateTime");
+            return;
+        }
         setTaskFilter({ ...taskFilter, "EndDateTime": [start._d, end._d] });
         setState({ start, end });
+        setIsDateShow(true);
     };
 
     const label =
@@ -1015,6 +1022,9 @@ function TodoList() {
                                     startDate: start.toDate(),
                                     endDate: end.toDate(),
                                     ranges: {
+                                        'Clear Filter': [
+                                            'Clear', 'Clear'
+                                        ],
                                         'All': [
                                             moment({ year: 1990, month: 0, day: 1 }).toDate(),
                                             moment().toDate()
@@ -1050,7 +1060,7 @@ function TodoList() {
                                     <i className="fa fa-calendar"></i>
                                     <CalendarMonthIcon className='me-2 text-red' />
 
-                                    <span>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
+                                    <span>{isDateShow ? label : "Select Due Date"}</span> <i className="fa fa-caret-down"></i>
                                 </div>
                             </DateRangePicker>
                         </Box>
@@ -1149,7 +1159,7 @@ function TodoList() {
 
                                                     <Box className='check-todo'>
                                                         <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
-                                                            <InsertLinkIcon />
+                                                            <AttachFileIcon />
                                                         </Badge>
 
                                                         <Radio className={item.Priority === 1 ? 'text-red' : item.Priority === 2 ? 'text-green' : 'text-grey'} checked
@@ -1257,7 +1267,7 @@ function TodoList() {
 
                                             <Box className='check-todo'>
                                                 <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
-                                                    <InsertLinkIcon />
+                                                    <AttachFileIcon />
                                                 </Badge>
 
                                                 <Radio className={item.Priority === 1 ? 'text-red' : item.Priority === 2 ? 'text-green' : 'text-grey'} checked

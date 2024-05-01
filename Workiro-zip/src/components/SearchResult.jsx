@@ -24,7 +24,7 @@ import Tooltip from '@mui/material/Tooltip';
 import BootstrapTooltip from '../utils/BootstrapTooltip';
 import Fileformat from '../images/files-icon/pdf.png';
 import IconButton from '@mui/material/IconButton';
-import InsertLinkIcon from '@mui/icons-material/InsertLink';
+import AttachFileIcon from '@mui/icons-material/InsertLink';
 
 
 const agrno = localStorage.getItem("agrno");
@@ -410,7 +410,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
                                 <Box className='check-todo'>
                                     <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
-                                        <InsertLinkIcon />
+                                        <AttachFileIcon />
                                     </Badge>
 
                                     <Radio className={item.Priority === 1 ? 'text-red ' : item.Priority === 2 ? 'text-green' : 'text-grey'} checked
