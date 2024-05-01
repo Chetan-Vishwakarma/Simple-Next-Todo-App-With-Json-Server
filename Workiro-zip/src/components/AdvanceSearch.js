@@ -35,6 +35,7 @@ function AdvanceSearch() {
     const [isClientField, setIsClientField] = useState(false);
     const [isDocIdField, setIsDocIdField] = useState(false);
     const [documentId, setDocumentId] = useState("");
+    const [isDateShow, setIsDateShow] = useState(false);
     const [documentData, setDocumentData] = useState({
         ClientId: "",
         Description: "",
@@ -71,6 +72,10 @@ function AdvanceSearch() {
         start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY');
 
     const handleCallback = (start, end) => {
+        if (start._i === "Clear") {
+            setIsDateShow(false);
+            return;
+        }
         setState({ start, end });
     };
     const Json_GetFolderData = () => {
@@ -445,11 +450,14 @@ function AdvanceSearch() {
                             </Box>
 
                             <Box sx={{ m: 1 }} className='pt-2'>
-                                <DateRangePicker
+                                {isDateShow ? <DateRangePicker
                                     initialSettings={{
                                         startDate: start.toDate(),
                                         endDate: end.toDate(),
                                         ranges: {
+                                            'Clear': [
+                                                'Clear', 'Clear'
+                                            ],
                                             'All': [
                                                 moment({ year: 1990, month: 0, day: 1 }).toDate(),
                                                 moment().toDate()
@@ -484,7 +492,9 @@ function AdvanceSearch() {
                                         <CalendarMonthIcon className='me-2 text-red' />
                                         <span className='font-14'>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
                                     </div>
-                                </DateRangePicker>
+                                </DateRangePicker> : <Button onClick={() => setIsDateShow(true)}>
+                                    {"Select Date"}
+                                </Button>}
                             </Box>
 
                             <hr className='mt-1' />
@@ -492,8 +502,8 @@ function AdvanceSearch() {
                             <Button variant="contained" size="small" onClick={() => {
                                 let formated_start_date = format_YYYY_MM_DD(start._d);
                                 let formated_end_date = format_YYYY_MM_DD(end._d);
-                                let obj = { ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date };
-                                setDocumentData({ ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date });
+                                let obj = { ...documentData, ItemFDate: isDateShow ? formated_start_date : "01/01/1900", ItemTDate: isDateShow ? formated_end_date : "01/01/1900" };
+                                setDocumentData(obj);
                                 Json_AdvanceSearchDoc(obj);
                             }}>
                                 Apply
