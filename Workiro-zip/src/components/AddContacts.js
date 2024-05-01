@@ -704,6 +704,36 @@ function AddContacts({ addContactData, contactDetails }) {
   const [open, setOpen] = useState(false);
   const handleOptionClick = (item) => {
     console.log(item, "onSelectData");
+    let data = { ...userContactDetails };
+      data = {
+        ...data,
+        ["Title"]: "",
+        ["FirstName"]: "",
+        ["LastName"]: "",
+        ["ReferenceName"]: "",
+        ["MainContact"]: "",
+        ["Inactive"]: "",
+        ["GreetingName"]: "",
+        ["EmailName"]: "",
+        ["MainUserId"]: -1,
+        ["MainLine1Name"]: "",
+        ["MainLine2Name"]: "",
+        ["MainLine3Name"]: "",
+        ["MainTownName"]: "",
+        ["Notes"]: "",
+        ["MainPostcodeName"]: "",
+        ["Maincontactcountry"]: "",
+        ["MainTelephoneName"]: "",
+        ["MainMobileName"]: "",
+        ["mainCountry"]: "",
+        ["billingsCountry"]: "",
+        ["ragistersCountry"]: "",
+        ["ReferenceID"]: "",
+        ["CreatePortal"]: "",
+        ["Base64ImgData"]: "",
+        ["RolesData"]:null
+      };
+      setContactDetails(data);
     setImportcontactdata("");
     setTxtValue(item);
     setOpen(false);
@@ -786,7 +816,6 @@ function AddContacts({ addContactData, contactDetails }) {
     console.log("cleardata",getAllStateReduxSonam);
     dispatch(clearDefaultRoleSonam());
     setdefaultClient(null); 
-    setDataFromChild(null);
     let data = { ...userContactDetails };
       data = {
         ...data,
