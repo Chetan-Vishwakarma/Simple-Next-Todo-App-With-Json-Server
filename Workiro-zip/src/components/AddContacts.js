@@ -704,6 +704,8 @@ function AddContacts({ addContactData, contactDetails }) {
   const [open, setOpen] = useState(false);
   const handleOptionClick = (item) => {
     console.log(item, "onSelectData");
+    dispatch(clearDefaultRoleSonam());
+    // setdefaultClient(null); 
     let data = { ...userContactDetails };
       data = {
         ...data,
