@@ -925,7 +925,6 @@ export default function DocumentList({ clientId }) {
                                     Sort By
                                 </Typography>
 
-
                                 <Box className='d-flex'>
                                     <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 '>
                                         <BootstrapTooltip title="Group By" arrow
