@@ -856,8 +856,8 @@ function CreateNewModalTask({ ...props }) {
 
     const CurrentDateChange = (e) => {
         setCurrentDate(e);
-        setNextDate("");
-        setNextDateClear(true);
+       // setNextDate("");
+       // setNextDateClear(true);
         console.log("get folder list112222", moment(e).format("YYYY/MM/DD"));
     }
 
@@ -2553,11 +2553,7 @@ toast.error("Please Select a Due Date");
         setAnchorElFiles(null);
     };
 
-    useEffect(() => {
-    setNextDate("");
-    setNextDateClear(true);
-    console.log("nextDate",nextDate)
-}, [currentDate]);
+   
 
     return (
         <React.Fragment>

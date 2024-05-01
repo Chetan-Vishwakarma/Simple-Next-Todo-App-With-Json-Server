@@ -15,7 +15,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+// import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import DatePicker from 'react-datetime';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import CommanCLS from '../../services/CommanService';
 import dayjs from 'dayjs';
@@ -434,12 +435,12 @@ function UploadDocument({
 
     const handleDateChangeDocument = (date) => {
        // console.log("Get Clietn On click", dayjs(date).format('YYYY/MM/DD'));
-        setDocumentDate(dayjs(date).format('YYYY/MM/DD')); // Update the selected date state
+        setDocumentDate(moment(date).format('DD/MM/YYYY')); // Update the selected date state
     };
 
     const handleDateChangeRecieved = (date) => {
         console.log("Get Clietn On click", dayjs(date).format('YYYY/MM/DD'));
-        setReceivedDate(dayjs(date).format('YYYY/MM/DD')); // Update the selected date state
+        setReceivedDate(moment(date).format('DD/MM/YYYY')); // Update the selected date state
     };
 
     const [createTaskChk, setCreateTaskChk] = useState(false);
@@ -588,10 +589,10 @@ function UploadDocument({
                     "uDFList": concatenatedString,
                     "sUDFList": "",
                     "clientname": txtClientData.Client,
-                    "receiveDate": dayjs(receivedDate).format("YYYY/MM/DD"),
+                    "receiveDate": moment(receivedDate).format("YYYY/MM/DD"),
                     "actionByDate": "1990/01/01",
-                    "actionDate": dayjs(documentDate).format("YYYY/MM/DD"),
-                    "docViewedDate": dayjs(documentDate).format("YYYY/MM/DD"),
+                    "actionDate": moment(documentDate).format("YYYY/MM/DD"),
+                    "docViewedDate": moment(documentDate).format("YYYY/MM/DD"),
                     "strb64": fileData ? fileData.Base64 : "",
                     "strtxt64": "",
                     "EmailMessageId": ""
@@ -869,10 +870,11 @@ function UploadDocument({
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                     <label className='font-14 text-black'>Document Date</label>
                                     <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                        <DatePicker className=" w-100"
-                                            format="DD/MM/YYYY"
-                                            defaultValue={moment()}
+                                        <DatePicker className="form-control w-100"
+                                             dateFormat="DD/MM/YYYY"
+                                            value={moment(documentDate).format("DD/MM/YYYY")}
                                             onChange={handleDateChangeDocument} // Handle date changes
+                                            timeFormat={false}
                                         />
 
 
@@ -885,9 +887,10 @@ function UploadDocument({
                                     <label className='font-14 text-black'>Received Date</label>
                                     <LocalizationProvider dateAdapter={AdapterDayjs} >
                                         <DatePicker className=" w-100"
-                                            format="DD/MM/YYYY"
-                                            defaultValue={moment()}
+                                             dateFormat="DD/MM/YYYY"
+                                            value={moment(receivedDate).format("DD/MM/YYYY")}
                                             onChange={handleDateChangeRecieved} // Handle date changes
+                                            timeFormat={false}
                                         />
                                     </LocalizationProvider>
                                 </Box>
