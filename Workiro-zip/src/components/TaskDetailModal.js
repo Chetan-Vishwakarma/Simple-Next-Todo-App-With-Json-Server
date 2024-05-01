@@ -2104,7 +2104,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                     {item.Folder}
                                                 </MenuItem>
                                             </>)
-                                        }) : ""}.length
+                                        }) : ""}
 
 
                                     </Menu>

@@ -926,7 +926,12 @@ function AddContacts({ addContactData, contactDetails }) {
                             Import Existing DocuSoft Contact
                           </h2>
                           <Autocomplete
-                            {...contactlist}
+                            // {...contactlist}
+                            options={contactlistdata}
+                            key={`contactlistkey`}
+                            getOptionLabel={(option) =>
+                              option.EMailId
+                            }
                             id="contactlist"
                             clearOnEscape
                             onChange={onChangecontactlist}
