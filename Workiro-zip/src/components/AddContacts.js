@@ -43,6 +43,7 @@ let clientName;
 function AddContacts({ addContactData, contactDetails }) {
   console.log(addContactData, "addContactData11111", contactDetails);
   const [contact, setContact] = useState([]);
+  const [Contactudfnull, setContactudfnull] = useState(false);
   const getAllStateReduxSonam = useSelector((state) => state.counter);
   const dispatch = useDispatch();
   const [fillcontact, setFillContact] = useState({});
@@ -54,6 +55,7 @@ function AddContacts({ addContactData, contactDetails }) {
   const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
   const [value, setValue] = React.useState(tabValue ? tabValue : "1");
   const [clientDetails, setClientDetails] = useState({});
+  const [clientDetailsclear, setClientDetailsclear] = useState({});
   const [folders, setFolders] = useState([]);
   const [Importdata, setImportdata] = useState([]);
   const [GellAllClientList, setGellAllClientList] = useState([]);
@@ -124,6 +126,7 @@ function AddContacts({ addContactData, contactDetails }) {
   };
 
   const Json_GetCRMContactUDFValues = () => {
+    console.log(Contactudfnull,"Contactudfnull1");
     let obj = {
       agrno: agrno,
       Email: Email,
@@ -768,6 +771,7 @@ function AddContacts({ addContactData, contactDetails }) {
     // setIntUserid(localStorage.getItem("UserId"));
     Json_GetFolders();
     Json_GetClientCardDetails();
+   
     Json_GetCRMContactUDFValues();
     Json_GetAllContacts();
     Json_GetAllClientList();
@@ -814,10 +818,40 @@ function AddContacts({ addContactData, contactDetails }) {
     }
   }, []);
   console.log(defaultClient, "defaultClientfirst");
+  const Json_GetCRMContactUDFValues11 = () => {
+    console.log(Contactudfnull,"Contactudfnull1");
+    let obj = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      ProjectId: folderId,
+      // ClientId: localStorage.getItem("origiNator") ? localStorage.getItem("origiNator") : userContactDetails.ReferenceID,
+      // ClientId: (contactDetails && contactDetails.length > 0) ? contactDetails[0]?.OriginatorNo ? contactDetails[0]?.OriginatorNo : "" : "",
+      // ContactId: (contactDetails && contactDetails.length > 0) ? contactDetails[0]?.ContactNo ? contactDetails[0]?.ContactNo : "-1" : "-1",
+      ClientId: "-1",
+      ContactId: "-1",
+    };
+    try {
+      Cls.Json_GetCRMContactUDFValues(obj, (sts, data) => {
+        if (sts) {
+          if (data) {
+            let json = JSON.parse(data);
+            console.log("Json_GetCRMContactUDFValues", json);
+            setClientDetailsclear(json);
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_GetCRMContactUDFValues", err);
+    }
+  };
   const clearDataCard = () => {
     console.log("cleardata",getAllStateReduxSonam);
     dispatch(clearDefaultRoleSonam());
-    setdefaultClient(null); 
+    setdefaultClient(null);
+    setContactudfnull(true);
+    Json_GetCRMContactUDFValues11();
+    // setDataFromChild(null); 
     let data = { ...userContactDetails };
       data = {
         ...data,
@@ -848,6 +882,8 @@ function AddContacts({ addContactData, contactDetails }) {
         ["RolesData"]:null
       };
       setContactDetails(data);
+
+      
   }
   return (
     <Box className="container-fluid p-0">
@@ -1099,12 +1135,23 @@ function AddContacts({ addContactData, contactDetails }) {
 
               <Box className="well mb-4">
                 <h2 className="font-20 mb-3 text-black">UDF Details</h2>
-                <ContactUDF
-                  data={clientDetails}
-                  contactDetails={contactDetails}
-                  setDataFromChild={setDataFromChild}
-                  ContactUDFEdit={ContactUDFEdit}
-                ></ContactUDF>
+                {Contactudfnull&&Contactudfnull===true  ? (
+          <ContactUDF
+          data={clientDetailsclear}
+          contactDetails={contactDetails}
+          setDataFromChild={setDataFromChild}
+          ContactUDFEdit={ContactUDFEdit}
+        ></ContactUDF>
+      ) : (
+        <ContactUDF
+        data={clientDetails}
+        contactDetails={contactDetails}
+        setDataFromChild={setDataFromChild}
+        ContactUDFEdit={ContactUDFEdit}
+      ></ContactUDF>
+      )}
+                
+             
               </Box>
               {addContactData && addContactData == {} ? (
                 <Button
