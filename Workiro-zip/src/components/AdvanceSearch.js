@@ -54,7 +54,7 @@ function AdvanceSearch() {
     });
     // for date datepicker
     const [state, setState] = useState({
-        start: moment().subtract(29, 'days'),
+        start: moment({ year: 1990, month: 0, day: 1 }),
         end: moment(),
     });
     const { start, end } = state;
@@ -77,6 +77,7 @@ function AdvanceSearch() {
             return;
         }
         setState({ start, end });
+        setIsDateShow(true);
     };
     const Json_GetFolderData = () => {
         let obj = {
@@ -450,7 +451,7 @@ function AdvanceSearch() {
                             </Box>
 
                             <Box sx={{ m: 1 }} className='pt-2'>
-                                {isDateShow ? <DateRangePicker
+                                <DateRangePicker
                                     initialSettings={{
                                         startDate: start.toDate(),
                                         endDate: end.toDate(),
@@ -490,11 +491,9 @@ function AdvanceSearch() {
                                     <div className='pointer d-flex align-items-center custom-datepicker-bordered' id="reportrange">
                                         <i className="fa fa-calendar"></i>
                                         <CalendarMonthIcon className='me-2 text-red' />
-                                        <span className='font-14'>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
+                                        <span className='font-14'>{isDateShow?label:"Select Date"}</span> <i className="fa fa-caret-down"></i>
                                     </div>
-                                </DateRangePicker> : <Button onClick={() => setIsDateShow(true)}>
-                                    {"Select Date"}
-                                </Button>}
+                                </DateRangePicker>
                             </Box>
 
                             <hr className='mt-1' />
