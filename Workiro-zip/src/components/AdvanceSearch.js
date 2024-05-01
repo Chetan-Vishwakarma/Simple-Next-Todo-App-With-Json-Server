@@ -54,7 +54,7 @@ function AdvanceSearch() {
     });
     // for date datepicker
     const [state, setState] = useState({
-        start: moment({ year: 1990, month: 0, day: 1 }),
+        start: moment(),
         end: moment(),
     });
     const { start, end } = state;
