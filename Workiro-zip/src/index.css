@@ -621,6 +621,16 @@ button {
   border-radius: 0px;
   padding: 0px !important;
 }
+.custom-date-picker .form-control {
+  height: 52px;
+}
+.custom-date-picker svg {
+  position: absolute;
+  right: 12px;
+  top: 13px;
+  font-size: 26px;
+  color: #D41B20;
+}
 
 .text-black {
   color: #1C274C;

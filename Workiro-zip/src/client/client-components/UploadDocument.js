@@ -25,19 +25,21 @@ import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+
 
 let originatorNo;
-function UploadDocument({ 
-      openUploadDocument, 
-      setOpenUploadDocument,
-      documentDate, setDocumentDate, receivedDate, setReceivedDate, setCreateNewFileObj, txtFolderData, setTxtFolderData, txtClientData, setTxtClientData, txtSectionData, setTxtSectionData, setTaskType, setOpenModal, handleClickOpen, openDocumentModalByRedux
-    }) {
-        //console.log("location state",localtion.state)
+function UploadDocument({
+    openUploadDocument,
+    setOpenUploadDocument,
+    documentDate, setDocumentDate, receivedDate, setReceivedDate, setCreateNewFileObj, txtFolderData, setTxtFolderData, txtClientData, setTxtClientData, txtSectionData, setTxtSectionData, setTaskType, setOpenModal, handleClickOpen, openDocumentModalByRedux
+}) {
+    //console.log("location state",localtion.state)
     const dispatch = useDispatch();
     const localtion = useLocation();
     try {
         originatorNo = localtion.state;
-      //  console.log("originatorNo11",originatorNo )
+        //  console.log("originatorNo11",originatorNo )
     }
 
     catch (e) {
@@ -105,7 +107,7 @@ function UploadDocument({
 
 
     const [fileLangth, setFileLength] = useState(0);
-    
+
 
 
 
@@ -145,7 +147,7 @@ function UploadDocument({
                             Guid: localStorage.getItem("GUID"),
                             FileType: cls.getFileExtension(file.name).toLowerCase()
                         };
-                        
+
                         setSelectedFiles((prevUploadedFiles) => [...prevUploadedFiles, fileData]);
                         resolve();
                     };
@@ -434,7 +436,7 @@ function UploadDocument({
 
 
     const handleDateChangeDocument = (date) => {
-       // console.log("Get Clietn On click", dayjs(date).format('YYYY/MM/DD'));
+        // console.log("Get Clietn On click", dayjs(date).format('YYYY/MM/DD'));
         setDocumentDate(moment(date).format('DD/MM/YYYY')); // Update the selected date state
     };
 
@@ -485,11 +487,11 @@ function UploadDocument({
 
     const handleNext = () => {
         setStep(step + 1);
-        if(selectedFiles.length===1){
+        if (selectedFiles.length === 1) {
             settxtStandarDescription(cls.getFileName(selectedFiles[0].FileName));
         }
-        else{
-            settxtStandarDescription(""); 
+        else {
+            settxtStandarDescription("");
         }
     };
 
@@ -505,7 +507,7 @@ function UploadDocument({
         }
     }
 
-   
+
 
     const UploadDocumentCreattTask = async () => {
         try {
@@ -521,10 +523,10 @@ function UploadDocument({
                 // setOpenUploadDocument(false);   
             }
             else {
-               // Json_RegisterItem()
-                    toast.error("Please select a document",{
-                        toastStyle: {zIndex:9999},
-                    });
+                // Json_RegisterItem()
+                toast.error("Please select a document", {
+                    toastStyle: { zIndex: 9999 },
+                });
             }
 
         } catch (error) {
@@ -533,8 +535,8 @@ function UploadDocument({
 
     }
 
-   
-    let counter=0;
+
+    let counter = 0;
 
     function Json_RegisterItem(fileData) {
         try {
@@ -577,9 +579,9 @@ function UploadDocument({
                     "originatorId": txtClientData.ClientID,
                     "senderId": txtClientData.ClientID,
                     "sectionName": txtSectionData.Sec,
-                    "extDescription":validationMessage==="" ? cls.getFileName(fileData.FileName) : txtStandarDescription,
+                    "extDescription": validationMessage === "" ? cls.getFileName(fileData.FileName) : txtStandarDescription,
                     "docDirection": "Incoming",
-                    "description": validationMessage==="" ? cls.getFileName(fileData.FileName) : txtStandarDescription,
+                    "description": validationMessage === "" ? cls.getFileName(fileData.FileName) : txtStandarDescription,
                     "priority": "",
                     "stickyNote": "",
                     "fileName": fileData ? fileData.FileName : "",
@@ -597,7 +599,7 @@ function UploadDocument({
                     "strtxt64": "",
                     "EmailMessageId": ""
                 }
-                
+
                 console.log("Json_RegisterItem", obj);
 
 
@@ -605,20 +607,20 @@ function UploadDocument({
                     if (sts) {
                         if (data) {
                             let js = JSON.parse(data)
-                           
+
                             if (js.Status === "true") {
                                 counter++;
-                               // console.log("Json_RegisterItem", js,counter)
+                                // console.log("Json_RegisterItem", js,counter)
                                 if (fileData) {
 
                                     fileData.DocId = js.ItemId;
                                     setCreateNewFileObj((Previous) => [...Previous, fileData]);
                                 }
 
-                                if(selectedFiles.length===counter){
-                                    let msg =`${selectedFiles.length}  Document(s) Uploaded!`;
-                                    console.log("Json_RegisterItem 222 ",msg)
-                                    toast.success(msg);                      
+                                if (selectedFiles.length === counter) {
+                                    let msg = `${selectedFiles.length}  Document(s) Uploaded!`;
+                                    console.log("Json_RegisterItem 222 ", msg)
+                                    toast.success(msg);
                                 }
 
                                 if (buttonNameText === "Submit & Create Portal Task" || buttonNameText === "Submit & Create Task") {
@@ -631,12 +633,12 @@ function UploadDocument({
                                     //     if(openModal){
                                     //         setOpenUploadDocument(false); 
                                     //     }
-                                      
+
                                     // }, 4000);    
-                                    
+
                                     // setOpenModal(true) doring conflict
                                     // setOpenUploadDocument(false);
-                                   
+
                                 }
                                 else {
                                     setOpenUploadDocument(false);
@@ -711,7 +713,7 @@ function UploadDocument({
             [id]: setUdf // Update selected value for a specific ComboBox
         }));
 
-        
+
         // console.log("newValue",udfIdWithValue);
 
     };
@@ -816,7 +818,7 @@ function UploadDocument({
                                 </Box>
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-                                    {!openDocumentModalByRedux?(<Autocomplete
+                                    {!openDocumentModalByRedux ? (<Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
                                         options={clientList}
@@ -827,11 +829,11 @@ function UploadDocument({
                                         //value={originatorNo.originatorNo} // Set default selected option based on the ID
                                         onChange={(event, newValue) => handleClientChange(newValue)}
                                         renderInput={(params) => <TextField {...params} label="Reference" />}
-                                    />):(<Autocomplete
+                                    />) : (<Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
                                         options={clientList}
-                                        defaultValue={clientList.filter(itm=>itm.ClientID===originatorNo.originatorNo)[0]}
+                                        defaultValue={clientList.filter(itm => itm.ClientID === originatorNo.originatorNo)[0]}
                                         getOptionLabel={(option) => {
                                             // console.log("ldsfljfd",option.Client);
                                             return option.Client;
@@ -869,30 +871,33 @@ function UploadDocument({
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                     <label className='font-14 text-black'>Document Date</label>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                        <DatePicker className="form-control w-100"
-                                             dateFormat="DD/MM/YYYY"
-                                            value={moment(documentDate).format("DD/MM/YYYY")}
-                                            onChange={handleDateChangeDocument} // Handle date changes
-                                            timeFormat={false}
-                                        />
 
+                                    <Box className='custom-date-picker'>
+                                        <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                            <DatePicker className=" w-100"
+                                                format="DD/MM/YYYY"
+                                                defaultValue={moment()}
+                                                onChange={handleDateChangeDocument} // Handle date changes
+                                            />
+                                        </LocalizationProvider>
+                                        <CalendarMonthIcon />
+                                    </Box>
 
-
-
-                                    </LocalizationProvider>
                                 </Box>
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                     <label className='font-14 text-black'>Received Date</label>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                        <DatePicker className=" w-100"
-                                             dateFormat="DD/MM/YYYY"
-                                            value={moment(receivedDate).format("DD/MM/YYYY")}
-                                            onChange={handleDateChangeRecieved} // Handle date changes
-                                            timeFormat={false}
-                                        />
-                                    </LocalizationProvider>
+                                    <Box className='custom-date-picker'>
+                                        <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                            <DatePicker className=" w-100"
+                                                dateFormat="DD/MM/YYYY"
+                                                value={moment(receivedDate).format("DD/MM/YYYY")}
+                                                onChange={handleDateChangeRecieved} // Handle date changes
+                                                timeFormat={false}
+                                            />
+                                        </LocalizationProvider>
+                                        <CalendarMonthIcon />
+                                    </Box>
                                 </Box>
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 d-flex align-items-end'>
@@ -943,7 +948,7 @@ function UploadDocument({
                                     switch (item.ControlType) {
                                         case "ComboBox":
                                             count++;
-                                           // console.log("vlaueeee", count)
+                                            // console.log("vlaueeee", count)
                                             let data = getAllFolderData["Table" + count];
                                             if (data && data.length > 0 && item.UDFId === data[0]["UDFID"]) {
                                                 return (
