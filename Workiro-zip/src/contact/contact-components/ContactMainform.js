@@ -10,20 +10,24 @@ import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { useSelector, useDispatch } from 'react-redux';
+
 import dayjs from "dayjs";
 import moment from 'moment';
 import { toast } from 'react-toastify';
+import { setSetDefaultRoleSonam,setSetDefaultTitleSonam,setDefaultUserSonam,setMainCountrySonam,setDefaultDateSonam} from '../../redux/reducers/counterSlice';
 let datesend ="";
 const ContactMainform = React.memo(
   ({ setContact,contact, clientNames, userContactDetails, setContactDetails, contactlistdata,Importcontactdata,setImportcontactdata,contactDetails }) => {
     console.log(contactDetails, "contactlistdatasonam1",Importcontactdata);
+    const dispatch = useDispatch();
+    const setDefaultRole11 = useSelector((state) => state.counter);
+    console.log(setDefaultRole11, "setDefaultRole11");
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
     const [Dataset, setDataset] = useState("");
-    const [SetDefaultTitle, setSetDefaultTitle] = useState("");
-    const [SetDefaultRole, setSetDefaultRole] = useState("");
     const [SetDefaultDate, setSetDefaultDate] = useState("");
     const [errors, setErrors] = useState({});
     const [checkboxfeb, setCheckboxfeb] = useState(false);
@@ -31,13 +35,8 @@ const ContactMainform = React.memo(
     const [advancedInactive, setAdvancedInactive] = useState(false);
     const [createPortal, setCreatePortal] = useState(false);
     const [contactFilled, setContactFilled] = useState(false);
-    const [mainCountry, setMainCountry] = useState(
-      countries.find((country) => country.label === "United Kingdom")?.label
-    );
     const [mangers, setMangers] = useState([]); // State to hold folders data
     const [Roles, setRoles] = useState([]);
-    // const defaultUser1 = mangers.find((manager) => manager.UserId == intUserid);
-    const [defaultUser, setDefaultUser] = useState(null);
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
     const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
@@ -67,7 +66,8 @@ const ContactMainform = React.memo(
                         (obj) => obj.RoleName == contactDetails[0].Role
                       );
                       console.log("filtercontactdataRole",defaultRole);
-                      setSetDefaultRole(defaultRole);
+                      // setSetDefaultRole(defaultRole);
+                      dispatch(setSetDefaultRoleSonam(defaultRole));
                    }
                 }
               
@@ -75,7 +75,8 @@ const ContactMainform = React.memo(
               let defaultUser1 = json.Table3.find(
                 (manager) => manager.UserId == localStorage.getItem("UserId")
               );
-              setDefaultUser(defaultUser1);
+              // setDefaultUser(defaultUser1);
+              dispatch(setDefaultUserSonam(defaultUser1));
             }
           }
         });
@@ -163,8 +164,9 @@ const ContactMainform = React.memo(
         // console.log(value.UserId, "UserId", selectedUserId);
         let data = { ...userContactDetails };
         data = { ...data, ["MainUserId"]: value.UserId, ["MainUserName"]: value.UserName };
-        console.log(defaultUser, "dataOnchange111", value);
-        setDefaultUser(value);
+        console.log( "dataOnchange111", value);
+        // setDefaultUser(value);
+        dispatch(setDefaultUserSonam(value));
         setContactDetails(data);
       } else {
         // If no option is selected, clear the selectedFolderID state
@@ -179,7 +181,7 @@ const ContactMainform = React.memo(
         data = { ...data, ["Title"]: value.label };
         console.log(data, "onChangetitle");
         setContactDetails(data);
-        setSetDefaultTitle(value);
+        dispatch(setSetDefaultTitleSonam(value));
       } else {
       }
     };
@@ -190,7 +192,8 @@ const ContactMainform = React.memo(
         data = { ...data, ["RolesData"]: value.RoleName };
         console.log(data, "onChangeRoles");
         setContactDetails(data);
-        setSetDefaultRole(value);
+        dispatch(setSetDefaultRoleSonam(value));
+        // setSetDefaultRole(value);
       } else {
       }
     };
@@ -215,7 +218,8 @@ const ContactMainform = React.memo(
         let data = { ...userContactDetails };
         data = { ...data, ["Maincontactcountry"]: value.label };
         console.log(data, "onChangetitle");
-        setMainCountry(value.label);
+        // setMainCountry(value.label);
+        dispatch(setMainCountrySonam(value));
         setContactDetails(data);
       } else {
         // If no option is selected, clear the selectedFolderID state
@@ -287,35 +291,28 @@ function formatDate(dateString) {
 
     return formattedDate;
 }
-const [defaultDate, setDefaultDate] = useState(() => {
-  // Extract timestamp from the date string
-  if(contactDetails && contactDetails.length > 0 && contactDetails[0]["Date Of Birth"]) {
+useEffect(() => {
+  // Set default date based on contactDetails
+  if (contactDetails && contactDetails.length > 0 && contactDetails[0]["Date Of Birth"]) {
     const timestamp = parseInt(contactDetails[0]["Date Of Birth"].slice(6, -2));
-  
-    // Create a new Date object from the timestamp
     const datetimestamp = new Date(timestamp);
-    
-    // Convert the Date object to dayjs
     const defaultDateObject = dayjs(datetimestamp);
-    
-    // Check if the dayjs object is valid
     if (defaultDateObject.isValid()) {
-        return defaultDateObject;
+      // Dispatch action to set default date
+      dispatch(setDefaultDateSonam(defaultDateObject));
     } else {
-        console.log("Invalid date.");
-        return null; // or any default value
+      console.log("Invalid date.");
     }
   }
-
-});
+}, [dispatch, contactDetails]);
     useEffect(() => {
       setAgrNo(localStorage.getItem("agrno"));
       setPassword(localStorage.getItem("Password"));
       setEmail(localStorage.getItem("Email"));
       setFolderId(localStorage.getItem("FolderId"));
       Json_GetConfiguration();
-      console.log(contact, "contactlistsona",userContactDetails);
-  
+      // console.log(contact, setDefaultRole11,"contactlistsona","setdef",SetDefaultRole,userContactDetails);
+  console.log(setDefaultRole11,"setDefaultRole11")
       if (contact) {
         // setContactDetails(null);
         setImportcontactdata(null)
@@ -383,7 +380,8 @@ const [defaultDate, setDefaultDate] = useState(() => {
           (obj) => obj.label == contactDetails[0].Title
         );
        
-        setSetDefaultTitle(filtercontact);
+        //setSetDefaultTitle(filtercontact);
+        dispatch(setSetDefaultTitleSonam(filtercontact));
         // var date11 = new Date(contactDetails[0]["Date Of Birth"]);
         // let momentdata = moment(contactDetails[0]["Date Of Birth"]).format("MM/DD/YYYY");
         // console.log(momentdata,"momentdata",date11,"date11",formatDate(contactDetails[0]["Date Of Birth"]));
@@ -429,8 +427,13 @@ const [defaultDate, setDefaultDate] = useState(() => {
        
        
       }
+      const defaultCountryLabel = countries.find(country => country.label === 'United Kingdom');
+      console.log(defaultCountryLabel,"defaultCountryLabel");
+    // if (defaultCountryLabel) {
+      dispatch(setMainCountrySonam(defaultCountryLabel));
+    // }
       
-  }, [contact, Importcontactdata]);
+  }, [contact, Importcontactdata,dispatch,countries]);
   console.log(SetDefaultDate,"SetDefaultDate")
     return (
       <div>
@@ -441,7 +444,7 @@ const [defaultDate, setDefaultDate] = useState(() => {
               <Autocomplete
                 options={titleData}
                 key={`uniques-manager`}
-                value={SetDefaultTitle || null}
+                value={setDefaultRole11?.SetDefaultTitleSonam || null}
                 onChange={onChangetitle}
                 clearOnEscape
                 renderInput={(params) => (
@@ -481,6 +484,7 @@ const [defaultDate, setDefaultDate] = useState(() => {
               onChange={onChange}
             />
           </Grid>
+
           <Grid item xs={6} md={6}>
             <FormControl fullWidth variant="outlined">
               <Autocomplete
@@ -488,7 +492,7 @@ const [defaultDate, setDefaultDate] = useState(() => {
                 key={`uniques-roles`}
                 options={Roles}
                 getOptionLabel={(option) => option.RoleName}
-                value={SetDefaultRole || null}
+                value={setDefaultRole11?.SetDefaultRoleSonam || null}
                 onChange={onChangeRoles}
                 clearOnEscape
                 renderInput={(params) => (
@@ -514,13 +518,9 @@ const [defaultDate, setDefaultDate] = useState(() => {
                   "DateRangePicker",
                 ]}
               >
-{console.log(SetDefaultDate,"SetDefaultDate",datesend)}
                 <DatePicker
-                 // dateFormat="MM/DD/YYYY"
-                  // value={currentDate}
-                  // defaultValue={SetDefaultDate}
                   dateFormat="MM/DD/YYYY"
-                  value={defaultDate}
+                  value={setDefaultRole11?.defaultDateSonam || null}
                   onChange={(e) => handleInputOnDateChage(e)}
                   label="Birth date"
                 />
@@ -627,7 +627,7 @@ const [defaultDate, setDefaultDate] = useState(() => {
                 key={`maincontact-manager`}
                 options={mangers}
                 getOptionLabel={(option) => option.UserName}
-                value={defaultUser || null}
+                value={setDefaultRole11?.defaultUserSonam || null}
                 onChange={onChangeUser}
                 clearOnEscape
                 renderInput={(params) => (
@@ -713,9 +713,8 @@ const [defaultDate, setDefaultDate] = useState(() => {
                 options={countries}
                 key={`maincontact-Country`}
                 getOptionLabel={(option) => option.label}
-                value={countries.find(
-                  (country) => country.label === mainCountry
-                )}
+                value={setDefaultRole11?.mainCountrySonam
+                }
                 onChange={onChangecountry}
                 // value={defaultUser || null}
                 // onChange={onChangeuser}
