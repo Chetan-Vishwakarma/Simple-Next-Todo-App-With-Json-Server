@@ -21,7 +21,7 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import CustomLoader from './CustomLoader';
 // import DocumentRenameModal from './DocumentRenameModal';
 import Fileformat from '../images/files-icon/pdf.png';
-import InsertLinkIcon from '@mui/icons-material/InsertLink';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import GetFileType from './FileType';
 
 
@@ -754,7 +754,7 @@ function NewTodoList() {
 
                                     <Box className='check-todo'>
                                         <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
-                                            <InsertLinkIcon />
+                                            <AttachFileIcon />
                                         </Badge>
 
                                         <Radio
@@ -886,7 +886,7 @@ function NewTodoList() {
 
                                     <Box className='check-todo'>
                                         <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
-                                            <InsertLinkIcon />
+                                            <AttachFileIcon />
                                         </Badge>
 
                                         <Radio className='text-red'
@@ -999,7 +999,7 @@ function NewTodoList() {
 
                                     <Box className='check-todo'>
                                         <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
-                                            <InsertLinkIcon />
+                                            <AttachFileIcon />
                                         </Badge>
 
                                         <Radio className='text-red'

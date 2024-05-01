@@ -266,11 +266,13 @@ function AdvanceSearch() {
 
                 className='p-5'
             >
-                <Box className='client-details-filter p-2'>
+                <Box className='client-details-filter p-2'
+                    sx={{ maxWidth: '460px', width: '460px' }}
+                >
                     <Box className='mb-0'>
 
-                        <Typography variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
-                            Filter By
+                        <Typography variant="Body2" className='font-14 sembold mb-2 d-block text-black ps-2'>
+                            Advanced Search
                         </Typography>
 
                         <Box className='d-flex'>
@@ -358,127 +360,151 @@ function AdvanceSearch() {
                             </FormControl>
                         </Box>
 
-                        <Box className='d-flex'>
+                        <Box className='d-flex mb-3'>
 
-                            <div className='col-6'>
-                                {isClientField ? <Autocomplete
-                                    disablePortal
-                                    id="combo-box-demo"
-                                    defaultValue={Object.keys(selectedClient).length > 0 ? selectedClient : { "Company Name": "Select" }}
-                                    onChange={(e, newValue) => {
-                                        if (newValue === null) {
-                                            setSelectedClient({});
-                                        }
-                                        if (newValue) {
-                                            setSelectedClient(newValue);
-                                            setDocumentData({ ...documentData, ClientId: newValue.OriginatorNo });
-                                        }
-                                    }}
-                                    options={clientList}
-                                    getOptionLabel={(option) => {
-                                        return option["Company Name"];
-                                    }}
-                                    // sx={{ width: 300 }}
-                                    renderInput={(params) => <TextField value={selectedClient ? selectedClient["Company Name"] : ""} autoFocus={true} onBlur={() => setIsClientField(false)} {...params} size="small" />}
-                                /> : <Button onClick={() => {
-                                    setIsClientField(true);
-                                }}>
-                                    {Object.keys(selectedClient).length > 0 ? selectedClient["Company Name"] : "Reference"}
-                                </Button>}
-                            </div>
-
-                            <div className='col-6'>
-                                <FormControl sx={{ width: '100%' }} size="small" className='select-border'>
-                                    <BootstrapTooltip title="Document ID" arrow
-                                        placement="bottom-start"
-                                        slotProps={{
-                                            popper: {
-                                                modifiers: [
-                                                    {
-                                                        name: 'offset',
-                                                        options: {
-                                                            offset: [0, -10],
-                                                        },
-                                                    },
-                                                ],
-                                            },
+                            <Box className='col-6'>
+                                <Box className='btn-select'>
+                                    {isClientField ? <Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        className='font-12'
+                                        defaultValue={Object.keys(selectedClient).length > 0 ? selectedClient : { "Company Name": "Select" }}
+                                        onChange={(e, newValue) => {
+                                            if (newValue === null) {
+                                                setSelectedClient({});
+                                            }
+                                            if (newValue) {
+                                                setSelectedClient(newValue);
+                                                setDocumentData({ ...documentData, ClientId: newValue.OriginatorNo });
+                                            }
                                         }}
-                                    >
-                                        {!isDocIdField ? <Button onClick={handleDocIdField}>
-                                            {documentId !== "" ? documentId : "Document ID"}
-                                        </Button> : <TextField autoFocus={true} name="Description" type='number' value={documentId} onChange={(e) => setDocumentId(e.target.value)} onBlur={(e) => {
-                                            setIsDocIdField(false);
-                                        }} id="outlined-basic" placeholder='Document ID...' size="small" variant="outlined" />}
-                                    </BootstrapTooltip>
-                                </FormControl>
+                                        options={clientList}
+                                        getOptionLabel={(option) => {
+                                            return option["Company Name"];
+                                        }}
+                                        // sx={{ width: 300 }}
+                                        renderInput={(params) => <TextField className='font-12' value={selectedClient ? selectedClient["Company Name"] : ""} autoFocus={true} onBlur={() => setIsClientField(false)} {...params} size="small" />}
+                                    /> : <Button
+                                        className='button-select'
+                                        onClick={() => {
+                                            setIsClientField(true);
+                                        }}>
+                                        <BootstrapTooltip title="Reference" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
+                                        >
+                                            {Object.keys(selectedClient).length > 0 ? selectedClient["Company Name"] : "Reference"}
+                                        </BootstrapTooltip>
+                                    </Button>}
+                                </Box>
+                            </Box>
+
+                            <div className='col-6'>
+                                <Box className='btn-select'>
+                                    <FormControl sx={{ width: '100%' }} size="small" className='select-border'>
+                                        <BootstrapTooltip title="Document ID" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
+                                        >
+                                            {!isDocIdField ? <Button onClick={handleDocIdField} className='button-select'>
+                                                {documentId !== "" ? documentId : "Document ID"}
+                                            </Button> : <TextField autoFocus={true} name="Description" type='number' value={documentId} onChange={(e) => setDocumentId(e.target.value)} onBlur={(e) => {
+                                                setIsDocIdField(false);
+                                            }} id="outlined-basic" placeholder='Document ID...' size="small" variant="outlined" />}
+                                        </BootstrapTooltip>
+                                    </FormControl>
+                                </Box>
                             </div>
+                        </Box>
+                        <Box className='p-2 pt-0'>
+                            <Box className="input-search">
+                                <TextField name="Description" onChange={(e) => handleInputChange(e)} id="outlined-basic" placeholder='Description...' size="small" variant="outlined" className='ps-0' />
+                                <span className="material-symbols-outlined search-icon">search</span>
+                            </Box>
 
+                            <Box sx={{ m: 1 }} className='pt-2'>
+                                <DateRangePicker
+                                    initialSettings={{
+                                        startDate: start.toDate(),
+                                        endDate: end.toDate(),
+                                        ranges: {
+                                            'All': [
+                                                moment({ year: 1990, month: 0, day: 1 }).toDate(),
+                                                moment().toDate()
+                                            ],
+                                            Today: [moment().toDate(), moment().toDate()],
+                                            Yesterday: [
+                                                moment().subtract(1, 'days').toDate(),
+                                                moment().subtract(1, 'days').toDate(),
+                                            ],
+                                            'Last 7 Days': [
+                                                moment().subtract(6, 'days').toDate(),
+                                                moment().toDate(),
+                                            ],
+                                            'Last 30 Days': [
+                                                moment().subtract(29, 'days').toDate(),
+                                                moment().toDate(),
+                                            ],
+                                            'This Month': [
+                                                moment().startOf('month').toDate(),
+                                                moment().endOf('month').toDate(),
+                                            ],
+                                            'Last Month': [
+                                                moment().subtract(1, 'month').startOf('month').toDate(),
+                                                moment().subtract(1, 'month').endOf('month').toDate(),
+                                            ],
+                                        },
+                                    }}
+                                    onCallback={handleCallback}
+                                >
+                                    <div className='pointer d-flex align-items-center custom-datepicker-bordered' id="reportrange">
+                                        <i className="fa fa-calendar"></i>
+                                        <CalendarMonthIcon className='me-2 text-red' />
+                                        <span className='font-14'>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
+                                    </div>
+                                </DateRangePicker>
+                            </Box>
+
+                            <hr className='mt-1' />
+
+                            <Button variant="contained" size="small" onClick={() => {
+                                let formated_start_date = format_YYYY_MM_DD(start._d);
+                                let formated_end_date = format_YYYY_MM_DD(end._d);
+                                let obj = { ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date };
+                                setDocumentData({ ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date });
+                                Json_AdvanceSearchDoc(obj);
+                            }}>
+                                Apply
+                            </Button>
+                            {documentId !== "" && <Button variant="contained" size="small" onClick={() => {
+                                Json_SearchDocById();
+                            }} className='ms-2'>
+                                By ID
+                            </Button>}
                         </Box>
 
-                        <Box className="input-search">
-                            <TextField name="Description" onChange={(e) => handleInputChange(e)} id="outlined-basic" placeholder='Description...' size="small" variant="outlined" className='ps-0' />
-                            <span className="material-symbols-outlined search-icon">search</span>
-                        </Box>
-
-                        <Box sx={{ m: 1 }} className='pt-2'>
-                            <DateRangePicker
-                                initialSettings={{
-                                    startDate: start.toDate(),
-                                    endDate: end.toDate(),
-                                    ranges: {
-                                        'All': [
-                                            moment({ year: 1990, month: 0, day: 1 }).toDate(),
-                                            moment().toDate()
-                                        ],
-                                        Today: [moment().toDate(), moment().toDate()],
-                                        Yesterday: [
-                                            moment().subtract(1, 'days').toDate(),
-                                            moment().subtract(1, 'days').toDate(),
-                                        ],
-                                        'Last 7 Days': [
-                                            moment().subtract(6, 'days').toDate(),
-                                            moment().toDate(),
-                                        ],
-                                        'Last 30 Days': [
-                                            moment().subtract(29, 'days').toDate(),
-                                            moment().toDate(),
-                                        ],
-                                        'This Month': [
-                                            moment().startOf('month').toDate(),
-                                            moment().endOf('month').toDate(),
-                                        ],
-                                        'Last Month': [
-                                            moment().subtract(1, 'month').startOf('month').toDate(),
-                                            moment().subtract(1, 'month').endOf('month').toDate(),
-                                        ],
-                                    },
-                                }}
-                                onCallback={handleCallback}
-                            >
-                                <div className='pointer d-flex align-items-center custom-datepicker-bordered' id="reportrange">
-                                    <i className="fa fa-calendar"></i>
-                                    <CalendarMonthIcon className='me-2 text-red' />
-                                    <span className='font-14'>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
-                                </div>
-                            </DateRangePicker>
-                        </Box>
-
-                        <hr className='mt-1' />
-
-                        <Button variant="contained" size="small" onClick={() => {
-                            let formated_start_date = format_YYYY_MM_DD(start._d);
-                            let formated_end_date = format_YYYY_MM_DD(end._d);
-                            let obj = { ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date };
-                            setDocumentData({ ...documentData, ItemFDate: formated_start_date, ItemTDate: formated_end_date });
-                            Json_AdvanceSearchDoc(obj);
-                        }}>
-                            Apply
-                        </Button>
-                        {documentId !== "" && <Typography onClick={() => {
-                            Json_SearchDocById();
-                        }} variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
-                            By ID
-                        </Typography>}
                     </Box>
                 </Box>
             </Popover>

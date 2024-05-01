@@ -1129,6 +1129,21 @@ span.tox-statusbar__branding {
   top: 23px;
   left: 0;
 }
+.dropdown-box .btn-select {
+
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
 
 .btn-white {
   background: #fff;
@@ -2075,6 +2090,7 @@ span.tox-statusbar__branding {
   color: #4780FF;
   font-size: 12px;
   padding-top: 0px !important;
+  font-family: "Poppins", sans-serif !important;
 
 }
 
@@ -2202,8 +2218,30 @@ span.tox-statusbar__branding {
   top: 5px;
   min-width: 16px;
   height: 16px;
+  right: 6px;
 }
-
+.btn-select .button-select {
+  /* color: red; */
+  /* font-size: 13px; */
+  /* border: 0; */
+  color: #4780FF;
+  font-weight: 600;
+  font-size: 12px;
+  /* padding-top: 0px !important; */
+  width: 100%;
+  /* text-align: left; */
+  justify-content: start;
+}
+.btn-select .button-select:hover {
+  background-color: transparent;
+}
+.btn-select .MuiAutocomplete-root {
+  margin: 0 10px;
+  font-size: 12px;
+}
+.btn-select .MuiAutocomplete-root {
+  font-size: 12px !important;
+}
 @media only screen and (max-width: 1366px) {
   .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root {
     font-size: 12px;
