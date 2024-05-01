@@ -32,6 +32,9 @@ import ContactMainform from "../contact/contact-components/ContactMainform";
 import UploadButtons from "../contact/contact-components/UploadProfile";
 import ContactUDF from "../contact/contact-components/ContactUDF";
 import { ToastContainer, toast } from "react-toastify";
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { clearDefaultRoleSonam } from '../../src/redux/reducers/counterSlice';
 let originatorNo;
 let folderData;
 let clientData;
@@ -40,6 +43,8 @@ let clientName;
 function AddContacts({ addContactData, contactDetails }) {
   console.log(addContactData, "addContactData11111", contactDetails);
   const [contact, setContact] = useState([]);
+  const getAllStateReduxSonam = useSelector((state) => state.counter);
+  const dispatch = useDispatch();
   const [fillcontact, setFillContact] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const tabValue = searchParams.get("val");
@@ -699,6 +704,38 @@ function AddContacts({ addContactData, contactDetails }) {
   const [open, setOpen] = useState(false);
   const handleOptionClick = (item) => {
     console.log(item, "onSelectData");
+    dispatch(clearDefaultRoleSonam());
+    // setdefaultClient(null); 
+    let data = { ...userContactDetails };
+      data = {
+        ...data,
+        ["Title"]: "",
+        ["FirstName"]: "",
+        ["LastName"]: "",
+        ["ReferenceName"]: "",
+        ["MainContact"]: "",
+        ["Inactive"]: "",
+        ["GreetingName"]: "",
+        ["EmailName"]: "",
+        ["MainUserId"]: -1,
+        ["MainLine1Name"]: "",
+        ["MainLine2Name"]: "",
+        ["MainLine3Name"]: "",
+        ["MainTownName"]: "",
+        ["Notes"]: "",
+        ["MainPostcodeName"]: "",
+        ["Maincontactcountry"]: "",
+        ["MainTelephoneName"]: "",
+        ["MainMobileName"]: "",
+        ["mainCountry"]: "",
+        ["billingsCountry"]: "",
+        ["ragistersCountry"]: "",
+        ["ReferenceID"]: "",
+        ["CreatePortal"]: "",
+        ["Base64ImgData"]: "",
+        ["RolesData"]:null
+      };
+      setContactDetails(data);
     setImportcontactdata("");
     setTxtValue(item);
     setOpen(false);
@@ -722,6 +759,7 @@ function AddContacts({ addContactData, contactDetails }) {
     setContactDetails(data);
   }
   console.log(contact, "contactcontact", ImportContact);
+ 
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));
     setPassword(localStorage.getItem("Password"));
@@ -776,6 +814,41 @@ function AddContacts({ addContactData, contactDetails }) {
     }
   }, []);
   console.log(defaultClient, "defaultClientfirst");
+  const clearDataCard = () => {
+    console.log("cleardata",getAllStateReduxSonam);
+    dispatch(clearDefaultRoleSonam());
+    setdefaultClient(null); 
+    let data = { ...userContactDetails };
+      data = {
+        ...data,
+        ["Title"]: "",
+        ["FirstName"]: "",
+        ["LastName"]: "",
+        ["ReferenceName"]: "",
+        ["MainContact"]: "",
+        ["Inactive"]: "",
+        ["GreetingName"]: "",
+        ["EmailName"]: "",
+        ["MainUserId"]: -1,
+        ["MainLine1Name"]: "",
+        ["MainLine2Name"]: "",
+        ["MainLine3Name"]: "",
+        ["MainTownName"]: "",
+        ["Notes"]: "",
+        ["MainPostcodeName"]: "",
+        ["Maincontactcountry"]: "",
+        ["MainTelephoneName"]: "",
+        ["MainMobileName"]: "",
+        ["mainCountry"]: "",
+        ["billingsCountry"]: "",
+        ["ragistersCountry"]: "",
+        ["ReferenceID"]: "",
+        ["CreatePortal"]: "",
+        ["Base64ImgData"]: "",
+        ["RolesData"]:null
+      };
+      setContactDetails(data);
+  }
   return (
     <Box className="container-fluid p-0">
       {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
@@ -915,7 +988,7 @@ function AddContacts({ addContactData, contactDetails }) {
 
                     <Grid item xs={1} md={1} className="d-flex align-items-end pb-1">
                       <Button className="min-width-auto text-danger">
-                        <HighlightOffIcon className="font-32" />
+                        <HighlightOffIcon className="font-32" onClick={clearDataCard}/>
                       </Button>
                     </Grid>
 

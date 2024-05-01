@@ -14,6 +14,7 @@ import Button from "@mui/material/Button";
 import { styled } from '@mui/system';
 import PersonIcon from '@mui/icons-material/Person';
 import Fab from '@mui/material/Fab';
+import { ToastContainer, toast } from 'react-toastify';
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -760,21 +761,31 @@ function Client() {
     };
     const SyncFunctionData = () => {
         console.log('SyncFunctionData');
-        let obj = {};
-        obj.agrno = agrno;
-        obj.Email = Email;
-        obj.password = password;
-
-        try {
-            Cls.TeamSolution(obj, function (sts, data) {
-                if (sts && data) {
-                    console.log({ status: true, messages: "Success", res: data });
-
+        const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+        let Cls3 = new CommanCLS(baseUrl, agrno, Email, password);
+        Cls3.ConfirmMessage("Would you like to manually initiate Teams Sync?", function (res) {
+            if (res) {
+              
+                let obj = {};
+                obj.agrno = agrno;
+                obj.Email = Email;
+                obj.password = password;
+        
+                try {
+                    console.log(obj,"objectdata");
+                    Cls.TeamSolution(obj, function (sts, data) {
+                        if (sts && data) {
+                            console.log({ status: true, messages: "Success", res: data });
+                            toast.success("Teams sync initiated and is runnning in the background. Clients imported will automatically be shown on Micrsoft Teams.");
+                        }
+                    });
+                } catch (error) {
+                    console.log({ status: false, messages: "Faild Please Try again" });
                 }
-            });
-        } catch (error) {
-            console.log({ status: false, messages: "Faild Please Try again" });
-        }
+            }
+
+        });
+        
     }
 
 

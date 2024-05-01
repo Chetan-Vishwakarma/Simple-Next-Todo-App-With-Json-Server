@@ -10,7 +10,12 @@ const counterSlices = createSlice({
         openTaskModal:false,
         clientAndDocDataForTaskModal: null,
         openDocumentModalByRedux: false,
-        reduxDataSonam: []
+        reduxDataSonam: [],
+        SetDefaultRoleSonam:"",
+        SetDefaultTitleSonam:"",
+        defaultUserSonam:null,
+        mainCountrySonam:"",
+        defaultDateSonam: null,
     },
     reducers: {
         //sonam state start
@@ -38,11 +43,33 @@ const counterSlices = createSlice({
           }, // chetan state end
           updateReduxDataSonam: (state, action) => {
             state.reduxData = action.payload;
-          }
+          },
+          setSetDefaultRoleSonam: (state, action) => {
+            state.SetDefaultRoleSonam = action.payload;
+          },
+          setSetDefaultTitleSonam: (state, action) => {
+            state.SetDefaultTitleSonam = action.payload;
+          },
+          setDefaultUserSonam: (state, action) => {
+            state.defaultUserSonam = action.payload;
+          },
+          setMainCountrySonam: (state, action) => {
+            state.mainCountrySonam = action.payload;
+          },
+          setDefaultDateSonam: (state, action) => {
+            state.defaultDateSonam = action.payload;
+          },
+          clearDefaultRoleSonam: (state) => {
+            state.SetDefaultRoleSonam = null;
+            state.SetDefaultTitleSonam = null;
+            state.defaultUserSonam =null;
+            state.mainCountrySonam= null;
+            state.defaultDateSonam = null;
+          },
     }
 });
 
-export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux,updateReduxDataSonam } = counterSlices.actions;
+export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux,updateReduxDataSonam,setSetDefaultRoleSonam,clearDefaultRoleSonam,setSetDefaultTitleSonam,setDefaultUserSonam,setMainCountrySonam,setDefaultDateSonam} = counterSlices.actions;
 
 // export const getUsers = () => async(dispatch) => {
 //     const response = await axios.get("https://jsonplaceholder.typicode.com/users");
