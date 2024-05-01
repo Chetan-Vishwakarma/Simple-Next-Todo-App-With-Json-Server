@@ -380,9 +380,34 @@ function AdvanceSearch() {
                                     }}
                                     // sx={{ width: 300 }}
                                     renderInput={(params) => <TextField value={selectedClient ? selectedClient["Company Name"] : ""} autoFocus={true} onBlur={() => setIsClientField(false)} {...params} size="small" />}
-                                /> : <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 mb-0' onClick={() => {
+                                /> : <FormControl onClick={() => {
                                     setIsClientField(true);
-                                }}></FormControl>
+                                }} sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 mb-0'>
+                                    <BootstrapTooltip title="References" arrow
+                                        placement="bottom-start"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >
+                                        <Select
+                                            value={""}
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            className='custom-dropdown'
+                                        >
+                                            <MenuItem value={""} style={{ display: "none" }}>Reference</MenuItem>
+                                        </Select>
+                                    </BootstrapTooltip>
+                                </FormControl>
 
 
                                     // <Button onClick={() => {
@@ -410,9 +435,17 @@ function AdvanceSearch() {
                                             },
                                         }}
                                     >
-                                        {!isDocIdField ? <Button onClick={handleDocIdField}>
-                                            {documentId !== "" ? documentId : "Document ID"}
-                                        </Button> : <TextField autoFocus={true} name="Description" type='number' value={documentId} onChange={(e) => setDocumentId(e.target.value)} onBlur={(e) => {
+                                        {!isDocIdField ? <Select
+                                            value={documentId}
+                                            displayEmpty
+                                            onClick={handleDocIdField}
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            className='custom-dropdown'
+                                        >
+                                            {documentId !== "" 
+                                               ? <MenuItem value={documentId}>{documentId}</MenuItem>
+                                               : <MenuItem value={""} style={{ display: "none" }}>Document Id</MenuItem>}
+                                        </Select> : <TextField autoFocus={true} name="Description" type='number' value={documentId} onChange={(e) => setDocumentId(e.target.value)} onBlur={(e) => {
                                             setIsDocIdField(false);
                                         }} id="outlined-basic" placeholder='Document ID...' size="small" variant="outlined" />}
                                     </BootstrapTooltip>
