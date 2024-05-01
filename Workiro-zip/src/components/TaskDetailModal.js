@@ -447,6 +447,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                             timestamp = parseInt(activity.Item_Date.slice(6, -2));
                         }
                         const date = new Date(timestamp);
+                        
                         const formatedate = formatDate(date)
                         // console.log(formatDate(date),"dateformattingdate");
                         return { ...activity, Item_Date: formatedate };
@@ -3028,7 +3029,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                                 </Typography>
                                                                 <Typography variant="body1">
                                                                     {/* Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span>  */}
-                                                                    Date <span className='sembold'>{data.data["Item_Date"] ? data.data["Item_Date"] : ""}</span> |
+                                                                    {/* Date <span className='sembold'>{data.data["Item_Date"] ? data.data["Item_Date"] : ""}</span> | */}
                                                                     Uploaded by <span className='sembold'>{forwardUser.ForwardTo}</span>
                                                                 </Typography>
                                                             </Box>
