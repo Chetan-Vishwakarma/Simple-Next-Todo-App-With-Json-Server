@@ -4243,6 +4243,7 @@ toast.error("Please Select a Due Date");
                                 caption="Description"
                                 width={300}
                                 cellRender={(data)=>{
+                                    return <><span className='custom-tooltip'>{data.data.Description}</span>{data.data.Description}</>
                                     return <Tooltip title={data.data.Description} placement="top-start">
                                     {data.data.Description}
                                   </Tooltip>
