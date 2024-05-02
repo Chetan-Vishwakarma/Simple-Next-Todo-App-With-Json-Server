@@ -1701,13 +1701,13 @@ toast.error("Please Select a Due Date");
     const renderTypeCell = (data) => {
         // Define the condition based on which the icon will be rendered
         if (data.value === 'pdf') {
-            return <PictureAsPdfIcon></PictureAsPdfIcon>;
+            return <Tooltip title={data.value} placement="top-start"><PictureAsPdfIcon></PictureAsPdfIcon></Tooltip>;
         } else if (data.value === 'txt') {
 
-            return <TextSnippetIcon></TextSnippetIcon>;
+            return <Tooltip title={data.value} placement="top-start"><TextSnippetIcon></TextSnippetIcon></Tooltip>;
         }
         // You can add more conditions or return default content if needed
-        return data.value;
+        return <Tooltip title={data.value} placement="top-start">{data.value}</Tooltip>;
     };
 
     // const getPortalUser = () => {
@@ -2328,7 +2328,7 @@ toast.error("Please Select a Due Date");
     };
     const handleCloseDoc = () => {
         setAnchorElDoc(null);
-
+        setSelectedFileIndex(null);
     };
 
     function DeleteFile(d) {
@@ -4245,12 +4245,21 @@ toast.error("Please Select a Due Date");
                             <Column
                                 dataField="Description"
                                 caption="Description"
-                                width={200}
-
+                                width={300}
+                                cellRender={(data)=>{
+                                    return <Tooltip title={data.data.Description} placement="top-start">
+                                    {data.data.Description}
+                                  </Tooltip>
+                                }}
                             />
                             <Column
                                 dataField="Section"
                                 caption="Section"
+                                cellRender={(data)=>{
+                                    return <Tooltip title={data.data.Section} placement="top-start">
+                                    {data.data.Section}
+                                  </Tooltip>
+                                }}
                             />
                             {/* <Column
                                 dataField="Client"
