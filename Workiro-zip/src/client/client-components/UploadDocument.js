@@ -896,9 +896,13 @@ return formattedDate;
                                     <Box className='custom-date-picker'>
                                         <LocalizationProvider dateAdapter={AdapterDayjs} >
                                             <DatePicker className=" w-100"
-                                                format="DD/MM/YYYY"
+                                                dateFormat="DD/MM/YYYY"
+                                                value={moment(documentDate).format("DD/MM/YYYY")}
                                                 defaultValue={moment()}
-                                                onChange={handleDateChangeDocument} // Handle date changes
+                                                onChange={(e)=>handleDateChangeDocument(e)} // Handle date changes
+                                                timeFormat={false}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
                                             />
                                         </LocalizationProvider>
                                         <CalendarMonthIcon />
@@ -913,8 +917,10 @@ return formattedDate;
                                             <DatePicker className=" w-100"
                                                 dateFormat="DD/MM/YYYY"
                                                 value={moment(receivedDate).format("DD/MM/YYYY")}
-                                                onChange={handleDateChangeRecieved} // Handle date changes
+                                                onChange={(e)=>handleDateChangeRecieved(e)} // Handle date changes
                                                 timeFormat={false}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
                                             />
                                         </LocalizationProvider>
                                         <CalendarMonthIcon />
