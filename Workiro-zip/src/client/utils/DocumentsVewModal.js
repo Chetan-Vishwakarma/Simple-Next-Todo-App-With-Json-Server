@@ -24,7 +24,7 @@ import CreateNewModalTask from '../../components/CreateNewModal';
 
 import { useDispatch } from "react-redux";
 import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux } from "../../redux/reducers/counterSlice"
-
+import AlarmOnIcon from '@mui/icons-material/AlarmOn';
 import $ from 'jquery';
 import Fileformat from '../../images/files-icon/pdf.png';
 import ListIcon from '@mui/icons-material/List';
@@ -242,8 +242,8 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         setViewerToken(localStorage.getItem("ViewerToken"));
 
         if (selectedDocument) {
-            
-            
+
+
             // console.log("selectedDocument", selectedDocument)
 
             setTxtClientData({ Client: selectedDocument.Client, ClientID: selectedDocument.SenderId })
@@ -253,7 +253,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
             Json_GetItemBase64DataById(selectedDocument)
 
             var IsApproved = selectedDocument["IsApproved"];
-            
+
             var PortalDocId = selectedDocument["PortalDocId"];
 
             let IsApp = "";
@@ -820,17 +820,22 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 </TabPanel>
 
                                 <TabPanel value="4" className='p-0'>
-                                    <Box className='text-center mt-3'>
+                                    <Box className='text-center mt-4'>
                                         {getAssociatedTaskList && getAssociatedTaskList.map((item, index) => {
                                             let str = item?.AssignedToID;
                                             let arr = str?.split(',').map(Number);
                                             let isUserAssigned = arr?.includes(parseInt(localStorage.getItem('UserId')));
                                             console.log("isUserAssigned", isUserAssigned)
                                             return (
-                                                <label key={index} onClick={(e) => Json_CRM_GetOutlookTask(e, item)} className="btn btn-outline-primary me-2 mb-2">
-                                                    <RadioButtonUncheckedIcon className={`me-1 ${isUserAssigned ? 'green' : 'disabled'}`} />
+                                                // <Button key={index} onClick={(e) => Json_CRM_GetOutlookTask(e, item)} className="btn btn-outlin-2 me-2 mb-2" variant="outlined" disabled>
+                                                //     <AlarmOnIcon className={`me-2 ${isUserAssigned ? 'green' : 'disabled'}`} />
+                                                //     {item.Subject}
+                                                // </Button>
+
+                                                <Button key={index} onClick={(e) => Json_CRM_GetOutlookTask(e, item)} className="btn btn-outlin-2 me-2 mb-2" variant="outlined">
+                                                    <AlarmOnIcon className={`me-2 ${isUserAssigned ? 'green' : 'disabled'}`} />
                                                     {item.Subject}
-                                                </label>
+                                                </Button>
                                             );
                                         })}
 
