@@ -1975,6 +1975,10 @@ input[type=number] {
   overflow-x: hidden;
 }
 
+.client-details-scroll-search {
+  max-height: calc(100vh - 210px);
+}
+
 .main-chatbox {
   max-height: 270px;
   overflow: auto;
