@@ -730,123 +730,95 @@ export default function DocumentList({ clientId }) {
                                 <Box className='d-flex'>
 
                                     <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 mb-0'>
-                                        <BootstrapTooltip title="Sections" arrow
-                                            placement="bottom-start"
-                                            slotProps={{
-                                                popper: {
-                                                    modifiers: [
-                                                        {
-                                                            name: 'offset',
-                                                            options: {
-                                                                offset: [0, -10],
-                                                            },
-                                                        },
-                                                    ],
-                                                },
+                                        <span className='custom-tooltip'>Section</span>
+
+                                        <Select
+                                            value={selectedSection}
+                                            onChange={(e) => {
+                                                setSelectedSection(e.target.value);
+                                                if (e.target.value === "Section") {
+                                                    handleFilterDeletion('Section');
+                                                    setSelectedSection("");
+                                                    return;
+                                                } else if (e.target.value !== '') {
+                                                    setFilterCriteria({ ...filterCriteria, Section: [e.target.value] })
+                                                } else {
+                                                    handleFilterDeletion('Section');
+                                                    // let obj = Object.keys(filterCriteria).filter(objKey =>
+                                                    //     objKey !== 'Section').reduce((newObj, key) =>
+                                                    //     {
+                                                    //         newObj[key] = filterCriteria[key];
+                                                    //         return newObj;
+                                                    //     }, {}
+                                                    // );
+                                                    // setFilterCriteria(obj);
+                                                }
                                             }}
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            className='custom-dropdown'
                                         >
-                                            <Select
-                                                value={selectedSection}
-                                                onChange={(e) => {
-                                                    setSelectedSection(e.target.value);
-                                                    if (e.target.value === "Section") {
-                                                        handleFilterDeletion('Section');
-                                                        setSelectedSection("");
-                                                        return;
-                                                    } else if (e.target.value !== '') {
-                                                        setFilterCriteria({ ...filterCriteria, Section: [e.target.value] })
-                                                    } else {
-                                                        handleFilterDeletion('Section');
-                                                        // let obj = Object.keys(filterCriteria).filter(objKey =>
-                                                        //     objKey !== 'Section').reduce((newObj, key) =>
-                                                        //     {
-                                                        //         newObj[key] = filterCriteria[key];
-                                                        //         return newObj;
-                                                        //     }, {}
-                                                        // );
-                                                        // setFilterCriteria(obj);
-                                                    }
-                                                }}
-                                                displayEmpty
-                                                inputProps={{ 'aria-label': 'Without label' }}
-                                                className='custom-dropdown'
-                                            >
 
-                                                <MenuItem value="" style={{ display: "none" }}>
+                                            <MenuItem value="" style={{ display: "none" }}>
 
-                                                    Sections
-                                                </MenuItem>
-                                                <MenuItem value="Section" >00. Clear Filter</MenuItem>
-                                                {sections.length > 0 && sections.map((itm) => {
-                                                    return <MenuItem value={itm.Sec}>{itm.Sec}</MenuItem>
-                                                })}
+                                                Sections
+                                            </MenuItem>
+                                            <MenuItem value="Section" >00. Clear Filter</MenuItem>
+                                            {sections.length > 0 && sections.map((itm) => {
+                                                return <MenuItem value={itm.Sec}>{itm.Sec}</MenuItem>
+                                            })}
 
-                                                {/* <MenuItem value={10}>Section 1</MenuItem>
+                                            {/* <MenuItem value={10}>Section 1</MenuItem>
                                     <MenuItem value={20}>Section 2</MenuItem> */}
-                                            </Select>
-                                        </BootstrapTooltip>
+                                        </Select>
                                     </FormControl>
 
                                     <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 mb-0'>
-                                        <BootstrapTooltip title="Folders" arrow
-                                            placement="bottom-start"
-                                            slotProps={{
-                                                popper: {
-                                                    modifiers: [
-                                                        {
-                                                            name: 'offset',
-                                                            options: {
-                                                                offset: [0, -10],
-                                                            },
-                                                        },
-                                                    ],
-                                                },
+                                        <span className='custom-tooltip'>Folder</span>
+
+                                        <Select
+                                            value={selectedFolder}
+                                            onChange={(e) => {
+                                                setSelectedFolder(e.target.value);
+                                                if (e.target.value === "Folder") {
+                                                    handleFilterDeletion("Folder");
+                                                    setSelectedFolder("");
+                                                    return;
+                                                } else if (e.target.value !== '') {
+                                                    setFilterCriteria({ ...filterCriteria, Folder: [e.target.value] });
+                                                } else {
+                                                    handleFilterDeletion('Folder');
+                                                    // let obj = Object.keys(filterCriteria).filter(objKey =>
+                                                    //     objKey !== 'Folder').reduce((newObj, key) =>
+                                                    //     {
+                                                    //         newObj[key] = filterCriteria[key];
+                                                    //         return newObj;
+                                                    //     }, {}
+                                                    // );
+                                                    // setFilterCriteria(obj);
+                                                }
                                             }}
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            className='custom-dropdown'
                                         >
-                                            <Select
-                                                value={selectedFolder}
-                                                onChange={(e) => {
-                                                    setSelectedFolder(e.target.value);
-                                                    if (e.target.value === "Folder") {
-                                                        handleFilterDeletion("Folder");
-                                                        setSelectedFolder("");
-                                                        return;
-                                                    } else if (e.target.value !== '') {
-                                                        setFilterCriteria({ ...filterCriteria, Folder: [e.target.value] });
-                                                    } else {
-                                                        handleFilterDeletion('Folder');
-                                                        // let obj = Object.keys(filterCriteria).filter(objKey =>
-                                                        //     objKey !== 'Folder').reduce((newObj, key) =>
-                                                        //     {
-                                                        //         newObj[key] = filterCriteria[key];
-                                                        //         return newObj;
-                                                        //     }, {}
-                                                        // );
-                                                        // setFilterCriteria(obj);
-                                                    }
-                                                }}
-                                                displayEmpty
-                                                inputProps={{ 'aria-label': 'Without label' }}
-                                                className='custom-dropdown'
-                                            >
-                                                <MenuItem value="" style={{ display: "none" }}>Folders</MenuItem>
+                                            <MenuItem value="" style={{ display: "none" }}>Folders</MenuItem>
 
-                                                <MenuItem value="Folder" className='text-danger ps-1'>
-                                                    <ClearIcon className='font-18 me-1' />
-                                                    Clear Filters</MenuItem>
+                                            <MenuItem value="Folder" className='text-danger ps-1'>
+                                                <ClearIcon className='font-18 me-1' />
+                                                Clear Filters</MenuItem>
 
-                                                {folders.length > 0 && folders.map((itm) => {
-                                                    return <MenuItem value={itm.Folder} className='ps-1'>
-                                                        <FolderSharedIcon className='font-18 me-1' />
-                                                        {itm.Folder}</MenuItem>
-                                                })}
-                                                {/* <MenuItem value="">
+                                            {folders.length > 0 && folders.map((itm) => {
+                                                return <MenuItem value={itm.Folder} className='ps-1'>
+                                                    <FolderSharedIcon className='font-18 me-1' />
+                                                    {itm.Folder}</MenuItem>
+                                            })}
+                                            {/* <MenuItem value="">
                                         Select
                                     </MenuItem>
                                     <MenuItem value={10}>Select 1</MenuItem>
                                     <MenuItem value={20}>Select 2</MenuItem> */}
-                                            </Select>
-                                        </BootstrapTooltip>
+                                        </Select>
                                     </FormControl>
                                 </Box>
 
@@ -885,38 +857,21 @@ export default function DocumentList({ clientId }) {
 
 
                                     <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border'>
-                                        <BootstrapTooltip title="Select Reference" arrow
-                                            placement="bottom-start"
-                                            slotProps={{
-                                                popper: {
-                                                    modifiers: [
-                                                        {
-                                                            name: 'offset',
-                                                            options: {
-                                                                offset: [0, -10],
-                                                            },
-                                                        },
-                                                    ],
-                                                },
-                                            }}
+                                        <span className='custom-tooltip'>Document ID</span>
+                                        <Select
+                                            value={selectedClient}
+                                            // onChange={handleFilterOnClientSelection}
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            className='custom-dropdown'
                                         >
-                                            <Select
-                                                value={selectedClient}
-                                                // onChange={handleFilterOnClientSelection}
-                                                displayEmpty
-                                                inputProps={{ 'aria-label': 'Without label' }}
-                                                className='custom-dropdown'
-                                            >
-                                                <MenuItem value="" style={{ display: "none" }}>
-                                                    Document ID
-                                                </MenuItem>
-
-                                                <MenuItem>
-                                                    <input className='form-control' />
-                                                </MenuItem>
-
-                                            </Select>
-                                        </BootstrapTooltip>
+                                            <MenuItem value="" style={{ display: "none" }}>
+                                                Document ID
+                                            </MenuItem>
+                                            <MenuItem>
+                                                <input className='form-control' />
+                                            </MenuItem>
+                                        </Select>
                                     </FormControl>
 
                                 </Box>
@@ -927,96 +882,71 @@ export default function DocumentList({ clientId }) {
 
                                 <Box className='d-flex'>
                                     <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 '>
-                                        <BootstrapTooltip title="Group By" arrow
-                                            placement="bottom-start"
-                                            slotProps={{
-                                                popper: {
-                                                    modifiers: [
-                                                        {
-                                                            name: 'offset',
-                                                            options: {
-                                                                offset: [0, -10],
-                                                            },
-                                                        },
-                                                    ],
-                                                },
+
+                                        <span className='custom-tooltip'>Group By</span>
+
+                                        <Select
+                                            value={selectedGroup}
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            className='custom-dropdown'
+                                            onChange={(e) => {
+                                                if (e.target.value === "Group By") {
+                                                    setSelectedGroup("");
+                                                    return;
+                                                }
+                                                setSelectedGroup(e.target.value);
                                             }}
                                         >
-                                            <Select
-                                                value={selectedGroup}
-                                                displayEmpty
-                                                inputProps={{ 'aria-label': 'Without label' }}
-                                                className='custom-dropdown'
-                                                onChange={(e) => {
-                                                    if (e.target.value === "Group By") {
-                                                        setSelectedGroup("");
-                                                        return;
-                                                    }
-                                                    setSelectedGroup(e.target.value);
-                                                }}
-                                            >
-                                                <MenuItem value="" style={{ display: "none" }}> Group By</MenuItem>
-                                                <MenuItem className='ps-1 text-red' value="Group By">
-                                                    <CloseIcon className='font-18 me-1' />
-                                                    Clear Group by</MenuItem>
-                                                <MenuItem className='ps-1' value="Description">
-                                                    <DescriptionIcon className='font-18 me-1' />
-                                                    Description</MenuItem>
-                                                <MenuItem className='ps-1' value={"CommentBy"}>
-                                                    <InsertCommentIcon className='font-18 me-1' />
-                                                    Comment By</MenuItem>
-                                                <MenuItem className='ps-1' value={"Type"}>
-                                                    <ChecklistIcon className='font-18 me-1' />
-                                                    Type</MenuItem>
-                                                {/* <MenuItem className='ps-1' value={"Comments"}>
+                                            <MenuItem value="" style={{ display: "none" }}> Group By</MenuItem>
+                                            <MenuItem className='ps-1 text-red' value="Group By">
+                                                <CloseIcon className='font-18 me-1' />
+                                                Clear Group by</MenuItem>
+                                            <MenuItem className='ps-1' value="Description">
+                                                <DescriptionIcon className='font-18 me-1' />
+                                                Description</MenuItem>
+                                            <MenuItem className='ps-1' value={"CommentBy"}>
+                                                <InsertCommentIcon className='font-18 me-1' />
+                                                Comment By</MenuItem>
+                                            <MenuItem className='ps-1' value={"Type"}>
+                                                <ChecklistIcon className='font-18 me-1' />
+                                                Type</MenuItem>
+                                            {/* <MenuItem className='ps-1' value={"Comments"}>
                                     <CloseIcon className='font-18 me-1' />
                                         Comments</MenuItem> */}
-                                                {/* <MenuItem value={20}>Comment</MenuItem> */}
-                                            </Select>
-                                        </BootstrapTooltip>
+                                            {/* <MenuItem value={20}>Comment</MenuItem> */}
+                                        </Select>
+
                                     </FormControl>
 
                                     <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0'>
-                                        <BootstrapTooltip title="Sort By" arrow
-                                            placement="bottom-start"
-                                            slotProps={{
-                                                popper: {
-                                                    modifiers: [
-                                                        {
-                                                            name: 'offset',
-                                                            options: {
-                                                                offset: [0, -10],
-                                                            },
-                                                        },
-                                                    ],
-                                                },
-                                            }}
+
+                                        <span className='custom-tooltip'>Sort By</span>
+
+                                        <Select
+                                            value={sortByProperty}
+                                            onChange={(e) => {
+                                                if (e.target.value === "Sort By") {
+                                                    setSortByProperty("")
+                                                    return;
+                                                }
+                                                setSortByProperty(e.target.value)
+                                            }
+                                            }
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            className='custom-dropdown'
                                         >
-                                            <Select
-                                                value={sortByProperty}
-                                                onChange={(e) => {
-                                                    if (e.target.value === "Sort By") {
-                                                        setSortByProperty("")
-                                                        return;
-                                                    }
-                                                    setSortByProperty(e.target.value)
-                                                }
-                                                }
-                                                displayEmpty
-                                                inputProps={{ 'aria-label': 'Without label' }}
-                                                className='custom-dropdown'
-                                            >
-                                                <MenuItem value="" style={{ display: "none" }}>
-                                                    <SwapVertIcon className='pe-1' /> Sort By
-                                                </MenuItem>
-                                                <MenuItem className='ps-1' value="None" onClick={() => setAdvFilteredResult([])}><WarningIcon className='ps-1' />  Clear Sortby</MenuItem>
-                                                <MenuItem value={"Date"} className='ps-1'>
-                                                    <CalendarMonthIcon className='pe-1' />
-                                                    By Date</MenuItem>
-                                                <MenuItem value={"Description"} className='ps-1'><DescriptionIcon className='pe-1' />
-                                                    By Description</MenuItem>
-                                            </Select>
-                                        </BootstrapTooltip>
+                                            <MenuItem value="" style={{ display: "none" }}>
+                                                <SwapVertIcon className='pe-1' /> Sort By
+                                            </MenuItem>
+                                            <MenuItem className='ps-1' value="None" onClick={() => setAdvFilteredResult([])}><WarningIcon className='ps-1' />  Clear Sortby</MenuItem>
+                                            <MenuItem value={"Date"} className='ps-1'>
+                                                <CalendarMonthIcon className='pe-1' />
+                                                By Date</MenuItem>
+                                            <MenuItem value={"Description"} className='ps-1'><DescriptionIcon className='pe-1' />
+                                                By Description</MenuItem>
+                                        </Select>
                                     </FormControl>
 
                                     {sortByProperty !== "" && sortByProperty !== "None" && <Checkbox
@@ -1180,7 +1110,7 @@ export default function DocumentList({ clientId }) {
                                 <Box className='row'>
                                     {advFilteredResult.length > 0 ? (
                                         advFilteredResult.map((itm) => {
-                                            console.log("file type 1122",itm)
+                                            console.log("file type 1122", itm)
                                             return <>
                                                 <Box className='col-xxl-3 col-xl-4 col-md-6'>
                                                     <Box className="file-uploads">
