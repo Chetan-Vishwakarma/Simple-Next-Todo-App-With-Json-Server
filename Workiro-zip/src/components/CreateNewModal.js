@@ -4239,20 +4239,23 @@ toast.error("Please Select a Due Date");
                                 dataField="Type"
                                 caption="Type"
                                 cellRender={renderTypeCell} // Render cells based on condition
+                                width={60}
                             />
 
                             <Column
                                 dataField="Description"
                                 caption="Description"
+                                width={200}
+
                             />
                             <Column
                                 dataField="Section"
                                 caption="Section"
                             />
-                            <Column
+                            {/* <Column
                                 dataField="Client"
                                 caption="Client"
-                            />
+                            /> */}
                             <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
                             <Paging defaultPageSize={10} />
                         </DataGrid>

@@ -304,6 +304,7 @@ function AdvanceSearch() {
                                         onChange={(e) => {
                                             handleInputChange(e);
                                             if (e.target.value === "Section") {
+                                                setDocumentData({...documentData,sectionId:"-1"});
                                                 return;
                                             }
                                         }}
