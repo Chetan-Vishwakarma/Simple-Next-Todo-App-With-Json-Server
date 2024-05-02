@@ -401,8 +401,8 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                 {filteredDocuments.length > 9 && <Box className='text-center mt-5'><Button onClick={handleDocumentNavigation} variant="text" className='btn-blue-2 mb-4' size='small'>View More</Button></Box>}
             </Box>
 
-            <Box className='mb-5'>
-                <h3 className='font-20 mt-1'><SearchIcon /> We found the following Tasks matching <span className='text-blue bold'>"{target}"</span></h3>
+            <Box className='mb-5 mt-5'>
+                <h3 className='font-20 mt-1 mb-3'><SearchIcon /> We found the following Tasks matching <span className='text-blue bold'>"{target}"</span></h3>
                 <Grid className='mt-0' container spacing={2} >
                     {filteredTasks.length > 0 ? filteredTasks.slice(0, 9).map(item => {
                         return <Grid className='pt-0' item xs={12} lg={4} md={4} sm={12}>
@@ -425,9 +425,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                     {/* <PushPinIcon className='pinicon'></PushPinIcon> */}
                                     
                                 </Box>
-
                                 
-
                                 <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> {item.Source}</Typography>
                                 <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
                                 <Box className='d-flex align-items-center justify-content-between'>

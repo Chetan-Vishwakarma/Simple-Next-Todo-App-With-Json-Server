@@ -827,7 +827,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                             let isUserAssigned = arr?.includes(parseInt(localStorage.getItem('UserId')));
                                             console.log("isUserAssigned", isUserAssigned)
                                             return (
-                                                <label key={index} onClick={(e) => Json_CRM_GetOutlookTask(e, item)} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex">
+                                                <label key={index} onClick={(e) => Json_CRM_GetOutlookTask(e, item)} className="btn btn-outline-primary me-2 mb-2">
                                                     <RadioButtonUncheckedIcon className={`me-1 ${isUserAssigned ? 'green' : 'disabled'}`} />
                                                     {item.Subject}
                                                 </label>

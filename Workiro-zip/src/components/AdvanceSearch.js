@@ -283,86 +283,82 @@ function AdvanceSearch() {
 
                         <Box className='d-flex'>
                             <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 mb-0'>
-                                <BootstrapTooltip title="Section" arrow
-                                    placement="bottom-start"
-                                    slotProps={{
-                                        popper: {
-                                            modifiers: [
-                                                {
-                                                    name: 'offset',
-                                                    options: {
-                                                        offset: [0, -10],
-                                                    },
-                                                },
-                                            ],
-                                        },
+                                <span className='custom-tooltip'>Section</span>
+
+                                <Select
+                                    value={documentData.sectionId}
+                                    name='sectionId'
+                                    onChange={(e) => {
+                                        handleInputChange(e);
+                                        if (e.target.value === "Section") {
+                                            setDocumentData({ ...documentData, sectionId: "-1" });
+                                            return;
+                                        }
                                     }}
+                                    displayEmpty
+                                    inputProps={{ 'aria-label': 'Without label' }}
+                                    className='custom-dropdown'
+                                    id="sadik"
+                                    MenuProps={{ PaperProps: { sx: { maxHeight: '260px !important' } } }}
                                 >
-                                    <Select
-                                        value={documentData.sectionId}
-                                        name='sectionId'
-                                        onChange={(e) => {
-                                            handleInputChange(e);
-                                            if (e.target.value === "Section") {
-                                                return;
-                                            }
-                                        }}
-                                        displayEmpty
-                                        inputProps={{ 'aria-label': 'Without label' }}
-                                        className='custom-dropdown'
-                                        id="sadik"
-                                        MenuProps={{ PaperProps: { sx: { maxHeight: '260px !important' } } }}
-                                    >
-                                        <MenuItem value="-1" style={{ display: "none" }}>
-                                            Section
-                                        </MenuItem>
-                                        <MenuItem value="Section" >00. Clear Filter</MenuItem>
-                                        {sections.length > 0 && sections.map((itm) => {
-                                            return <MenuItem value={itm.SecID}>{itm.Sec}</MenuItem>
-                                        })}
-                                    </Select>
-                                </BootstrapTooltip>
+                                    <MenuItem value="-1" style={{ display: "none" }}>
+                                        {/* <BootstrapTooltip title="Section" arrow
+                                            placement="bottom-start"
+                                            slotProps={{
+                                                popper: {
+                                                    modifiers: [
+                                                        {
+                                                            name: 'offset',
+                                                            options: {
+                                                                offset: [0, -10],
+                                                            },
+                                                        },
+                                                    ],
+                                                },
+                                            }}
+                                        > */}
+
+                                        Section
+
+                                        {/* </BootstrapTooltip> */}
+
+                                    </MenuItem>
+                                    <MenuItem value="Section" className='text-danger sembold'>Clear Filter</MenuItem>
+                                    {sections.length > 0 && sections.map((itm) => {
+                                        return <MenuItem value={itm.SecID}>
+                                            {itm.Sec}</MenuItem>
+                                    })}
+                                </Select>
                             </FormControl>
                             <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 mb-0'>
-                                <BootstrapTooltip title="Folders" arrow
-                                    placement="bottom-start"
-                                    slotProps={{
-                                        popper: {
-                                            modifiers: [
-                                                {
-                                                    name: 'offset',
-                                                    options: {
-                                                        offset: [0, -10],
-                                                    },
-                                                },
-                                            ],
-                                        },
+
+                                <span className='custom-tooltip'>Folders</span>
+
+                                <Select
+                                    value={documentData.ProjectId}
+                                    name='ProjectId'
+                                    onChange={(e) => {
+                                        handleInputChange(e);
+                                        if (e.target.value === "Folder") {
+                                            return;
+                                        }
                                     }}
+                                    displayEmpty
+                                    inputProps={{ 'aria-label': 'Without label' }}
+                                    className='custom-dropdown'
                                 >
-                                    <Select
-                                        value={documentData.ProjectId}
-                                        name='ProjectId'
-                                        onChange={(e) => {
-                                            handleInputChange(e);
-                                            if (e.target.value === "Folder") {
-                                                return;
-                                            }
-                                        }}
-                                        displayEmpty
-                                        inputProps={{ 'aria-label': 'Without label' }}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem value={""} style={{ display: "none" }}>Client</MenuItem>
-                                        <MenuItem value="Folder" className='text-danger ps-1'>
-                                            <ClearIcon className='font-18 me-1' />
-                                            Clear Filters</MenuItem>
-                                        {folders.length > 0 && folders.map((itm) => {
-                                            return <MenuItem value={itm.FolderID} className='ps-1'>
-                                                <FolderSharedIcon className='font-18 me-1' />
-                                                {itm.Folder}</MenuItem>
-                                        })}
-                                    </Select>
-                                </BootstrapTooltip>
+                                    <MenuItem value={""} style={{ display: "none" }}>
+                                        Client</MenuItem>
+                                    <MenuItem value="Folder" className='text-danger ps-1'>
+                                        <ClearIcon className='font-18 me-1' />
+                                        Clear Filters</MenuItem>
+                                    {folders.length > 0 && folders.map((itm) => {
+                                        return <MenuItem value={itm.FolderID} className='ps-1'>
+                                            <FolderSharedIcon className='font-18 me-1' />
+                                            {itm.Folder}</MenuItem>
+                                    })}
+                                </Select>
+
                             </FormControl>
                         </Box>
 
@@ -491,7 +487,7 @@ function AdvanceSearch() {
                                     <div className='pointer d-flex align-items-center custom-datepicker-bordered' id="reportrange">
                                         <i className="fa fa-calendar"></i>
                                         <CalendarMonthIcon className='me-2 text-red' />
-                                        <span className='font-14'>{isDateShow?label:"Select Date"}</span> <i className="fa fa-caret-down"></i>
+                                        <span className='font-14'>{isDateShow ? label : "Select Date"}</span> <i className="fa fa-caret-down"></i>
                                     </div>
                                 </DateRangePicker>
                             </Box>
