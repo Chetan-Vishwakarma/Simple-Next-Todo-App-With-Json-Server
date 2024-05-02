@@ -42,7 +42,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
     data = { ...data, [name]: val };
     console.log(data, "dataOnchange", e);
     setUserDetail(data);
-    if(name == "Line1" || name == "Line2" || name == "Line3" || name =="Town" || name == "MCounty" || name == "Postcode" || mainCountry){
+    if(name || mainCountry){
       console.log(data, "dataOnchangeuserDetail");
       let addressfill = { ...userDetail };
       addressfill = { 
@@ -53,6 +53,18 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
         Town:data.Town,
         MCounty:data.MCounty,
         Postcode:data.Postcode,
+        BilLine1: data.BilLine1,
+        BilLine2: data.BilLine2,
+        BilLine3: data.BilLine3,
+        BilTown: data.BilTown,
+        BilCountry: data.BilCountry,
+        BilPostcode: data.BilPostcode,
+        regLine1: data.regLine1,
+        regLine2: data.regLine2,
+        regLine3: data.regLine3,
+        regTown: data.regTown,
+        regCountry: data.regCountry,
+        regPostcode: data.regPostcode,
         fullAddress: data.Line1+"\r\n"+data.Line2+"\r\n"+data.Line3+"\r\n"+data.Town+"\r\n"+data.MCounty+"\r\n"+data.Postcode+"\r\n"+mainCountry
       }
       setUserDetail(addressfill);
@@ -95,9 +107,8 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
   };
 
   // tabs
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+ 
+
   let mainAddress = null,
   billingAddress = null,
   registeredAddress = null;
@@ -182,6 +193,13 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
       console.log("Error while calling Json_GetToFavourites", err);
     }
   };
+  console.log("handlechange2",userDetail);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+    // Json_GetClientAddresses();
+   console.log("handle_change ",userDetail);
+  };
+
   useEffect(() => {
     
     if(dataCompanyHouse){

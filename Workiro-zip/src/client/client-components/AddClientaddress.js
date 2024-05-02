@@ -31,7 +31,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
     data = { ...data, [name]: val };
     console.log(data, "dataOnchange", e);
     setUserDetail(data);
-    if(name == "Line1" || name == "Line2" || name == "Line3" || name =="Town" || name == "MCounty" || name == "Postcode" || mainCountry){
+    if(name || mainCountry){
       console.log(data, "dataOnchangeuserDetail");
       let addressfill = { ...userDetail };
       addressfill = { 
@@ -42,10 +42,37 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
         Town:data.Town,
         MCounty:data.MCounty,
         Postcode:data.Postcode,
+        BilLine1: data.BilLine1,
+        BilLine2: data.BilLine2,
+        BilLine3: data.BilLine3,
+        BilTown: data.BilTown,
+        BilCountry: data.BilCountry,
+        BilPostcode: data.BilPostcode,
+        regLine1: data.regLine1,
+        regLine2: data.regLine2,
+        regLine3: data.regLine3,
+        regTown: data.regTown,
+        regCountry: data.regCountry,
+        regPostcode: data.regPostcode,
         fullAddress: data.Line1+"\r\n"+data.Line2+"\r\n"+data.Line3+"\r\n"+data.Town+"\r\n"+data.MCounty+"\r\n"+data.Postcode+"\r\n"+mainCountry
       }
       setUserDetail(addressfill);
     }
+    // if(name == "Line1" || name == "Line2" || name == "Line3" || name =="Town" || name == "MCounty" || name == "Postcode" || mainCountry){
+    //   console.log(data, "dataOnchangeuserDetail");
+    //   let addressfill = { ...userDetail };
+    //   addressfill = { 
+    //     ...addressfill,
+    //     Line1:data.Line1,
+    //     Line2:data.Line2,
+    //     Line3:data.Line3,
+    //     Town:data.Town,
+    //     MCounty:data.MCounty,
+    //     Postcode:data.Postcode,
+    //     fullAddress: data.Line1+"\r\n"+data.Line2+"\r\n"+data.Line3+"\r\n"+data.Town+"\r\n"+data.MCounty+"\r\n"+data.Postcode+"\r\n"+mainCountry
+    //   }
+    //   setUserDetail(addressfill);
+    // }
   };
   const onChange_registerCountry = (event, value) => {
     event.preventDefault();
