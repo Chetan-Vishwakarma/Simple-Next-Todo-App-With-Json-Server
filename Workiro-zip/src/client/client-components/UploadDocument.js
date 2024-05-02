@@ -299,8 +299,8 @@ function UploadDocument({
         Json_GetClientsByFolder(localStorage.getItem("ProjectId"))
         Json_GetFolders();
         Json_GetFolderData(localStorage.getItem("ProjectId"));
-        setDocumentDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
-        setReceivedDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
+        setDocumentDate(moment(cls.GetCurrentDayDate()).format("DD/MM/YYYY")); // Update the selected date state with the new date value
+        setReceivedDate(moment(cls.GetCurrentDayDate()).format("DD/MM/YYYY")); // Update the selected date state with the new date value
         // console.log("GetCurrentDayDate", dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD"));
         // console.log("GetNextDayDate", cls.GetNextDayDate());
         setOpenModal(false);
@@ -536,7 +536,28 @@ function UploadDocument({
    
     let counter=0;
 
+    function dateFormatYYYYDDMM(originalDate){
+        // Original date string
+//var originalDate = "14/02/2024";
+
+// Split the original date string by "/"
+var parts = originalDate.split("/");
+
+// Create a new Date object using the parts
+var date = new Date(parts[2], parts[1] - 1, parts[0]);
+
+// Format the date into "yyyy/mm/dd" format
+var formattedDate = date.getFullYear() + "/" + 
+                    ("0" + (date.getMonth() + 1)).slice(-2) + "/" + 
+                    ("0" + date.getDate()).slice(-2);
+
+//console.log(formattedDate); // Output: "2024/02/14"
+return formattedDate;
+    }
+
     function Json_RegisterItem(fileData) {
+        console.log("document date 111",moment(documentDate).format("YYYY/MM/DD"),documentDate);
+
         try {
             let values;
             let concatenatedString;
@@ -589,10 +610,10 @@ function UploadDocument({
                     "uDFList": concatenatedString,
                     "sUDFList": "",
                     "clientname": txtClientData.Client,
-                    "receiveDate": moment(receivedDate).format("YYYY/MM/DD"),
+                    "receiveDate": dateFormatYYYYDDMM(receivedDate),
                     "actionByDate": "1990/01/01",
-                    "actionDate": moment(documentDate).format("YYYY/MM/DD"),
-                    "docViewedDate": moment(documentDate).format("YYYY/MM/DD"),
+                    "actionDate": dateFormatYYYYDDMM(documentDate),
+                    "docViewedDate": dateFormatYYYYDDMM(documentDate),
                     "strb64": fileData ? fileData.Base64 : "",
                     "strtxt64": "",
                     "EmailMessageId": ""
@@ -870,10 +891,10 @@ function UploadDocument({
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                     <label className='font-14 text-black'>Document Date</label>
                                     <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                        <DatePicker className="form-control w-100"
+                                        <DatePicker className="w-100"
                                              dateFormat="DD/MM/YYYY"
                                             value={moment(documentDate).format("DD/MM/YYYY")}
-                                            onChange={handleDateChangeDocument} // Handle date changes
+                                            onChange={(e)=>handleDateChangeDocument(e)} // Handle date changes
                                             timeFormat={false}
                                         />
 
@@ -889,7 +910,7 @@ function UploadDocument({
                                         <DatePicker className=" w-100"
                                              dateFormat="DD/MM/YYYY"
                                             value={moment(receivedDate).format("DD/MM/YYYY")}
-                                            onChange={handleDateChangeRecieved} // Handle date changes
+                                            onChange={(e)=>handleDateChangeRecieved(e)} // Handle date changes
                                             timeFormat={false}
                                         />
                                     </LocalizationProvider>

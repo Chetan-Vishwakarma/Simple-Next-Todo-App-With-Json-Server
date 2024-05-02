@@ -289,7 +289,39 @@ function NewTodoList() {
         setLoadMore(prevLoadMore => prevLoadMore + 9);
     };
 
+    const [userList, setUserList] = React.useState([]);
+
+    function Json_GetForwardUserList() {
+        try {
+
+            let o = {};
+            o.ProjectId = localStorage.getItem("FolderId");
+            o.SectionId = "-1";
+            Cls.Json_GetForwardUserList(o, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        let dt = js.Table;
+                        console.log("Json_GetForwardUserList111", dt)
+                        if (dt.length > 0) {
+                            let result = dt.filter((el) => {
+                                return el.CGroup !== "Yes";
+                            });
+
+                            setUserList(result);
+
+                        }
+                    }
+
+                }
+            });
+        } catch (error) {
+            console.log("error", error);
+        }
+    }
+
     useEffect(() => {
+        Json_GetForwardUserList();
         Json_getRecentDocumentList();
         // Json_ExplorerSearchDoc();
         Json_Get_CRM_UserByProjectId();
@@ -298,6 +330,36 @@ function NewTodoList() {
 
 
     }, [isApi])
+
+
+    const FiterAssinee = (ownerid) => {
+
+        let res = userList.filter((e) => e.ID === ownerid);
+        // console.log("userList212121",res);
+        if (res.length > 0) {
+            return res[0].ForwardTo;
+        }
+
+    }
+    const FilterAgs = (item) => {
+        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
+
+        const userId = parseInt(localStorage.getItem("UserId"));
+
+        const filteredIds = arr.filter((k) => k !== item.OwnerID);
+
+        const user = filteredIds.find((u) => u === userId);
+
+
+        const userToFind = user ? user : filteredIds[0];
+
+
+
+        const res = userToFind ? userList.find((e) => e.ID === userToFind) : null;
+
+        return res ? res.ForwardTo : "";
+    }
+
 
     const handleScroll = (e) => {
 
@@ -780,10 +842,19 @@ function NewTodoList() {
                                     </Typography>
 
                                     <Box className='d-flex align-items-center justify-content-between'>
+
+                                    <Typography variant='subtitle1'><pan className='text-gray'>
+                                                            {FiterAssinee(item.OwnerID)} {arr.length > 2 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
+                                                            {/* <a href='#'>Patrick</a>, */}
+                                                            <a href='javascript:void(0)'>{FilterAgs(item)}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
+                                                                + {arr.length - 2}
+                                                            </>)}</a></Typography>
+{/* 
                                         <Typography variant='subtitle1' ><pan className='text-gray'>
                                             <a href='#'>{item.UserName}</a> <ArrowForwardIosIcon className='font-14' /> </pan>
 
-                                            <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +{arr.length}</a></Typography>
+                                            <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +{arr.length}</a></Typography> */}
+
                                         <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                     </Box>
 
@@ -877,6 +948,7 @@ function NewTodoList() {
                         // });
 
                         //      console.log("Hello Notes1",notesshow);
+                        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
 
                         return <>
 
@@ -913,11 +985,18 @@ function NewTodoList() {
                                     <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
 
                                     <Box className='d-flex align-items-center justify-content-between'>
-                                        <Typography variant='subtitle1' ><pan className='text-gray'>
+                                    <Typography variant='subtitle1'><pan className='text-gray'>
+                                                            {FiterAssinee(item.OwnerID)} {arr.length > 2 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
+                                                            {/* <a href='#'>Patrick</a>, */}
+                                                            <a href='javascript:void(0)'>{FilterAgs(item)}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
+                                                                + {arr.length - 2}
+                                                            </>)}</a></Typography>
+
+                                        {/* <Typography variant='subtitle1' ><pan className='text-gray'>
                                             You <ArrowForwardIosIcon className='font-14' /> </pan>
                                             <a href='#'>Patrick</a>,
                                             <a href='#'>Patrick</a> <a href='#'> +2</a></Typography>
-                                        <Typography variant='subtitle1 sembold'>01/05/23</Typography>
+                                        <Typography variant='subtitle1 sembold'>01/05/23</Typography> */}
                                     </Box>
 
                                     <Box className='d-flex align-items-center justify-content-between'>
