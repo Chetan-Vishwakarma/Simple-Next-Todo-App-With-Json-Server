@@ -1139,7 +1139,7 @@ function AddContacts({ addContactData, contactDetails }) {
 
               <Box className="well mb-4">
                 <h2 className="font-20 mb-3 text-black">UDF Details</h2>
-                {Contactudfnull&&Contactudfnull===true  ? (
+                {Contactudfnull && Contactudfnull===true  ? (
           <ContactUDF
           data={clientDetailsclear}
           contactDetails={contactDetails}

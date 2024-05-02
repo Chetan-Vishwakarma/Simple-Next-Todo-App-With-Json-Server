@@ -35,7 +35,7 @@ import TaskDetailModal from "./TaskDetailModal";
 import CreateNewModalTask from "./CreateNewModal";
 import { useDispatch } from "react-redux";
 import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux } from "../redux/reducers/counterSlice";
-
+import PostAddIcon from '@mui/icons-material/PostAdd';
 
 
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
@@ -654,7 +654,7 @@ console.log(updatedData);
                                                 onClick={(event) => handleCloseDocumentCreateTask(event, data)}
                                             >
                                                 <ListItemIcon>
-                                                    <CloudUploadIcon fontSize="medium" />
+                                                    <PostAddIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Create Task</MenuItem>
                                             <MenuItem
