@@ -76,9 +76,9 @@ const ContactUDF = React.memo(({ data, setDataFromChild,contactDetails}) => {
   useEffect(() => {
     Json_GetForwardUserList();
   }, []);
-  useEffect(() => {
-    setDataFromChild(selectedDatetest);
-  }, [selectedDatetest]);
+  // useEffect(() => {
+  //   setDataFromChild(selectedDatetest);
+  // }, [selectedDatetest]);
   console.log("selectedDatetestsonamoutside", selectedDatetest);
   const renderDynamicInput = (data) => {
     console.log(data,"datetypedata");
@@ -103,7 +103,7 @@ const ContactUDF = React.memo(({ data, setDataFromChild,contactDetails}) => {
                 data.TextControlValue +
                 "_UDF"
               }
-              value={data.UdfValue}
+              defaultValue={data.UdfValue}
               onChange={handleInputChange}
             />
               );
@@ -273,7 +273,7 @@ if (defaultDateObject.isValid()) {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  value={data.UdfValue}
+                  defaultValue={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -316,7 +316,7 @@ if (defaultDateObject.isValid()) {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  value={data.UdfValue}
+                  defaultValue={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -359,7 +359,7 @@ if (defaultDateObject.isValid()) {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  value={data.UdfValue}
+                  defaultValue={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
