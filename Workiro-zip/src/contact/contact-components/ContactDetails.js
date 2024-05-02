@@ -254,19 +254,11 @@ function ContactDetails() {
               details.filter((item) => item.ContactNo === Number(contactNo))
             );
             let contactdata = details.filter(
-              (item) => item.ContactNo === contactNo
+              (item) => item.ContactNo == contactNo
             );
-            console.log("Json_GetAllContactsByClientIDssss", contactdata);
+            console.log(contactNo,"Json_GetAllContactsByClientIDssss", contactdata);
             if (contactdata && contactdata.length > 0) {
-              try{
-                if(countries && countries.length > 0) {
-                  const matchingCountry = countries.find(country => country.label == contactdata[0].Country);
-                  setIssetCountry(matchingCountry);
-                  console.log(matchingCountry,"matching_country");
-                }
-              } catch(e){
-             console.log(e,"errorcountries");
-              }
+             
               if (contactdata[0]["Portal User"]) {
                 console.log(contactdata[0]["Portal User"], "portaluser");
                 setIsPortalUser(true);
@@ -281,6 +273,15 @@ function ContactDetails() {
               }
               if(contactdata[0]["Bank Check Document ID"] || contactdata[0]["Bank Checked Date"] || contactdata[0]["License Check Document ID"] || contactdata[0]["License Checked Date"] || contactdata[0]["NI Check Document ID"] || contactdata[0]["NI Checked Date"] || contactdata[0]["Passport Check Document ID"] || contactdata[0]["Passport Checked Date"]){
                 setIsVerfy(true);
+              }
+              try{
+                if(countries && countries.length > 0) {
+                  const matchingCountry = countries.find(country => country.label == contactdata[0].Country);
+                  setIssetCountry(matchingCountry);
+                  console.log(matchingCountry,"matching_country");
+                }
+              } catch(e){
+             console.log(e,"errorcountries");
               }
             }
           }
