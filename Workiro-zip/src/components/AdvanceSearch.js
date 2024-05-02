@@ -66,6 +66,23 @@ function AdvanceSearch() {
     };
     const handleClose = () => {
         setAnchorEl(null);
+        setDocumentId("");
+        setDocumentData({
+            ClientId: "",
+            Description: "",
+            Email: Email,
+            IsUDF: "F",
+            ItemFDate: "01/01/1900",
+            ItemTDate: "01/01/1900",
+            ItemrecFDate: "01/01/1900",
+            ItemrecTDate: "01/01/1900",
+            ProjectId: folderId,
+            agrno: agrno,
+            password: password,
+            sectionId: "-1",
+            udflist: [],
+            udfvalueList: []
+        });
     };
 
     const label =
