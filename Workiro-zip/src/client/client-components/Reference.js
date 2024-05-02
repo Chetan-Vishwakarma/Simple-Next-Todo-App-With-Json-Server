@@ -164,7 +164,28 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
     console.log(obj, "mainaddress");
     Json_SetClientAddress(obj);
   };
+  const Json_UpdateClientField = () => {
+    let objdata = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      projectid:userDetail.folderId ? userDetail.folderId : -1,
+      ClientId: userDetail.Clientid ? userDetail.Clientid : "",
+      fieldName: "CompanyNo",
+      fieldValue: userDetail.CHNumber ? userDetail.CHNumber : ""
+    };
+    try{
+      Cls.Json_UpdateClientField(objdata, (sts, data) => {
+        if (sts) {
+          if (data) {
+            console.log("Json_UpdateClientField", data);
+          }
+        }
+      });
+    } catch (e) {
 
+    }
+  };
   const billingAddress = () => {
     let obj = {
       agrno: agrno,
@@ -259,6 +280,7 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
             mainAddress();
             billingAddress();
             ragisterAddress();
+            Json_UpdateClientField();
             localStorage.setItem("ClientName",userDetail.Clientname);
           } else {
             toast.error("Reference ID Already Exists!");

@@ -253,7 +253,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
             <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs mb-2'>
               <Tab label="Main Address" value="1" />
               <Tab label="Billing Address" value="2" />
-              <Tab label="Ragistered Address" value="3" />
+              <Tab label="Registered Address" value="3" />
               <Tab label="Full Address" value="4" />
             </TabList>
 

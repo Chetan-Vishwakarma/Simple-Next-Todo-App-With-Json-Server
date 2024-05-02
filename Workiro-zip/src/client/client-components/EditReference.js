@@ -62,7 +62,7 @@ function EditReference({ companyEditDetails }) {
     mainAddress: "",
     biliAddress: "",
     regAddress: "",
-    fullAddress: "",
+    fullAddress: companyEditDetails[0]?.Address,
     Bussiness: "",
     Status: "",
     Source: "",
@@ -93,7 +93,7 @@ function EditReference({ companyEditDetails }) {
     mainCountry: "",
     billingsCountry: "",
     ragistersCountry: "",
-    CHNumber: "",
+    CHNumber:companyEditDetails[0]?.CompanyNo,
     InActiveData:false,
     HideData:false
   });
