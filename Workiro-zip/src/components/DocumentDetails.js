@@ -324,7 +324,19 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
     const handleClickOpenDocumentDetailsList = (event, sDoc) => {
         Json_getAssociatedTaskListByDocumentId(sDoc);
-        setDocForDetails(sDoc);
+        console.log(sDoc,"openDocumentDetailsList");
+        const updatedData = {};
+
+for (const key in sDoc) {
+    if (key === "Attach") {
+        updatedData["Attachment(s)"] = sDoc[key];
+    } else {
+        updatedData[key] = sDoc[key];
+    }
+}
+
+console.log(updatedData);
+        setDocForDetails(updatedData);
         event.stopPropagation();
         setOpenDocumentDetailsList(true);
         Json_GetAudit(sDoc);
@@ -753,7 +765,8 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                             </TableHead>
                                             <TableBody>
                                                 {Object.keys(docForDetails).length > 0 && Object.keys(docForDetails).map((itm, i) => {
-                                                    if (["Registration No.", "Folder", "Client", "Section", "Received Date", "Item Date", "FileSize", "Notes", "Category", "Attach", "Type", "Version", "Received By", "Item ID"].includes(itm)) {
+                                                    {console.log(itm,"itemdatafetched");}
+                                                    if (["Registration No.", "Folder", "Client", "Section", "Received Date", "Item Date", "FileSize", "Notes", "Category", "Attachment(s)", "Type", "Version", "ReceivedBy", "Item ID"].includes(itm)) {
                                                         return <TableRow
                                                             key={i}
                                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

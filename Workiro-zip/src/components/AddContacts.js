@@ -455,7 +455,6 @@ function AddContacts({ addContactData, contactDetails }) {
           ? userContactDetails.MainContact
           : false,
         CCode: contactDetails[0].OriginatorNo ? contactDetails[0].OriginatorNo : "-1",
-        emailupdate: userContactDetails.EmailName ? userContactDetails.EmailName : "",
         Salutation: userContactDetails.Title ? userContactDetails.Title : "",
         accid: agrno,
       };
@@ -789,7 +788,7 @@ function AddContacts({ addContactData, contactDetails }) {
         ["Inactive"]: item.Active === "Yes" ? false : true,
         ["GreetingName"]: item.Greeting,
         ["EmailName"]: item["E-Mail"],
-        ["MainUserId"]: -1,
+        ["MainUserId"]: item["Assigned Manager"],
         ["MainLine1Name"]: item["Address 1"],
         ["MainLine2Name"]: item["Address 2"],
         ["MainLine3Name"]: item["Address 3"],
@@ -926,7 +925,12 @@ function AddContacts({ addContactData, contactDetails }) {
                             Import Existing DocuSoft Contact
                           </h2>
                           <Autocomplete
-                            {...contactlist}
+                            // {...contactlist}
+                            options={contactlistdata}
+                            key={`contactlistkey`}
+                            getOptionLabel={(option) =>
+                              option.EMailId
+                            }
                             id="contactlist"
                             clearOnEscape
                             onChange={onChangecontactlist}

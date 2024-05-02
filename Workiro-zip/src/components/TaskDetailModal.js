@@ -2106,7 +2106,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                         <MenuItem className='ps-2 w-100'>
                                             <ListItemIcon>
                                                 <AttachEmailIcon className="font-22" />
-                                            </ListItemIcon>Folder</MenuItem>
+                                            </ListItemIcon>Change Folder</MenuItem>
                                     </Button>
                                     <Menu
                                         id="basic-menu"
@@ -2128,7 +2128,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                     {item.Folder}
                                                 </MenuItem>
                                             </>)
-                                        }) : ""}.length
+                                        }) : ""}
 
 
                                     </Menu>

@@ -815,9 +815,9 @@ function NewTodoList() {
                                     onDoubleClick={() => handleClickOpen(item)}>
 
                                     <Box className='check-todo'>
-                                        <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
+                                        {/* <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
                                             <AttachFileIcon />
-                                        </Badge>
+                                        </Badge> */}
 
                                         <Radio
                                             checked
@@ -957,9 +957,9 @@ function NewTodoList() {
                                     onClick={() => handleClickOpen()}>
 
                                     <Box className='check-todo'>
-                                        <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
+                                        {/* <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
                                             <AttachFileIcon />
-                                        </Badge>
+                                        </Badge> */}
 
                                         <Radio className='text-red'
                                             // {...label}
@@ -1077,9 +1077,9 @@ function NewTodoList() {
 
 
                                     <Box className='check-todo'>
-                                        <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
+                                        {/* <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
                                             <AttachFileIcon />
-                                        </Badge>
+                                        </Badge> */}
 
                                         <Radio className='text-red'
                                             // {...label}

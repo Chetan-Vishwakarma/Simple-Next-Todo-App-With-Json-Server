@@ -622,6 +622,18 @@ button {
   padding: 0px !important;
 }
 
+.custom-date-picker .form-control {
+  height: 52px;
+}
+
+.custom-date-picker svg {
+  position: absolute;
+  right: 12px;
+  top: 13px;
+  font-size: 26px;
+  color: #D41B20;
+}
+
 .text-black {
   color: #1C274C;
 }
@@ -670,6 +682,7 @@ hr {
 
 .swal2-container .swal2-popup.swal2-modal .swal2-default-outline.swal2-confirm {
   background-color: #4780ff !important;
+  font-size: 14px !important;
 }
 
 .swal2-container .swal2-popup.swal2-modal {
@@ -679,6 +692,7 @@ hr {
 
 .swal2-container .swal2-popup.swal2-modal .swal2-cancel {
   background-color: #d42027 !important;
+  font-size: 14px !important;
 }
 
 .custom-modal .MuiDialog-container .MuiDialog-paperWidthSm {
@@ -1129,9 +1143,8 @@ span.tox-statusbar__branding {
   top: 23px;
   left: 0;
 }
-.dropdown-box .btn-select {
 
-}
+.dropdown-box .btn-select {}
 
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
@@ -2220,6 +2233,7 @@ input[type=number] {
   height: 16px;
   right: 6px;
 }
+
 .btn-select .button-select {
   /* color: red; */
   /* font-size: 13px; */
@@ -2232,16 +2246,55 @@ input[type=number] {
   /* text-align: left; */
   justify-content: start;
 }
+
 .btn-select .button-select:hover {
   background-color: transparent;
 }
+
 .btn-select .MuiAutocomplete-root {
   margin: 0 10px;
   font-size: 12px;
 }
+
 .btn-select .MuiAutocomplete-root {
   font-size: 12px !important;
 }
+
+.custom-tooltip {
+  position: absolute;
+  top: 25px;
+  font-size: 11px;
+  background: #000;
+  color: #fff;
+  padding: 2px 8px;
+  display: block;
+  z-index: 1;
+  border-radius: 3px;
+  color: #fff;
+  opacity: 0;
+  visibility: hidden;
+  transition: .5s all ease;
+}
+
+.custom-tooltip:after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid #000;
+  position: absolute;
+  top: -10px;
+  right: 6px;
+  z-index: 1;
+}
+
+.select-border:hover .custom-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
 @media only screen and (max-width: 1366px) {
   .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root {
     font-size: 12px;
@@ -2810,7 +2863,6 @@ input[type=number] {
 
 .cd-vertical-nav {
   position: fixed;
-  z-index: 1;
   right: 5%;
   bottom: 30px;
   width: 90%;
@@ -2831,7 +2883,8 @@ input[type=number] {
   -moz-transition: -moz-transform .2s;
   transition: transform .2s;
   border-radius: .25em;
-  background-color: rgba(234, 242, 227, .9)
+  background-color: rgba(234, 242, 227, .9);
+  z-index: 9999;
 }
 
 .cd-vertical-nav a {
