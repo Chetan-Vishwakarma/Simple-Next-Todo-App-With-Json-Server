@@ -1975,7 +1975,7 @@ input[type=number] {
   overflow-x: hidden;
 }
 
-.client-details-scroll-search {
+.client-details-scroll-search-2 {
   max-height: calc(100vh - 210px);
 }
 
