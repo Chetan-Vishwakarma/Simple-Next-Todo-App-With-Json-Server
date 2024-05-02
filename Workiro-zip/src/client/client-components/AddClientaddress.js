@@ -101,14 +101,14 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
         mainCountry:"",
         BilLine1:dataCompanyHouse.address_line_1,
         BilLine2:dataCompanyHouse.address_line_2,
-        // BilLine3:,
+        BilLine3:"",
         BilTown:dataCompanyHouse.locality,
         BilCountry:dataCompanyHouse.region,
         BilPostcode:dataCompanyHouse.postal_code,
         billingsCountry:"",
         regLine1:dataCompanyHouse.address_line_1,
         regLine2:dataCompanyHouse.address_line_2,
-        // regLine3:,
+        regLine3:"",
         regTown:dataCompanyHouse.locality,
         regCountry:dataCompanyHouse.region,
         regPostcode:dataCompanyHouse.postal_code,
@@ -268,7 +268,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                       label="Line1"
                       variant="outlined"
                       name="BilLine1"
-                      value={userDetail.BilLine1}
+                      defaultValue={userDetail.BilLine1}
                       onChange={onChange}
                     />
                   </Grid>
@@ -280,7 +280,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                       label="Line2"
                       variant="outlined"
                       name="BilLine2"
-                      value={userDetail.BilLine2}
+                      defaultValue={userDetail.BilLine2}
                       onChange={onChange}
                     />
                   </Grid>
@@ -292,7 +292,8 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                       label="Line3"
                       variant="outlined"
                       name="BilLine3"
-                      value={userDetail.BilLine3}
+                      // value={userDetail.BilLine3}
+                      defaultValue={userDetail.BilLine3}
                       onChange={onChange}
                     />
                   </Grid>
@@ -304,7 +305,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                       label="Town"
                       variant="outlined"
                       name="BilTown"
-                      value={userDetail.BilTown}
+                      defaultValue={userDetail.BilTown}
                       onChange={onChange}
                     />
                   </Grid>
@@ -316,7 +317,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                       label="County"
                       variant="outlined"
                       name="BilCountry"
-                      value={userDetail.BilCountry}
+                      defaultValue={userDetail.BilCountry}
                       onChange={onChange}
                     />
                   </Grid>
@@ -329,7 +330,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                       label="Postcode"
                       variant="outlined"
                       name="BilPostcode"
-                      value={userDetail.BilPostcode}
+                      defaultValue={userDetail.BilPostcode}
                       onChange={onChange}
                     />
                   </Grid>
@@ -389,7 +390,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                       label="Line1"
                       variant="outlined"
                       name="regLine1"
-                      value={userDetail.regLine1}
+                      defaultValue={userDetail.regLine1}
                       onChange={onChange}
                     />
                   </Grid>
@@ -401,7 +402,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                       label="Line2"
                       variant="outlined"
                       name="regLine2"
-                      value={userDetail.regLine2}
+                      defaultValue={userDetail.regLine2}
                       onChange={onChange}
                     />
                   </Grid>
@@ -414,7 +415,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                       label="Line3"
                       variant="outlined"
                       name="regLine3"
-                      value={userDetail.regLine3}
+                      defaultValue={userDetail.regLine3}
                       onChange={onChange}
                     />
                   </Grid>
@@ -426,7 +427,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                       label="Town"
                       variant="outlined"
                       name="regTown"
-                      value={userDetail.regTown}
+                      defaultValue={userDetail.regTown}
                       onChange={onChange}
                     />
                   </Grid>
@@ -438,7 +439,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                       label="County"
                       variant="outlined"
                       name="regCountry"
-                      value={userDetail.regCountry}
+                      defaultValue={userDetail.regCountry}
                       onChange={onChange}
                     />
                   </Grid>
@@ -451,7 +452,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                       label="Postcode"
                       variant="outlined"
                       name="regPostcode"
-                      value={userDetail.regPostcode}
+                      defaultValue={userDetail.regPostcode}
                       onChange={onChange}
                     />
                   </Grid>
@@ -510,7 +511,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
                 <textarea
                   aria-label="minimum height"
                   name="fullAddress"
-                  value={userDetail.fullAddress}
+                  defaultValue={userDetail.fullAddress}
                   onChange={onChange}
                   className="form-control textarea textarea-2"
                   placeholder="Full Address"

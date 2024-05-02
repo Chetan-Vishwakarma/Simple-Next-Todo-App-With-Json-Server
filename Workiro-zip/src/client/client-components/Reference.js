@@ -33,15 +33,7 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
   const [defaultClient, setDefaultClient] = useState([]);
   // const [activeStep, setActiveStep] = React.useState(0);
   const [contactData, setContactData] = useState("");
-  const handleClickOpen5 = () => {
-    setReferance(false);
-    setOpen5(true);
-    setAddContact(userDetail)
-  };
-
-  const handleClose5 = () => {
-    setOpen5(false);
-  };
+  
   const [userDetail, setUserDetail] = useState({
     Clientname: "",
     Clientid: "",
@@ -112,6 +104,15 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
   const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
   let Cls = new CommanCLS(baseUrl, agrno, Email, password);
   let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
+  const handleClickOpen5 = () => {
+    setReferance(false);
+    setOpen5(true);
+    setAddContact(userDetail)
+  };
+
+  const handleClose5 = () => {
+    setOpen5(false);
+  };
   const Json_GetClientCardDetails = () => {
     let obj = {
       Email: Email,
