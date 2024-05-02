@@ -941,7 +941,7 @@ const handleRemoveOption = (optionToRemove) => {
                 return getAudit.map((item, index) => (
                     <li key={index}>
                         <Box class="datetime">
-                            <span>{moment(item["Actioned Date"]).format("DD/MM/YYYY HH:mm:ss")}</span>
+                            <span>{moment(item["Actioned Date"] ? item["Actioned Date"] : item["Activity Date"]).format("DD/MM/YYYY HH:mm:ss")}</span>
                             <span>{ }</span>
                         </Box>
                         <Box class="line-dotted">
