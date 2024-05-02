@@ -307,7 +307,6 @@ function CreateNewModalTask({ ...props }) {
     useEffect(() => {
         console.log("dfdksfoier", reduxRefForTaskModal);
         if (reduxRefForTaskModal) {
-            setAddUser([]);
             setTaskType(reduxRefClientAndDoc.TaskType);
             setCreateNewFileObj(reduxRefClientAndDoc.createNewFileObj);
             setTxtClientData(reduxRefClientAndDoc.txtClientData);
@@ -323,9 +322,6 @@ function CreateNewModalTask({ ...props }) {
         } else {
             handleClose();
         }
-        ClearForm();
-        Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("FolderId"));
-       
     }, [reduxRefForTaskModal]);
 
     useEffect(() => {
@@ -500,18 +496,14 @@ function CreateNewModalTask({ ...props }) {
                             return el.CGroup !== "Yes";
                         });
                         if (result.length > 0) {
-                            setAddUser([])
                             result.map((el) => {
-                                
                                 if (el.ID === parseInt(localStorage.getItem("UserId"))) {
-                                  
+                                    console.log("Json_GetForwardUserList11", el);
                                     setOwnerID(el.ID);
                                     setOwnerName(el.ForwardTo);
                                     setOwnerRighClick(el);
                                     setClearData(el);
                                     setAddUser((pre) => [...pre, el])
-                                    console.log("Json_GetForwardUserList11", el);
-                                    
                                 }
                             })
                         }
@@ -524,7 +516,7 @@ function CreateNewModalTask({ ...props }) {
                         setUserFilter(removeuser);
 
                         let commanuser = result.filter((e) => e.ID === parseInt(localStorage.getItem("UserId")));
-                       // console.log("Json_GetForwardUserList11", removeuser);
+                        console.log("Json_GetForwardUserList11", removeuser);
                         setSelectedUSer(commanuser[0]);
 
                     }
@@ -879,9 +871,6 @@ function CreateNewModalTask({ ...props }) {
     }, [currentDate]);
 
     useEffect(() => {
-
-        setAddUser([]);
-
 
         let strGuid = uuidv4().replace(/-/g, '');
         localStorage.setItem("GUID", strGuid)
@@ -1397,7 +1386,6 @@ toast.error("Please Select a Due Date");
                     else {
                         toast.error("Task Not Created Please Try Again");
                         console.log("Response final", data)
-                        setLoading(false);
                     }
                 }
                 else {
@@ -1408,9 +1396,6 @@ toast.error("Please Select a Due Date");
 
                 // setLoading(false);
             }
-            else{
-                setLoading(false);
-            }
         })
 
     }
@@ -1419,17 +1404,6 @@ toast.error("Please Select a Due Date");
 
 
     function ClearForm() {
-
-        setOwnerID([]);
-                                    setOwnerName([]);
-                                    setOwnerRighClick([]);
-                                    setClearData([]);
-                                    setAddUser([])
-
-        setSelectedFiles([]);
-        setSelectedDocumentFile([]);
-        setAttachmentPath([]);
-
         // console.log("Add User List11", addUser);  
         //setAddUser(clearData)
         setFilterText("");
@@ -1448,7 +1422,7 @@ toast.error("Please Select a Due Date");
         setTxtDescriptin("");
         setTextClientId("")
 
-        
+        setSelectedFiles([]);
 
         setTxtPriority("Normal");
         setTxtStatus("Not Started");
@@ -2059,7 +2033,6 @@ toast.error("Please Select a Due Date");
                 // }
 
                 const isaddUser = addUser.map(obj => obj.ID).join(',');
-
                 let ooo = {
                     "ClientIsRecurrence": false,
                     "StartDate":currentDate? moment(currentDate).format("YYYY/MM/DD"):"1900/01/01",
@@ -2268,20 +2241,17 @@ toast.error("Please Select a Due Date");
 
     const firsorScandCtr = (item) => {
         if (item) {
-            if(item.ForwardTo){
-                const words = item.ForwardTo.split(" ");
-                // Extract the first letter of each word and concatenate them
-                let result = "";
-                for (
-                    let i = 0;
-                    i < words.length && i < 2;
-                    i++
-                ) {
-                    result += words[i].charAt(0);
-                }
-                return result;
+            const words = item.ForwardTo.split(" ");
+            // Extract the first letter of each word and concatenate them
+            let result = "";
+            for (
+                let i = 0;
+                i < words.length && i < 2;
+                i++
+            ) {
+                result += words[i].charAt(0);
             }
-           
+            return result;
         }
 
     }
@@ -4273,7 +4243,6 @@ toast.error("Please Select a Due Date");
                                 caption="Description"
                                 width={300}
                                 cellRender={(data)=>{
-                                    return <><span className='custom-tooltip'>{data.data.Description}</span>{data.data.Description}</>
                                     return <Tooltip title={data.data.Description} placement="top-start">
                                     {data.data.Description}
                                   </Tooltip>
