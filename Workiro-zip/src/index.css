@@ -1975,8 +1975,8 @@ input[type=number] {
   overflow-x: hidden;
 }
 
-.client-details-scroll-search {
-  max-height: calc(100vh - 210px);
+.client-details-scroll-search-2 {
+  max-height: calc(100vh - 210px) !important;
 }
 
 .main-chatbox {
