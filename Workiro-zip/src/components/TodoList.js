@@ -1075,6 +1075,7 @@ function TodoList() {
                                 onChange={(e) => {
                                     if (e.target.value === "") {
                                         setSelectedSortBy("Sort By");
+                                        setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] })
                                         return;
                                     }
                                     setSelectedSortBy(e.target.value)
@@ -1086,7 +1087,7 @@ function TodoList() {
                                 <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
                                 <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
                                 <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-20 me-1' />Priority</MenuItem>
-                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-20 me-1' />Section</MenuItem>
+                                {/* <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-20 me-1' />Section</MenuItem> */}
                                 <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-20 me-1' />Start Date</MenuItem>
                             </Select>
                         </FormControl>
