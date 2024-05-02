@@ -370,7 +370,6 @@ function AdvanceSearch() {
                                         disablePortal
                                         id="combo-box-demo"
                                         className='font-12'
-                                        defaultValue={Object.keys(selectedClient).length > 0 ? selectedClient : { "Company Name": "Select" }}
                                         onChange={(e, newValue) => {
                                             if (newValue === null) {
                                                 setSelectedClient({});
