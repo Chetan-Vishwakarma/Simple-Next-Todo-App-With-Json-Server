@@ -83,6 +83,7 @@ function AdvanceSearch() {
             udflist: [],
             udfvalueList: []
         });
+        setIsDateShow(false);
     };
 
     const label =

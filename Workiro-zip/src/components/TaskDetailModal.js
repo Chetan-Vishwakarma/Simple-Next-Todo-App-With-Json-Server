@@ -3314,7 +3314,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                             {docDetailsSearchByItemId ? (<>
                                                 <TableBody>
                                                     {Object.keys(docDetailsSearchByItemId).length > 0 && Object.keys(docDetailsSearchByItemId).map((itm, i) => {
-                                                        if (itm !== "StickyNotes") {
+                                                        if (["Registration No.", "Folder", "Client", "Section", "Received Date", "Item Date", "FileSize", "Notes", "Category", "Attachment(s)", "Type", "Version", "ReceivedBy", "Item ID"].includes(itm)) {
                                                             return <TableRow
                                                                 key={i}
                                                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
