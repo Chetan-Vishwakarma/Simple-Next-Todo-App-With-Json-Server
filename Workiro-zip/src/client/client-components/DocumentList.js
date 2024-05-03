@@ -1087,13 +1087,11 @@ export default function DocumentList({ clientId }) {
                         </Box>
 
                         <Box className='d-flex flex-wrap justify-content-between'>
-                            <Box className='mt-2'>
+                            <Box className='mb-2 overflowy-auto pb-1'>
                                 <Stack direction="row" spacing={1}>
-                                    {/* <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
-                                        <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} /> */}
                                     {Object.keys(filterCriteria).length > 0 && Object.keys(filterCriteria).map((key) => {
                                         if (!["Item Date", "Folder", "Section", "Client"].includes(key)) {
-                                            return <Chip label={`${key}: ${filterCriteria[key][0]}`} variant="outlined" onDelete={() => {
+                                            return <Chip label={`${key==="Description"?"Document Name":key==="SenderId"?"Filled By":key==="SubSection"?"Sub Section":key==="Notes"?"Has Notes":key==="Attach"?"Has Attachments":key==="Type"?"Document Type":key==="Comments"?"Comment":key==="CommentBy"&&"Comment By"}: ${filterCriteria[key][0]}`} variant="outlined" onDelete={() => {
                                                 handleFilterDeletion(key);
                                             }} />
                                         }
@@ -1103,7 +1101,7 @@ export default function DocumentList({ clientId }) {
                             </Box>
                         </Box>
 
-                        <Box className='client-details-scroll' name='client-details-scroll-search'>
+                        <Box className='client-details-scroll client-details-scroll-search-2' name='client-details-scroll-search'>
                             {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
                             {toggleScreen.singleCardView && <DocumentDetails groupByFilterResult={groupByFilterResult} isGroupBy={isGroupBy} documents={documents} advFilteredResult={advFilteredResult} dataNotFoundBoolean={dataNotFoundBoolean} selectedGroup={selectedGroup}></DocumentDetails>}
                             {toggleScreen.multipleCardView &&

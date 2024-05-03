@@ -66,6 +66,24 @@ function AdvanceSearch() {
     };
     const handleClose = () => {
         setAnchorEl(null);
+        setDocumentId("");
+        setDocumentData({
+            ClientId: "",
+            Description: "",
+            Email: Email,
+            IsUDF: "F",
+            ItemFDate: "01/01/1900",
+            ItemTDate: "01/01/1900",
+            ItemrecFDate: "01/01/1900",
+            ItemrecTDate: "01/01/1900",
+            ProjectId: folderId,
+            agrno: agrno,
+            password: password,
+            sectionId: "-1",
+            udflist: [],
+            udfvalueList: []
+        });
+        setIsDateShow(false);
     };
 
     const label =
@@ -370,7 +388,6 @@ function AdvanceSearch() {
                                         disablePortal
                                         id="combo-box-demo"
                                         className='font-12'
-                                        defaultValue={Object.keys(selectedClient).length > 0 ? selectedClient : { "Company Name": "Select" }}
                                         onChange={(e, newValue) => {
                                             if (newValue === null) {
                                                 setSelectedClient({});

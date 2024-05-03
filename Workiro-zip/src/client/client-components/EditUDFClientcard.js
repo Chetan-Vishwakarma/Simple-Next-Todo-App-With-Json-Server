@@ -201,6 +201,7 @@ if (defaultDateObject.isValid()) {
 
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DemoContainer
+      
         components={[
           "DatePicker",
           "TimePicker",
@@ -214,6 +215,7 @@ if (defaultDateObject.isValid()) {
           // value={currentDate}
         //   dateFormat="DD/MM/YYYY"
         //   value={currentDate}
+        className="custom-date-2"
           defaultValue={defaultDateObject}
           // defaultValue={formattedDefaultDate}
           label={data.Name}
@@ -248,11 +250,12 @@ if (defaultDateObject.isValid()) {
                       "DateTimePicker",
                       "DateRangePicker",
                     ]}
-                    className=''
+                    
                   > 
                     <DatePicker
                       // dateFormat="DD/MM/YYYY"
                       // value={currentDate}
+                      className="custom-date-2"
                       label={data.Name}
                       id={
                         data.UserDefFieldID +

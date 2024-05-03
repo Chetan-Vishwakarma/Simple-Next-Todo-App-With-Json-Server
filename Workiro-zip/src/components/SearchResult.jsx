@@ -25,6 +25,7 @@ import BootstrapTooltip from '../utils/BootstrapTooltip';
 import Fileformat from '../images/files-icon/pdf.png';
 import IconButton from '@mui/material/IconButton';
 import AttachFileIcon from '@mui/icons-material/InsertLink';
+import PostAddIcon from '@mui/icons-material/PostAdd';
 
 
 const agrno = localStorage.getItem("agrno");
@@ -268,134 +269,137 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
                 <Grid className='mt-0' container spacing={2}>
                     {filteredDocuments.length > 0 ? filteredDocuments.slice(0, 9).map((item, index) => {
-                        console.log("search result file data",item)
-                        return <Grid key={index} className='pt-0' item xs={12} lg={4} md={4} sm={12}><Box className="file-uploads">
-                            <label className="file-uploads-label file-uploads-document" onClick={(event) => {
-                                event.stopPropagation();
-                                event.preventDefault();
-                                handleCloseDocument(event, index);
-                            }} onDoubleClick={(e) => ViewerDocument(item)}>
-                                <Box className="d-flex align-items-center">
-                                    {/* <DescriptionIcon
+                        console.log("search result file data", item)
+                        return <Grid key={index} className='pt-0 d-flex w-100' item xs={12} lg={4} md={4} sm={12}>
+                            <Box className="file-uploads d-flex w-100">
+                                <label className="file-uploads-label file-uploads-document d-flex w-100" onClick={(event) => {
+                                    event.stopPropagation();
+                                    event.preventDefault();
+                                    handleCloseDocument(event, index);
+                                }} onDoubleClick={(e) => ViewerDocument(item)}>
+                                    <Box className="d-flex align-items-center">
+                                        {/* <DescriptionIcon
                                         sx={{
                                             fontSize: 32,
                                         }}
                                         className='me-2 ms-0'
                                     /> */}
-                                    <div className='img-format'>
-                                        <img src={Fileformat} />
-                                    </div>
-                                    <Box className="upload-content pe-3">
-                                        {editingIndex == index ? (
-                                            <input
-                                                type="text"
-                                                defaultValue={item.Description}
-                                                value={updatedSubject}
-                                                onChange={handleChange}
-                                                autoFocus
-                                                onBlur={(e) => handleSave(e.target.value, item.Description, item, index)}
-                                                className='edit-input'
-                                            />
-                                        ) : (
-                                            <BootstrapTooltip title={item.Description ? item.Description : ""} arrow
-                                                placement="bottom-start"
-                                                slotProps={{
-                                                    popper: {
-                                                        modifiers: [
-                                                            {
-                                                                name: 'offset',
-                                                                options: {
-                                                                    offset: [0, -10],
+                                        <div className='img-format'>
+                                            <img src={Fileformat} />
+                                        </div>
+                                        <Box className="upload-content pe-3">
+                                            {editingIndex == index ? (
+                                                <input
+                                                    type="text"
+                                                    defaultValue={item.Description}
+                                                    value={updatedSubject}
+                                                    onChange={handleChange}
+                                                    autoFocus
+                                                    onBlur={(e) => handleSave(e.target.value, item.Description, item, index)}
+                                                    className='edit-input'
+                                                />
+                                            ) : (
+                                                <BootstrapTooltip title={item.Description ? item.Description : ""} arrow
+                                                    placement="bottom-start"
+                                                    slotProps={{
+                                                        popper: {
+                                                            modifiers: [
+                                                                {
+                                                                    name: 'offset',
+                                                                    options: {
+                                                                        offset: [0, -10],
+                                                                    },
                                                                 },
-                                                            },
-                                                        ],
-                                                    },
+                                                            ],
+                                                        },
+                                                    }}
+                                                >
+                                                    <Typography variant="h4" >
+                                                        {Object.keys(test).includes(String(index)) ? test[index] : (item.Description && item.Description.length > 35) ? item.Description.substr(0, 35) + "..." : item.Description ? item.Description : "No Name"}
+                                                    </Typography>
+                                                </BootstrapTooltip>
+                                            )}
+                                            <Typography variant="body1">
+                                                {/* Size:  <span className='sembold'>{item.FileSize? item.FileSize: ""}</span> |  */}
+                                                Date <span className='sembold'>{item["Item Date"] !== "NaN/NaN/NaN" ? formatDate(item["Item Date"]) : "01/01/2000"}</span>
+                                                | <span className='sembold'>{item.Client}</span>
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    <Box>
+                                        <Button
+                                            id={`basic-button-${index}`}
+                                            aria-controls={anchorElDocumentList[index] ? `basic-menu-${index}` : undefined}
+                                            aria-haspopup="true"
+                                            aria-expanded={Boolean(anchorElDocumentList[index])}
+                                            onClick={(event) => handleClickDocumentList(event, index)}
+                                            className='min-width-auto'
+                                        >
+                                            <MoreVertIcon />
+                                        </Button>
+                                        <Menu
+                                            id={`basic-menu-${index}`}
+                                            anchorEl={anchorElDocumentList[index]}
+                                            open={Boolean(anchorElDocumentList[index])}
+                                            onClose={(event) => handleCloseDocument(event, index)}
+                                            MenuListProps={{
+                                                'aria-labelledby': `basic-button-${index}`,
+                                            }}
+                                            className='custom-dropdown'
+                                        >
+                                            <MenuItem
+                                                onClick={(event) => handleCloseDocument(event, index)}
+                                            >
+
+                                                <ListItemIcon>
+                                                    <PostAddIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Create Task</MenuItem>
+                                            <MenuItem onClick={(event) => {
+                                                handleCloseDocument(event, index)
+                                                handleClickOpenDocumentDetailsList(item)
+                                            }}>
+                                                <ListItemIcon>
+                                                    <ArticleIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Document Details</MenuItem>
+
+                                            <MenuItem
+                                                onClick={(event) => handleCloseDocument(event, index)}
+                                            >
+                                                <ListItemIcon>
+                                                    <CloudUploadIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Upload New Version</MenuItem>
+                                            <MenuItem
+                                                onClick={(event) => {
+                                                    handleEdit(index);
+                                                    handleCloseDocument(event, index);
                                                 }}
                                             >
-                                                <Typography variant="h4" >
-                                                    {Object.keys(test).includes(String(index)) ? test[index] : (item.Description && item.Description.length > 35) ? item.Description.substr(0, 35) + "..." : item.Description ? item.Description : "No Name"}
-                                                </Typography>
-                                            </BootstrapTooltip>
-                                        )}
-                                        <Typography variant="body1">
-                                            {/* Size:  <span className='sembold'>{item.FileSize? item.FileSize: ""}</span> |  */}
-                                            Date <span className='sembold'>{item["Item Date"] !== "NaN/NaN/NaN" ? formatDate(item["Item Date"]) : "01/01/2000"}</span>
-                                            | <span className='sembold'>{item.Client}</span>
-                                        </Typography>
+                                                <ListItemIcon>
+                                                    <DriveFileRenameOutlineIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Rename Document</MenuItem>
+                                            <MenuItem
+                                                onClick={(event) => handleCloseDocument(event, index)}
+                                            >
+                                                <ListItemIcon>
+                                                    <TravelExploreIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Open in Browser</MenuItem>
+                                            <MenuItem
+                                                onClick={(event) => handleCloseDocument(event, index)}
+                                            >
+                                                <ListItemIcon>
+                                                    <CloudDownloadIcon fontSize="medium" />
+                                                </ListItemIcon>
+                                                Download</MenuItem>
+                                        </Menu>
                                     </Box>
-                                </Box>
-                                <Box>
-                                    <Button
-                                        id={`basic-button-${index}`}
-                                        aria-controls={anchorElDocumentList[index] ? `basic-menu-${index}` : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={Boolean(anchorElDocumentList[index])}
-                                        onClick={(event) => handleClickDocumentList(event, index)}
-                                        className='min-width-auto'
-                                    >
-                                        <MoreVertIcon />
-                                    </Button>
-                                    <Menu
-                                        id={`basic-menu-${index}`}
-                                        anchorEl={anchorElDocumentList[index]}
-                                        open={Boolean(anchorElDocumentList[index])}
-                                        onClose={(event) => handleCloseDocument(event, index)}
-                                        MenuListProps={{
-                                            'aria-labelledby': `basic-button-${index}`,
-                                        }}
-                                        className='custom-dropdown'
-                                    >
-                                        <MenuItem
-                                            onClick={(event) => handleCloseDocument(event, index)}
-                                        >
-                                            <ListItemIcon>
-                                                <CloudUploadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Create Task</MenuItem>
-                                        <MenuItem onClick={(event) => {
-                                            handleCloseDocument(event, index)
-                                            handleClickOpenDocumentDetailsList(item)
-                                        }}>
-                                            <ListItemIcon>
-                                                <ArticleIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Document Details</MenuItem>
-
-                                        <MenuItem
-                                            onClick={(event) => handleCloseDocument(event, index)}
-                                        >
-                                            <ListItemIcon>
-                                                <CloudUploadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Upload New Version</MenuItem>
-                                        <MenuItem
-                                            onClick={(event) => {
-                                                handleEdit(index);
-                                                handleCloseDocument(event, index);
-                                            }}
-                                        >
-                                            <ListItemIcon>
-                                                <DriveFileRenameOutlineIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Rename Document</MenuItem>
-                                        <MenuItem
-                                            onClick={(event) => handleCloseDocument(event, index)}
-                                        >
-                                            <ListItemIcon>
-                                                <TravelExploreIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Open in Browser</MenuItem>
-                                        <MenuItem
-                                            onClick={(event) => handleCloseDocument(event, index)}
-                                        >
-                                            <ListItemIcon>
-                                                <CloudDownloadIcon fontSize="medium" />
-                                            </ListItemIcon>
-                                            Download</MenuItem>
-                                    </Menu>
-                                </Box>
-                            </label>
-                        </Box></Grid>
+                                </label>
+                            </Box>
+                        </Grid>
                     }) : <DataNotFound />}</Grid>
 
                 {filteredDocuments.length > 9 && <Box className='text-center mt-5'><Button onClick={handleDocumentNavigation} variant="text" className='btn-blue-2 mb-4' size='small'>View More</Button></Box>}
@@ -423,9 +427,9 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                     />
 
                                     {/* <PushPinIcon className='pinicon'></PushPinIcon> */}
-                                    
+
                                 </Box>
-                                
+
                                 <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> {item.Source}</Typography>
                                 <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
                                 <Box className='d-flex align-items-center justify-content-between'>
