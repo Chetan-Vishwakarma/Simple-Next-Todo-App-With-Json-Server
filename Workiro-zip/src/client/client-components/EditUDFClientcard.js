@@ -112,7 +112,7 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
                 data.TextControlValue +
                 "_UDF"
               }
-              value={data.UdfValue}
+              defaultValue={data.UdfValue}
               onChange={handleInputChange}
             />
               );
@@ -291,7 +291,7 @@ if (defaultDateObject.isValid()) {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  value={data.UdfValue}
+                  defaultValue={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -334,7 +334,7 @@ if (defaultDateObject.isValid()) {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  value={data.UdfValue}
+                  defaultValue={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -377,7 +377,7 @@ if (defaultDateObject.isValid()) {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  value={data.UdfValue}
+                  defaultValue={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );

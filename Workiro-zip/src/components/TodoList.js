@@ -1185,7 +1185,7 @@ function TodoList() {
                                                         <Typography variant='subtitle1'><pan className='text-gray'>
                                                             {FiterAssinee(item.OwnerID)} {arr.length > 2 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
                                                             {/* <a href='#'>Patrick</a>, */}
-                                                            <a href='#'>{FilterAgs(item)}</a> <a href='#'> {arr.length > 2 && (<>
+                                                            <a href='javascript:void(0)'>{FilterAgs(item)}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
                                                                 + {arr.length - 2}
                                                             </>)}</a></Typography>
                                                         <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
@@ -1292,7 +1292,7 @@ function TodoList() {
                                                 <Typography variant='subtitle1'><pan className='text-gray'>
                                                     {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)} </pan>
                                                     {/* <a href='#'>Patrick</a>, */}
-                                                    <a href='#'>{FilterAgs(item)}</a> <a href='#'> {arr.length > 2 && (<>
+                                                    <a href='javascript:void(0)'>{FilterAgs(item)}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
                                                         +{arr.length - 2}
                                                     </>)}</a></Typography>
                                                 <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>

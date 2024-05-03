@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CommanCLS from "../../services/CommanService";
-import UDFClientcard from "./UDFClientcard";
+import EditUDFClientcard from "./EditUDFClientcard";
 import AddClientdetails from "./AddClientdetails";
-import AddClientaddress from "./AddClientaddress";
+import EditClientaddress from "./EditClientaddress";
 import AddClientmaincontact from "./AddClientmaincontact";
 import { ToastContainer, toast } from 'react-toastify';
 import { memo } from "react";
@@ -33,15 +33,7 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
   const [defaultClient, setDefaultClient] = useState([]);
   // const [activeStep, setActiveStep] = React.useState(0);
   const [contactData, setContactData] = useState("");
-  const handleClickOpen5 = () => {
-    setReferance(false);
-    setOpen5(true);
-    setAddContact(userDetail)
-  };
-
-  const handleClose5 = () => {
-    setOpen5(false);
-  };
+  
   const [userDetail, setUserDetail] = useState({
     Clientname: "",
     Clientid: "",
@@ -112,6 +104,15 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
   const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
   let Cls = new CommanCLS(baseUrl, agrno, Email, password);
   let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
+  const handleClickOpen5 = () => {
+    setReferance(false);
+    setOpen5(true);
+    setAddContact(userDetail)
+  };
+
+  const handleClose5 = () => {
+    setOpen5(false);
+  };
   const Json_GetClientCardDetails = () => {
     let obj = {
       Email: Email,
@@ -158,12 +159,33 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
       Town: userDetail.Town ? userDetail.Town : "",
       County: userDetail.MCounty ? userDetail.MCounty : "",
       Postcode: userDetail.Postcode ? userDetail.Postcode : "",
-      Country: userDetail.mainCountry,
+      Country: userDetail.mainCountry ? userDetail.mainCountry : "United Kingdom"
     };
     console.log(obj, "mainaddress");
     Json_SetClientAddress(obj);
   };
+  const Json_UpdateClientField = () => {
+    let objdata = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      projectid:userDetail.folderId ? userDetail.folderId : -1,
+      ClientId: userDetail.Clientid ? userDetail.Clientid : "",
+      fieldName: "CompanyNo",
+      fieldValue: userDetail.CHNumber ? userDetail.CHNumber : ""
+    };
+    try{
+      Cls.Json_UpdateClientField(objdata, (sts, data) => {
+        if (sts) {
+          if (data) {
+            console.log("Json_UpdateClientField", data);
+          }
+        }
+      });
+    } catch (e) {
 
+    }
+  };
   const billingAddress = () => {
     let obj = {
       agrno: agrno,
@@ -178,7 +200,7 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
       Town: userDetail.BilTown ? userDetail.BilTown : "",
       County: userDetail.BilCountry ? userDetail.BilCountry : "",
       Postcode: userDetail.BilPostcode ? userDetail.BilPostcode : "",
-      Country: userDetail.billingsCountry,
+      Country: userDetail.billingsCountry ? userDetail.billingsCountry : "United Kingdom",
     };
     console.log(obj, "mainaddress11");
     Json_SetClientAddress(obj);
@@ -197,7 +219,7 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
       Town: userDetail.regTown ? userDetail.regTown : "",
       County: userDetail.regCountry ? userDetail.regCountry : "",
       Postcode: userDetail.regPostcode ? userDetail.regPostcode : "",
-      Country: userDetail.ragistersCountry,
+      Country: userDetail.ragistersCountry ? userDetail.ragistersCountry : "United Kingdom"
     };
     console.log(obj, "mainaddress22");
 
@@ -258,6 +280,7 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
             mainAddress();
             billingAddress();
             ragisterAddress();
+            Json_UpdateClientField();
             localStorage.setItem("ClientName",userDetail.Clientname);
           } else {
             toast.error("Reference ID Already Exists!");
@@ -461,13 +484,13 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
       description: (
         <Box className="clearfix">
           {
-            <AddClientaddress
+            <EditClientaddress
               userDetail={userDetail}
               //
               dataCompanyHouse={dataCompanyHouse}
               setUserDetail={setUserDetail}
               //
-            ></AddClientaddress>
+            ></EditClientaddress>
           }
         </Box>
       ),
@@ -477,7 +500,7 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
       label: "Details",
       description: (
         <Box className="clearfix">
-          <UDFClientcard
+          <EditUDFClientcard
             data={clientDetails}
             setDataFromChild={setDataFromChild}
           />

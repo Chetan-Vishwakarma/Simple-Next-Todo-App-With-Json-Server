@@ -42,6 +42,33 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
     data = { ...data, [name]: val };
     console.log(data, "dataOnchange", e);
     setUserDetail(data);
+    if(name || mainCountry){
+      console.log(data, "dataOnchangeuserDetail");
+      let addressfill = { ...userDetail };
+      addressfill = { 
+        ...addressfill,
+        Line1:data.Line1,
+        Line2:data.Line2,
+        Line3:data.Line3,
+        Town:data.Town,
+        MCounty:data.MCounty,
+        Postcode:data.Postcode,
+        BilLine1: data.BilLine1,
+        BilLine2: data.BilLine2,
+        BilLine3: data.BilLine3,
+        BilTown: data.BilTown,
+        BilCountry: data.BilCountry,
+        BilPostcode: data.BilPostcode,
+        regLine1: data.regLine1,
+        regLine2: data.regLine2,
+        regLine3: data.regLine3,
+        regTown: data.regTown,
+        regCountry: data.regCountry,
+        regPostcode: data.regPostcode,
+        fullAddress: data.Line1+"\r\n"+data.Line2+"\r\n"+data.Line3+"\r\n"+data.Town+"\r\n"+data.MCounty+"\r\n"+data.Postcode+"\r\n"+mainCountry
+      }
+      setUserDetail(addressfill);
+    }
   };
   const onChange_registerCountry = (event, value) => {
     event.preventDefault();
@@ -80,9 +107,8 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
   };
 
   // tabs
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+ 
+
   let mainAddress = null,
   billingAddress = null,
   registeredAddress = null;
@@ -167,6 +193,13 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
       console.log("Error while calling Json_GetToFavourites", err);
     }
   };
+  console.log("handlechange2",userDetail);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+    // Json_GetClientAddresses();
+   console.log("handle_change ",userDetail);
+  };
+
   useEffect(() => {
     
     if(dataCompanyHouse){
@@ -220,7 +253,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
             <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs mb-2'>
               <Tab label="Main Address" value="1" />
               <Tab label="Billing Address" value="2" />
-              <Tab label="Ragistered Address" value="3" />
+              <Tab label="Registered Address" value="3" />
               <Tab label="Full Address" value="4" />
             </TabList>
 
@@ -358,7 +391,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                       label="Line1"
                       variant="outlined"
                       name="BilLine1"
-                      value={userDetail.BilLine1}
+                      defaultValue={userDetail.BilLine1}
                       onChange={onChange}
                     />
                   </Grid>
@@ -370,7 +403,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                       label="Line2"
                       variant="outlined"
                       name="BilLine2"
-                      value={userDetail.BilLine2}
+                      defaultValue={userDetail.BilLine2}
                       onChange={onChange}
                     />
                   </Grid>
@@ -382,7 +415,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                       label="Line3"
                       variant="outlined"
                       name="BilLine3"
-                      value={userDetail.BilLine3}
+                      defaultValue={userDetail.BilLine3}
                       onChange={onChange}
                     />
                   </Grid>
@@ -394,7 +427,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                       label="Town"
                       variant="outlined"
                       name="BilTown"
-                      value={userDetail.BilTown}
+                      defaultValue={userDetail.BilTown}
                       onChange={onChange}
                     />
                   </Grid>
@@ -406,7 +439,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                       label="County"
                       variant="outlined"
                       name="BilCountry"
-                      value={userDetail.BilCountry}
+                      defaultValue={userDetail.BilCountry}
                       onChange={onChange}
                     />
                   </Grid>
@@ -419,7 +452,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                       label="Postcode"
                       variant="outlined"
                       name="BilPostcode"
-                      value={userDetail.BilPostcode}
+                      defaultValue={userDetail.BilPostcode}
                       onChange={onChange}
                     />
                   </Grid>
@@ -479,7 +512,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                       label="Line1"
                       variant="outlined"
                       name="regLine1"
-                      value={userDetail.regLine1}
+                      defaultValue={userDetail.regLine1}
                       onChange={onChange}
                     />
                   </Grid>
@@ -491,7 +524,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                       label="Line2"
                       variant="outlined"
                       name="regLine2"
-                      value={userDetail.regLine2}
+                      defaultValue={userDetail.regLine2}
                       onChange={onChange}
                     />
                   </Grid>
@@ -504,7 +537,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                       label="Line3"
                       variant="outlined"
                       name="regLine3"
-                      value={userDetail.regLine3}
+                      defaultValue={userDetail.regLine3}
                       onChange={onChange}
                     />
                   </Grid>
@@ -516,7 +549,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                       label="Town"
                       variant="outlined"
                       name="regTown"
-                      value={userDetail.regTown}
+                      defaultValue={userDetail.regTown}
                       onChange={onChange}
                     />
                   </Grid>
@@ -528,7 +561,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                       label="County"
                       variant="outlined"
                       name="regCountry"
-                      value={userDetail.regCountry}
+                      defaultValue={userDetail.regCountry}
                       onChange={onChange}
                     />
                   </Grid>
@@ -541,7 +574,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                       label="Postcode"
                       variant="outlined"
                       name="regPostcode"
-                      value={userDetail.regPostcode}
+                      defaultValue={userDetail.regPostcode}
                       onChange={onChange}
                     />
                   </Grid>
@@ -598,7 +631,7 @@ const EditClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHo
                 <textarea
                   aria-label="minimum height"
                   name="fullAddress"
-                  value={userDetail.fullAddress}
+                  defaultValue={userDetail.fullAddress}
                   onChange={onChange}
                   className="form-control textarea textarea-2"
                   placeholder="Full Address"

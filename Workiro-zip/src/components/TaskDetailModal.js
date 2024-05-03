@@ -439,7 +439,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                 }
 
                 let table6 = json.T6;
-                
+
                 if (table6 && table6.length > 0) {
                     const formattedActivity = table6.map((activity) => {
                         let timestamp;
@@ -447,24 +447,24 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                             timestamp = parseInt(activity.Item_Date.slice(6, -2));
                         }
                         const date = new Date(timestamp);
-                        
+
                         const formatedate = formatDate(date)
                         // console.log(formatDate(date),"dateformattingdate");
                         return { ...activity, Item_Date: formatedate };
                     });
-           
+
                     setAttachmentFile(formattedActivity);
                     // setTimeout(() => {
                     //     console.log("attachmentFile", attachmentFile);
                     // }, 3000);
 
-                    for (let item of table6) {
+                    // for (let item of table6) {
 
-                        // if(item.DestinationPath){
-                        //     let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };
-                        //    // setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
-                        // }
-                    }
+                    //     // if(item.DestinationPath){
+                    //     //     let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };
+                    //     //    // setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+                    //     // }
+                    // }
                 }
             }
         });
@@ -515,12 +515,12 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
         console.log("kjdhdsjhsdf", dt)
         if (dt) {
             // let fullDate = new Date(parseInt(dt.substr(6)));
-          //  let fullDate = new Date(dt);
+            //  let fullDate = new Date(dt);
 
             let fullDate = new Date(parseInt(dt.substr(6)));
             console.log("date formet111", fullDate);
             return fullDate;
-           // return fullDate;
+            // return fullDate;
 
         }
         else {
@@ -718,9 +718,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
 
         setCurrentDate(startFormattingDate(selectedTask.Start));
 
-       // setCurrentDate(moment(selectedTask.Start, "DD/MM/YYYY").toDate());
-        
-        console.log("moment122222221",moment(selectedTask.Start,"DD/MM/YYYY").toDate());
+        // setCurrentDate(moment(selectedTask.Start, "DD/MM/YYYY").toDate());
+
+        console.log("moment122222221", moment(selectedTask.Start, "DD/MM/YYYY").toDate());
 
         //moment(dateString, "DD/MM/YYYY").toDate();
         setNextDate(DateFormet(selectedTask.EndDateTime));
@@ -1591,12 +1591,16 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
     const [docForDetails, setDocForDetails] = useState({});
     const handleClickOpenDocumentDetailsList = (event, sDoc) => {
-        //console.log("selected document data obj",sDoc)
+        console.log("selected document data obj", sDoc)
         setDocForDetails(sDoc);
         setExpanded("panel1");
         setOpenDocumentDetailsList(true);
         Json_getAssociatedTaskListByDocumentId(sDoc);
         Json_GetVersionByItemId(sDoc)
+        if (sDoc.ItemId) {
+            Json_SearchDocById(sDoc);
+        }
+
     };
     const handleCloseDocumentDetailsList = () => {
         setOpenDocumentDetailsList(false);
@@ -1604,6 +1608,26 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     // sadik code start
     function createData(document, details) {
         return { document, details };
+    }
+
+    const [docDetailsSearchByItemId, setDocDetailsSearchByItemId] = useState(null);
+    function Json_SearchDocById(doc) {
+        try {
+            let o = {};
+            o.ItemId = doc.ItemId;
+            ClsSms.Json_SearchDocById(o, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        let tbl = js[""];
+                        console.log("Json_SearchDocById", tbl)
+                        setDocDetailsSearchByItemId(tbl[0]);
+                    }
+                }
+            })
+        } catch (error) {
+            console.log("NetWork Error Json_SearchDocById", error)
+        }
     }
 
     const rows = [
@@ -2407,7 +2431,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                                 {item.Notes} {/* Display each note */}
                                                             </Typography>
                                                             <Typography variant="body1" className="font-12">
-                                                                {dateAndTime(item.ActivityDate)}
+                                                                {moment(item.ActivityDate).format("DD/MM/YYYY HH:mm:ss")}
                                                             </Typography>
                                                         </Box>
                                                     </>
@@ -2427,7 +2451,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                                     </Typography>
                                                                     <Box className="d-flex align-items-center justify-content-end">
                                                                         <Typography variant="body1" className="font-10">
-                                                                            {dateAndTime(item.DateOfRemark)}
+                                                                            {moment(item.DateOfRemark).format("DD/MM/YYYY HH:mm:ss")}
                                                                         </Typography>
 
                                                                         <Box className="">
@@ -2495,7 +2519,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                                 </Typography>
                                                                 <Box className="d-flex align-items-center justify-content-end">
                                                                     <Typography variant="body1" className="font-12">
-                                                                        {dateAndTime(item.DateOfRemark)}
+                                                                        {moment(item.DateOfRemark).format("DD/MM/YYYY HH:mm:ss")}
                                                                     </Typography>
 
                                                                     <Box className="">
@@ -2572,7 +2596,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                                 </Typography>
                                                             ))}
                                                             <Typography variant="body1" className="font-12">
-                                                                {dateAndTime(item.ActivityDate)}
+                                                                {moment(item.ActivityDate).format("DD/MM/YYYY HH:mm:ss")}
                                                             </Typography>
                                                         </Box>
                                                     </>
@@ -2592,7 +2616,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                                     </Typography>
                                                                     <Box className="d-flex align-items-center justify-content-end">
                                                                         <Typography variant="body1" className="font-10">
-                                                                            {dateAndTime(item.ActivityDate)}
+                                                                            {moment(item.ActivityDate).format("DD/MM/YYYY HH:mm:ss")}
                                                                         </Typography>
 
                                                                         <Box className="">
@@ -2660,7 +2684,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                                 </Typography>
                                                                 <Box className="d-flex align-items-center justify-content-end">
                                                                     <Typography variant="body1" className="font-12">
-                                                                        {dateAndTime(item.ActivityDate)}
+                                                                        {moment(item.ActivityDate).format("DD/MM/YYYY HH:mm:ss")}
                                                                     </Typography>
 
                                                                     <Box className="">
@@ -2760,7 +2784,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                             <Box className="d-flex align-items-end main-file-upload  pt-3">
                                 <Box className="w-100">
                                     <Stack direction="row" className='pb-2 custom-chips' spacing={1}>
-                                        {console.log(selectedFiles, "selectedFiles11")}
+                                        {/* {console.log(selectedFiles, "selectedFiles11")} */}
                                         {
                                             selectedFiles && selectedFiles.slice(0, 3).map((item, index) => (
                                                 <Chip key={index} label={item.FileName} variant="outlined" onDelete={() => handleDelete(item)} />
@@ -2997,9 +3021,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                             // Set the groupIndex to 0 to enable grouping by this column
                                             dataType="string"  // Set the data type to "string" for proper grouping
                                             cellRender={(data) => {
-                                               // console.log(data, "datadms")
-                                               let rowdata = data.data;
-                                               let rd = ClsSms.getFileExtension(rowdata.FileName);
+                                                // console.log(data, "datadms")
+                                                let rowdata = data.data;
+                                                let rd = ClsSms.getFileExtension(rowdata.FileName);
                                                 return <Box className="file-uploads">
                                                     <label className="file-uploads-label file-uploads-document" onClick={(event) => {
                                                         event.stopPropagation();
@@ -3021,7 +3045,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                             /> */}
                                                             <div className='img-format'>
                                                                 {/* <img src={Fileformat} /> */}
-                                                                {<GetFileType Type={rd?rd.toLowerCase():null}></GetFileType>}
+                                                                {<GetFileType Type={rd ? rd.toLowerCase() : null}></GetFileType>}
                                                             </div>
                                                             <Box className="upload-content pe-3">
                                                                 <Typography variant="h4" >
@@ -3287,20 +3311,38 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                     <TableCell className='bold' align="right">Details</TableCell>
                                                 </TableRow>
                                             </TableHead>
-                                            <TableBody>
-                                                {Object.keys(docForDetails).length > 0 && Object.keys(docForDetails).map((itm, i) => {
-                                                    if (itm !== "StickyNotes") {
-                                                        return <TableRow
-                                                            key={i}
-                                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                        >
-                                                            <TableCell align="left" className='bold'>{itm}</TableCell>
-                                                            <TableCell align="left">{docForDetails[itm] ? docForDetails[itm] : "Not Available"}</TableCell>
-                                                            {/* <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date", "Item Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell> */}
-                                                        </TableRow>
-                                                    }
-                                                })}
-                                            </TableBody>
+                                            {docDetailsSearchByItemId ? (<>
+                                                <TableBody>
+                                                    {Object.keys(docDetailsSearchByItemId).length > 0 && Object.keys(docDetailsSearchByItemId).map((itm, i) => {
+                                                        if (itm !== "StickyNotes") {
+                                                            return <TableRow
+                                                                key={i}
+                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                            >
+                                                                <TableCell align="left" className='bold'>{itm}</TableCell>
+                                                                <TableCell align="left">{docDetailsSearchByItemId[itm] ? docDetailsSearchByItemId[itm] : "Not Available"}</TableCell>
+                                                                {/* <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date", "Item Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell> */}
+                                                            </TableRow>
+                                                        }
+                                                    })}
+                                                </TableBody>
+                                            </>) : (
+                                                <TableBody>
+                                                    {Object.keys(docForDetails).length > 0 && Object.keys(docForDetails).map((itm, i) => {
+                                                        if (itm !== "StickyNotes") {
+                                                            return <TableRow
+                                                                key={i}
+                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                            >
+                                                                <TableCell align="left" className='bold'>{itm}</TableCell>
+                                                                <TableCell align="left">{docForDetails[itm] ? docForDetails[itm] : "Not Available"}</TableCell>
+                                                                {/* <TableCell align="left">{docForDetails[itm] !== "" && docForDetails[itm] !== undefined && docForDetails[itm] !== null && docForDetails[itm] !== "undefined" ? ["Received Date", "Item Date"].includes(itm) ? startFormattingDate(docForDetails[itm]) : docForDetails[itm] : ""}</TableCell> */}
+                                                            </TableRow>
+                                                        }
+                                                    })}
+                                                </TableBody>
+                                            )}
+
                                         </Table>
                                     </TableContainer>
                                 </AccordionDetails>
