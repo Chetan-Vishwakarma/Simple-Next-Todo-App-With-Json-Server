@@ -5,8 +5,7 @@ import CommanCLS from "../../services/CommanService";
 import EditUDFClientcard from "./EditUDFClientcard";
 import AddClientdetails from "./AddClientdetails";
 import EditClientaddress from "./EditClientaddress";
-import AddClientmaincontact from "./AddClientmaincontact";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { memo } from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -14,26 +13,19 @@ import StepLabel from "@mui/material/StepLabel";
 import StepContent from "@mui/material/StepContent";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import CreateNewModalTask from "../../components/CreateNewModal";
-function Reference({open5,setOpen5,setReferance,setAddContact}) {
+function Reference({setOpen5,setReferance,setAddContact}) {
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
   const [intUserid, setIntUserid] = useState(localStorage.getItem("UserId"));
   const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
-  const [selected, setSelected] = React.useState(false);
-  const [value, setValue] = React.useState("1");
   const [clientDetails, setClientDetails] = useState({});
   const [selectedFolderID, setSelectedFolderID] = useState(null);
   const [dataFromChild, setDataFromChild] = useState([]);
   const [dataCompanyHouse, setDataCompanyHouse] = useState([]);
-
   const [defaultUser, setDefaultUser] = useState(null);
-
   const [defaultClient, setDefaultClient] = useState([]);
   // const [activeStep, setActiveStep] = React.useState(0);
-  const [contactData, setContactData] = useState("");
-  
   const [userDetail, setUserDetail] = useState({
     Clientname: "",
     Clientid: "",
@@ -96,7 +88,6 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
     ragistersCountry: "",
     CHNumber: ""
   });
-  console.log("userDetailuserDetail", userDetail);
   const [originatorNo, setoriginatorNo] = useState("");
   const [companyDetails, setCompanyDetails] = useState([]);
   const [activeStep, setActiveStep] = React.useState(0);
@@ -108,10 +99,6 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
     setReferance(false);
     setOpen5(true);
     setAddContact(userDetail)
-  };
-
-  const handleClose5 = () => {
-    setOpen5(false);
   };
   const Json_GetClientCardDetails = () => {
     let obj = {
@@ -289,62 +276,6 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
       });
     }
   };
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    function todayDate() {
-      var today = new Date().toJSON().slice(0, 10);
-      return today;
-    }
-    let clientdata = {
-      agrno: agrno,
-      Email: Email,
-      password: password,
-      ProjectIdList: userDetail.FolderId ? userDetail.FolderId : -1,
-      OriginatorNo: userDetail.Clientid ? userDetail.Clientid : "",
-      OriginatorName: userDetail.Clientname ? userDetail.Clientname : "",
-      Address: userDetail.fullAddress ? userDetail.fullAddress : "",
-      TelNo: userDetail.Telephone ? userDetail.Telephone : "",
-      AlteTelNo: userDetail.Mobile ? userDetail.Mobile : "",
-      Faxno: "",
-      ContactName: "",
-      UDF1: "",
-      UDF2: "",
-      UDF3: "",
-      StickyNote: "",
-      ContactEmail: userDetail.Email ? userDetail.Email : "",
-      MParameter: "",
-      CDate: todayDate(),
-      BussId: userDetail.BussId ? userDetail.BussId : -1,
-      SourceId: userDetail.SourceId ? userDetail.SourceId : -1,
-      StatusId: userDetail.StatusId ? userDetail.StatusId : -1,
-      Description: "",
-      OrgPassword: "",
-      ManagerId: userDetail.UserId ? userDetail.UserId : parseInt(intUserid),
-      OrgActive: "Yes",
-    };
-    // toast.success("Reference Added Successfully !");
-    // Json_InsertContact();
-    console.log(clientdata, "clientdata");
-    Cls.Json_AddClient(clientdata, (sts, data) => {
-      console.log(sts, data, "newclientdata");
-      let jsonparse = JSON.parse(data);
-      if (sts) {
-        if (jsonparse.Status == "Success") {
-          console.log("Response", data);
-         
-          toast.success("Reference Added Successfully !");
-          // Json_InsertContact(); Main contact not need
-          saveUDF();
-          mainAddress();
-          billingAddress();
-          ragisterAddress();
-         
-        } else {
-          toast.success("Reference ID Already Exists!");
-        }
-      }
-    });
-  };
   const Json_InsertContact = () => {
     let InsertContact = {
       agrno: agrno,
@@ -445,16 +376,13 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
             <AddClientdetails
               userDetail={userDetail}
               setDataFromChild={setDataFromChild}
-              //
               dataCompanyHouse={dataCompanyHouse}
               // setDataCompanyHouse={setDataCompanyHouse}
               setUserDetail={setUserDetail}
-              //
               defaultClient={defaultClient}
               setDefaultClient={setDefaultClient}
               setDataCompanyHouse={setDataCompanyHouse}
               setSelectedFolderID={setSelectedFolderID}
-              //
               defaultUser={defaultUser}
               setDefaultUser={setDefaultUser}
             ></AddClientdetails>
@@ -486,10 +414,8 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
           {
             <EditClientaddress
               userDetail={userDetail}
-              //
               dataCompanyHouse={dataCompanyHouse}
               setUserDetail={setUserDetail}
-              //
             ></EditClientaddress>
           }
         </Box>
@@ -511,7 +437,6 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
 
   return (
     <Box className="container-fluid p-0">
-       {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
       <Box sx={{ width: "100%", typography: "body1" }} className="">
         <Box sx={{ maxWidth: "100%" }}>
           <Stepper activeStep={activeStep} orientation="vertical">
@@ -561,9 +486,6 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
           </Stepper>
           {activeStep === steps.length && (
             <Paper square elevation={0} sx={{ p: 3 }}>
-              {/* <Typography className="text-green">
-                References Added Successfully!
-              </Typography> */}
               <Button className="btn-blue-2 mt-4" onClick={handleReset} sx={{ mt: 1, mr: 1 }}>
               Add Another Client
               </Button>
@@ -573,25 +495,6 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
             </Paper>
           )}
         </Box>
-        {/* <CreateNewModalTask open={open5} handleClose={handleClose5} /> */}
-
-        {/* Stepper end  */}
-
-        {/* <Box className="main-accordian">
-            <div style={{ marginBottom: "20px" }}>
-            <Button
-              style={{ marginTop: "20px" }}
-              variant="contained"
-              onClick={handleSubmit}
-              disabled={
-                !userDetail.Clientname || !userDetail.Clientid
-                // !folderData
-              }
-            >
-              Add Client
-            </Button>{" "}
-          </div>
-        </Box> */}
       </Box>
     </Box>
   );
