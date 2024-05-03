@@ -375,6 +375,7 @@ export default function SidebarNav() {
   }, []);
 
   const handleGlobalSearch = (val) => {
+    console.log("klkgjsljglkjg",val);
     setSearchInputForGlobalSearch(val);
     if (val === "") {
       setIsSearch(false);

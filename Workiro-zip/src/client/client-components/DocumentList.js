@@ -1089,11 +1089,9 @@ export default function DocumentList({ clientId }) {
                         <Box className='d-flex flex-wrap justify-content-between'>
                             <Box className='mt-2'>
                                 <Stack direction="row" spacing={1}>
-                                    {/* <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
-                                        <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} /> */}
                                     {Object.keys(filterCriteria).length > 0 && Object.keys(filterCriteria).map((key) => {
                                         if (!["Item Date", "Folder", "Section", "Client"].includes(key)) {
-                                            return <Chip label={`${key}: ${filterCriteria[key][0]}`} variant="outlined" onDelete={() => {
+                                            return <Chip label={`${key==="Description"?"Document Name":key==="SenderId"?"Filled By":key==="SubSection"?"Sub Section":key==="Notes"?"Has Notes":key==="Attach"?"Has Attachments":key==="Type"?"Document Type":key==="Comments"?"Comment":key==="CommentBy"&&"Comment By"}: ${filterCriteria[key][0]}`} variant="outlined" onDelete={() => {
                                                 handleFilterDeletion(key);
                                             }} />
                                         }

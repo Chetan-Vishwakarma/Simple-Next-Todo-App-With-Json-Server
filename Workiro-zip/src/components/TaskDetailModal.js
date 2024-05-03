@@ -673,7 +673,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     const [getVertion, setGetVertion] = React.useState([]);
 
     function Json_GetVersionByItemId(data) {
-        console.log("selected document data obj111", data)
+        // console.log("selected document data obj111", data)
         try {
             let obj = {};
             obj.itemId = data["Registration No."];
@@ -1571,17 +1571,17 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState({});
     // const DocumentList = Boolean(anchorElDocumentList);
     const handleClickDocumentList = (event, rowData) => {
-        // console.log("fjdsfdlsjfljfllj problem detect");
+        console.log("djfldjdfds",rowData.key);
         event.stopPropagation();
         const newAnchorElDocumentList = { ...anchorElDocumentList };
-        newAnchorElDocumentList[rowData.key] = event.currentTarget;
+        newAnchorElDocumentList[rowData.data.ItemId] = event.currentTarget;
         setAnchorElDocumentList(newAnchorElDocumentList);
     };
 
     const handleCloseDocument = (event, rowData) => {
         event.stopPropagation();
         const newAnchorElDocumentList = { ...anchorElDocumentList };
-        delete newAnchorElDocumentList[rowData.key];
+        delete newAnchorElDocumentList[rowData.data.ItemId];
         setAnchorElDocumentList(newAnchorElDocumentList);
     };
 
@@ -1591,7 +1591,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
     const [docForDetails, setDocForDetails] = useState({});
     const handleClickOpenDocumentDetailsList = (event, sDoc) => {
-        console.log("selected document data obj", sDoc)
+        console.log("selected document data obj", sDoc);
         setDocForDetails(sDoc);
         setExpanded("panel1");
         setOpenDocumentDetailsList(true);
@@ -3060,10 +3060,10 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                         </Box>
                                                         <Box>
                                                             <Button
-                                                                id={`basic-button-${data.key}`}
-                                                                aria-controls={anchorElDocumentList[data.key] ? `basic-menu-${data.key}` : undefined}
+                                                                id={`basic-button-${data.data.ItemId}`}
+                                                                aria-controls={anchorElDocumentList[data.data.ItemId] ? `basic-menu-${data.data.ItemId}` : undefined}
                                                                 aria-haspopup="true"
-                                                                aria-expanded={Boolean(anchorElDocumentList[data.key])}
+                                                                aria-expanded={Boolean(anchorElDocumentList[data.data.ItemId])}
                                                                 onClick={(event) => {
                                                                     handleClickDocumentList(event, data)
                                                                 }}
@@ -3072,12 +3072,12 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                                 <MoreVertIcon />
                                                             </Button>
                                                             <Menu
-                                                                id={`basic-menu-${data.key}`}
-                                                                anchorEl={anchorElDocumentList[data.key]}
-                                                                open={Boolean(anchorElDocumentList[data.key])}
+                                                                id={`basic-menu-${data.data.ItemId}`}
+                                                                anchorEl={anchorElDocumentList[data.data.ItemId]}
+                                                                open={Boolean(anchorElDocumentList[data.data.ItemId])}
                                                                 onClose={(event) => handleCloseDocument(event, data)}
                                                                 MenuListProps={{
-                                                                    'aria-labelledby': `basic-button-${data.key}`,
+                                                                    'aria-labelledby': `basic-button-${data.data.ItemId}`,
                                                                 }}
                                                                 className='custom-dropdown'
                                                             >

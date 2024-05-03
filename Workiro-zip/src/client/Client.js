@@ -316,12 +316,14 @@ function Client() {
         Json_GetContactListByFolder(folderID);
     }
     const handleSearch = (value) => {
+        if (value !== "") setIsSearch(true);
         setSearchInput(value);
         // for clients filter
         let filteredClientData = clients.filter((item) => {
-            return item["Company Name"] !== "" && item["Company Name"].toLowerCase().includes(searchInput.toLowerCase());
+            return item["Company Name"] !== "" && item["Company Name"].toLowerCase().includes(value.toLowerCase());
         });
         if (value === "") {
+            setIsSearch(false);
             setClientsForSearchBoxNotFound(false);
             setFilteredClientsForSearchBox([]);  // when you will face some issue then make an folderId state and pass folderId parameter in this function
         }
@@ -334,7 +336,7 @@ function Client() {
         }
         // for contacts filter
         let filteredContactData = contacts.filter((item) => {
-            return (item["First Name"] !== "" || item["Last Name"]) && `${item["First Name"]} ${item["Last Name"]}`.toLowerCase().includes(searchInput.toLowerCase());
+            return (item["First Name"] !== "" || item["Last Name"]) && `${item["First Name"]} ${item["Last Name"]}`.toLowerCase().includes(value.toLowerCase());
         });
         if (value === "") {
             setContactsForSearchBoxNotFound(false);
@@ -808,7 +810,9 @@ function Client() {
                                             <span className="material-symbols-outlined search-icon">search</span>
 
                                             <Input
-                                                onClick={(e) => handleDialogsOpen(e, "Search")}
+                                                onClick={(e) => {
+                                                    if (e.target.value!=="") handleDialogsOpen(e, "Search");
+                                                }}
                                                 onChange={(e) => handleSearch(e.target.value)}
                                                 placeholder='Search'
                                                 className='ps-0' />
