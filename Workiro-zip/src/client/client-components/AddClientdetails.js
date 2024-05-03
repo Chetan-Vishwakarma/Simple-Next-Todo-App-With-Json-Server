@@ -98,6 +98,7 @@ const AddClientdetails = React.memo(
     const onChangestatuss = (event, value) => {
       event.preventDefault();
       if (value) {
+        localStorage.removeItem("defaultstatusID");
         let data = { ...userDetail };
         data = { ...data, ["StatusId"]: value.StatusId };
         setDefaultStatus(value);
@@ -146,6 +147,20 @@ const AddClientdetails = React.memo(
           [name]: "", // Clear error message if validation succeeds or if value is empty
         }));
       }
+      let validationError = '';
+      const regex = /^[a-zA-Z0-9,.\-/]*$/;
+      if(name == 'Clientid'){
+        if (regex.test(val)) {
+          data = {
+            ...data,
+            [name]: val
+        };
+        } else {
+          validationError = 'Invalid input. Only alphabets, numbers, ",", ".", and "-" are allowed.';
+      }
+      setErrors({ ...errors, [name]: validationError });
+      }
+  
     };
     const validateEmail = (email) => {
       // Basic email validation regex
@@ -178,7 +193,9 @@ const AddClientdetails = React.memo(
                   (item) => item.StatusName === "Active"
                 );
                 console.log(defaultStatus, "defaultstatus", json.Table);
+                localStorage.setItem("defaultstatusID", defaultStatus.StatusId);
                 setDefaultStatus(defaultStatus);
+                
               } catch (e) {}
 
               setStatus(json.Table);
@@ -482,6 +499,8 @@ const AddClientdetails = React.memo(
               name="Clientid"
               value={userDetail.Clientid}
               onChange={onChange}
+              error={!!errors['Clientid']}
+              helperText={errors['Clientid']}
             />
           </Grid>
           <Grid item lg={4} xs={6} md={6}>
