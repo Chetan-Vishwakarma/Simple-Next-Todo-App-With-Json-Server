@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import CommanCLS from "../../services/CommanService";
 import EditUDFClientcard from "./EditUDFClientcard";
 import AddClientdetails from "./AddClientdetails";
-import AddClientaddress from "./AddClientaddress";
+import EditClientaddress from "./EditClientaddress";
 import AddClientmaincontact from "./AddClientmaincontact";
 import { ToastContainer, toast } from 'react-toastify';
 import { memo } from "react";
@@ -484,13 +484,13 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
       description: (
         <Box className="clearfix">
           {
-            <AddClientaddress
+            <EditClientaddress
               userDetail={userDetail}
               //
               dataCompanyHouse={dataCompanyHouse}
               setUserDetail={setUserDetail}
               //
-            ></AddClientaddress>
+            ></EditClientaddress>
           }
         </Box>
       ),
