@@ -127,6 +127,21 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
         [name]: '', // Clear error message if validation succeeds or if value is empty
       }));
     }
+    let validationError = '';
+    const regex = /^[a-zA-Z0-9,.\-/]*$/;
+    if(name == 'Clientid'){
+      if (regex.test(val)) {
+        data = {
+          ...data,
+          [name]: val
+      };
+      } else {
+        validationError = 'Invalid input. Only alphabets, numbers, ",", ".", and "-" are allowed.';
+    }
+    setErrors({ ...errors, [name]: validationError });
+    }
+  
+  
   };
   const validateEmail = (email) => {
     // Basic email validation regex
@@ -357,6 +372,8 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
             name="Clientid"
             value={userDetail.Clientid}
             onChange={onChange}
+            error={!!errors['Clientid']}
+            helperText={errors['Clientid']}
           />
         </Grid>
 
@@ -543,9 +560,8 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
             name="Email"
             value={userDetail.Email}
             onChange={onChange}
-            error={!!errors['Email']} // Set error state based on whether there is an error message
-            helperText={errors['Email']} // Display error message if there is one
-
+            error={!!errors['Email']}
+            helperText={errors['Email']}
           />
         </Grid>
         <Grid item lg={4} xs={6} md={6}>
