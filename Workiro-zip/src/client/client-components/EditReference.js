@@ -64,10 +64,10 @@ function EditReference({ companyEditDetails }) {
     Manager: "",
     Email: companyEditDetails[0]?.Email,
     folderId: localStorage.getItem("FolderId"),
-    BussId: companyEditDetails[0].BussID,
+    BussId: companyEditDetails[0]?.BussID,
     UserId: -1,
-    SourceId: companyEditDetails[0].SourceId,
-    StatusId: companyEditDetails[0].StatusId,
+    SourceId: companyEditDetails[0]?.SourceId,
+    StatusId: companyEditDetails[0]?.StatusId,
     Title: "",
     FirstName: "",
     LastName: "",
@@ -105,7 +105,7 @@ function EditReference({ companyEditDetails }) {
       agrno: agrno,
       intProjectId: folderId,
       password: password,
-      strOrignatorNumber: companyEditDetails[0].OriginatorNo ? companyEditDetails[0].OriginatorNo : "",
+      strOrignatorNumber: companyEditDetails[0]?.OriginatorNo ? companyEditDetails[0]?.OriginatorNo : "",
     };
     try {
       webClientCLS.Json_GetClientCardDetails(obj, (sts, data) => {

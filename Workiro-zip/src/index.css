@@ -2305,6 +2305,13 @@ input[type=number] {
   color: #D42026;
   font-weight: 600;
 }
+
+.custom-date-2 .MuiButtonBase-root {
+  color: #D41B20;
+  background-color: #fff;
+  z-index: 1;
+}
+
 .daterangepicker .ranges ul li:first-child.active {
   color: #fff;
 }

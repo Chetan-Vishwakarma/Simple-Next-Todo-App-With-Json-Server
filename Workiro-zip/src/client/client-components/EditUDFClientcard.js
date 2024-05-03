@@ -201,7 +201,7 @@ if (defaultDateObject.isValid()) {
 
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DemoContainer
-      className='custom-date-2'
+      
         components={[
           "DatePicker",
           "TimePicker",
@@ -250,7 +250,7 @@ if (defaultDateObject.isValid()) {
                       "DateTimePicker",
                       "DateRangePicker",
                     ]}
-                    className='custom-date-2'
+                    
                   > 
                     <DatePicker
                       // dateFormat="DD/MM/YYYY"
