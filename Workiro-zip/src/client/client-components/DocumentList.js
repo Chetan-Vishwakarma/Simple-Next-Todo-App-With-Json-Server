@@ -1087,13 +1087,13 @@ export default function DocumentList({ clientId }) {
                         </Box>
 
                         <Box className='d-flex flex-wrap justify-content-between'>
-                            <Box className='mt-2'>
+                            <Box className='mb-2 overflowy-auto pb-1'>
                                 <Stack direction="row" spacing={1}>
                                     {/* <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
                                         <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} /> */}
                                     {Object.keys(filterCriteria).length > 0 && Object.keys(filterCriteria).map((key) => {
                                         if (!["Item Date", "Folder", "Section", "Client"].includes(key)) {
-                                            return <Chip label={`${key}: ${filterCriteria[key][0]}`} variant="outlined" onDelete={() => {
+                                            return <Chip className='my-2' label={`${key}: ${filterCriteria[key][0]}`} variant="outlined" onDelete={() => {
                                                 handleFilterDeletion(key);
                                             }} />
                                         }

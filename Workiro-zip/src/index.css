@@ -621,7 +621,9 @@ button {
   border-radius: 0px;
   padding: 0px !important;
 }
-
+.custom-date-picker {
+  position: relative;
+}
 .custom-date-picker .form-control {
   height: 52px;
 }
@@ -2299,6 +2301,15 @@ input[type=number] {
   visibility: visible;
 }
 
+.daterangepicker .ranges ul li:first-child {
+  color: #D42026;
+  font-weight: 600;
+}
+
+.overflowy-auto {
+  overflow-y: auto;
+}
+
 @media only screen and (max-width: 1366px) {
   .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root {
     font-size: 12px;
@@ -2888,7 +2899,8 @@ input[type=number] {
   transition: transform .2s;
   border-radius: .25em;
   background-color: rgba(234, 242, 227, .9);
-  z-index: 9999;
+  /* z-index: 9999; */
+  z-index: 9;
 }
 
 .cd-vertical-nav a {
