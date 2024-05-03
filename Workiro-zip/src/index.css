@@ -2305,7 +2305,9 @@ input[type=number] {
   color: #D42026;
   font-weight: 600;
 }
-
+.daterangepicker .ranges ul li:first-child.active {
+  color: #fff;
+}
 .overflowy-auto {
   overflow-y: auto;
 }
