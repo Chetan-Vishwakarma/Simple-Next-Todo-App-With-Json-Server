@@ -240,7 +240,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
       agrno: agrno,
       UserEmail: Email,
       password: password,
-      strOrignatorno: companyEditDetails[0].OriginatorNo ? companyEditDetails[0].OriginatorNo :
+      strOrignatorno: companyEditDetails[0]?.OriginatorNo ? companyEditDetails[0]?.OriginatorNo :
         "",
       intuserId: localStorage.getItem("UserId")
     };

@@ -1087,7 +1087,7 @@ export default function DocumentList({ clientId }) {
                         </Box>
 
                         <Box className='d-flex flex-wrap justify-content-between'>
-                            <Box className='mt-2'>
+                            <Box className='mb-2 overflowy-auto pb-1'>
                                 <Stack direction="row" spacing={1}>
                                     {Object.keys(filterCriteria).length > 0 && Object.keys(filterCriteria).map((key) => {
                                         if (!["Item Date", "Folder", "Section", "Client"].includes(key)) {

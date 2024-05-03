@@ -187,7 +187,8 @@
     right: 0;
     /* top: 0; */
     top: 85px;   /* Commented only for document view modal */
-    z-index: 999;
+    /* z-index: 999; */
+    z-index: 8;
     display: flex !important;
     /* align-items: center; */ /* Commented only for document view modal*/
     justify-content: center;
