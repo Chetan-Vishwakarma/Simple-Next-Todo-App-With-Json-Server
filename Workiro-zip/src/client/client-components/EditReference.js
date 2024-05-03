@@ -426,20 +426,7 @@ function EditReference({ companyEditDetails }) {
       });
     } catch (e) { }
   };
-  const mapStateToProps = (state) => ({
-    userDetail: state.userDetail,
-    dataCompanyHouse: state.dataCompanyHouse,
-  });
-  const mapDispatchToProps = {
-    setUserDetail,
-    setDataCompanyHouse,
-    setSelectedFolderID,
-  };
-  const EditClientdetailsContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(EditClientdetails);
-
+ 
 
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));

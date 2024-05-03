@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CommanCLS from "../../services/CommanService";
-import UDFClientcard from "./UDFClientcard";
+import EditUDFClientcard from "./EditUDFClientcard";
 import AddClientdetails from "./AddClientdetails";
 import AddClientaddress from "./AddClientaddress";
 import AddClientmaincontact from "./AddClientmaincontact";
@@ -159,7 +159,7 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
       Town: userDetail.Town ? userDetail.Town : "",
       County: userDetail.MCounty ? userDetail.MCounty : "",
       Postcode: userDetail.Postcode ? userDetail.Postcode : "",
-      Country: userDetail.mainCountry,
+      Country: userDetail.mainCountry ? userDetail.mainCountry : "United Kingdom"
     };
     console.log(obj, "mainaddress");
     Json_SetClientAddress(obj);
@@ -200,7 +200,7 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
       Town: userDetail.BilTown ? userDetail.BilTown : "",
       County: userDetail.BilCountry ? userDetail.BilCountry : "",
       Postcode: userDetail.BilPostcode ? userDetail.BilPostcode : "",
-      Country: userDetail.billingsCountry,
+      Country: userDetail.billingsCountry ? userDetail.billingsCountry : "United Kingdom",
     };
     console.log(obj, "mainaddress11");
     Json_SetClientAddress(obj);
@@ -219,7 +219,7 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
       Town: userDetail.regTown ? userDetail.regTown : "",
       County: userDetail.regCountry ? userDetail.regCountry : "",
       Postcode: userDetail.regPostcode ? userDetail.regPostcode : "",
-      Country: userDetail.ragistersCountry,
+      Country: userDetail.ragistersCountry ? userDetail.ragistersCountry : "United Kingdom"
     };
     console.log(obj, "mainaddress22");
 
@@ -500,7 +500,7 @@ function Reference({open5,setOpen5,setReferance,setAddContact}) {
       label: "Details",
       description: (
         <Box className="clearfix">
-          <UDFClientcard
+          <EditUDFClientcard
             data={clientDetails}
             setDataFromChild={setDataFromChild}
           />

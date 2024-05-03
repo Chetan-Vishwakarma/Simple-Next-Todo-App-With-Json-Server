@@ -9,16 +9,17 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 
+let mainContrydata="";
 const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHouse })=>{
   console.log(dataCompanyHouse,"dataCompanyHouse",userDetail);
   const [mainCountry, setMainCountry] = useState(
-    countries.find((country) => country.label === "United Kingdom")?.label
+    countries.find((country) => country.label == "United Kingdom")?.label
   );
   const [billingsCountry, setBillingsCountry] = useState(
-    countries.find((country) => country.label === "United Kingdom")?.label
+    countries.find((country) => country.label == "United Kingdom")?.label
   );
   const [ragistersCountry, setRagistersCountry] = useState(
-    countries.find((country) => country.label === "United Kingdom")?.label
+    countries.find((country) => country.label == "United Kingdom")?.label
   );
   // tabs
   const [value, setValue] = React.useState('1');
@@ -32,7 +33,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
     console.log(data, "dataOnchange", e);
     setUserDetail(data);
     if(name || mainCountry){
-      console.log(data, "dataOnchangeuserDetail");
+      console.log(data, "dataOnchangeuserDetail",mainContrydata);
       let addressfill = { ...userDetail };
       addressfill = { 
         ...addressfill,
@@ -54,7 +55,7 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
         regTown: data.regTown,
         regCountry: data.regCountry,
         regPostcode: data.regPostcode,
-        fullAddress: data.Line1+"\r\n"+data.Line2+"\r\n"+data.Line3+"\r\n"+data.Town+"\r\n"+data.MCounty+"\r\n"+data.Postcode+"\r\n"+mainCountry
+        fullAddress: data.Line1+"\r\n"+data.Line2+"\r\n"+data.Line3+"\r\n"+data.Town+"\r\n"+data.MCounty+"\r\n"+data.Postcode+"\r\n"+ mainCountry
       }
       setUserDetail(addressfill);
     }
@@ -102,9 +103,10 @@ const AddClientaddress =  React.memo(({ userDetail, setUserDetail,dataCompanyHou
     event.preventDefault();
     if (value) {
       let data = { ...userDetail };
-      data = { ...data, ["mainCountry"]: value.label };
+      data = { ...data, ["mainCountry"]: value.label};
       console.log(data, "dataOnchange");
       setMainCountry(value.label);
+      mainContrydata = value.label;
       setUserDetail(data);
     } else {
     }
