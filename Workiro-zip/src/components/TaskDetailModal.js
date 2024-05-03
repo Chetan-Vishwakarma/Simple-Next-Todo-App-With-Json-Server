@@ -677,7 +677,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     const [getVertion, setGetVertion] = React.useState([]);
 
     function Json_GetVersionByItemId(data) {
-        console.log("selected document data obj111", data)
+        // console.log("selected document data obj111", data)
         try {
             let obj = {};
             obj.itemId = data["Registration No."];
@@ -1575,7 +1575,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState({});
     // const DocumentList = Boolean(anchorElDocumentList);
     const handleClickDocumentList = (event, rowData) => {
-        // console.log("fjdsfdlsjfljfllj problem detect");
+        console.log("djfldjdfds",rowData.key);
         event.stopPropagation();
         const newAnchorElDocumentList = { ...anchorElDocumentList };
         newAnchorElDocumentList[rowData.data.Guid] = event.currentTarget;
