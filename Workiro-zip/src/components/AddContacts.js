@@ -1072,6 +1072,7 @@ function AddContacts({ addContactData, contactDetails }) {
                             option.Client.toLowerCase().includes(inputValue.toLowerCase())
                           )
                         }
+                        
                         autoHighlight  // Highlight the first suggestion
                         selectOnFocus  // Select suggestion when input is focused
                         renderInput={(params) => (

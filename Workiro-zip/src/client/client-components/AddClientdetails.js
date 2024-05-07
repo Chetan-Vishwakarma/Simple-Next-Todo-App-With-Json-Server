@@ -349,12 +349,20 @@ const AddClientdetails = React.memo(
     const [open, setOpen] = useState(false);
 
     const handleOptionClick = (id) => {
+      console.log(id,"getdta");
       setTxtValue(id);
       setOpen(false);
 
       let data = id.company_number;
       Json_CompanyDetails(id.title);
     };
+    const handleKeyDown  = (e) => {
+      console.log("handleKeyDown");
+      if (e.key === "Enter") {
+        console.log("EnterImport",e.target.value);
+        Json_CompanyDetails(e.target.value);
+      }
+    }
     const clearDataCard = () => {
       setDefaultClient(null);
       setDataFromChild(null);
@@ -470,6 +478,7 @@ const AddClientdetails = React.memo(
                     variant="outlined"
                     name="importclient"
                     onChange={onChangeImportData}
+                    onKeyDown={handleKeyDown}
                     label="Enter Company Name or Number"
                   />
                 )}
