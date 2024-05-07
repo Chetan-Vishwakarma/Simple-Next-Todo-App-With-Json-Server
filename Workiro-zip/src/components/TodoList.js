@@ -1358,9 +1358,6 @@ const [openMore, setOpenMore] = useState(false);
                                                             {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
                                                             {/* <a href='#'>Patrick</a>, */}
                                                             <a href='javascript:void(0)'>{userName && userName.length > 0 ? userName[0].UserName : ""}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
-
-
-
                                                             </>)}</a>
 
                                                             <Button
@@ -1550,8 +1547,6 @@ const [openMore, setOpenMore] = useState(false);
 
                                                 </Typography>
                                             </Box>
-
-
 
                                             <Box className='mt-2'>
                                                 <Button variant="text" disabled={item.mstatus === "Completed"} className='btn-blue-2 me-2' onClick={() => MarkComplete(item)} >Mark Complete</Button>
