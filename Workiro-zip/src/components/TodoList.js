@@ -1156,11 +1156,26 @@ function TodoList() {
                             >
                                 <div className='pointer me-2 d-flex align-items-center' id="reportrange"
                                 >
-
-                                    <i className="fa fa-calendar"></i>
-                                    <CalendarMonthIcon className='me-2 text-red' />
-
-                                    <span>{isDateShow ? label : "Select Due Date"}</span> <i className="fa fa-caret-down"></i>
+                                    <BootstrapTooltip title="Task Start Date" arrow
+                                        placement="top"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >
+                                        <i className="fa fa-calendar"></i>
+                                        <CalendarMonthIcon className='me-2 text-red' />
+                                        <span>
+                                            {isDateShow ? label : "Select Due Date"}</span> <i className="fa fa-caret-down"></i>
+                                    </BootstrapTooltip>
                                 </div>
                             </DateRangePicker>
                         </Box>
@@ -1182,7 +1197,25 @@ function TodoList() {
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem className='ps-2' value="Sort By" style={{ display: "none" }}><SortIcon />Sort By</MenuItem>
+                                <MenuItem className='ps-2' value="Sort By" style={{ display: "none" }}><SortIcon />
+                                    <BootstrapTooltip title="Sort By" arrow
+                                        placement="top"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >
+                                        Sort By
+                                    </BootstrapTooltip>
+                                </MenuItem>
                                 <MenuItem className='ps-2 text-red' value="" onClick={() => setAllTask([...actualData])}><ClearIcon />Clear Sortby</MenuItem>
                                 <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
                                 <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
@@ -1209,7 +1242,25 @@ function TodoList() {
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem className='ps-2' value="Group By" style={{ display: "none" }}>Group By</MenuItem>
+                                <MenuItem className='ps-2' value="Group By" style={{ display: "none" }}>
+                                    <BootstrapTooltip title="Group By" arrow
+                                        placement="top"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >
+                                        Group By
+                                    </BootstrapTooltip>
+                                </MenuItem>
                                 <MenuItem className='ps-2' value=""><ClearIcon className='font-20 me-1' />Clear Groupby</MenuItem>
                                 <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
                                 <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
@@ -1221,23 +1272,35 @@ function TodoList() {
                         </FormControl>
 
                         <ToggleButtonGroup className='ms-3' size='small'>
-                            <ToggleButton value="left" aria-label="left aligned" onClick={handleMenuOpen}>
-                                <DownloadIcon />
-                            </ToggleButton>
+                            <BootstrapTooltip title="Download Tasks List" arrow
+                                placement="top"
+                                slotProps={{
+                                    popper: {
+                                        modifiers: [
+                                            {
+                                                name: 'offset',
+                                                options: {
+                                                    offset: [0, -10],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                }}
+                            >
+                                <ToggleButton value="left" aria-label="left aligned" onClick={handleMenuOpen}>
+                                    <DownloadIcon />
+                                </ToggleButton>
+                            </BootstrapTooltip>
                             <Menu
                                 anchorEl={anchorElDown}
                                 open={Boolean(anchorElDown)}
                                 onClose={handleMenuClose}
                             >
                                 <MenuItem onClick={ExportData}><InsertDriveFileIcon />  Export to Excel</MenuItem>
-
-
                             </Menu>
                         </ToggleButtonGroup>
-
                     </Box>
                 </Box>
-
 
                 <Box className='main-filter-box'>
                     {/* <Box className='row'> */}
@@ -1316,12 +1379,12 @@ function TodoList() {
                                                                     horizontal: 'left',
                                                                 }}
                                                             >
-                                                            {
-                                                            userName.length>0?userName.map((user, index)=>{
-                                                            return (   <MenuItem key={index} onClick={handleCloseMore}>{user.UserName}</MenuItem>)
-                                                            }):""
-                                                            }
-                                                             
+                                                                {
+                                                                    userName.length > 0 ? userName.map((user, index) => {
+                                                                        return (<MenuItem key={index} onClick={handleCloseMore}>{user.UserName}</MenuItem>)
+                                                                    }) : ""
+                                                                }
+
                                                                 <MenuItem onClick={handleClose}>My account</MenuItem>
                                                                 <MenuItem onClick={handleClose}>Logout</MenuItem>
                                                             </Menu>
