@@ -79,7 +79,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EditReference from "../client/client-components/EditReference";
 import UploadDocument from "../client/client-components/UploadDocument";
 import AddContacts from "./AddContacts";
-import { handleOpenModalRedux, setMyTasks } from "../redux/reducers/counterSlice";
+import { fetchAllTasksRedux, fetchRecentTasksRedux, handleOpenModalRedux, setMyTasks } from "../redux/reducers/counterSlice";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 
@@ -1364,6 +1364,8 @@ toast.error("Please Select a Due Date");
 
                         Json_CRM_GetOutlookTask_ForTask();
                         setLoading(false);
+                        dispatch(fetchRecentTasksRedux());
+                        dispatch(fetchAllTasksRedux());
                         toast.success("Created Task !");
                         // setMessageId(js.Message);
 
