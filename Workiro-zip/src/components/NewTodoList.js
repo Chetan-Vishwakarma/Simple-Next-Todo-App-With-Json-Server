@@ -24,7 +24,7 @@ import Fileformat from '../images/files-icon/pdf.png';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import GetFileType from './FileType';
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllTasksRedux, fetchRecentDocumentsRedux, fetchRecentTasksRedux } from '../redux/reducers/counterSlice';
+import { fetchRecentTasksRedux, fetchAllTasksRedux, fetchRecentDocumentsRedux } from '../redux/reducers/api_helper';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };

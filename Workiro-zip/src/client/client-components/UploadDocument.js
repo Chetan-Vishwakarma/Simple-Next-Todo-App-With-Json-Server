@@ -24,7 +24,8 @@ import moment from 'moment';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
 import { useDispatch } from "react-redux";
-import { fetchRecentDocumentsRedux, setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
+import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
+import { fetchRecentDocumentsRedux } from '../../redux/reducers/api_helper';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 
