@@ -815,13 +815,21 @@ function TodoList() {
         return userFilter && userFilter.length > 0 ? userFilter : "";
     }
 
-    const [anchorElMore, setAnchorElMore] = React.useState < null | HTMLElement > (null);
-    const openMore = Boolean(anchorElMore);
+    // const [anchorElMore, setAnchorElMore] = React.useState(null);
+    // const openMore = Boolean(anchorElMore);
+
+    const [anchorElMore, setAnchorElMore] = useState(null);
+const [openMore, setOpenMore] = useState(false);
+
     const handleClickMore = (event) => {
+        console.log("heloo",event)
         setAnchorElMore(event.currentTarget);
+        setOpenMore(true);
     };
+    
     const handleCloseMore = () => {
-        setAnchorEl(null);
+        setAnchorElMore(null);
+        setOpenMore(false);
     };
 
 
@@ -1303,7 +1311,6 @@ function TodoList() {
                                                             </Button>
                                                             <Menu
                                                                 id="demo-positioned-menu"
-                                                                aria-labelledby="demo-positioned-button"
                                                                 anchorEl={anchorElMore}
                                                                 open={openMore}
                                                                 onClose={handleCloseMore}
@@ -1316,15 +1323,11 @@ function TodoList() {
                                                                     horizontal: 'left',
                                                                 }}
                                                             >
-                                                            {
-                                                            userName.length>0?userName.map((user, index)=>{
-                                                            return (   <MenuItem key={index} onClick={handleCloseMore}>{user.UserName}</MenuItem>)
-                                                            }):""
-                                                            }
-                                                             
-                                                                <MenuItem onClick={handleClose}>My account</MenuItem>
-                                                                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                                                                {userName.map((user, index) => (
+                                                                    <MenuItem key={index} onClick={handleCloseMore}>{user.UserName}</MenuItem>
+                                                                ))}
                                                             </Menu>
+
 
                                                         </Typography>
                                                         <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
