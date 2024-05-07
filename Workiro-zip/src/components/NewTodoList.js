@@ -300,6 +300,7 @@ function NewTodoList() {
 
     useEffect(() => {
         dispatch(fetchRecentTasksRedux());
+        dispatch(fetchAllTasksRedux("Todo"));
         Json_GetForwardUserList();
         Json_getRecentDocumentList();
         // Json_ExplorerSearchDoc();
@@ -367,7 +368,7 @@ function NewTodoList() {
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
         // Json_CRM_GetOutlookTask();
-        dispatch(fetchAllTasksRedux());
+        dispatch(fetchAllTasksRedux("Todo"));
         window.addEventListener('scroll', handleScroll);
 
         return () => {

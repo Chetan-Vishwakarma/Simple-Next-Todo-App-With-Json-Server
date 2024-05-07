@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import CommanCLS from "../../services/CommanService";
+import dateForMyTask from "../../utils/dateForMyTask";
 
 const agrno = localStorage.getItem("agrno");
 const password = localStorage.getItem("Password");
@@ -69,7 +70,7 @@ const counterSlices = createSlice({
     fetchAllTasks: (state, action) => {
       state.allTask = action.payload;
     },
-     // chetan state end
+    // chetan state end
     updateReduxDataSonam: (state, action) => {
       state.reduxData = action.payload;
     },
@@ -100,7 +101,7 @@ const counterSlices = createSlice({
 
 export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux, updateReduxDataSonam, setSetDefaultRoleSonam, clearDefaultRoleSonam, setSetDefaultTitleSonam, setDefaultUserSonam, setMainCountrySonam, setDefaultDateSonam, setIsAdvanceDocSearchRedux, fetchRecentTasks, fetchAllTasks } = counterSlices.actions;
 
-export const fetchRecentTasksRedux = () => dispatch =>  {
+export const fetchRecentTasksRedux = () => dispatch => {
   try {
     ClsSms.Json_getRecentTaskList((sts, data) => {
       if (sts) {
@@ -119,36 +120,93 @@ export const fetchRecentTasksRedux = () => dispatch =>  {
   }
 };
 
-export const fetchAllTasksRedux = () => dispatch =>  {
+export const fetchAllTasksRedux = (target) => dispatch => {
   try {
     Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
-        if (sts) {
-            if (data) {
-                let json = JSON.parse(data);
-                const formattedTasks = json.Table.map((task) => {
-                    let timestamp;
-                    if (task.EndDateTime) {
-                        timestamp = parseInt(task.EndDateTime.slice(6, -2));
-                    }
+      if (sts) {
+        if (data) {
+          let json = JSON.parse(data);
+          if (json.Table.length > 0) {
+            const fltTask = json.Table.filter(itm => itm.AssignedToID.split(",").includes(UserId) && ["Portal", "CRM"].includes(itm.Source));
+            if (target === "Todo") {
+              const formattedTasks = fltTask.map((task) => {
+                return dateForMyTask(task);
+              });
+              formattedTasks.sort((a, b) => b.CreationDate - a.CreationDate);
+              dispatch(fetchAllTasks(formattedTasks));
+              return;
+            } else if (target === "MyTask") {
+              const formattedTasks = fltTask.map((task) => {
+                let timestamp;
+                let timestamp2;
+                let date = "";
+                let date2 = "";
+                if (task.CreationDate) {
+                  timestamp = parseInt(task.CreationDate.slice(6, -2));
+                  if (!isNaN(timestamp)) {
+                    date = new Date(timestamp); // Create Date object using timestamp
+                  } else {
+                    // console.error("Invalid timestamp:", timestamp);
+                  }
+                } else {
+                  date = task.CreationDate;
+                }
+                if (task.EndDateTime) {
+                  timestamp2 = parseInt(task.EndDateTime.slice(6, -2));
+                  if (!isNaN(timestamp2)) {
+                    date2 = new Date(timestamp2); // Create Date object using timestamp2
+                  } else {
+                    // console.error("Invalid timestamp2:", timestamp2);
+                  }
+                } else {
+                  date2 = task.EndDateTime;
+                }
 
-                    const date = new Date(timestamp);
+                return { ...task, CreationDate: date, EndDateTime: date2 };
+              });
+              formattedTasks.sort((a, b) => b.EndDateTime - a.EndDateTime);
+              dispatch(fetchAllTasks(formattedTasks));
+              return;
+            } else {
+              const formattedTasks = fltTask.map((task) => {
+                let timestamp;
+                let timestamp2;
+                let date = "";
+                let date2 = "";
+                if (task.CreationDate) {
+                  timestamp = parseInt(task.CreationDate.slice(6, -2));
+                  if (!isNaN(timestamp)) {
+                    date = new Date(timestamp); // Create Date object using timestamp
+                  } else {
+                    // console.error("Invalid timestamp:", timestamp);
+                  }
+                } else {
+                  date = task.CreationDate;
+                }
+                if (task.EndDateTime) {
+                  timestamp2 = parseInt(task.EndDateTime.slice(6, -2));
+                  if (!isNaN(timestamp2)) {
+                    date2 = new Date(timestamp2); // Create Date object using timestamp2
+                  } else {
+                    // console.error("Invalid timestamp2:", timestamp2);
+                  }
+                } else {
+                  date2 = task.EndDateTime;
+                }
 
-                    return { ...task, EndDateTime: date };
-                });
-
-                // Sorting by EndDateTime
-                formattedTasks.sort((a, b) => b.EndDateTime - a.EndDateTime);
-
-                const filtredTask = formattedTasks.filter(itm => itm.AssignedToID.split(",").includes(UserId) && ["Portal", "CRM"].includes(itm.Source));
-
-                dispatch(fetchAllTasks(filtredTask));
-
+                return { ...task, CreationDate: date, EndDateTime: date2 };
+              });
+              formattedTasks.sort((a, b) => b.EndDateTime - a.EndDateTime);
+              dispatch(fetchAllTasks(formattedTasks));
+              return;
             }
+          }
         }
+      }
     });
-} catch (err) {
+  } catch (err) {
     console.log("Error while calling Json_CRM_GetOutlookTask", err);
-}
+  }
 };
 // export const getUsers = () => async(dispatch) => {
 //     const response = await axios.get("https://jsonplaceholder.typicode.com/users");
