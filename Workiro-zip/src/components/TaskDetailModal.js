@@ -80,6 +80,7 @@ import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import Fileformat from '../images/files-icon/pdf.png';
 import moment from 'moment';
 import GetFileType from "./FileType";
+import { BorderBottom } from "@mui/icons-material";
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -2422,8 +2423,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                         <Box
                                                             className="text-center py-2 file-uploaded"
                                                             style={{
-                                                                backgroundColor: "#e5e5e5",
-                                                                marginBottom: "10px",
+                                                                // backgroundColor: "#e5e5e5",
+                                                                marginBottom: "0px",
                                                                 "border-radius": "3px",
                                                             }}
                                                         >
@@ -2585,8 +2586,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                         <Box
                                                             className="text-center py-2 file-uploaded"
                                                             style={{
-                                                                backgroundColor: "#e5e5e5",
-                                                                marginBottom: "10px",
+                                                                // backgroundColor: "#e5e5e5",
+                                                                marginBottom: "0px",
                                                                 "border-radius": "3px",
                                                             }}
                                                         >

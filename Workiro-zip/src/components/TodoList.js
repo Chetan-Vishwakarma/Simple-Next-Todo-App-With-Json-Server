@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, TextField, Autocomplete, ToggleButton, ToggleButtonGroup, FormControl, Select, InputLabel,Badge } from '@mui/material';
+import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, TextField, Autocomplete, ToggleButton, ToggleButtonGroup, FormControl, Select, InputLabel, Badge } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import user from "../images/user.jpg";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -54,7 +54,19 @@ import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { updateReduxDataSonam } from '../redux/reducers/counterSlice';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 
+
+const BootstrapTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+    [`& .${tooltipClasses.arrow}`]: {
+        // color: theme.palette.common.black,
+    },
+    [`& .${tooltipClasses.tooltip}`]: {
+        // backgroundColor: theme.palette.common.black,
+    },
+}));
 
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20' />, <PublishedWithChangesIcon color='primary' className='me-1 font-20' />, <HourglassBottomIcon color='primary' className='me-1 font-20' />, <CheckCircleOutlineIcon color='success' className='me-1 font-20' />];
 let attatmentdata = [];
@@ -445,7 +457,7 @@ function TodoList() {
         setTaskFilter(obj);
     }
     const handleCallback = (start, end) => {
-        if(start._i==="Clear"){
+        if (start._i === "Clear") {
             setIsDateShow(false);
             handleFilterDeletion("EndDateTime");
             return;
@@ -942,8 +954,30 @@ function TodoList() {
                                 }}
                                 className='custom-dropdown'
                             >
+
+
+
                                 <MenuItem value="Folder" style={{ display: "none" }}>
-                                    Folders</MenuItem>
+                                    <BootstrapTooltip title="Folders" arrow
+                                        placement="bottom-start"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >
+                                        Folders
+                                    </BootstrapTooltip>
+
+                                </MenuItem>
+
                                 <MenuItem value="" className='text-danger ps-1'><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
                                 {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'><FolderSharedIcon className="font-20 me-1" /> {fld.Folder}</MenuItem>)}
                             </Select>
@@ -971,7 +1005,24 @@ function TodoList() {
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value="Source" style={{ display: "none" }}>Type</MenuItem>
+                                <MenuItem value="Source" style={{ display: "none" }}>
+                                    <BootstrapTooltip title="Folders" arrow
+                                        placement="bottom-start"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >Type
+                                    </BootstrapTooltip>
+                                </MenuItem>
                                 <MenuItem value="" className='ps-1 text-danger' >
                                     <ClearIcon className="font-20 me-2" />
                                     Clear Filter</MenuItem>
@@ -1008,7 +1059,26 @@ function TodoList() {
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value={"Status"} style={{ display: "none" }}> Status</MenuItem>
+                                <MenuItem value={"Status"} style={{ display: "none" }}>
+                                    <BootstrapTooltip title="Folders" arrow
+                                        placement="bottom-start"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >
+                                        Status
+                                    </BootstrapTooltip>
+
+                                </MenuItem>
                                 <MenuItem className='text-danger ps-1' value={""} ><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
                                 {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm} className='ps-1'> {statusIconList[i]} {itm}</MenuItem>)}
                             </Select>

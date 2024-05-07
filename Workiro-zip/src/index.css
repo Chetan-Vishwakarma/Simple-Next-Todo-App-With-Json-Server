@@ -621,9 +621,11 @@ button {
   border-radius: 0px;
   padding: 0px !important;
 }
+
 .custom-date-picker {
   position: relative;
 }
+
 .custom-date-picker .form-control {
   height: 52px;
 }
@@ -1030,6 +1032,13 @@ span.tox-statusbar__branding {
   word-break: break-all;
   display: flex;
   align-items: center;
+  border-radius: 0;
+  transition: .5s all ease;
+}
+
+.search-box ul li:hover {
+  color: #fff;
+  background: #d42027;
 }
 
 .client-img {
@@ -1379,7 +1388,8 @@ input[type=number] {
 }
 
 .box-user-list-dropdown button:hover {
-  background: #f1f1f1;
+  background: #d42027;
+  color: #fff;
 }
 
 .box-user-list-dropdown button p {
@@ -1390,7 +1400,7 @@ input[type=number] {
   /* background: red; */
   position: absolute;
   right: 6px;
-  top: 18px;
+  top: 12px;
   display: inline-block;
   color: red;
   /* font-size: 10px !important; */
@@ -1744,6 +1754,16 @@ input[type=number] {
   font-size: 40px;
   color: #AFAFAF;
 }
+
+.file-uploaded {
+  border-bottom: 1px solid #ebebeb;
+  background: #fff;
+}
+.file-uploaded:last-child {
+  border-bottom: 0px;
+}
+
+
 
 .main-file-upload {
   /* border-top: 1px solid #f1f1f1; */
@@ -2316,8 +2336,13 @@ input[type=number] {
 .daterangepicker .ranges ul li:first-child.active {
   color: #fff;
 }
+
 .overflowy-auto {
   overflow-y: auto;
+}
+
+.tox .tox-statusbar {
+  display: none !important;
 }
 
 @media only screen and (max-width: 1366px) {
