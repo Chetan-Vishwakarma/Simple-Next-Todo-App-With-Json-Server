@@ -1396,7 +1396,6 @@ const [openMore, setOpenMore] = useState(false);    // If any error occur then r
                                                                 <MenuItem onClick={handleClose}>Logout</MenuItem>
                                                             </Menu>
 
-
                                                         </Typography>
                                                         <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                                     </Box>
