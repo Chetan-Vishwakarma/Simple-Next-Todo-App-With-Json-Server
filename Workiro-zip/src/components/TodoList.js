@@ -815,7 +815,7 @@ function TodoList() {
         return userFilter && userFilter.length > 0 ? userFilter : "";
     }
 
-    const [anchorElMore, setAnchorElMore] = React.useState < null | HTMLElement > (null);
+    const [anchorElMore, setAnchorElMore] = React.useState(null);
     const openMore = Boolean(anchorElMore);
     const handleClickMore = (event) => {
         setAnchorElMore(event.currentTarget);
