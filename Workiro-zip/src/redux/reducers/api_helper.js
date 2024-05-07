@@ -1,0 +1,105 @@
+import CommanCLS from "../../services/CommanService";
+import dateForMyTask from "../../utils/dateForMyTask";
+import { fetchAllTasks, fetchRecentDocuments, fetchRecentTasks } from "./counterSlice";
+
+const agrno = localStorage.getItem("agrno");
+const password = localStorage.getItem("Password");
+const Email = localStorage.getItem("Email");
+const FolderId = localStorage.getItem("FolderId");
+const UserId = localStorage.getItem("UserId");
+
+const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+let ClsSms = new CommanCLS(baseUrl, agrno, Email, password);
+const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+let Cls = new CommanCLS(baseUrlPractice, agrno, Email, password);
+
+export const fetchRecentTasksRedux = () => dispatch => {
+    try {
+      ClsSms.Json_getRecentTaskList((sts, data) => {
+        if (sts) {
+          if (data) {
+            let json = JSON.parse(data);
+            let tbl = json.Table;
+            if (tbl.length > 0) {
+              dispatch(fetchRecentTasks(tbl));
+              return tbl;
+            }
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_CRM_GetOutlookTask", err);
+    }
+  };
+
+  export const fetchAllTasksRedux = (target) => dispatch => {
+    try {
+      Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
+        if (sts) {
+          if (data) {
+            let json = JSON.parse(data);
+            if (json.Table.length > 0) {
+              const fltTask = json.Table.filter(itm => itm.AssignedToID.split(",").includes(UserId) && ["Portal", "CRM"].includes(itm.Source));
+              if (target === "Todo") {
+                const formattedTasks = fltTask.map((task) => {
+                  return dateForMyTask(task);
+                });
+                formattedTasks.sort((a, b) => b.CreationDate - a.CreationDate);
+                dispatch(fetchAllTasks(formattedTasks));
+                return;
+              } else if (target === "MyTask") {
+                const formattedTasks = fltTask.map((task) => {
+                  return dateForMyTask(task);
+                });
+                formattedTasks.sort((a, b) => b.EndDateTime - a.EndDateTime);
+                dispatch(fetchAllTasks(formattedTasks));
+                return;
+              } else {
+                const formattedTasks = fltTask.map((task) => {
+                  return dateForMyTask(task);
+                });
+                formattedTasks.sort((a, b) => b.EndDateTime - a.EndDateTime);
+                dispatch(fetchAllTasks(formattedTasks));
+                return;
+              }
+            }
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_CRM_GetOutlookTask", err);
+    }
+  };
+  
+  export const fetchRecentDocumentsRedux = () => dispatch => {
+    try {
+      ClsSms.Json_getRecentDocumentList((sts, data) => {
+          if (sts) {
+              if (data) {
+                  let json = JSON.parse(data);
+                  let tbl = json.Table;
+                  if (tbl.length > 0) {
+                      const mapMethod = tbl.map(el => {
+                          let date = "";
+                          if (el["RecentDate"]) {
+                              const dateString = el["RecentDate"].slice(6, -2); // Extract the date part
+                              const timestamp = parseInt(dateString); // Convert to timestamp
+                              if (!isNaN(timestamp)) {
+                                  date = new Date(timestamp); // Create Date object using timestamp
+                              } else {
+                                  console.error("Invalid timestamp:", dateString);
+                              }
+                          } else {
+                              date = el["RecentDate"];
+                          }
+                          return { ...el, ["RecentDate"]: date, ["Registration No."]: el.ItemId, ["Description"]: el.Subject, ["Type"]: el.type };
+                      });
+                      dispatch(fetchRecentDocuments(mapMethod));
+                  }
+              }
+          }
+      });
+  } catch (err) {
+      console.log("Error while calling Json_getRecentDocumentList", err);
+  }
+  };
