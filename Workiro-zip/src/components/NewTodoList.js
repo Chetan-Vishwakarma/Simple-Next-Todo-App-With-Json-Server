@@ -24,7 +24,7 @@ import Fileformat from '../images/files-icon/pdf.png';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import GetFileType from './FileType';
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllTasksRedux, fetchRecentTasksRedux } from '../redux/reducers/counterSlice';
+import { fetchAllTasksRedux, fetchRecentDocumentsRedux, fetchRecentTasksRedux } from '../redux/reducers/counterSlice';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -35,7 +35,7 @@ function NewTodoList() {
     const dispatch = useDispatch();
     const { recentTaskList } = useSelector(state => state.counter.recentTaskRedux);
     const allTask = useSelector(state => state.counter.allTask).filter(itm=>itm.mstatus!=="Completed");
-    console.log("fsdfjsldjfljre",allTask);
+    const recentDocument = useSelector(state => state.counter.recentDocument);
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -59,7 +59,7 @@ function NewTodoList() {
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [userName, setUserName] = React.useState(null);
-    const [recentDocument, setRecentDocument] = React.useState([]);
+    const [recentDocument_Test, setRecentDocument] = React.useState([]);
 
     const [expanded, setExpanded] = React.useState('panel1');
 
@@ -301,8 +301,9 @@ function NewTodoList() {
     useEffect(() => {
         dispatch(fetchRecentTasksRedux());
         dispatch(fetchAllTasksRedux("Todo"));
+        dispatch(fetchRecentDocumentsRedux());
         Json_GetForwardUserList();
-        Json_getRecentDocumentList();
+        // Json_getRecentDocumentList();
         // Json_ExplorerSearchDoc();
         Json_Get_CRM_UserByProjectId();
         // Json_CRM_GetOutlookTask();

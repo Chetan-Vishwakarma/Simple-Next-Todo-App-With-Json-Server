@@ -24,7 +24,7 @@ import moment from 'moment';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
 import { useDispatch } from "react-redux";
-import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
+import { fetchRecentDocumentsRedux, setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 
@@ -664,10 +664,7 @@ return formattedDate;
                                 else {
                                     setOpenUploadDocument(false);
                                 }
-
-
-
-
+                                dispatch(fetchRecentDocumentsRedux());
                             }
                             else {
                                 toast.error("Faild Please Try Again");

@@ -34,7 +34,8 @@ const counterSlices = createSlice({
       isLoading: true,
       recentTaskList: [],
     },
-    allTask: []
+    allTask: [],
+    recentDocument:[]
   },
   reducers: {
     //sonam state start
@@ -70,6 +71,9 @@ const counterSlices = createSlice({
     fetchAllTasks: (state, action) => {
       state.allTask = action.payload;
     },
+    fetchRecentDocuments: (state, action) => {
+      state.recentDocument = action.payload;
+    },
     // chetan state end
     updateReduxDataSonam: (state, action) => {
       state.reduxData = action.payload;
@@ -99,7 +103,7 @@ const counterSlices = createSlice({
   }
 });
 
-export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux, updateReduxDataSonam, setSetDefaultRoleSonam, clearDefaultRoleSonam, setSetDefaultTitleSonam, setDefaultUserSonam, setMainCountrySonam, setDefaultDateSonam, setIsAdvanceDocSearchRedux, fetchRecentTasks, fetchAllTasks } = counterSlices.actions;
+export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux, updateReduxDataSonam, setSetDefaultRoleSonam, clearDefaultRoleSonam, setSetDefaultTitleSonam, setDefaultUserSonam, setMainCountrySonam, setDefaultDateSonam, setIsAdvanceDocSearchRedux, fetchRecentTasks, fetchAllTasks, fetchRecentDocuments } = counterSlices.actions;
 
 export const fetchRecentTasksRedux = () => dispatch => {
   try {
@@ -158,6 +162,40 @@ export const fetchAllTasksRedux = (target) => dispatch => {
     console.log("Error while calling Json_CRM_GetOutlookTask", err);
   }
 };
+
+export const fetchRecentDocumentsRedux = () => dispatch => {
+  try {
+    ClsSms.Json_getRecentDocumentList((sts, data) => {
+        if (sts) {
+            if (data) {
+                let json = JSON.parse(data);
+                let tbl = json.Table;
+                if (tbl.length > 0) {
+                    const mapMethod = tbl.map(el => {
+                        let date = "";
+                        if (el["RecentDate"]) {
+                            const dateString = el["RecentDate"].slice(6, -2); // Extract the date part
+                            const timestamp = parseInt(dateString); // Convert to timestamp
+                            if (!isNaN(timestamp)) {
+                                date = new Date(timestamp); // Create Date object using timestamp
+                            } else {
+                                console.error("Invalid timestamp:", dateString);
+                            }
+                        } else {
+                            date = el["RecentDate"];
+                        }
+                        return { ...el, ["RecentDate"]: date, ["Registration No."]: el.ItemId, ["Description"]: el.Subject, ["Type"]: el.type };
+                    });
+                    dispatch(fetchRecentDocuments(mapMethod));
+                }
+            }
+        }
+    });
+} catch (err) {
+    console.log("Error while calling Json_getRecentDocumentList", err);
+}
+};
+
 // export const getUsers = () => async(dispatch) => {
 //     const response = await axios.get("https://jsonplaceholder.typicode.com/users");
 //     dispatch(users(response.data));
