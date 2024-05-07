@@ -23,7 +23,7 @@ import Swal from 'sweetalert2';
 import CreateNewModalTask from '../../components/CreateNewModal';
 
 import { useDispatch } from "react-redux";
-import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux } from "../../redux/reducers/counterSlice"
+import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux ,setGetActivitySonam } from "../../redux/reducers/counterSlice"
 import AlarmOnIcon from '@mui/icons-material/AlarmOn';
 import $ from 'jquery';
 import Fileformat from '../../images/files-icon/pdf.png';
@@ -123,7 +123,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     const Json_GetAudit = () => {
         try {
             let obj = {
-                itemid: selectedDocument["Registration No."],
+                itemid: selectedDocument["Registration No."] ? selectedDocument["Registration No."] : selectedDocument.ItemId,
 
             }
             cls.Json_GetAudit(obj, function (sts, data) {
@@ -150,7 +150,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                         })
                         if (formattedActivity.length > 0) {
                             const filteredArray = formattedActivity.filter(item => item.Comments !== null);
-
+                            dispatch(setGetActivitySonam(setGetAudit));
                             setGetAudit(filteredArray);
                             console.log("Json_GetAudit", filteredArray)
                         }

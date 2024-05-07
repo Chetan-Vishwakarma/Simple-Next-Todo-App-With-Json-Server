@@ -131,6 +131,9 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
         }
 
     }
+    const call_Json_GetAudit = () => {
+        Json_GetAudit(docForDetails);
+    }
     useEffect(() => {
         Json_GetAudit(docForDetails);
         Json_GetVersionByItemId(docForDetails)
@@ -326,7 +329,7 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                 </AccordionSummary>
                                 <AccordionDetails>
 
-                                    <Activity getAudit={getAudit}></Activity>
+                                    <Activity getAudit={getAudit} call_Json_GetAudit={call_Json_GetAudit}></Activity>
 
                                     {/* {Array(5).fill("").map(() => {
                                         return <> */}

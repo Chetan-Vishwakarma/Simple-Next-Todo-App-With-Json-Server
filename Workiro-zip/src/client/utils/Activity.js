@@ -41,6 +41,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import Activitygrid from './Activitygrid';
 import { exportDataGrid } from "devextreme/excel_exporter";
 import saveAs from "file-saver";
+import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -70,7 +71,6 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     //  getAudit = getAudit.map((Actioned)=>{
     //     return { ...Actioned, ["Actioned Date"]: new Date() };
     // })
-    console.log(getAudit,`ActivityselectedDocument`,selectedDocument);
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -136,6 +136,8 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
             console.log("Error while calling Json_GetClientCardDetails", err);
           }
     }
+
+    
     const onChangeStandardCate = (event, value) => {
         event.preventDefault();
         if (value) {
