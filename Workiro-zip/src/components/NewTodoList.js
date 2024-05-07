@@ -23,12 +23,19 @@ import CustomLoader from './CustomLoader';
 import Fileformat from '../images/files-icon/pdf.png';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import GetFileType from './FileType';
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRecentTasksRedux, fetchAllTasksRedux, fetchRecentDocumentsRedux } from '../redux/reducers/api_helper';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 const userId = localStorage.getItem("UserId");
 
 function NewTodoList() {
+
+    const dispatch = useDispatch();
+    const { recentTaskList } = useSelector(state => state.counter.recentTaskRedux);
+    const allTask = useSelector(state => state.counter.allTask).filter(itm=>itm.mstatus!=="Completed");
+    const recentDocument = useSelector(state => state.counter.recentDocument);
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -45,14 +52,14 @@ function NewTodoList() {
     //let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
     //let Clsp = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
-    const [allTask, setAllTask] = useState([]);
+    // const [allTask, setAllTask] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
-    const [recentTaskList, setRecentTaskList] = useState([]);
+    // const [recentTaskList, setRecentTaskList] = useState([]);
     //const [crmTaskAcivity, setCRMTaskAcivity] = useState([]);
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [userName, setUserName] = React.useState(null);
-    const [recentDocument, setRecentDocument] = React.useState([]);
+    const [recentDocument_Test, setRecentDocument] = React.useState([]);
 
     const [expanded, setExpanded] = React.useState('panel1');
 
@@ -107,7 +114,7 @@ function NewTodoList() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("sdfdskjfksdjkhwe filter1111",json.Table)
+                        console.log("sdfdskjfksdjkhwe filter1111", json.Table)
                         const formattedTasks = json.Table.map((task) => {
                             let timestamp;
                             if (task.EndDateTime) {
@@ -132,7 +139,7 @@ function NewTodoList() {
                         const filtredTask = formattedTasks.filter(itm => itm.AssignedToID.split(",").includes(userId) && itm.mstatus !== "Completed" && ["Portal", "CRM"].includes(itm.Source));
 
                         // console.log("Json_CRM_GetOutlookTask", filtredTask);
-                        setAllTask(filtredTask);
+                        // setAllTask(filtredTask);
                         console.log("sdfdskjfksdjkhwe", filtredTask, "toOpen", toOpen);
 
                     }
@@ -165,40 +172,6 @@ function NewTodoList() {
             console.log("Error while calling Json_CRM_GetOutlookTask", err);
         }
     };
-
-    const Json_getRecentTaskList = () => {
-
-        try {
-            ClsSms.Json_getRecentTaskList((sts, data) => {
-                if (sts) {
-                    if (data) {
-                        let json = JSON.parse(data);
-                        console.log("Json_getRecentTaskList", json);
-                        let tbl = json.Table;
-                        if (tbl.length > 0) {
-
-                            setRecentTaskList(tbl)
-                        }
-                        // const formattedTasks = json.Table.map((task) => {
-                        //     let timestamp;
-                        //     if (task.EndDateTime) {
-                        //         timestamp = parseInt(task.EndDateTime.slice(6, -2));
-                        //     }
-
-                        //     const date = new Date(timestamp);
-
-                        //     return { ...task, EndDateTime: date };
-                        // });
-
-                        //setAllTask(formattedTasks.sort((a, b) => a.EndDateTime - b.EndDateTime));
-                        // setAllTask(json.Table);
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_CRM_GetOutlookTask", err);
-        }
-    }
 
     const [isApi, setIsApi] = useState(false);
 
@@ -298,15 +271,15 @@ function NewTodoList() {
             o.agrno = agrno;
             o.Email = Email;
             o.Password = password;
-            
-            ClsSms.GetInternalUserList(o,function (sts, data) {
+
+            ClsSms.GetInternalUserList(o, function (sts, data) {
                 if (sts) {
                     if (data) {
                         let js = JSON.parse(data);
-                        let {Status,Message}=js;
-                       // let dt = js.Table;
-                       // console.log("Json_GetForwardUserList1112222", js)
-                        if (Status==="Success") {
+                        let { Status, Message } = js;
+                        // let dt = js.Table;
+                        // console.log("Json_GetForwardUserList1112222", js)
+                        if (Status === "Success") {
                             let tbl = Message.Table;
                             //console.log("Json_GetForwardUserList1112222", tbl)
                             let result = tbl.filter((el) => {
@@ -326,14 +299,14 @@ function NewTodoList() {
     }
 
     useEffect(() => {
+        dispatch(fetchRecentTasksRedux());
+        dispatch(fetchAllTasksRedux("Todo"));
+        dispatch(fetchRecentDocumentsRedux());
         Json_GetForwardUserList();
-        Json_getRecentDocumentList();
+        // Json_getRecentDocumentList();
         // Json_ExplorerSearchDoc();
         Json_Get_CRM_UserByProjectId();
-        Json_CRM_GetOutlookTask();
-        Json_getRecentTaskList();
-
-
+        // Json_CRM_GetOutlookTask();
     }, [isApi])
 
 
@@ -347,27 +320,27 @@ function NewTodoList() {
 
     }
     const FilterAgs = (item) => {
-        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);       
+        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
 
         const userId = parseInt(localStorage.getItem("UserId"));
 
-        const filteredIds = arr.filter((k) => k !== item.OwnerID);       
-       
-        console.log("Helloo check11",arr)
-       // const user = filteredIds.find((u) => u === userId);       
-       
-     
+        const filteredIds = arr.filter((k) => k !== item.OwnerID);
+
+        console.log("Helloo check11", arr)
+        // const user = filteredIds.find((u) => u === userId);       
+
+
         //const userToFind = user ? user : filteredIds[0];     
 
-       // const res = userToFind ? userList.find((e) => e.ID === userToFind) : null;  
-       let userFilter;
-       if(filteredIds.length>0){
-        userFilter = userList.filter((e)=>e.UserId===filteredIds[0])
-        // console.log("Helloo check11",userFilter)
+        // const res = userToFind ? userList.find((e) => e.ID === userToFind) : null;  
+        let userFilter;
+        if (filteredIds.length > 0) {
+            userFilter = userList.filter((e) => e.UserId === filteredIds[0])
+            // console.log("Helloo check11",userFilter)
         }
 
 
-        return userFilter && userFilter.length>0 ? userFilter[0].UserName : "";
+        return userFilter && userFilter.length > 0 ? userFilter[0].UserName : "";
     }
 
 
@@ -395,7 +368,8 @@ function NewTodoList() {
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
-        Json_CRM_GetOutlookTask();
+        // Json_CRM_GetOutlookTask();
+        dispatch(fetchAllTasksRedux("Todo"));
         window.addEventListener('scroll', handleScroll);
 
         return () => {
@@ -533,26 +507,26 @@ function NewTodoList() {
     };
 
 
-    
-        useEffect(() => {
-          // Retrieve the CSS theme from local storage
-          const cssTheme = localStorage.getItem("cssTheme");
-      
-          // Set a default background color
-          document.documentElement.style.setProperty('--main-bg-color', '#d42027');
-      
-          // Check if a CSS theme is stored in local storage
-          if (cssTheme !== null && cssTheme !== "") {
+
+    useEffect(() => {
+        // Retrieve the CSS theme from local storage
+        const cssTheme = localStorage.getItem("cssTheme");
+
+        // Set a default background color
+        document.documentElement.style.setProperty('--main-bg-color', '#d42027');
+
+        // Check if a CSS theme is stored in local storage
+        if (cssTheme !== null && cssTheme !== "") {
             // Apply the stored CSS theme
             document.documentElement.style.setProperty('--main-bg-color', cssTheme);
-          }
-        }, []); // Empty dependency array to run the effect only once when the component mounts
-      
+        }
+    }, []); // Empty dependency array to run the effect only once when the component mounts
+
 
 
 
     const handleOpenBrower = (e, index) => {
-        
+
         handleCloseDocument(index);
         //setAnchorElDocumentList(null);
         console.log("document object", e);
@@ -853,13 +827,13 @@ function NewTodoList() {
 
                                     <Box className='d-flex align-items-center justify-content-between'>
 
-                                    <Typography variant='subtitle1'><pan className='text-gray'>
-                                                            {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
-                                                            {/* <a href='#'>Patrick</a>, */}
-                                                            <a href='javascript:void(0)'>{FilterAgs(item)}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
-                                                                + {arr.length - 2}
-                                                            </>)}</a></Typography>
-{/* 
+                                        <Typography variant='subtitle1'><pan className='text-gray'>
+                                            {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
+                                            {/* <a href='#'>Patrick</a>, */}
+                                            <a href='javascript:void(0)'>{FilterAgs(item)}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
+                                                + {arr.length - 2}
+                                            </>)}</a></Typography>
+                                        {/* 
                                         <Typography variant='subtitle1' ><pan className='text-gray'>
                                             <a href='#'>{item.UserName}</a> <ArrowForwardIosIcon className='font-14' /> </pan>
 
@@ -995,12 +969,12 @@ function NewTodoList() {
                                     <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
 
                                     <Box className='d-flex align-items-center justify-content-between'>
-                                    <Typography variant='subtitle1'><pan className='text-gray'>
-                                                            {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
-                                                            {/* <a href='#'>Patrick</a>, */}
-                                                            <a href='javascript:void(0)'>{FilterAgs(item)}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
-                                                                + {arr.length - 2}
-                                                            </>)}</a></Typography>
+                                        <Typography variant='subtitle1'><pan className='text-gray'>
+                                            {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
+                                            {/* <a href='#'>Patrick</a>, */}
+                                            <a href='javascript:void(0)'>{FilterAgs(item)}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
+                                                + {arr.length - 2}
+                                            </>)}</a></Typography>
 
                                         {/* <Typography variant='subtitle1' ><pan className='text-gray'>
                                             You <ArrowForwardIosIcon className='font-14' /> </pan>
@@ -1181,7 +1155,7 @@ function NewTodoList() {
 
                     <Box className='row'>
                         {recentDocument.length > 0 ? recentDocument.map((item, index) => {
-                        // console.log("file data type",item.type)
+                            // console.log("file data type",item.type)
                             return <>
 
                                 <Box className='col-xxl-3 col-xl-4 col-md-6 d-flex' key={index}>
@@ -1199,7 +1173,7 @@ function NewTodoList() {
                                                 /> */}
                                                 <div className='img-format'>
                                                     {/* <img src={Fileformat} /> */}
-                                                   {<GetFileType Type={item.type?item.type.toLowerCase():null}></GetFileType>}
+                                                    {<GetFileType Type={item.type ? item.type.toLowerCase() : null}></GetFileType>}
                                                 </div>
                                                 <Box className="upload-content pe-3" onDoubleClick={(e) => ViewerDocument(item)}>
                                                     {editingIndex == index ? (
@@ -1214,7 +1188,7 @@ function NewTodoList() {
                                                         />
                                                     ) : (
                                                         <Typography variant="h4">
-                                                            {Object.keys(test).includes(String(index)) ? test[index] : item.Subject && item.Subject.length>18 ? item.Subject.substr(0,18)+"..." : item.Subject.length<=18 ? item.Subject : ""}
+                                                            {Object.keys(test).includes(String(index)) ? test[index] : item.Subject && item.Subject.length > 18 ? item.Subject.substr(0, 18) + "..." : item.Subject.length <= 18 ? item.Subject : ""}
                                                         </Typography>
                                                     )}
                                                     <Typography variant="body1">
