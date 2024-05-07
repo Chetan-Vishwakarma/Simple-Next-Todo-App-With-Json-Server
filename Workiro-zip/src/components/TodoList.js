@@ -958,8 +958,8 @@ function TodoList() {
 
 
                                 <MenuItem value="Folder" style={{ display: "none" }}>
-                                    <BootstrapTooltip title="Folders" arrow
-                                        placement="bottom-start"
+                                    <BootstrapTooltip title="Filter by Folder" arrow
+                                        placement="top"
                                         slotProps={{
                                             popper: {
                                                 modifiers: [
@@ -1006,8 +1006,8 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value="Source" style={{ display: "none" }}>
-                                    <BootstrapTooltip title="Folders" arrow
-                                        placement="bottom-start"
+                                    <BootstrapTooltip title="Filter by Task Type" arrow
+                                        placement="top"
                                         slotProps={{
                                             popper: {
                                                 modifiers: [
@@ -1060,8 +1060,8 @@ function TodoList() {
                                 className='custom-dropdown'
                             >
                                 <MenuItem value={"Status"} style={{ display: "none" }}>
-                                    <BootstrapTooltip title="Folders" arrow
-                                        placement="bottom-start"
+                                    <BootstrapTooltip title="Filter by Task Status" arrow
+                                        placement="top"
                                         slotProps={{
                                             popper: {
                                                 modifiers: [
