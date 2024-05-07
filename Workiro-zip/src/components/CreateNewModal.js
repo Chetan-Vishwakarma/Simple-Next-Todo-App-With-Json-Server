@@ -1692,7 +1692,7 @@ const obj = {
     comment: `${ownerName} has initiated a task-${textSubject}. Task ID: ${taskID}.`
 };
 
-if (addUser && addUser.length > 0) {
+if (addUser && addUser.length > 0 && filteredData.length > 0) {
     // If addUser is present and has elements, add the filtered data as assignees
     obj.comment += ` ${filteredData.length > 0 ? filteredData.map(item => item.ForwardTo).join(', ') : ''} have been added as assignees.`;
 }
