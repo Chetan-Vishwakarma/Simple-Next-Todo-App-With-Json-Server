@@ -815,13 +815,21 @@ function TodoList() {
         return userFilter && userFilter.length > 0 ? userFilter : "";
     }
 
-    const [anchorElMore, setAnchorElMore] = React.useState(null);
-    const openMore = Boolean(anchorElMore);
+    // const [anchorElMore, setAnchorElMore] = React.useState(null);
+    // const openMore = Boolean(anchorElMore);
+
+    const [anchorElMore, setAnchorElMore] = useState(null);
+const [openMore, setOpenMore] = useState(false);
+
     const handleClickMore = (event) => {
+        console.log("heloo",event)
         setAnchorElMore(event.currentTarget);
+        setOpenMore(true);
     };
+    
     const handleCloseMore = () => {
-        setAnchorEl(null);
+        setAnchorElMore(null);
+        setOpenMore(false);
     };
 
 
@@ -1366,7 +1374,6 @@ function TodoList() {
                                                             </Button>
                                                             <Menu
                                                                 id="demo-positioned-menu"
-                                                                aria-labelledby="demo-positioned-button"
                                                                 anchorEl={anchorElMore}
                                                                 open={openMore}
                                                                 onClose={handleCloseMore}
