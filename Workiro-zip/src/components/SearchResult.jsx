@@ -222,7 +222,44 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         }
     }
 
+    const [userList, setUserList] = React.useState([]);
+    
+    function Json_GetForwardUserList() {
+        try {
+
+            let o = {};
+            o.agrno = agrno;
+            o.Email = Email;
+            o.Password = password;
+            
+            ClsSms.GetInternalUserList(o,function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        let {Status,Message}=js;
+                       // let dt = js.Table;
+                       // console.log("Json_GetForwardUserList1112222", js)
+                        if (Status==="Success") {
+                            let tbl = Message.Table;
+                            //console.log("Json_GetForwardUserList1112222", tbl)
+                            let result = tbl.filter((el) => {
+                                return el.CGroup !== "Yes";
+                            });
+
+                            setUserList(result);
+
+                        }
+                    }
+
+                }
+            });
+        } catch (error) {
+            console.log("error", error);
+        }
+    }
+
     useEffect(() => {
+        Json_GetForwardUserList();
         let fltTasks = myTotalTasks.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
         setFilteredTasks(fltTasks);
         let fltDocuments = myDocuments.filter(itm => {
@@ -259,6 +296,42 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
         return formattedDate === "Invalid Date" ? " " : formattedDate;
     }
+
+
+
+    const FiterAssinee = (ownerid) => {
+
+        let res = userList.filter((e) => e.UserId === ownerid);
+        // console.log("userList212121",res);
+        if (res.length > 0) {
+            return res[0].UserName;
+        }
+
+    }
+    const FilterAgs = (item) => {
+        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);       
+
+        const userId = parseInt(localStorage.getItem("UserId"));
+
+        const filteredIds = arr.filter((k) => k !== item.OwnerID);       
+       
+        console.log("Helloo check11",arr)
+       // const user = filteredIds.find((u) => u === userId);       
+       
+     
+        //const userToFind = user ? user : filteredIds[0];     
+
+       // const res = userToFind ? userList.find((e) => e.ID === userToFind) : null;  
+       let userFilter;
+       if(filteredIds.length>0){
+        userFilter = userList.filter((e)=>e.UserId===filteredIds[0])
+        // console.log("Helloo check11",userFilter)
+        }
+
+
+        return userFilter && userFilter.length>0 ? userFilter[0].UserName : "";
+    }
+
     return (
         <>
             <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
@@ -409,6 +482,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                 <h3 className='font-20 mt-1 mb-3'><SearchIcon /> We found the following Tasks matching <span className='text-blue bold'>"{target}"</span></h3>
                 <Grid className='mt-0' container spacing={2} >
                     {filteredTasks.length > 0 ? filteredTasks.slice(0, 9).map(item => {
+                        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
                         return <Grid className='pt-0' item xs={12} lg={4} md={4} sm={12}>
                             <Box className='todo-list-box white-box relative w-100'>
 
@@ -433,10 +507,15 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                 <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> {item.Source}</Typography>
                                 <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
                                 <Box className='d-flex align-items-center justify-content-between'>
-                                    <Typography variant='subtitle1' ><pan className='text-gray'>
-                                        {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
+                                    <Typography variant='subtitle1'><pan className='text-gray'>
+                                        {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
                                         {/* <a href='#'>Patrick</a>, */}
-                                        <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +2</a></Typography>
+                                        <a href='javascript:void(0)'>{FilterAgs(item)}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
+                                            + {arr.length - 2}
+                                        </>)}</a></Typography>
+
+                                  
+
                                     <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                 </Box>
                                 <Box className='d-flex align-items-center justify-content-between'>
@@ -452,7 +531,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                     </Typography>
                                 </Box>
                                 <Box className='mt-2'>
-                                    <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)}>Mark Complete</Button>
+                                    <Button variant="text" disabled={item.mstatus === "Completed"} className='btn-blue-2 me-2' onClick={() => MarkComplete(item)}>Mark Complete</Button>
                                     <DateRangePicker initialSettings={{
                                         singleDatePicker: true,
                                         showDropdowns: true,
