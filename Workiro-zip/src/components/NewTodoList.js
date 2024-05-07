@@ -337,6 +337,32 @@ function NewTodoList() {
     }, [isApi])
 
 
+   
+    const [anchorElMore, setAnchorElMore] = useState({}); // State to manage anchor element for each document
+    const [openMore, setOpenMore] = useState({}); // State to manage menu visibility for each document
+
+    const handleClickMore = (event, documentIndex) => {
+        setAnchorElMore((prevState) => ({
+            ...prevState,
+            [documentIndex]: event.currentTarget
+        }));
+        setOpenMore((prevState) => ({
+            ...prevState,
+            [documentIndex]: true
+        }));
+    };
+
+    const handleCloseMore = (documentIndex) => {
+        setAnchorElMore((prevState) => ({
+            ...prevState,
+            [documentIndex]: null
+        }));
+        setOpenMore((prevState) => ({
+            ...prevState,
+            [documentIndex]: false
+        }));
+    };
+
     const FiterAssinee = (ownerid) => {
 
         let res = userList.filter((e) => e.UserId === ownerid);
@@ -346,28 +372,33 @@ function NewTodoList() {
         }
 
     }
+    
     const FilterAgs = (item) => {
-        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);       
+        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
 
-        const userId = parseInt(localStorage.getItem("UserId"));
+        // const userId = parseInt(localStorage.getItem("UserId"));
 
-        const filteredIds = arr.filter((k) => k !== item.OwnerID);       
-       
-        console.log("Helloo check11",arr)
-       // const user = filteredIds.find((u) => u === userId);       
-       
-     
-        //const userToFind = user ? user : filteredIds[0];     
+        const filteredIds = arr.filter((k) => k !== item.OwnerID);
 
-       // const res = userToFind ? userList.find((e) => e.ID === userToFind) : null;  
-       let userFilter;
-       if(filteredIds.length>0){
-        userFilter = userList.filter((e)=>e.UserId===filteredIds[0])
-        // console.log("Helloo check11",userFilter)
+        let userFilter = []; // Initialize an empty array to store filtered users
+
+        if (filteredIds.length > 0) {
+            userFilter = userList.filter((user) => filteredIds.includes(user.UserId));
+            console.log(userFilter, "hello pring data");
+            // Filter userList to include only those users whose UserId is present in filteredIds
         }
 
 
-        return userFilter && userFilter.length>0 ? userFilter[0].UserName : "";
+        // const user = filteredIds.find((u) => u === userId);       
+
+
+        //const userToFind = user ? user : filteredIds[0];     
+
+        // const res = userToFind ? userList.find((e) => e.ID === userToFind) : null;  
+
+
+
+        return userFilter && userFilter.length > 0 ? userFilter : "";
     }
 
 
@@ -811,7 +842,7 @@ function NewTodoList() {
 
                     {allTask.length > 0 ? allTask.slice(0, loadMore).map((item, index) => {
                         const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
-
+                        let userName = FilterAgs(item);
                         const priority = item.Priority === 1 ? "High" :
                             item.Priority === 2 ? "Normal" :
                                 item.Priority === 3 ? "Low" : "Normal";
@@ -854,11 +885,43 @@ function NewTodoList() {
                                     <Box className='d-flex align-items-center justify-content-between'>
 
                                     <Typography variant='subtitle1'><pan className='text-gray'>
+
                                                             {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
                                                             {/* <a href='#'>Patrick</a>, */}
-                                                            <a href='javascript:void(0)'>{FilterAgs(item)}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
-                                                                + {arr.length - 2}
-                                                            </>)}</a></Typography>
+                                                            <span>{userName && userName.length > 0 ? userName[0].UserName : ""}</span> 
+                                                            
+
+                                                            {arr && arr.length > 2 ? <Button
+                                                                id={`demo-positioned-button-${index}`}
+                                                                aria-controls={openMore[index] ? `demo-positioned-menu-${index}` : undefined}
+                                                                aria-haspopup="true"
+                                                                aria-expanded={openMore[index] ? 'true' : undefined}
+                                                                onClick={(event) => handleClickMore(event, index)}
+                                                            >
+                                                                + {arr && arr.length > 0 ? arr.length - 2 : ""}
+                                                            </Button> : ""}
+
+                                                            <Menu
+                                                                id={`demo-positioned-menu-${index}`}
+                                                                anchorEl={anchorElMore[index]}
+                                                                open={openMore[index]}
+                                                                onClose={() => handleCloseMore(index)}
+                                                                anchorOrigin={{
+                                                                    vertical: 'top',
+                                                                    horizontal: 'left',
+                                                                }}
+                                                                transformOrigin={{
+                                                                    vertical: 'top',
+                                                                    horizontal: 'left',
+                                                                }}
+                                                            >
+                                                                {userName && userName.length > 0 ? userName.slice(1).map((user, idx) => (
+                                                                    <MenuItem key={idx} onClick={() => handleCloseMore(index)}>{user.UserName}</MenuItem>
+                                                                )) : ""}
+                                                            </Menu>
+                                                            
+                                                            
+                                                            </Typography>
 {/* 
                                         <Typography variant='subtitle1' ><pan className='text-gray'>
                                             <a href='#'>{item.UserName}</a> <ArrowForwardIosIcon className='font-14' /> </pan>
