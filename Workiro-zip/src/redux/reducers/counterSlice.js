@@ -16,6 +16,7 @@ const counterSlices = createSlice({
         defaultUserSonam:null,
         mainCountrySonam:"",
         defaultDateSonam: null,
+        isAdvanceDocSearchRedux: false
     },
     reducers: {
         //sonam state start
@@ -40,6 +41,9 @@ const counterSlices = createSlice({
           },
           setOpenDocumentModalByRedux: (state, action) => {
             state.openDocumentModalByRedux = action.payload;
+          },
+          setIsAdvanceDocSearchRedux: (state, action) => {
+            state.isAdvanceDocSearchRedux = action.payload;
           }, // chetan state end
           updateReduxDataSonam: (state, action) => {
             state.reduxData = action.payload;
@@ -69,7 +73,7 @@ const counterSlices = createSlice({
     }
 });
 
-export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux,updateReduxDataSonam,setSetDefaultRoleSonam,clearDefaultRoleSonam,setSetDefaultTitleSonam,setDefaultUserSonam,setMainCountrySonam,setDefaultDateSonam} = counterSlices.actions;
+export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux,updateReduxDataSonam,setSetDefaultRoleSonam,clearDefaultRoleSonam,setSetDefaultTitleSonam,setDefaultUserSonam,setMainCountrySonam,setDefaultDateSonam, setIsAdvanceDocSearchRedux} = counterSlices.actions;
 
 // export const getUsers = () => async(dispatch) => {
 //     const response = await axios.get("https://jsonplaceholder.typicode.com/users");

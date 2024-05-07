@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer, useMemo } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -58,6 +58,7 @@ import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import ToggleButton from '@mui/material/ToggleButton';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import AdvanceSearch from './AdvanceSearch';
+import { useDispatch, useSelector } from "react-redux"
 
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -143,7 +144,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export default function SidebarNav() {
 
   const location = useLocation();
-
+  const isAdvanceDocSearchRedux = useSelector((state)=>state.counter.isAdvanceDocSearchRedux);
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -417,6 +418,15 @@ export default function SidebarNav() {
     // setTabs([...tabs,{ tabLink: `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${folderId}`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
 
   }, [globalSearch, window.location.pathname]);
+
+  useMemo(()=>{
+    if(isAdvanceDocSearchRedux){
+      setTabs([...tabs, { tabLink: `/dashboard/SearchResult/Doc`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
+      tabs.map(itm => {
+        itm.active = false;
+      });
+    }
+  },[isAdvanceDocSearchRedux]);
 
   return (
     <>
@@ -876,7 +886,7 @@ export default function SidebarNav() {
             {/* <Route path="/AddContacts" element={<AddContacts />} /> */}
             <Route path="/SmartViews" element={<></>} />
             <Route path="/SearchResult" element={<SearchResult myTotalTasks={myTotalTasks} myDocuments={myDocuments} />} />
-            <Route path="/DocumentList" element={<DocumentList clientId="" />} />
+            <Route path="/SearchResult/Doc" element={<DocumentList clientId="" />} />
             <Route path="/LogOut" element={<Logout />} />
           </Routes>
         </Box>

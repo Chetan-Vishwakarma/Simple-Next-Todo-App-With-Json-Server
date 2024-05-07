@@ -14,6 +14,8 @@ import TuneIcon from '@mui/icons-material/Tune';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import BootstrapTooltip from '../utils/BootstrapTooltip';
 import { toast } from 'react-toastify';
+import { useDispatch } from "react-redux"
+import { setIsAdvanceDocSearchRedux } from '../redux/reducers/counterSlice';
 
 let agrno = localStorage.getItem("agrno");
 let password = localStorage.getItem("Password");
@@ -22,6 +24,7 @@ let folderId = localStorage.getItem("FolderId");
 
 function AdvanceSearch() {
     const location = useLocation();
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const { globalSearchDocs } = location.state ? location.state : { globalSearchDocs: [], strGlobal: "" };
     const baseUrlSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -217,7 +220,8 @@ function AdvanceSearch() {
                             });
                             setSelectedClient({});
                             handleClose();
-                            navigate("/dashboard/DocumentList", { state: { globalSearchDocs: json.Table6, strGlobal: documentData.Description } });
+                            dispatch(setIsAdvanceDocSearchRedux(true));
+                            navigate("/dashboard/SearchResult/Doc", { state: { globalSearchDocs: json.Table6, strGlobal: documentData.Description } });
                         } else {
                             toast.error("Documents not found for this criteria");
                             handleClose();
