@@ -8,7 +8,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import Activity from '../../client/utils/Activity';
-
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import LockIcon from '@mui/icons-material/Lock';
 
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
@@ -42,6 +42,8 @@ import DownloadIcon from '@mui/icons-material/Download';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import CreateIcon from '@mui/icons-material/Create';
 import ShareIcon from '@mui/icons-material/Share';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -855,14 +857,15 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                         {/* <FormControlLabel control={<Checkbox />} className="p-0 m-0 ms-2 ps-1" size="small"/> */}
                                         <Checkbox {...label} defaultChecked size="small" />
 
-                                        <Button className='btn-blue-2 me-2 mb-1 pointer' for='file-upload' startIcon={<AttachFileIcon />}>
+                                        <Button className='btn-blue-2 me-2 mb-1 pointer' for='file-upload' startIcon={<CloudUploadIcon />}>
                                             <input type='file' id='file-upload' multiple onChange={handleFileSelect} className='file-input' />
                                             <label for='file-upload' className='pointer '>Upload Your File</label>
                                         </Button>
 
-                                        <Button className='btn-red me-2 mb-1 ps-1' onClick={DeleteDocumentAttachment} startIcon={<AttachFileIcon />}>Delete</Button>
+                                        <Button className='btn-red me-2 mb-1 ps-1' onClick={DeleteDocumentAttachment} startIcon={<DeleteIcon />}>Delete</Button>
 
-                                        <Button className='btn-blue-2 me-2 mb-1 ps-1' onClick={DowloadSingleFileOnClick} startIcon={<AttachFileIcon />}>Download</Button>
+                                        <Button className='btn-blue-2 me-2 mb-1 ps-1' onClick={DowloadSingleFileOnClick} startIcon={<DownloadIcon />}>Download</Button>
+                                        
 
                                     </Box>
 

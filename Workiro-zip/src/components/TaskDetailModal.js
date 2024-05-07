@@ -3005,9 +3005,6 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                 }
                                             </Menu>
                                         </>)}
-
-
-
                                     </Stack>
 
                                     <Box className='position-relative'>
@@ -3021,7 +3018,6 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                     className="file-input"
                                                 />
                                                 <label for={`file-upload ${selectedTask.ID}`} className="pointer"><AttachFileIcon /></label> */}
-
 
                                                 <div>
                                                     <Button
@@ -3084,8 +3080,6 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                         <MenuItem onClick={handleDocumentClickOpen}>Select From DMS</MenuItem>
                                                     </Menu> */}
                                                 </div>
-
-
                                             </Box>
                                         </>)}
 
@@ -3131,7 +3125,6 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                 </DialogContent>
             </Dialog>
             {/* end */}
-
 
             {/* // document list modal */}
 

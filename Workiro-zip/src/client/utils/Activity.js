@@ -42,6 +42,8 @@ import Activitygrid from './Activitygrid';
 import { exportDataGrid } from "devextreme/excel_exporter";
 import saveAs from "file-saver";
 import moment from 'moment';
+import ClearIcon from '@mui/icons-material/Clear';
+
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
 ))(({ theme }) => ({
@@ -810,7 +812,7 @@ const handleRemoveOption = (optionToRemove) => {
                                                         <MenuItem value="" style={{ display: "none" }}>
                                                             <SwapVertIcon className='pe-1' /> Sort By
                                                         </MenuItem>
-                                                        <MenuItem className='ps-1' value="None"><WarningIcon className='ps-1' />  Clear Sortby</MenuItem>
+                                                        <MenuItem className='ps-1 text-danger sembold' value="None"><ClearIcon className='ps-1' />  Clear Sortby</MenuItem>
                                                         <MenuItem value={"Date"} className='ps-1' >
                                                             <CalendarMonthIcon className='pe-1' />
                                                             By Date</MenuItem>
@@ -892,7 +894,8 @@ const handleRemoveOption = (optionToRemove) => {
                                               
                                                 className='custom-dropdown'
                                             >
-                                               <MenuItem value="Section" onClick={() => handleMenuItemClick("Clear Filter")}>Clear Filter</MenuItem>
+                                                
+                                               <MenuItem value="Section" onClick={() => handleMenuItemClick("Clear Filter")} className='text-danger sembold'><ClearIcon className='me-1'/> Clear Filter</MenuItem>
                                                 {UniqueUser && UniqueUser.length > 0 && UniqueUser.map((itm) => {
                                                     return <MenuItem key={itm.ForwardedBy} value={itm.ForwardedBy} onClick={() => handleMenuItemClick(itm.ForwardedBy)}>{itm.ForwardedBy}</MenuItem>
                                                 })}

@@ -472,6 +472,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                     </Box>
                                 </label>
                             </Box>
+                            
                         </Grid>
                     }) : <DataNotFound />}</Grid>
 

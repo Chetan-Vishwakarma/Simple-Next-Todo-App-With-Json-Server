@@ -757,13 +757,14 @@ export default function DocumentList({ clientId }) {
                                             displayEmpty
                                             inputProps={{ 'aria-label': 'Without label' }}
                                             className='custom-dropdown'
+                                            MenuProps={{ PaperProps: { sx: { maxHeight: '300px !important' } } }}
                                         >
 
                                             <MenuItem value="" style={{ display: "none" }}>
 
                                                 Sections
                                             </MenuItem>
-                                            <MenuItem value="Section" >00. Clear Filter</MenuItem>
+                                            <MenuItem value="Section" className='text-danger sembold'><ClearIcon className='me-1'/>  Clear Filter</MenuItem>
                                             {sections.length > 0 && sections.map((itm) => {
                                                 return <MenuItem value={itm.Sec}>{itm.Sec}</MenuItem>
                                             })}
@@ -804,7 +805,7 @@ export default function DocumentList({ clientId }) {
                                         >
                                             <MenuItem value="" style={{ display: "none" }}>Folders</MenuItem>
 
-                                            <MenuItem value="Folder" className='text-danger ps-1'>
+                                            <MenuItem value="Folder" className='text-danger sembold ps-1'>
                                                 <ClearIcon className='font-18 me-1' />
                                                 Clear Filters</MenuItem>
 
@@ -940,7 +941,8 @@ export default function DocumentList({ clientId }) {
                                             <MenuItem value="" style={{ display: "none" }}>
                                                 <SwapVertIcon className='pe-1' /> Sort By
                                             </MenuItem>
-                                            <MenuItem className='ps-1' value="None" onClick={() => setAdvFilteredResult([])}><WarningIcon className='ps-1' />  Clear Sortby</MenuItem>
+                                            
+                                            <MenuItem className='ps-1 text-danger sembold' value="None" onClick={() => setAdvFilteredResult([])}><ClearIcon className='ps-1' />  Clear Sortby</MenuItem>
                                             <MenuItem value={"Date"} className='ps-1'>
                                                 <CalendarMonthIcon className='pe-1' />
                                                 By Date</MenuItem>

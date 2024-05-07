@@ -345,7 +345,7 @@ function AdvanceSearch() {
                                         {/* </BootstrapTooltip> */}
 
                                     </MenuItem>
-                                    <MenuItem value="Section" className='text-danger sembold'>Clear Filter</MenuItem>
+                                    <MenuItem value="Section" className='text-danger sembold'><ClearIcon className='me-1'/> Clear Filter</MenuItem>
                                     {sections.length > 0 && sections.map((itm) => {
                                         return <MenuItem value={itm.SecID}>
                                             {itm.Sec}</MenuItem>
@@ -371,7 +371,7 @@ function AdvanceSearch() {
                                 >
                                     <MenuItem value={""} style={{ display: "none" }}>
                                         Client</MenuItem>
-                                    <MenuItem value="Folder" className='text-danger ps-1'>
+                                    <MenuItem value="Folder" className='text-danger sembold ps-1'>
                                         <ClearIcon className='font-18 me-1' />
                                         Clear Filters</MenuItem>
                                     {folders.length > 0 && folders.map((itm) => {
@@ -508,14 +508,14 @@ function AdvanceSearch() {
                                     <div className='pointer d-flex align-items-center custom-datepicker-bordered' id="reportrange">
                                         <i className="fa fa-calendar"></i>
                                         <CalendarMonthIcon className='me-2 text-red' />
-                                        <span className='font-14'>{isDateShow ? label : "Select Date"}</span> <i className="fa fa-caret-down"></i>
+                                        <span className='font-12'>{isDateShow ? label : "Select Date"}</span> <i className="fa fa-caret-down"></i>
                                     </div>
                                 </DateRangePicker>
                             </Box>
 
                             <hr className='mt-1' />
 
-                            <Button variant="contained" size="small" onClick={() => {
+                            <Button variant="contained" className='btn-blue-2' onClick={() => {
                                 let formated_start_date = format_YYYY_MM_DD(start._d);
                                 let formated_end_date = format_YYYY_MM_DD(end._d);
                                 let obj = { ...documentData, ItemFDate: isDateShow ? formated_start_date : "01/01/1900", ItemTDate: isDateShow ? formated_end_date : "01/01/1900" };
