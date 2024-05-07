@@ -295,16 +295,21 @@ function NewTodoList() {
         try {
 
             let o = {};
-            o.ProjectId = localStorage.getItem("FolderId");
-            o.SectionId = "-1";
-            Cls.Json_GetForwardUserList(o, function (sts, data) {
+            o.agrno = agrno;
+            o.Email = Email;
+            o.Password = password;
+            
+            ClsSms.GetInternalUserList(o,function (sts, data) {
                 if (sts) {
                     if (data) {
                         let js = JSON.parse(data);
-                        let dt = js.Table;
-                        console.log("Json_GetForwardUserList111", dt)
-                        if (dt.length > 0) {
-                            let result = dt.filter((el) => {
+                        let {Status,Message}=js;
+                       // let dt = js.Table;
+                       // console.log("Json_GetForwardUserList1112222", js)
+                        if (Status==="Success") {
+                            let tbl = Message.Table;
+                            //console.log("Json_GetForwardUserList1112222", tbl)
+                            let result = tbl.filter((el) => {
                                 return el.CGroup !== "Yes";
                             });
 
@@ -334,30 +339,35 @@ function NewTodoList() {
 
     const FiterAssinee = (ownerid) => {
 
-        let res = userList.filter((e) => e.ID === ownerid);
+        let res = userList.filter((e) => e.UserId === ownerid);
         // console.log("userList212121",res);
         if (res.length > 0) {
-            return res[0].ForwardTo;
+            return res[0].UserName;
         }
 
     }
     const FilterAgs = (item) => {
-        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
+        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);       
 
         const userId = parseInt(localStorage.getItem("UserId"));
 
-        const filteredIds = arr.filter((k) => k !== item.OwnerID);
+        const filteredIds = arr.filter((k) => k !== item.OwnerID);       
+       
+        console.log("Helloo check11",arr)
+       // const user = filteredIds.find((u) => u === userId);       
+       
+     
+        //const userToFind = user ? user : filteredIds[0];     
 
-        const user = filteredIds.find((u) => u === userId);
+       // const res = userToFind ? userList.find((e) => e.ID === userToFind) : null;  
+       let userFilter;
+       if(filteredIds.length>0){
+        userFilter = userList.filter((e)=>e.UserId===filteredIds[0])
+        // console.log("Helloo check11",userFilter)
+        }
 
 
-        const userToFind = user ? user : filteredIds[0];
-
-
-
-        const res = userToFind ? userList.find((e) => e.ID === userToFind) : null;
-
-        return res ? res.ForwardTo : "";
+        return userFilter && userFilter.length>0 ? userFilter[0].UserName : "";
     }
 
 
@@ -844,7 +854,7 @@ function NewTodoList() {
                                     <Box className='d-flex align-items-center justify-content-between'>
 
                                     <Typography variant='subtitle1'><pan className='text-gray'>
-                                                            {FiterAssinee(item.OwnerID)} {arr.length > 2 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
+                                                            {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
                                                             {/* <a href='#'>Patrick</a>, */}
                                                             <a href='javascript:void(0)'>{FilterAgs(item)}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
                                                                 + {arr.length - 2}
@@ -896,7 +906,7 @@ function NewTodoList() {
                                     </Box>
 
                                     <Box className='mt-2'>
-                                        <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)}>Mark Complete</Button>
+                                        <Button variant="text" disabled={item.mstatus === "Completed"} className='btn-blue-2 me-2' onClick={() => MarkComplete(item)}>Mark Complete</Button>
                                         <DateRangePicker initialSettings={{
                                             singleDatePicker: true,
                                             showDropdowns: true,
@@ -986,7 +996,7 @@ function NewTodoList() {
 
                                     <Box className='d-flex align-items-center justify-content-between'>
                                     <Typography variant='subtitle1'><pan className='text-gray'>
-                                                            {FiterAssinee(item.OwnerID)} {arr.length > 2 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
+                                                            {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
                                                             {/* <a href='#'>Patrick</a>, */}
                                                             <a href='javascript:void(0)'>{FilterAgs(item)}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
                                                                 + {arr.length - 2}

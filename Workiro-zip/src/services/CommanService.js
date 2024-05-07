@@ -860,6 +860,17 @@ console.log("formattedDate",formattedDate)
         })
     }
 
+    GetInternalUserList(o,callBack) {
+        super.CreateNewServiceParamObject("GetInternalUserList",o,false);
+        super.CallNewService("GetInternalUserList", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
     Json_GetForwardUserList(obj, callBack) {
         super.CreateNewServiceParamObject("Json_GetForwardUserList", obj, true);
         super.CallNewService("Json_GetForwardUserList", function (status, Data) {

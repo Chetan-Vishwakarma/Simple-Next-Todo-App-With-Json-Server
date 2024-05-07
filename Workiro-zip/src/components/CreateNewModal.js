@@ -3067,8 +3067,6 @@ toast.error("Please Select a Due Date");
 
                                                     <Box className="box-user-list-dropdown">
 
-
-
                                                         {addUser
                                                             ? addUser.map((item, ind) => {
                                                                 if (item.ID === ownerID) {
@@ -3163,7 +3161,6 @@ toast.error("Please Select a Due Date");
                                                         person_add
                                                     </span>
                                                 </Box>
-
                                             </Button>
 
                                             <Menu
