@@ -1700,7 +1700,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
 
     }
 
-
+    const call_Json_GetAudit = () => {
+        Json_GetAudit(docForDetails);
+    }
     const rows = [
         createData('Folder', 'Client'),
         createData('Client', '212121Test'),
@@ -3606,7 +3608,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                 </AccordionSummary>
                                 <AccordionDetails>
 
-                               {<Activity getAudit={getAudit} selectedDocument={docForDetails} ></Activity>} 
+                               {<Activity getAudit={getAudit} selectedDocument={docForDetails} call_Json_GetAudit={call_Json_GetAudit}></Activity>} 
 
 
                                     {/* {Array(5).fill("").map(() => {
