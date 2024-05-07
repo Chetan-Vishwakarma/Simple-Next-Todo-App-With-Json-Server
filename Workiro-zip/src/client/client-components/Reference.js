@@ -249,7 +249,7 @@ function Reference({setOpen5,setReferance,setAddContact}) {
         CDate: todayDate(),
         BussId: userDetail.BussId ? userDetail.BussId : -1,
         SourceId: userDetail.SourceId ? userDetail.SourceId : -1,
-        StatusId: userDetail.StatusId ? userDetail.StatusId : -1,
+        StatusId: userDetail.StatusId ? userDetail.StatusId : parseInt(localStorage.getItem("defaultstatusID")),
         Description: "",
         OrgPassword: "",
         ManagerId: userDetail.UserId ? userDetail.UserId : parseInt(intUserid),
