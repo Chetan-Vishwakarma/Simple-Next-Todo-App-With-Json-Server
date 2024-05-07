@@ -819,7 +819,7 @@ function TodoList() {
     // const openMore = Boolean(anchorElMore);
 
     const [anchorElMore, setAnchorElMore] = useState(null);
-const [openMore, setOpenMore] = useState(false);
+const [openMore, setOpenMore] = useState(false);    // If any error occur then replace this with  {  const openMore = Boolean(anchorElMore);  }
 
     const handleClickMore = (event) => {
         console.log("heloo",event)
