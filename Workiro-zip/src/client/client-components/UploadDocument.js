@@ -301,9 +301,9 @@ function UploadDocument({
         Json_GetClientsByFolder(localStorage.getItem("ProjectId"))
         Json_GetFolders();
         Json_GetFolderData(localStorage.getItem("ProjectId"));
-        setDocumentDate(moment(cls.GetCurrentDayDate()).format("DD/MM/YYYY")); // Update the selected date state with the new date value
-        setReceivedDate(moment(cls.GetCurrentDayDate()).format("DD/MM/YYYY")); // Update the selected date state with the new date value
-        // console.log("GetCurrentDayDate", dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD"));
+        setDocumentDate(moment(new Date()).format("DD/MM/YYYY")); // Update the selected date state with the new date value
+        setReceivedDate(moment(new Date()).format("DD/MM/YYYY")); // Update the selected date state with the new date value
+         console.log("GetCurrentDayDate222", moment(new Date()).format("DD/MM/YYYY"));
         // console.log("GetNextDayDate", cls.GetNextDayDate());
         setOpenModal(false);
         setshowModalCreateTask(false)
@@ -897,7 +897,7 @@ return formattedDate;
                                         <LocalizationProvider dateAdapter={AdapterDayjs} >
                                             <DatePicker className=" w-100"
                                                 dateFormat="DD/MM/YYYY"
-                                                value={moment(documentDate).format("DD/MM/YYYY")}
+                                                value={documentDate}
                                                 defaultValue={moment()}
                                                 onChange={(e)=>handleDateChangeDocument(e)} // Handle date changes
                                                 timeFormat={false}
@@ -916,7 +916,7 @@ return formattedDate;
                                         <LocalizationProvider dateAdapter={AdapterDayjs} >
                                             <DatePicker className=" w-100"
                                                 dateFormat="DD/MM/YYYY"
-                                                value={moment(receivedDate).format("DD/MM/YYYY")}
+                                                value={receivedDate}
                                                 onChange={(e)=>handleDateChangeRecieved(e)} // Handle date changes
                                                 timeFormat={false}
                                                 closeOnSelect={true}

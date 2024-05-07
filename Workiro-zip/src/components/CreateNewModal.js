@@ -3067,8 +3067,6 @@ toast.error("Please Select a Due Date");
 
                                                     <Box className="box-user-list-dropdown">
 
-
-
                                                         {addUser
                                                             ? addUser.map((item, ind) => {
                                                                 if (item.ID === ownerID) {
@@ -3163,7 +3161,6 @@ toast.error("Please Select a Due Date");
                                                         person_add
                                                     </span>
                                                 </Box>
-
                                             </Button>
 
                                             <Menu
@@ -3440,7 +3437,7 @@ toast.error("Please Select a Due Date");
                                                                     onClose={handleCloseDoc}
                                                                     MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
                                                                 >
-                                                                    <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Delete</MenuItem>
+                                                                    <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Remove</MenuItem>
                                                                     {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
                                                                         <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
                                                                     )}

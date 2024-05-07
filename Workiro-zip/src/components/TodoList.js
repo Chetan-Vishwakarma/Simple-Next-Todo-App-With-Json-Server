@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, TextField, Autocomplete, ToggleButton, ToggleButtonGroup, FormControl, Select, InputLabel,Badge } from '@mui/material';
+import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, TextField, Autocomplete, ToggleButton, ToggleButtonGroup, FormControl, Select, InputLabel, Badge } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import user from "../images/user.jpg";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -54,7 +54,19 @@ import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { updateReduxDataSonam } from '../redux/reducers/counterSlice';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 
+
+const BootstrapTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+    [`& .${tooltipClasses.arrow}`]: {
+        // color: theme.palette.common.black,
+    },
+    [`& .${tooltipClasses.tooltip}`]: {
+        // backgroundColor: theme.palette.common.black,
+    },
+}));
 
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20' />, <PublishedWithChangesIcon color='primary' className='me-1 font-20' />, <HourglassBottomIcon color='primary' className='me-1 font-20' />, <CheckCircleOutlineIcon color='success' className='me-1 font-20' />];
 let attatmentdata = [];
@@ -338,16 +350,21 @@ function TodoList() {
         try {
 
             let o = {};
-            o.ProjectId = localStorage.getItem("FolderId");
-            o.SectionId = "-1";
-            ClsSms.Json_GetForwardUserList(o, function (sts, data) {
+            o.agrno = agrno;
+            o.Email = Email;
+            o.Password = password;
+
+            ClsSms.GetInternalUserList(o, function (sts, data) {
                 if (sts) {
                     if (data) {
                         let js = JSON.parse(data);
-                        let dt = js.Table;
-                        console.log("Json_GetForwardUserList111", dt)
-                        if (dt.length > 0) {
-                            let result = dt.filter((el) => {
+                        let { Status, Message } = js;
+                        // let dt = js.Table;
+                        // console.log("Json_GetForwardUserList1112222", js)
+                        if (Status === "Success") {
+                            let tbl = Message.Table;
+                            //console.log("Json_GetForwardUserList1112222", tbl)
+                            let result = tbl.filter((el) => {
                                 return el.CGroup !== "Yes";
                             });
 
@@ -445,7 +462,7 @@ function TodoList() {
         setTaskFilter(obj);
     }
     const handleCallback = (start, end) => {
-        if(start._i==="Clear"){
+        if (start._i === "Clear") {
             setIsDateShow(false);
             handleFilterDeletion("EndDateTime");
             return;
@@ -757,15 +774,65 @@ function TodoList() {
 
 
 
+
     const FiterAssinee = (ownerid) => {
 
-        let res = userList.filter((e) => e.ID === ownerid);
+        let res = userList.filter((e) => e.UserId === ownerid);
         // console.log("userList212121",res);
         if (res.length > 0) {
-            return res[0].ForwardTo;
+            return res[0].UserName;
         }
 
     }
+
+
+
+    const FilterAgs = (item) => {
+        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
+
+        // const userId = parseInt(localStorage.getItem("UserId"));
+
+        const filteredIds = arr.filter((k) => k !== item.OwnerID);
+
+        let userFilter = []; // Initialize an empty array to store filtered users
+
+        if (filteredIds.length > 0) {
+            userFilter = userList.filter((user) => filteredIds.includes(user.UserId));
+            console.log(userFilter, "hello pring data");
+            // Filter userList to include only those users whose UserId is present in filteredIds
+        }
+
+
+        // const user = filteredIds.find((u) => u === userId);       
+
+
+        //const userToFind = user ? user : filteredIds[0];     
+
+        // const res = userToFind ? userList.find((e) => e.ID === userToFind) : null;  
+
+
+
+        return userFilter && userFilter.length > 0 ? userFilter : "";
+    }
+
+    // const [anchorElMore, setAnchorElMore] = React.useState(null);
+    // const openMore = Boolean(anchorElMore);
+
+    const [anchorElMore, setAnchorElMore] = useState(null);
+const [openMore, setOpenMore] = useState(false);    // If any error occur then replace this with  {  const openMore = Boolean(anchorElMore);  }
+
+    const handleClickMore = (event) => {
+        console.log("heloo",event)
+        setAnchorElMore(event.currentTarget);
+        setOpenMore(true);
+    };
+    
+    const handleCloseMore = () => {
+        setAnchorElMore(null);
+        setOpenMore(false);
+    };
+
+
     const exportexcel = (data) => {
         let workbook = new Workbook();
         let worksheet = workbook.addWorksheet("SheetName");
@@ -821,24 +888,7 @@ function TodoList() {
         setAnchorElDown(null);
     }, []);
 
-    const FilterAgs = (item) => {
-        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
 
-        const userId = parseInt(localStorage.getItem("UserId"));
-
-        const filteredIds = arr.filter((k) => k !== item.OwnerID);
-
-        const user = filteredIds.find((u) => u === userId);
-
-
-        const userToFind = user ? user : filteredIds[0];
-
-
-
-        const res = userToFind ? userList.find((e) => e.ID === userToFind) : null;
-
-        return res ? res.ForwardTo : "";
-    }
 
     useEffect(() => {
         setAllTask([...reduxData]);
@@ -942,8 +992,30 @@ function TodoList() {
                                 }}
                                 className='custom-dropdown'
                             >
+
+
+
                                 <MenuItem value="Folder" style={{ display: "none" }}>
-                                    Folders</MenuItem>
+                                    <BootstrapTooltip title="Filter by Folder" arrow
+                                        placement="top"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >
+                                        Folders
+                                    </BootstrapTooltip>
+
+                                </MenuItem>
+
                                 <MenuItem value="" className='text-danger ps-1'><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
                                 {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'><FolderSharedIcon className="font-20 me-1" /> {fld.Folder}</MenuItem>)}
                             </Select>
@@ -971,7 +1043,24 @@ function TodoList() {
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value="Source" style={{ display: "none" }}>Type</MenuItem>
+                                <MenuItem value="Source" style={{ display: "none" }}>
+                                    <BootstrapTooltip title="Filter by Task Type" arrow
+                                        placement="top"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >Type
+                                    </BootstrapTooltip>
+                                </MenuItem>
                                 <MenuItem value="" className='ps-1 text-danger' >
                                     <ClearIcon className="font-20 me-2" />
                                     Clear Filter</MenuItem>
@@ -1008,7 +1097,26 @@ function TodoList() {
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value={"Status"} style={{ display: "none" }}> Status</MenuItem>
+                                <MenuItem value={"Status"} style={{ display: "none" }}>
+                                    <BootstrapTooltip title="Filter by Task Status" arrow
+                                        placement="top"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >
+                                        Status
+                                    </BootstrapTooltip>
+
+                                </MenuItem>
                                 <MenuItem className='text-danger ps-1' value={""} ><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
                                 {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm} className='ps-1'> {statusIconList[i]} {itm}</MenuItem>)}
                             </Select>
@@ -1056,11 +1164,26 @@ function TodoList() {
                             >
                                 <div className='pointer me-2 d-flex align-items-center' id="reportrange"
                                 >
-
-                                    <i className="fa fa-calendar"></i>
-                                    <CalendarMonthIcon className='me-2 text-red' />
-
-                                    <span>{isDateShow ? label : "Select Due Date"}</span> <i className="fa fa-caret-down"></i>
+                                    <BootstrapTooltip title="Task Start Date" arrow
+                                        placement="top"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >
+                                        <i className="fa fa-calendar"></i>
+                                        <CalendarMonthIcon className='me-2 text-red' />
+                                        <span>
+                                            {isDateShow ? label : "Select Due Date"}</span> <i className="fa fa-caret-down"></i>
+                                    </BootstrapTooltip>
                                 </div>
                             </DateRangePicker>
                         </Box>
@@ -1082,7 +1205,25 @@ function TodoList() {
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem className='ps-2' value="Sort By" style={{ display: "none" }}><SortIcon />Sort By</MenuItem>
+                                <MenuItem className='ps-2' value="Sort By" style={{ display: "none" }}><SortIcon />
+                                    <BootstrapTooltip title="Sort By" arrow
+                                        placement="top"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >
+                                        Sort By
+                                    </BootstrapTooltip>
+                                </MenuItem>
                                 <MenuItem className='ps-2 text-red' value="" onClick={() => setAllTask([...actualData])}><ClearIcon />Clear Sortby</MenuItem>
                                 <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
                                 <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
@@ -1109,7 +1250,25 @@ function TodoList() {
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem className='ps-2' value="Group By" style={{ display: "none" }}>Group By</MenuItem>
+                                <MenuItem className='ps-2' value="Group By" style={{ display: "none" }}>
+                                    <BootstrapTooltip title="Group By" arrow
+                                        placement="top"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >
+                                        Group By
+                                    </BootstrapTooltip>
+                                </MenuItem>
                                 <MenuItem className='ps-2' value=""><ClearIcon className='font-20 me-1' />Clear Groupby</MenuItem>
                                 <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
                                 <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
@@ -1121,23 +1280,35 @@ function TodoList() {
                         </FormControl>
 
                         <ToggleButtonGroup className='ms-3' size='small'>
-                            <ToggleButton value="left" aria-label="left aligned" onClick={handleMenuOpen}>
-                                <DownloadIcon />
-                            </ToggleButton>
+                            <BootstrapTooltip title="Download Tasks List" arrow
+                                placement="top"
+                                slotProps={{
+                                    popper: {
+                                        modifiers: [
+                                            {
+                                                name: 'offset',
+                                                options: {
+                                                    offset: [0, -10],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                }}
+                            >
+                                <ToggleButton value="left" aria-label="left aligned" onClick={handleMenuOpen}>
+                                    <DownloadIcon />
+                                </ToggleButton>
+                            </BootstrapTooltip>
                             <Menu
                                 anchorEl={anchorElDown}
                                 open={Boolean(anchorElDown)}
                                 onClose={handleMenuClose}
                             >
                                 <MenuItem onClick={ExportData}><InsertDriveFileIcon />  Export to Excel</MenuItem>
-
-
                             </Menu>
                         </ToggleButtonGroup>
-
                     </Box>
                 </Box>
-
 
                 <Box className='main-filter-box'>
                     {/* <Box className='row'> */}
@@ -1153,6 +1324,7 @@ function TodoList() {
 
                                         {dataInGroup[key].length > 0 && dataInGroup[key].map((item, index) => {
                                             const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
+                                            let userName = FilterAgs(item);
                                             return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                                 <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
@@ -1183,11 +1355,48 @@ function TodoList() {
 
                                                     <Box className='d-flex align-items-center justify-content-between'>
                                                         <Typography variant='subtitle1'><pan className='text-gray'>
-                                                            {FiterAssinee(item.OwnerID)} {arr.length > 2 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
+                                                            {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
                                                             {/* <a href='#'>Patrick</a>, */}
-                                                            <a href='javascript:void(0)'>{FilterAgs(item)}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
+                                                            <a href='javascript:void(0)'>{userName && userName.length > 0 ? userName[0].UserName : ""}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
+
+
+
+                                                            </>)}</a>
+
+                                                            <Button
+                                                                id="demo-positioned-button"
+                                                                aria-controls={openMore ? 'demo-positioned-menu' : undefined}
+                                                                aria-haspopup="true"
+                                                                aria-expanded={openMore ? 'true' : undefined}
+                                                                onClick={handleClickMore}
+                                                            >
                                                                 + {arr.length - 2}
-                                                            </>)}</a></Typography>
+                                                            </Button>
+                                                            <Menu
+                                                                id="demo-positioned-menu"
+                                                                anchorEl={anchorElMore}
+                                                                open={openMore}
+                                                                onClose={handleCloseMore}
+                                                                anchorOrigin={{
+                                                                    vertical: 'top',
+                                                                    horizontal: 'left',
+                                                                }}
+                                                                transformOrigin={{
+                                                                    vertical: 'top',
+                                                                    horizontal: 'left',
+                                                                }}
+                                                            >
+                                                                {
+                                                                    userName.length > 0 ? userName.map((user, index) => {
+                                                                        return (<MenuItem key={index} onClick={handleCloseMore}>{user.UserName}</MenuItem>)
+                                                                    }) : ""
+                                                                }
+
+                                                                <MenuItem onClick={handleClose}>My account</MenuItem>
+                                                                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                                                            </Menu>
+
+                                                        </Typography>
                                                         <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                                     </Box>
 
@@ -1236,7 +1445,7 @@ function TodoList() {
                                                     </Box>
 
                                                     <Box className='mt-2'>
-                                                        <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)} >Mark Complete</Button>
+                                                        <Button variant="text" disabled={item.mstatus === "Completed"} className='btn-blue-2 me-2' onClick={() => MarkComplete(item)} >Mark Complete</Button>
                                                         <DateRangePicker initialSettings={{
                                                             singleDatePicker: true,
                                                             showDropdowns: true,
@@ -1263,6 +1472,7 @@ function TodoList() {
                             </>) : (allTask.length > 0 ?
                                 (allTask.slice(0, loadMore).map((item, index) => {
                                     const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
+                                    let userName = FilterAgs(item);
                                     return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
                                         <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
@@ -1292,7 +1502,7 @@ function TodoList() {
                                                 <Typography variant='subtitle1'><pan className='text-gray'>
                                                     {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)} </pan>
                                                     {/* <a href='#'>Patrick</a>, */}
-                                                    <a href='javascript:void(0)'>{FilterAgs(item)}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
+                                                    <a href='javascript:void(0)'>{userName && userName.length > 0 ? userName[0].UserName : ""}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
                                                         +{arr.length - 2}
                                                     </>)}</a></Typography>
                                                 <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
@@ -1344,7 +1554,7 @@ function TodoList() {
 
 
                                             <Box className='mt-2'>
-                                                <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)} >Mark Complete</Button>
+                                                <Button variant="text" disabled={item.mstatus === "Completed"} className='btn-blue-2 me-2' onClick={() => MarkComplete(item)} >Mark Complete</Button>
                                                 <DateRangePicker initialSettings={{
                                                     singleDatePicker: true,
                                                     showDropdowns: true,
