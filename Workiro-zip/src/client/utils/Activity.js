@@ -193,7 +193,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
      
     function addToWorkTable() {
        
-        let obj = {  agrno: agrno, Email: Email, password: password,ItemId: selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : "", comment:userAddComment.TextAddComment};
+        let obj = {  agrno: agrno, Email: Email, password: password,ItemId: selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : selectedDocudata.ItemId, comment:userAddComment.TextAddComment};
         console.log(selectedDocudata["Registration No."],"addToWorkTable111", obj);
         cls.Json_AddToWork(obj, function (status, data) {
           if (status) {
@@ -1025,7 +1025,7 @@ const handleRemoveOption = (optionToRemove) => {
                     {/*  */}
                     <Button onClick={AddCommenthandleClose}>
                         <span className="material-symbols-outlined text-black">
-                            cancel
+                        Cancel
                         </span>
                     </Button>
                 </Box>
@@ -1072,11 +1072,12 @@ const handleRemoveOption = (optionToRemove) => {
 
                     <DialogActions className='justify-content-between'>
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                            Doc ID: {selectedDocudata && selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : ""}
+                            Doc ID: {selectedDocudata && selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : selectedDocudata.ItemId
+                            }
                         </Typography>
 
                         <Box>
-                            <Button onClick={AddCommenthandleClose} className='btn-red me-2'>Cancle</Button>
+                            <Button onClick={AddCommenthandleClose} className='btn-red me-2'>Cancel</Button>
                             <Button onClick={AddCommenthandleCloseSubmit} className='btn-blue-2' autoFocus>
                                 Submit
                             </Button>
