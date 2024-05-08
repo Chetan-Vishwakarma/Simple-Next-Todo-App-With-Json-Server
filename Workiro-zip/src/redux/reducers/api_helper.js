@@ -103,3 +103,68 @@ export const fetchRecentTasksRedux = () => dispatch => {
       console.log("Error while calling Json_getRecentDocumentList", err);
   }
   };
+
+  const Json_GetSupplierListByProject = (folder_id = "", favouriteClients = []) => dispatch => {
+    console.log("sdfjdslfjljdf");
+    let obj = {
+        agrno: agrno,
+        Email: Email,
+        password: password,
+        ProjectId: FolderId
+    };
+    try {
+        Cls.Json_GetSupplierListByProject(obj, (sts, data) => {
+            if (sts) {
+                if (data) {
+                    let json = JSON.parse(data);
+                    const clients_data = json?.Table;
+
+                    // sorting functionality start
+                    const fvClient = favouriteClients.map(itm => itm.OriginatorNo);   // getting favourite clients org number
+                    const filterFvClient = [...new Set(fvClient)];  // filtering duplicate favourite client
+                    const dddd = [...clients_data].filter(itm => itm["Company Name"] !== '').sort((a, b) => a["Company Name"].localeCompare(b["Company Name"]));
+                    let dtaa = [...dddd].sort((a, b) => {
+                        let cpm = 0;
+                        if (filterFvClient.includes(a.OriginatorNo)) {
+                            cpm = -1;
+                        } else {
+                            cpm = 1;
+                        }
+                        return cpm;
+                    });
+                    // sorting functionality completed
+                    // setClients(dtaa);
+                    // setClientKeys(Object.keys(json.Table[0]));
+                    // setIsLoading(false);
+                    // Json_GetContactListByFolder(folder_id);
+                    console.log("sdfkhdkhdkjhewe",dtaa);
+                }
+            }
+        });
+    } catch (err) {
+        console.log("Error while calling Json_GetSupplierListByProject", err);
+    }
+  }
+
+  export const fetchSupplierListOrderByFavourite = () => dispatch => {
+    let obj = {
+        agrno: agrno,
+        Email: Email,
+        password: password
+    };
+    try {
+        ClsSms.Json_GetToFavourites(obj, (sts, data) => {
+            if (sts) {
+                if (data) {
+                    let json = JSON.parse(data);
+                    console.log("dsfdsfjkht",json.Table);
+                    dispatch(Json_GetSupplierListByProject(FolderId, json.Table));
+                }
+            }
+        });
+    } catch (err) {
+        console.log("Error while calling Json_GetToFavourites", err);
+    }
+  }
+
+  

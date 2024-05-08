@@ -21,6 +21,8 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CustomLoader from '../components/CustomLoader';
 import SyncIcon from '@mui/icons-material/Sync';
 import Tooltip from '@mui/material/Tooltip';
+import { fetchSupplierListOrderByFavourite } from '../redux/reducers/api_helper';
+import { useDispatch } from 'react-redux';
 
 const CommonFilters = [
     { key: "Company Name", val: "Company Name" }, { key: "Address 1", val: "Address Line 1" },
@@ -70,6 +72,7 @@ const ClientFilters = [
 function Client() {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -293,6 +296,7 @@ function Client() {
         setEmail(localStorage.getItem("Email"));
         // Json_GetSupplierListByProject();
         Json_GetToFavourites();
+        dispatch(fetchSupplierListOrderByFavourite());
         window.addEventListener('scroll', eventHandler)
     }, []);
     const basedOnClientContactAndAll = (target) => {
