@@ -44,7 +44,7 @@ import { exportDataGrid } from "devextreme/excel_exporter";
 import saveAs from "file-saver";
 import ClearIcon from '@mui/icons-material/Clear';
 import { useSelector, useDispatch } from 'react-redux';
-import ClearIcon from '@mui/icons-material/Clear';
+
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
