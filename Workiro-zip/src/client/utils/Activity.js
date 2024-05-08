@@ -41,6 +41,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import Activitygrid from './Activitygrid';
 import { exportDataGrid } from "devextreme/excel_exporter";
 import saveAs from "file-saver";
+import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 import ClearIcon from '@mui/icons-material/Clear';
 
@@ -72,7 +73,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     //  getAudit = getAudit.map((Actioned)=>{
     //     return { ...Actioned, ["Actioned Date"]: new Date() };
     // })
-    console.log(getAudit,`ActivityselectedDocument`,selectedDocument);
+    console.log(selectedDocument,"selectedDocument");
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -138,6 +139,8 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
             console.log("Error while calling Json_GetClientCardDetails", err);
           }
     }
+
+    
     const onChangeStandardCate = (event, value) => {
         event.preventDefault();
         if (value) {
@@ -195,7 +198,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
      
     function addToWorkTable() {
        
-        let obj = {  agrno: agrno, Email: Email, password: password,ItemId: selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : selectedDocudata.ItemId, comment:userAddComment.TextAddComment};
+        let obj = {  agrno: agrno, Email: Email, password: password,ItemId: selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : selectedDocudata?.ItemId, comment:userAddComment.TextAddComment};
         console.log(selectedDocudata["Registration No."],"addToWorkTable111", obj);
         cls.Json_AddToWork(obj, function (status, data) {
           if (status) {
@@ -1075,7 +1078,8 @@ const handleRemoveOption = (optionToRemove) => {
 
                     <DialogActions className='justify-content-between'>
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                            Doc ID: {selectedDocudata && selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : selectedDocudata.ItemId
+                            {console.log(selectedDocudata,"selectedDocudata11")}
+                            Doc ID: {selectedDocudata && selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : selectedDocudata?.ItemId
                             }
                         </Typography>
 

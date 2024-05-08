@@ -319,7 +319,9 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
         }
 
     }
-
+    const call_Json_GetAudit = () => {
+        Json_GetAudit(docForDetails);
+    }
     // Document details List
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
     const handleClickOpenDocumentDetailsList = (event, sDoc) => {
@@ -862,7 +864,7 @@ console.log(updatedData);
                                 </AccordionSummary>
                                 <AccordionDetails>
 
-                                    <Activity getAudit={getAudit} selectedDocument={docForDetails} ></Activity>
+                                    <Activity getAudit={getAudit} selectedDocument={docForDetails} call_Json_GetAudit={call_Json_GetAudit}></Activity>
 
 
                                     {/* {Array(5).fill("").map(() => {
