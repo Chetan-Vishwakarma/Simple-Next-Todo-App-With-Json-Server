@@ -20,6 +20,7 @@ import FormControl from '@mui/material/FormControl';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; // Import Excel icon
 import * as XLSX from 'xlsx';
  import {Workbook} from 'exceljs';
+ import moment from 'moment';
 //  import DataGrid from "devextreme-react/data-grid";
 import DataGrid, {
     Column, FilterRow, Search, SearchPanel, Selection,
@@ -42,7 +43,6 @@ import Activitygrid from './Activitygrid';
 import { exportDataGrid } from "devextreme/excel_exporter";
 import saveAs from "file-saver";
 import { useSelector, useDispatch } from 'react-redux';
-import moment from 'moment';
 import ClearIcon from '@mui/icons-material/Clear';
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -573,7 +573,7 @@ const handleRemoveOption = (optionToRemove) => {
   
         data.forEach((item, index) => {
           // Add your logic to populate the worksheet with data from the items
-          worksheet.addRow([item["Actioned Date"], item.Comments, item["ForwardedBy"]]);
+          worksheet.addRow([item["Actioned Date"] ? item["Actioned Date"] : moment(item["Activity Date"]).format("DD/MM/YYYY"), item.Comments, item["ForwardedBy"]]);
         });
        // Set column widths to add space between columns (in pixels)
   worksheet.columns.forEach(column => {
