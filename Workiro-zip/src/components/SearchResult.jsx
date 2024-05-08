@@ -26,6 +26,8 @@ import Fileformat from '../images/files-icon/pdf.png';
 import IconButton from '@mui/material/IconButton';
 import AttachFileIcon from '@mui/icons-material/InsertLink';
 import PostAddIcon from '@mui/icons-material/PostAdd';
+import { setGetActivityDataSonam } from '../../src/redux/reducers/counterSlice';
+import { useSelector, useDispatch } from 'react-redux';
 
 
 const agrno = localStorage.getItem("agrno");
@@ -42,6 +44,8 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const target = searchParams.get("str");
+    const dispatch = useDispatch();
+    
     // const [target,setTarget] = useState(localStorage.getItem("globalSearchKey"));
     const folder = searchParams.get("folder");
     const [filteredTasks, setFilteredTasks] = useState([]);
@@ -137,8 +141,11 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
     const [docForDetails, setDocForDetails] = useState({});
+    const [showDocuDetails, setshowDocuDetails] = useState(false);
     const handleClickOpenDocumentDetailsList = (sDoc) => {
+        setshowDocuDetails(true);
         setDocForDetails(sDoc);
+        dispatch(setGetActivityDataSonam(sDoc));
         setExpanded("panel1");
         setOpenDocumentDetailsList(true);
     };
@@ -366,7 +373,9 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     return (
         <>
             <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
-            <DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList} />
+           {showDocuDetails===true && ( <DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} selectedDocument={selectedDocument} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList} />)}
+           
+           
 
             <Box className='clearfix'>
                 <h3 className='font-20'><SearchIcon />  We found the following Documents matching <span className='text-blue bold'>"{target}"</span></h3>
@@ -503,6 +512,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                     </Box>
                                 </label>
                             </Box>
+                            
                         </Grid>
                     }) : <DataNotFound />}</Grid>
 

@@ -8,6 +8,7 @@ import TaskDetailModal from './TaskDetailModal';
 import Fileformat from '../images/files-icon/pdf.png';
 
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 // sadik code start
 function createData(document, details) {
     return { document, details };
@@ -30,8 +31,11 @@ const rows = [
     createData('CC', 'test@gmail.com')
 ];
 
-function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocumentDetailsList, setOpenDocumentDetailsList }) {
+function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocumentDetailsList, setOpenDocumentDetailsList,selectedDocument }) {
     // const [openDocumentDetailsList, setOpenDocumentDetailsList] = useState(false);
+    const setDefaultdata= useSelector((state) => state.counter.GetActivityDataSonam);
+    console.log(setDefaultdata, "setDefaultdata11");
+    console.log(docForDetails,"docForDetails2211",selectedDocument);
     const [associatedTask, setAssociatedTask] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
     const [openModal, setOpen] = React.useState(false);
@@ -131,7 +135,12 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
         }
 
     }
+    const call_Json_GetAudit = () => {
+        console.log(setDefaultdata,"setDefaultdatasonam");
+        Json_GetAudit(setDefaultdata);
+    }
     useEffect(() => {
+    
         Json_GetAudit(docForDetails);
         Json_GetVersionByItemId(docForDetails)
     }, []);
@@ -326,7 +335,7 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                 </AccordionSummary>
                                 <AccordionDetails>
 
-                                    <Activity getAudit={getAudit}></Activity>
+                                    <Activity getAudit={getAudit} selectedDocument={docForDetails} call_Json_GetAudit={call_Json_GetAudit}></Activity>
 
                                     {/* {Array(5).fill("").map(() => {
                                         return <> */}

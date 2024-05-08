@@ -17,6 +17,8 @@ const counterSlices = createSlice({
     mainCountrySonam: "",
     defaultDateSonam: null,
     isAdvanceDocSearchRedux: false,
+    GetActivitySonam:"",
+    GetActivityDataSonam:"",
     recentTaskRedux: {
       isLoading: true,
       recentTaskList: [],
@@ -71,6 +73,12 @@ const counterSlices = createSlice({
     setSetDefaultTitleSonam: (state, action) => {
       state.SetDefaultTitleSonam = action.payload;
     },
+    setGetActivitySonam: (state, action) => {
+      state.GetActivitySonam = action.payload;
+    },
+    setGetActivityDataSonam: (state, action) => {
+      state.GetActivityDataSonam = action.payload;
+    },
     setDefaultUserSonam: (state, action) => {
       state.defaultUserSonam = action.payload;
     },
@@ -90,7 +98,7 @@ const counterSlices = createSlice({
   }
 });
 
-export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux, updateReduxDataSonam, setSetDefaultRoleSonam, clearDefaultRoleSonam, setSetDefaultTitleSonam, setDefaultUserSonam, setMainCountrySonam, setDefaultDateSonam, setIsAdvanceDocSearchRedux, fetchRecentTasks, fetchAllTasks, fetchRecentDocuments } = counterSlices.actions;
+export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux, updateReduxDataSonam, setSetDefaultRoleSonam, clearDefaultRoleSonam, setSetDefaultTitleSonam, setDefaultUserSonam, setMainCountrySonam, setDefaultDateSonam, setIsAdvanceDocSearchRedux, fetchRecentTasks, fetchAllTasks, fetchRecentDocuments,setGetActivitySonam ,setGetActivityDataSonam} = counterSlices.actions;
 
 // export const getUsers = () => async(dispatch) => {
 //     const response = await axios.get("https://jsonplaceholder.typicode.com/users");

@@ -1356,6 +1356,7 @@ toast.error("Please Select a Due Date");
                         setOwnerMessage(js.Message);
 
                         if (selectedRows && selectedRows.length > 0) {
+                            
                             selectedRows.forEach((item) => {
                                 addToWorkTable(item.ItemId, js.Message);
                             });
@@ -1678,19 +1679,40 @@ toast.error("Please Select a Due Date");
         console.log(addItemdata, "addItemdata");
     };
     function addToWorkTable(Itid, taskID, textSubject) {
-        console.log(taskID, "addToWorkTable", Itid);
-        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${ownerName} has initiated a task-${textSubject} . Task ID : ${taskID}` };
-        console.log("addToWorkTable111", obj);
-        clsSms.Json_AddToWork(obj, function (status, data) {
-            if (status) {
-                if (data) {
-                    //let json = JSON.parse(data);
-                    console.log("getitemid", data);
+        const isaddUser = addUser.map(obj => obj.ForwardTo).join(',');
+        const filteredData = addUser.filter(item => item.ForwardTo !== ownerName);
 
-
-                }
+        console.log(isaddUser,addUser,"addToWorkTableownerName", ownerName);
+        if(Itid && taskID && textSubject){
+            const obj = {
+                agrno: agrno,
+                Email: Email,
+                password: password,
+                ItemId: Itid,
+                comment: `${ownerName} has initiated a task-${textSubject}. Task ID: ${taskID}.`
+            };
+            
+            if (addUser && addUser.length > 0 && filteredData.length > 0) {
+                // If addUser is present and has elements, add the filtered data as assignees
+                obj.comment += ` ${filteredData.length > 0 ? filteredData.map(item => item.ForwardTo).join(', ') : ''} have been added as assignees.`;
             }
-        });
+            
+            // Use obj wherever needed in your code
+            
+                    console.log("addToWorkTable111", obj);
+                    clsSms.Json_AddToWork(obj, function (status, data) {
+                        if (status) {
+                            if (data) {
+                                //let json = JSON.parse(data);
+                                console.log("getitemid", data);
+            
+            
+                            }
+                        }
+                    });
+        }
+
+
     }
     const Json_GetClientCardDetails = (cid) => {
         try {
@@ -2110,6 +2132,7 @@ toast.error("Please Select a Due Date");
 
                                 // setMessageId(js.Message);
                                 if (selectedDocumentFile && selectedDocumentFile.length > 0) {
+                                    console.log(selectedDocumentFile,"selectedfite")
                                     selectedDocumentFile.map((item) => {
                                         addToWorkTable(item.DocId, js.Message, textSubject);
                                     });

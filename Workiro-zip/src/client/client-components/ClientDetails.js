@@ -33,7 +33,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import EditClientdetails from './EditClientdetails';
 import EditReference from './EditReference';
 import { toast } from 'react-toastify';
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import UploadDocForClient from './UploadDocForClient';
@@ -41,6 +41,8 @@ import CustomLoader from '../../components/CustomLoader';
 import { useDispatch } from "react-redux";
 import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
 import Fileformat from '../../images/files-icon/pdf.png';
+import { DialogTitle } from '@mui/material';
+import { Label } from '@mui/icons-material';
 
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
@@ -52,14 +54,13 @@ function ClientDetails() {
     const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [searchParams,setSearchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const tabValue = searchParams.get("val");
     // const test = searchParams.get("OrgNo");
 
     const originatorNo = searchParams.get("OrgNo");
 
-
-    const { globalSearchDocs } = location.state!==null? location.state: {globalSearchDocs:[]};
+    const { globalSearchDocs } = location.state !== null ? location.state : { globalSearchDocs: [] };
 
     const [selected, setSelected] = React.useState(false);
     const [value, setValue] = React.useState(tabValue ? tabValue : '1');
@@ -89,7 +90,6 @@ function ClientDetails() {
     const [txtSectionData, setTxtSectionData] = useState(null);
     const [TaskType, setTaskType] = useState(null);
     const [openModal, setOpenModal] = useState(null);
-    
 
     const handleClickOpenUploadDocument = () => {
         dispatch(setOpenDocumentModalByRedux(true));
@@ -207,14 +207,14 @@ function ClientDetails() {
             console.log("Error while calling Json_GetClientCardDetails", err)
         }
     }
-   
+
 
 
 
 
     useEffect(() => {
         Json_GetClientCardDetails();
-      
+
     }, []);
 
 
@@ -230,6 +230,15 @@ function ClientDetails() {
     };
 
 
+    const [Notesopen, NotessetOpen] = React.useState(false);
+    const NoteshandleClickOpen = () => {
+        NotessetOpen(true);
+    };
+    const NoteshandleClose = () => {
+        NotessetOpen(false);
+    };
+
+
     return (
         <>
             <Box className="container-fluid p-0">
@@ -239,7 +248,7 @@ function ClientDetails() {
                 {globalSearchDocs.length === 0 && <Box className="d-flex align-items-center justify-content-between flex-wrap">
                     <Box className='d-flex flex-wrap align-items-center'>
 
-                        <ArrowBackIosIcon className='mb-2 pointer' onClick={()=>navigate("/dashboard/Connections")}/>
+                        <ArrowBackIosIcon className='mb-2 pointer' onClick={() => navigate("/dashboard/Connections")} />
 
                         <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
                             {clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}
@@ -266,8 +275,8 @@ function ClientDetails() {
                     <Box className='d-flex flex-wrap'>
                         <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<BorderColorIcon />}
                             onClick={(e) => handleClickReferance(e, originatorNo)}>Edit Client</Button>
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<GroupAddIcon />}>Add Client</Button>
-                        <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<DeleteIcon />}>Notes</Button>
+                        {/* <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<GroupAddIcon />}>Add Client</Button> */}
+                        <Button className='btn-blue-2 me-2 mb-1' size="small" startIcon={<DeleteIcon />} onClick={NoteshandleClickOpen}>Notes</Button>
                         <Button className='btn-blue-2 mb-1' size="small" startIcon={<EmailIcon />}
                             onClick={handleClickOpenUploadDocument}
                         >Add Document</Button>
@@ -277,7 +286,7 @@ function ClientDetails() {
                 {/* <UploadDocForClient setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument} localtion={location}
                 ></UploadDocForClient> */}
 
-{/* <UploadDocument
+                {/* <UploadDocument
                 openUploadDocument={openUploadDocument}
                 setOpenUploadDocument={setOpenUploadDocument}
                 documentDate={documentDate}
@@ -314,18 +323,18 @@ function ClientDetails() {
                             </TabList>
                         </Box>
                         <TabPanel value="1" className='p-0'>
-                            { ( clientDetails && clientDetails?.Table3?.length > 0 ) ?<><Box className="general-tab white-box">
+                            {(clientDetails && clientDetails?.Table3?.length > 0) ? <><Box className="general-tab white-box">
                                 <Box className="row">
                                     {/* For CompanyDetails */}
-                                    <CompanyDetails companyDetails={companyDetails} originatorNo={originatorNo} Cls={Cls}/>
+                                    <CompanyDetails companyDetails={companyDetails} originatorNo={originatorNo} Cls={Cls} />
                                     {/* For ClientOverview */}
-                                    <ClientOverview Cls={Cls} webClientCLS={webClientCLS} locationState={{agrno:agrno, Email:Email, password:password, folderId:folderId, originatorNo:originatorNo}} />
+                                    <ClientOverview Cls={Cls} webClientCLS={webClientCLS} locationState={{ agrno: agrno, Email: Email, password: password, folderId: folderId, originatorNo: originatorNo }} />
                                 </Box>
                             </Box>
-                            <Box className='main-accordian'>
-                                {/* For UDFs */}
-                                <UdfCard data={clientDetails} />
-                            </Box></>:<CustomLoader/>}
+                                <Box className='main-accordian'>
+                                    {/* For UDFs */}
+                                    <UdfCard data={clientDetails} />
+                                </Box></> : <CustomLoader />}
                         </TabPanel>
 
                         <TabPanel value="2" className='p-0'>
@@ -389,6 +398,56 @@ function ClientDetails() {
                 </DialogActions> */}
             </Dialog>
 
+
+            {/* notes modal */}
+            <Dialog
+                open={Notesopen}
+                onClose={NoteshandleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal'
+            >
+
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                            Add Notes
+                        </Typography>
+                        {/* <Box className="btn-Select">
+                                    <Button className='btn-white'>Action</Button>
+                                    <Button className='btn-white'>Ser</Button>
+                                    <Button className='btn-white'>Custom</Button>
+
+                                    <hr />
+
+                                    <Button className='btn-blue-2' size="small">Apply Now</Button>
+                                </Box> */}
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={NoteshandleClose} autoFocus sx={{ minWidth: 30 }}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description" className='mb-4'>
+                        <Box className='form-group'>
+                            <label>Add Notes</label>
+                            <textarea className='textarea textarea-2 form-control' placeholder='Write your notes...'></textarea>
+                        </Box>
+                    </DialogContentText>
+
+                    <DialogActions>
+                        <Button onClick={NoteshandleClose} className="btn-blue-2">Add Notes</Button>
+                        <Button onClick={NoteshandleClose} className="btn-blue-2" autoFocus>
+                            Cancel
+                        </Button>
+                    </DialogActions>
+                </DialogContent>
+            </Dialog>
         </>
     )
 }

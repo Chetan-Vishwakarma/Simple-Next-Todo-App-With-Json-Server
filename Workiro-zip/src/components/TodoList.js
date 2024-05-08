@@ -1027,7 +1027,7 @@ function TodoList() {
 
                                 </MenuItem>
 
-                                <MenuItem value="" className='text-danger ps-1'><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
+                                <MenuItem value="" className='text-danger sembold ps-1'><ClearIcon className="font-18 me-2" /> Clear Filter</MenuItem>
                                 {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'><FolderSharedIcon className="font-20 me-1" /> {fld.Folder}</MenuItem>)}
                             </Select>
                         </FormControl>
@@ -1073,7 +1073,7 @@ function TodoList() {
                                     </BootstrapTooltip>
                                 </MenuItem>
                                 <MenuItem value="" className='ps-1 text-danger' >
-                                    <ClearIcon className="font-20 me-2" />
+                                    <ClearIcon className="font-18 me-2" />
                                     Clear Filter</MenuItem>
                                 <MenuItem className='ps-1' value="CRM">
                                     <DvrIcon className="font-20 me-2" />
@@ -1128,7 +1128,7 @@ function TodoList() {
                                     </BootstrapTooltip>
 
                                 </MenuItem>
-                                <MenuItem className='text-danger ps-1' value={""} ><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
+                                <MenuItem className='text-danger ps-1' value={""} ><ClearIcon className="font-20 me-2" />  Clear Filter</MenuItem>
                                 {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm} className='ps-1'> {statusIconList[i]} {itm}</MenuItem>)}
                             </Select>
                         </FormControl>
@@ -1235,7 +1235,7 @@ function TodoList() {
                                         Sort By
                                     </BootstrapTooltip>
                                 </MenuItem>
-                                <MenuItem className='ps-2 text-red' value="" onClick={() => setAllTask([...actualData])}><ClearIcon />Clear Sortby</MenuItem>
+                                <MenuItem className='ps-2 text-danger sembold' value="" onClick={() => setAllTask([...actualData])}><ClearIcon />Clear Sortby</MenuItem>
                                 <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
                                 <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
                                 <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-20 me-1' />Priority</MenuItem>
@@ -1587,8 +1587,6 @@ function TodoList() {
 
                                                 </Typography>
                                             </Box>
-
-
 
                                             <Box className='mt-2'>
                                                 <Button variant="text" disabled={item.mstatus === "Completed"} className='btn-blue-2 me-2' onClick={() => MarkComplete(item)} >Mark Complete</Button>

@@ -8,7 +8,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import Activity from '../../client/utils/Activity';
-
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import LockIcon from '@mui/icons-material/Lock';
 
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
@@ -23,7 +23,7 @@ import Swal from 'sweetalert2';
 import CreateNewModalTask from '../../components/CreateNewModal';
 
 import { useDispatch } from "react-redux";
-import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux } from "../../redux/reducers/counterSlice"
+import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux ,setGetActivitySonam } from "../../redux/reducers/counterSlice"
 import AlarmOnIcon from '@mui/icons-material/AlarmOn';
 import $ from 'jquery';
 import Fileformat from '../../images/files-icon/pdf.png';
@@ -42,6 +42,8 @@ import DownloadIcon from '@mui/icons-material/Download';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import CreateIcon from '@mui/icons-material/Create';
 import ShareIcon from '@mui/icons-material/Share';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -123,7 +125,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     const Json_GetAudit = () => {
         try {
             let obj = {
-                itemid: selectedDocument["Registration No."],
+                itemid: selectedDocument["Registration No."] ? selectedDocument["Registration No."] : selectedDocument.ItemId,
 
             }
             cls.Json_GetAudit(obj, function (sts, data) {
@@ -150,7 +152,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                         })
                         if (formattedActivity.length > 0) {
                             const filteredArray = formattedActivity.filter(item => item.Comments !== null);
-
+                            dispatch(setGetActivitySonam(setGetAudit));
                             setGetAudit(filteredArray);
                             console.log("Json_GetAudit", filteredArray)
                         }
@@ -875,14 +877,15 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                         {/* <FormControlLabel control={<Checkbox />} className="p-0 m-0 ms-2 ps-1" size="small"/> */}
                                         <Checkbox {...label} defaultChecked size="small" />
 
-                                        <Button className='btn-blue-2 me-2 mb-1 pointer' for='file-upload' startIcon={<AttachFileIcon />}>
+                                        <Button className='btn-blue-2 me-2 mb-1 pointer' for='file-upload' startIcon={<CloudUploadIcon />}>
                                             <input type='file' id='file-upload' multiple onChange={handleFileSelect} className='file-input' />
                                             <label for='file-upload' className='pointer '>Upload Your File</label>
                                         </Button>
 
-                                        <Button className='btn-red me-2 mb-1 ps-1' onClick={DeleteDocumentAttachment} startIcon={<AttachFileIcon />}>Delete</Button>
+                                        <Button className='btn-red me-2 mb-1 ps-1' onClick={DeleteDocumentAttachment} startIcon={<DeleteIcon />}>Delete</Button>
 
-                                        <Button className='btn-blue-2 me-2 mb-1 ps-1' onClick={DowloadSingleFileOnClick} startIcon={<AttachFileIcon />}>Download</Button>
+                                        <Button className='btn-blue-2 me-2 mb-1 ps-1' onClick={DowloadSingleFileOnClick} startIcon={<DownloadIcon />}>Download</Button>
+                                        
 
                                     </Box>
 

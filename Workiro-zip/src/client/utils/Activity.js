@@ -20,6 +20,7 @@ import FormControl from '@mui/material/FormControl';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; // Import Excel icon
 import * as XLSX from 'xlsx';
  import {Workbook} from 'exceljs';
+ import moment from 'moment';
 //  import DataGrid from "devextreme-react/data-grid";
 import DataGrid, {
     Column, FilterRow, Search, SearchPanel, Selection,
@@ -41,7 +42,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import Activitygrid from './Activitygrid';
 import { exportDataGrid } from "devextreme/excel_exporter";
 import saveAs from "file-saver";
-import moment from 'moment';
+import { useSelector, useDispatch } from 'react-redux';
+import ClearIcon from '@mui/icons-material/Clear';
+
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
 ))(({ theme }) => ({
@@ -70,7 +73,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     //  getAudit = getAudit.map((Actioned)=>{
     //     return { ...Actioned, ["Actioned Date"]: new Date() };
     // })
-    console.log(getAudit,`ActivityselectedDocument`,selectedDocument);
+    console.log(selectedDocument,"selectedDocument");
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -136,6 +139,8 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
             console.log("Error while calling Json_GetClientCardDetails", err);
           }
     }
+
+    
     const onChangeStandardCate = (event, value) => {
         event.preventDefault();
         if (value) {
@@ -193,7 +198,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
      
     function addToWorkTable() {
        
-        let obj = {  agrno: agrno, Email: Email, password: password,ItemId: selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : selectedDocudata.ItemId, comment:userAddComment.TextAddComment};
+        let obj = {  agrno: agrno, Email: Email, password: password,ItemId: selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : selectedDocudata?.ItemId, comment:userAddComment.TextAddComment};
         console.log(selectedDocudata["Registration No."],"addToWorkTable111", obj);
         cls.Json_AddToWork(obj, function (status, data) {
           if (status) {
@@ -568,7 +573,7 @@ const handleRemoveOption = (optionToRemove) => {
   
         data.forEach((item, index) => {
           // Add your logic to populate the worksheet with data from the items
-          worksheet.addRow([item["Actioned Date"], item.Comments, item["ForwardedBy"]]);
+          worksheet.addRow([item["Actioned Date"] ? item["Actioned Date"] : moment(item["Activity Date"]).format("DD/MM/YYYY"), item.Comments, item["ForwardedBy"]]);
         });
        // Set column widths to add space between columns (in pixels)
   worksheet.columns.forEach(column => {
@@ -810,7 +815,7 @@ const handleRemoveOption = (optionToRemove) => {
                                                         <MenuItem value="" style={{ display: "none" }}>
                                                             <SwapVertIcon className='pe-1' /> Sort By
                                                         </MenuItem>
-                                                        <MenuItem className='ps-1' value="None"><WarningIcon className='ps-1' />  Clear Sortby</MenuItem>
+                                                        <MenuItem className='ps-1 text-danger sembold' value="None"><ClearIcon className='ps-1' />  Clear Sortby</MenuItem>
                                                         <MenuItem value={"Date"} className='ps-1' >
                                                             <CalendarMonthIcon className='pe-1' />
                                                             By Date</MenuItem>
@@ -892,7 +897,8 @@ const handleRemoveOption = (optionToRemove) => {
                                               
                                                 className='custom-dropdown'
                                             >
-                                               <MenuItem value="Section" onClick={() => handleMenuItemClick("Clear Filter")}>Clear Filter</MenuItem>
+                                                
+                                               <MenuItem value="Section" onClick={() => handleMenuItemClick("Clear Filter")} className='text-danger sembold'><ClearIcon className='me-1'/> Clear Filter</MenuItem>
                                                 {UniqueUser && UniqueUser.length > 0 && UniqueUser.map((itm) => {
                                                     return <MenuItem key={itm.ForwardedBy} value={itm.ForwardedBy} onClick={() => handleMenuItemClick(itm.ForwardedBy)}>{itm.ForwardedBy}</MenuItem>
                                                 })}
@@ -1072,7 +1078,8 @@ const handleRemoveOption = (optionToRemove) => {
 
                     <DialogActions className='justify-content-between'>
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                            Doc ID: {selectedDocudata && selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : selectedDocudata.ItemId
+                            {console.log(selectedDocudata,"selectedDocudata11")}
+                            Doc ID: {selectedDocudata && selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : selectedDocudata?.ItemId
                             }
                         </Typography>
 
