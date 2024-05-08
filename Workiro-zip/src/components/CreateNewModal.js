@@ -2861,7 +2861,7 @@ toast.error("Please Select a Due Date");
                                         </Box> */}
 
                                         {/* attached to start */}
-                                        <Box className='mt-3'>
+                                        <Box className='mt-3 mb-3'>
 
 
                                             {/* attached to end */}
@@ -3012,7 +3012,7 @@ toast.error("Please Select a Due Date");
                                             </Box>
                                         </>)}
 
-                                        <div className="mt-1 mb-2">
+                                        <div className="mt-1 mb-3">
 
                                             <Button
                                                 id="basic-button5"
@@ -3023,8 +3023,6 @@ toast.error("Please Select a Due Date");
                                                 aria-expanded={UserDropdownopen ? "true" : undefined}
                                                 onContextMenu={handleRightClick}
                                                 className="p-0 w-auto d-inline-block"
-
-
                                             >
                                                 <Box className="d-flex align-items-center">
                                                     {ownerRighClick && (<>
@@ -3036,7 +3034,6 @@ toast.error("Please Select a Due Date");
                                                             <p>{firsorScandCtr(ownerRighClick)}</p>
                                                         </Box> <ArrowForwardIosIcon className='me-1 font-20' />
                                                     </>)}
-
 
                                                     {addUser.length > 1
                                                         ? addUser.slice(1, 3).map((item) => {
@@ -3065,14 +3062,10 @@ toast.error("Please Select a Due Date");
                                                                     </>
                                                                 );
                                                             }
-
-
                                                         })
                                                         : null}
-
                                                 </Box>
                                             </Button>
-
 
                                             {dropdownVisible && (<Menu
                                                 id="basic-menu5"

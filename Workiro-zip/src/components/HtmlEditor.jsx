@@ -46,7 +46,7 @@ return(<>
         initialValue={templateDataMarkup}
         
         init={{
-            height: "300px",
+            height: "240px",
             menubar: false,
             readonly: true,
             plugins: [

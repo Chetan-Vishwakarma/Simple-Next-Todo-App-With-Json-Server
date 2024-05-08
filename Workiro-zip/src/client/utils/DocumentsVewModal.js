@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Box, Button, Typography, Dialog, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Menu, MenuItem } from '@mui/material';
+import { Box, Button, Typography, Dialog, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Menu, MenuItem, DialogActions } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 
 import TabPanel from '@mui/lab/TabPanel';
@@ -23,7 +23,7 @@ import Swal from 'sweetalert2';
 import CreateNewModalTask from '../../components/CreateNewModal';
 
 import { useDispatch } from "react-redux";
-import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux ,setGetActivitySonam } from "../../redux/reducers/counterSlice"
+import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setGetActivitySonam } from "../../redux/reducers/counterSlice"
 import AlarmOnIcon from '@mui/icons-material/AlarmOn';
 import $ from 'jquery';
 import Fileformat from '../../images/files-icon/pdf.png';
@@ -106,6 +106,10 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     const [isLoading, setIsLoading] = useState(true);
 
     const [createNewFileObj, setCreateNewFileObj] = useState([]);
+
+    const [ShareanchorEl, setShareAnchorEl] = React.useState(null);
+    const [CreateTaskanchorEl, setCreateTaskAnchorEl] = React.useState(null);
+    const [ReIndexopen, ReIndexsetOpen] = React.useState(false);
 
 
     const handleChange = (event, newValue) => {
@@ -560,7 +564,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
 
     // 
-    const [CreateTaskanchorEl, setCreateTaskAnchorEl] = React.useState(null);
+
     const openCreateTask = Boolean(CreateTaskanchorEl);
     const createTaskhandleClick = (event) => {
         setCreateTaskAnchorEl(event.currentTarget);
@@ -571,13 +575,19 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
 
     // 
-    const [ShareanchorEl, setShareAnchorEl] = React.useState(null);
     const openShare = Boolean(ShareanchorEl);
     const SharehandleClick = (event) => {
         setShareAnchorEl(event.currentTarget);
     };
     const SharehandleClose = () => {
         setShareAnchorEl(null);
+    };
+
+    const ReIndexhandleClickOpen = () => {
+        ReIndexsetOpen(true);
+    };
+    const ReIndexhandleClose = () => {
+        ReIndexsetOpen(false);
     };
 
     return (
@@ -717,11 +727,16 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 }}
                             >
 
-                                <MenuItem onClick={handleCloseChangeIndex}> <ListIcon className='me-1' />  Re-index</MenuItem>
+                                <MenuItem onClick={() => {
+                                    handleCloseChangeIndex();
+                                    ReIndexhandleClickOpen();
+                                }}>
+                                    <ListIcon className='me-1' />  Re-index 
+                                </MenuItem>
                                 <MenuItem onClick={handleCloseChangeIndex}> <RedeemIcon className='me-1' /> Check-Out</MenuItem>
                                 <MenuItem onClick={handleCloseChangeIndex}> <CategoryIcon className='me-1' /> Category</MenuItem>
                                 <MenuItem onClick={handleCloseChangeIndex}> <DriveFileRenameOutlineIcon className='me-1' /> Rename</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <AddToDriveIcon className='me-1' /> Upload to Drive</MenuItem>
+                                {/* <MenuItem onClick={handleCloseChangeIndex}> <AddToDriveIcon className='me-1' /> Upload to Drive</MenuItem> */}
                             </Menu>
                         </Box>
 
@@ -812,12 +827,12 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 </TabPanel>
 
                                 <TabPanel value="3" className='p-0'>
-                                    {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
-                                    <Box className='text-end'>
-                                        <Button onClick={SaveStickyNotes} variant="contained" className='mt-3'>Save Notes</Button>
-
-                                        {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
-
+                                    <Box className='mt-3'>
+                                        {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+                                        <Box className='text-end mt-2'>
+                                            <Button onClick={SaveStickyNotes} variant="contained" className='mt-3 btn-blue-2'>Save Notes</Button>
+                                            {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
+                                        </Box>
                                     </Box>
                                 </TabPanel>
 
@@ -840,7 +855,6 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                                 </Button>
                                             );
                                         })}
-
                                     </Box>
                                 </TabPanel>
 
@@ -865,7 +879,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                         <Button className='btn-red me-2 mb-1 ps-1' onClick={DeleteDocumentAttachment} startIcon={<DeleteIcon />}>Delete</Button>
 
                                         <Button className='btn-blue-2 me-2 mb-1 ps-1' onClick={DowloadSingleFileOnClick} startIcon={<DownloadIcon />}>Download</Button>
-                                        
+
 
                                     </Box>
 
@@ -932,9 +946,47 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                 </Button>
             </DialogActions> */}
             </Dialog>
+
+
+            {/* Re-Index modal Start */}
+            <Dialog
+                open={ReIndexopen}
+                onClose={ReIndexhandleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal'
+            >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold text-black'>
+                            Edit Client
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={ReIndexhandleClose}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Let Google help apps determine location. This means sending anonymous
+                        location data to Google, even when no apps are running.
+                    </DialogContentText>
+                </DialogContent>
+
+                <DialogActions>
+                    <Button onClick={ReIndexhandleClose}>Disagree</Button>
+                    <Button onClick={ReIndexhandleClose} autoFocus>
+                        Agree
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
         </>
-
-
     )
 }
 
