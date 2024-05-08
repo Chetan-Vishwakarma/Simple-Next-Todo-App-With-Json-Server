@@ -407,7 +407,6 @@ function TodoList() {
 
     const handleClickOpen = (task = selectedTask) => {
         setSelectedTask(task);
-
         setOpen(true);
 
     };
@@ -818,19 +817,31 @@ function TodoList() {
     // const [anchorElMore, setAnchorElMore] = React.useState(null);
     // const openMore = Boolean(anchorElMore);
 
-    const [anchorElMore, setAnchorElMore] = useState(null);
-const [openMore, setOpenMore] = useState(false);    // If any error occur then replace this with  {  const openMore = Boolean(anchorElMore);  }
+    const [anchorElMore, setAnchorElMore] = useState({}); // State to manage anchor element for each document
+    const [openMore, setOpenMore] = useState({}); // State to manage menu visibility for each document
 
-    const handleClickMore = (event) => {
-        console.log("heloo",event)
-        setAnchorElMore(event.currentTarget);
-        setOpenMore(true);
+    const handleClickMore = (event, documentIndex) => {
+        setAnchorElMore((prevState) => ({
+            ...prevState,
+            [documentIndex]: event.currentTarget
+        }));
+        setOpenMore((prevState) => ({
+            ...prevState,
+            [documentIndex]: true
+        }));
     };
-    
-    const handleCloseMore = () => {
-        setAnchorElMore(null);
-        setOpenMore(false);
+
+    const handleCloseMore = (documentIndex) => {
+        setAnchorElMore((prevState) => ({
+            ...prevState,
+            [documentIndex]: null
+        }));
+        setOpenMore((prevState) => ({
+            ...prevState,
+            [documentIndex]: false
+        }));
     };
+
 
 
     const exportexcel = (data) => {
@@ -1355,25 +1366,27 @@ const [openMore, setOpenMore] = useState(false);    // If any error occur then r
 
                                                     <Box className='d-flex align-items-center justify-content-between'>
                                                         <Typography variant='subtitle1'><pan className='text-gray'>
+
                                                             {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
                                                             {/* <a href='#'>Patrick</a>, */}
-                                                            <a href='javascript:void(0)'>{userName && userName.length > 0 ? userName[0].UserName : ""}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
-                                                            </>)}</a>
+                                                            <span>{userName && userName.length > 0 ? userName[0].UserName : ""}</span> 
+                                                            
 
-                                                            <Button
-                                                                id="demo-positioned-button"
-                                                                aria-controls={openMore ? 'demo-positioned-menu' : undefined}
+                                                            {arr && arr.length > 2 ? <Button
+                                                                id={`demo-positioned-button-${index}`}
+                                                                aria-controls={openMore[index] ? `demo-positioned-menu-${index}` : undefined}
                                                                 aria-haspopup="true"
-                                                                aria-expanded={openMore ? 'true' : undefined}
-                                                                onClick={handleClickMore}
+                                                                aria-expanded={openMore[index] ? 'true' : undefined}
+                                                                onClick={(event) => handleClickMore(event, index)}
                                                             >
-                                                                + {arr.length - 2}
-                                                            </Button>
+                                                                + {arr && arr.length > 0 ? arr.length - 2 : ""}
+                                                            </Button> : ""}
+
                                                             <Menu
-                                                                id="demo-positioned-menu"
-                                                                anchorEl={anchorElMore}
-                                                                open={openMore}
-                                                                onClose={handleCloseMore}
+                                                                id={`demo-positioned-menu-${index}`}
+                                                                anchorEl={anchorElMore[index]}
+                                                                open={openMore[index]}
+                                                                onClose={() => handleCloseMore(index)}
                                                                 anchorOrigin={{
                                                                     vertical: 'top',
                                                                     horizontal: 'left',
@@ -1383,14 +1396,9 @@ const [openMore, setOpenMore] = useState(false);    // If any error occur then r
                                                                     horizontal: 'left',
                                                                 }}
                                                             >
-                                                                {
-                                                                    userName.length > 0 ? userName.map((user, index) => {
-                                                                        return (<MenuItem key={index} onClick={handleCloseMore}>{user.UserName}</MenuItem>)
-                                                                    }) : ""
-                                                                }
-
-                                                                <MenuItem onClick={handleClose}>My account</MenuItem>
-                                                                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                                                                {userName && userName.length > 0 ? userName.slice(1).map((user, idx) => (
+                                                                    <MenuItem key={idx} onClick={() => handleCloseMore(index)}>{user.UserName}</MenuItem>
+                                                                )) : ""}
                                                             </Menu>
 
                                                         </Typography>
@@ -1499,9 +1507,41 @@ const [openMore, setOpenMore] = useState(false);    // If any error occur then r
                                                 <Typography variant='subtitle1'><pan className='text-gray'>
                                                     {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)} </pan>
                                                     {/* <a href='#'>Patrick</a>, */}
-                                                    <a href='javascript:void(0)'>{userName && userName.length > 0 ? userName[0].UserName : ""}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
-                                                        +{arr.length - 2}
-                                                    </>)}</a></Typography>
+                                                    <span>{userName && userName.length > 0 ? userName[0].UserName : ""}</span>
+                      
+
+                                                    {arr && arr.length >2 ? <Button
+                                                                id={`demo-positioned-button-${index}`}
+                                                                aria-controls={openMore[index] ? `demo-positioned-menu-${index}` : undefined}
+                                                                aria-haspopup="true"
+                                                                aria-expanded={openMore[index] ? 'true' : undefined}
+                                                                onClick={(event) => handleClickMore(event, index)}
+                                                            >
+                                                                + {arr && arr.length>0?arr.length - 2:""}
+                                                            </Button>:""}
+                                                    <Menu
+                                                        id={`demo-positioned-menu-${index}`}
+                                                        anchorEl={anchorElMore[index]}
+                                                        open={openMore[index]}
+                                                        onClose={() => handleCloseMore(index)}
+                                                        anchorOrigin={{
+                                                            vertical: 'top',
+                                                            horizontal: 'left',
+                                                        }}
+                                                        transformOrigin={{
+                                                            vertical: 'top',
+                                                            horizontal: 'left',
+                                                        }}
+                                                    >
+                                                        {userName && userName.length > 0 ? userName.slice(1).map((user, idx) => (
+                                                            <MenuItem key={idx} onClick={() => handleCloseMore(index)}>{user.UserName}</MenuItem>
+                                                        )) : ""}
+                                                    </Menu>
+                                                </Typography>
+
+
+
+
                                                 <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                             </Box>
 

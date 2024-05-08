@@ -922,7 +922,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                         return callBack(data);
                     }
                     else {
-                        toast.error(item.Description + "was not uploaded as it had no data")
+                        console.log("Document is blank")
                     }
 
                 }

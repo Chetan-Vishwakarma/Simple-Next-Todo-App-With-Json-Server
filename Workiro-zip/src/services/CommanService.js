@@ -534,6 +534,18 @@ console.log("formattedDate",formattedDate)
         })
     }
 
+    Json_CheckoutItem(obj, callBack) {
+        super.CreateNewServiceParamObject("Json_CheckoutItem", obj, true);
+        super.CallNewService("Json_CheckoutItem", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+
     
     Json_GetCategory(obj, callBack) {
         super.CreateNewServiceParamObject("Json_GetCategory", obj, true);

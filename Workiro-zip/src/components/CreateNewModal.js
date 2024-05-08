@@ -1875,7 +1875,7 @@ toast.error("Please Select a Due Date");
                         return callBack(data);
                     }
                     else {
-                        toast.error(item.Description + "was not uploaded as it had no data")
+                       
                     }
 
                 }

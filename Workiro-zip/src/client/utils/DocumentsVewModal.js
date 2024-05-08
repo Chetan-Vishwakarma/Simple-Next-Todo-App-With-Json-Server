@@ -250,7 +250,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         if (selectedDocument) {
 
 
-            // console.log("selectedDocument", selectedDocument)
+            console.log("selectedDocument", selectedDocument)
 
             setTxtClientData({ Client: selectedDocument.Client, ClientID: selectedDocument.SenderId })
             setTxtSectionData({ Sec: selectedDocument.Section, SecID: selectedDocument.PostItemTypeID })
@@ -348,7 +348,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                         setCreateNewFileObj(filesData);
                     }
                     else {
-                        toast.error(item.Description + "was not uploaded as it had no data")
+                        toast.error("Document is blank.")
                     }
 
                 }
@@ -360,29 +360,29 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     }
 
     function DowloadSingleFileOnClick() {
+        console.log("DowloadSingleFileOnClick", createNewFileObj)
         try {
-            if (seletedFileData.length === 1) {
-                const uint8Array = new Uint8Array(seletedFileData[0].FileData);
-                const blob = new Blob([uint8Array], { type: 'application/octet-stream' });
+            if (createNewFileObj.length > 0) {
+                const byteCharacters = atob(createNewFileObj[0].Base64);
+                const byteNumbers = new Array(byteCharacters.length);
 
-                // Create a URL representing the Blob
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: 'application/octet-stream' });
+
                 const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = createNewFileObj[0].FileName;
+                document.body.appendChild(a);
+                a.click();
 
-                // Create a link element pointing to the URL
-                const link = document.createElement('a');
-                link.href = url;
-
-                // Set the download attribute to specify the file name
-                link.download = seletedFileData[0].SubItemPath;
-
-                // Append the link to the document body
-                document.body.appendChild(link);
-
-                // Trigger a click event on the link to initiate the download
-                link.click();
-
-                // Remove the link from the document body
-                document.body.removeChild(link);
+                // Clean up
+                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
             }
             else {
                 Json_DownloadZip();
@@ -561,6 +561,26 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         // setopenModal(true)
         handleTaskModalOpening("Portal");
     }
+    const PublishDocument = () => {
+        try {
+        let o ={ItemId:selectedDocument.ItemId};
+            cls.Json_SearchDocById(o, function (sts, doc) {
+                if (sts) {
+                    if (doc) {
+                       let js =JSON.parse(doc);
+                       let tbl = js[""];
+                       console.log("Json_SearchDocById",tbl);
+ let opeUrl = `https://www.sharedocuments.co.uk/Compose.aspx?accid=${agrno}&email=${Email}&check=${password}&sendclient=${tbl[0].SenderId}&sendemail=&clientname=${tbl[0].Client}&docs=${tbl[0]["Registration No."]}`;
+ window.open(opeUrl);
+                    }
+                }
+
+            });
+        } catch (error) {
+            console.log("Network Error Json_SearchDocById")
+        }
+       
+    }
 
 
     // 
@@ -614,7 +634,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                     <Box className="d-flex align-items-center justify-content-between flex-wrap">
 
                         <Box className='text-end relative me-3'>
-                            <DownloadForOfflineIcon className='text-red pointer font-32 btn-download' />
+                            <DownloadForOfflineIcon onClick={DowloadSingleFileOnClick} className='text-red pointer font-32 btn-download' />
                         </Box>
 
                         <div>
@@ -653,7 +673,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 <MenuItem
                                     onClick={() => {
                                         CreateTaskhandleClose();
-                                        createTask();
+                                        createTaskForPublish();
                                     }}
                                 ><LanguageIcon className='me-1' /> Portal Task</MenuItem>
                             </Menu>
@@ -683,7 +703,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 <MenuItem
                                     onClick={() => {
                                         SharehandleClose();
-                                        createTaskForPublish();
+                                        PublishDocument();
                                     }}
                                 >
                                     <PublishIcon className='me-1' />
@@ -694,9 +714,9 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 <MenuItem onClick={SharehandleClose}>
                                     <MarkunreadIcon className='me-1' />
                                     Email</MenuItem>
-                                <MenuItem onClick={SharehandleClose}>
+                                {/* <MenuItem onClick={SharehandleClose}>
                                     <DownloadIcon className='me-1' />
-                                    Download</MenuItem>
+                                    Download</MenuItem> */}
                             </Menu>
                         </div>
 
