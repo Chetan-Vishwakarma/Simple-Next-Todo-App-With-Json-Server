@@ -35,9 +35,11 @@ function UploadDocument({
     setOpenUploadDocument,
     documentDate, setDocumentDate, receivedDate, setReceivedDate, setCreateNewFileObj, txtFolderData, setTxtFolderData, txtClientData, setTxtClientData, txtSectionData, setTxtSectionData, setTaskType, setOpenModal, handleClickOpen, openDocumentModalByRedux
 }) {
-    //console.log("location state",localtion.state)
+
     const dispatch = useDispatch();
+
     const localtion = useLocation();
+    console.log("location state",localtion.state)
     try {
         originatorNo = localtion.state;
         //  console.log("originatorNo11",originatorNo )
@@ -76,7 +78,7 @@ function UploadDocument({
 
     const [selectedFiles, setSelectedFiles] = useState([]);////////////Set file selected and upload
 
-    const [txtClientId, setTxtClientId] = useState(originatorNo);/////////////////for clientid set
+    const [txtClientId, setTxtClientId] = useState(originatorNo ?originatorNo.originatorNo:"");/////////////////for clientid set
 
     // const [txtClientData, setTxtClientData] = useState(null);/////////////////for clientid set
 

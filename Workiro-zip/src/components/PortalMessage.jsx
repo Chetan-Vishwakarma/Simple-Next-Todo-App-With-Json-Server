@@ -805,7 +805,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                    
 
                 <Editor
-        apiKey='o4y7u8xi67vf7efmqoitw2dd85wgsq7xoh7838djixgfddsl'
+        apiKey='9rtpya3b7esplotrim3s5whie028587o62gv9zqid4yzb4x6'
         initialValue={templateDataMarkup}
         disabled = {true}
         init={{

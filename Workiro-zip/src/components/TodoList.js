@@ -170,7 +170,7 @@ function TodoList() {
             console.log("Error while calling Json_GetFolders", err);
         }
     }
-    console.log("fdlkgjgljroirreotudfn", globalSearchTask.map(itm => itm.mstatus));
+    //console.log("fdlkgjgljroirreotudfn", globalSearchTask.map(itm => itm.mstatus));
     const Json_CRM_GetOutlookTask = () => {
         if (globalSearchTask.length > 0) {
             console.log("globalSearchTask", globalSearchTask);
@@ -196,6 +196,7 @@ function TodoList() {
                 const date = new Date(timestamp);
 
                 return { ...task, CreationDate: date };
+
             }).sort((a, b) => b.CreationDate - a.CreationDate);
 
             // dispatch(setMyTasks([...hasCreationDate]));
@@ -214,7 +215,7 @@ function TodoList() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_CRM_GetOutlookTask111", json);
+                       
                         let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
                         console.log("resultoutlook", result);
                         if (result && result.length > 0) {
@@ -225,12 +226,24 @@ function TodoList() {
                         const formattedTasks = result.map((task) => {
                             let timestamp;
                             if (task.EndDateTime) {
+                                // Assuming task.EndDateTime contains milliseconds since Unix epoch
                                 timestamp = parseInt(task.EndDateTime.slice(6, -2));
                             }
+                        
+                            // Check if timestamp is valid
+                            if (!isNaN(timestamp)) {
+                                // Create a new Date object from the timestamp
+                                const date = new Date(timestamp);
+                                console.log("Timestamp:", timestamp,date);
+                                //console.log("Date:", date.toLocaleString());
+                                
+                                // Return the task with the formatted EndDateTime
+                                return { ...task, EndDateTime: date };
+                            } else {
+                                // If timestamp is not valid, return the original task
+                                return task;
 
-                            const date = new Date(timestamp);
-
-                            return { ...task, EndDateTime: date };
+                            }
                         });
 
                         // let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
@@ -360,15 +373,15 @@ function TodoList() {
                         let js = JSON.parse(data);
                         let { Status, Message } = js;
                         // let dt = js.Table;
-                        // console.log("Json_GetForwardUserList1112222", js)
+                         console.log("Json_GetForwardUserList1112222", js)
                         if (Status === "Success") {
                             let tbl = Message.Table;
                             //console.log("Json_GetForwardUserList1112222", tbl)
-                            let result = tbl.filter((el) => {
-                                return el.CGroup !== "Yes";
-                            });
+                            // let result = tbl.filter((el) => {
+                            //     return el.CGroup !== "Yes";
+                            // });
 
-                            setUserList(result);
+                            setUserList(tbl);
 
                         }
                     }

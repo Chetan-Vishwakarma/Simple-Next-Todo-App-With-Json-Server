@@ -83,6 +83,7 @@ import { handleOpenModalRedux, setMyTasks } from "../redux/reducers/counterSlice
 import { fetchAllTasksRedux, fetchRecentTasksRedux } from "../redux/reducers/api_helper";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
+import GetFileType from "./FileType";
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -1010,7 +1011,7 @@ function CreateNewModalTask({ ...props }) {
         let completeCounter = 0;
 
         selectedFilesArray.forEach((file, index) => {
-            console.log(file.size,"file size check")
+           
             const reader = new FileReader();
             completeCounter++;
             reader.onload = () => {
@@ -1025,7 +1026,7 @@ function CreateNewModalTask({ ...props }) {
                     Guid: localStorage.getItem("GUID"),
                     FileType: getFileExtension(file.name).toLowerCase()
                 };
-
+                console.log(fileData,"file size check")
                 filesData.push(fileData);
 
                 if (txtTaskType === "CRM") {
@@ -3418,8 +3419,11 @@ toast.error("Please Select a Due Date");
                                                 <>
                                                     <label className="file-uploads-label mb-2" key={index}>
                                                         <Box className="d-flex align-items-center">
+                                                           
                                                             <span className="material-symbols-outlined icon">
-                                                                description
+                                                           
+                                                            {<GetFileType Type={file ? file.FileType.toLowerCase() : null}></GetFileType>}
+                                                            
                                                             </span>
                                                             <Box className="upload-content pe-3">
                                                                 <Typography variant="h4">
