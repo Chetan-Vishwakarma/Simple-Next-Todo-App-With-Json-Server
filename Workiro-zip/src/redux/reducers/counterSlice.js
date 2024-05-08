@@ -24,7 +24,13 @@ const counterSlices = createSlice({
       recentTaskList: [],
     },
     allTask: [],
-    recentDocument:[]
+    recentDocument:[],
+    connectionsState: {
+      clients: [],
+      contacts: [],
+      isLoading: true,
+      allFolders: [],
+    },
   },
   reducers: {
     //sonam state start
@@ -63,6 +69,17 @@ const counterSlices = createSlice({
     fetchRecentDocuments: (state, action) => {
       state.recentDocument = action.payload;
     },
+    setClientFromRedux: (state, action) => {
+      state.connectionsState.clients = action.payload;
+      state.connectionsState.isLoading = false;
+    },
+    setContactsFromRedux: (state, action) => {
+      state.connectionsState.contacts = action.payload;
+      state.connectionsState.isLoading = false;
+    },
+    setAllFoldersFromRedux: (state, action) => {
+      state.connectionsState.allFolders = action.payload;
+    },
     // chetan state end
     updateReduxDataSonam: (state, action) => {
       state.reduxData = action.payload;
@@ -98,7 +115,7 @@ const counterSlices = createSlice({
   }
 });
 
-export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux, updateReduxDataSonam, setSetDefaultRoleSonam, clearDefaultRoleSonam, setSetDefaultTitleSonam, setDefaultUserSonam, setMainCountrySonam, setDefaultDateSonam, setIsAdvanceDocSearchRedux, fetchRecentTasks, fetchAllTasks, fetchRecentDocuments,setGetActivitySonam ,setGetActivityDataSonam} = counterSlices.actions;
+export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux, updateReduxDataSonam, setSetDefaultRoleSonam, clearDefaultRoleSonam, setSetDefaultTitleSonam, setDefaultUserSonam, setMainCountrySonam, setDefaultDateSonam, setIsAdvanceDocSearchRedux, fetchRecentTasks, fetchAllTasks, fetchRecentDocuments,setGetActivitySonam ,setGetActivityDataSonam, setClientFromRedux, setContactsFromRedux, setAllFoldersFromRedux } = counterSlices.actions;
 
 // export const getUsers = () => async(dispatch) => {
 //     const response = await axios.get("https://jsonplaceholder.typicode.com/users");
