@@ -190,13 +190,13 @@ function TodoList() {
             let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                 let timestamp;
                 if (task.CreationDate) {
-                    timestamp = parseInt(task.CreationDate.slice(6, -2));
+                    // timestamp = parseInt(task.CreationDate.slice(6, -2));
+                   
+                    timestamp = moment(task.CreationDate).format("DD-MM-YYYY h:mm:ss");
+                    console.log(task.CreationDate,'sonam1==========================='+timestamp);
                 }
 
-                const date = new Date(timestamp);
-
-                return { ...task, CreationDate: date };
-
+                return { ...task, CreationDate: timestamp };
             }).sort((a, b) => b.CreationDate - a.CreationDate);
 
             // dispatch(setMyTasks([...hasCreationDate]));
@@ -221,7 +221,6 @@ function TodoList() {
                         if (result && result.length > 0) {
                             setExporttoExcel(result);
                             exportTaskData = [...result];
-
                         }
                         const formattedTasks = result.map((task) => {
                             let timestamp;
@@ -252,12 +251,15 @@ function TodoList() {
                         let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                             let timestamp;
                             if (task.CreationDate) {
-                                timestamp = parseInt(task.CreationDate.slice(6, -2));
+                                // timestamp = parseInt(task.CreationDate.slice(6, -2));
+                               
+                                timestamp = moment(task.CreationDate).format("DD-MM-YYYY h:mm:ss");
+                                console.log(task.CreationDate,'sonam2==========================='+timestamp);
                             }
-
-                            const date = new Date(timestamp);
-
-                            return { ...task, CreationDate: date };
+                           
+                            // const date = new Date(timestamp);
+                            // console.log(task.CreationDate,"datefillsonamtestdata",formattedDateWithTime);
+                            return { ...task, CreationDate: timestamp };
                         }).sort((a, b) => b.CreationDate - a.CreationDate);
 
                         hasCreationDate.filter(itm => {
@@ -1520,42 +1522,10 @@ function TodoList() {
                                                 <Typography variant='subtitle1'><pan className='text-gray'>
                                                     {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)} </pan>
                                                     {/* <a href='#'>Patrick</a>, */}
-                                                    <span>{userName && userName.length > 0 ? userName[0].UserName : ""}</span>
-                      
-
-                                                    {arr && arr.length >2 ? <Button
-                                                                id={`demo-positioned-button-${index}`}
-                                                                aria-controls={openMore[index] ? `demo-positioned-menu-${index}` : undefined}
-                                                                aria-haspopup="true"
-                                                                aria-expanded={openMore[index] ? 'true' : undefined}
-                                                                onClick={(event) => handleClickMore(event, index)}
-                                                            >
-                                                                + {arr && arr.length>0?arr.length - 2:""}
-                                                            </Button>:""}
-                                                    <Menu
-                                                        id={`demo-positioned-menu-${index}`}
-                                                        anchorEl={anchorElMore[index]}
-                                                        open={openMore[index]}
-                                                        onClose={() => handleCloseMore(index)}
-                                                        anchorOrigin={{
-                                                            vertical: 'top',
-                                                            horizontal: 'left',
-                                                        }}
-                                                        transformOrigin={{
-                                                            vertical: 'top',
-                                                            horizontal: 'left',
-                                                        }}
-                                                    >
-                                                        {userName && userName.length > 0 ? userName.slice(1).map((user, idx) => (
-                                                            <MenuItem key={idx} onClick={() => handleCloseMore(index)}>{user.UserName}</MenuItem>
-                                                        )) : ""}
-                                                    </Menu>
-                                                </Typography>
-
-
-
-
-                                                <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
+                                                    <a href='javascript:void(0)'>{userName && userName.length > 0 ? userName[0].UserName : ""}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
+                                                        +{arr.length - 2}
+                                                    </>)}</a></Typography>
+                                                <Typography variant='subtitle1 sembold'>{item["CreationDate"] ? (startFormattingDate(item["CreationDate"])) : ""}</Typography>
                                             </Box>
 
                                             <Box className='d-flex align-items-center justify-content-between'>
