@@ -41,8 +41,10 @@ import { useDispatch } from "react-redux";
 import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
 import HtmlEditorDX from '../../components/HtmlEditor';
 import { Height } from '@mui/icons-material';
-
-
+import Fileformat from '../../images/files-icon/pdf.png';
+import { DialogTitle } from '@mui/material';
+import { Label } from '@mui/icons-material';
+import { fetchSupplierListOrderByFavourite } from '../../redux/reducers/api_helper';
 
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
@@ -73,12 +75,9 @@ function ClientDetails() {
 
     const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
 
-    //let Util = new Utils();
-
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
     let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
-    console.log(originatorNo, "originatorNooriginatorNo")
 
     // upload document modal start
     const [openUploadDocument, setOpenUploadDocument] = React.useState(false);
@@ -97,7 +96,6 @@ function ClientDetails() {
 
     const handleClickOpenUploadDocument = () => {
         dispatch(setOpenDocumentModalByRedux(true));
-        setOpenUploadDocument(true);
     };
     // upload document modal end
 
@@ -107,7 +105,7 @@ function ClientDetails() {
         setValue(newValue);
     };
 
-    const Json_GetToFavourites = (currentUser) => {
+    const Json_GetToFavourites = () => {
         let obj = {
             agrno: agrno,
             Email: Email,
@@ -118,10 +116,9 @@ function ClientDetails() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_GetToFavourites", json);
                         let favouriteUser = json.Table;
-                        if (favouriteUser.length > 0 && currentUser.length > 0) {
-                            let ans = favouriteUser.some((item) => item.OriginatorNo === currentUser[0]?.OriginatorNo);
+                        if (favouriteUser.length > 0) {
+                            let ans = favouriteUser.map(itm=>itm.OriginatorNo.trim()).includes(originatorNo.trim());
                             if (ans) {
                                 setSelected(true);
                             } else {
@@ -150,9 +147,8 @@ function ClientDetails() {
             Cls.Json_RemoveToFavourite(obj, (sts, data) => {
                 if (sts) {
                     if (data) {
-                        let json = JSON.parse(data);
-                        // console.log("Json_RemoveToFavourite", json);
                         toast.success("Removed from favourites");
+                        dispatch(fetchSupplierListOrderByFavourite());
                         setSelected(false);
                     }
                 }
@@ -174,9 +170,8 @@ function ClientDetails() {
             Cls.Json_AddToFavourite(obj, (sts, data) => {
                 if (sts) {
                     if (data) {
-                        let json = JSON.parse(data);
-                        // console.log("Json_AddToFavourite", json);
                         toast.success("Added to favourites");
+                        dispatch(fetchSupplierListOrderByFavourite());
                         setSelected(true);
                     }
                 }
@@ -204,7 +199,7 @@ function ClientDetails() {
                         setCompanyDetails(json.Table1);
                         setCompanyEditDetails(json.Table1);
                         //Json_GetClientsByFolder();
-                        Json_GetToFavourites(json.Table1);
+                        // Json_GetToFavourites(json.Table1);
                     }
                 }
             });
@@ -219,15 +214,13 @@ function ClientDetails() {
 
     useEffect(() => {
         Json_GetClientCardDetails();
-
+        Json_GetToFavourites();
     }, []);
 
 
     // edit client modal
     const [Referance, setReferance] = React.useState(false);
     const handleClickReferance = (e, originatorNo) => {
-
-        console.log(originatorNo, "originatorNossss", clientDetails.Table1);
         setReferance(true);
     };
     const EditCLientHandleClose = () => {
@@ -309,32 +302,6 @@ function ClientDetails() {
                         >Add Document</Button>
                     </Box>
                 </Box>}
-
-                {/* <UploadDocForClient setOpenUploadDocument={setOpenUploadDocument} openUploadDocument={openUploadDocument} localtion={location}
-                ></UploadDocForClient> */}
-
-                {/* <UploadDocument
-                openUploadDocument={openUploadDocument}
-                setOpenUploadDocument={setOpenUploadDocument}
-                documentDate={documentDate}
-                setDocumentDate={setDocumentDate}
-                receivedDate={receivedDate}
-                setReceivedDate={setReceivedDate}
-                createNewFileObj={createNewFileObj}
-                setCreateNewFileObj={setCreateNewFileObj}
-                txtFolderData={txtFolderData}
-                setTxtFolderData={setTxtFolderData}
-                txtClientData={txtClientData}
-                setTxtClientData={setTxtClientData}
-                txtSectionData={txtSectionData}
-                setTxtSectionData={setTxtSectionData}
-                TaskType={TaskType}
-                setTaskType={setTaskType}
-                openModal={openModal}
-                setOpenModal={setOpenModal}
-                handleClickOpen={()=>{console.log("Testing on Add Document button")}}
-            ></UploadDocument> */}
-
                 <hr />
                 <Box sx={{ width: '100%', typography: 'body1' }} className="">
                     <TabContext value={value}>

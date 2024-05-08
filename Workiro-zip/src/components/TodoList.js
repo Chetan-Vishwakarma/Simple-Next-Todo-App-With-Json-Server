@@ -170,7 +170,7 @@ function TodoList() {
             console.log("Error while calling Json_GetFolders", err);
         }
     }
-    console.log("fdlkgjgljroirreotudfn", globalSearchTask.map(itm => itm.mstatus));
+    //console.log("fdlkgjgljroirreotudfn", globalSearchTask.map(itm => itm.mstatus));
     const Json_CRM_GetOutlookTask = () => {
         if (globalSearchTask.length > 0) {
             console.log("globalSearchTask", globalSearchTask);
@@ -190,12 +190,13 @@ function TodoList() {
             let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                 let timestamp;
                 if (task.CreationDate) {
-                    timestamp = parseInt(task.CreationDate.slice(6, -2));
+                    // timestamp = parseInt(task.CreationDate.slice(6, -2));
+                   
+                    timestamp = moment(task.CreationDate).format("DD-MM-YYYY h:mm:ss");
+                    console.log(task.CreationDate,'sonam1==========================='+timestamp);
                 }
 
-                const date = new Date(timestamp);
-
-                return { ...task, CreationDate: date };
+                return { ...task, CreationDate: timestamp };
             }).sort((a, b) => b.CreationDate - a.CreationDate);
 
             // dispatch(setMyTasks([...hasCreationDate]));
@@ -214,23 +215,34 @@ function TodoList() {
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        console.log("Json_CRM_GetOutlookTask111", json);
+                       
                         let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
                         console.log("resultoutlook", result);
                         if (result && result.length > 0) {
                             setExporttoExcel(result);
                             exportTaskData = [...result];
-
                         }
                         const formattedTasks = result.map((task) => {
                             let timestamp;
                             if (task.EndDateTime) {
+                                // Assuming task.EndDateTime contains milliseconds since Unix epoch
                                 timestamp = parseInt(task.EndDateTime.slice(6, -2));
                             }
+                        
+                            // Check if timestamp is valid
+                            if (!isNaN(timestamp)) {
+                                // Create a new Date object from the timestamp
+                                const date = new Date(timestamp);
+                                console.log("Timestamp:", timestamp,date);
+                                //console.log("Date:", date.toLocaleString());
+                                
+                                // Return the task with the formatted EndDateTime
+                                return { ...task, EndDateTime: date };
+                            } else {
+                                // If timestamp is not valid, return the original task
+                                return task;
 
-                            const date = new Date(timestamp);
-
-                            return { ...task, EndDateTime: date };
+                            }
                         });
 
                         // let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
@@ -239,12 +251,15 @@ function TodoList() {
                         let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                             let timestamp;
                             if (task.CreationDate) {
-                                timestamp = parseInt(task.CreationDate.slice(6, -2));
+                                // timestamp = parseInt(task.CreationDate.slice(6, -2));
+                               
+                                timestamp = moment(task.CreationDate).format("DD-MM-YYYY h:mm:ss");
+                                console.log(task.CreationDate,'sonam2==========================='+timestamp);
                             }
-
-                            const date = new Date(timestamp);
-
-                            return { ...task, CreationDate: date };
+                           
+                            // const date = new Date(timestamp);
+                            // console.log(task.CreationDate,"datefillsonamtestdata",formattedDateWithTime);
+                            return { ...task, CreationDate: timestamp };
                         }).sort((a, b) => b.CreationDate - a.CreationDate);
 
                         hasCreationDate.filter(itm => {
@@ -360,15 +375,15 @@ function TodoList() {
                         let js = JSON.parse(data);
                         let { Status, Message } = js;
                         // let dt = js.Table;
-                        // console.log("Json_GetForwardUserList1112222", js)
+                         console.log("Json_GetForwardUserList1112222", js)
                         if (Status === "Success") {
                             let tbl = Message.Table;
                             //console.log("Json_GetForwardUserList1112222", tbl)
-                            let result = tbl.filter((el) => {
-                                return el.CGroup !== "Yes";
-                            });
+                            // let result = tbl.filter((el) => {
+                            //     return el.CGroup !== "Yes";
+                            // });
 
-                            setUserList(result);
+                            setUserList(tbl);
 
                         }
                     }
@@ -1507,42 +1522,10 @@ function TodoList() {
                                                 <Typography variant='subtitle1'><pan className='text-gray'>
                                                     {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)} </pan>
                                                     {/* <a href='#'>Patrick</a>, */}
-                                                    <span>{userName && userName.length > 0 ? userName[0].UserName : ""}</span>
-                      
-
-                                                    {arr && arr.length >2 ? <Button
-                                                                id={`demo-positioned-button-${index}`}
-                                                                aria-controls={openMore[index] ? `demo-positioned-menu-${index}` : undefined}
-                                                                aria-haspopup="true"
-                                                                aria-expanded={openMore[index] ? 'true' : undefined}
-                                                                onClick={(event) => handleClickMore(event, index)}
-                                                            >
-                                                                + {arr && arr.length>0?arr.length - 2:""}
-                                                            </Button>:""}
-                                                    <Menu
-                                                        id={`demo-positioned-menu-${index}`}
-                                                        anchorEl={anchorElMore[index]}
-                                                        open={openMore[index]}
-                                                        onClose={() => handleCloseMore(index)}
-                                                        anchorOrigin={{
-                                                            vertical: 'top',
-                                                            horizontal: 'left',
-                                                        }}
-                                                        transformOrigin={{
-                                                            vertical: 'top',
-                                                            horizontal: 'left',
-                                                        }}
-                                                    >
-                                                        {userName && userName.length > 0 ? userName.slice(1).map((user, idx) => (
-                                                            <MenuItem key={idx} onClick={() => handleCloseMore(index)}>{user.UserName}</MenuItem>
-                                                        )) : ""}
-                                                    </Menu>
-                                                </Typography>
-
-
-
-
-                                                <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
+                                                    <a href='javascript:void(0)'>{userName && userName.length > 0 ? userName[0].UserName : ""}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
+                                                        +{arr.length - 2}
+                                                    </>)}</a></Typography>
+                                                <Typography variant='subtitle1 sembold'>{item["CreationDate"] ? (startFormattingDate(item["CreationDate"])) : ""}</Typography>
                                             </Box>
 
                                             <Box className='d-flex align-items-center justify-content-between'>

@@ -8,7 +8,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import Activity from '../../client/utils/Activity';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+
 import LockIcon from '@mui/icons-material/Lock';
 
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
@@ -53,6 +53,7 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument, Json_CRM_GetOutlookTask }) {
+    console.log(selectedDocument, "selected document ")
     const dispatch = useDispatch();
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -88,6 +89,35 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     };
     const handleCloseChangeIndex = () => {
         setAnchorElChangeIndex(null);
+    };
+    const handleChangeCheckOut = () => {
+
+        try {
+            let o = { ItemId: selectedDocument["Registration No."], ViewerToken: localStorage.getItem("ViewerToken") }
+            cls.Json_CheckoutItem(o, function (sts, data) {
+                if (sts) {
+                    if (data) {
+
+                        console.log("Json_CheckoutItem", data)
+                        if (data.includes("Success")) {
+                            var getversion = data.split(":")[1];
+                            let openUrl = `https://mydocusoft.com/DSFileViewer.aspx?agreementid=${agrno}&Email=${Email}&ItemId=${selectedDocument["Registration No."]}&Guid=${selectedDocument["guid"]}&VersionId=${getversion}&ViewerToken=${localStorage.getItem("ViewerToken")}`;
+
+                            window.open(openUrl);
+                            return;
+
+                        }
+
+                    }
+                }
+            })
+        } catch (error) {
+
+        }
+
+
+        setAnchorElChangeIndex(null);
+
     };
 
     const [value, setValue] = React.useState('1');
@@ -133,7 +163,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     const Json_GetAudit = () => {
         try {
             let obj = {
-                itemid: selectedDocument["Registration No."] ? selectedDocument["Registration No."] : selectedDocument.ItemId,
+                itemid: selectedDocument["Registration No."],
 
             }
             cls.Json_GetAudit(obj, function (sts, data) {
@@ -160,7 +190,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                         })
                         if (formattedActivity.length > 0) {
                             const filteredArray = formattedActivity.filter(item => item.Comments !== null);
-                            dispatch(setGetActivitySonam(setGetAudit));
+
                             setGetAudit(filteredArray);
                             console.log("Json_GetAudit", filteredArray)
                         }
@@ -567,7 +597,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     }
     const PublishDocument = () => {
         try {
-            let o = { ItemId: selectedDocument.ItemId };
+            let o = { ItemId: selectedDocument["Registration No."] };
             cls.Json_SearchDocById(o, function (sts, doc) {
                 if (sts) {
                     if (doc) {
@@ -730,12 +760,12 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 >
                                     <PublishIcon className='me-1' />
                                     Publish</MenuItem>
-                                <MenuItem onClick={SharehandleClose}>
+                                {/* <MenuItem onClick={SharehandleClose}>
                                     <ForwardToInboxIcon className='me-1' />
                                     Send as Form</MenuItem>
                                 <MenuItem onClick={SharehandleClose}>
                                     <MarkunreadIcon className='me-1' />
-                                    Email</MenuItem>
+                                    Email</MenuItem> */}
                                 {/* <MenuItem onClick={SharehandleClose}>
                                     <DownloadIcon className='me-1' />
                                     Download</MenuItem> */}
@@ -775,7 +805,15 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 }}>
                                     <ListIcon className='me-1' />  Re-index
                                 </MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <RedeemIcon className='me-1' /> Check-Out</MenuItem>
+
+                                {selectedDocument && (selectedDocument.type === "docx" || selectedDocument.type === "doc" || selectedDocument.type === "excel" || selectedDocument.type === "xlsx") && (
+                                    <MenuItem onClick={handleChangeCheckOut}>
+                                        <RedeemIcon className='me-1' />
+                                        Check-Out
+                                    </MenuItem>
+                                )}
+                                
+                                {/* <MenuItem onClick={handleCloseChangeIndex}> <RedeemIcon className='me-1' /> Check-Out</MenuItem> */}
                                 <MenuItem onClick={() => {
                                     handleCloseChangeIndex();
                                     CategoryhandleClickOpen();
@@ -924,15 +962,14 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                         {/* <FormControlLabel control={<Checkbox />} className="p-0 m-0 ms-2 ps-1" size="small"/> */}
                                         <Checkbox {...label} defaultChecked size="small" />
 
-                                        <Button className='btn-blue-2 me-2 mb-1 pointer' for='file-upload' startIcon={<CloudUploadIcon />}>
+                                        <Button className='btn-blue-2 me-2 mb-1 pointer' for='file-upload' startIcon={<AttachFileIcon />}>
                                             <input type='file' id='file-upload' multiple onChange={handleFileSelect} className='file-input' />
                                             <label for='file-upload' className='pointer '>Upload Your File</label>
                                         </Button>
 
-                                        <Button className='btn-red me-2 mb-1 ps-1' onClick={DeleteDocumentAttachment} startIcon={<DeleteIcon />}>Delete</Button>
+                                        <Button className='btn-red me-2 mb-1 ps-1' onClick={DeleteDocumentAttachment} startIcon={<AttachFileIcon />}>Delete</Button>
 
                                         <Button className='btn-blue-2 me-2 mb-1 ps-1' onClick={DowloadSingleFileOnClick} startIcon={<DownloadIcon />}>Download</Button>
-
 
                                     </Box>
 
