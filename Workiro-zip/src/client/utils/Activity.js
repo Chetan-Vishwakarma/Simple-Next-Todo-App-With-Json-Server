@@ -42,6 +42,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import Activitygrid from './Activitygrid';
 import { exportDataGrid } from "devextreme/excel_exporter";
 import saveAs from "file-saver";
+import ClearIcon from '@mui/icons-material/Clear';
 import { useSelector, useDispatch } from 'react-redux';
 // import moment from 'moment';
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -471,8 +472,8 @@ function handleAscendingSort() {
         // Sort by Actioned Date in ascending order
         const sortedArr = [...getAudit].sort((a, b) => {
             // Convert Actioned Date strings to date objects for comparison
-            const dateA = parseDate(a["Actioned Date"]);
-            const dateB = parseDate(b["Actioned Date"]);
+            const dateA = a["Actioned Date"];
+            const dateB = b["Actioned Date"];
             return dateA - dateB;
         });
         console.log(sortedArr, "Sorted by Date ascending");
@@ -490,7 +491,7 @@ function handleAscendingSort() {
 
         // Set the sorted array to tempdatafilter state variable
         setTempdatafilter(sortedArr);
-    }
+    } 
 }
 
 
@@ -500,8 +501,8 @@ function handleDescendingSort() {
         // Sort by Actioned Date in descending order
         const sortedArr = [...getAudit].sort((a, b) => {
             // Convert Actioned Date strings to date objects for comparison
-            const dateA = parseDate(a["Actioned Date"]);
-            const dateB = parseDate(b["Actioned Date"]);
+            const dateA = a["Actioned Date"];
+            const dateB = b["Actioned Date"];
             return dateB - dateA; // Compare in descending order
         });
         console.log(sortedArr, "Sorted by Date descending");
@@ -799,8 +800,9 @@ const handleRemoveOption = (optionToRemove) => {
                                                         // onChange={handleChange}
                                                         value={sortByProperty}
                                                         onChange={(e) => {
-                                                            if (e.target.value === "Sort By") {
-                                                                setSortByProperty("")
+                                                            if (e.target.value === "Clear Sort") {
+                                                                setSortByProperty("");
+                                                                setTempdatafilter(getAudit);
                                                                 return;
                                                             }
                                                             setSortByProperty(e.target.value)
@@ -814,7 +816,7 @@ const handleRemoveOption = (optionToRemove) => {
                                                         <MenuItem value="" style={{ display: "none" }}>
                                                             <SwapVertIcon className='pe-1' /> Sort By
                                                         </MenuItem>
-                                                        <MenuItem className='ps-1' value="None"><WarningIcon className='ps-1' />  Clear Sortby</MenuItem>
+                                                        <MenuItem value="Clear Sort" className='text-danger ps-1'><ClearIcon className="font-20 me-2" /> Clear Sort</MenuItem>
                                                         <MenuItem value={"Date"} className='ps-1' >
                                                             <CalendarMonthIcon className='pe-1' />
                                                             By Date</MenuItem>
