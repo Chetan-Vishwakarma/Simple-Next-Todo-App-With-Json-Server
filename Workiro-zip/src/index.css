@@ -731,6 +731,9 @@ span.tox-statusbar__branding {
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .activity-timeline ul {
