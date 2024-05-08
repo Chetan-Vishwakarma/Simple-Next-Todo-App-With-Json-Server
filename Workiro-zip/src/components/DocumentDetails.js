@@ -431,7 +431,7 @@ console.log(updatedData);
                         dispatch(handleOpenModalRedux(tskType));
                     }
                     else {
-                        toast.error(item.Description + "was not uploaded as it had no data")
+                        toast.error("Document is blank.")
                     }
 
                 }
@@ -496,7 +496,8 @@ console.log(updatedData);
                         ankr.click();
                     }
                     else {
-                        toast.error(item.Description + "was not uploaded as it had no data")
+                     
+                       console.log("Document is blank")
                     }
 
                 }

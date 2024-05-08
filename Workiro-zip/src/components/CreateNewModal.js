@@ -79,7 +79,8 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EditReference from "../client/client-components/EditReference";
 import UploadDocument from "../client/client-components/UploadDocument";
 import AddContacts from "./AddContacts";
-import { fetchAllTasksRedux, fetchRecentTasksRedux, handleOpenModalRedux, setMyTasks } from "../redux/reducers/counterSlice";
+import { handleOpenModalRedux, setMyTasks } from "../redux/reducers/counterSlice";
+import { fetchAllTasksRedux, fetchRecentTasksRedux } from "../redux/reducers/api_helper";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 
@@ -1852,7 +1853,7 @@ toast.error("Please Select a Due Date");
                         return callBack(data);
                     }
                     else {
-                        toast.error(item.Description + "was not uploaded as it had no data")
+                       
                     }
 
                 }
