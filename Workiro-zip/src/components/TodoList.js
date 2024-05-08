@@ -1508,7 +1508,7 @@ const [openMore, setOpenMore] = useState(false);    // If any error occur then r
                                                     <a href='javascript:void(0)'>{userName && userName.length > 0 ? userName[0].UserName : ""}</a> <a href='javascript:void(0)'> {arr.length > 2 && (<>
                                                         +{arr.length - 2}
                                                     </>)}</a></Typography>
-                                                <Typography variant='subtitle1 sembold'>{item["CreationDate"] ? (moment(item["CreationDate"]).format("DD-MM-YYYY h:mm:ss")) : (startFormattingDate(item["CreationDate"])) ? (startFormattingDate(item["CreationDate"])): ""}</Typography>
+                                                <Typography variant='subtitle1 sembold'>{item["CreationDate"] ? (startFormattingDate(item["CreationDate"])) : ""}</Typography>
                                             </Box>
 
                                             <Box className='d-flex align-items-center justify-content-between'>
