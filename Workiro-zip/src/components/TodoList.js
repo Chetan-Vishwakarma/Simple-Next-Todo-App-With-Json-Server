@@ -907,7 +907,11 @@ function TodoList() {
         console.log(filterExportData, "11exportData", exportTaskData);
         if (filterExportData && filterExportData.length > 0) {
             exportexcel(filterExportData);
-        } else {
+        } 
+        else if(allTask && allTask.length > 0) {
+            exportexcel(allTask);
+        }
+        else {
             exportexcel(exportTaskData); // Export data from 
         }
 
