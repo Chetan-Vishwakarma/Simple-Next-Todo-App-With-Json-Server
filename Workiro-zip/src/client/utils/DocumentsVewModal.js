@@ -23,8 +23,8 @@ import Swal from 'sweetalert2';
 import CreateNewModalTask from '../../components/CreateNewModal';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
-import { useDispatch } from "react-redux";
-import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setGetActivitySonam } from "../../redux/reducers/counterSlice"
+
+import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setGetActivitySonam, setOpenReIndex, setSelectedDocumentRedux } from "../../redux/reducers/counterSlice"
 import AlarmOnIcon from '@mui/icons-material/AlarmOn';
 import $ from 'jquery';
 import Fileformat from '../../images/files-icon/pdf.png';
@@ -48,14 +48,24 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { TabList } from '@mui/lab';
 
+import { getFolders_Redux,Json_SearchDocById_Redux,Json_GetSections_Redux, Json_GetSupplierListByProject_Redux } from '../../redux/reducers/api_helper';
+import { useDispatch,useSelector } from 'react-redux'; 
+import ReFile from '../../components/ReFile';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 
+
 function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument, Json_CRM_GetOutlookTask }) {
-    console.log(selectedDocument, "selected document ")
+   // console.log(selectedDocument, "selected document ")
     const dispatch = useDispatch();
+
+
+   
+
+    //console.log(allFolders, "selected document ")
+
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -68,6 +78,8 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     const [txtClientData, setTxtClientData] = useState({});
     const [txtSectionData, setTxtSectionData] = useState({});
     const [txtFolderData, setTxtFolderData] = useState({});
+
+   
 
     //const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
@@ -143,7 +155,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
     const [ShareanchorEl, setShareAnchorEl] = React.useState(null);
     const [CreateTaskanchorEl, setCreateTaskAnchorEl] = React.useState(null);
-    const [ReIndexopen, ReIndexsetOpen] = React.useState(false);
+    const [ReIndexopen, setReIndexOpen] = React.useState(false);
     const [Categoryopen, CategorysetOpen] = React.useState(false);
 
 
@@ -283,6 +295,17 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         setViewerToken(localStorage.getItem("ViewerToken"));
 
         if (selectedDocument) {
+
+
+            dispatch(getFolders_Redux());
+            dispatch(Json_SearchDocById_Redux(selectedDocument["Registration No."]));
+            if(selectedDocument.ProjectId){                    
+                dispatch(Json_GetSections_Redux(selectedDocument.ProjectId));
+                dispatch(Json_GetSupplierListByProject_Redux(selectedDocument.ProjectId))
+               } 
+
+            dispatch(setSelectedDocumentRedux(selectedDocument))
+          
 
 
             console.log("selectedDocument", selectedDocument)
@@ -638,12 +661,11 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         setShareAnchorEl(null);
     };
 
-    const ReIndexhandleClickOpen = () => {
-        ReIndexsetOpen(true);
+    const ReIndexhandleClickOpen = () => {        
+        setReIndexOpen(true);
+
     };
-    const ReIndexhandleClose = () => {
-        ReIndexsetOpen(false);
-    };
+   
 
 
     const CategoryhandleClickOpen = () => {
@@ -665,6 +687,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
     return (
         <>
+        <ReFile ReIndexopen={ReIndexopen} setReIndexOpen={setReIndexOpen} selectedDocument={selectedDocument}></ReFile>
             <Dialog
                 open={openPDFView}
                 onClose={handleClosePDFView}
@@ -1040,91 +1063,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
 
             {/* Re-Index modal Start */}
-            <Dialog
-                open={ReIndexopen}
-                onClose={ReIndexhandleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                className='custom-modal'
-
-                sx={{
-                    maxWidth: 600,
-                    width: '100%',
-                    margin: '0 auto'
-                }}
-            >
-                <Box className="d-flex align-items-center justify-content-between modal-head">
-                    <Box className="dropdown-box">
-                        <Typography variant="h4" className='font-18 bold text-black'>
-                            Re-Index
-                        </Typography>
-                    </Box>
-
-                    {/*  */}
-                    <Button onClick={ReIndexhandleClose}>
-                        <span className="material-symbols-outlined text-black">
-                            cancel
-                        </span>
-                    </Button>
-                </Box>
-
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-
-                        <Grid item xs={6} md={6} className='mb-3'>
-                            <Autocomplete
-                                disablePortal
-                                options={top100Films}
-                                renderInput={(params) => <TextField {...params} label="Folder" />}
-                                MenuProps={{ PaperProps: { sx: { maxHeight: '100px !important' } } }}
-                            />
-                        </Grid>
-
-                        <Grid item xs={6} md={6} className='mb-3'>
-                            <Autocomplete
-                                disablePortal
-                                options={top100Films}
-                                renderInput={(params) => <TextField {...params} label="Section" />}
-                                MenuProps={{ PaperProps: { sx: { maxHeight: '100px !important' } } }}
-                            />
-                        </Grid>
-
-                        <Grid item xs={6} md={6} className='mb-3'>
-                            <Autocomplete
-                                disablePortal
-                                options={top100Films}
-                                renderInput={(params) => <TextField {...params} label="Client" />}
-                                MenuProps={{ PaperProps: { sx: { maxHeight: '100px !important' } } }}
-                            />
-                        </Grid>
-                        <Grid className='mt-0' container spacing={2}>
-                            <Grid item xs={6} md={6} className='pt-0'>
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DemoContainer components={['DatePicker']}>
-                                        <DatePicker label="Document Date" className=" w-100" />
-                                    </DemoContainer>
-                                </LocalizationProvider>
-                            </Grid>
-                            <Grid item xs={6} md={6} className='pt-0'>
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DemoContainer components={['DatePicker']}>
-                                        <DatePicker label="Received Date" className=" w-100" />
-                                    </DemoContainer>
-                                </LocalizationProvider>
-                            </Grid>
-
-                        </Grid>
-                    </DialogContentText>
-
-                    <DialogActions className='mt-4 mb-3 p-0'>
-                        <Button className='btn-red' onClick={ReIndexhandleClose}>Cancel</Button>
-                        <Button className='btn-blue-2' onClick={ReIndexhandleClose} autoFocus>
-                            Submit
-                        </Button>
-                    </DialogActions>
-
-                </DialogContent>
-            </Dialog>
+           
 
 
             {/* category modal start */}

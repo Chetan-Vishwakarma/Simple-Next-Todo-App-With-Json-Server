@@ -158,6 +158,7 @@ function TodoList() {
     }
     //console.log("fdlkgjgljroirreotudfn", globalSearchTask.map(itm => itm.mstatus));
     const Json_CRM_GetOutlookTask = () => {
+
         if (globalSearchTask.length > 0) {
             console.log("globalSearchTask", globalSearchTask);
             const formattedTasks = globalSearchTask.map((task) => {
@@ -176,10 +177,10 @@ function TodoList() {
             let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                 let timestamp;
                 if (task.CreationDate) {
-                    // timestamp = parseInt(task.CreationDate.slice(6, -2));
+                     timestamp = parseInt(task.CreationDate.slice(6, -2));
                    
-                    timestamp = moment(task.CreationDate).format("DD-MM-YYYY h:mm:ss");
-                    console.log(task.CreationDate,'sonam1==========================='+timestamp);
+                  //  timestamp = moment(task.CreationDate).format("DD-MM-YYYY h:mm:ss");
+                  //  console.log(task.CreationDate,'sonam1==========================='+timestamp);
                 }
 
                 return { ...task, CreationDate: timestamp };
