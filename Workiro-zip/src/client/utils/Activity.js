@@ -45,7 +45,6 @@ import saveAs from "file-saver";
 import ClearIcon from '@mui/icons-material/Clear';
 import { useSelector, useDispatch } from 'react-redux';
 
-
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
 ))(({ theme }) => ({
@@ -817,7 +816,7 @@ const handleRemoveOption = (optionToRemove) => {
                                                         <MenuItem value="" style={{ display: "none" }}>
                                                             <SwapVertIcon className='pe-1' /> Sort By
                                                         </MenuItem>
-                                                        <MenuItem value="Clear Sort" className='text-danger ps-1'><ClearIcon className="font-20 me-2" /> Clear Sort</MenuItem>
+                                                        <MenuItem value="Clear Sort" className='ps-1 text-danger sembold'><ClearIcon className=" me-2" /> Clear Sort</MenuItem>
                                                         <MenuItem value={"Date"} className='ps-1' >
                                                             <CalendarMonthIcon className='pe-1' />
                                                             By Date</MenuItem>

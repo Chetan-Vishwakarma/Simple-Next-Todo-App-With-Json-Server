@@ -2348,6 +2348,10 @@ input[type=number] {
   display: none !important;
 }
 
+.tox-notifications-container {
+  
+}
+
 @media only screen and (max-width: 1366px) {
   .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root {
     font-size: 12px;

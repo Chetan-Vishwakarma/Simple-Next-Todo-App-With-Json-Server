@@ -6,7 +6,6 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ToggleButton from '@mui/material/ToggleButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import EmailIcon from '@mui/icons-material/Email';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
@@ -40,6 +39,8 @@ import UploadDocForClient from './UploadDocForClient';
 import CustomLoader from '../../components/CustomLoader';
 import { useDispatch } from "react-redux";
 import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
+import HtmlEditorDX from '../../components/HtmlEditor';
+import { Height } from '@mui/icons-material';
 import Fileformat from '../../images/files-icon/pdf.png';
 import { DialogTitle } from '@mui/material';
 import { Label } from '@mui/icons-material';
@@ -49,6 +50,7 @@ const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
 const password = localStorage.getItem("Password");
 const folderId = localStorage.getItem("FolderId");
+
 
 function ClientDetails() {
 
@@ -78,10 +80,25 @@ function ClientDetails() {
     let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
 
     // upload document modal start
+    const [openUploadDocument, setOpenUploadDocument] = React.useState(false);
+
+    const [documentDate, setDocumentDate] = useState(null);
+    const [receivedDate, setReceivedDate] = useState(null);
+    const [createNewFileObj, setCreateNewFileObj] = useState(null);
+    const [txtFolderData, setTxtFolderData] = useState(null);
+    const [txtClientData, setTxtClientData] = useState(null);
+    const [txtSectionData, setTxtSectionData] = useState(null);
+    const [TaskType, setTaskType] = useState(null);
+    const [openModal, setOpenModal] = useState(null);
+    const [templateDataMarkup, setTemplateDataMarkup] = React.useState([]);
+    const [editorContentValue, setEditorContentValue] = React.useState([]);
+
+
     const handleClickOpenUploadDocument = () => {
         dispatch(setOpenDocumentModalByRedux(true));
     };
     // upload document modal end
+
 
 
     const handleChange = (event, newValue) => {
@@ -218,6 +235,28 @@ function ClientDetails() {
     const NoteshandleClose = () => {
         NotessetOpen(false);
     };
+
+
+    const SaveStickyNotes = () => {
+        try {
+            //  console.log(editorContentValue)
+            // let o = {
+            //     ItemId: selectedDocument["Registration No."],
+            //     strStickyNotes: window.btoa(editorContentValue)
+            // }
+            // cls.Json_SetItemStickyNotes(o, function (sts, data) {
+            //     if (sts && data) {
+            //         if (data === "Success") {
+            //             Json_GetItemStickyNotes();
+            //             toast.success("Updated !");
+            //         }
+            //     }
+            // })
+        } catch (error) {
+            console.log({ Status: false, mgs: "Data not found", Error: error });
+        }
+
+    }
 
 
     return (
@@ -389,14 +428,13 @@ function ClientDetails() {
 
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description" className='mb-4'>
-                        <Box className='form-group'>
-                            <label>Add Notes</label>
-                            <textarea className='textarea textarea-2 form-control' placeholder='Write your notes...'></textarea>
+                        <Box className='mt-1'>
+                            {<HtmlEditorDX sx={{ Height: "200px !important" }} templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
                         </Box>
                     </DialogContentText>
 
                     <DialogActions>
-                        <Button onClick={NoteshandleClose} className="btn-blue-2">Add Notes</Button>
+                        <Button className="btn-blue-2" onClick={SaveStickyNotes} >Add Notes</Button>
                         <Button onClick={NoteshandleClose} className="btn-blue-2" autoFocus>
                             Cancel
                         </Button>

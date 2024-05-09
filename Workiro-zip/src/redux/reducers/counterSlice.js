@@ -17,20 +17,30 @@ const counterSlices = createSlice({
     mainCountrySonam: "",
     defaultDateSonam: null,
     isAdvanceDocSearchRedux: false,
-    GetActivitySonam:"",
-    GetActivityDataSonam:"",
+    GetActivitySonam: "",
+    GetActivityDataSonam: "",
+
     recentTaskRedux: {
       isLoading: true,
       recentTaskList: [],
     },
+
     allTask: [],
-    recentDocument:[],
+    recentDocument: [],
+
     connectionsState: {
       clients: [],
       contacts: [],
       isLoading: true,
       allFolders: [],
+      searchByItemId: [],
+      allSections: [],
+      allClientsList:[]
     },
+    refile:{
+      opentReIndex:false,
+    },
+    selectedDocumentRedux:{}
   },
   reducers: {
     //sonam state start
@@ -80,6 +90,15 @@ const counterSlices = createSlice({
     setAllFoldersFromRedux: (state, action) => {
       state.connectionsState.allFolders = action.payload;
     },
+    setSearchDocByIdFromRedux: (state, action) => {
+      state.connectionsState.searchByItemId = action.payload;
+    },
+    setSectionListFromRedux: (state, action) => {
+      state.connectionsState.allSections = action.payload;
+    },
+    setClientListByFolderIdFromRedux:(state, action)=>{
+state.connectionsState.allClientsList=action.payload;
+    },
     // chetan state end
     updateReduxDataSonam: (state, action) => {
       state.reduxData = action.payload;
@@ -112,10 +131,46 @@ const counterSlices = createSlice({
       state.mainCountrySonam = null;
       state.defaultDateSonam = null;
     },
+    setOpenReIndex:(state,action)=>{
+     state.refile.opentReIndex = action.payload;
+    },
+    setSelectedDocumentRedux:(state,action)=>{
+     state.selectedDocumentRedux=action.payload;
+    }
   }
 });
 
-export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux, updateReduxDataSonam, setSetDefaultRoleSonam, clearDefaultRoleSonam, setSetDefaultTitleSonam, setDefaultUserSonam, setMainCountrySonam, setDefaultDateSonam, setIsAdvanceDocSearchRedux, fetchRecentTasks, fetchAllTasks, fetchRecentDocuments,setGetActivitySonam ,setGetActivityDataSonam, setClientFromRedux, setContactsFromRedux, setAllFoldersFromRedux } = counterSlices.actions;
+export const {
+  setUserDetail,
+  setDataCompanyHouse,
+  setSelectedFolderID,
+  setMyTasks,
+  handleOpenModalRedux,
+  setClientAndDocDataForTaskModalRedux,
+  setOpenDocumentModalByRedux,
+  updateReduxDataSonam,
+  setSetDefaultRoleSonam,
+  clearDefaultRoleSonam,
+  setSetDefaultTitleSonam,
+  setDefaultUserSonam,
+  setMainCountrySonam,
+  setDefaultDateSonam,
+  setIsAdvanceDocSearchRedux,
+  fetchRecentTasks,
+  fetchAllTasks,
+  fetchRecentDocuments,
+  setGetActivitySonam,
+  setGetActivityDataSonam,
+  setClientFromRedux,
+  setContactsFromRedux,
+
+  setAllFoldersFromRedux,
+  setSearchDocByIdFromRedux,
+  setSectionListFromRedux,
+  setClientListByFolderIdFromRedux,
+  setOpenReIndex,
+  setSelectedDocumentRedux
+} = counterSlices.actions;
 
 // export const getUsers = () => async(dispatch) => {
 //     const response = await axios.get("https://jsonplaceholder.typicode.com/users");

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Box, Button, Typography, Dialog, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Menu, MenuItem } from '@mui/material';
+import { Box, Button, Typography, Dialog, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Menu, MenuItem, DialogActions, Grid, FormControlLabel, TextField, Autocomplete, RadioGroup, FormLabel, Radio, FormControl } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 
 import TabPanel from '@mui/lab/TabPanel';
@@ -21,9 +21,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 import CreateNewModalTask from '../../components/CreateNewModal';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
-import { useDispatch } from "react-redux";
-import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux } from "../../redux/reducers/counterSlice"
+
+import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setGetActivitySonam, setOpenReIndex, setSelectedDocumentRedux } from "../../redux/reducers/counterSlice"
 import AlarmOnIcon from '@mui/icons-material/AlarmOn';
 import $ from 'jquery';
 import Fileformat from '../../images/files-icon/pdf.png';
@@ -42,14 +43,28 @@ import DownloadIcon from '@mui/icons-material/Download';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import CreateIcon from '@mui/icons-material/Create';
 import ShareIcon from '@mui/icons-material/Share';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+
+import { getFolders_Redux,Json_SearchDocById_Redux,Json_GetSections_Redux, Json_GetSupplierListByProject_Redux } from '../../redux/reducers/api_helper';
+import { useDispatch,useSelector } from 'react-redux'; 
+import ReFile from '../../components/ReFile';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 
+
 function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument, Json_CRM_GetOutlookTask }) {
-    console.log(selectedDocument, "selected document ")
+   // console.log(selectedDocument, "selected document ")
     const dispatch = useDispatch();
+
+
+   
+
+    //console.log(allFolders, "selected document ")
+
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -62,6 +77,8 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     const [txtClientData, setTxtClientData] = useState({});
     const [txtSectionData, setTxtSectionData] = useState({});
     const [txtFolderData, setTxtFolderData] = useState({});
+
+   
 
     //const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
@@ -134,6 +151,11 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     const [isLoading, setIsLoading] = useState(true);
 
     const [createNewFileObj, setCreateNewFileObj] = useState([]);
+
+    const [ShareanchorEl, setShareAnchorEl] = React.useState(null);
+    const [CreateTaskanchorEl, setCreateTaskAnchorEl] = React.useState(null);
+    const [ReIndexopen, setReIndexOpen] = React.useState(false);
+    const [Categoryopen, CategorysetOpen] = React.useState(false);
 
 
     const handleChange = (event, newValue) => {
@@ -272,6 +294,17 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         setViewerToken(localStorage.getItem("ViewerToken"));
 
         if (selectedDocument) {
+
+
+            dispatch(getFolders_Redux());
+            dispatch(Json_SearchDocById_Redux(selectedDocument["Registration No."]));
+            if(selectedDocument.ProjectId){                    
+                dispatch(Json_GetSections_Redux(selectedDocument.ProjectId));
+                dispatch(Json_GetSupplierListByProject_Redux(selectedDocument.ProjectId))
+               } 
+
+            dispatch(setSelectedDocumentRedux(selectedDocument))
+          
 
 
             console.log("selectedDocument", selectedDocument)
@@ -608,7 +641,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
 
     // 
-    const [CreateTaskanchorEl, setCreateTaskAnchorEl] = React.useState(null);
+
     const openCreateTask = Boolean(CreateTaskanchorEl);
     const createTaskhandleClick = (event) => {
         setCreateTaskAnchorEl(event.currentTarget);
@@ -619,7 +652,6 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
 
     // 
-    const [ShareanchorEl, setShareAnchorEl] = React.useState(null);
     const openShare = Boolean(ShareanchorEl);
     const SharehandleClick = (event) => {
         setShareAnchorEl(event.currentTarget);
@@ -628,8 +660,33 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         setShareAnchorEl(null);
     };
 
+    const ReIndexhandleClickOpen = () => {        
+        setReIndexOpen(true);
+
+    };
+   
+
+
+    const CategoryhandleClickOpen = () => {
+        CategorysetOpen(true);
+    };
+
+    const CategoryhandleClose = () => {
+        CategorysetOpen(false);
+    };
+
+
+    const [Renameopen, RenamesetOpen] = React.useState(false);
+    const RenamehandleClickOpen = () => {
+        RenamesetOpen(true);
+    };
+    const RenamehandleClose = () => {
+        RenamesetOpen(false);
+    };
+
     return (
         <>
+        <ReFile ReIndexopen={ReIndexopen} setReIndexOpen={setReIndexOpen} selectedDocument={selectedDocument}></ReFile>
             <Dialog
                 open={openPDFView}
                 onClose={handleClosePDFView}
@@ -765,18 +822,35 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 }}
                             >
 
-                                <MenuItem onClick={handleCloseChangeIndex}> <ListIcon className='me-1' />  Re-index</MenuItem>
+                                <MenuItem onClick={() => {
+                                    handleCloseChangeIndex();
+                                    ReIndexhandleClickOpen();
+                                }}>
+                                    <ListIcon className='me-1' />  Re-index
+                                </MenuItem>
+
                                 {selectedDocument && (selectedDocument.type === "docx" || selectedDocument.type === "doc" || selectedDocument.type === "excel" || selectedDocument.type === "xlsx") && (
                                     <MenuItem onClick={handleChangeCheckOut}>
                                         <RedeemIcon className='me-1' />
                                         Check-Out
                                     </MenuItem>
                                 )}
+                                
+                                {/* <MenuItem onClick={handleCloseChangeIndex}> <RedeemIcon className='me-1' /> Check-Out</MenuItem> */}
+                                <MenuItem onClick={() => {
+                                    handleCloseChangeIndex();
+                                    CategoryhandleClickOpen();
+                                }}
+                                > <CategoryIcon className='me-1' /> Category</MenuItem>
+                                <MenuItem
 
+                                    onClick={() => {
+                                        handleCloseChangeIndex();
+                                        RenamehandleClickOpen();
+                                    }}
 
-                                <MenuItem onClick={handleCloseChangeIndex}> <CategoryIcon className='me-1' /> Category</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <DriveFileRenameOutlineIcon className='me-1' /> Rename</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <AddToDriveIcon className='me-1' /> Upload to Drive</MenuItem>
+                                > <DriveFileRenameOutlineIcon className='me-1' /> Rename</MenuItem>
+                                {/* <MenuItem onClick={handleCloseChangeIndex}> <AddToDriveIcon className='me-1' /> Upload to Drive</MenuItem> */}
                             </Menu>
                         </Box>
 
@@ -867,12 +941,12 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 </TabPanel>
 
                                 <TabPanel value="3" className='p-0'>
-                                    {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
-                                    <Box className='text-end'>
-                                        <Button onClick={SaveStickyNotes} variant="contained" className='mt-3'>Save Notes</Button>
-
-                                        {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
-
+                                    <Box className='mt-3'>
+                                        {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+                                        <Box className='text-end mt-2'>
+                                            <Button onClick={SaveStickyNotes} variant="contained" className='mt-3 btn-blue-2'>Save Notes</Button>
+                                            {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
+                                        </Box>
                                     </Box>
                                 </TabPanel>
 
@@ -895,7 +969,6 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                                 </Button>
                                             );
                                         })}
-
                                     </Box>
                                 </TabPanel>
 
@@ -919,7 +992,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
                                         <Button className='btn-red me-2 mb-1 ps-1' onClick={DeleteDocumentAttachment} startIcon={<AttachFileIcon />}>Delete</Button>
 
-                                        <Button className='btn-blue-2 me-2 mb-1 ps-1' onClick={DowloadSingleFileOnClick} startIcon={<AttachFileIcon />}>Download</Button>
+                                        <Button className='btn-blue-2 me-2 mb-1 ps-1' onClick={DowloadSingleFileOnClick} startIcon={<DownloadIcon />}>Download</Button>
 
                                     </Box>
 
@@ -986,10 +1059,155 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                 </Button>
             </DialogActions> */}
             </Dialog>
+
+
+            {/* Re-Index modal Start */}
+           
+
+
+            {/* category modal start */}
+
+            <Dialog
+                open={Categoryopen}
+                onClose={CategoryhandleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal'
+
+                sx={{
+                    maxWidth: 660,
+                    width: '100%',
+                    margin: '0 auto'
+                }}
+            >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold text-black'>
+                            Section Category
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={CategoryhandleClose}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <FormControl>
+                            <RadioGroup
+                                row
+                                aria-labelledby="demo-row-radio-buttons-group-label"
+                                name="row-radio-buttons-group"
+                            >
+                                <FormControlLabel value="1. Received" control={<Radio className='text-blue' />} label="1. Received" />
+                                <FormControlLabel value="2. Pending" control={<Radio className='text-blue' />} label="2. Pending" />
+                                <FormControlLabel value="3. Complete" control={<Radio className='text-blue' />} label="3. Complete" />
+                                <FormControlLabel value="4. Will Test" control={<Radio className='text-blue' />} label="4. Will Test" />
+
+                                <FormControlLabel value="1. Received" control={<Radio className='text-blue' />} label="1. Received" />
+                                <FormControlLabel value="2. Pending" control={<Radio className='text-blue' />} label="2. Pending" />
+                                <FormControlLabel value="3. Complete" control={<Radio className='text-blue' />} label="3. Complete" />
+                                <FormControlLabel value="4. Will Test" control={<Radio className='text-blue' />} label="4. Will Test" />
+
+
+                            </RadioGroup>
+                        </FormControl>
+                    </DialogContentText>
+
+                    <hr />
+
+                    <DialogActions className='justify-content-between'>
+
+                        <Typography variant="h4" className='font-14 bold text-black mb-0'>
+                            Doc ID: 992102
+                            {/* {console.log(selectedDocudata, "selectedDocudata11")}
+                            Doc ID: {selectedDocudata && selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : selectedDocudata?.ItemId
+                            } */}
+                        </Typography>
+
+                        <Box>
+                            <Button className='btn-red me-2' onClick={CategoryhandleClose}>Cancel</Button>
+                            <Button className='btn-blue-2' onClick={CategoryhandleClose} autoFocus>
+                                Submit
+                            </Button>
+                        </Box>
+                    </DialogActions>
+                </DialogContent>
+            </Dialog>
+
+
+
+            {/* Rename Modal */}
+            <Dialog
+                open={Renameopen}
+                onClose={RenamehandleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal'
+
+                sx={{
+                    maxWidth: 660,
+                    width: '100%',
+                    margin: '0 auto'
+                }}
+            >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold text-black'>
+                            Edit Description
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={RenamehandleClose}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <Box className='mb-3'>
+                            <Autocomplete
+                                disablePortal
+                                options={top100Films}
+                                renderInput={(params) => <TextField {...params} label="Standard Description List
+                                " />}
+                                MenuProps={{ PaperProps: { sx: { maxHeight: '100px !important' } } }}
+                            />
+                        </Box>
+
+                        <Box>
+                            <label className='font-14 text-black'>Document Date</label>
+                            <textarea className='textarea w-100' placeholder='Description'></textarea>
+                        </Box>
+
+                    </DialogContentText>
+
+                    <hr />
+
+                    <DialogActions>
+                        <Button onClick={RenamehandleClose} className='btn-red'>Cancel</Button>
+                        <Button onClick={RenamehandleClose} className='btn-blue-2' autoFocus>
+                            Submit
+                        </Button>
+                    </DialogActions>
+
+                </DialogContent>
+
+            </Dialog>
         </>
-
-
     )
 }
 
+const top100Films = [
+    { label: 'Client', year: 1994 },
+    { label: 'Cases', year: 1972 },
+    { label: 'Customer', year: 1974 },
+]
 export default DocumentsVewModal;

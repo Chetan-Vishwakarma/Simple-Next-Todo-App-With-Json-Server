@@ -172,6 +172,7 @@ function TodoList() {
     }
     //console.log("fdlkgjgljroirreotudfn", globalSearchTask.map(itm => itm.mstatus));
     const Json_CRM_GetOutlookTask = () => {
+
         if (globalSearchTask.length > 0) {
             console.log("globalSearchTask", globalSearchTask);
             const formattedTasks = globalSearchTask.map((task) => {
@@ -190,10 +191,10 @@ function TodoList() {
             let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
                 let timestamp;
                 if (task.CreationDate) {
-                    // timestamp = parseInt(task.CreationDate.slice(6, -2));
+                     timestamp = parseInt(task.CreationDate.slice(6, -2));
                    
-                    timestamp = moment(task.CreationDate).format("DD-MM-YYYY h:mm:ss");
-                    console.log(task.CreationDate,'sonam1==========================='+timestamp);
+                  //  timestamp = moment(task.CreationDate).format("DD-MM-YYYY h:mm:ss");
+                  //  console.log(task.CreationDate,'sonam1==========================='+timestamp);
                 }
 
                 return { ...task, CreationDate: timestamp };
@@ -216,28 +217,33 @@ function TodoList() {
                     if (data) {
                         let json = JSON.parse(data);
                        
-                        let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
+                    
+                       
+                       
+                        const result = json.Table.filter(itm => itm.AssignedToID.split(",").includes(localStorage.getItem("UserId")) && ["Portal", "CRM"].includes(itm.Source));
                         console.log("resultoutlook", result);
                         if (result && result.length > 0) {
                             setExporttoExcel(result);
                             exportTaskData = [...result];
                         }
+                       
                         const formattedTasks = result.map((task) => {
                             let timestamp;
-                            if (task.EndDateTime) {
+                            
+                            if (task.CreationDate) {
                                 // Assuming task.EndDateTime contains milliseconds since Unix epoch
-                                timestamp = parseInt(task.EndDateTime.slice(6, -2));
+                                timestamp = parseInt(task.CreationDate.slice(6, -2));
                             }
-                        
+                          
                             // Check if timestamp is valid
                             if (!isNaN(timestamp)) {
                                 // Create a new Date object from the timestamp
                                 const date = new Date(timestamp);
-                                console.log("Timestamp:", timestamp,date);
+                               // console.log("Timestamp:", timestamp,date);
                                 //console.log("Date:", date.toLocaleString());
                                 
                                 // Return the task with the formatted EndDateTime
-                                return { ...task, EndDateTime: date };
+                                return { ...task, CreationDate: date };
                             } else {
                                 // If timestamp is not valid, return the original task
                                 return task;
@@ -246,27 +252,13 @@ function TodoList() {
                         });
 
                         // let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
-                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
+                       // let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
+                      
+                       formattedTasks.sort((a, b) => b.CreationDate - a.CreationDate);
 
-                        let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
-                            let timestamp;
-                            if (task.CreationDate) {
-                                // timestamp = parseInt(task.CreationDate.slice(6, -2));
-                               
-                                timestamp = moment(task.CreationDate).format("DD-MM-YYYY h:mm:ss");
-                                console.log(task.CreationDate,'sonam2==========================='+timestamp);
-                            }
-                           
-                            // const date = new Date(timestamp);
-                            // console.log(task.CreationDate,"datefillsonamtestdata",formattedDateWithTime);
-                            return { ...task, CreationDate: timestamp };
-                        }).sort((a, b) => b.CreationDate - a.CreationDate);
+                      
 
-                        hasCreationDate.filter(itm => {
-                            console.log(`sdfklrioire ${itm.mstatus}`);
-                        })
-
-                        dispatch(setMyTasks([...hasCreationDate]));
+                        dispatch(setMyTasks([...formattedTasks]));
                         // setActualData([...hasCreationDate]);
                         // setAllTask([...hasCreationDate]);
 
@@ -812,7 +804,7 @@ function TodoList() {
 
         if (filteredIds.length > 0) {
             userFilter = userList.filter((user) => filteredIds.includes(user.UserId));
-            console.log(userFilter, "hello pring data");
+           // console.log(userFilter, "hello pring data");
             // Filter userList to include only those users whose UserId is present in filteredIds
         }
 

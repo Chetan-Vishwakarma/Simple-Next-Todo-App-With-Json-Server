@@ -279,9 +279,25 @@ function AdvanceSearch() {
     }
     return (
         <div style={{ top: globalSearchDocs && globalSearchDocs.length > 0 && "85px", right: globalSearchDocs && globalSearchDocs.length > 0 && "20px" }} className=''>
-            <Button aria-describedby={id} variant="" className='min-width-auto btn-blu px-2' size='small' onClick={handleClick}>
-                <TuneIcon />
-            </Button>
+            <BootstrapTooltip title="Advanced Document Search" arrow
+                placement="bottom-start"
+                slotProps={{
+                    popper: {
+                        modifiers: [
+                            {
+                                name: 'offset',
+                                options: {
+                                    offset: [0, -10],
+                                },
+                            },
+                        ],
+                    },
+                }}
+            >
+                <Button aria-describedby={id} variant="" className='min-width-auto btn-blu px-2' size='small' onClick={handleClick}>
+                    <TuneIcon />
+                </Button>
+            </BootstrapTooltip>
             <Popover
                 id={id}
                 open={open}
@@ -345,7 +361,7 @@ function AdvanceSearch() {
                                         {/* </BootstrapTooltip> */}
 
                                     </MenuItem>
-                                    <MenuItem value="Section" className='text-danger sembold'><ClearIcon className='me-1'/> Clear Filter</MenuItem>
+                                    <MenuItem value="Section" className='text-danger sembold'><ClearIcon className='me-1' /> Clear Filter</MenuItem>
                                     {sections.length > 0 && sections.map((itm) => {
                                         return <MenuItem value={itm.SecID}>
                                             {itm.Sec}</MenuItem>

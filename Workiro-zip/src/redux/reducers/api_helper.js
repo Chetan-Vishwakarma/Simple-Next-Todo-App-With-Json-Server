@@ -1,7 +1,16 @@
 import CommanCLS from "../../services/CommanService";
 import dateForMyTask from "../../utils/dateForMyTask";
 import { formateDate } from "../../utils/fomatDateForConnectionsContacts";
-import { fetchAllTasks, fetchRecentDocuments, fetchRecentTasks, setAllFoldersFromRedux, setClientFromRedux, setContactsFromRedux } from "./counterSlice";
+import { fetchAllTasks,
+     fetchRecentDocuments, 
+     fetchRecentTasks,
+      setAllFoldersFromRedux, 
+      setClientFromRedux,
+       setContactsFromRedux,
+       setSearchDocByIdFromRedux,
+       setSectionListFromRedux,
+       setClientListByFolderIdFromRedux
+     } from "./counterSlice";
 
 const agrno = localStorage.getItem("agrno");
 const password = localStorage.getItem("Password");
@@ -13,6 +22,7 @@ const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 let ClsSms = new CommanCLS(baseUrl, agrno, Email, password);
 const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 let Cls = new CommanCLS(baseUrlPractice, agrno, Email, password);
+
 
 export const fetchRecentTasksRedux = () => dispatch => {
     try {
@@ -46,20 +56,23 @@ export const fetchAllTasksRedux = (target) => dispatch => {
                                 return dateForMyTask(task);
                             });
                             formattedTasks.sort((a, b) => b.CreationDate - a.CreationDate);
+                            console.log("formattedTasks11",formattedTasks)
                             dispatch(fetchAllTasks(formattedTasks));
                             return;
                         } else if (target === "MyTask") {
                             const formattedTasks = fltTask.map((task) => {
                                 return dateForMyTask(task);
                             });
-                            formattedTasks.sort((a, b) => b.EndDateTime - a.EndDateTime);
+                            formattedTasks.sort((a, b) => b.CreationDate - a.CreationDate);
+                           
                             dispatch(fetchAllTasks(formattedTasks));
                             return;
                         } else {
                             const formattedTasks = fltTask.map((task) => {
                                 return dateForMyTask(task);
                             });
-                            formattedTasks.sort((a, b) => b.EndDateTime - a.EndDateTime);
+                            formattedTasks.sort((a, b) => b.CreationDate - a.CreationDate);
+                           
                             dispatch(fetchAllTasks(formattedTasks));
                             return;
                         }
@@ -196,6 +209,7 @@ export const getFolders_Redux = () => dispatch => {
                 if (data) {
                     let json = JSON.parse(data);
                     if (json.Table.length > 0) dispatch(setAllFoldersFromRedux(json.Table));
+                    //console.log("document view modal33",json)
                 }
             }
         });
@@ -203,3 +217,64 @@ export const getFolders_Redux = () => dispatch => {
         console.log("Error while calling Json_GetFolders", err);
     }
 }
+////////////////DocuSoft
+export const Json_SearchDocById_Redux = (ItemId) => dispatch => {
+    let obj = {      
+        ItemId: ItemId
+    };
+    try {
+        ClsSms.Json_SearchDocById(obj, (sts, data) => {
+            if (sts) {
+                if (data) {
+                    let json = JSON.parse(data);
+                    if (json[""].length > 0) dispatch(setSearchDocByIdFromRedux(json[""]));
+                    //console.log("document view modal33",json)
+                }
+            }
+        });
+    } catch (err) {
+        console.log("Error while calling Json_SearchDocById", err);
+    }
+} 
+
+export const Json_GetSections_Redux = (pid) => dispatch=> {
+    try {
+        let o = { ProjectId: pid }
+        ClsSms.Json_GetSections(o, function (sts, data) {
+            if (sts) {
+                if (data) {
+                    let js = JSON.parse(data);
+                  //  let sectionList = js.Table;
+                   // console.log("Json_GetSections", sectionList)
+                    if (js.Table.length > 0) dispatch(setSectionListFromRedux(js.Table));
+                }
+
+            }
+        })
+    } catch (error) {
+        console.log("Error while calling Json_GetSections", error);
+    }
+
+}
+
+export const Json_GetSupplierListByProject_Redux = (folder_id = "") => dispatch => {
+    let obj = {       
+        ProjectId: folder_id ? folder_id : FolderId
+    };
+    try {
+        Cls.Json_GetSupplierListByProject(obj, (sts, data) => {
+            if (sts) {
+                if (data) {
+                    let json = JSON.parse(data);
+                    const clients_data = json?.Table;
+                    if(clients_data.length>0)dispatch(setClientListByFolderIdFromRedux(clients_data));
+                   
+                }
+            }
+        });
+    } catch (err) {
+        console.log("Error while calling Json_GetSupplierListByProject", err);
+    }
+}
+
+////////////////End DocuSoft 
