@@ -3,7 +3,7 @@ import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
 import Autocomplete from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
-import { FormControl, List, ListItem, ListItemText } from "@mui/material";
+import { FormControl, FormControlLabel, List, ListItem, ListItemText, Switch } from "@mui/material";
 import Box from "@mui/material/Box";
 import CommanCLS from "../../services/CommanService";
 import { memo } from "react";
@@ -404,7 +404,22 @@ const AddClientdetails = React.memo(
       setDataCompanyHouse(null);
       console.log("clearDataCard");
     };
-
+    const handleAttachID = (event) => {
+      if (event.target.checked) {
+        // If the switch is checked, concatenate client name with client ID
+        setUserDetail((prevUserDetail) => ({
+          ...prevUserDetail,
+          Clientid: `${prevUserDetail.Clientid} ${prevUserDetail.Clientname}`
+        }));
+      } else {
+        // If the switch is unchecked, remove client name from client ID
+        const clientIdWithoutName = userDetail.Clientid.replace(userDetail.Clientname, '').trim();
+        setUserDetail((prevUserDetail) => ({
+          ...prevUserDetail,
+          Clientid: clientIdWithoutName
+        }));
+      }
+    };
     console.log(Importdata, "Importdata", ImportCompanyDetails);
     useEffect(() => {
       setAgrNo(localStorage.getItem("agrno"));
@@ -702,6 +717,19 @@ const AddClientdetails = React.memo(
               helperText={errors["Email"]}
             />
           </Grid>
+          <Grid item lg={4} xs={6} md={6}>
+           <FormControlLabel
+             key={`maincheckbox`}
+             control={
+             <Switch
+             name="InActiveData"
+             // checked={userDetail.InActiveData}
+             onChange={handleAttachID}
+            />
+            }
+             label="Attach ID"
+          />
+        </Grid>
         </Grid>
       </div>
     );
