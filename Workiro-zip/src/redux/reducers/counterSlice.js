@@ -24,7 +24,8 @@ const counterSlices = createSlice({
       recentTaskList: [],
     },
     allTask: [],
-    allTask2: [],
+    actualData: [],
+    isTaskLoadingFromRedux: true,
     recentDocument:[],
     connectionsState: {
       clients: [],
@@ -66,7 +67,12 @@ const counterSlices = createSlice({
     },
     fetchAllTasks: (state, action) => {
       state.allTask = action.payload;
-      state.allTask2 = action.payload;
+      state.actualData = action.payload;
+      state.isTaskLoadingFromRedux = false;
+    },
+    setAllTaskFromRedux: (state, action) => {
+      state.allTask = action.payload;
+      state.isTaskLoadingFromRedux = false;
     },
     fetchRecentDocuments: (state, action) => {
       state.recentDocument = action.payload;
@@ -117,7 +123,7 @@ const counterSlices = createSlice({
   }
 });
 
-export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux, updateReduxDataSonam, setSetDefaultRoleSonam, clearDefaultRoleSonam, setSetDefaultTitleSonam, setDefaultUserSonam, setMainCountrySonam, setDefaultDateSonam, setIsAdvanceDocSearchRedux, fetchRecentTasks, fetchAllTasks, fetchRecentDocuments,setGetActivitySonam ,setGetActivityDataSonam, setClientFromRedux, setContactsFromRedux, setAllFoldersFromRedux } = counterSlices.actions;
+export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux, updateReduxDataSonam, setSetDefaultRoleSonam, clearDefaultRoleSonam, setSetDefaultTitleSonam, setDefaultUserSonam, setMainCountrySonam, setDefaultDateSonam, setIsAdvanceDocSearchRedux, fetchRecentTasks, fetchAllTasks, fetchRecentDocuments,setGetActivitySonam ,setGetActivityDataSonam, setClientFromRedux, setContactsFromRedux, setAllFoldersFromRedux, setAllTaskFromRedux } = counterSlices.actions;
 
 // export const getUsers = () => async(dispatch) => {
 //     const response = await axios.get("https://jsonplaceholder.typicode.com/users");

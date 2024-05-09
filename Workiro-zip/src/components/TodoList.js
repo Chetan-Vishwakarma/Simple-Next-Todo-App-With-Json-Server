@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, TextField, Autocomplete, ToggleButton, ToggleButtonGroup, FormControl, Select, InputLabel, Badge } from '@mui/material';
+import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, ToggleButton, ToggleButtonGroup, FormControl, Select } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import user from "../images/user.jpg";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import ScheduleIcon from '@mui/icons-material/Schedule';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommanCLS from '../services/CommanService';
 import TaskDetailModal from './TaskDetailModal';
@@ -14,10 +12,8 @@ import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CustomLoader from './CustomLoader';
-import * as XLSX from 'xlsx';
 import { Workbook } from 'exceljs';
 import saveAs from "file-saver";
-// import { data } from 'jquery';
 import MergeIcon from '@mui/icons-material/Merge';
 import AttachEmailIcon from '@mui/icons-material/AttachEmail';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -35,7 +31,6 @@ import { useLocation } from 'react-router-dom';
 import ClearIcon from '@mui/icons-material/Clear';
 import DvrIcon from '@mui/icons-material/Dvr';
 import LanguageIcon from '@mui/icons-material/Language';
-import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import CustomBreadCrumbs from './CustomBreadCrumbs';
 import SortIcon from '@mui/icons-material/Sort';
 import PersonIcon from '@mui/icons-material/Person';
@@ -43,18 +38,13 @@ import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
 import SubjectIcon from '@mui/icons-material/Subject';
 import { toast } from 'react-toastify';
-import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
-import PeopleIcon from '@mui/icons-material/People';
-import ShareIcon from '@mui/icons-material/Share';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
-import CreateNewModalTask from './CreateNewModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { setMyTasks } from '../redux/reducers/counterSlice';
+import { setAllTaskFromRedux } from '../redux/reducers/counterSlice';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { updateReduxDataSonam } from '../redux/reducers/counterSlice';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { fetchAllTasksRedux } from '../redux/reducers/api_helper';
 
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -74,9 +64,9 @@ let exportTaskData = [];
 let filterExportData = [];
 function TodoList() {
     const location = useLocation();
-    const reduxData = useSelector((data) => data.counter.myTasks);
-    const reduxDataSonam = useSelector((state) => state.counter.reduxData);
-    const allTask2 = useSelector((state) => state.counter.allTask);
+    const allTask = useSelector((state) => state.counter.allTask);
+    const actualData = useSelector((state) => state.counter.actualData);
+    // const isLoading = useSelector((state) => state.counter.isTaskLoadingFromRedux);
     const dispatch = useDispatch();
     let dddd = location.state !== null ? location.state : { globalSearchTask: [] };
     const { globalSearchTask, strGlobal } = dddd;
@@ -98,8 +88,6 @@ function TodoList() {
     let ClsSms = new CommanCLS(baseUrl, agrno, Email, password);
 
     const [anchorElDown, setAnchorElDown] = useState(null);
-    const [allTask, setAllTask] = useState([...allTask2]);
-    const [actualData, setActualData] = useState([...allTask2]);
     const [selectedTask, setSelectedTask] = useState({});
 
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -116,7 +104,6 @@ function TodoList() {
     const [selectedGroupBy, setSelectedGroupBy] = useState("Group By");
 
     const [dataInGroup, setDataInGroup] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
     const [isSearch, setIsSearch] = useState(false);
 
     const [suggestionList, setSuggestionList] = useState([]);
@@ -199,14 +186,14 @@ function TodoList() {
             }).sort((a, b) => b.CreationDate - a.CreationDate);
 
             // dispatch(setMyTasks([...hasCreationDate]));
-            setActualData([...hasCreationDate]);
-            setAllTask([...hasCreationDate]);
+            // setActualData([...hasCreationDate]);
+            // setAllTask([...hasCreationDate]);
 
             setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] });
             // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
             Json_GetFolders();
             setIsApi(true);
-            setIsLoading(false);
+            // setIsLoading(false);
             return;
         }
         try {
@@ -268,7 +255,7 @@ function TodoList() {
                         // dispatch(setMyTasks([...hasCreationDate]));
 
                         setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] });  // for initialization of filter
-                        setIsLoading(false);
+                        // setIsLoading(false);
                         Json_GetFolders();
                     }
                 }
@@ -295,6 +282,10 @@ function TodoList() {
 
 
     useEffect(() => {
+
+        if(actualData.length===0 || allTask.length===0){
+            dispatch(fetchAllTasksRedux("Todo"));
+        }
 
         const handleScroll = () => {
             if (
@@ -452,7 +443,8 @@ function TodoList() {
 
         console.log("fltData2222", fltData)
 
-        setAllTask([...fltData]);
+        // setAllTask([...fltData]);
+        dispatch(setAllTaskFromRedux([...fltData]));
         filterExportData = [...fltData];
         if (Object.keys(dataInGroup).length > 0) {
 
@@ -497,33 +489,39 @@ function TodoList() {
         switch (selectedSortBy) {
             case "EndDateTime":
                 let sotEndDate = [...allTask].sort((a, b) => b.EndDateTime - a.EndDateTime);
-                setAllTask(sotEndDate);
+                // setAllTask(sotEndDate);
+                dispatch(setAllTaskFromRedux(sotEndDate));
                 isGroupDataExist(sotEndDate);
                 return;
             case "CreationDate":
                 let sortStartDate = [...allTask].sort((a, b) => b.CreationDate - a.CreationDate);
-                setAllTask(sortStartDate);
+                // setAllTask(sortStartDate);
+                dispatch(setAllTaskFromRedux(sortStartDate));
                 isGroupDataExist(sortStartDate);
                 return;
             case "Subject":
                 let sortSubject = [...allTask].sort((a, b) => b.Subject.localeCompare(a.Subject));
-                setAllTask(sortSubject);
+                // setAllTask(sortSubject);
+                dispatch(setAllTaskFromRedux(sortSubject));
                 isGroupDataExist(sortSubject);
                 return;
             case "Client":
                 let fltData = [...allTask].filter(itm => itm.Client !== null);
                 let sortClient = [...fltData].sort((a, b) => b.Client.localeCompare(a.Client));
-                setAllTask(sortClient);
+                // setAllTask(sortClient);
+                dispatch(setAllTaskFromRedux(sortClient));
                 isGroupDataExist(sortClient);
                 return;
             case "Priority":
                 let sortPriority = [...allTask].sort((a, b) => b.Priority - a.Priority);
-                setAllTask(sortPriority);
+                // setAllTask(sortPriority);
+                dispatch(setAllTaskFromRedux(sortPriority));
                 isGroupDataExist(sortPriority);
                 return;
             case "Section":
                 let sortSection = [...allTask].sort((a, b) => b.Section.split(" ")[1] - a.Section.split(" ")[1]);
-                setAllTask(sortSection);
+                // setAllTask(sortSection);
+                dispatch(setAllTaskFromRedux(sortSection));
                 isGroupDataExist(sortSection);
                 return;
             default:
@@ -535,33 +533,39 @@ function TodoList() {
         switch (selectedSortBy) {
             case "EndDateTime":
                 let sotEndDate = [...allTask].sort((a, b) => a.EndDateTime - b.EndDateTime);
-                setAllTask(sotEndDate);
+                // setAllTask(sotEndDate);
+                dispatch(setAllTaskFromRedux(sotEndDate));
                 isGroupDataExist(sotEndDate);
                 return;
             case "CreationDate":
                 let sortStartDate = [...allTask].sort((a, b) => a.CreationDate - b.CreationDate);
-                setAllTask(sortStartDate);
+                // setAllTask(sortStartDate);
+                dispatch(setAllTaskFromRedux(sortStartDate));
                 isGroupDataExist(sortStartDate);
                 return;
             case "Subject":
                 let sortSubject = [...allTask].sort((a, b) => a.Subject.localeCompare(b.Subject));
-                setAllTask(sortSubject);
+                // setAllTask(sortSubject);
+                dispatch(setAllTaskFromRedux(sortSubject));
                 isGroupDataExist(sortSubject);
                 return;
             case "Client":
                 let fltData = [...allTask].filter(itm => itm.Client !== null);
                 let sortClient = [...fltData].sort((a, b) => a.Client.localeCompare(b.Client));
-                setAllTask(sortClient);
+                // setAllTask(sortClient);
+                dispatch(setAllTaskFromRedux(sortClient));
                 isGroupDataExist(sortClient);
                 return;
             case "Priority":
                 let sortPriority = [...allTask].sort((a, b) => a.Priority - b.Priority);
-                setAllTask(sortPriority);
+                // setAllTask(sortPriority);
+                dispatch(setAllTaskFromRedux(sortPriority));
                 isGroupDataExist(sortPriority);
                 return;
             case "Section":
                 let sortSection = [...allTask].sort((a, b) => a.Section.split(" ")[1] - b.Section.split(" ")[1]);
-                setAllTask(sortSection);
+                // setAllTask(sortSection);
+                dispatch(setAllTaskFromRedux(sortSection));
                 isGroupDataExist(sortSection);
                 return;
             default:
@@ -1251,7 +1255,7 @@ function TodoList() {
                                         Sort By
                                     </BootstrapTooltip>
                                 </MenuItem>
-                                <MenuItem className='ps-2 text-danger sembold' value="" onClick={() => setAllTask([...actualData])}><ClearIcon />Clear Sortby</MenuItem>
+                                <MenuItem className='ps-2 text-danger sembold' value="" onClick={() => dispatch(setAllTaskFromRedux([...actualData]))}><ClearIcon />Clear Sortby</MenuItem>
                                 <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
                                 <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
                                 <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-20 me-1' />Priority</MenuItem>
@@ -1339,7 +1343,7 @@ function TodoList() {
 
                 <Box className='main-filter-box'>
                     {/* <Box className='row'> */}
-                    {isLoading ? <Box className="custom-loader"><CustomLoader /></Box> : (<Box className='row'>
+                    {allTask.length===0 && actualData.length===0 ? <Box className="custom-loader"><CustomLoader /></Box> : (<Box className='row'>
 
                         {
 
