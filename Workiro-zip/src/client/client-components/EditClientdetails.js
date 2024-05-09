@@ -283,24 +283,21 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
 
  
   const handleAdvancedSettingChange = (event) => {
-    setAdvancedSettingChecked(event.target.checked);
-    let data = { ...userDetail };
-    let name = event.target.name;
-    let val = event.target.checked;
-    data = { ...data, [name]: val };
-    console.log(data, "dataOnchange", event);
-
-    setUserDetail(data);
+    setUserDetail((prevUserDetail) => ({
+      ...prevUserDetail,
+      InActiveData: event.target.checked,
+      HideData: !event.target.checked // Uncheck the HideData switch when InActiveData is checked
+    }));
   };
+  
   const handleAdvancedInactive = (event) => {
-    setAdvancedInactive(event.target.checked);
-    let data = { ...userDetail };
-    let name = event.target.name;
-    let val = event.target.checked;
-    data = { ...data, [name]: val };
-    console.log(data, "dataOnchange", event);
-    setUserDetail(data);
+    setUserDetail((prevUserDetail) => ({
+      ...prevUserDetail,
+      HideData: event.target.checked,
+      InActiveData: !event.target.checked // Uncheck the InActiveData switch when HideData is checked
+    }));
   };
+  
   console.log(Importdata, "Importdata", ImportCompanyDetails);
   
   useEffect(() => {
@@ -570,7 +567,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
             control={
               <Switch
                 name="InActiveData"
-                checked={advancedSettingChecked}
+                checked={userDetail.InActiveData}
                 onChange={handleAdvancedSettingChange}
               />
             }
@@ -582,7 +579,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
             control={
               <Switch
                 name="HideData"
-                checked={advancedInactive}
+                checked={userDetail.HideData}
                 onChange={handleAdvancedInactive}
               />
             }
