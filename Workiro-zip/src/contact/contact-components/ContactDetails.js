@@ -326,7 +326,7 @@ function ContactDetails() {
                 dispatch(fetchSupplierListOrderByFavourite(folderId));
               },1500);
             } else {
-              toast.error(data);
+              toast.error("Deleting this contact is not allowed because it has attached documents. Please remove the attached documents before proceeding with the deletion.");
             }
             
            
