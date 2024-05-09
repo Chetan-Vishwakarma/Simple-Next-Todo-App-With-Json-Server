@@ -76,8 +76,7 @@ function TodoList() {
     const location = useLocation();
     const reduxData = useSelector((data) => data.counter.myTasks);
     const reduxDataSonam = useSelector((state) => state.counter.reduxData);
-    console.log(reduxDataSonam, "reduxdatasonam");
-    console.log(reduxData, "datatasklist");
+    const allTask2 = useSelector((state) => state.counter.allTask);
     const dispatch = useDispatch();
     let dddd = location.state !== null ? location.state : { globalSearchTask: [] };
     const { globalSearchTask, strGlobal } = dddd;
@@ -99,8 +98,8 @@ function TodoList() {
     let ClsSms = new CommanCLS(baseUrl, agrno, Email, password);
 
     const [anchorElDown, setAnchorElDown] = useState(null);
-    const [allTask, setAllTask] = useState([...reduxData]);
-    const [actualData, setActualData] = useState([...reduxData]);
+    const [allTask, setAllTask] = useState([...allTask2]);
+    const [actualData, setActualData] = useState([...allTask2]);
     const [selectedTask, setSelectedTask] = useState({});
 
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -117,7 +116,7 @@ function TodoList() {
     const [selectedGroupBy, setSelectedGroupBy] = useState("Group By");
 
     const [dataInGroup, setDataInGroup] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [isSearch, setIsSearch] = useState(false);
 
     const [suggestionList, setSuggestionList] = useState([]);
@@ -266,9 +265,7 @@ function TodoList() {
                             console.log(`sdfklrioire ${itm.mstatus}`);
                         })
 
-                        dispatch(setMyTasks([...hasCreationDate]));
-                        // setActualData([...hasCreationDate]);
-                        // setAllTask([...hasCreationDate]);
+                        // dispatch(setMyTasks([...hasCreationDate]));
 
                         setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] });  // for initialization of filter
                         setIsLoading(false);
@@ -916,11 +913,11 @@ function TodoList() {
 
 
 
-    useEffect(() => {
-        setAllTask([...reduxData]);
-        setActualData([...reduxData]);
-        dispatch(updateReduxDataSonam(reduxData));
-    }, [reduxData, dispatch]);
+    // useEffect(() => {
+    //     setAllTask([...reduxData]);
+    //     setActualData([...reduxData]);
+    //     dispatch(updateReduxDataSonam(reduxData));
+    // }, [reduxData, dispatch]);
 
     return (
         <>
