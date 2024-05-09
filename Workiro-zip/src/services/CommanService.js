@@ -1394,4 +1394,36 @@ console.log("formattedDate",formattedDate)
         });
       }
 
+      SupplierContact(obj, callBack) {
+        //let o = { ProjectId: FolderId,SectionId: };
+        super.CreateNewServiceParamObject("Json_deleteSupplierContact", obj, true);
+        super.CallNewService("Json_deleteSupplierContact", function (status, Data) {
+          if (status) {
+            if (Data != "") {
+              return callBack(true, Data);
+            } else {
+              return callBack(false, []);
+            }
+          } else {
+            // console.log("status", status);
+          }
+        });
+      }
+
+      Suppliers(obj, callBack) {
+        //let o = { ProjectId: FolderId,SectionId: };
+        super.CreateNewServiceParamObject("Json_DeleteSuppliers", obj, true);
+        super.CallNewService("Json_DeleteSuppliers", function (status, Data) {
+          if (status) {
+            if (Data != "") {
+              return callBack(true, Data);
+            } else {
+              return callBack(false, []);
+            }
+          } else {
+            // console.log("status", status);
+          }
+        });
+      }
+
 }

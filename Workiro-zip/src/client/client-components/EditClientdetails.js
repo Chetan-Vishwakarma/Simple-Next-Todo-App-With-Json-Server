@@ -283,24 +283,37 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
 
  
   const handleAdvancedSettingChange = (event) => {
-    setAdvancedSettingChecked(event.target.checked);
-    let data = { ...userDetail };
-    let name = event.target.name;
-    let val = event.target.checked;
-    data = { ...data, [name]: val };
-    console.log(data, "dataOnchange", event);
-
-    setUserDetail(data);
+    setUserDetail((prevUserDetail) => ({
+      ...prevUserDetail,
+      InActiveData: event.target.checked,
+      HideData: !event.target.checked // Uncheck the HideData switch when InActiveData is checked
+    }));
   };
+  
   const handleAdvancedInactive = (event) => {
-    setAdvancedInactive(event.target.checked);
-    let data = { ...userDetail };
-    let name = event.target.name;
-    let val = event.target.checked;
-    data = { ...data, [name]: val };
-    console.log(data, "dataOnchange", event);
-    setUserDetail(data);
+    setUserDetail((prevUserDetail) => ({
+      ...prevUserDetail,
+      HideData: event.target.checked,
+      InActiveData: !event.target.checked // Uncheck the InActiveData switch when HideData is checked
+    }));
   };
+  const handleAttachID = (event) => {
+    if (event.target.checked) {
+      // If the switch is checked, concatenate client name with client ID
+      setUserDetail((prevUserDetail) => ({
+        ...prevUserDetail,
+        Clientid: `${prevUserDetail.Clientid} ${prevUserDetail.Clientname}`
+      }));
+    } else {
+      // If the switch is unchecked, remove client name from client ID
+      const clientIdWithoutName = userDetail.Clientid.replace(userDetail.Clientname, '').trim();
+      setUserDetail((prevUserDetail) => ({
+        ...prevUserDetail,
+        Clientid: clientIdWithoutName
+      }));
+    }
+  };
+
   console.log(Importdata, "Importdata", ImportCompanyDetails);
   
   useEffect(() => {
@@ -570,7 +583,7 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
             control={
               <Switch
                 name="InActiveData"
-                checked={advancedSettingChecked}
+                checked={userDetail.InActiveData}
                 onChange={handleAdvancedSettingChange}
               />
             }
@@ -582,13 +595,24 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
             control={
               <Switch
                 name="HideData"
-                checked={advancedInactive}
+                checked={userDetail.HideData}
                 onChange={handleAdvancedInactive}
               />
             }
             label="Hide"
           />
-
+        
+        <FormControlLabel
+             key={`maincheckbox`}
+             control={
+             <Switch
+             name="InActiveData"
+             // checked={userDetail.InActiveData}
+             onChange={handleAttachID}
+            />
+            }
+             label="Attach ID"
+          />
         </Grid>
       </Grid>
     </div>

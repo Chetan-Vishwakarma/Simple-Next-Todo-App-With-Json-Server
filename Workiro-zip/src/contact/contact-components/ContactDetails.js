@@ -67,6 +67,8 @@ import DialogActions from '@mui/material/DialogActions';
 import AddContacts from "../../components/AddContacts";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ContactcardUDF from "./ContactcardUDF";
+import { useDispatch } from "react-redux";
+import { fetchSupplierListOrderByFavourite } from "../../redux/reducers/api_helper";
 // import DeleteIcon from '@mui/icons-material/Delete';
 const label = { inputProps: { "aria-label": "Switch demo" } };
 // const [nextDate, setNextDate] = useState("");
@@ -93,7 +95,7 @@ function ContactDetails() {
   const [value, setValue] = React.useState("1");
 
   const [contactDetails, setContactDetails] = useState([]);
-
+  const dispatch = useDispatch();
   // dropdown
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -126,6 +128,8 @@ function ContactDetails() {
 
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   const portalUrl = "https://portal.docusoftweb.com/clientservices.asmx/";
+  const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+  let Clsprect = new CommanCLS(baseUrlPractice, agrno, Email, password);
   let portlCls = new CommanCLS(portalUrl, agrno, Email, password);
   let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
@@ -302,8 +306,46 @@ function ContactDetails() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const SupplierContact = () => {
+    let obj = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      ClientID: originatorNo ? originatorNo : "",
+      ContactEmail: contactDetails[0]["E-Mail"]
+    };
+    try {
+      Cls.SupplierContact(obj, (sts, data) => {
+        if (sts) {
+          if (data) {
+            console.log("SupplierContact", data);
+            if(data =="Success"){
+              toast.error("Contact deleted Successfully !");
+              setTimeout(() => {
+                navigate("/dashboard/Connections");
+                dispatch(fetchSupplierListOrderByFavourite(folderId));
+              },1500);
+            } else {
+              toast.error("Deleting this contact is not allowed because it has attached documents. Please remove the attached documents before proceeding with the deletion.");
+            }
+            
+           
+           setAnchorEl(null);
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_GetCRMContactUDFValues", err);
+    }
+  };
   const handleDelete = () => {
-    setAnchorEl(null);
+    console.log("deletecontact");
+    Clsprect.ConfirmMessage("Are you sure you want to delete this contact ? ", function (res) {
+      if (res) {
+        SupplierContact();
+      }
+  })
+   
   };
   const handleChangeBlock = () =>{
     setOpen5(true);
