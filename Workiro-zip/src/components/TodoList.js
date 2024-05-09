@@ -325,7 +325,6 @@ function TodoList() {
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
         Json_CRM_GetOutlookTask();
-
     }, []);
 
     function startFormattingDate(dt) {
@@ -385,7 +384,8 @@ function TodoList() {
             setDataInGroup(gData);
         }
 
-    }, [taskFilter]);
+    }, []);
+// }, [taskFilter]);
 
     function handleFilterDeletion(target) {
         let obj = Object.keys(taskFilter).filter(objKey =>
@@ -747,7 +747,6 @@ function TodoList() {
 
         if (filteredIds.length > 0) {
             userFilter = userList.filter((user) => filteredIds.includes(user.UserId));
-            console.log(userFilter, "hello pring data");
             // Filter userList to include only those users whose UserId is present in filteredIds
         }
 
