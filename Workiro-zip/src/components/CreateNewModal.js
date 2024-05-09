@@ -41,6 +41,10 @@ import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { red, yellow, green } from '@mui/material/colors';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import EditIcon from '@mui/icons-material/Edit';
+
+
+
 
 import {
     List,
@@ -2611,6 +2615,15 @@ function CreateNewModalTask({ ...props }) {
     };
 
 
+    // 
+    const [AddTemplateanchorEl, setAddTemplateAnchorEl] = React.useState(null);
+    const AddTemplateopen = Boolean(AddTemplateanchorEl);
+    const AddTemplatehandleClick = (event) => {
+        setAddTemplateAnchorEl(event.currentTarget);
+    };
+    const AddTemplatehandleClose = () => {
+        setAddTemplateAnchorEl(null);
+    };
 
     return (
         <React.Fragment>
@@ -3232,6 +3245,9 @@ close
                                                                         MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
                                                                     >
                                                                         <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Remove</MenuItem>
+
+                                                                        <MenuItem className="ps-1"><EditIcon className="font-18 me-1" /> Rename</MenuItem>
+
                                                                         {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
                                                                             <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
                                                                         )}
@@ -3406,11 +3422,86 @@ close
 
                                                 </Box>
 
-                                                <Box className='mb-2'>
-                                                    <FormControlLabel control={<Checkbox checked={isCheckedForApproval} disabled={isDisabledForApproval} onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
-                                                    <FormControlLabel control={<Checkbox checked={isCheckedWithOutmgs} onChange={handleCheckboxChangeisCheckedWithOutmgs} />} label="Send Without Message" />
 
-                                                    <Button
+
+
+                                                <Box className='mb-2 d-flex flex-wrap align-items-center'>
+
+                                                    <Box className='small-checkbox'>
+                                                        <FormControlLabel control={<Checkbox size='small' checked={isCheckedForApproval} disabled={isDisabledForApproval} onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
+                                                        <FormControlLabel control={<Checkbox size='small' checked={isCheckedWithOutmgs} onChange={handleCheckboxChangeisCheckedWithOutmgs} />} label="Send Without Message" />
+                                                        <FormControlLabel control={<Checkbox size='small' />} label="Append Signature" />
+                                                    </Box>
+
+                                                    {/* start */}
+                                                    <Box className="clearfix">
+                                                        <BootstrapTooltip title="Add Template" arrow
+                                                            placement="bottom-start"
+                                                            slotProps={{
+                                                                popper: {
+                                                                    modifiers: [
+                                                                        {
+                                                                            name: 'offset',
+                                                                            options: {
+                                                                                offset: [0, -10],
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            }}
+                                                        >
+                                                            <Button
+                                                                id="basic-button"
+                                                                aria-controls={AddTemplateopen ? 'basic-menu' : undefined}
+                                                                aria-haspopup="true"
+                                                                aria-expanded={AddTemplateopen ? 'true' : undefined}
+                                                                onClick={AddTemplatehandleClick}
+                                                                className={'btn-blue-2'}
+                                                            >
+                                                                Add Tempalte
+                                                            </Button>
+                                                        </BootstrapTooltip>
+                                                        <Menu
+                                                            id="basic-menu"
+                                                            anchorEl={AddTemplateanchorEl}
+                                                            open={AddTemplateopen}
+                                                            onClose={AddTemplatehandleClose}
+                                                            MenuListProps={{
+                                                                'aria-labelledby': 'basic-button',
+                                                            }}
+                                                            className="search-list-main"
+                                                        >
+
+                                                            <Box className='px-1' >
+                                                                <TextField
+                                                                    label="Client"
+                                                                    variant="outlined"
+                                                                    autoFocus
+                                                                    value={searchQuery}
+                                                                    onChange={handleSearchInputChange}
+                                                                    sx={{ width: "100%" }}
+                                                                    size="small"
+                                                                />
+                                                            </Box>
+
+                                                            <List
+                                                                sx={{
+                                                                    width: "100%",
+                                                                    maxWidth: 360,
+                                                                    bgcolor: "background.paper",
+                                                                    maxHeight: '300px'
+                                                                }}
+                                                            >
+
+                                                                <MenuItem onClick={AddTemplatehandleClose}>Will Reference preview Test</MenuItem>
+                                                                <MenuItem onClick={AddTemplatehandleClose}>mytesttemplate</MenuItem>
+                                                                <MenuItem onClick={AddTemplatehandleClose}>Portal - ZH - Letter of engagment & Request list</MenuItem>
+                                                            </List>
+                                                        </Menu>
+                                                    </Box>
+
+
+                                                    {/* <Button
                                                         variant="contained"
                                                         id="fade-button"
                                                         aria-controls={openTemp ? 'fade-menu' : undefined}
@@ -3459,7 +3550,7 @@ close
                                                             <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
                                                             <Paging defaultPageSize={10} />
                                                         </DataGrid>
-                                                    </Menu>
+                                                    </Menu> */}
                                                 </Box>
 
                                             </>

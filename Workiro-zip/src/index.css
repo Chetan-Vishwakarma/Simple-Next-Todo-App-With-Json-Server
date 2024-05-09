@@ -708,7 +708,7 @@ hr {
 
 .custom-modal-1200 .MuiDialog-container .MuiDialog-paperWidthSm {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1100px;
 }
 
 .full-modal .MuiDialog-container .MuiDialog-paperWidthSm {
@@ -1709,7 +1709,9 @@ input[type=number] {
 .check-todo svg {
   font-size: 26px;
 }
-
+.small-checkbox .MuiTypography-root {
+  font-size: 13px;
+}
 .check-todo {
   position: absolute !important;
   right: 10px;
