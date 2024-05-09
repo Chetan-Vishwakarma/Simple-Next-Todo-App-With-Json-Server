@@ -1,7 +1,7 @@
 import CommanCLS from "../../services/CommanService";
 import dateForMyTask from "../../utils/dateForMyTask";
 import { formateDate } from "../../utils/fomatDateForConnectionsContacts";
-import { fetchAllTasks, fetchRecentDocuments, fetchRecentTasks, setAllFoldersFromRedux, setClientFromRedux, setContactsFromRedux } from "./counterSlice";
+import { fetchAllTasks, fetchRecentDocuments, fetchRecentTasks, setAllFoldersFromRedux, setAllTaskFromRedux, setClientFromRedux, setContactsFromRedux } from "./counterSlice";
 
 const agrno = localStorage.getItem("agrno");
 const password = localStorage.getItem("Password");
@@ -47,6 +47,7 @@ export const fetchAllTasksRedux = (target) => dispatch => {
                             });
                             formattedTasks.sort((a, b) => b.CreationDate - a.CreationDate);
                             dispatch(fetchAllTasks(formattedTasks));
+                            dispatch(setAllTaskFromRedux({data:formattedTasks, taskFilter: { mstatus: ["Not Started", "On Hold", "In Progress"] } }))
                             return;
                         } else if (target === "MyTask") {
                             const formattedTasks = fltTask.map((task) => {

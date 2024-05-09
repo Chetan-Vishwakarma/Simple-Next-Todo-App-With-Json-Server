@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, ToggleButton, ToggleButtonGroup, FormControl, Select } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -40,7 +40,7 @@ import SubjectIcon from '@mui/icons-material/Subject';
 import { toast } from 'react-toastify';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import { useDispatch, useSelector } from 'react-redux';
-import { setAllTaskFromRedux } from '../redux/reducers/counterSlice';
+import { setAllTaskFromRedux, setAllTaskFromReduxOrderWise } from '../redux/reducers/counterSlice';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
@@ -73,7 +73,7 @@ function TodoList() {
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
-    const [ExporttoExcel, setExporttoExcel] = React.useState([]);
+    const [ExporttoExcel, setExporttoExcel] = React.useState([...allTask]);
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
     const [userId, setUserId] = useState(localStorage.getItem("UserId"));
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -190,79 +190,14 @@ function TodoList() {
             // setAllTask([...hasCreationDate]);
 
             setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] });
+            dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] } }))
             // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
             Json_GetFolders();
             setIsApi(true);
             // setIsLoading(false);
             return;
         }
-        try {
-            Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
-                if (sts) {
-                    if (data) {
-                        let json = JSON.parse(data);
-                       
-                        let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
-                        console.log("resultoutlook", result);
-                        if (result && result.length > 0) {
-                            setExporttoExcel(result);
-                            exportTaskData = [...result];
-                        }
-                        const formattedTasks = result.map((task) => {
-                            let timestamp;
-                            if (task.EndDateTime) {
-                                // Assuming task.EndDateTime contains milliseconds since Unix epoch
-                                timestamp = parseInt(task.EndDateTime.slice(6, -2));
-                            }
-                        
-                            // Check if timestamp is valid
-                            if (!isNaN(timestamp)) {
-                                // Create a new Date object from the timestamp
-                                const date = new Date(timestamp);
-                                console.log("Timestamp:", timestamp,date);
-                                //console.log("Date:", date.toLocaleString());
-                                
-                                // Return the task with the formatted EndDateTime
-                                return { ...task, EndDateTime: date };
-                            } else {
-                                // If timestamp is not valid, return the original task
-                                return task;
-
-                            }
-                        });
-
-                        // let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
-                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
-
-                        let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
-                            let timestamp;
-                            if (task.CreationDate) {
-                                // timestamp = parseInt(task.CreationDate.slice(6, -2));
-                               
-                                timestamp = moment(task.CreationDate).format("DD-MM-YYYY h:mm:ss");
-                                console.log(task.CreationDate,'sonam2==========================='+timestamp);
-                            }
-                           
-                            // const date = new Date(timestamp);
-                            // console.log(task.CreationDate,"datefillsonamtestdata",formattedDateWithTime);
-                            return { ...task, CreationDate: timestamp };
-                        }).sort((a, b) => b.CreationDate - a.CreationDate);
-
-                        hasCreationDate.filter(itm => {
-                            console.log(`sdfklrioire ${itm.mstatus}`);
-                        })
-
-                        // dispatch(setMyTasks([...hasCreationDate]));
-
-                        setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] });  // for initialization of filter
-                        // setIsLoading(false);
-                        Json_GetFolders();
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_CRM_GetOutlookTask", err);
-        }
+        Json_GetFolders();
     }
 
     const [isApi, setIsApi] = useState(false);
@@ -307,9 +242,9 @@ function TodoList() {
 
 
 
-    useEffect(() => {
-        Json_CRM_GetOutlookTask();
-    }, [isApi])
+    // useEffect(() => {
+    //     Json_CRM_GetOutlookTask();
+    // }, [isApi])
 
 
     function DownLoadAttachment(Path) {
@@ -390,7 +325,6 @@ function TodoList() {
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
         Json_CRM_GetOutlookTask();
-
     }, []);
 
     function startFormattingDate(dt) {
@@ -421,9 +355,6 @@ function TodoList() {
     };
 
     useEffect(() => {
-        actualData.filter(itm => {
-            console.log(`sdfklrioire ${itm.mstatus}`);
-        })
         let fltData = actualData.filter(function (obj) {
             return Object.keys(taskFilter).every(function (key) {
                 if (taskFilter[key][0].length > 0 || typeof taskFilter[key][0] === "object") {
@@ -441,10 +372,10 @@ function TodoList() {
             });
         });
 
-        console.log("fltData2222", fltData)
-
+        console.log("kdlfjsdljdlsjgds",actualData);
+        console.log("kdlfjsdljdlsjgds",taskFilter);
         // setAllTask([...fltData]);
-        dispatch(setAllTaskFromRedux([...fltData]));
+        // dispatch(setAllTaskFromRedux([...fltData]));
         filterExportData = [...fltData];
         if (Object.keys(dataInGroup).length > 0) {
 
@@ -453,7 +384,8 @@ function TodoList() {
             setDataInGroup(gData);
         }
 
-    }, [taskFilter]);
+    }, []);
+// }, [taskFilter]);
 
     function handleFilterDeletion(target) {
         let obj = Object.keys(taskFilter).filter(objKey =>
@@ -463,6 +395,7 @@ function TodoList() {
             }, {}
             );
         setTaskFilter(obj);
+        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: obj }));
     }
     const handleCallback = (start, end) => {
         if (start._i === "Clear") {
@@ -471,6 +404,7 @@ function TodoList() {
             return;
         }
         setTaskFilter({ ...taskFilter, "EndDateTime": [start._d, end._d] });
+        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, "EndDateTime": [start._d, end._d] } }));
         setState({ start, end });
         setIsDateShow(true);
     };
@@ -490,38 +424,38 @@ function TodoList() {
             case "EndDateTime":
                 let sotEndDate = [...allTask].sort((a, b) => b.EndDateTime - a.EndDateTime);
                 // setAllTask(sotEndDate);
-                dispatch(setAllTaskFromRedux(sotEndDate));
+                dispatch(setAllTaskFromReduxOrderWise(sotEndDate));
                 isGroupDataExist(sotEndDate);
                 return;
             case "CreationDate":
                 let sortStartDate = [...allTask].sort((a, b) => b.CreationDate - a.CreationDate);
                 // setAllTask(sortStartDate);
-                dispatch(setAllTaskFromRedux(sortStartDate));
+                dispatch(setAllTaskFromReduxOrderWise(sortStartDate));
                 isGroupDataExist(sortStartDate);
                 return;
             case "Subject":
                 let sortSubject = [...allTask].sort((a, b) => b.Subject.localeCompare(a.Subject));
                 // setAllTask(sortSubject);
-                dispatch(setAllTaskFromRedux(sortSubject));
+                dispatch(setAllTaskFromReduxOrderWise(sortSubject));
                 isGroupDataExist(sortSubject);
                 return;
             case "Client":
                 let fltData = [...allTask].filter(itm => itm.Client !== null);
                 let sortClient = [...fltData].sort((a, b) => b.Client.localeCompare(a.Client));
                 // setAllTask(sortClient);
-                dispatch(setAllTaskFromRedux(sortClient));
+                dispatch(setAllTaskFromReduxOrderWise(sortClient));
                 isGroupDataExist(sortClient);
                 return;
             case "Priority":
                 let sortPriority = [...allTask].sort((a, b) => b.Priority - a.Priority);
                 // setAllTask(sortPriority);
-                dispatch(setAllTaskFromRedux(sortPriority));
+                dispatch(setAllTaskFromReduxOrderWise(sortPriority));
                 isGroupDataExist(sortPriority);
                 return;
             case "Section":
                 let sortSection = [...allTask].sort((a, b) => b.Section.split(" ")[1] - a.Section.split(" ")[1]);
                 // setAllTask(sortSection);
-                dispatch(setAllTaskFromRedux(sortSection));
+                dispatch(setAllTaskFromReduxOrderWise(sortSection));
                 isGroupDataExist(sortSection);
                 return;
             default:
@@ -534,38 +468,38 @@ function TodoList() {
             case "EndDateTime":
                 let sotEndDate = [...allTask].sort((a, b) => a.EndDateTime - b.EndDateTime);
                 // setAllTask(sotEndDate);
-                dispatch(setAllTaskFromRedux(sotEndDate));
+                dispatch(setAllTaskFromReduxOrderWise(sotEndDate));
                 isGroupDataExist(sotEndDate);
                 return;
             case "CreationDate":
                 let sortStartDate = [...allTask].sort((a, b) => a.CreationDate - b.CreationDate);
                 // setAllTask(sortStartDate);
-                dispatch(setAllTaskFromRedux(sortStartDate));
+                dispatch(setAllTaskFromReduxOrderWise(sortStartDate));
                 isGroupDataExist(sortStartDate);
                 return;
             case "Subject":
                 let sortSubject = [...allTask].sort((a, b) => a.Subject.localeCompare(b.Subject));
                 // setAllTask(sortSubject);
-                dispatch(setAllTaskFromRedux(sortSubject));
+                dispatch(setAllTaskFromReduxOrderWise(sortSubject));
                 isGroupDataExist(sortSubject);
                 return;
             case "Client":
                 let fltData = [...allTask].filter(itm => itm.Client !== null);
                 let sortClient = [...fltData].sort((a, b) => a.Client.localeCompare(b.Client));
                 // setAllTask(sortClient);
-                dispatch(setAllTaskFromRedux(sortClient));
+                dispatch(setAllTaskFromReduxOrderWise(sortClient));
                 isGroupDataExist(sortClient);
                 return;
             case "Priority":
                 let sortPriority = [...allTask].sort((a, b) => a.Priority - b.Priority);
                 // setAllTask(sortPriority);
-                dispatch(setAllTaskFromRedux(sortPriority));
+                dispatch(setAllTaskFromReduxOrderWise(sortPriority));
                 isGroupDataExist(sortPriority);
                 return;
             case "Section":
                 let sortSection = [...allTask].sort((a, b) => a.Section.split(" ")[1] - b.Section.split(" ")[1]);
                 // setAllTask(sortSection);
-                dispatch(setAllTaskFromRedux(sortSection));
+                dispatch(setAllTaskFromReduxOrderWise(sortSection));
                 isGroupDataExist(sortSection);
                 return;
             default:
@@ -755,7 +689,7 @@ function TodoList() {
             if (sts && data) {
                 if (data === "Success") {
                     toast.success(FieldName === "EndDateTime" ? "Due Date Changed" : "Completed")
-
+                    dispatch(fetchAllTasksRedux("Todo"));
                     Json_AddSupplierActivity(e);
                 }
                 console.log("Json_UpdateTaskField", data)
@@ -778,7 +712,7 @@ function TodoList() {
             ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
                 if (sts && data) {
                     console.log({ status: true, messages: "Success", res: data });
-                    Json_CRM_GetOutlookTask()
+                    // Json_CRM_GetOutlookTask()                   
                 }
             });
         } catch (error) {
@@ -813,7 +747,6 @@ function TodoList() {
 
         if (filteredIds.length > 0) {
             userFilter = userList.filter((user) => filteredIds.includes(user.UserId));
-            console.log(userFilter, "hello pring data");
             // Filter userList to include only those users whose UserId is present in filteredIds
         }
 
@@ -966,6 +899,7 @@ function TodoList() {
                                             let fltData = allTask.filter(itm => itm.Subject.toLowerCase().includes(e.target.value.toLowerCase()));
                                             setSuggestionList(fltData);
                                             setTaskFilter({ ...taskFilter, Subject: [e.target.value] });
+                                            dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, Subject: [e.target.value] } }));
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
@@ -1019,6 +953,7 @@ function TodoList() {
                                         return;
                                     } else {
                                         setTaskFilter({ ...taskFilter, Folder: [e.target.value] })
+                                        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, Folder: [e.target.value] } }));
                                     }
                                 }}
                                 className='custom-dropdown'
@@ -1070,6 +1005,7 @@ function TodoList() {
                                         return;
                                     } else {
                                         setTaskFilter({ ...taskFilter, Source: [e.target.value] });
+                                        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, Source: [e.target.value] } }));
                                     }
                                 }}
                                 className='custom-dropdown'
@@ -1116,14 +1052,17 @@ function TodoList() {
                                     if (e.target.value === "Status") {
                                         // handleFilterDeletion("mstatus");
                                         setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] })
+                                        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] } }));
                                         return;
                                     } else if (e.target.value === "") {
                                         // handleFilterDeletion("mstatus");
                                         setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] })
+                                        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] } }));
                                         setSelectedStatus("Status");
                                         return;
                                     } else {
                                         setTaskFilter({ ...taskFilter, mstatus: [e.target.value] });
+                                        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, mstatus: [e.target.value] } }));
                                     }
                                 }}
                                 className='custom-dropdown'
@@ -1230,6 +1169,7 @@ function TodoList() {
                                     if (e.target.value === "") {
                                         setSelectedSortBy("Sort By");
                                         setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] })
+                                        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] } }));
                                         return;
                                     }
                                     setSelectedSortBy(e.target.value)
@@ -1255,7 +1195,7 @@ function TodoList() {
                                         Sort By
                                     </BootstrapTooltip>
                                 </MenuItem>
-                                <MenuItem className='ps-2 text-danger sembold' value="" onClick={() => dispatch(setAllTaskFromRedux([...actualData]))}><ClearIcon />Clear Sortby</MenuItem>
+                                <MenuItem className='ps-2 text-danger sembold' value="" onClick={() => dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { mstatus: ["Not Started", "On Hold", "In Progress"] } }))}><ClearIcon />Clear Sortby</MenuItem>
                                 <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
                                 <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
                                 <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-20 me-1' />Priority</MenuItem>
