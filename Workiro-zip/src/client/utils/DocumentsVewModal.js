@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Box, Button, Typography, Dialog, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Menu, MenuItem, DialogActions } from '@mui/material';
+import { Box, Button, Typography, Dialog, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Menu, MenuItem, DialogActions, Grid, FormControlLabel, TextField, Autocomplete, RadioGroup, FormLabel, Radio, FormControl } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 
 import TabPanel from '@mui/lab/TabPanel';
@@ -21,6 +21,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 import CreateNewModalTask from '../../components/CreateNewModal';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import { useDispatch } from "react-redux";
 import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setGetActivitySonam } from "../../redux/reducers/counterSlice"
@@ -42,6 +43,11 @@ import DownloadIcon from '@mui/icons-material/Download';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import CreateIcon from '@mui/icons-material/Create';
 import ShareIcon from '@mui/icons-material/Share';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { TabList } from '@mui/lab';
+
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -138,6 +144,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     const [ShareanchorEl, setShareAnchorEl] = React.useState(null);
     const [CreateTaskanchorEl, setCreateTaskAnchorEl] = React.useState(null);
     const [ReIndexopen, ReIndexsetOpen] = React.useState(false);
+    const [Categoryopen, CategorysetOpen] = React.useState(false);
 
 
     const handleChange = (event, newValue) => {
@@ -638,6 +645,24 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         ReIndexsetOpen(false);
     };
 
+
+    const CategoryhandleClickOpen = () => {
+        CategorysetOpen(true);
+    };
+
+    const CategoryhandleClose = () => {
+        CategorysetOpen(false);
+    };
+
+
+    const [Renameopen, RenamesetOpen] = React.useState(false);
+    const RenamehandleClickOpen = () => {
+        RenamesetOpen(true);
+    };
+    const RenamehandleClose = () => {
+        RenamesetOpen(false);
+    };
+
     return (
         <>
             <Dialog
@@ -775,17 +800,34 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 }}
                             >
 
-                                <MenuItem onClick={handleCloseChangeIndex}> <ListIcon className='me-1' />  Re-index</MenuItem>
+                                <MenuItem onClick={() => {
+                                    handleCloseChangeIndex();
+                                    ReIndexhandleClickOpen();
+                                }}>
+                                    <ListIcon className='me-1' />  Re-index
+                                </MenuItem>
+
                                 {selectedDocument && (selectedDocument.type === "docx" || selectedDocument.type === "doc" || selectedDocument.type === "excel" || selectedDocument.type === "xlsx") && (
                                     <MenuItem onClick={handleChangeCheckOut}>
                                         <RedeemIcon className='me-1' />
                                         Check-Out
                                     </MenuItem>
                                 )}
+                                
+                                {/* <MenuItem onClick={handleCloseChangeIndex}> <RedeemIcon className='me-1' /> Check-Out</MenuItem> */}
+                                <MenuItem onClick={() => {
+                                    handleCloseChangeIndex();
+                                    CategoryhandleClickOpen();
+                                }}
+                                > <CategoryIcon className='me-1' /> Category</MenuItem>
+                                <MenuItem
 
+                                    onClick={() => {
+                                        handleCloseChangeIndex();
+                                        RenamehandleClickOpen();
+                                    }}
 
-                                <MenuItem onClick={handleCloseChangeIndex}> <CategoryIcon className='me-1' /> Category</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <DriveFileRenameOutlineIcon className='me-1' /> Rename</MenuItem>
+                                > <DriveFileRenameOutlineIcon className='me-1' /> Rename</MenuItem>
                                 {/* <MenuItem onClick={handleCloseChangeIndex}> <AddToDriveIcon className='me-1' /> Upload to Drive</MenuItem> */}
                             </Menu>
                         </Box>
@@ -805,14 +847,14 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                         <Box className="mt-3 full-height-modal">
                             <TabContext value={value}>
                                 <Box>
-                                    <Tabs onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
+                                    <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
                                         <Tab label="Documents" value="1" />
                                         <Tab label="Versions" value="2" />
                                         <Tab label="Notes" value="3" />
                                         <Tab label="Associated Tasks" value="4" />
                                         <Tab label="Activity" value="5" />
                                         <Tab label="Attachments" value="6" />
-                                    </Tabs>
+                                    </TabList>
                                 </Box>
                                 <TabPanel value="1" className='p-0'>
                                     <Box className='white-box'>
@@ -901,7 +943,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
                                                 <Button key={index} onClick={(e) => Json_CRM_GetOutlookTask(e, item)} className="btn btn-outlin-2 me-2 mb-2" variant="outlined">
                                                     <AlarmOnIcon className={`me-2 ${isUserAssigned ? 'green' : 'disabled'}`} />
-                                                    {item.Subject}
+                                                    <span>{item.Subject}</span>
                                                 </Button>
                                             );
                                         })}
@@ -929,7 +971,6 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                         <Button className='btn-red me-2 mb-1 ps-1' onClick={DeleteDocumentAttachment} startIcon={<AttachFileIcon />}>Delete</Button>
 
                                         <Button className='btn-blue-2 me-2 mb-1 ps-1' onClick={DowloadSingleFileOnClick} startIcon={<DownloadIcon />}>Download</Button>
-
 
                                     </Box>
 
@@ -1005,11 +1046,17 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 className='custom-modal'
+
+                sx={{
+                    maxWidth: 600,
+                    width: '100%',
+                    margin: '0 auto'
+                }}
             >
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold text-black'>
-                            Edit Client
+                            Re-Index
                         </Typography>
                     </Box>
 
@@ -1023,21 +1070,206 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        Let Google help apps determine location. This means sending anonymous
-                        location data to Google, even when no apps are running.
-                    </DialogContentText>
-                </DialogContent>
 
-                <DialogActions>
-                    <Button onClick={ReIndexhandleClose}>Disagree</Button>
-                    <Button onClick={ReIndexhandleClose} autoFocus>
-                        Agree
-                    </Button>
-                </DialogActions>
+                        <Grid item xs={6} md={6} className='mb-3'>
+                            <Autocomplete
+                                disablePortal
+                                options={top100Films}
+                                renderInput={(params) => <TextField {...params} label="Folder" />}
+                                MenuProps={{ PaperProps: { sx: { maxHeight: '100px !important' } } }}
+                            />
+                        </Grid>
+
+                        <Grid item xs={6} md={6} className='mb-3'>
+                            <Autocomplete
+                                disablePortal
+                                options={top100Films}
+                                renderInput={(params) => <TextField {...params} label="Section" />}
+                                MenuProps={{ PaperProps: { sx: { maxHeight: '100px !important' } } }}
+                            />
+                        </Grid>
+
+                        <Grid item xs={6} md={6} className='mb-3'>
+                            <Autocomplete
+                                disablePortal
+                                options={top100Films}
+                                renderInput={(params) => <TextField {...params} label="Client" />}
+                                MenuProps={{ PaperProps: { sx: { maxHeight: '100px !important' } } }}
+                            />
+                        </Grid>
+                        <Grid className='mt-0' container spacing={2}>
+                            <Grid item xs={6} md={6} className='pt-0'>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DemoContainer components={['DatePicker']}>
+                                        <DatePicker label="Document Date" className=" w-100" />
+                                    </DemoContainer>
+                                </LocalizationProvider>
+                            </Grid>
+                            <Grid item xs={6} md={6} className='pt-0'>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DemoContainer components={['DatePicker']}>
+                                        <DatePicker label="Received Date" className=" w-100" />
+                                    </DemoContainer>
+                                </LocalizationProvider>
+                            </Grid>
+
+                        </Grid>
+                    </DialogContentText>
+
+                    <DialogActions className='mt-4 mb-3 p-0'>
+                        <Button className='btn-red' onClick={ReIndexhandleClose}>Cancel</Button>
+                        <Button className='btn-blue-2' onClick={ReIndexhandleClose} autoFocus>
+                            Submit
+                        </Button>
+                    </DialogActions>
+
+                </DialogContent>
             </Dialog>
 
+
+            {/* category modal start */}
+
+            <Dialog
+                open={Categoryopen}
+                onClose={CategoryhandleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal'
+
+                sx={{
+                    maxWidth: 660,
+                    width: '100%',
+                    margin: '0 auto'
+                }}
+            >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold text-black'>
+                            Section Category
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={CategoryhandleClose}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <FormControl>
+                            <RadioGroup
+                                row
+                                aria-labelledby="demo-row-radio-buttons-group-label"
+                                name="row-radio-buttons-group"
+                            >
+                                <FormControlLabel value="1. Received" control={<Radio className='text-blue' />} label="1. Received" />
+                                <FormControlLabel value="2. Pending" control={<Radio className='text-blue' />} label="2. Pending" />
+                                <FormControlLabel value="3. Complete" control={<Radio className='text-blue' />} label="3. Complete" />
+                                <FormControlLabel value="4. Will Test" control={<Radio className='text-blue' />} label="4. Will Test" />
+
+                                <FormControlLabel value="1. Received" control={<Radio className='text-blue' />} label="1. Received" />
+                                <FormControlLabel value="2. Pending" control={<Radio className='text-blue' />} label="2. Pending" />
+                                <FormControlLabel value="3. Complete" control={<Radio className='text-blue' />} label="3. Complete" />
+                                <FormControlLabel value="4. Will Test" control={<Radio className='text-blue' />} label="4. Will Test" />
+
+
+                            </RadioGroup>
+                        </FormControl>
+                    </DialogContentText>
+
+                    <hr />
+
+                    <DialogActions className='justify-content-between'>
+
+                        <Typography variant="h4" className='font-14 bold text-black mb-0'>
+                            Doc ID: 992102
+                            {/* {console.log(selectedDocudata, "selectedDocudata11")}
+                            Doc ID: {selectedDocudata && selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : selectedDocudata?.ItemId
+                            } */}
+                        </Typography>
+
+                        <Box>
+                            <Button className='btn-red me-2' onClick={CategoryhandleClose}>Cancel</Button>
+                            <Button className='btn-blue-2' onClick={CategoryhandleClose} autoFocus>
+                                Submit
+                            </Button>
+                        </Box>
+                    </DialogActions>
+                </DialogContent>
+            </Dialog>
+
+
+
+            {/* Rename Modal */}
+            <Dialog
+                open={Renameopen}
+                onClose={RenamehandleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal'
+
+                sx={{
+                    maxWidth: 660,
+                    width: '100%',
+                    margin: '0 auto'
+                }}
+            >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold text-black'>
+                            Edit Description
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={RenamehandleClose}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <Box className='mb-3'>
+                            <Autocomplete
+                                disablePortal
+                                options={top100Films}
+                                renderInput={(params) => <TextField {...params} label="Standard Description List
+                                " />}
+                                MenuProps={{ PaperProps: { sx: { maxHeight: '100px !important' } } }}
+                            />
+                        </Box>
+
+                        <Box>
+                            <label className='font-14 text-black'>Document Date</label>
+                            <textarea className='textarea w-100' placeholder='Description'></textarea>
+                        </Box>
+
+                    </DialogContentText>
+
+                    <hr />
+
+                    <DialogActions>
+                        <Button onClick={RenamehandleClose} className='btn-red'>Cancel</Button>
+                        <Button onClick={RenamehandleClose} className='btn-blue-2' autoFocus>
+                            Submit
+                        </Button>
+                    </DialogActions>
+
+                </DialogContent>
+
+            </Dialog>
         </>
     )
 }
 
+const top100Films = [
+    { label: 'Client', year: 1994 },
+    { label: 'Cases', year: 1972 },
+    { label: 'Customer', year: 1974 },
+]
 export default DocumentsVewModal;

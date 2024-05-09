@@ -33,20 +33,22 @@ import EditClientdetails from './EditClientdetails';
 import EditReference from './EditReference';
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
-
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import UploadDocForClient from './UploadDocForClient';
 import CustomLoader from '../../components/CustomLoader';
 import { useDispatch } from "react-redux";
 import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
+import HtmlEditorDX from '../../components/HtmlEditor';
+import { Height } from '@mui/icons-material';
 import Fileformat from '../../images/files-icon/pdf.png';
 import { DialogTitle } from '@mui/material';
 import { Label } from '@mui/icons-material';
 import { fetchSupplierListOrderByFavourite } from '../../redux/reducers/api_helper';
-import HtmlEditorDX from '../../components/HtmlEditor';
-import { Height } from '@mui/icons-material';
-
-
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Fade from "@mui/material/Fade";
 
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
@@ -85,13 +87,22 @@ function ClientDetails() {
     const [editorContentValue, setEditorContentValue] = React.useState([]);
 
     // upload document modal start
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
     const handleClickOpenUploadDocument = () => {
         dispatch(setOpenDocumentModalByRedux(true));
     };
     // upload document modal end
 
-
-
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+      };
+      const handleDelete = () => {
+        setAnchorEl(null);
+      };
+      const handleClose = () => {
+        setAnchorEl(null);
+      };
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
@@ -291,6 +302,36 @@ function ClientDetails() {
                         <Button className='btn-blue-2 mb-1' size="small" startIcon={<EmailIcon />}
                             onClick={handleClickOpenUploadDocument}
                         >Add Document</Button>
+
+<div>
+            <Button
+              id="fade-button"
+              aria-controls={open ? "fade-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={handleClick}
+              className="min-width-auto mb-1"
+            >
+              <MoreVertIcon />
+            </Button>
+            <Menu
+              id="fade-menu"
+              MenuListProps={{
+                "aria-labelledby": "fade-button",
+              }}
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              TransitionComponent={Fade}
+            >
+                            <MenuItem className="ps-1" onClick={handleDelete}>
+                                <ListItemIcon>
+                                <DeleteIcon fontSize="small" />
+                                </ListItemIcon>
+                                Delete
+                            </MenuItem>
+            </Menu>
+          </div>
                     </Box>
                 </Box>}
                 <hr />

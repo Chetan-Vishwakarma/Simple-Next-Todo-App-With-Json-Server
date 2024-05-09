@@ -11,6 +11,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import DnsIcon from '@mui/icons-material/Dns';
 import AppsIcon from '@mui/icons-material/Apps';
 import TableRowsIcon from '@mui/icons-material/TableRows';
+import ClearIcon from '@mui/icons-material/Clear';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import WarningIcon from '@mui/icons-material/Warning';
@@ -43,7 +44,6 @@ import Activitygrid from './Activitygrid';
 import { exportDataGrid } from "devextreme/excel_exporter";
 import saveAs from "file-saver";
 import { useSelector, useDispatch } from 'react-redux';
-import ClearIcon from '@mui/icons-material/Clear';
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -816,7 +816,7 @@ const handleRemoveOption = (optionToRemove) => {
                                                         <MenuItem value="" style={{ display: "none" }}>
                                                             <SwapVertIcon className='pe-1' /> Sort By
                                                         </MenuItem>
-                                                        <MenuItem value="Clear Sort" className='text-danger ps-1'><ClearIcon className="font-20 me-2" /> Clear Sort</MenuItem>
+                                                        <MenuItem value="Clear Sort" className='ps-1 text-danger sembold'><ClearIcon className=" me-2" /> Clear Sort</MenuItem>
                                                         <MenuItem value={"Date"} className='ps-1' >
                                                             <CalendarMonthIcon className='pe-1' />
                                                             By Date</MenuItem>

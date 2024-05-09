@@ -67,6 +67,7 @@ import DialogActions from '@mui/material/DialogActions';
 import AddContacts from "../../components/AddContacts";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ContactcardUDF from "./ContactcardUDF";
+// import DeleteIcon from '@mui/icons-material/Delete';
 const label = { inputProps: { "aria-label": "Switch demo" } };
 // const [nextDate, setNextDate] = useState("");
 
@@ -301,7 +302,9 @@ function ContactDetails() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  
+  const handleDelete = () => {
+    setAnchorEl(null);
+  };
   const handleChangeBlock = () =>{
     setOpen5(true);
   }
@@ -631,6 +634,12 @@ function ContactDetails() {
                                     <MarkAsUnreadIcon fontSize="small" />
                                 </ListItemIcon>
                                 Send Portal Messages
+                            </MenuItem>
+                            <MenuItem className="ps-1" onClick={handleDelete}>
+                                <ListItemIcon>
+                                <DeleteIcon fontSize="small" />
+                                </ListItemIcon>
+                                Delete
                             </MenuItem>
             </Menu>
           </div>
