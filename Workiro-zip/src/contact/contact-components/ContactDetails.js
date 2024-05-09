@@ -126,6 +126,8 @@ function ContactDetails() {
 
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   const portalUrl = "https://portal.docusoftweb.com/clientservices.asmx/";
+  const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+  let Clsprect = new CommanCLS(baseUrlPractice, agrno, Email, password);
   let portlCls = new CommanCLS(portalUrl, agrno, Email, password);
   let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
@@ -302,8 +304,39 @@ function ContactDetails() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const Json_deleteSupplierContact = () => {
+    let obj = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      ClientID: originatorNo ? originatorNo : "",
+      ContactEmail: contactDetails[0]["E-Mail"]
+    };
+    try {
+      Cls.Json_deleteSupplierContact(obj, (sts, data) => {
+        if (sts) {
+          if (data) {
+            console.log("Json_deleteSupplierContact", data);
+            toast.error("Contact deleted Successfully !");
+            setTimeout(() => {
+              navigate("/dashboard/Connections");
+            },1500);
+           setAnchorEl(null);
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_GetCRMContactUDFValues", err);
+    }
+  };
   const handleDelete = () => {
-    setAnchorEl(null);
+    console.log("deletecontact");
+    Clsprect.ConfirmMessage("Are you sure you want to delete this contact ? ", function (res) {
+      if (res) {
+        Json_deleteSupplierContact();
+      }
+  })
+   
   };
   const handleChangeBlock = () =>{
     setOpen5(true);
