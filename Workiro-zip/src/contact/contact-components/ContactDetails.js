@@ -306,7 +306,7 @@ function ContactDetails() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const Json_deleteSupplierContact = () => {
+  const SupplierContact = () => {
     let obj = {
       agrno: agrno,
       Email: Email,
@@ -315,10 +315,10 @@ function ContactDetails() {
       ContactEmail: contactDetails[0]["E-Mail"]
     };
     try {
-      Cls.Json_deleteSupplierContact(obj, (sts, data) => {
+      Cls.SupplierContact(obj, (sts, data) => {
         if (sts) {
           if (data) {
-            console.log("Json_deleteSupplierContact", data);
+            console.log("SupplierContact", data);
             if(data =="Success"){
               toast.error("Contact deleted Successfully !");
               setTimeout(() => {
@@ -342,7 +342,7 @@ function ContactDetails() {
     console.log("deletecontact");
     Clsprect.ConfirmMessage("Are you sure you want to delete this contact ? ", function (res) {
       if (res) {
-        Json_deleteSupplierContact();
+        SupplierContact();
       }
   })
    

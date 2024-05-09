@@ -78,7 +78,8 @@ function ClientDetails() {
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
     const clientWebUrl = "https://docusms.uk/dswebclientmanager.asmx/";
-
+    const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+    let Clsprect = new CommanCLS(baseUrlPractice, agrno, Email, password);
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
     let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
@@ -97,8 +98,45 @@ function ClientDetails() {
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
       };
+      const Suppliers = () => {
+        let obj = {
+          agrno: agrno,
+          Email: Email,
+          password: password,
+          CCodeList: originatorNo ? originatorNo : ""
+        };
+        try {
+          Cls.Suppliers(obj, (sts, data) => {
+            if (sts) {
+              if (data) {
+                console.log("Suppliers", data);
+                if(data =="Success"){
+                  toast.error("Contact deleted Successfully !");
+                  setTimeout(() => {
+                    navigate("/dashboard/Connections");
+                    dispatch(fetchSupplierListOrderByFavourite(folderId));
+                  },1500);
+                } else {
+                  toast.error(data);
+                }
+                
+               
+               setAnchorEl(null);
+              }
+            }
+          });
+        } catch (err) {
+          console.log("Error while calling Json_GetCRMContactUDFValues", err);
+        }
+      };
       const handleDelete = () => {
-        setAnchorEl(null);
+        console.log("deleteclient");
+        Clsprect.ConfirmMessage("Are you sure you want to delete this client ? ", function (res) {
+          if (res) {
+            //Suppliers();
+          }
+      })
+       
       };
       const handleClose = () => {
         setAnchorEl(null);
