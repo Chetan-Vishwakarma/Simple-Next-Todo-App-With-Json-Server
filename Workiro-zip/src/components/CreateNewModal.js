@@ -327,7 +327,7 @@ function CreateNewModalTask({ ...props }) {
         }
         ClearForm();
         Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("FolderId"));
-       
+
     }, [reduxRefForTaskModal]);
 
     useEffect(() => {
@@ -504,16 +504,16 @@ function CreateNewModalTask({ ...props }) {
                         if (result.length > 0) {
                             setAddUser([])
                             result.map((el) => {
-                                
+
                                 if (el.ID === parseInt(localStorage.getItem("UserId"))) {
-                                  
+
                                     setOwnerID(el.ID);
                                     setOwnerName(el.ForwardTo);
                                     setOwnerRighClick(el);
                                     setClearData(el);
                                     setAddUser((pre) => [...pre, el])
                                     console.log("Json_GetForwardUserList11", el);
-                                    
+
                                 }
                             })
                         }
@@ -526,7 +526,7 @@ function CreateNewModalTask({ ...props }) {
                         setUserFilter(removeuser);
 
                         let commanuser = result.filter((e) => e.ID === parseInt(localStorage.getItem("UserId")));
-                       // console.log("Json_GetForwardUserList11", removeuser);
+                        // console.log("Json_GetForwardUserList11", removeuser);
                         setSelectedUSer(commanuser[0]);
 
                     }
@@ -562,9 +562,9 @@ function CreateNewModalTask({ ...props }) {
     // };
 
     const kbToMb = (kb) => {
-       
 
-        let t = kb /(1024 * 1024);
+
+        let t = kb / (1024 * 1024);
 
         return t.toFixed(2);
     };
@@ -866,8 +866,8 @@ function CreateNewModalTask({ ...props }) {
 
     const CurrentDateChange = (e) => {
         setCurrentDate(e);
-       // setNextDate("");
-       // setNextDateClear(true);
+        // setNextDate("");
+        // setNextDateClear(true);
         console.log("get folder list112222", moment(e).format("YYYY/MM/DD"));
     }
 
@@ -876,7 +876,7 @@ function CreateNewModalTask({ ...props }) {
 
 
     useEffect(() => {
-       // console.log("get folder list112222", selectedDate);
+        // console.log("get folder list112222", selectedDate);
         setSelectedDate(null); // Set the selected date to null to clear it
     }, [currentDate]);
 
@@ -1011,7 +1011,7 @@ function CreateNewModalTask({ ...props }) {
         let completeCounter = 0;
 
         selectedFilesArray.forEach((file, index) => {
-           
+
             const reader = new FileReader();
             completeCounter++;
             reader.onload = () => {
@@ -1026,7 +1026,7 @@ function CreateNewModalTask({ ...props }) {
                     Guid: localStorage.getItem("GUID"),
                     FileType: getFileExtension(file.name).toLowerCase()
                 };
-                console.log(fileData,"file size check")
+                console.log(fileData, "file size check")
                 filesData.push(fileData);
 
                 if (txtTaskType === "CRM") {
@@ -1290,14 +1290,14 @@ function CreateNewModalTask({ ...props }) {
         if (attachmentPath.length > 0) {
             attString = attachmentPath.map(obj => obj.Path).join('|');
         }
-if(nextDate){
- // setLoading(true);
-}
-else{
-toast.error("Please Select a Due Date");
- setLoading(false);
+        if (nextDate) {
+            // setLoading(true);
+        }
+        else {
+            toast.error("Please Select a Due Date");
+            setLoading(false);
             return false
-}
+        }
 
         //console.log("nextDate1", currentDate)
         // let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
@@ -1310,8 +1310,8 @@ toast.error("Please Select a Due Date");
         let ooo = {
 
             "ClientIsRecurrence": false,
-            "StartDate":currentDate? moment(currentDate).format("YYYY/MM/DD"): "1900/01/01",
-            "ClientEnd":nextDate?moment(nextDate).format("YYYY/MM/DD") : "1900/01/01",
+            "StartDate": currentDate ? moment(currentDate).format("YYYY/MM/DD") : "1900/01/01",
+            "ClientEnd": nextDate ? moment(nextDate).format("YYYY/MM/DD") : "1900/01/01",
             "ClientDayNumber": "1",
             "ClientMonth": "1",
             "ClientOccurrenceCount": "1",
@@ -1357,7 +1357,7 @@ toast.error("Please Select a Due Date");
                         setOwnerMessage(js.Message);
 
                         if (selectedRows && selectedRows.length > 0) {
-                            
+
                             selectedRows.forEach((item) => {
                                 addToWorkTable(item.ItemId, js.Message);
                             });
@@ -1413,7 +1413,7 @@ toast.error("Please Select a Due Date");
 
                 // setLoading(false);
             }
-            else{
+            else {
                 setLoading(false);
             }
         })
@@ -1426,10 +1426,10 @@ toast.error("Please Select a Due Date");
     function ClearForm() {
 
         setOwnerID([]);
-                                    setOwnerName([]);
-                                    setOwnerRighClick([]);
-                                    setClearData([]);
-                                    setAddUser([])
+        setOwnerName([]);
+        setOwnerRighClick([]);
+        setClearData([]);
+        setAddUser([])
 
         setSelectedFiles([]);
         setSelectedDocumentFile([]);
@@ -1453,7 +1453,7 @@ toast.error("Please Select a Due Date");
         setTxtDescriptin("");
         setTextClientId("")
 
-        
+
 
         setTxtPriority("Normal");
         setTxtStatus("Not Started");
@@ -1683,8 +1683,8 @@ toast.error("Please Select a Due Date");
         const isaddUser = addUser.map(obj => obj.ForwardTo).join(',');
         const filteredData = addUser.filter(item => item.ForwardTo !== ownerName);
 
-        console.log(isaddUser,addUser,"addToWorkTableownerName", ownerName);
-        if(Itid && taskID && textSubject){
+        console.log(isaddUser, addUser, "addToWorkTableownerName", ownerName);
+        if (Itid && taskID && textSubject) {
             const obj = {
                 agrno: agrno,
                 Email: Email,
@@ -1692,25 +1692,25 @@ toast.error("Please Select a Due Date");
                 ItemId: Itid,
                 comment: `${ownerName} has initiated a task-${textSubject}. Task ID: ${taskID}.`
             };
-            
+
             if (addUser && addUser.length > 0 && filteredData.length > 0) {
                 // If addUser is present and has elements, add the filtered data as assignees
                 obj.comment += ` ${filteredData.length > 0 ? filteredData.map(item => item.ForwardTo).join(', ') : ''} have been added as assignees.`;
             }
-            
+
             // Use obj wherever needed in your code
-            
-                    console.log("addToWorkTable111", obj);
-                    clsSms.Json_AddToWork(obj, function (status, data) {
-                        if (status) {
-                            if (data) {
-                                //let json = JSON.parse(data);
-                                console.log("getitemid", data);
-            
-            
-                            }
-                        }
-                    });
+
+            console.log("addToWorkTable111", obj);
+            clsSms.Json_AddToWork(obj, function (status, data) {
+                if (status) {
+                    if (data) {
+                        //let json = JSON.parse(data);
+                        console.log("getitemid", data);
+
+
+                    }
+                }
+            });
         }
 
 
@@ -1876,7 +1876,7 @@ toast.error("Please Select a Due Date");
                         return callBack(data);
                     }
                     else {
-                       
+
                     }
 
                 }
@@ -2068,14 +2068,14 @@ toast.error("Please Select a Due Date");
                     setLoading(false);
                     return false
                 }
-                if(nextDate){
- // setLoading(true);
-}
-else{
-toast.error("Please Select a Due Date");
- setLoading(false);
-            return false
-}
+                if (nextDate) {
+                    // setLoading(true);
+                }
+                else {
+                    toast.error("Please Select a Due Date");
+                    setLoading(false);
+                    return false
+                }
 
 
                 // let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
@@ -2088,7 +2088,7 @@ toast.error("Please Select a Due Date");
 
                 let ooo = {
                     "ClientIsRecurrence": false,
-                    "StartDate":currentDate? moment(currentDate).format("YYYY/MM/DD"):"1900/01/01",
+                    "StartDate": currentDate ? moment(currentDate).format("YYYY/MM/DD") : "1900/01/01",
                     "ClientEnd": nextDate ? moment(nextDate).format("YYYY/MM/DD") : "1900/01/01",
                     "ClientDayNumber": "1",
                     "ClientMonth": "1",
@@ -2105,7 +2105,7 @@ toast.error("Please Select a Due Date");
                     "Subject": textSubject,
                     "TypeofTaskID": txtSectionId.toString(),
                     "EndDateTime": nextDate ? moment(nextDate).format("YYYY/MM/DD") : "1900/01/01",
-                    "StartDateTime":currentDate? moment(currentDate).format("YYYY/MM/DD"):"1900/01/01",
+                    "StartDateTime": currentDate ? moment(currentDate).format("YYYY/MM/DD") : "1900/01/01",
                     "Status": txtStatus,
                     "Priority": txtPriorityId.toString(),
                     "PercentComplete": "1",
@@ -2133,7 +2133,7 @@ toast.error("Please Select a Due Date");
 
                                 // setMessageId(js.Message);
                                 if (selectedDocumentFile && selectedDocumentFile.length > 0) {
-                                    console.log(selectedDocumentFile,"selectedfite")
+                                    console.log(selectedDocumentFile, "selectedfite")
                                     selectedDocumentFile.map((item) => {
                                         addToWorkTable(item.DocId, js.Message, textSubject);
                                     });
@@ -2295,7 +2295,7 @@ toast.error("Please Select a Due Date");
 
     const firsorScandCtr = (item) => {
         if (item) {
-            if(item.ForwardTo){
+            if (item.ForwardTo) {
                 const words = item.ForwardTo.split(" ");
                 // Extract the first letter of each word and concatenate them
                 let result = "";
@@ -2308,7 +2308,7 @@ toast.error("Please Select a Due Date");
                 }
                 return result;
             }
-           
+
         }
 
     }
@@ -2610,7 +2610,7 @@ toast.error("Please Select a Due Date");
         setAnchorElFiles(null);
     };
 
-   
+
 
     return (
         <React.Fragment>
@@ -2820,39 +2820,507 @@ toast.error("Please Select a Due Date");
 
                         <Box className="row full-height-modal">
                             <Box className="col-lg-8 border-end">
-                                <Box className="clearfix">
-                                    <Box>
-                                        <Box className="align-items-center">
-                                            {/* <span class="material-symbols-outlined">
+
+                                <Box className='clearfix'>
+
+                                    <Box className="align-items-center">
+                                        {/* <span class="material-symbols-outlined">
                                                 edit_square
                                             </span> */}
 
-                                            {/* <Checkbox
+                                        {/* <Checkbox
                                                 className='create-tast p-1 text-blue'
                                                 {...label}
                                                 defaultChecked
                                                 sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
                                             /> */}
 
-                                            {/* <Checkbox
+                                        {/* <Checkbox
                                                 {...label}
                                                 icon={<RadioButtonUncheckedOutlinedIcon />}
                                                 checkedIcon={<CheckCircleIcon />}
                                                 className="p-0"
                                             /> */}
 
-                                            <Box>
-                                                <input
-                                                    placeholder="Subject..."
-                                                    className="input-text"
-                                                    onChange={(e) => setTextSubject(e.target.value)}
-                                                    type="text"
-                                                    value={textSubject}
-                                                />
-                                            </Box>
+                                        <Box>
+                                            <input
+                                                placeholder="Subject..."
+                                                className="input-text"
+                                                onChange={(e) => setTextSubject(e.target.value)}
+                                                type="text"
+                                                value={textSubject}
+                                            />
                                         </Box>
+                                    </Box>
+                                    {/* end */}
 
-                                        {/* <Box className="d-flex align-items-center mt-3">
+                                    <hr />
+
+                                    <Box className="mt-1 mb-3">
+                                        <Button
+                                            id="basic-button5"
+                                            aria-controls={
+                                                UserDropdownopen ? "basic-menu5" : undefined
+                                            }
+                                            aria-haspopup="true"
+                                            aria-expanded={UserDropdownopen ? "true" : undefined}
+                                            onContextMenu={handleRightClick}
+                                            className="p-0 w-auto d-inline-block"
+                                        >
+                                            <Box className="d-flex align-items-center">
+                                                {ownerRighClick && (<>
+                                                    <Box
+                                                        className="user-img-list me-1 admin"
+                                                        title={ownerRighClick.ForwardTo}
+                                                        key={ownerRighClick.ID}
+                                                    >
+                                                        <p>{firsorScandCtr(ownerRighClick)}</p>
+                                                    </Box> <ArrowForwardIosIcon className='me-1 font-20' />
+                                                </>)}
+
+                                                {addUser.length > 1
+                                                    ? addUser.slice(1, 3).map((item) => {
+                                                        const words = item.ForwardTo.split(" ");
+                                                        // Extract the first letter of each word and concatenate them
+                                                        let result = "";
+                                                        for (
+                                                            let i = 0;
+                                                            i < words.length && i < 2;
+                                                            i++
+                                                        ) {
+                                                            result += words[i].charAt(0);
+                                                        }
+                                                        if (item.ID !== ownerID) {
+                                                            return (
+                                                                <>
+                                                                    <Box
+                                                                        className="user-img-list me-1 admin"
+                                                                        title={item.ForwardTo}
+                                                                        key={item.ID}
+                                                                    >
+                                                                        <p>{result}</p>
+                                                                    </Box>
+
+
+                                                                </>
+                                                            );
+                                                        }
+                                                    })
+                                                    : null}
+                                            </Box>
+                                        </Button>
+
+                                        {dropdownVisible && (<Menu
+                                            id="basic-menu5"
+                                            anchorEl={userDropdownanchorElRight}
+                                            open={UserDropdownopenRight}
+                                            onClose={handleUserClose}
+                                            MenuListProps={{
+                                                "aria-labelledby": "basic-button5",
+                                            }}
+                                            className="user-list-dropdown"
+                                        >
+
+                                            <Box
+                                                className="inner-user-list-dropdown"
+                                                style={{ maxHeight: "200px", overflowY: "auto" }}
+                                            >
+                                                <p className="sembold">Transfer Ownership To:</p>
+
+                                                <Box className="box-user-list-dropdown">
+
+                                                    {addUser
+                                                        ? addUser.map((item, ind) => {
+                                                            if (item.ID === ownerID) {
+                                                                return (
+                                                                    <React.Fragment key={ind}>
+                                                                        <button type="button"
+                                                                            id={item.ID}
+                                                                        >
+                                                                            <Box className="user-img-list me-2">
+                                                                                <img src={user} alt="User" />
+                                                                            </Box>
+                                                                            <p>{item.ForwardTo}</p>
+                                                                        </button>
+                                                                    </React.Fragment>
+                                                                );
+                                                            } else {
+                                                                return (
+                                                                    <React.Fragment key={ind}>
+                                                                        <button type="button" id={item.ID}
+                                                                            onClick={() => handleItemClick(item)}
+                                                                        >
+                                                                            <Box className="user-img-list me-2">
+                                                                                <img src={user} alt="User" />
+                                                                            </Box>
+                                                                            <p>{item.ForwardTo}</p>
+                                                                            {/* <span
+className="close"
+onClick={() => handleRemoveUser(item.ID)}
+role="button" // Adding role="button" to indicate this element is clickable
+tabIndex="0" // Adding tabIndex to make the element focusable
+>
+<span className="material-symbols-outlined">
+close
+</span>
+</span> */}
+                                                                        </button>
+                                                                    </React.Fragment>
+                                                                );
+                                                            }
+                                                        })
+                                                        : null}
+                                                </Box>
+                                            </Box>
+                                        </Menu>)}
+
+                                        {addUser.length > 4 && (<>
+                                            <Button
+                                                id="basic-button"
+                                                aria-controls={openFiles ? 'basic-menu' : undefined}
+                                                aria-haspopup="true"
+                                                aria-expanded={openFiles ? 'true' : undefined}
+                                                onClick={handleClickFiles}
+                                                className="p-0 min-width-auto"
+                                            >
+                                                <Box
+                                                    className="user-img-list me-1 admin"
+                                                >
+                                                    <p>+{addUser.length - 3}</p>
+                                                </Box>
+                                            </Button>
+                                            <Menu
+                                                id="basic-menu"
+                                                anchorEl={anchorElFiles}
+                                                open={openFiles}
+                                                onClose={handleCloseFiles}
+                                                MenuListProps={{
+                                                    'aria-labelledby': 'basic-button',
+                                                }}
+                                                className="custom-menu"
+                                            >
+                                                {addUser.length > 3 &&
+                                                    addUser.slice(3, addUser.length).map((item, index) => (
+                                                        <MenuItem key={index} onClick={handleCloseFiles}>{item.ForwardTo}</MenuItem>
+                                                    ))
+                                                }
+                                            </Menu>
+                                        </>)}
+
+                                        <Button
+                                            id="basic-button5"
+                                            aria-controls={
+                                                UserDropdownopen ? "basic-menu5" : undefined
+                                            }
+                                            aria-haspopup="true"
+                                            aria-expanded={UserDropdownopen ? "true" : undefined}
+                                            onClick={handleUserClick}
+                                            className="p-0 w-auto d-inline-block"
+                                        >
+
+                                            <Box className="d-flex">
+                                                <span class="material-symbols-outlined">
+                                                    person_add
+                                                </span>
+                                            </Box>
+                                        </Button>
+
+                                        <Menu
+                                            id="basic-menu5"
+                                            anchorEl={userDropdownanchorEl}
+                                            open={UserDropdownopen}
+                                            onClose={handleUserClose}
+                                            MenuListProps={{
+                                                "aria-labelledby": "basic-button5",
+                                            }}
+                                            className="user-list-dropdown"
+                                        >
+
+                                            <Box
+                                                className="inner-user-list-dropdown"
+                                                style={{ maxHeight: "200px", overflowY: "auto" }}
+                                            >
+                                                <p className="sembold">Assigned</p>
+                                                <Box className="box-user-list-dropdown">
+                                                    {addUser
+                                                        ? addUser.map((item, ind) => {
+                                                            if (item.ID === ownerID) {
+                                                                return (
+                                                                    <React.Fragment key={ind}>
+                                                                        <button type="button" id={item.ID} >
+                                                                            <Box className="user-img-list me-2">
+                                                                                <img src={user} alt="User" />
+                                                                            </Box>
+                                                                            <p>{item.ForwardTo}</p>
+                                                                        </button>
+                                                                    </React.Fragment>
+                                                                );
+                                                            } else {
+                                                                return (
+                                                                    <React.Fragment key={ind}>
+                                                                        <button type="button" id={item.ID}>
+                                                                            <Box className="user-img-list me-2">
+                                                                                <img src={user} alt="User" />
+                                                                            </Box>
+                                                                            <p>{item.ForwardTo}</p>
+                                                                            <span
+                                                                                className="close"
+                                                                                onClick={() => handleRemoveUser(item.ID)}
+                                                                                role="button" // Adding role="button" to indicate this element is clickable
+                                                                                tabIndex="0" // Adding tabIndex to make the element focusable
+                                                                            >
+                                                                                <span className="material-symbols-outlined">
+                                                                                    close
+                                                                                </span>
+                                                                            </span>
+                                                                        </button>
+                                                                    </React.Fragment>
+                                                                );
+                                                            }
+                                                        })
+                                                        : null}
+                                                </Box>
+                                            </Box>
+
+                                            <Box className="inner-user-list-dropdown">
+                                                <p className="sembold mb-0">My Team</p>
+
+                                                <Box className="box-user-list-dropdown" style={{ maxHeight: "200px", overflowY: "auto" }}>
+                                                    <Box className="mb-1 mt-3 px-3">
+                                                        <input
+                                                            type="text"
+                                                            className="form-control"
+                                                            placeholder="Search..."
+                                                            value={filterText}
+                                                            onChange={(e) => setFilterText(e.target.value)}
+                                                        />
+                                                    </Box>
+                                                    <Box className="box-user-list-dropdown">
+
+                                                        {FilderDataList.map((item, ind) => (
+                                                            <React.Fragment key={ind}>
+                                                                <button
+                                                                    type="button"
+                                                                    id={item.ID}
+                                                                    onClick={() => handalClickAddUser(item)}
+                                                                >
+                                                                    <Box className="user-img-list me-2">
+                                                                        <img src={user} alt="User" />
+                                                                    </Box>
+                                                                    <p>{item.ForwardTo}</p>
+                                                                    {/* <a href="" className="close"><span className="material-symbols-outlined">close</span></a> */}
+                                                                </button>
+                                                            </React.Fragment>
+                                                        ))}
+                                                    </Box>
+                                                </Box>
+                                            </Box>
+                                        </Menu>
+                                    </Box>
+                                    {/* Box End */}
+
+                                    <Box className="file-uploads">
+                                        <input
+                                            type="file"
+                                            id="file-upload"
+                                            multiple
+                                            onChange={handleFileSelect}
+                                        />
+                                        <label className="file-uploads-label" for="file-upload">
+                                            <Box className="d-flex align-items-center">
+                                                <span className="material-symbols-outlined icon">
+                                                    cloud_upload
+                                                </span>
+                                                <Box className="upload-content pe-3">
+                                                    <Typography variant="h4">
+                                                        Select a file or drag and drop here
+                                                    </Typography>
+                                                    <Typography variant="body1">
+                                                        JPG, PNG or PDF, file size no more than 10MB
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+
+                                            <Button
+                                                id="basic-button"
+                                                variant="contained"
+                                                aria-controls={openSelectFile ? 'basic-menu' : undefined}
+                                                aria-haspopup="true"
+                                                aria-expanded={openSelectFile ? 'true' : undefined}
+                                                onClick={handleClickSelectFile}
+                                                className="btn-blue-2"
+                                            >
+                                                Select file
+                                            </Button>
+                                            <Menu
+                                                id="basic-menu"
+                                                anchorEl={anchorSelectFileEl}
+                                                open={openSelectFile}
+                                                onClose={handleSelectFileClose}
+                                                MenuListProps={{
+                                                    'aria-labelledby': 'basic-button',
+                                                }}
+                                                className="custom-dropdown"
+                                            >
+                                                <label onClick={handleSelectFileClose} htmlFor="file-upload" className="d-block">
+                                                    <MenuItem><FileUploadIcon className="font-20 me-1" /> Upload File(s)</MenuItem>
+                                                </label>
+                                                <MenuItem onClick={handleDocumentClickOpen}><InsertPageBreakIcon className="font-20 me-1" /> Select From DMS</MenuItem>
+
+                                            </Menu>
+
+                                        </label>
+                                    </Box>
+                                    {/* Box End */}
+
+
+                                    <Box className="file-uploads file-upload-height">
+                                        {selectedFiles.length > 0
+                                            ? selectedFiles.map((file, index) => {
+                                                // console.log("Uploadin", file);
+
+                                                return (
+                                                    <>
+                                                        <label className="file-uploads-label mb-2" key={index}>
+                                                            <Box className="d-flex align-items-center">
+
+                                                                <span className="material-symbols-outlined icon">
+
+                                                                    {<GetFileType Type={file ? file.FileType.toLowerCase() : null}></GetFileType>}
+
+                                                                </span>
+                                                                <Box className="upload-content pe-3">
+                                                                    <Typography variant="h4">
+                                                                        {file ? file.FileName : ""}
+                                                                    </Typography>
+                                                                    <Typography variant="body1">
+                                                                        {file ? kbToMb(file.FileSize) : ""} MB
+                                                                    </Typography>
+                                                                </Box>
+                                                            </Box>
+
+                                                            <Box className="d-flex align-items-center">
+
+                                                                {txtTaskType === "Portal" && (<>
+                                                                    <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
+                                                                        Sign
+                                                                    </Button>
+                                                                </>)}
+
+                                                                <Box className="ps-2">
+
+                                                                    <Button
+                                                                        id="basic-button"
+                                                                        aria-controls={openDoc ? 'basic-menu' : undefined}
+                                                                        aria-haspopup="true"
+                                                                        aria-expanded={openDoc ? 'true' : undefined}
+                                                                        onClick={(event) => handleClickDoc(event, index)} // Pass index to handleClickDoc
+                                                                        className="min-width-auto"
+
+                                                                    >
+                                                                        <span className="material-symbols-outlined">
+                                                                            more_vert
+                                                                        </span>
+                                                                    </Button>
+
+                                                                    <Menu
+                                                                        id="basic-menu"
+                                                                        className="custom-dropdown"
+                                                                        anchorEl={anchorElDoc}
+                                                                        open={openDoc && selectedFileIndex === index} // Ensure the menu opens only for the selected file
+                                                                        onClose={handleCloseDoc}
+                                                                        MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
+                                                                    >
+                                                                        <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Remove</MenuItem>
+                                                                        {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
+                                                                            <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
+                                                                        )}
+                                                                    </Menu>
+
+                                                                </Box>
+                                                            </Box>
+                                                            {/* <Button variant="text" className='btn-blue-2'>Select file</Button> */}
+                                                        </label>
+                                                    </>
+                                                );
+                                            })
+                                            : (createNewFileObj && createNewFileObj.length > 0)
+                                                ? createNewFileObj.map((file, index) => {
+                                                    // console.log("Uploadin", file);
+
+                                                    return (
+                                                        <>
+                                                            <label className="file-uploads-label mb-2" key={index}>
+                                                                <Box className="d-flex align-items-center">
+                                                                    <span className="material-symbols-outlined icon">
+                                                                        description
+                                                                    </span>
+                                                                    <Box className="upload-content pe-3">
+                                                                        <Typography variant="h4">
+                                                                            {file ? file.FileName : ""}
+                                                                        </Typography>
+                                                                        <Typography variant="body1">
+                                                                            {file ? kbToMb(file.FileSize) : ""} MB
+                                                                        </Typography>
+                                                                    </Box>
+                                                                </Box>
+
+                                                                <Box className="d-flex align-items-center">
+
+                                                                    {txtTaskType === "Portal" && (<>
+                                                                        <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
+                                                                            Sign
+                                                                        </Button>
+                                                                    </>)}
+
+                                                                    <Box className="ps-2">
+
+                                                                        <Button
+                                                                            id="basic-button"
+                                                                            aria-controls={openDoc ? 'basic-menu' : undefined}
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded={openDoc ? 'true' : undefined}
+                                                                            onClick={(event) => handleClickDoc(event, index)} // Pass index to handleClickDoc
+                                                                            className="min-width-auto"
+
+                                                                        >
+                                                                            <span className="material-symbols-outlined">
+                                                                                more_vert
+                                                                            </span>
+                                                                        </Button>
+
+                                                                        <Menu
+                                                                            id="basic-menu"
+                                                                            className="custom-dropdown"
+                                                                            anchorEl={anchorElDoc}
+                                                                            open={openDoc && selectedFileIndex === index} // Ensure the menu opens only for the selected file
+                                                                            onClose={handleCloseDoc}
+                                                                            MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
+                                                                        >
+                                                                            <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Delete</MenuItem>
+                                                                            {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
+                                                                                <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
+                                                                            )}
+                                                                        </Menu>
+
+                                                                    </Box>
+                                                                </Box>
+                                                                {/* <Button variant="text" className='btn-blue-2'>Select file</Button> */}
+                                                            </label>
+                                                        </>
+                                                    );
+                                                })
+                                                : null}
+                                    </Box>
+                                    {/* Box End */}
+                                </Box>
+                                {/* end */}
+
+
+                                <Box className="clearfix">
+
+
+                                    {/* <Box className="d-flex align-items-center mt-3">
                                             <span class="material-symbols-outlined">
                                                 edit_square
                                             </span>
@@ -2861,487 +3329,162 @@ toast.error("Please Select a Due Date");
                                             </Box>
                                         </Box> */}
 
-                                        {/* attached to start */}
-                                        <Box className='mt-3 mb-3'>
+                                    {/* attached to start */}
+                                    <Box className='mt-3 mb-3'>
 
 
-                                            {/* attached to end */}
+                                        {/* attached to end */}
 
-                                            {isVisibleByTypeCRM && (
-                                                <>
-                                                    <Box className='mb-2'>
-                                                        <Autocomplete
-                                                            disablePortal
-                                                            id="combo-box-demo"
-                                                            options={userList}
-                                                            getOptionLabel={(option) => option.ForwardTo}
-                                                            renderInput={(params) => <TextField {...params} label="From" />}
-                                                            className="w-100"
-                                                            size="small"
-                                                            value={selectedUSer}
-                                                            onChange={handleOptionChangeFromUser}
-                                                        />
-                                                    </Box>
-                                                    <Box className='mb-2'>
+                                        {isVisibleByTypeCRM && (
+                                            <>
+                                                <Box className='mb-2'>
+                                                    <Autocomplete
+                                                        disablePortal
+                                                        id="combo-box-demo"
+                                                        options={userList}
+                                                        getOptionLabel={(option) => option.ForwardTo}
+                                                        renderInput={(params) => <TextField {...params} label="From" />}
+                                                        className="w-100"
+                                                        size="small"
+                                                        value={selectedUSer}
+                                                        onChange={handleOptionChangeFromUser}
+                                                    />
+                                                </Box>
+                                                <Box className='mb-2'>
 
-                                                        <Autocomplete
-                                                            multiple
-                                                            id="checkboxes-tags-demo"
-                                                            options={portalUserTo}
-                                                            disableCloseOnSelect
-                                                            getOptionLabel={(option) => option["E-Mail"]}
-                                                            size="small"
-                                                            renderOption={(props, option, { selected }) => (
-                                                                <li {...props}>
-                                                                    <Checkbox
+                                                    <Autocomplete
+                                                        multiple
+                                                        id="checkboxes-tags-demo"
+                                                        options={portalUserTo}
+                                                        disableCloseOnSelect
+                                                        getOptionLabel={(option) => option["E-Mail"]}
+                                                        size="small"
+                                                        renderOption={(props, option, { selected }) => (
+                                                            <li {...props}>
+                                                                <Checkbox
 
-                                                                        icon={icon}
-                                                                        checkedIcon={checkedIcon}
-                                                                        style={{ marginRight: 8 }}
-                                                                        checked={selected}
-                                                                    />
-                                                                    {option["First Name"] + " " + option["Last Name"] + " (" + option["E-Mail"] + ")"}
-                                                                </li>
-                                                            )}
-                                                            renderInput={(params) => (
-                                                                <TextField {...params} label="To:" limitTags={2} placeholder="" />
-                                                            )}
-                                                            onChange={handleAutocompleteChange} // Handle selection change
-
-                                                        />
-                                                    </Box>
-
-                                                    <Box className='mb-2'>
-                                                        <Autocomplete
-                                                            multiple
-                                                            id="checkboxes-tags-demo"
-                                                            options={portalUserCC}
-                                                            disableCloseOnSelect
-                                                            getOptionLabel={(option) => option["E-Mail"]}
-                                                            size="small"
-                                                            renderOption={(props, option, { selected }) => (
-                                                                <li {...props}>
-                                                                    <Checkbox
-                                                                        icon={icon}
-                                                                        checkedIcon={checkedIcon}
-                                                                        style={{ marginRight: 8 }}
-                                                                        checked={selected}
-                                                                    />
-                                                                    {option["First Name"] + " " + option["Last Name"] + " (" + option["E-Mail"] + ")"}
-                                                                </li>
-                                                            )}
-                                                            renderInput={(params) => (
-                                                                <TextField {...params} label="CC:" limitTags={2} placeholder="" />
-                                                            )}
-                                                            onChange={handleAutocompleteChangeOnCC} // Handle selection change
-                                                        />
-
-                                                    </Box>
-
-                                                    <Box className='mb-2'>
-                                                        <FormControlLabel control={<Checkbox checked={isCheckedForApproval} disabled={isDisabledForApproval} onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
-                                                        <FormControlLabel control={<Checkbox checked={isCheckedWithOutmgs} onChange={handleCheckboxChangeisCheckedWithOutmgs} />} label="Send Without Message" />
-
-                                                        <Button
-                                                            variant="contained"
-                                                            id="fade-button"
-                                                            aria-controls={openTemp ? 'fade-menu' : undefined}
-                                                            aria-haspopup="true"
-                                                            aria-expanded={openTemp ? 'true' : undefined}
-                                                            onClick={handleClickAddTemplate}
-                                                            className="btn-blue-2"
-
-                                                        >
-                                                            Add Template
-                                                        </Button>
-                                                        <Menu
-                                                            id="fade-menu"
-                                                            MenuListProps={{
-                                                                'aria-labelledby': 'fade-button',
-                                                            }}
-                                                            anchorEl={anchorElTemp}
-                                                            open={openTemp}
-                                                            onClose={handleCloseTemp}
-                                                            TransitionComponent={Fade}
-                                                            style={{ width: '50%', pending: "12px" }}
-                                                        >
-                                                            {errorMgs ? (
-                                                                <span sx={{ color: "red" }}>Email is blank, please select the mail</span>
-                                                            ) : (
-                                                                null // or any other element you want to render when errorMgs is false
-                                                            )}
-                                                            <DataGrid
-                                                                dataSource={smsTemplate}
-                                                                allowColumnReordering={true}
-                                                                rowAlternationEnabled={true}
-                                                                showBorders={true}
-                                                                width={"100%"}
-                                                                selection={{ mode: 'single' }}
-                                                                onSelectionChanged={handleSelectionChangedTemp} // Handle selection change event
-                                                            >
-                                                                <FilterRow visible={true} />
-                                                                <SearchPanel visible={false} highlightCaseSensitive={true} />
-
-                                                                <Column
-                                                                    dataField="Description"
-                                                                    caption="Description"
-                                                                    width={400}
+                                                                    icon={icon}
+                                                                    checkedIcon={checkedIcon}
+                                                                    style={{ marginRight: 8 }}
+                                                                    checked={selected}
                                                                 />
+                                                                {option["First Name"] + " " + option["Last Name"] + " (" + option["E-Mail"] + ")"}
+                                                            </li>
+                                                        )}
+                                                        renderInput={(params) => (
+                                                            <TextField {...params} label="To:" limitTags={2} placeholder="" />
+                                                        )}
+                                                        onChange={handleAutocompleteChange} // Handle selection change
 
-                                                                <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
-                                                                <Paging defaultPageSize={10} />
-                                                            </DataGrid>
-                                                        </Menu>
-                                                    </Box>
-
-                                                </>
-                                            )}
-                                            {txtTaskType === "Portal" && (
-                                                <HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
-                                            )}
-
-                                        </Box>
-
-                                        {!isVisibleByTypeCRM && (<>
-                                            <Box className="mt-3 mb-3">
-                                                <textarea
-                                                    className="form-control textarea-text resize-none"
-                                                    placeholder="Description"
-                                                    value={txtdescription} // Bind the value to the state
-                                                    onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
-                                                ></textarea>
-                                            </Box>
-                                        </>)}
-
-                                        <div className="mt-1 mb-3">
-
-                                            <Button
-                                                id="basic-button5"
-                                                aria-controls={
-                                                    UserDropdownopen ? "basic-menu5" : undefined
-                                                }
-                                                aria-haspopup="true"
-                                                aria-expanded={UserDropdownopen ? "true" : undefined}
-                                                onContextMenu={handleRightClick}
-                                                className="p-0 w-auto d-inline-block"
-                                            >
-                                                <Box className="d-flex align-items-center">
-                                                    {ownerRighClick && (<>
-                                                        <Box
-                                                            className="user-img-list me-1 admin"
-                                                            title={ownerRighClick.ForwardTo}
-                                                            key={ownerRighClick.ID}
-                                                        >
-                                                            <p>{firsorScandCtr(ownerRighClick)}</p>
-                                                        </Box> <ArrowForwardIosIcon className='me-1 font-20' />
-                                                    </>)}
-
-                                                    {addUser.length > 1
-                                                        ? addUser.slice(1, 3).map((item) => {
-                                                            const words = item.ForwardTo.split(" ");
-                                                            // Extract the first letter of each word and concatenate them
-                                                            let result = "";
-                                                            for (
-                                                                let i = 0;
-                                                                i < words.length && i < 2;
-                                                                i++
-                                                            ) {
-                                                                result += words[i].charAt(0);
-                                                            }
-                                                            if (item.ID !== ownerID) {
-                                                                return (
-                                                                    <>
-                                                                        <Box
-                                                                            className="user-img-list me-1 admin"
-                                                                            title={item.ForwardTo}
-                                                                            key={item.ID}
-                                                                        >
-                                                                            <p>{result}</p>
-                                                                        </Box>
-
-
-                                                                    </>
-                                                                );
-                                                            }
-                                                        })
-                                                        : null}
+                                                    />
                                                 </Box>
-                                            </Button>
 
-                                            {dropdownVisible && (<Menu
-                                                id="basic-menu5"
-                                                anchorEl={userDropdownanchorElRight}
-                                                open={UserDropdownopenRight}
-                                                onClose={handleUserClose}
-                                                MenuListProps={{
-                                                    "aria-labelledby": "basic-button5",
-                                                }}
-                                                className="user-list-dropdown"
-                                            >
+                                                <Box className='mb-2'>
+                                                    <Autocomplete
+                                                        multiple
+                                                        id="checkboxes-tags-demo"
+                                                        options={portalUserCC}
+                                                        disableCloseOnSelect
+                                                        getOptionLabel={(option) => option["E-Mail"]}
+                                                        size="small"
+                                                        renderOption={(props, option, { selected }) => (
+                                                            <li {...props}>
+                                                                <Checkbox
+                                                                    icon={icon}
+                                                                    checkedIcon={checkedIcon}
+                                                                    style={{ marginRight: 8 }}
+                                                                    checked={selected}
+                                                                />
+                                                                {option["First Name"] + " " + option["Last Name"] + " (" + option["E-Mail"] + ")"}
+                                                            </li>
+                                                        )}
+                                                        renderInput={(params) => (
+                                                            <TextField {...params} label="CC:" limitTags={2} placeholder="" />
+                                                        )}
+                                                        onChange={handleAutocompleteChangeOnCC} // Handle selection change
+                                                    />
 
-                                                <Box
-                                                    className="inner-user-list-dropdown"
-                                                    style={{ maxHeight: "200px", overflowY: "auto" }}
-                                                >
-                                                    <p className="sembold">Transfer Ownership To:</p>
-
-                                                    <Box className="box-user-list-dropdown">
-
-                                                        {addUser
-                                                            ? addUser.map((item, ind) => {
-                                                                if (item.ID === ownerID) {
-                                                                    return (
-                                                                        <React.Fragment key={ind}>
-                                                                            <button type="button"
-                                                                                id={item.ID}
-                                                                            >
-                                                                                <Box className="user-img-list me-2">
-                                                                                    <img src={user} alt="User" />
-                                                                                </Box>
-                                                                                <p>{item.ForwardTo}</p>
-                                                                            </button>
-                                                                        </React.Fragment>
-                                                                    );
-                                                                } else {
-                                                                    return (
-                                                                        <React.Fragment key={ind}>
-                                                                            <button type="button" id={item.ID}
-                                                                                onClick={() => handleItemClick(item)}
-                                                                            >
-                                                                                <Box className="user-img-list me-2">
-                                                                                    <img src={user} alt="User" />
-                                                                                </Box>
-                                                                                <p>{item.ForwardTo}</p>
-                                                                                {/* <span
-                                        className="close"
-                                        onClick={() => handleRemoveUser(item.ID)}
-                                        role="button" // Adding role="button" to indicate this element is clickable
-                                        tabIndex="0" // Adding tabIndex to make the element focusable
-                                    >
-                                        <span className="material-symbols-outlined">
-                                            close
-                                        </span>
-                                    </span> */}
-                                                                            </button>
-                                                                        </React.Fragment>
-                                                                    );
-                                                                }
-                                                            })
-                                                            : null}
-                                                    </Box>
                                                 </Box>
-                                            </Menu>)}
 
-                                            {addUser.length > 4 && (<>
-                                                <Button
-                                                    id="basic-button"
-                                                    aria-controls={openFiles ? 'basic-menu' : undefined}
-                                                    aria-haspopup="true"
-                                                    aria-expanded={openFiles ? 'true' : undefined}
-                                                    onClick={handleClickFiles}
-                                                    className="p-0 min-width-auto"
-                                                >
-                                                    <Box
-                                                        className="user-img-list me-1 admin"
+                                                <Box className='mb-2'>
+                                                    <FormControlLabel control={<Checkbox checked={isCheckedForApproval} disabled={isDisabledForApproval} onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
+                                                    <FormControlLabel control={<Checkbox checked={isCheckedWithOutmgs} onChange={handleCheckboxChangeisCheckedWithOutmgs} />} label="Send Without Message" />
+
+                                                    <Button
+                                                        variant="contained"
+                                                        id="fade-button"
+                                                        aria-controls={openTemp ? 'fade-menu' : undefined}
+                                                        aria-haspopup="true"
+                                                        aria-expanded={openTemp ? 'true' : undefined}
+                                                        onClick={handleClickAddTemplate}
+                                                        className="btn-blue-2"
+
                                                     >
-                                                        <p>+{addUser.length - 3}</p>
-                                                    </Box>
-                                                </Button>
-                                                <Menu
-                                                    id="basic-menu"
-                                                    anchorEl={anchorElFiles}
-                                                    open={openFiles}
-                                                    onClose={handleCloseFiles}
-                                                    MenuListProps={{
-                                                        'aria-labelledby': 'basic-button',
-                                                    }}
-                                                    className="custom-menu"
-                                                >
-                                                    {addUser.length > 3 &&
-                                                        addUser.slice(3, addUser.length).map((item, index) => (
-                                                            <MenuItem key={index} onClick={handleCloseFiles}>{item.ForwardTo}</MenuItem>
-                                                        ))
-                                                    }
-                                                </Menu>
-                                            </>)}
+                                                        Add Template
+                                                    </Button>
+                                                    <Menu
+                                                        id="fade-menu"
+                                                        MenuListProps={{
+                                                            'aria-labelledby': 'fade-button',
+                                                        }}
+                                                        anchorEl={anchorElTemp}
+                                                        open={openTemp}
+                                                        onClose={handleCloseTemp}
+                                                        TransitionComponent={Fade}
+                                                        style={{ width: '50%', pending: "12px" }}
+                                                    >
+                                                        {errorMgs ? (
+                                                            <span sx={{ color: "red" }}>Email is blank, please select the mail</span>
+                                                        ) : (
+                                                            null // or any other element you want to render when errorMgs is false
+                                                        )}
+                                                        <DataGrid
+                                                            dataSource={smsTemplate}
+                                                            allowColumnReordering={true}
+                                                            rowAlternationEnabled={true}
+                                                            showBorders={true}
+                                                            width={"100%"}
+                                                            selection={{ mode: 'single' }}
+                                                            onSelectionChanged={handleSelectionChangedTemp} // Handle selection change event
+                                                        >
+                                                            <FilterRow visible={true} />
+                                                            <SearchPanel visible={false} highlightCaseSensitive={true} />
 
-                                            <Button
-                                                id="basic-button5"
-                                                aria-controls={
-                                                    UserDropdownopen ? "basic-menu5" : undefined
-                                                }
-                                                aria-haspopup="true"
-                                                aria-expanded={UserDropdownopen ? "true" : undefined}
-                                                onClick={handleUserClick}
-                                                className="p-0 w-auto d-inline-block"
-                                            >
-
-                                                <Box className="d-flex">
-                                                    <span class="material-symbols-outlined">
-                                                        person_add
-                                                    </span>
-                                                </Box>
-                                            </Button>
-
-                                            <Menu
-                                                id="basic-menu5"
-                                                anchorEl={userDropdownanchorEl}
-                                                open={UserDropdownopen}
-                                                onClose={handleUserClose}
-                                                MenuListProps={{
-                                                    "aria-labelledby": "basic-button5",
-                                                }}
-                                                className="user-list-dropdown"
-                                            >
-
-                                                <Box
-                                                    className="inner-user-list-dropdown"
-                                                    style={{ maxHeight: "200px", overflowY: "auto" }}
-                                                >
-                                                    <p className="sembold">Assigned</p>
-                                                    <Box className="box-user-list-dropdown">
-                                                        {addUser
-                                                            ? addUser.map((item, ind) => {
-                                                                if (item.ID === ownerID) {
-                                                                    return (
-                                                                        <React.Fragment key={ind}>
-                                                                            <button type="button" id={item.ID} >
-                                                                                <Box className="user-img-list me-2">
-                                                                                    <img src={user} alt="User" />
-                                                                                </Box>
-                                                                                <p>{item.ForwardTo}</p>
-                                                                            </button>
-                                                                        </React.Fragment>
-                                                                    );
-                                                                } else {
-                                                                    return (
-                                                                        <React.Fragment key={ind}>
-                                                                            <button type="button" id={item.ID}>
-                                                                                <Box className="user-img-list me-2">
-                                                                                    <img src={user} alt="User" />
-                                                                                </Box>
-                                                                                <p>{item.ForwardTo}</p>
-                                                                                <span
-                                                                                    className="close"
-                                                                                    onClick={() => handleRemoveUser(item.ID)}
-                                                                                    role="button" // Adding role="button" to indicate this element is clickable
-                                                                                    tabIndex="0" // Adding tabIndex to make the element focusable
-                                                                                >
-                                                                                    <span className="material-symbols-outlined">
-                                                                                        close
-                                                                                    </span>
-                                                                                </span>
-                                                                            </button>
-                                                                        </React.Fragment>
-                                                                    );
-                                                                }
-                                                            })
-                                                            : null}
-                                                    </Box>
-                                                </Box>
-
-                                                <Box className="inner-user-list-dropdown">
-                                                    <p className="sembold mb-0">My Team</p>
-
-                                                    <Box className="box-user-list-dropdown" style={{ maxHeight: "200px", overflowY: "auto" }}>
-                                                        <Box className="mb-1 mt-3 px-3">
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                placeholder="Search..."
-                                                                value={filterText}
-                                                                onChange={(e) => setFilterText(e.target.value)}
+                                                            <Column
+                                                                dataField="Description"
+                                                                caption="Description"
+                                                                width={400}
                                                             />
-                                                        </Box>
-                                                        <Box className="box-user-list-dropdown">
 
-                                                            {FilderDataList.map((item, ind) => (
-                                                                <React.Fragment key={ind}>
-                                                                    <button
-                                                                        type="button"
-                                                                        id={item.ID}
-                                                                        onClick={() => handalClickAddUser(item)}
-                                                                    >
-                                                                        <Box className="user-img-list me-2">
-                                                                            <img src={user} alt="User" />
-                                                                        </Box>
-                                                                        <p>{item.ForwardTo}</p>
-                                                                        {/* <a href="" className="close">
-                        <span className="material-symbols-outlined">
-                          close
-                        </span>
-                      </a> */}
-                                                                    </button>
-                                                                </React.Fragment>
-                                                            ))}
-                                                        </Box>
-                                                    </Box>
+                                                            <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
+                                                            <Paging defaultPageSize={10} />
+                                                        </DataGrid>
+                                                    </Menu>
                                                 </Box>
-                                            </Menu>
 
-
-                                        </div>
-
-
+                                            </>
+                                        )}
+                                        {txtTaskType === "Portal" && (
+                                            <HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
+                                        )}
 
                                     </Box>
+
+                                    {!isVisibleByTypeCRM && (<>
+                                        <Box className="mt-3 mb-3">
+                                            <textarea
+                                                className="form-control textarea-text resize-none"
+                                                placeholder="Description"
+                                                value={txtdescription} // Bind the value to the state
+                                                onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
+                                            ></textarea>
+                                        </Box>
+                                    </>)}
+
+
                                 </Box>
 
                                 {/* end */}
-
-
-                                <Box className="file-uploads">
-                                    <input
-                                        type="file"
-                                        id="file-upload"
-                                        multiple
-                                        onChange={handleFileSelect}
-                                    />
-                                    <label className="file-uploads-label" for="file-upload">
-                                        <Box className="d-flex align-items-center">
-                                            <span className="material-symbols-outlined icon">
-                                                cloud_upload
-                                            </span>
-                                            <Box className="upload-content pe-3">
-                                                <Typography variant="h4">
-                                                    Select a file or drag and drop here
-                                                </Typography>
-                                                <Typography variant="body1">
-                                                    JPG, PNG or PDF, file size no more than 10MB
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-
-                                        <Button
-                                            id="basic-button"
-                                            variant="contained"
-                                            aria-controls={openSelectFile ? 'basic-menu' : undefined}
-                                            aria-haspopup="true"
-                                            aria-expanded={openSelectFile ? 'true' : undefined}
-                                            onClick={handleClickSelectFile}
-                                            className="btn-blue-2"
-                                        >
-                                            Select file
-                                        </Button>
-                                        <Menu
-                                            id="basic-menu"
-                                            anchorEl={anchorSelectFileEl}
-                                            open={openSelectFile}
-                                            onClose={handleSelectFileClose}
-                                            MenuListProps={{
-                                                'aria-labelledby': 'basic-button',
-                                            }}
-                                            className="custom-dropdown"
-                                        >
-                                            <label onClick={handleSelectFileClose} htmlFor="file-upload" className="d-block">
-                                                <MenuItem><FileUploadIcon className="font-20 me-1" /> Upload File(s)</MenuItem>
-                                            </label>
-                                            <MenuItem onClick={handleDocumentClickOpen}><InsertPageBreakIcon className="font-20 me-1" /> Select From DMS</MenuItem>
-
-                                        </Menu>
-
-                                    </label>
-                                </Box>
 
 
                                 {/* DMS Start 
@@ -3403,144 +3546,7 @@ toast.error("Please Select a Due Date");
 
 
 
-                                <Box className="file-uploads file-upload-height">
-                                    {selectedFiles.length > 0
-                                        ? selectedFiles.map((file, index) => {
-                                            // console.log("Uploadin", file);
 
-                                            return (
-                                                <>
-                                                    <label className="file-uploads-label mb-2" key={index}>
-                                                        <Box className="d-flex align-items-center">
-                                                           
-                                                            <span className="material-symbols-outlined icon">
-                                                           
-                                                            {<GetFileType Type={file ? file.FileType.toLowerCase() : null}></GetFileType>}
-                                                            
-                                                            </span>
-                                                            <Box className="upload-content pe-3">
-                                                                <Typography variant="h4">
-                                                                    {file ? file.FileName : ""}
-                                                                </Typography>
-                                                                <Typography variant="body1">
-                                                                    {file ? kbToMb(file.FileSize) : ""} MB
-                                                                </Typography>
-                                                            </Box>
-                                                        </Box>
-
-                                                        <Box className="d-flex align-items-center">
-
-                                                            {txtTaskType === "Portal" && (<>
-                                                                <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
-                                                                    Sign
-                                                                </Button>
-                                                            </>)}
-
-                                                            <Box className="ps-2">
-
-                                                                <Button
-                                                                    id="basic-button"
-                                                                    aria-controls={openDoc ? 'basic-menu' : undefined}
-                                                                    aria-haspopup="true"
-                                                                    aria-expanded={openDoc ? 'true' : undefined}
-                                                                    onClick={(event) => handleClickDoc(event, index)} // Pass index to handleClickDoc
-                                                                    className="min-width-auto"
-
-                                                                >
-                                                                    <span className="material-symbols-outlined">
-                                                                        more_vert
-                                                                    </span>
-                                                                </Button>
-
-                                                                <Menu
-                                                                    id="basic-menu"
-                                                                    className="custom-dropdown"
-                                                                    anchorEl={anchorElDoc}
-                                                                    open={openDoc && selectedFileIndex === index} // Ensure the menu opens only for the selected file
-                                                                    onClose={handleCloseDoc}
-                                                                    MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
-                                                                >
-                                                                    <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Remove</MenuItem>
-                                                                    {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
-                                                                        <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
-                                                                    )}
-                                                                </Menu>
-
-                                                            </Box>
-                                                        </Box>
-                                                        {/* <Button variant="text" className='btn-blue-2'>Select file</Button> */}
-                                                    </label>
-                                                </>
-                                            );
-                                        })
-                                        : (createNewFileObj && createNewFileObj.length > 0)
-                                            ? createNewFileObj.map((file, index) => {
-                                                // console.log("Uploadin", file);
-
-                                                return (
-                                                    <>
-                                                        <label className="file-uploads-label mb-2" key={index}>
-                                                            <Box className="d-flex align-items-center">
-                                                                <span className="material-symbols-outlined icon">
-                                                                    description
-                                                                </span>
-                                                                <Box className="upload-content pe-3">
-                                                                    <Typography variant="h4">
-                                                                        {file ? file.FileName : ""}
-                                                                    </Typography>
-                                                                    <Typography variant="body1">
-                                                                        {file ? kbToMb(file.FileSize) : ""} MB
-                                                                    </Typography>
-                                                                </Box>
-                                                            </Box>
-
-                                                            <Box className="d-flex align-items-center">
-
-                                                                {txtTaskType === "Portal" && (<>
-                                                                    <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
-                                                                        Sign
-                                                                    </Button>
-                                                                </>)}
-
-                                                                <Box className="ps-2">
-
-                                                                    <Button
-                                                                        id="basic-button"
-                                                                        aria-controls={openDoc ? 'basic-menu' : undefined}
-                                                                        aria-haspopup="true"
-                                                                        aria-expanded={openDoc ? 'true' : undefined}
-                                                                        onClick={(event) => handleClickDoc(event, index)} // Pass index to handleClickDoc
-                                                                        className="min-width-auto"
-
-                                                                    >
-                                                                        <span className="material-symbols-outlined">
-                                                                            more_vert
-                                                                        </span>
-                                                                    </Button>
-
-                                                                    <Menu
-                                                                        id="basic-menu"
-                                                                        className="custom-dropdown"
-                                                                        anchorEl={anchorElDoc}
-                                                                        open={openDoc && selectedFileIndex === index} // Ensure the menu opens only for the selected file
-                                                                        onClose={handleCloseDoc}
-                                                                        MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
-                                                                    >
-                                                                        <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Delete</MenuItem>
-                                                                        {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
-                                                                            <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
-                                                                        )}
-                                                                    </Menu>
-
-                                                                </Box>
-                                                            </Box>
-                                                            {/* <Button variant="text" className='btn-blue-2'>Select file</Button> */}
-                                                        </label>
-                                                    </>
-                                                );
-                                            })
-                                            : null}
-                                </Box>
 
                                 {/* <Box className="mt-3 mb-3">
                                     <textarea
@@ -3945,7 +3951,7 @@ toast.error("Please Select a Due Date");
                                                     dateFormat="DD/MM/YYYY"
                                                     value={currentDate}
                                                     onChange={(date) => {
-                                                        CurrentDateChange(date);                                                       
+                                                        CurrentDateChange(date);
                                                     }}
                                                     timeFormat={false}
                                                     isValidDate={disablePastDt}
@@ -3984,7 +3990,7 @@ toast.error("Please Select a Due Date");
                                             <DatePicker
                                                 showIcon
                                                 dateFormat="DD/MM/YYYY"
-                                                value={nextDate?nextDate:""}
+                                                value={nextDate ? nextDate : ""}
                                                 onChange={(e) => setNextDate(e)} // Handle date changes
                                                 timeFormat={false}
                                                 isValidDate={disableDueDate}
@@ -4019,32 +4025,33 @@ toast.error("Please Select a Due Date");
                                     </label>
 
                                     {isRemindMe && (<>
-                                        <label className="font-14 d-block mb-1">Reminder Date</label>
-
-                                        <Box className='custom-datepicker'>
-                                            <CalendarMonthIcon />
-                                            <LocalizationProvider
-                                                className="pe-0"
-                                                dateAdapter={AdapterDayjs}
-                                                timeFormat={false}
-                                                isValidDate={disablePastDtTwoDate}
-                                            >
-
-                                                <DatePicker className=" w-100"
-                                                    showIcon
-                                                    dateFormat="DD/MM/YYYY"
-                                                    value={remiderDate}
-                                                    onChange={(e) => setRemiderDate(e)} // Handle date changes
-
+                                        <Box className='mb-2'>
+                                            <label className="font-14 d-block mb-1">Reminder Date</label>
+                                            <Box className='custom-datepicker'>
+                                                <CalendarMonthIcon />
+                                                <LocalizationProvider
+                                                    className="pe-0"
+                                                    dateAdapter={AdapterDayjs}
                                                     timeFormat={false}
                                                     isValidDate={disablePastDtTwoDate}
-                                                    closeOnSelect={true}
-                                                    placeholder='Reminder Date'
+                                                >
 
-                                                    icon="fa fa-calendar"
+                                                    <DatePicker className=" w-100"
+                                                        showIcon
+                                                        dateFormat="DD/MM/YYYY"
+                                                        value={remiderDate}
+                                                        onChange={(e) => setRemiderDate(e)} // Handle date changes
 
-                                                />
-                                            </LocalizationProvider>
+                                                        timeFormat={false}
+                                                        isValidDate={disablePastDtTwoDate}
+                                                        closeOnSelect={true}
+                                                        placeholder='Reminder Date'
+
+                                                        icon="fa fa-calendar"
+
+                                                    />
+                                                </LocalizationProvider>
+                                            </Box>
                                         </Box>
 
                                     </>)}
@@ -4292,19 +4299,19 @@ toast.error("Please Select a Due Date");
                                 dataField="Description"
                                 caption="Description"
                                 width={300}
-                                cellRender={(data)=>{
+                                cellRender={(data) => {
                                     return <Tooltip title={data.data.Description} placement="top-start">
-                                    {data.data.Description}
-                                  </Tooltip>
+                                        {data.data.Description}
+                                    </Tooltip>
                                 }}
                             />
                             <Column
                                 dataField="Section"
                                 caption="Section"
-                                cellRender={(data)=>{
+                                cellRender={(data) => {
                                     return <Tooltip title={data.data.Section} placement="top-start">
-                                    {data.data.Section}
-                                  </Tooltip>
+                                        {data.data.Section}
+                                    </Tooltip>
                                 }}
                             />
                             {/* <Column
