@@ -67,6 +67,8 @@ import DialogActions from '@mui/material/DialogActions';
 import AddContacts from "../../components/AddContacts";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ContactcardUDF from "./ContactcardUDF";
+import { useDispatch } from "react-redux";
+import { fetchSupplierListOrderByFavourite } from "../../redux/reducers/api_helper";
 // import DeleteIcon from '@mui/icons-material/Delete';
 const label = { inputProps: { "aria-label": "Switch demo" } };
 // const [nextDate, setNextDate] = useState("");
@@ -93,7 +95,7 @@ function ContactDetails() {
   const [value, setValue] = React.useState("1");
 
   const [contactDetails, setContactDetails] = useState([]);
-
+  const dispatch = useDispatch();
   // dropdown
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -317,10 +319,17 @@ function ContactDetails() {
         if (sts) {
           if (data) {
             console.log("Json_deleteSupplierContact", data);
-            toast.error("Contact deleted Successfully !");
-            setTimeout(() => {
-              navigate("/dashboard/Connections");
-            },1500);
+            if(data =="Success"){
+              toast.error("Contact deleted Successfully !");
+              setTimeout(() => {
+                navigate("/dashboard/Connections");
+                dispatch(fetchSupplierListOrderByFavourite(folderId));
+              },1500);
+            } else {
+              toast.error(data);
+            }
+            
+           
            setAnchorEl(null);
           }
         }
