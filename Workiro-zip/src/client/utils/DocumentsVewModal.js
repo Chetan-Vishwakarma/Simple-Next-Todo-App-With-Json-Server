@@ -46,6 +46,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { TabList } from '@mui/lab';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -846,14 +847,14 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                         <Box className="mt-3 full-height-modal">
                             <TabContext value={value}>
                                 <Box>
-                                    <Tabs onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
+                                    <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
                                         <Tab label="Documents" value="1" />
                                         <Tab label="Versions" value="2" />
                                         <Tab label="Notes" value="3" />
                                         <Tab label="Associated Tasks" value="4" />
                                         <Tab label="Activity" value="5" />
                                         <Tab label="Attachments" value="6" />
-                                    </Tabs>
+                                    </TabList>
                                 </Box>
                                 <TabPanel value="1" className='p-0'>
                                     <Box className='white-box'>
@@ -942,7 +943,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
                                                 <Button key={index} onClick={(e) => Json_CRM_GetOutlookTask(e, item)} className="btn btn-outlin-2 me-2 mb-2" variant="outlined">
                                                     <AlarmOnIcon className={`me-2 ${isUserAssigned ? 'green' : 'disabled'}`} />
-                                                    {item.Subject}
+                                                    <span>{item.Subject}</span>
                                                 </Button>
                                             );
                                         })}
