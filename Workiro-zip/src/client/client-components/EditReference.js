@@ -89,8 +89,8 @@ function EditReference({ companyEditDetails }) {
     billingsCountry: "",
     ragistersCountry: "",
     CHNumber:companyEditDetails[0]?.CompanyNo,
-    InActiveData:false,
-    HideData:false
+    InActiveData:companyEditDetails[0]?.OrgActive==="Yes" ? false : true,
+    HideData:companyEditDetails[0]?.OrgActive=="HID" ? true : false
   });
   console.log("userDetailuserDetail", userDetail);
   const [originatorNo, setoriginatorNo] = useState("");
