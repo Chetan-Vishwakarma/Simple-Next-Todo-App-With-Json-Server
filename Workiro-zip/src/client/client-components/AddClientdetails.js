@@ -360,6 +360,7 @@ const AddClientdetails = React.memo(
       console.log("handleKeyDown");
       if (e.key === "Enter") {
         console.log("EnterImport",e.target.value);
+        setTxtValue(e.target.value);
         Json_CompanyDetails(e.target.value);
       }
     }
@@ -430,7 +431,7 @@ const AddClientdetails = React.memo(
                 fullWidth
                 options={ImportContact}
                 getOptionLabel={(option) => option.title}
-                onChange={(e, value) => setImportdata(value)}
+                onChange={(e, value) => setTxtValue(value)}
                 // inputValue={ImportContact}
                 noOptionsText="No matches found"
                 filterOptions={(x) => x}
