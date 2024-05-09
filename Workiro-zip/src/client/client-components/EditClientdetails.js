@@ -297,7 +297,23 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
       InActiveData: !event.target.checked // Uncheck the InActiveData switch when HideData is checked
     }));
   };
-  
+  const handleAttachID = (event) => {
+    if (event.target.checked) {
+      // If the switch is checked, concatenate client name with client ID
+      setUserDetail((prevUserDetail) => ({
+        ...prevUserDetail,
+        Clientid: `${prevUserDetail.Clientid} ${prevUserDetail.Clientname}`
+      }));
+    } else {
+      // If the switch is unchecked, remove client name from client ID
+      const clientIdWithoutName = userDetail.Clientid.replace(userDetail.Clientname, '').trim();
+      setUserDetail((prevUserDetail) => ({
+        ...prevUserDetail,
+        Clientid: clientIdWithoutName
+      }));
+    }
+  };
+
   console.log(Importdata, "Importdata", ImportCompanyDetails);
   
   useEffect(() => {
@@ -585,7 +601,18 @@ const EditClientdetails = React.memo(({ userDetail, setUserDetail, setDataCompan
             }
             label="Hide"
           />
-
+        
+        <FormControlLabel
+             key={`maincheckbox`}
+             control={
+             <Switch
+             name="InActiveData"
+             // checked={userDetail.InActiveData}
+             onChange={handleAttachID}
+            />
+            }
+             label="Attach ID"
+          />
         </Grid>
       </Grid>
     </div>
