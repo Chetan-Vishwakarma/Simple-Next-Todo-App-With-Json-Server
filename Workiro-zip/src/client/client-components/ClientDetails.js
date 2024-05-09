@@ -83,19 +83,10 @@ function ClientDetails() {
 
     let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
 
-    // upload document modal start
-    const [openUploadDocument, setOpenUploadDocument] = React.useState(false);
-
-    const [documentDate, setDocumentDate] = useState(null);
-    const [receivedDate, setReceivedDate] = useState(null);
-    const [createNewFileObj, setCreateNewFileObj] = useState(null);
-    const [txtFolderData, setTxtFolderData] = useState(null);
-    const [txtClientData, setTxtClientData] = useState(null);
-    const [txtSectionData, setTxtSectionData] = useState(null);
-    const [TaskType, setTaskType] = useState(null);
-    const [openModal, setOpenModal] = useState(null);
     const [templateDataMarkup, setTemplateDataMarkup] = React.useState([]);
     const [editorContentValue, setEditorContentValue] = React.useState([]);
+
+    // upload document modal start
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClickOpenUploadDocument = () => {

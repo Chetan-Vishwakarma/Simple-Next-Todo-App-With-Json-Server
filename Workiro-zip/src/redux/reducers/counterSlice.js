@@ -24,6 +24,7 @@ const counterSlices = createSlice({
       recentTaskList: [],
     },
     allTask: [],
+    allTask2: [],
     recentDocument:[],
     connectionsState: {
       clients: [],
@@ -65,6 +66,7 @@ const counterSlices = createSlice({
     },
     fetchAllTasks: (state, action) => {
       state.allTask = action.payload;
+      state.allTask2 = action.payload;
     },
     fetchRecentDocuments: (state, action) => {
       state.recentDocument = action.payload;

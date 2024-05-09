@@ -11,6 +11,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import DnsIcon from '@mui/icons-material/Dns';
 import AppsIcon from '@mui/icons-material/Apps';
 import TableRowsIcon from '@mui/icons-material/TableRows';
+import ClearIcon from '@mui/icons-material/Clear';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import WarningIcon from '@mui/icons-material/Warning';
@@ -42,7 +43,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import Activitygrid from './Activitygrid';
 import { exportDataGrid } from "devextreme/excel_exporter";
 import saveAs from "file-saver";
-import ClearIcon from '@mui/icons-material/Clear';
 import { useSelector, useDispatch } from 'react-redux';
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
