@@ -81,6 +81,9 @@ function ClientDetails() {
 
     let webClientCLS = new CommanCLS(clientWebUrl, agrno, Email, password);
 
+    const [templateDataMarkup, setTemplateDataMarkup] = React.useState([]);
+    const [editorContentValue, setEditorContentValue] = React.useState([]);
+
     // upload document modal start
     const handleClickOpenUploadDocument = () => {
         dispatch(setOpenDocumentModalByRedux(true));

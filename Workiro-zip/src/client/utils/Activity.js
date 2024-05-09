@@ -42,7 +42,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import Activitygrid from './Activitygrid';
 import { exportDataGrid } from "devextreme/excel_exporter";
 import saveAs from "file-saver";
-import ClearIcon from '@mui/icons-material/Clear';
 import { useSelector, useDispatch } from 'react-redux';
 import ClearIcon from '@mui/icons-material/Clear';
 
