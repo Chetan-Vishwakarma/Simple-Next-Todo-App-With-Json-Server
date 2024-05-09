@@ -34,7 +34,7 @@ function NewTodoList() {
 
     const dispatch = useDispatch();
     const { recentTaskList } = useSelector(state => state.counter.recentTaskRedux);
-    const allTask = useSelector(state => state.counter.allTask).filter(itm=>itm.mstatus!=="Completed");
+    const allTask = useSelector(state => state.counter.actualData).filter(itm=>itm.mstatus!=="Completed");
     const recentDocument = useSelector(state => state.counter.recentDocument);
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));

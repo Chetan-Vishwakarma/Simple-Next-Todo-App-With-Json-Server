@@ -1,5 +1,26 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+function applyTaskFilters(data,criteria){
+  if(data && data.length>0){
+  return data.filter(function (obj) {
+    return Object.keys(criteria).every(function (key) {
+        if (criteria[key][0].length > 0 || typeof criteria[key][0] === "object") {
+            if (obj[key] && obj[key] !== undefined && obj[key] !== "") {
+                if (key === "EndDateTime") {
+                    let docDate = obj[key];
+                    let sDate = criteria[key][0];
+                    let eDate = criteria[key][1];
+                    return docDate >= sDate && docDate <= eDate;
+                } else {
+                    return obj[key].toString().toLowerCase().includes(criteria[key][0].toString().toLowerCase());
+                }
+            }
+        }
+    });
+});
+  }
+}
+
 const counterSlices = createSlice({
   name: "counter",
   initialState: {
@@ -71,8 +92,15 @@ const counterSlices = createSlice({
       state.isTaskLoadingFromRedux = false;
     },
     setAllTaskFromRedux: (state, action) => {
-      state.allTask = action.payload;
+      console.log("fdskljflkjgjsdg",action.payload);
+      let data = action.payload.data;
+      let criteria = action.payload.taskFilter;
+      let fltData = applyTaskFilters(data,criteria);
+      state.allTask = (fltData && fltData.length>0) ? fltData : data;
       state.isTaskLoadingFromRedux = false;
+    },
+    setAllTaskFromReduxOrderWise: (state, action) => {
+      state.allTask = action.payload;
     },
     fetchRecentDocuments: (state, action) => {
       state.recentDocument = action.payload;
@@ -123,7 +151,7 @@ const counterSlices = createSlice({
   }
 });
 
-export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux, updateReduxDataSonam, setSetDefaultRoleSonam, clearDefaultRoleSonam, setSetDefaultTitleSonam, setDefaultUserSonam, setMainCountrySonam, setDefaultDateSonam, setIsAdvanceDocSearchRedux, fetchRecentTasks, fetchAllTasks, fetchRecentDocuments,setGetActivitySonam ,setGetActivityDataSonam, setClientFromRedux, setContactsFromRedux, setAllFoldersFromRedux, setAllTaskFromRedux } = counterSlices.actions;
+export const { setUserDetail, setDataCompanyHouse, setSelectedFolderID, setMyTasks, handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setOpenDocumentModalByRedux, updateReduxDataSonam, setSetDefaultRoleSonam, clearDefaultRoleSonam, setSetDefaultTitleSonam, setDefaultUserSonam, setMainCountrySonam, setDefaultDateSonam, setIsAdvanceDocSearchRedux, fetchRecentTasks, fetchAllTasks, fetchRecentDocuments,setGetActivitySonam ,setGetActivityDataSonam, setClientFromRedux, setContactsFromRedux, setAllFoldersFromRedux, setAllTaskFromRedux, setAllTaskFromReduxOrderWise } = counterSlices.actions;
 
 // export const getUsers = () => async(dispatch) => {
 //     const response = await axios.get("https://jsonplaceholder.typicode.com/users");
