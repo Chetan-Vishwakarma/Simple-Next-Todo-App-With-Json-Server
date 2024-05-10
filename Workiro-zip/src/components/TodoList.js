@@ -843,19 +843,19 @@ function TodoList() {
             );
         });
     };
-    const ExportData = useCallback(() => {
-        console.log(filterExportData, "11exportData", exportTaskData);
-        if (filterExportData && filterExportData.length > 0) {
-            // exportexcel(filterExportData);
-        } 
-        else if(allTask && allTask.length > 0) {
-            exportexcel(allTask
-            );
-        }
-        else {
-            // exportexcel(exportTaskData); // Export data from 
-        }
 
+    const ExportData = useCallback((dataa) => {
+        console.log(filterExportData, "11exportData",exportTaskData,dataa);
+        exportexcel(dataa);
+        // if (filterExportData && filterExportData.length > 0) {
+        //     exportexcel(filterExportData);
+        // } 
+        // else if(allTask && allTask.length > 0) {
+        //     exportexcel(allTask);
+        // }
+        // else {
+        //     exportexcel(exportTaskData); // Export data from 
+        // }
         setAnchorElDown(null);
     }, []);
 
@@ -1282,7 +1282,7 @@ function TodoList() {
                                 open={Boolean(anchorElDown)}
                                 onClose={handleMenuClose}
                             >
-                                <MenuItem onClick={ExportData}><InsertDriveFileIcon />  Export to Excel</MenuItem>
+                                <MenuItem onClick={()=>{ExportData(allTask)}}><InsertDriveFileIcon />  Export to Excel</MenuItem>
                             </Menu>
                         </ToggleButtonGroup>
                     </Box>
