@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { Box, Button, Typography, Dialog, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Menu, MenuItem, DialogActions, Grid, FormControlLabel, TextField, Autocomplete, RadioGroup, FormLabel, Radio, FormControl } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setOpenReIndex } from '../redux/reducers/counterSlice';
 
 import { DatePicker, LocalizationProvider, esES } from '@mui/x-date-pickers';
@@ -10,6 +10,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import CommanCLS from '../services/CommanService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Json_ExplorerSearchDoc_Redux, fetchRecentDocumentsRedux } from '../redux/reducers/api_helper';
+import { Tune } from '@mui/icons-material';
 
 const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
 
@@ -22,6 +24,7 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
     const { allFolders, allSections, allClientsList } = useSelector(state => state.counter.connectionsState);
 
     const { opentReIndex } = useSelector((state) => state.counter.refile);
+    const dispatch=useDispatch();
 
     // const {selectedDocumentRedux} = useSelector((state)=>state.counter.selectedDocumentRedux);
 
@@ -34,10 +37,21 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
     const [txtCompanyName, setTxtCompanyName] = useState("");
 
     const [btnSubmit, setBtnSubmit] = useState("Submit");
-    const [optDesabled, setoptDesabled] = useState(false);
+  
+
+    const [isDisabledFolder, setIsDisabledFolder] = useState(false);
+    const [isDisabledComp, setIsDisabledCom] = useState(false);
+    const [isDisabledSection, setIsDisabledSection] = useState(false);
+
 
     const ReIndexhandleClose = () => {
+        setBtnSubmit("Submit")
         setReIndexOpen(false);
+        setIsDisabled(true);
+        setIsDisabledCom(false);
+        setIsDisabledFolder(false);
+        setIsDisabledSection(false);
+    
 
     };
     const HandalClickRefile = () => {
@@ -47,34 +61,61 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
 
     function Json_ReFileDocument() {
         try {
-            let o = "";
-            if(btnSubmit === "Folder Update"){
-                o = {'ItemId': selectedDocument["Registration No."], 'ProjectId': txtFolder.FolderID, 'ClientId': '', 'sectionId': '-1', 'subsectionId': '-1' };
+            let o = {};
+            if (btnSubmit === "Folder Update") {
+                o = {
+                    'ItemId': selectedDocument["Registration No."],
+                    'ProjectId': txtFolder.FolderID,
+                    'ClientId': '',
+                    'sectionId': '-1',
+                    'subsectionId': '-1'
+                };
+            } else if (btnSubmit === "Section Update") {
+                o = {
+                    'ItemId': selectedDocument["Registration No."],
+                    'ProjectId': "-1",
+                    'ClientId': '',
+                    'sectionId': txtSection.SecID,
+                    'subsectionId': '-1'
+                };
+            } else if (btnSubmit === "Client Update") {
+                o = {
+                    'ItemId': selectedDocument["Registration No."],
+                    'ProjectId': "-1",
+                    'ClientId': txtCompanyName.SenderId,
+                    'sectionId': "-1",
+                    'subsectionId': '-1'
+                };
+            } else {
+                console.log("Invalid btnSubmit value:", btnSubmit);
             }
-            else if(btnSubmit==="Section Update"){
-                o = {'ItemId': selectedDocument["Registration No."], 'ProjectId': "-1", 'ClientId': '', 'sectionId': txtSection.SecID, 'subsectionId': '-1' }; 
-            } 
-            else{
-                console.log("Json_ReFileDocument obj", o);
-            }
-            
-            console.log("Json_ReFileDocument obj", o);
+        
             cls.Json_ReFileDocument(o, function (sts, data) {
                 if (sts) {
                     if (data === "Success") {
                         toast.success("Document Filing Index Updated");
+                        dispatch(fetchRecentDocumentsRedux());
+                        let obj = {};
+                        obj.ProjectId = selectedDocument.ProjectId;
+                        obj.ClientId = selectedDocument.OriginatorNo;
+                        obj.sectionId = "-1";
+                        dispatch(Json_ExplorerSearchDoc_Redux(obj));
+                        setIsDisabled(true)
+                        setIsDisabledFolder(false);
+                                setIsDisabledSection(false);
+                                setIsDisabledCom(false);
+
+                    } else {
+                        toast.error("Document Filing Index Not Update Please Try Again !");
                     }
-                    else {
-                        toast.error("Document Filing Index Not Update Please Try Again !")
-                    }
+                } else {
+                    toast.error("Document Filing Index Not Update Please Try Again !");
                 }
-                else {
-                    toast.error("Document Filing Index Not Update Please Try Again !")
-                }
-            })
+            });
         } catch (error) {
-            console.log("Network Error, Json_ReFileDocument", error)
+            console.error("Network Error, Json_ReFileDocument:", error);
         }
+        
     }
 
     useEffect(() => {
@@ -141,10 +182,14 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
                                 event.preventDefault();
                                 setTxtFolder(value);
                                 setBtnSubmit("Folder Update")
+                                setIsDisabledCom(true);
+                                setIsDisabledSection(true);
                                 // Disable other Autocomplete components based on selection
-                                setTxtSection(null); // Reset selected section
-                                setTxtCompanyName(null); // Reset selected client
+                                //setTxtSection(null); // Reset selected section
+                                //setTxtCompanyName(null); // Reset selected client
+                                
                             }}
+                            disabled={isDisabledFolder}
                             renderInput={(params) => <TextField {...params} label="Folder" />}
                             MenuProps={{ PaperProps: { sx: { maxHeight: '100px !important' } } }}
                         />
@@ -161,10 +206,12 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
                                 setTxtSection(value)
                                 setBtnSubmit("Section Update");
                                 // Disable other Autocomplete components based on selection
-                                setTxtFolder(null); // Reset selected section
-                                setTxtCompanyName(null); // Reset selected client
+                                //setTxtFolder(null); // Reset selected section
+                               // setTxtCompanyName(null); // Reset selected client
+                               setIsDisabledFolder(true);
+                               setIsDisabledCom(true);
                             }}
-
+                            disabled={isDisabledSection}
                             renderInput={(params) => <TextField {...params} label="Section" />}
                             MenuProps={{ PaperProps: { sx: { maxHeight: '100px !important' } } }}
                         />
@@ -178,13 +225,16 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
                             value={txtCompanyName || null}
                             onChange={(event, value) => {
                                 event.preventDefault();
-                                // console.log("selected clietn",value)
+                                 console.log("selected clietn",value)
                                 setTxtCompanyName(value)
                                 setBtnSubmit("Client Update")
                                  // Disable other Autocomplete components based on selection
-                                 setTxtFolder(null); // Reset selected section
-                                 setTxtSection(null); // Reset selected client
+                                 //setTxtFolder(null); // Reset selected section
+                                // setTxtSection(null); // Reset selected client
+                                setIsDisabledFolder(true);
+                                setIsDisabledSection(true);
                             }}
+                            disabled={isDisabledComp}
                             renderInput={(params) => <TextField {...params} label="Client" />}
                             MenuProps={{ PaperProps: { sx: { maxHeight: '100px !important' } } }}
                         />

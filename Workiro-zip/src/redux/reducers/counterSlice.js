@@ -62,7 +62,8 @@ const counterSlices = createSlice({
     refile:{
       opentReIndex:false,
     },
-    selectedDocumentRedux:{}
+    selectedDocumentRedux:{},
+    explorerSearchDocRedux:[]
   },
   reducers: {
     //sonam state start
@@ -170,6 +171,9 @@ state.connectionsState.allClientsList=action.payload;
     },
     setSelectedDocumentRedux:(state,action)=>{
      state.selectedDocumentRedux=action.payload;
+    },
+    setExplorerSearchDocRedux:(state,action)=>{
+          state.explorerSearchDocRedux = action.payload;
     }
   }
 });
@@ -205,7 +209,9 @@ export const {
   setSectionListFromRedux,
   setClientListByFolderIdFromRedux,
   setOpenReIndex,
-  setSelectedDocumentRedux
+  setSelectedDocumentRedux,
+
+  setExplorerSearchDocRedux
 } = counterSlices.actions;
 
 // export const getUsers = () => async(dispatch) => {

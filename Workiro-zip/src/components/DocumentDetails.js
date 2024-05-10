@@ -611,6 +611,7 @@ console.log(updatedData);
                                         </div> */}
 
                                         <GetFileType Type={rd.Type?rd.Type.toLowerCase():null}></GetFileType>
+
                                         <Box className="upload-content pe-3">
                                             {editingIndex === data.key ? <input
                                                 type="text"

@@ -134,7 +134,11 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     };
 
     const [value, setValue] = React.useState('1');
-    const [viewerUrl, setViwerUrl] = React.useState('');
+
+    
+
+    const [viewerUrl, setViwerUrl] = React.useState("");
+   
     const [seletedFileData, setSeletedFileData] = React.useState([]);
     const [getVertion, setGetVertion] = React.useState([]);
     const [selectedFiles, setSelectedFiles] = React.useState([]);

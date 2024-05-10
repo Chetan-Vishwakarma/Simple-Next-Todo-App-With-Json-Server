@@ -11,7 +11,8 @@ import { fetchAllTasks,
        setSearchDocByIdFromRedux,
        setSectionListFromRedux,
        setClientListByFolderIdFromRedux,
-       setAllTaskFromRedux
+       setAllTaskFromRedux,
+       setExplorerSearchDocRedux
      } from "./counterSlice";
 
 const agrno = localStorage.getItem("agrno");
@@ -324,5 +325,38 @@ export const updateTaskFieldFromRedux = (FieldName, FieldValue, e) => dispatch =
         }
     })
 }
+
+export const Json_ExplorerSearchDoc_Redux =(obj)=>dispatch=>{
+       try {
+        ClsSms.Json_ExplorerSearchDoc(obj,function(sts,data){
+            if (sts && data) {
+                let json = JSON.parse(data);
+                console.log("ExplorerSearchDoc", json);
+                let tbl6 = json.Table6;
+                if(tbl6.length>0){
+                    tbl6.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
+                    tbl6.map((itm) => itm["Received Date"] = formatDate(itm["Received Date"]));    
+                    if(json.Table6.length>0)dispatch(setExplorerSearchDocRedux(tbl6));
+                }
+           
+               
+               
+            }
+        })
+       } catch (error) {
+        console.log("Network Error Json_ExplorerSearchDoc",error)
+       }
+}
+
+function formatDate(inputDate) {
+    const date = new Date(inputDate);
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // January is 0, so add 1 to get the correct month
+    const year = date.getFullYear();
+    const paddedDay = day < 10 ? `0${day}` : day;
+    const paddedMonth = month < 10 ? `0${month}` : month;
+    return `${paddedDay}/${paddedMonth}/${year}`;
+}
+
 
 ////////////////End DocuSoft 
