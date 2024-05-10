@@ -102,7 +102,6 @@ const counterSlices = createSlice({
       state.isTaskLoadingFromRedux = false;
     },
     setAllTaskFromRedux: (state, action) => {
-      console.log("fdskljflkjgjsdg",action.payload);
       let data = action.payload.data;
       let criteria = action.payload.taskFilter;
       let fltData = applyTaskFilters(data,criteria);

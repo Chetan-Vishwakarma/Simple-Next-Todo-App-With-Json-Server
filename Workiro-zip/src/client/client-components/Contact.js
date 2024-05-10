@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import DataGrid, {
   Column, FilterRow, Search, SearchPanel, Selection,
@@ -22,6 +22,9 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import Fileformat from '../../images/files-icon/pdf.png';
+import { useSelector, useDispatch } from "react-redux";
+import { set_C_D_ContactsFromRedux } from '../../redux/reducers/counterSlice';
+import { fetchContactListByFolderRedux } from '../../redux/reducers/api_helper';
 
 const saleAmountEditorOptions = { format: 'currency', showClearButton: true };
 const filterLabel = { 'aria-label': 'Filter' };
@@ -87,9 +90,9 @@ const orderHeaderFilter = (data) => {
 };
 
 let exportTaskData = [];
-function Contact({ clientId,clientName }) {
-  console.log(clientName,"clientNamefjdsfjerio", typeof clientId);
+function Contact({ clientId, clientName }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -100,12 +103,11 @@ function Contact({ clientId,clientName }) {
   //   let dt = new LoginDetails();
   let cls = new CommanCLS(baseUrl, agrno, Email, password);
 
-  const [showFilterRow, setShowFilterRow] = useState(true);
-  const [showHeaderFilter, setShowHeaderFilter] = useState(true);
-  const [currentFilter, setCurrentFilter] = useState(applyFilterTypes[0].key);
+  const allContactList = useSelector(state => state.counter.connectionsState.contacts).filter(itm => itm.OriginatorNo === clientId);
+  const dataNotFound = allContactList.length > 0 ? false : true;
 
-  const [allContactList, setAllContactList] = useState([]);
-  const [dataNotFound, setDataNotFound] = useState(false);
+  // const [allContactList_test, setAllContactList] = useState([]);
+  // const [dataNotFound, setDataNotFound] = useState(allContactList.length > 0 ? false : true);
 
 
   const dataGridRef = useRef(null);
@@ -141,10 +143,10 @@ function Contact({ clientId,clientName }) {
                 return el;
               }).filter(itm => itm.OriginatorNo === clientId);
               exportTaskData = [...res];
-              console.log(res,"resdata");
-              setAllContactList(res)
+              console.log(res, "resdata");
+              // setAllContactList(res)
               if (res.length === 0) {
-                setDataNotFound(true);
+                // setDataNotFound(true);
               }
             }
           }
@@ -156,9 +158,8 @@ function Contact({ clientId,clientName }) {
     }
   }
   useEffect(() => {
-    Json_GetContactListByFolder();
-
-  }, [])
+    if(allContactList.length===0) dispatch(fetchContactListByFolderRedux());
+  }, []);
 
   const handleRowDoubleClick = (e) => {
     navigate(`/dashboard/ContactDetails?originatorNo=${e.data.OriginatorNo}&contactNo=${e.data.ContactNo}`, {
@@ -231,17 +232,15 @@ function Contact({ clientId,clientName }) {
     workbook.xlsx.writeBuffer().then(function (buffer) {
       saveAs(
         new Blob([buffer], { type: "application/octet-stream" }),
-        `${clientName+"_Contacts" ? clientName+"_Contacts" : ""}.xlsx`
+        `${clientName + "_Contacts" ? clientName + "_Contacts" : ""}.xlsx`
       );
     });
   };
 
   const ExportData = useCallback(() => {
-    console.log("exportData", exportTaskData);
-    exportexcel(exportTaskData ? exportTaskData : []); // Export data from 
+    exportexcel(allContactList.length > 0 ? allContactList : []); // Export data from 
     setAnchorElDown(null);
   }, []);
-  console.log(allContactList, "exportData1");
   return (
     <>
       <div className='btn-downloads'>
@@ -316,8 +315,11 @@ function Contact({ clientId,clientName }) {
               dataType="date"
               caption="Date Of Birth"
               // format="M/d/yyyy, HH:mm" 
-              format="d/M/yyyy" 
-              />
+              format="d/M/yyyy"
+              cellRender={(data) => {
+                return cls.DateFormateDate(data.data["Date Of Birth"]);
+              }}
+            />
           </DataGrid></> : <CustomLoader />)}
       </div>
     </>

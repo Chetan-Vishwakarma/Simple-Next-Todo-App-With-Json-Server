@@ -28,6 +28,7 @@ import AttachFileIcon from '@mui/icons-material/InsertLink';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import { setAllTaskFromRedux, setGetActivityDataSonam } from '../../src/redux/reducers/counterSlice';
 import { useSelector, useDispatch } from 'react-redux';
+import { updateTaskFieldFromRedux } from '../redux/reducers/api_helper';
 
 
 const agrno = localStorage.getItem("agrno");
@@ -162,72 +163,11 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     }
 
     const MarkComplete = (e) => {
-        console.log("MarkComplete", e)
         Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
             if (res) {
-                Json_UpdateTaskField("Status", "Completed", e);
+                dispatch(updateTaskFieldFromRedux("Status", "Completed", e));
             }
         })
-    }
-    function Json_UpdateTaskField(FieldName, FieldValue, e) {
-        let o = {
-            agrno: agrno,
-            strEmail: Email,
-            password: password,
-            TaskId: e.ID,
-            FieldName: FieldName,
-            FieldValue: FieldValue
-        }
-
-        ClsSms.Json_UpdateTaskField(o, function (sts, data) {
-            if (sts && data) {
-                if (data === "Success") {
-                    toast.success("Completed")
-                    Json_AddSupplierActivity(e);
-                }
-                console.log("Json_UpdateTaskField", data)
-            }
-        })
-    }
-
-    const Json_AddSupplierActivity = (e) => {
-        let obj = {};
-        obj.OriginatorNo = e.ClientNo;
-        obj.ActionReminder = "";
-        obj.Notes = "Completed by " + e["Forwarded By"];
-        obj.Status = "sys"; //selectedTask.Status;
-        obj.TaskId = e.ID;
-        obj.TaskName = "";
-        obj.ActivityLevelID = "";
-        obj.ItemId = "";
-
-        try {
-            ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
-                if (sts && data) {
-                    console.log({ status: true, messages: "Success", res: data });
-                    Json_CRM_GetOutlookTask()
-                }
-            });
-        } catch (error) {
-            console.log({ status: false, messages: "Faild Please Try again" });
-        }
-    };
-
-    const Json_CRM_GetOutlookTask = () => {
-        try {
-            Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
-                if (sts) {
-                    if (data) {
-                        let json = JSON.parse(data);
-                        console.log("Json_CRM_GetOutlookTask111", json);
-                        let result = json.Table.filter((el) => (el.Source === "CRM" || el.Source === "Portal") && el.Subject.toLowerCase().includes(target.toLowerCase()));
-                        setFilteredTasks(result);
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_CRM_GetOutlookTask", err);
-        }
     }
     
     const [userList, setUserList] = React.useState([]);
@@ -249,7 +189,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                 return el.CGroup !== "Yes";
                             });
                             setUserList(result);
-
                         }
                     }
 
@@ -614,7 +553,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                     }}
                                         onCallback={(start) => {
                                             const date = start.format('YYYY/MM/DD');
-                                            Json_UpdateTaskField("EndDateTime", date, item);
+                                            dispatch(updateTaskFieldFromRedux("EndDateTime", date, item));
                                         }}
                                     >
                                         <Button variant="outlined" className='btn-outlin-2'>

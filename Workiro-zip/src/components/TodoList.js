@@ -571,12 +571,9 @@ function TodoList() {
     }
     const MarkComplete = (e) => {
 
-        console.log(attatmentdata, "attatmentdataattatmentdata", e);
-
         Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
             if (res) {
 
-                // Json_UpdateTaskField("Status", "Completed", e);
                 dispatch(updateTaskFieldFromRedux("Status", "Completed", e));
 
                 try {
@@ -608,55 +605,6 @@ function TodoList() {
             }
         })
     }
-    function Json_UpdateTaskField(FieldName, FieldValue, e) {
-        // Json_Get_CRM_SavedTask_ByTaskId(e.ID);
-        let o = {
-            agrno: agrno,
-            strEmail: Email,
-            password: password,
-            TaskId: e.ID,
-            FieldName: FieldName,
-            FieldValue: FieldValue
-        }
-
-        ClsSms.Json_UpdateTaskField(o, function (sts, data) {
-            if (sts && data) {
-                if (data === "Success") {
-                    toast.success(FieldName === "EndDateTime" ? "Due Date Changed" : "Completed")
-                    // dispatch(fetchAllTasksRedux("Todo"));
-                    // Json_AddSupplierActivity(e);
-                }
-                console.log("Json_UpdateTaskField", data)
-            }
-        })
-    }
-
-    const Json_AddSupplierActivity = (e) => {
-        let obj = {};
-        obj.OriginatorNo = e.ClientNo;
-        obj.ActionReminder = "";
-        obj.Notes = "Completed by " + e["Forwarded By"];
-        obj.Status = "sys"; //selectedTask.Status;
-        obj.TaskId = e.ID;
-        obj.TaskName = "";
-        obj.ActivityLevelID = "";
-        obj.ItemId = "";
-
-        try {
-            ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
-                if (sts && data) {
-                    // console.log({ status: true, messages: "Success", res: data });   
-                    // Nothing code for execution because we have done all things in previous api-caling            
-                }
-            });
-        } catch (error) {
-            console.log({ status: false, messages: "Faild Please Try again" });
-        }
-    };
-
-
-
-
 
     const FiterAssinee = (ownerid) => {
 
@@ -1349,7 +1297,6 @@ function TodoList() {
                                                         }}
                                                             onCallback={(start) => {
                                                                 const date = start.format('YYYY/MM/DD');
-                                                                // Json_UpdateTaskField("EndDateTime", date, item);
                                                                 dispatch(updateTaskFieldFromRedux("EndDateTime", date, item));
                                                             }}
                                                         >
@@ -1457,7 +1404,6 @@ function TodoList() {
                                                 }}
                                                     onCallback={(start) => {
                                                         const date = start.format('YYYY/MM/DD');
-                                                        // Json_UpdateTaskField("EndDateTime", date, item);
                                                         dispatch(updateTaskFieldFromRedux("EndDateTime", date, item));
                                                     }}
                                                 >
