@@ -111,7 +111,7 @@ function ClientDetails() {
               if (data) {
                 console.log("Suppliers", data);
                 if(data =="Success"){
-                  toast.error("Contact deleted Successfully !");
+                  toast.error("Client deleted Successfully !");
                   setTimeout(() => {
                     navigate("/dashboard/Connections");
                     dispatch(fetchSupplierListOrderByFavourite(folderId));
@@ -119,8 +119,6 @@ function ClientDetails() {
                 } else {
                   toast.error(data);
                 }
-                
-               
                setAnchorEl(null);
               }
             }
@@ -133,7 +131,7 @@ function ClientDetails() {
         console.log("deleteclient");
         Clsprect.ConfirmMessage("Are you sure you want to delete this client ? ", function (res) {
           if (res) {
-            //Suppliers();
+            Suppliers();
           }
       })
        
@@ -366,7 +364,7 @@ function ClientDetails() {
                                 <ListItemIcon>
                                 <DeleteIcon fontSize="small" />
                                 </ListItemIcon>
-                                Delete
+                                Delete Client
                             </MenuItem>
             </Menu>
           </div>

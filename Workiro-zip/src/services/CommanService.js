@@ -1426,4 +1426,20 @@ console.log("formattedDate",formattedDate)
         });
       }
 
+      CRM_TaskDeleteByTaskID(obj, callBack) {
+        //let o = { ProjectId: FolderId,SectionId: };
+        super.CreateNewServiceParamObject("Json_Get_CRM_TaskDeleteByTaskID", obj, true);
+        super.CallNewService("Json_Get_CRM_TaskDeleteByTaskID", function (status, Data) {
+          if (status) {
+            if (Data != "") {
+              return callBack(true, Data);
+            } else {
+              return callBack(false, []);
+            }
+          } else {
+            // console.log("status", status);
+          }
+        });
+      }
+
 }

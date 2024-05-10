@@ -681,7 +681,7 @@ function ContactDetails() {
                                 <ListItemIcon>
                                 <DeleteIcon fontSize="small" />
                                 </ListItemIcon>
-                                Delete
+                                Delete Contact
                             </MenuItem>
             </Menu>
           </div>
