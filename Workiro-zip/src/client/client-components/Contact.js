@@ -104,6 +104,7 @@ function Contact({ clientId, clientName }) {
   let cls = new CommanCLS(baseUrl, agrno, Email, password);
 
   const allContactList = useSelector(state => state.counter.connectionsState.contacts).filter(itm => itm.OriginatorNo === clientId);
+  const isLoading = useSelector(state => state.counter.connectionsState.isLoading);
   const dataNotFound = allContactList.length > 0 ? false : true;
 
   // const [allContactList_test, setAllContactList] = useState([]);
@@ -157,6 +158,7 @@ function Contact({ clientId, clientName }) {
       console.log({ "Message": "Data Not Found NetWork Error", Error: error })
     }
   }
+
   useEffect(() => {
     if(allContactList.length===0) dispatch(fetchContactListByFolderRedux());
   }, []);
@@ -261,7 +263,7 @@ function Contact({ clientId, clientName }) {
       <div className='table-responsive table-grid table-grid-2'>
 
 
-        {dataNotFound ? <DataNotFound /> : (allContactList.length > 0 ?
+        {isLoading ? <CustomLoader /> : (allContactList.length > 0 ?
           <><DataGrid
             id="gridContainer"
             className='client-card-contact-grid'
@@ -320,7 +322,7 @@ function Contact({ clientId, clientName }) {
                 return cls.DateFormateDate(data.data["Date Of Birth"]);
               }}
             />
-          </DataGrid></> : <CustomLoader />)}
+          </DataGrid></> : <DataNotFound />)}
       </div>
     </>
   )

@@ -91,6 +91,7 @@ function TaskList({ clientName }) {
 
   const dispatch = useDispatch();
   const outlookTaskList = useSelector((state) => state.counter.actualData).filter(task=>String(task.ClientNo).trim()===String(clientName).trim());
+  const isLoading = useSelector((state) => state.counter.isTaskLoadingFromRedux);
 
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -219,7 +220,7 @@ function TaskList({ clientName }) {
       </div>
       <div className='table-responsive table-grid table-grid-2'>
 
-        {dataNotFound ? <DataNotFound /> : (outlookTaskList.length > 0 ? <DataGrid
+        {isLoading ? <CustomLoader /> : (outlookTaskList.length > 0 ? <DataGrid
           id="gridContainer"
           className='client-card-task-grid'
           ref={dataGridRef}
@@ -281,7 +282,7 @@ function TaskList({ clientName }) {
             {/* <HeaderFilter groupInterval={10000} /> *
           </Column> */}
           
-        </DataGrid> : <CustomLoader />)}
+        </DataGrid> : <DataNotFound />)}
       </div>
     </>
   )

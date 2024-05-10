@@ -37,14 +37,14 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import UploadDocForClient from './UploadDocForClient';
 import CustomLoader from '../../components/CustomLoader';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
 import HtmlEditorDX from '../../components/HtmlEditor';
 import { Height } from '@mui/icons-material';
 import Fileformat from '../../images/files-icon/pdf.png';
 import { DialogTitle } from '@mui/material';
 import { Label } from '@mui/icons-material';
-import { fetchSupplierListOrderByFavourite } from '../../redux/reducers/api_helper';
+import { fetchContactListByFolderRedux, fetchSupplierListOrderByFavourite } from '../../redux/reducers/api_helper';
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -64,9 +64,9 @@ function ClientDetails() {
     const [searchParams, setSearchParams] = useSearchParams();
     const tabValue = searchParams.get("val");
     // const test = searchParams.get("OrgNo");
-
+    
     const originatorNo = searchParams.get("OrgNo");
-
+    
     const { globalSearchDocs } = location.state !== null ? location.state : { globalSearchDocs: [] };
 
     const [selected, setSelected] = React.useState(false);
@@ -247,10 +247,6 @@ function ClientDetails() {
             console.log("Error while calling Json_GetClientCardDetails", err)
         }
     }
-
-
-
-
 
     useEffect(() => {
         Json_GetClientCardDetails();
