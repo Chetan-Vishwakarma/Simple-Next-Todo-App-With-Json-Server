@@ -728,7 +728,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
 
         // setCurrentDate(moment(selectedTask.Start, "DD/MM/YYYY").toDate());
 
-        console.log("moment122222221", moment(selectedTask.Start, "DD/MM/YYYY").toDate());
+        console.log(docForDetails,"moment122222221", moment(selectedTask.Start, "DD/MM/YYYY").toDate());
 
         //moment(dateString, "DD/MM/YYYY").toDate();
         setNextDate(DateFormet(selectedTask.EndDateTime));
@@ -765,7 +765,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
 
 
 
-
+   
 
 
 
@@ -808,7 +808,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     };
 
 
-
+    
 
     const [anchorEl1, setAnchorEl1] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(null);
@@ -1603,7 +1603,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     const [boolVal, setBoolVal] = useState(false);
 
     const handleClickOpenDocumentDetailsList = (sDoc) => {
-        console.log("selected document data obj", sDoc)
+        console.log("selected document data obj", sDoc);
+        sDoc["PostItemTypeID"] = selectedTask.SectionId;
         setDocForDetails(sDoc);
         setExpanded("panel1");
         setOpenDocumentDetailsList(true);
@@ -1908,7 +1909,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
             console.log("Error while calling Json_getAssociatedTaskListByDocumentId", err);
         }
     }
-
+    console.log(docForDetails,"docfordetailssonam");
     const cellRender = (data)=>{
         console.log(data, "datadms1111111111111")
         let rowdata = data.data;
