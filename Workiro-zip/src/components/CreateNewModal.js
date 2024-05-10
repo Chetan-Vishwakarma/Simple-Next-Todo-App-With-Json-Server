@@ -2146,7 +2146,7 @@ function CreateNewModalTask({ ...props }) {
                                 // toast.success("Created Task");
                                 setOpen(false);
                                 // setIsApi(!isApi);
-
+                                dispatch(fetchAllTasksRedux("Todo"))
 
                             }
                             else {
