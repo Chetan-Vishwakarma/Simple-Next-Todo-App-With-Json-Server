@@ -102,65 +102,12 @@ function TaskList({ clientName }) {
   let cls = new CommanCLS(baseUrl, agrno, Email, password);
 
   const [anchorElDown, setAnchorElDown] = useState(null);
-  const [outlookTaskList_test, setOutlookTaskList] = useState([]);
   const [ExportTaskListData, setExportTaskListData] = useState([]);
   const [dataNotFound, setDataNotFound] = useState(false);
 
   const dataGridRef = useRef(null);
 
-  // const clearFilter = useCallback(() => {
-  //     dataGridRef.current.instance.clearFilter();
-  // }, []);
-
-  // const onShowFilterRowChanged = useCallback((e) => {
-  //     setShowFilterRow(e.value);
-  //     clearFilter();
-  // }, [clearFilter]);
-
-  // const onShowHeaderFilterChanged = useCallback((e) => {
-  //     setShowHeaderFilter(e.value);
-  //     clearFilter();
-  // }, [clearFilter]);
-
-  // const onCurrentFilterChanged = useCallback((e) => {
-  //     setCurrentFilter(e.value);
-  // }, []);
-
-
-  const Json_CRM_GetOutlookTask = () => {
-    try {
-      cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
-        if (sts) {
-          if (data) {
-            let json = JSON.parse(data);
-            console.log("Json_CRM_GetOutlookTasksonam", json?.Table);
-            if (json?.Table.length > 0) {
-              let filteredData = json.Table.filter(itm => itm["EndDateTime"] !== null && !itm["EndDateTime"].split("").includes("-") && itm["Start"] !== null && !itm["Start"].split("").includes("-") && itm.Client === clientName);
-              filteredData.map(itm => {
-                const timeStamp1 = parseInt(itm["EndDateTime"].match(/\d+/)[0]);
-                itm["EndDateTime"] = new Date(timeStamp1);
-                const timeStamp2 = parseInt(itm["Start"].match(/\d+/)[0]);
-                itm["Start"] = new Date(timeStamp2);
-              })
-              if (filteredData.length === 0) {
-                setDataNotFound(true);
-              }
-              console.log("filteredData", filteredData)
-              setOutlookTaskList(filteredData);
-              exportTaskData = [...filteredData];
-              setExportTaskListData([...filteredData]);
-            }
-
-          }
-        }
-      });
-    } catch (err) {
-      console.log("Error while calling Json_CRM_GetOutlookTask", err);
-    }
-  }
-
   useEffect(() => {
-    // Json_CRM_GetOutlookTask();
     dispatch(fetchAllTasksRedux("Todo"));
   }, [])
 
@@ -243,21 +190,12 @@ function TaskList({ clientName }) {
   };
 
   const ExportData = useCallback(() => {
-    console.log("exportData", ExportTaskListData);
-    exportexcel(ExportTaskListData ? ExportTaskListData : []); // Export data from 
+    exportexcel(outlookTaskList.length>0 ? outlookTaskList : []); // Export data from 
     setAnchorElDown(null);
-  }, [ExportTaskListData]);
+  }, []);
+
   const handleRowDoubleClick = (e) => {
-    // Handle double click event on the row
-    console.log('Row double-clicked sdaskldjsajlaj:', e.data);
-    // if(selectedChoice==="All" || selectedChoice==="Contacts"){
-    //     let orgNo = e.data.OriginatorNo;
-    //     let contactNo = e.data.ContactNo;
-    //     handleContactNavigattion(orgNo, contactNo);
-    // }else{
-    //     let originatorNo = e.data.OriginatorNo;
-    //     handleClientNavigation(originatorNo);
-    // }
+    // console.log('Row double-clicked sdaskldjsajlaj:', e.data);
   };
 
   return (
