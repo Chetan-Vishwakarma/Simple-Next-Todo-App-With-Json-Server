@@ -26,7 +26,7 @@ import Fileformat from '../images/files-icon/pdf.png';
 import IconButton from '@mui/material/IconButton';
 import AttachFileIcon from '@mui/icons-material/InsertLink';
 import PostAddIcon from '@mui/icons-material/PostAdd';
-import { setGetActivityDataSonam } from '../../src/redux/reducers/counterSlice';
+import { setAllTaskFromRedux, setGetActivityDataSonam } from '../../src/redux/reducers/counterSlice';
 import { useSelector, useDispatch } from 'react-redux';
 
 
@@ -39,13 +39,14 @@ const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 const smsUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
 function SearchResult({ myTotalTasks, myDocuments }) {
+    const dispatch = useDispatch();
+    const actualData = useSelector(state=> state.counter.actualData);
+
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
     let ClsSms = new CommanCLS(smsUrl, agrno, Email, password);
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const target = searchParams.get("str");
-    const dispatch = useDispatch();
-    
     // const [target,setTarget] = useState(localStorage.getItem("globalSearchKey"));
     const folder = searchParams.get("folder");
     const [filteredTasks, setFilteredTasks] = useState([]);
@@ -268,8 +269,8 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
     useEffect(() => {
         Json_GetForwardUserList();
-        let fltTasks = myTotalTasks.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
-        setFilteredTasks(fltTasks);
+        // let fltTasks = myTotalTasks.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
+        // setFilteredTasks(fltTasks);
         let fltDocuments = myDocuments.filter(itm => {
             if (itm.Description && target) {
                 return itm.Description.toLowerCase().includes(target.toLowerCase());
@@ -280,6 +281,11 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         // })
         setFilteredDocuments(fltDocuments);
         // console.log("fkjhdkjs",fltDocuments);
+
+        let fltTasksssss = actualData.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
+        setFilteredTasks(fltTasksssss);
+        dispatch(setAllTaskFromRedux({data:fltTasksssss, taskFilter: { "mstatus": ["Not Started", "On Hold", "In Progress"] } }))
+        
     }, [target, folder, myDocuments]);
 
     // useEffect(()=>{
@@ -291,7 +297,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     }
 
     const handleMyTaskNavigation = () => {
-        navigate("/dashboard/MyTask", { state: { globalSearchTask: filteredTasks, strGlobal: target } });
+        navigate("/dashboard/MyTask?filter=true", { state: { globalSearchTask: [], strGlobal: target } });
     }
     function startFormattingDate(dt) {
         const timestamp = parseInt(/\d+/.exec(dt));

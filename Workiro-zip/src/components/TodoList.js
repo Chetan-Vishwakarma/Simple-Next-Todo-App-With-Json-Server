@@ -27,7 +27,7 @@ import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import PortalDetails from './PortalDetails';
 import DataNotFound from './DataNotFound';
 import { styled } from '@mui/system';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import ClearIcon from '@mui/icons-material/Clear';
 import DvrIcon from '@mui/icons-material/Dvr';
 import LanguageIcon from '@mui/icons-material/Language';
@@ -66,6 +66,8 @@ function TodoList() {
     const location = useLocation();
     const allTask = useSelector((state) => state.counter.allTask);
     const actualData = useSelector((state) => state.counter.actualData);
+    const [searchParam,setSearchParam] = useSearchParams();
+    const filter = searchParam.get("filter");
     // const isLoading = useSelector((state) => state.counter.isTaskLoadingFromRedux);
     const dispatch = useDispatch();
     let dddd = location.state !== null ? location.state : { globalSearchTask: [] };
@@ -220,6 +222,9 @@ function TodoList() {
     useEffect(() => {
 
         if(actualData.length===0 || allTask.length===0){
+            dispatch(fetchAllTasksRedux("Todo"));
+        }
+        if(!filter){
             dispatch(fetchAllTasksRedux("Todo"));
         }
 
@@ -837,17 +842,17 @@ function TodoList() {
             );
         });
     };
-
     const ExportData = useCallback(() => {
         console.log(filterExportData, "11exportData", exportTaskData);
         if (filterExportData && filterExportData.length > 0) {
-            exportexcel(filterExportData);
+            // exportexcel(filterExportData);
         } 
         else if(allTask && allTask.length > 0) {
-            exportexcel(allTask);
+            exportexcel(allTask
+            );
         }
         else {
-            exportexcel(exportTaskData); // Export data from 
+            // exportexcel(exportTaskData); // Export data from 
         }
 
         setAnchorElDown(null);
