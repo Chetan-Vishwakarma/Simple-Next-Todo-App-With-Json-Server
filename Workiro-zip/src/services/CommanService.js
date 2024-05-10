@@ -9,7 +9,23 @@ export default class CommanCLS extends AllService {
     constructor(APIUrl, agrno, Email, password) {
         super(APIUrl, agrno, Email, password);
     }
+
+
+
+    Json_ReFileDocument(obj,callBack) {
+        super.CreateNewServiceParamObject("Json_ReFileDocument",obj,true);
+        super.CallNewService("Json_ReFileDocument", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+    
 ///////////////////all contact
+
 Json_GetContactListByFolder(obj,callBack) {
     super.CreateNewServiceParamObject("Json_GetContactListByFolder",obj,true);
     super.CallNewService("Json_GetContactListByFolder", function (status, Data) {

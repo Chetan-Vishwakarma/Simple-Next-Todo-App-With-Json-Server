@@ -32,6 +32,7 @@ export const fetchRecentTasksRedux = () => dispatch => {
                 if (data) {
                     let json = JSON.parse(data);
                     let tbl = json.Table;
+                 //   console.log("Json_getRecentTaskList", tbl);
                     if (tbl.length > 0) {
                         dispatch(fetchRecentTasks(tbl));
                         return tbl;
@@ -94,6 +95,7 @@ export const fetchRecentDocumentsRedux = () => dispatch => {
                 if (data) {
                     let json = JSON.parse(data);
                     let tbl = json.Table;
+                    console.log("Json_getRecentDocumentList", tbl);
                     if (tbl.length > 0) {
                         const mapMethod = tbl.map(el => {
                             let date = "";
