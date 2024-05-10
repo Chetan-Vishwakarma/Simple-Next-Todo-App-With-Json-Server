@@ -608,9 +608,9 @@ function NewTodoList() {
             IsApp = IsApproved;
             PortalID = PortalDocId;
         }
-
+        console.log(e, "geturldata");
         let url = `https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=${e["Registration No."]}&filetype=${e.type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
-        console.log(url, "geturldata");
+       
         // setsendUrldata(url);
         //window.open(url);
         setIsLoadingDoc(true)
