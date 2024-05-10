@@ -44,7 +44,7 @@ import { setAllTaskFromRedux, setAllTaskFromReduxOrderWise } from '../redux/redu
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
-import { fetchAllTasksRedux } from '../redux/reducers/api_helper';
+import { fetchAllTasksRedux, updateTaskFieldFromRedux } from '../redux/reducers/api_helper';
 
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -576,7 +576,8 @@ function TodoList() {
         Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
             if (res) {
 
-                Json_UpdateTaskField("Status", "Completed", e);
+                // Json_UpdateTaskField("Status", "Completed", e);
+                dispatch(updateTaskFieldFromRedux("Status", "Completed", e));
 
                 try {
                     let obj = {};
@@ -622,8 +623,8 @@ function TodoList() {
             if (sts && data) {
                 if (data === "Success") {
                     toast.success(FieldName === "EndDateTime" ? "Due Date Changed" : "Completed")
-                    dispatch(fetchAllTasksRedux("Todo"));
-                    Json_AddSupplierActivity(e);
+                    // dispatch(fetchAllTasksRedux("Todo"));
+                    // Json_AddSupplierActivity(e);
                 }
                 console.log("Json_UpdateTaskField", data)
             }
@@ -1348,7 +1349,8 @@ function TodoList() {
                                                         }}
                                                             onCallback={(start) => {
                                                                 const date = start.format('YYYY/MM/DD');
-                                                                Json_UpdateTaskField("EndDateTime", date, item);
+                                                                // Json_UpdateTaskField("EndDateTime", date, item);
+                                                                dispatch(updateTaskFieldFromRedux("EndDateTime", date, item));
                                                             }}
                                                         >
                                                             <Button variant="outlined" className='btn-outlin-2'>
@@ -1455,7 +1457,8 @@ function TodoList() {
                                                 }}
                                                     onCallback={(start) => {
                                                         const date = start.format('YYYY/MM/DD');
-                                                        Json_UpdateTaskField("EndDateTime", date, item);
+                                                        // Json_UpdateTaskField("EndDateTime", date, item);
+                                                        dispatch(updateTaskFieldFromRedux("EndDateTime", date, item));
                                                     }}
                                                 >
                                                     <Button variant="outlined" className='btn-outlin-2'>

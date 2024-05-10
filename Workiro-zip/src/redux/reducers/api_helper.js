@@ -1,6 +1,7 @@
 import CommanCLS from "../../services/CommanService";
 import dateForMyTask from "../../utils/dateForMyTask";
 import { formateDate } from "../../utils/fomatDateForConnectionsContacts";
+import { toast } from 'react-toastify';
 import { fetchAllTasks,
      fetchRecentDocuments, 
      fetchRecentTasks,
@@ -277,6 +278,51 @@ export const Json_GetSupplierListByProject_Redux = (folder_id = "") => dispatch 
     } catch (err) {
         console.log("Error while calling Json_GetSupplierListByProject", err);
     }
+}
+
+export const addSupplierActivityFromRedux = (e) => dispatch => {
+    let obj = {};
+        obj.OriginatorNo = e.ClientNo;
+        obj.ActionReminder = "";
+        obj.Notes = "Completed by " + e["Forwarded By"];
+        obj.Status = "sys"; //selectedTask.Status;
+        obj.TaskId = e.ID;
+        obj.TaskName = "";
+        obj.ActivityLevelID = "";
+        obj.ItemId = "";
+
+        try {
+            ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
+                if (sts && data) {
+                    // console.log({ status: true, messages: "Success", res: data });
+                    // Json_CRM_GetOutlookTask()
+                }
+            });
+        } catch (error) {
+            console.log({ status: false, messages: "Faild Please Try again" });
+        }
+}
+
+export const updateTaskFieldFromRedux = (FieldName, FieldValue, e) => dispatch => {
+    let o = {
+        agrno: agrno,
+        strEmail: Email,
+        password: password,
+        TaskId: e.ID,
+        FieldName: FieldName,
+        FieldValue: FieldValue
+    }
+
+    ClsSms.Json_UpdateTaskField(o, function (sts, data) {
+        if (sts && data) {
+            if (data === "Success") {
+                toast.success(FieldName === "EndDateTime" ? "Due Date Changed" : "Completed")
+                dispatch(fetchAllTasksRedux("Todo"));
+                dispatch(addSupplierActivityFromRedux(e));
+            }
+            // console.log("Json_UpdateTaskField", data)
+        }
+    })
 }
 
 ////////////////End DocuSoft 

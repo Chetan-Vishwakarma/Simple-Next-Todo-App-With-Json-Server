@@ -230,31 +230,24 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         }
     }
     
-
     const [userList, setUserList] = React.useState([]);
 
     function Json_GetForwardUserList() {
         try {
-
             let o = {};
             o.agrno = agrno;
             o.Email = Email;
             o.Password = password;
-            
             ClsSms.GetInternalUserList(o,function (sts, data) {
                 if (sts) {
                     if (data) {
                         let js = JSON.parse(data);
                         let {Status,Message}=js;
-                       // let dt = js.Table;
-                       // console.log("Json_GetForwardUserList1112222", js)
                         if (Status==="Success") {
                             let tbl = Message.Table;
-                            //console.log("Json_GetForwardUserList1112222", tbl)
                             let result = tbl.filter((el) => {
                                 return el.CGroup !== "Yes";
                             });
-
                             setUserList(result);
 
                         }
