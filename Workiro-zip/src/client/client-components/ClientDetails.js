@@ -110,14 +110,14 @@ function ClientDetails() {
             if (sts) {
               if (data) {
                 console.log("Suppliers", data);
-                if(data =="Success"){
-                  toast.error("Client deleted Successfully !");
+                if(data){
+                  toast.error(data);
                   setTimeout(() => {
                     navigate("/dashboard/Connections");
                     dispatch(fetchSupplierListOrderByFavourite(folderId));
-                  },1500);
+                  },1000);
                 } else {
-                  toast.error(data);
+                    console.log("Failed to delete client!");
                 }
                setAnchorEl(null);
               }
