@@ -408,7 +408,7 @@ function ClientDetails() {
                             <Contact clientId={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorNo} clientName={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}></Contact>
                         </TabPanel>
                         <TabPanel value="4" className='p-0 relative'>
-                            <TaskList clientName={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}></TaskList>
+                            <TaskList clientName={clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorNo}></TaskList>
                         </TabPanel>
 
                         <TabPanel value="5" className='p-0 relative'>

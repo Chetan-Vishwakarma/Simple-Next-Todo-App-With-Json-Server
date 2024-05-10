@@ -7,7 +7,7 @@ import DataGrid, {
   Pager, Paging, DataGridTypes,
 } from 'devextreme-react/data-grid';
 import 'devextreme/dist/css/dx.light.css';
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
 import ToggleButton from '@mui/material/ToggleButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -21,6 +21,7 @@ import DataNotFound from '../../components/DataNotFound';
 import DownloadIcon from '@mui/icons-material/Download';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import Fileformat from '../../images/files-icon/pdf.png';
+import { fetchAllTasksRedux } from '../../redux/reducers/api_helper';
 
 const saleAmountEditorOptions = { format: 'currency', showClearButton: true };
 const filterLabel = { 'aria-label': 'Filter' };
@@ -87,8 +88,10 @@ const orderHeaderFilter = (data) => {
 
 let exportTaskData = [];
 function TaskList({ clientName }) {
-  const reduxData = useSelector((state) => state.counter.reduxData);
-  console.log(reduxData, "reduxdatasonam");
+
+  const dispatch = useDispatch();
+  const outlookTaskList = useSelector((state) => state.counter.actualData).filter(task=>String(task.ClientNo).trim()===String(clientName).trim());
+
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -98,12 +101,8 @@ function TaskList({ clientName }) {
   //   let dt = new LoginDetails();
   let cls = new CommanCLS(baseUrl, agrno, Email, password);
 
-  const [showFilterRow, setShowFilterRow] = useState(true);
-  const [showHeaderFilter, setShowHeaderFilter] = useState(true);
-  const [currentFilter, setCurrentFilter] = useState(applyFilterTypes[0].key);
-
   const [anchorElDown, setAnchorElDown] = useState(null);
-  const [outlookTaskList, setOutlookTaskList] = useState([]);
+  const [outlookTaskList_test, setOutlookTaskList] = useState([]);
   const [ExportTaskListData, setExportTaskListData] = useState([]);
   const [dataNotFound, setDataNotFound] = useState(false);
 
@@ -161,8 +160,8 @@ function TaskList({ clientName }) {
   }
 
   useEffect(() => {
-    Json_CRM_GetOutlookTask();
-
+    // Json_CRM_GetOutlookTask();
+    dispatch(fetchAllTasksRedux("Todo"));
   }, [])
 
   const cellRender = (data) => {
@@ -308,7 +307,8 @@ function TaskList({ clientName }) {
 
           <Column dataField="Subject" />
           <Column
-            dataField="Start"
+          caption="Start"
+            dataField="CreationDate"
             dataType="date"
             format="d/M/yyyy"
           />

@@ -59,7 +59,6 @@ export const fetchAllTasksRedux = (target) => dispatch => {
                                 return dateForMyTask(task);
                             });
                             formattedTasks.sort((a, b) => b.CreationDate - a.CreationDate);
-                            console.log("formattedTasks11",formattedTasks)
                             dispatch(fetchAllTasks(formattedTasks));
                             dispatch(setAllTaskFromRedux({data:formattedTasks, taskFilter: { mstatus: ["Not Started", "On Hold", "In Progress"] } }))
                             return;
@@ -96,7 +95,6 @@ export const fetchRecentDocumentsRedux = () => dispatch => {
                 if (data) {
                     let json = JSON.parse(data);
                     let tbl = json.Table;
-                    console.log("Json_getRecentDocumentList", tbl);
                     if (tbl.length > 0) {
                         const mapMethod = tbl.map(el => {
                             let date = "";
