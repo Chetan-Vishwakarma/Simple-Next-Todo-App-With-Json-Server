@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import DataGrid, {
   Column, FilterRow, Search, SearchPanel, Selection,
@@ -24,6 +24,7 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import Fileformat from '../../images/files-icon/pdf.png';
 import { useSelector, useDispatch } from "react-redux";
 import { set_C_D_ContactsFromRedux } from '../../redux/reducers/counterSlice';
+import { fetchContactListByFolderRedux } from '../../redux/reducers/api_helper';
 
 const saleAmountEditorOptions = { format: 'currency', showClearButton: true };
 const filterLabel = { 'aria-label': 'Filter' };
@@ -157,8 +158,8 @@ function Contact({ clientId, clientName }) {
     }
   }
   useEffect(() => {
-    // Json_GetContactListByFolder();
-  }, [])
+    if(allContactList.length===0) dispatch(fetchContactListByFolderRedux());
+  }, []);
 
   const handleRowDoubleClick = (e) => {
     navigate(`/dashboard/ContactDetails?originatorNo=${e.data.OriginatorNo}&contactNo=${e.data.ContactNo}`, {
