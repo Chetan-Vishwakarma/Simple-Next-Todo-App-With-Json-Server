@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, ToggleButton, ToggleButtonGroup, FormControl, Select } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -27,7 +27,7 @@ import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import PortalDetails from './PortalDetails';
 import DataNotFound from './DataNotFound';
 import { styled } from '@mui/system';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import ClearIcon from '@mui/icons-material/Clear';
 import DvrIcon from '@mui/icons-material/Dvr';
 import LanguageIcon from '@mui/icons-material/Language';
@@ -62,58 +62,42 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 f
 let attatmentdata = [];
 let exportTaskData = [];
 let filterExportData = [];
+
 function TodoList() {
-    const location = useLocation();
     const allTask = useSelector((state) => state.counter.allTask);
     const actualData = useSelector((state) => state.counter.actualData);
     const [searchParam,setSearchParam] = useSearchParams();
     const filter = searchParam.get("filter");
-    // const isLoading = useSelector((state) => state.counter.isTaskLoadingFromRedux);
     const dispatch = useDispatch();
-    let dddd = location.state !== null ? location.state : { globalSearchTask: [] };
-    const { globalSearchTask, strGlobal } = dddd;
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
-    const [ExporttoExcel, setExporttoExcel] = React.useState([...allTask]);
-    const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
-    const [userId, setUserId] = useState(localStorage.getItem("UserId"));
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 
     let Cls = new CommanCLS(baseUrlPractice, agrno, Email, password);
     const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
     let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
-    //let Clsp = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
-
     let ClsSms = new CommanCLS(baseUrl, agrno, Email, password);
 
     const [anchorElDown, setAnchorElDown] = useState(null);
     const [selectedTask, setSelectedTask] = useState({});
-
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [attachmentFileTodo, setAttachmentFileTodo] = useState([]);
     const [loadMore, setLoadMore] = useState(20);
-
     const [folders, setFolders] = useState([]);
     const [selectedFolder, setSelectedFolder] = useState("Folder");
     const [selectedStatus, setSelectedStatus] = useState("Status");
     const [selectedType, setSelectedType] = useState("Source");
     const [taskFilter, setTaskFilter] = useState({"mstatus": ["Not Started", "On Hold", "In Progress"]});
-
     const [selectedSortBy, setSelectedSortBy] = useState("Sort By");
     const [selectedGroupBy, setSelectedGroupBy] = useState("Group By");
-
     const [dataInGroup, setDataInGroup] = useState([]);
     const [isSearch, setIsSearch] = useState(false);
-
     const [suggestionList, setSuggestionList] = useState([]);
-
     const [searchInput, setSearchInput] = useState("");
     const [isDateShow, setIsDateShow] = useState(false);
-
-
 
     // for date datepicker
     const [state, setState] = useState({
@@ -121,7 +105,6 @@ function TodoList() {
         end: moment(),
     });
     const { start, end } = state;
-
 
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -158,73 +141,18 @@ function TodoList() {
             console.log("Error while calling Json_GetFolders", err);
         }
     }
-    //console.log("fdlkgjgljroirreotudfn", globalSearchTask.map(itm => itm.mstatus));
-    const Json_CRM_GetOutlookTask = () => {
-
-        if (globalSearchTask.length > 0) {
-            console.log("globalSearchTask", globalSearchTask);
-            const formattedTasks = globalSearchTask.map((task) => {
-                let timestamp;
-                if (task.EndDateTime) {
-                    timestamp = parseInt(task.EndDateTime.slice(6, -2));
-                }
-
-                const date = new Date(timestamp);
-
-                return { ...task, EndDateTime: date };
-            });
-
-            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
-
-            let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
-                let timestamp;
-                if (task.CreationDate) {
-                     timestamp = parseInt(task.CreationDate.slice(6, -2));
-                   
-                  //  timestamp = moment(task.CreationDate).format("DD-MM-YYYY h:mm:ss");
-                  //  console.log(task.CreationDate,'sonam1==========================='+timestamp);
-                }
-
-                return { ...task, CreationDate: timestamp };
-            }).sort((a, b) => b.CreationDate - a.CreationDate);
-
-            // dispatch(setMyTasks([...hasCreationDate]));
-            // setActualData([...hasCreationDate]);
-            // setAllTask([...hasCreationDate]);
-
-            setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] });
-            dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] } }))
-            // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
-            Json_GetFolders();
-            setIsApi(true);
-            // setIsLoading(false);
-            return;
-        }
-        Json_GetFolders();
-    }
 
     const [isApi, setIsApi] = useState(false);
 
-
-    const eventHandler = (e) => {
-        console.log("Load more data2", e);
-        if (window.innerHeight + e.target.documentElement.scrollTop + 1 >= e.target.documentElement.scrollHeight) {
-            // Check if there's more data to load before updating loadMore
-
-            setLoadMore((prevLoadMore) => prevLoadMore + 50);
+    useEffect(()=>{
+        if(!Boolean(filter)){
+            dispatch(fetchAllTasksRedux("Todo"));
         }
-    }
-
-    const loaderRef = useRef(null);
-
-
+    },[filter]);
 
     useEffect(() => {
 
         if(actualData.length===0 || allTask.length===0){
-            dispatch(fetchAllTasksRedux("Todo"));
-        }
-        if(!filter){
             dispatch(fetchAllTasksRedux("Todo"));
         }
 
@@ -327,10 +255,8 @@ function TodoList() {
     useEffect(() => {
         Json_GetForwardUserList();
         setAgrNo(localStorage.getItem("agrno"));
-        setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
-        // Json_CRM_GetOutlookTask();
         Json_GetFolders();
     }, []);
 
@@ -718,8 +644,8 @@ function TodoList() {
         try {
             ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
                 if (sts && data) {
-                    console.log({ status: true, messages: "Success", res: data });
-                    // Json_CRM_GetOutlookTask()                   
+                    // console.log({ status: true, messages: "Success", res: data });   
+                    // Nothing code for execution because we have done all things in previous api-caling            
                 }
             });
         } catch (error) {
@@ -770,9 +696,6 @@ function TodoList() {
         return userFilter && userFilter.length > 0 ? userFilter : "";
     }
 
-    // const [anchorElMore, setAnchorElMore] = React.useState(null);
-    // const openMore = Boolean(anchorElMore);
-
     const [anchorElMore, setAnchorElMore] = useState({}); // State to manage anchor element for each document
     const [openMore, setOpenMore] = useState({}); // State to manage menu visibility for each document
 
@@ -797,8 +720,6 @@ function TodoList() {
             [documentIndex]: false
         }));
     };
-
-
 
     const exportexcel = (data) => {
         let workbook = new Workbook();
@@ -871,7 +792,7 @@ function TodoList() {
         <>
             <Box className="container-fluid p-0">
 
-                {globalSearchTask.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/MyTask", tabName: "My Task" }]} />}
+                {/* {globalSearchTask.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/MyTask", tabName: "My Task" }]} />} */}
 
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal} attachmentFileTodo={attachmentFileTodo}></TaskDetailModal>
                 {/* <CreateNewModalTask setIsApi={setIsApi} isApi={isApi}></CreateNewModalTask> */}
