@@ -100,7 +100,7 @@ function TodoList() {
     const [selectedFolder, setSelectedFolder] = useState("Folder");
     const [selectedStatus, setSelectedStatus] = useState("Status");
     const [selectedType, setSelectedType] = useState("Source");
-    const [taskFilter, setTaskFilter] = useState({});
+    const [taskFilter, setTaskFilter] = useState({"mstatus": ["Not Started", "On Hold", "In Progress"]});
 
     const [selectedSortBy, setSelectedSortBy] = useState("Sort By");
     const [selectedGroupBy, setSelectedGroupBy] = useState("Group By");
