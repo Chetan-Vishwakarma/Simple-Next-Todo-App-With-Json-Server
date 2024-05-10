@@ -6,7 +6,7 @@ function applyTaskFilters(data,criteria){
     return Object.keys(criteria).every(function (key) {
         if (criteria[key][0].length > 0 || typeof criteria[key][0] === "object") {
             if (obj[key] && obj[key] !== undefined && obj[key] !== "") {
-                if (key === "EndDateTime") {
+                if (key === "CreationDate") {
                     let docDate = obj[key];
                     let sDate = criteria[key][0];
                     let eDate = criteria[key][1];

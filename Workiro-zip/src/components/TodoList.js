@@ -330,7 +330,8 @@ function TodoList() {
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
-        Json_CRM_GetOutlookTask();
+        // Json_CRM_GetOutlookTask();
+        Json_GetFolders();
     }, []);
 
     function startFormattingDate(dt) {
@@ -406,11 +407,11 @@ function TodoList() {
     const handleCallback = (start, end) => {
         if (start._i === "Clear") {
             setIsDateShow(false);
-            handleFilterDeletion("EndDateTime");
+            handleFilterDeletion("CreationDate");
             return;
         }
-        setTaskFilter({ ...taskFilter, "EndDateTime": [start._d, end._d] });
-        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, "EndDateTime": [start._d, end._d] } }));
+        setTaskFilter({ ...taskFilter, "CreationDate": [start._d, end._d] });
+        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, "CreationDate": [start._d, end._d] } }));
         setState({ start, end });
         setIsDateShow(true);
     };
@@ -1158,7 +1159,7 @@ function TodoList() {
                                         <i className="fa fa-calendar"></i>
                                         <CalendarMonthIcon className='me-2 text-red' />
                                         <span>
-                                            {isDateShow ? label : "Select Due Date"}</span> <i className="fa fa-caret-down"></i>
+                                            {isDateShow ? label : "Select Start Date"}</span> <i className="fa fa-caret-down"></i>
                                     </BootstrapTooltip>
                                 </div>
                             </DateRangePicker>
