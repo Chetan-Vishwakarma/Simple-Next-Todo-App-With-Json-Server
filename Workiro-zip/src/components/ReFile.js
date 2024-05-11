@@ -12,6 +12,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Json_ExplorerSearchDoc_Redux, fetchRecentDocumentsRedux } from '../redux/reducers/api_helper';
 import { Tune } from '@mui/icons-material';
+import moment from 'moment';
+import dayjs from 'dayjs';
 
 const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
 
@@ -24,11 +26,11 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
     const { allFolders, allSections, allClientsList } = useSelector(state => state.counter.connectionsState);
 
     const { opentReIndex } = useSelector((state) => state.counter.refile);
-    const dispatch=useDispatch();
+    const dispatch = useDispatch();
 
     // const {selectedDocumentRedux} = useSelector((state)=>state.counter.selectedDocumentRedux);
 
-    console.log("selectedDocumentRedux", allFolders, allSections, allClientsList, selectedDocument)
+    console.log("selectedDocumentRedux", allFolders, allSections, allClientsList, selectedDocument,dayjs(selectedDocument["Item Date"]).format("YYYY/MM/DD"))
 
     const [isDisabled, setIsDisabled] = useState(false);
 
@@ -37,7 +39,7 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
     const [txtCompanyName, setTxtCompanyName] = useState("");
 
     const [btnSubmit, setBtnSubmit] = useState("Submit");
-  
+
 
     const [isDisabledFolder, setIsDisabledFolder] = useState(false);
     const [isDisabledComp, setIsDisabledCom] = useState(false);
@@ -51,7 +53,7 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
         setIsDisabledCom(false);
         setIsDisabledFolder(false);
         setIsDisabledSection(false);
-    
+
 
     };
     const HandalClickRefile = () => {
@@ -61,6 +63,8 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
 
     function Json_ReFileDocument() {
         try {
+            console.log("Invalid btnSubmit value:", btnSubmit);
+
             let o = {};
             if (btnSubmit === "Folder Update") {
                 o = {
@@ -82,14 +86,16 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
                 o = {
                     'ItemId': selectedDocument["Registration No."],
                     'ProjectId': "-1",
-                    'ClientId': txtCompanyName.SenderId,
+                    'ClientId': txtCompanyName.OriginatorNo,
                     'sectionId': "-1",
                     'subsectionId': '-1'
                 };
-            } else {
-                console.log("Invalid btnSubmit value:", btnSubmit);
+            } else if (btnSubmit === "Document Date Update") {
+               
+                Json_ReIndexDate();
+                return;
             }
-        
+
             cls.Json_ReFileDocument(o, function (sts, data) {
                 if (sts) {
                     if (data === "Success") {
@@ -102,20 +108,44 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
                         dispatch(Json_ExplorerSearchDoc_Redux(obj));
                         setIsDisabled(true)
                         setIsDisabledFolder(false);
-                                setIsDisabledSection(false);
-                                setIsDisabledCom(false);
+                        setIsDisabledSection(false);
+                        setIsDisabledCom(false);
 
                     } else {
                         toast.error("Document Filing Index Not Update Please Try Again !");
                     }
                 } else {
-                    toast.error("Document Filing Index Not Update Please Try Again !");
+                    //toast.error("Document Filing Index Not Update Please Try Again !");
                 }
             });
         } catch (error) {
             console.error("Network Error, Json_ReFileDocument:", error);
         }
-        
+
+    }
+
+    function Json_ReIndexDate() {
+        try {
+            var obj = {};
+            obj.ItemDate = documentDate;
+            obj.ReceivedDate = receivedDate;
+            obj.ItemId = selectedDocument["Registration No."];
+            cls.Json_ReIndexDate(obj, function (sts, data) {
+                if (sts) {
+                    if (data === "Success") {
+                        toast.success("Document Filing Index Updated");
+                        setBtnSubmit("Submit")
+                        setIsDisabled(true)
+                        setIsDisabledFolder(false);
+                        setIsDisabledSection(false);
+                        setIsDisabledCom(false);
+                    }
+                }
+            })
+
+        } catch (error) {
+            console.log("Network error ", error)
+        }
     }
 
     useEffect(() => {
@@ -136,9 +166,14 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
 
 
     useEffect(() => {
-        setIsDisabled(btnSubmit !== "Folder Update" && btnSubmit !== "Section Update" && btnSubmit !== "Client Update");
+        setIsDisabled(btnSubmit !== "Folder Update" && btnSubmit !== "Section Update" && btnSubmit !== "Client Update"&& btnSubmit !== "Document Date Update");
     }, [btnSubmit]);
 
+
+    const [documentDate, setDocumentDate] = useState(selectedDocument?dayjs(selectedDocument["Item Date"]): null);
+    const [receivedDate, setReceivedDate] = useState(selectedDocument? dayjs(selectedDocument["Received Date"]): null);
+
+    const today = new Date();
     return (<>
         <Dialog
             open={ReIndexopen}
@@ -187,7 +222,7 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
                                 // Disable other Autocomplete components based on selection
                                 //setTxtSection(null); // Reset selected section
                                 //setTxtCompanyName(null); // Reset selected client
-                                
+
                             }}
                             disabled={isDisabledFolder}
                             renderInput={(params) => <TextField {...params} label="Folder" />}
@@ -207,9 +242,9 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
                                 setBtnSubmit("Section Update");
                                 // Disable other Autocomplete components based on selection
                                 //setTxtFolder(null); // Reset selected section
-                               // setTxtCompanyName(null); // Reset selected client
-                               setIsDisabledFolder(true);
-                               setIsDisabledCom(true);
+                                // setTxtCompanyName(null); // Reset selected client
+                                setIsDisabledFolder(true);
+                                setIsDisabledCom(true);
                             }}
                             disabled={isDisabledSection}
                             renderInput={(params) => <TextField {...params} label="Section" />}
@@ -225,11 +260,11 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
                             value={txtCompanyName || null}
                             onChange={(event, value) => {
                                 event.preventDefault();
-                                 console.log("selected clietn",value)
+                                console.log("selected clietn", value)
                                 setTxtCompanyName(value)
                                 setBtnSubmit("Client Update")
-                                 // Disable other Autocomplete components based on selection
-                                 //setTxtFolder(null); // Reset selected section
+                                // Disable other Autocomplete components based on selection
+                                //setTxtFolder(null); // Reset selected section
                                 // setTxtSection(null); // Reset selected client
                                 setIsDisabledFolder(true);
                                 setIsDisabledSection(true);
@@ -243,14 +278,40 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
                         <Grid item xs={6} md={6} className='pt-0'>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DemoContainer components={['DatePicker']}>
-                                    <DatePicker label="Document Date" className=" w-100" />
+                                    <DatePicker label="Document Date" className=" w-100"
+                                    format="DD/MM/YYYY"
+                                        value={documentDate}
+                                        onChange={(newValue) => {
+                                          
+                                            setIsDisabled(false)
+                                            let yy = dayjs(newValue).format("YYYY/MM/DD");
+                                            setDocumentDate(yy);
+                                            setBtnSubmit("Document Date Update")
+                                            console.log("documentDate",yy)
+                                        }}
+
+                                    />
                                 </DemoContainer>
                             </LocalizationProvider>
                         </Grid>
                         <Grid item xs={6} md={6} className='pt-0'>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DemoContainer components={['DatePicker']}>
-                                    <DatePicker label="Received Date" className=" w-100" />
+                                    <DatePicker label="Received Date" className=" w-100"
+                                    format="DD/MM/YYYY"
+                                        value={receivedDate}
+                                        
+                                        onChange={(newValue) => {
+                                           
+                                             setIsDisabled(false)
+
+                                             let yy = dayjs(newValue).format("YYYY/MM/DD");
+
+                                            setReceivedDate(yy);
+                                            setBtnSubmit("Document Date Update")
+                                            console.log("ReceivedDate",yy)
+                                        }}
+                                    />
                                 </DemoContainer>
                             </LocalizationProvider>
                         </Grid>

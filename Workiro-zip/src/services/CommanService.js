@@ -23,6 +23,17 @@ export default class CommanCLS extends AllService {
             }
         })
     }
+    Json_ReIndexDate(obj,callBack) {
+        super.CreateNewServiceParamObject("Json_ReIndexDate",obj,true);
+        super.CallNewService("Json_ReIndexDate", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
     
 ///////////////////all contact
 
