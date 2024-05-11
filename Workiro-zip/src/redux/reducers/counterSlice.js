@@ -63,7 +63,11 @@ const counterSlices = createSlice({
       opentReIndex:false,
     },
     selectedDocumentRedux:{},
-    explorerSearchDocRedux:[]
+    explorerSearchDocRedux:{
+      allDocuments: [],
+      documents: [],
+      isLoading: true
+    }
   },
   reducers: {
     //sonam state start
@@ -173,7 +177,9 @@ state.connectionsState.allClientsList=action.payload;
      state.selectedDocumentRedux=action.payload;
     },
     setExplorerSearchDocRedux:(state,action)=>{
-          state.explorerSearchDocRedux = action.payload;
+          state.explorerSearchDocRedux.allDocuments = action.payload;
+          state.explorerSearchDocRedux.documents = action.payload;
+          state.explorerSearchDocRedux.isLoading = false;
     }
   }
 });
