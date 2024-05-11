@@ -79,7 +79,7 @@ function AddContacts({ addContactData, contactDetails }) {
     MainContact: false,
     Inactive: false,
     GreetingName: "",
-    EmailName: "",
+    EmailName: contactDetails?.[0]["E-Mail"],
     MainUserId: -1,
     MainUserName: "",
     MainLine1Name: "",
@@ -444,9 +444,7 @@ function AddContacts({ addContactData, contactDetails }) {
           : "",
         Contactemail: userContactDetails.EmailName ? userContactDetails.EmailName : "",
         note: userContactDetails.Notes ? userContactDetails.Notes : "",
-        emailupdate: userContactDetails.EmailName
-          ? userContactDetails.EmailName
-          : "",
+        emailupdate: contactDetails[0]["E-Mail"] ? contactDetails[0]["E-Mail"] : "",
         CActive: userContactDetails.Inactive === false ? "Yes" : "No",
         AssignedManager: userContactDetails.MainUserId
           ? userContactDetails.MainUserId
@@ -458,6 +456,7 @@ function AddContacts({ addContactData, contactDetails }) {
         Salutation: userContactDetails.Title ? userContactDetails.Title : "",
         accid: agrno,
       };
+      console.log(userContactDetails.EmailName,"contactdatatest",contactDetails[0]["E-Mail"]);
       Cls.UpdateContact(contactData, (sts, data) => {
         if (sts) {
           if (data) {
