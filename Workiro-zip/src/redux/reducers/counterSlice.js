@@ -206,6 +206,11 @@ const counterSlices = createSlice({
       state.explorerSearchDocRedux.documents = action.payload;
       state.explorerSearchDocRedux.isLoading = false;
     },
+    clearExplorerSearchDocRedux: (state, action) => {
+      state.explorerSearchDocRedux.allDocuments = [];
+      state.explorerSearchDocRedux.documents = [];
+      state.explorerSearchDocRedux.isLoading = true;
+    },
     setCateGoryApi: (state, action) => {
       state.AllCategory = action.payload;
     }
@@ -245,7 +250,8 @@ export const {
   setSelectedDocumentRedux,
   setExplorerSearchDocRedux,
   setAdvanceSearchResultFromRedux,
-  setCateGoryApi
+  setCateGoryApi,
+  clearExplorerSearchDocRedux
 } = counterSlices.actions;
 
 // export const getUsers = () => async(dispatch) => {

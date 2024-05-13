@@ -38,7 +38,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import UploadDocForClient from './UploadDocForClient';
 import CustomLoader from '../../components/CustomLoader';
 import { useDispatch, useSelector } from "react-redux";
-import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
+import { clearExplorerSearchDocRedux, setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
 import HtmlEditorDX from '../../components/HtmlEditor';
 import { Height } from '@mui/icons-material';
 import Fileformat from '../../images/files-icon/pdf.png';
@@ -292,6 +292,10 @@ function ClientDetails() {
 
     }
 
+    function handleGoBack(){
+        dispatch(clearExplorerSearchDocRedux());
+        navigate("/dashboard/Connections");
+    }
 
     return (
         <>
@@ -302,7 +306,7 @@ function ClientDetails() {
                 {globalSearchDocs.length === 0 && <Box className="d-flex align-items-center justify-content-between flex-wrap">
                     <Box className='d-flex flex-wrap align-items-center'>
 
-                        <ArrowBackIosIcon className='mb-2 pointer' onClick={() => navigate("/dashboard/Connections")} />
+                        <ArrowBackIosIcon className='mb-2 pointer' onClick={handleGoBack} />
 
                         <Typography variant="h2" className='title me-3 mb-2' gutterBottom>
                             {clientDetails.Table1 && clientDetails?.Table1[0]?.OriginatorName}
