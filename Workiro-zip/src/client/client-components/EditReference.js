@@ -13,6 +13,8 @@ import Typography from "@mui/material/Typography";
 import EditClientdetails from "./EditClientdetails";
 import EditUDFClientcard from "./EditUDFClientcard";
 import EditClientaddress from "./EditClientaddress";
+import { useDispatch } from "react-redux";
+import { fetchSupplierListOrderByFavourite } from "../../redux/reducers/api_helper";
 function EditReference({ companyEditDetails }) {
   console.log(companyEditDetails, "companyEditDetails");
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -28,6 +30,7 @@ function EditReference({ companyEditDetails }) {
   const [dataCompanyHouse, setDataCompanyHouse] = useState([]);
   const [SendPorjectId, setSendPorjectId] = useState(null);
   const [activeStep, setActiveStep] = React.useState(0);
+  const dispatch = useDispatch();
   const [userDetail, setUserDetail] = useState({
     Clientname: companyEditDetails[0]?.OriginatorName,
     Clientid: companyEditDetails[0]?.OriginatorNo,
@@ -344,6 +347,7 @@ function EditReference({ companyEditDetails }) {
             mainAddress();
             billingAddress();
             ragisterAddress();
+            // dispatch(fetchSupplierListOrderByFavourite(userDetail.folderId));
           }
           else {
             // toast.success("Reference ID Already Exists!");
