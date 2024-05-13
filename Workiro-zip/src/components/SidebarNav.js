@@ -59,7 +59,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import AdvanceSearch from './AdvanceSearch';
 import { useDispatch, useSelector } from "react-redux"
-import { Json_AdvanceSearchDocFromRedux } from '../redux/reducers/api_helper';
+import { Json_AdvanceSearchDocFromRedux, fetchAllTasksRedux } from '../redux/reducers/api_helper';
 
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -149,6 +149,7 @@ export default function SidebarNav() {
 
   const {docDescriptions:documentsDescription} = useSelector(state=>state.counter.advanceSearchResult);
   const isAdvanceDocSearchRedux = useSelector((state)=>state.counter.isAdvanceDocSearchRedux);
+  const taskSubjects = useSelector((state)=>state.counter.taskSubjects);
 
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -156,8 +157,6 @@ export default function SidebarNav() {
   const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
   const [userId, setUserId] = useState(localStorage.getItem("UserId"));
   const [globalSearch, setGlobalSearch] = useState(localStorage.getItem("globalSearchKey"));
-
-  console.log("fueteuiuert", window.location.pathname);
 
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -185,7 +184,7 @@ export default function SidebarNav() {
   const [isSearch, setIsSearch] = useState(false);
   const [forDocuments, setForDocuments] = useState("");
   const [myTotalTasks, setMyTotalTasks] = useState([]);
-  const [taskSubjects, setTasksSubjects] = useState([]);
+  const [taskSubjects_test, setTasksSubjects] = useState([]);
   const [filteredTaskSubjects, setFilteredTaskSubjects] = useState([]);
   const [folders, setFolders] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState(folderId);
@@ -331,12 +330,10 @@ export default function SidebarNav() {
       if (sts) {
         if (data) {
           let json = JSON.parse(data);
-          console.log("Json_Get_CRM_UserByProjectId", json.Table);
           json.Table.map((item) => {
             if (item.loggedInUser === "True") {
               setUserName(item.DisplayName);
               setUserEmail(item.Name);
-              Json_CRM_GetOutlookTask();
             }
           });
         }
@@ -359,6 +356,7 @@ export default function SidebarNav() {
     setEmail(localStorage.getItem("Email"));
     setUserId(localStorage.getItem("UserId"));
     Json_Get_CRM_UserByProjectId();
+    if(taskSubjects.length===0) dispatch(fetchAllTasksRedux("Todo"));
     // console.log("location Object",location.pathname.split("/").pop());
     tabs.length > 0 && tabs.map(itm => {
       if (itm.tabLink.split("/").pop() === location.pathname.split("/").pop()) {
@@ -381,7 +379,6 @@ export default function SidebarNav() {
   }, []);
 
   const handleGlobalSearch = (val) => {
-    console.log("klkgjsljglkjg",val);
     setSearchInputForGlobalSearch(val);
     if (val === "") {
       setIsSearch(false);

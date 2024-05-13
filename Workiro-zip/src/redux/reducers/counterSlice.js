@@ -21,6 +21,16 @@ function applyTaskFilters(data, criteria) {
   }
 }
 
+function filterSubjects(tasks) {
+  const task_subjects = [];
+  tasks.map(itm => {
+    if (itm.Subject && !task_subjects.includes(itm.Subject)) {
+      task_subjects.push(itm.Subject);
+    }
+  });
+  return task_subjects;
+}
+
 const counterSlices = createSlice({
   name: "counter",
   initialState: {
@@ -48,6 +58,7 @@ const counterSlices = createSlice({
 
     allTask: [],
     actualData: [],
+    taskSubjects: [],
     isTaskLoadingFromRedux: true,
     recentDocument: [],
     connectionsState: {
@@ -115,6 +126,8 @@ const counterSlices = createSlice({
       let data = action.payload.data;
       let criteria = action.payload.taskFilter;
       let fltData = applyTaskFilters(data, criteria);
+      let taskSubjects = filterSubjects(data);
+      state.taskSubjects = taskSubjects.length > 0 ? taskSubjects : [];
       state.allTask = (fltData && fltData.length > 0) ? fltData : data;
       state.isTaskLoadingFromRedux = false;
     },

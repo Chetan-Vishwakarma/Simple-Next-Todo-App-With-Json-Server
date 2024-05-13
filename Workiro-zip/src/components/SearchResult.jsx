@@ -42,8 +42,8 @@ const smsUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
 function SearchResult({ myTotalTasks, myDocuments }) {
     const dispatch = useDispatch();
-    const actualData = useSelector(state=> state.counter.actualData);
-    const {result:filteredDocuments, isLoading} = useSelector(state=>state.counter.advanceSearchResult);
+    const { actualData, isTaskLoadingFromRedux } = useSelector(state => state.counter);
+    const { result: filteredDocuments, isLoading } = useSelector(state => state.counter.advanceSearchResult);
 
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
     let ClsSms = new CommanCLS(smsUrl, agrno, Email, password);
@@ -88,7 +88,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     const [test, setTest] = useState({});
 
     const handleEdit = (index) => {
-        console.log("Editing index:", index);
         setEditingIndex(index);
         setUpdatedSubject(filteredDocuments[index].Description);
     };
@@ -171,7 +170,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
             }
         })
     }
-    
+
     const [userList, setUserList] = React.useState([]);
 
     function Json_GetForwardUserList() {
@@ -180,12 +179,12 @@ function SearchResult({ myTotalTasks, myDocuments }) {
             o.agrno = agrno;
             o.Email = Email;
             o.Password = password;
-            ClsSms.GetInternalUserList(o,function (sts, data) {
+            ClsSms.GetInternalUserList(o, function (sts, data) {
                 if (sts) {
                     if (data) {
                         let js = JSON.parse(data);
-                        let {Status,Message}=js;
-                        if (Status==="Success") {
+                        let { Status, Message } = js;
+                        if (Status === "Success") {
                             let tbl = Message.Table;
                             let result = tbl.filter((el) => {
                                 return el.CGroup !== "Yes";
@@ -218,8 +217,8 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
         let fltTasksssss = actualData.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
         setFilteredTasks(fltTasksssss);
-        dispatch(setAllTaskFromRedux({data:fltTasksssss, taskFilter: { "mstatus": ["Not Started", "On Hold", "In Progress"] } }))
-        
+        dispatch(setAllTaskFromRedux({ data: fltTasksssss, taskFilter: { "mstatus": ["Not Started", "On Hold", "In Progress"] } }))
+
     }, [target, folder, myDocuments]);
 
     // useEffect(()=>{
@@ -247,7 +246,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
 
 
-     const [anchorElMore, setAnchorElMore] = useState({}); // State to manage anchor element for each document
+    const [anchorElMore, setAnchorElMore] = useState({}); // State to manage anchor element for each document
     const [openMore, setOpenMore] = useState({}); // State to manage menu visibility for each document
 
     const handleClickMore = (event, documentIndex) => {
@@ -281,7 +280,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         }
 
     }
-    
+
     const FilterAgs = (item) => {
         const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
 
@@ -313,14 +312,14 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     return (
         <>
             <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
-           {showDocuDetails===true && ( <DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} selectedDocument={selectedDocument} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList} />)}
-           
-           
+            {showDocuDetails === true && (<DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} selectedDocument={selectedDocument} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList} />)}
+
+
 
             <Box className='clearfix'>
                 <h3 className='font-20'><SearchIcon />  We found the following Documents matching <span className='text-blue bold'>"{target}"</span></h3>
 
-                {isLoading? <CustomLoader/> :<Grid className='mt-0' container spacing={2}>
+                {isLoading ? <CustomLoader /> : <Grid className='mt-0' container spacing={2}>
                     {filteredDocuments.length > 0 ? filteredDocuments.slice(0, 9).map((item, index) => {
                         console.log("search result file data", item)
                         return <Grid key={index} className='pt-0 d-flex w-100' item xs={12} lg={4} md={4} sm={12}>
@@ -452,7 +451,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                     </Box>
                                 </label>
                             </Box>
-                            
+
                         </Grid>
                     }) : <DataNotFound />}</Grid>}
 
@@ -462,7 +461,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
             <Box className='mb-5 mt-5'>
                 <h3 className='font-20 mt-1 mb-3'><SearchIcon /> We found the following Tasks matching <span className='text-blue bold'>"{target}"</span></h3>
                 <Grid className='mt-0' container spacing={2} >
-                    {filteredTasks.length > 0 ? filteredTasks.slice(0, 9).map((item,index) =>{
+                    {isTaskLoadingFromRedux ? <CustomLoader /> : (filteredTasks.length > 0 ? filteredTasks.slice(0, 9).map((item, index) => {
                         const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
                         let userName = FilterAgs(item);
                         return <Grid className='pt-0' item xs={12} lg={4} md={4} sm={12}>
@@ -492,43 +491,43 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                     <Typography variant='subtitle1'><pan className='text-gray'>
 
                                         {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
-                                                            {/* <a href='#'>Patrick</a>, */}
-                                                            <span>{userName && userName.length > 0 ? userName[0].UserName : ""}</span> 
-                                                            
+                                        {/* <a href='#'>Patrick</a>, */}
+                                        <span>{userName && userName.length > 0 ? userName[0].UserName : ""}</span>
 
-                                                            {arr && arr.length > 2 ? <Button
-                                                                id={`demo-positioned-button-${index}`}
-                                                                aria-controls={openMore[index] ? `demo-positioned-menu-${index}` : undefined}
-                                                                aria-haspopup="true"
-                                                                aria-expanded={openMore[index] ? 'true' : undefined}
-                                                                onClick={(event) => handleClickMore(event, index)}
-                                                            >
-                                                                + {arr && arr.length > 0 ? arr.length - 2 : ""}
-                                                            </Button> : ""}
 
-                                                            <Menu
-                                                                id={`demo-positioned-menu-${index}`}
-                                                                anchorEl={anchorElMore[index]}
-                                                                open={openMore[index]}
-                                                                onClose={() => handleCloseMore(index)}
-                                                                anchorOrigin={{
-                                                                    vertical: 'top',
-                                                                    horizontal: 'left',
-                                                                }}
-                                                                transformOrigin={{
-                                                                    vertical: 'top',
-                                                                    horizontal: 'left',
-                                                                }}
-                                                            >
-                                                                {userName && userName.length > 0 ? userName.slice(1).map((user, idx) => (
-                                                                    <MenuItem key={idx} onClick={() => handleCloseMore(index)}>{user.UserName}</MenuItem>
-                                                                )) : ""}
-                                                            </Menu>
-                                        
-                                        
-                                        </Typography>
+                                        {arr && arr.length > 2 ? <Button
+                                            id={`demo-positioned-button-${index}`}
+                                            aria-controls={openMore[index] ? `demo-positioned-menu-${index}` : undefined}
+                                            aria-haspopup="true"
+                                            aria-expanded={openMore[index] ? 'true' : undefined}
+                                            onClick={(event) => handleClickMore(event, index)}
+                                        >
+                                            + {arr && arr.length > 0 ? arr.length - 2 : ""}
+                                        </Button> : ""}
 
-                                  
+                                        <Menu
+                                            id={`demo-positioned-menu-${index}`}
+                                            anchorEl={anchorElMore[index]}
+                                            open={openMore[index]}
+                                            onClose={() => handleCloseMore(index)}
+                                            anchorOrigin={{
+                                                vertical: 'top',
+                                                horizontal: 'left',
+                                            }}
+                                            transformOrigin={{
+                                                vertical: 'top',
+                                                horizontal: 'left',
+                                            }}
+                                        >
+                                            {userName && userName.length > 0 ? userName.slice(1).map((user, idx) => (
+                                                <MenuItem key={idx} onClick={() => handleCloseMore(index)}>{user.UserName}</MenuItem>
+                                            )) : ""}
+                                        </Menu>
+
+
+                                    </Typography>
+
+
 
                                     <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
                                 </Box>
@@ -566,7 +565,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                             </Box>
                         </Grid>
 
-                    } ) : <DataNotFound />}
+                    }) : <DataNotFound />)}
                 </Grid>
 
                 {filteredTasks.length > 9 && <Box className='text-center'><Button onClick={handleMyTaskNavigation} variant="text" className='btn-blue-2 mt-4 mb-4' size='small'>View More</Button></Box>}
