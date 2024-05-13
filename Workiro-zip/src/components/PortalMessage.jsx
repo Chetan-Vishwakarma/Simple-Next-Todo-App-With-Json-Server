@@ -4,6 +4,8 @@ import CommanCL from "../services/CommanService";
 import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText } from '@mui/material';
 import { Avatar, Grid, IconButton, List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
 //import CopyLinkButton from "./CopyLinkButton";
+import Tooltip from '@mui/material/Tooltip';
+
 
 import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -36,6 +38,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 
 import { Editor } from '@tinymce/tinymce-react';
+import BootstrapTooltip from "../utils/BootstrapTooltip";
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -81,7 +84,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
     const [endDate, setEndDate] = React.useState("");
     const [messageViewHistory, setMessageViewHistory] = React.useState([]);
 
-    
+
 
     const [copyLink, setCopyLink] = React.useState("");
     const [certificateData, setCertificateData] = React.useState("");
@@ -102,7 +105,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
     };
 
 
-   
+
 
     const GetMessageHtml_Json = (m) => {
         let o = {
@@ -446,7 +449,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                 return { ...el, ["DDate"]: date };
                             });
 
-                            console.log(arrayOfObjects,"GetMessageAttachments_Json1", mapMethod);
+                            console.log(arrayOfObjects, "GetMessageAttachments_Json1", mapMethod);
                             setFilterAttachments(mapMethod);
 
                             setTotalAttachment(arrayOfObjects.length);
@@ -638,8 +641,10 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
     const [openCertificate, setOpenCertificate] = React.useState(false);
     const handleClickOpenCertificate = (data) => {
-        setOpenCertificate(true);
-        GetSignedAttachment_Json(data);
+        console.log(data,"download_data");
+        //setOpenCertificate(true);
+        //GetSignedAttachment_Json(data);
+        GetAttachment_Json(data);
     };
     const handleCloseCertificate = () => {
         setOpenCertificate(false);
@@ -802,33 +807,33 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                 <h5 className='mb-0 text-black'>{selectedTask.Subject}</h5>
             </Box> */}
                 <Box className='mb-2'>
-                   
 
-                <Editor
-        apiKey='9rtpya3b7esplotrim3s5whie028587o62gv9zqid4yzb4x6'
-        initialValue={templateDataMarkup}
-        disabled = {true}
-        init={{
-            height: "300px",
-            menubar: false,
-            readonly: true,
-            plugins: [
-                'a11ychecker','advlist','advcode','advtable','autolink','checklist','export',
-                'lists','link','image','charmap','preview','anchor','searchreplace','visualblocks',
-                'powerpaste','fullscreen','formatpainter','insertdatetime','media','table','help','wordcount','resize'
-            ],
-            toolbar: 'undo redo | casechange blocks | bold italic backcolor | ' +
-                'alignleft aligncenter alignright alignjustify | ' +
-                'bullist numlist checklist outdent indent | removeformat | a11ycheck code table help',
-            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-            resize: true, // Enable resizing,
-         
-        }}
-        //onEditorChange={handleEditorChange}
-        // onInit={(evt, editor) => {
-        //     editorRef.current = editor;
-        //   }}
-    />
+
+                    <Editor
+                        apiKey='9rtpya3b7esplotrim3s5whie028587o62gv9zqid4yzb4x6'
+                        initialValue={templateDataMarkup}
+                        disabled={true}
+                        init={{
+                            height: "300px",
+                            menubar: false,
+                            readonly: true,
+                            plugins: [
+                                'a11ychecker', 'advlist', 'advcode', 'advtable', 'autolink', 'checklist', 'export',
+                                'lists', 'link', 'image', 'charmap', 'preview', 'anchor', 'searchreplace', 'visualblocks',
+                                'powerpaste', 'fullscreen', 'formatpainter', 'insertdatetime', 'media', 'table', 'help', 'wordcount', 'resize'
+                            ],
+                            toolbar: 'undo redo | casechange blocks | bold italic backcolor | ' +
+                                'alignleft aligncenter alignright alignjustify | ' +
+                                'bullist numlist checklist outdent indent | removeformat | a11ycheck code table help',
+                            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                            resize: true, // Enable resizing,
+
+                        }}
+                    //onEditorChange={handleEditorChange}
+                    // onInit={(evt, editor) => {
+                    //     editorRef.current = editor;
+                    //   }}
+                    />
 
 
                     {/* <textarea
@@ -843,12 +848,12 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
                 <Box className='d-flex flex-wrap align-items-center justify-content-between'>
                     <Box className='d-flex'>
-{messageViewHistory?.length>0 ? (<DraftsIcon className='text-blue' /> ):(<MarkunreadIcon className='text-blue' /> )}
-                      
+                        {messageViewHistory?.length > 0 ? (<DraftsIcon className='text-blue' />) : (<MarkunreadIcon className='text-blue' />)}
+
                         {/* <DraftsIcon /> */}
                         <Box className='ps-3'>
                             <h5 className='font-14 text-black mb-1'>{messageViewHistory?.length > 0 ? "Last Viewed On" : "The message has not yet been viewed"} </h5>
-                            <p className='font-12 text-gray sembold mb-2'>{messageViewHistory?.length > 0 ? moment(messageViewHistory[0].ViewDateTime).format("DD/MM/YYYY")  : null}</p>
+                            <p className='font-12 text-gray sembold mb-2'>{messageViewHistory?.length > 0 ? moment(messageViewHistory[0].ViewDateTime).format("DD/MM/YYYY") : null}</p>
                             <Button className='btn-blue-2' size="small" startIcon={<ScheduleIcon />} onClick={handleClickOpen}>View History</Button>
                         </Box>
                     </Box>
@@ -1085,10 +1090,15 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                     <Box className='todo-list-box white-box relative w-100 font-14'>
 
                                         <Box className='download-btn-box'>
-                                            <Button onClick={() => UploadToDocuSoft(item)} size="small" className="min-width-auto me-1">
-                                                <img src={docuicon} width='18' />
-                                            </Button>
-                                            <Button size="small" className="min-width-auto" onClick={() => handleDownloadPortalAtt(item)} ><DownloadIcon /></Button>
+                                            <BootstrapTooltip title="Upload to docusoft">
+                                                <Button onClick={() => UploadToDocuSoft(item)} size="small" className="min-width-auto me-1">
+                                                    <img src={docuicon} width='18' />
+                                                </Button>
+                                            </BootstrapTooltip>
+
+                                            <BootstrapTooltip title="Download">
+                                                <Button size="small" className="min-width-auto" onClick={() => handleDownloadPortalAtt(item)} ><DownloadIcon /></Button>
+                                            </BootstrapTooltip>
                                         </Box>
 
                                         {/* <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography> */}

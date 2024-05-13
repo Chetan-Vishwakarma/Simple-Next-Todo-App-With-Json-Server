@@ -2864,6 +2864,16 @@ function CreateNewModalTask({ ...props }) {
                                                 value={textSubject}
                                             />
                                         </Box>
+                                        {!isVisibleByTypeCRM && (<>
+                                        <Box className="mt-3 mb-3">
+                                            <textarea
+                                                className="form-control textarea-text resize-none"
+                                                placeholder="Description"
+                                                value={txtdescription} // Bind the value to the state
+                                                onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
+                                            ></textarea>
+                                        </Box>
+                                    </>)}
                                     </Box>
                                     {/* end */}
 
@@ -3561,16 +3571,7 @@ close
 
                                     </Box>
 
-                                    {!isVisibleByTypeCRM && (<>
-                                        <Box className="mt-3 mb-3">
-                                            <textarea
-                                                className="form-control textarea-text resize-none"
-                                                placeholder="Description"
-                                                value={txtdescription} // Bind the value to the state
-                                                onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
-                                            ></textarea>
-                                        </Box>
-                                    </>)}
+                                  
 
 
                                 </Box>
