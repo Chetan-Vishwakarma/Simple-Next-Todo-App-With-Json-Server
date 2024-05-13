@@ -427,7 +427,7 @@ export default function SidebarNav() {
 
   useMemo(()=>{
     if(isAdvanceDocSearchRedux){
-      setTabs([...tabs, { tabLink: `/dashboard/SearchResult/Doc`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
+      setTabs([...tabs, { tabLink: `/dashboard/DocumentList`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
       tabs.map(itm => {
         itm.active = false;
       });
@@ -892,7 +892,7 @@ export default function SidebarNav() {
             {/* <Route path="/AddContacts" element={<AddContacts />} /> */}
             <Route path="/SmartViews" element={<></>} />
             <Route path="/SearchResult" element={<SearchResult myTotalTasks={myTotalTasks} myDocuments={myDocuments} />} />
-            <Route path="/SearchResult/Doc" element={<DocumentList clientId="" />} />
+            <Route path="/DocumentList" element={<DocumentList clientId="" />} />
             <Route path="/LogOut" element={<Logout />} />
           </Routes>
         </Box>

@@ -360,7 +360,7 @@ export const GetCategory_Redux = (o) => dispatch => {
     try {
 
         ClsSms.Json_GetCategory(o, function (sts, data) {
-            console.log("Json_GetCategory22",data);
+            console.log("Json_GetCategory22", data);
             if (sts && data) {
                 let js = JSON.parse(data);
                 if (js) dispatch(setCateGoryApi(js))
@@ -408,19 +408,19 @@ export const Json_AdvanceSearchDocFromRedux = (f_id, description) => dispatch =>
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        if (json.Table6.length>0) {
+                        if (json.Table6.length > 0) {
                             let fltDouble = [];
                             json.Table6.map((itm) => itm.Description).filter(item => {
                                 if (!fltDouble.includes(item)) {
                                     fltDouble.push(item);
                                 }
                             });
-                            json.Table6.map(itm=>{
-                                itm["Item Date"]=new Date(itm["Item Date"]);
-                                itm["Received Date"]=new Date(itm["Received Date"]);
+                            json.Table6.map(itm => {
+                                itm["Item Date"] = formatDate(itm["Item Date"]);
+                                itm["Received Date"] = formatDate(itm["Received Date"]);
                                 itm["CommentDate"] = Cls.DateForMate(itm["CommentDate"]);
                             });
-                            dispatch(setAdvanceSearchResultFromRedux({docs:json.Table6, descriptions: fltDouble}))
+                            dispatch(setAdvanceSearchResultFromRedux({ docs: json.Table6, descriptions: fltDouble }))
                             // setDocumentsDescription(fltDouble);
                             // setMyDocuments(json.Table6);
                         }

@@ -28,7 +28,7 @@ function App() {
             <Route path="TodoList" element={<NewTodoList />} />
             <Route path="SmartViews" element={<></>} />
             <Route path="SearchResult" element={<SearchResult /> } />
-            <Route path="SearchResult/Doc" element={<DocumentList clientId=""/> } />
+            <Route path="DocumentList" element={<DocumentList clientId=""/> } />
             <Route path="AddContacts" element={<AddContacts />} />
             <Route path="Logout" element={<Logout/>} />
             

@@ -2,16 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Box, Button, Typography, Radio, Menu, MenuItem, ListItemIcon, Badge } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import PushPinIcon from '@mui/icons-material/PushPin';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import SearchIcon from '@mui/icons-material/Search';
-import DocumentList from '../client/client-components/DocumentList';
 import DataNotFound from './DataNotFound';
 import CommanCLS from '../services/CommanService';
 import { toast } from 'react-toastify';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
-import moment from 'moment';
-import DescriptionIcon from '@mui/icons-material/Description';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ArticleIcon from '@mui/icons-material/Article';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -20,22 +16,19 @@ import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import DocDetails from './DocDetails';
 import DocumentsVewModal from '../client/utils/DocumentsVewModal';
-import Tooltip from '@mui/material/Tooltip';
 import BootstrapTooltip from '../utils/BootstrapTooltip';
 import Fileformat from '../images/files-icon/pdf.png';
-import IconButton from '@mui/material/IconButton';
 import AttachFileIcon from '@mui/icons-material/InsertLink';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import { setAllTaskFromRedux, setGetActivityDataSonam } from '../../src/redux/reducers/counterSlice';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAllTasksRedux, updateTaskFieldFromRedux } from '../redux/reducers/api_helper';
+import { updateTaskFieldFromRedux } from '../redux/reducers/api_helper';
 import CustomLoader from './CustomLoader';
 
 
 const agrno = localStorage.getItem("agrno");
 const Email = localStorage.getItem("Email");
 const password = localStorage.getItem("Password");
-const userId = localStorage.getItem("UserId");
 const folderId = localStorage.getItem("FolderId");
 const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 const smsUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -50,10 +43,8 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const target = searchParams.get("str");
-    // const [target,setTarget] = useState(localStorage.getItem("globalSearchKey"));
     const folder = searchParams.get("folder");
     const [filteredTasks, setFilteredTasks] = useState([]);
-    const [filteredDocuments_test, setFilteredDocuments] = useState([]);
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState({});
     const [expanded, setExpanded] = React.useState('panel1');
 
@@ -62,7 +53,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     const [isLoadingDoc, setIsLoadingDoc] = useState(false);
     const ViewerDocument = (e) => {
         setAnchorElDocumentList({});
-        // console.log("document_object111", e);
         setSelectedDocument(e);
 
         setOpenPDFView(true);
@@ -78,8 +68,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
         let url = `https://mydocusoft.com/viewer.html?GuidG=${e.Guid}&srtAgreement=${agrno}&strItemId=${e["Registration No."]}&filetype=${e.type}&ViewerToken=${localStorage.getItem("ViewerToken")}&IsApp=${IsApp}&PortalID=${PortalID}`;
         console.log(url, "geturldata");
-        // setsendUrldata(url);
-        //window.open(url);
         setIsLoadingDoc(true)
     };
 
@@ -109,7 +97,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                     let json = JSON.parse(data);
                     console.log("Json_RenameDocument", json);
                     if (json.Status === "Success") {
-                        // Json_getRecentDocumentList();
                         toast.success(json.Message);
                         setEditingIndex(null);
                         setTest({ ...test, [index]: newDesc });
@@ -202,18 +189,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
     useEffect(() => {
         Json_GetForwardUserList();
-        // let fltTasks = myTotalTasks.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
-        // setFilteredTasks(fltTasks);
-        let fltDocuments = myDocuments.filter(itm => {
-            if (itm.Description && target) {
-                return itm.Description.toLowerCase().includes(target.toLowerCase());
-            }
-        });
-        // fltDocuments.map(itm => {
-        //     itm["Item Date"] = formatDate(itm["Item Date"])
-        // })
-        setFilteredDocuments(fltDocuments);
-        // console.log("fkjhdkjs",fltDocuments);
 
         let fltTasksssss = actualData.filter(itm => itm.Subject.toLowerCase().includes(target.toLowerCase()));
         setFilteredTasks(fltTasksssss);
@@ -221,20 +196,16 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
     }, [target, folder, myDocuments]);
 
-    // useEffect(()=>{
-    //     dispatch(fetchAllTasksRedux("Todo"));
-    // },[]);
-
     const handleDocumentNavigation = () => {
-        navigate("/dashboard/DocumentList", { state: { globalSearchDocs: filteredDocuments, strGlobal: target } });
+        navigate("/dashboard/DocumentList?filter=true", { state: { globalSearchDocs: filteredDocuments, strGlobal: target } });
     }
 
     const handleMyTaskNavigation = () => {
         navigate("/dashboard/MyTask?filter=true", { state: { globalSearchTask: [], strGlobal: target } });
     }
+
     function startFormattingDate(dt) {
-        const timestamp = parseInt(/\d+/.exec(dt));
-        const date = new Date(timestamp);
+        const date = new Date(dt);
         const formattedDate = date.toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "2-digit",
@@ -246,8 +217,8 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
 
 
-    const [anchorElMore, setAnchorElMore] = useState({}); // State to manage anchor element for each document
-    const [openMore, setOpenMore] = useState({}); // State to manage menu visibility for each document
+    const [anchorElMore, setAnchorElMore] = useState({}); 
+    const [openMore, setOpenMore] = useState({}); 
 
     const handleClickMore = (event, documentIndex) => {
         setAnchorElMore((prevState) => ({
@@ -274,7 +245,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     const FiterAssinee = (ownerid) => {
 
         let res = userList.filter((e) => e.UserId === ownerid);
-        // console.log("userList212121",res);
         if (res.length > 0) {
             return res[0].UserName;
         }
@@ -284,8 +254,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     const FilterAgs = (item) => {
         const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
 
-        // const userId = parseInt(localStorage.getItem("UserId"));
-
         const filteredIds = arr.filter((k) => k !== item.OwnerID);
 
         let userFilter = []; // Initialize an empty array to store filtered users
@@ -294,17 +262,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
             userFilter = userList.filter((user) => filteredIds.includes(user.UserId));
             console.log(userFilter, "hello pring data");
             // Filter userList to include only those users whose UserId is present in filteredIds
-        }
-
-
-        // const user = filteredIds.find((u) => u === userId);       
-
-
-        //const userToFind = user ? user : filteredIds[0];     
-
-        // const res = userToFind ? userList.find((e) => e.ID === userToFind) : null;  
-
-
+        } 
 
         return userFilter && userFilter.length > 0 ? userFilter : "";
     }
@@ -313,8 +271,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         <>
             <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
             {showDocuDetails === true && (<DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} selectedDocument={selectedDocument} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList} />)}
-
-
 
             <Box className='clearfix'>
                 <h3 className='font-20'><SearchIcon />  We found the following Documents matching <span className='text-blue bold'>"{target}"</span></h3>
@@ -330,12 +286,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                     handleCloseDocument(event, index);
                                 }} onDoubleClick={(e) => ViewerDocument(item)}>
                                     <Box className="d-flex align-items-center">
-                                        {/* <DescriptionIcon
-                                        sx={{
-                                            fontSize: 32,
-                                        }}
-                                        className='me-2 ms-0'
-                                    /> */}
                                         <div className='img-format'>
                                             <img src={Fileformat} />
                                         </div>
@@ -529,7 +479,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
 
 
-                                    <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
+                                    <Typography variant='subtitle1 sembold'>{item["CreationDate"] ? (startFormattingDate(item["CreationDate"])) : ""}</Typography>
                                 </Box>
                                 <Box className='d-flex align-items-center justify-content-between'>
                                     <Typography variant='subtitle1'>{item.Client}</Typography>
@@ -538,7 +488,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                             <Button
                                                 id="basic-button"
                                             >
-                                                {item.Status}
+                                                {item.mstatus}
                                             </Button>
                                         </Box>
                                     </Typography>

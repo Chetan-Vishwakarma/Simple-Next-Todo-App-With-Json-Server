@@ -36,7 +36,7 @@ import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import moment from 'moment';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
 import CustomLoader from '../../components/CustomLoader';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -149,7 +149,19 @@ export default function DocumentList({ clientId }) {
     const location = useLocation();
     const dispatch = useDispatch();
 
-    const { documents, isLoading } = useSelector(state=>state.counter.explorerSearchDocRedux);
+    const [searchParam, setSearchParam] = useSearchParams();
+    const filter = searchParam.get("filter");
+
+    
+    let documents = [];
+    const advResult = useSelector(state => state.counter.advanceSearchResult.result);
+    const explorerResult = useSelector(state => state.counter.explorerSearchDocRedux.documents);
+    
+    documents = Boolean(filter) ? advResult : explorerResult;
+
+    let isLoading = true;
+    let explorerLoading = useSelector(state => state.counter.explorerSearchDocRedux.isLoading);
+    isLoading = Boolean(filter) ? false : explorerLoading; 
 
     const { globalSearchDocs, strGlobal } = location.state ? location.state : { globalSearchDocs: [], strGlobal: "" };
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -327,10 +339,10 @@ export default function DocumentList({ clientId }) {
     //             // return;
     //         } else {
     //             Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
-                    // if (data === "" || JSON.parse(data)?.Table[0]?.Message) {  // for data loading issue (api response issue)
-                    //     Json_ExplorerSearchDoc();
-                    //     return;
-                    // }
+    // if (data === "" || JSON.parse(data)?.Table[0]?.Message) {  // for data loading issue (api response issue)
+    //     Json_ExplorerSearchDoc();
+    //     return;
+    // }
     //                 if (sts && data) {
     //                     let json = JSON.parse(data);
     //                     if (json?.Table6?.length > 0) {
