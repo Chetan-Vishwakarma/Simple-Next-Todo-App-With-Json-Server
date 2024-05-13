@@ -53,6 +53,10 @@ import Fileformat from '../../images/files-icon/pdf.png';
 import GetFileType from '../../components/FileType';
 import { Json_ExplorerSearchDoc_Redux } from '../../redux/reducers/api_helper';
 import { useDispatch, useSelector } from "react-redux";
+import DownloadIcon from '@mui/icons-material/Download';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -149,7 +153,7 @@ export default function DocumentList({ clientId }) {
     const location = useLocation();
     const dispatch = useDispatch();
 
-    const { documents, isLoading } = useSelector(state=>state.counter.explorerSearchDocRedux);
+    const { documents, isLoading } = useSelector(state => state.counter.explorerSearchDocRedux);
 
     const { globalSearchDocs, strGlobal } = location.state ? location.state : { globalSearchDocs: [], strGlobal: "" };
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -327,10 +331,10 @@ export default function DocumentList({ clientId }) {
     //             // return;
     //         } else {
     //             Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
-                    // if (data === "" || JSON.parse(data)?.Table[0]?.Message) {  // for data loading issue (api response issue)
-                    //     Json_ExplorerSearchDoc();
-                    //     return;
-                    // }
+    // if (data === "" || JSON.parse(data)?.Table[0]?.Message) {  // for data loading issue (api response issue)
+    //     Json_ExplorerSearchDoc();
+    //     return;
+    // }
     //                 if (sts && data) {
     //                     let json = JSON.parse(data);
     //                     if (json?.Table6?.length > 0) {
@@ -1020,7 +1024,7 @@ export default function DocumentList({ clientId }) {
                 >
                     <Grid item xs={12} sm={12} md={toggleScreen.multipleCardView ? 12 : 12} lg={toggleScreen.multipleCardView ? 12 : 10}
                         xl={toggleScreen.multipleCardView ? 12 : 8}
-                        className='white-box'>
+                        className='white-box relative'>
                         <Box className={toggleScreen.multipleCardView ? 'd-flex m-auto justify-content-start w-100 align-items-end' : 'd-flex m-auto w-100 align-items-en'}>
                             {isAdvFilter === false && <Layout className=''>
                                 <AutocompleteWrapper className='mb-2'>
@@ -1184,6 +1188,37 @@ export default function DocumentList({ clientId }) {
                                     }))}
                                 </Box>
                             }
+
+
+                            <Box className='d-flex justify-content-between flex-wrap align-items-center file-selected-item'>
+                                <Box className='d-flex selected-file align-items-center'>
+                                    <Box className='select-item'>
+                                        <Typography variant="h4" className='font-20'>12</Typography>
+                                    </Box>
+                                    <Typography variant="h4" className='font-18'>Items selected</Typography>
+                                </Box>
+
+                                <Box className='d-flex ms-auto pe-4'>
+                                    <Button className=''>
+                                        Download
+                                        <DownloadIcon />
+                                    </Button>
+                                    <Button className=''>
+                                        Delete
+                                        <DeleteOutlineIcon />
+                                    </Button>
+                                    <Button className=''>
+                                        Move to
+                                        <ArrowForwardIcon />
+                                    </Button>
+                                </Box>
+
+                                <Button className='min-width-auto'>
+                                    <CloseIcon className='text-danger' />
+                                </Button>
+
+                            </Box>
+
                         </Box>
                     </Grid>
                 </Grid>}

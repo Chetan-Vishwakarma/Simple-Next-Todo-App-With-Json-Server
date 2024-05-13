@@ -2354,6 +2354,35 @@ input[type=number] {
   
 }
 
+.file-selected-item {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  min-width: 100%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  border: 1px solid #d3d3d3;
+  box-shadow: 0 0 10px #f3f1f1;
+  background: #fff;
+  padding-right: 15px;
+}
+.file-selected-item .selected-file .select-item {
+  background: #4780FF;
+  color: #fff;
+  margin-right: 10px;
+  min-width: 50px;
+  /* width: 100%; */
+  height: 50px;
+  /* border-radius: 90px; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5 6px;
+}
+
+
 @media only screen and (max-width: 1366px) {
   .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root {
     font-size: 12px;
