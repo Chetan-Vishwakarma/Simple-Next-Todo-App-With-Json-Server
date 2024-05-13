@@ -62,14 +62,12 @@ const counterSlices = createSlice({
     refile: {
       opentReIndex: false,
     },
-    selectedDocumentRedux: {},
     explorerSearchDocRedux: {
       allDocuments: [],
       documents: [],
       isLoading: true
     },
     selectedDocumentRedux: {},
-    explorerSearchDocRedux: [],
     AllCategory: [],
     advanceSearchResult: {
       result: [],

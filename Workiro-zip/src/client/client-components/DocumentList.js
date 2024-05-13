@@ -148,6 +148,7 @@ const MenuProps = {
 export default function DocumentList({ clientId }) {
     const location = useLocation();
     const dispatch = useDispatch();
+
     const { documents, isLoading } = useSelector(state=>state.counter.explorerSearchDocRedux);
 
     const { globalSearchDocs, strGlobal } = location.state ? location.state : { globalSearchDocs: [], strGlobal: "" };
