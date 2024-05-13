@@ -24,6 +24,7 @@ import { setAllTaskFromRedux, setGetActivityDataSonam } from '../../src/redux/re
 import { useSelector, useDispatch } from 'react-redux';
 import { updateTaskFieldFromRedux } from '../redux/reducers/api_helper';
 import CustomLoader from './CustomLoader';
+import TaskDetailModal from './TaskDetailModal';
 
 
 const agrno = localStorage.getItem("agrno");
@@ -31,15 +32,16 @@ const Email = localStorage.getItem("Email");
 const password = localStorage.getItem("Password");
 const folderId = localStorage.getItem("FolderId");
 const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 const smsUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
+let ClsSms = new CommanCLS(smsUrl, agrno, Email, password);
+const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
+let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
 
 function SearchResult({ myTotalTasks, myDocuments }) {
     const dispatch = useDispatch();
     const { actualData, isTaskLoadingFromRedux } = useSelector(state => state.counter);
     const { result: filteredDocuments, isLoading } = useSelector(state => state.counter.advanceSearchResult);
-
-    let Cls = new CommanCLS(baseUrl, agrno, Email, password);
-    let ClsSms = new CommanCLS(smsUrl, agrno, Email, password);
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const target = searchParams.get("str");
@@ -51,6 +53,11 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     const [selectedDocument, setSelectedDocument] = React.useState(null);
     const [openPDFView, setOpenPDFView] = React.useState(false);
     const [isLoadingDoc, setIsLoadingDoc] = useState(false);
+    const [openModal, setOpen] = React.useState(false);
+    const [selectedTask, setSelectedTask] = useState({});
+    const [isApi, setIsApi] = useState(false);
+    const [attachmentFileTodo, setAttachmentFileTodo] = useState([]);
+
     const ViewerDocument = (e) => {
         setAnchorElDocumentList({});
         setSelectedDocument(e);
@@ -150,10 +157,71 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         return `${paddedDay}/${paddedMonth}/${year}`;
     }
 
+    function addToWorkTable(Itid, e) {
+        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has completed  a task-${e.Subject} . Task ID : ${e.ID}` };
+        ClsSms.Json_AddToWork(obj, function (status, data) {
+            if (status) {
+                if (data) {
+                }
+            }
+        });
+    }
+
+    const GetMessageAttachments_Json = (mgsId, e) => {
+        let o = {
+            accid: agrno,
+            email: Email,
+            password: password,
+            messageId: mgsId,
+        };
+        ClsPortal.GetMessageAttachments_Json(o, function (sts, data) {
+            if (sts && data) {
+                let arrayOfObjects = JSON.parse(data);
+                if (arrayOfObjects && arrayOfObjects.length > 0) {
+                    setAttachmentFileTodo(arrayOfObjects);
+                    if (e.Source === "Portal") {
+                        arrayOfObjects.forEach((item) => {
+                            if (item.ItemID) {
+                                addToWorkTable(item.ItemID, e);
+                            }
+                        });
+                    }
+
+                }
+            }
+        });
+    }
+
     const MarkComplete = (e) => {
         Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
             if (res) {
                 dispatch(updateTaskFieldFromRedux("Status", "Completed", e));
+                try {
+                    let obj = {};
+                    obj.TaskId = e.ID;
+                    Cls.Json_Get_CRM_SavedTask_ByTaskId(obj, function (status, data) {
+                        if (status && data) {
+                            let json = JSON.parse(data);
+                            console.log("Json_Get_CRM_SavedTask_ByTaskId", json);
+
+                            let table6 = json.T6;
+
+                            if (table6 && table6.length > 0) {
+                                table6.forEach((item) => {
+                                    addToWorkTable(item.ItemId, e);
+                                });
+                            } else {
+
+                            }
+
+                        }
+                    });
+                } catch (e) { }
+                try {
+                    if (e.Source === "Portal") {
+                        GetMessageAttachments_Json(e.PubMessageId, e);
+                    }
+                } catch (e) { }
             }
         })
     }
@@ -267,10 +335,17 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         return userFilter && userFilter.length > 0 ? userFilter : "";
     }
 
+    const handleClickOpen = (task = selectedTask) => {
+        setSelectedTask(task);
+        setOpen(true);
+    };
+    
     return (
         <>
             <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
             {showDocuDetails === true && (<DocDetails expanded={expanded} setExpanded={setExpanded} ClsSms={ClsSms} docForDetails={docForDetails} selectedDocument={selectedDocument} openDocumentDetailsList={openDocumentDetailsList} setOpenDocumentDetailsList={setOpenDocumentDetailsList} />)}
+
+            <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal} attachmentFileTodo={attachmentFileTodo}></TaskDetailModal>
 
             <Box className='clearfix'>
                 <h3 className='font-20'><SearchIcon />  We found the following Documents matching <span className='text-blue bold'>"{target}"</span></h3>
@@ -415,7 +490,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                         const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
                         let userName = FilterAgs(item);
                         return <Grid className='pt-0' item xs={12} lg={4} md={4} sm={12}>
-                            <Box className='todo-list-box white-box relative w-100'>
+                            <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
                                 <Box className='check-todo'>
                                     <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
