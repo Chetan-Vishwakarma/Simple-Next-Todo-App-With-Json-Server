@@ -125,6 +125,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
             password: password,
             SectionId: selectedDocument ? selectedDocument.PostItemTypeID : ""
           };
+          console.log(getAudit,selectedDocument,"getAudit,selectedDocument")
           try {
             cls.Json_GetCategory(requestBody, (sts, data) => {
               if (sts) {

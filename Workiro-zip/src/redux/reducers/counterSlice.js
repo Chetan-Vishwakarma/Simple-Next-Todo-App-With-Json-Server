@@ -1,23 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-function applyTaskFilters(data,criteria){
-  if(data && data.length>0){
-  return data.filter(function (obj) {
-    return Object.keys(criteria).every(function (key) {
+function applyTaskFilters(data, criteria) {
+  if (data && data.length > 0) {
+    return data.filter(function (obj) {
+      return Object.keys(criteria).every(function (key) {
         if (criteria[key][0].length > 0 || typeof criteria[key][0] === "object") {
-            if (obj[key] && obj[key] !== undefined && obj[key] !== "") {
-                if (key === "CreationDate") {
-                    let docDate = obj[key];
-                    let sDate = criteria[key][0];
-                    let eDate = criteria[key][1];
-                    return docDate >= sDate && docDate <= eDate;
-                } else {
-                    return obj[key].toString().toLowerCase().includes(criteria[key][0].toString().toLowerCase());
-                }
+          if (obj[key] && obj[key] !== undefined && obj[key] !== "") {
+            if (key === "CreationDate") {
+              let docDate = obj[key];
+              let sDate = criteria[key][0];
+              let eDate = criteria[key][1];
+              return docDate >= sDate && docDate <= eDate;
+            } else {
+              return obj[key].toString().toLowerCase().includes(criteria[key][0].toString().toLowerCase());
             }
+          }
         }
+      });
     });
-});
   }
 }
 
@@ -49,7 +49,7 @@ const counterSlices = createSlice({
     allTask: [],
     actualData: [],
     isTaskLoadingFromRedux: true,
-    recentDocument:[],
+    recentDocument: [],
     connectionsState: {
       clients: [],
       contacts: [],
@@ -57,14 +57,25 @@ const counterSlices = createSlice({
       allFolders: [],
       searchByItemId: [],
       allSections: [],
-      allClientsList:[]
+      allClientsList: []
     },
-    refile:{
-      opentReIndex:false,
+    refile: {
+      opentReIndex: false,
     },
-    selectedDocumentRedux:{},
-    explorerSearchDocRedux:[],
-    AllCategory:[]
+    selectedDocumentRedux: {},
+    explorerSearchDocRedux: {
+      allDocuments: [],
+      documents: [],
+      isLoading: true
+    },
+    selectedDocumentRedux: {},
+    explorerSearchDocRedux: [],
+    AllCategory: [],
+    advanceSearchResult: {
+      result: [],
+      isLoading: true,
+      docDescriptions: []
+    }
   },
   reducers: {
     //sonam state start
@@ -105,8 +116,8 @@ const counterSlices = createSlice({
     setAllTaskFromRedux: (state, action) => {
       let data = action.payload.data;
       let criteria = action.payload.taskFilter;
-      let fltData = applyTaskFilters(data,criteria);
-      state.allTask = (fltData && fltData.length>0) ? fltData : data;
+      let fltData = applyTaskFilters(data, criteria);
+      state.allTask = (fltData && fltData.length > 0) ? fltData : data;
       state.isTaskLoadingFromRedux = false;
     },
     setAllTaskFromReduxOrderWise: (state, action) => {
@@ -132,8 +143,14 @@ const counterSlices = createSlice({
     setSectionListFromRedux: (state, action) => {
       state.connectionsState.allSections = action.payload;
     },
-    setClientListByFolderIdFromRedux:(state, action)=>{
-state.connectionsState.allClientsList=action.payload;
+    setClientListByFolderIdFromRedux: (state, action) => {
+      state.connectionsState.allClientsList = action.payload;
+    },
+    setAdvanceSearchResultFromRedux: (state, action) => {
+      let { docs, descriptions } = action.payload
+      state.advanceSearchResult.result = docs;
+      state.advanceSearchResult.docDescriptions = descriptions;
+      state.advanceSearchResult.isLoading = false;
     },
     // chetan state end
     updateReduxDataSonam: (state, action) => {
@@ -167,17 +184,19 @@ state.connectionsState.allClientsList=action.payload;
       state.mainCountrySonam = null;
       state.defaultDateSonam = null;
     },
-    setOpenReIndex:(state,action)=>{
-     state.refile.opentReIndex = action.payload;
+    setOpenReIndex: (state, action) => {
+      state.refile.opentReIndex = action.payload;
     },
-    setSelectedDocumentRedux:(state,action)=>{
-     state.selectedDocumentRedux=action.payload;
+    setSelectedDocumentRedux: (state, action) => {
+      state.selectedDocumentRedux = action.payload;
     },
-    setExplorerSearchDocRedux:(state,action)=>{
-          state.explorerSearchDocRedux = action.payload;
+    setExplorerSearchDocRedux: (state, action) => {
+      state.explorerSearchDocRedux.allDocuments = action.payload;
+      state.explorerSearchDocRedux.documents = action.payload;
+      state.explorerSearchDocRedux.isLoading = false;
     },
-    setCateGoryApi:(state,action)=>{
-      state.AllCategory=action.payload;
+    setCateGoryApi: (state, action) => {
+      state.AllCategory = action.payload;
     }
   }
 });
@@ -205,7 +224,6 @@ export const {
   setGetActivityDataSonam,
   setClientFromRedux,
   setContactsFromRedux,
-
   setAllFoldersFromRedux,
   setAllTaskFromRedux,
   setAllTaskFromReduxOrderWise,
@@ -214,8 +232,8 @@ export const {
   setClientListByFolderIdFromRedux,
   setOpenReIndex,
   setSelectedDocumentRedux,
-
   setExplorerSearchDocRedux,
+  setAdvanceSearchResultFromRedux,
   setCateGoryApi
 } = counterSlices.actions;
 

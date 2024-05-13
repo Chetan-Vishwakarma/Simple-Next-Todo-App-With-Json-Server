@@ -83,6 +83,8 @@ import Fileformat from '../images/files-icon/pdf.png';
 import moment from 'moment';
 import GetFileType from "./FileType";
 import { BorderBottom } from "@mui/icons-material";
+import { fetchAllTasksRedux } from "../redux/reducers/api_helper";
+import { useDispatch } from "react-redux";
 
 
 const Demo = styled('div')(({ theme }) => ({
@@ -101,7 +103,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
-
+    const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+    let Clsprect = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
 
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
@@ -127,7 +130,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     const [selectedRows, setSelectedRows] = useState([]);
     const [secondary, setSecondary] = React.useState(false);
     const [getCRMSaved, setGetCRMSaved] = React.useState([]);
-
+    const dispatch = useDispatch();
     // const [txtSection, settxtSection] = React.useState(selectedTask.Section);
     const [txtSection, settxtSection] = React.useState((selectedTask && selectedTask.Section) ? selectedTask.Section : "");
     // const [txtClient, setTxtClient] = React.useState(selectedTask.Client);
@@ -140,7 +143,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
 
     const [anchorClsEl, setAnchorClsEl] = useState(null);
 
-
+    const [anchorEl, setAnchorEl] = React.useState(null);
     const [crmTaskAcivity, setCRMTaskAcivity] = React.useState(null);
     //const [selectedTaskp, setselectedTask] = React.useState(selectedTask);
     /////////////////////////////////////////End Task Activity
@@ -725,7 +728,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
 
         // setCurrentDate(moment(selectedTask.Start, "DD/MM/YYYY").toDate());
 
-        console.log("moment122222221", moment(selectedTask.Start, "DD/MM/YYYY").toDate());
+        console.log(docForDetails,"moment122222221", moment(selectedTask.Start, "DD/MM/YYYY").toDate());
 
         //moment(dateString, "DD/MM/YYYY").toDate();
         setNextDate(DateFormet(selectedTask.EndDateTime));
@@ -762,7 +765,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
 
 
 
-
+   
 
 
 
@@ -805,7 +808,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     };
 
 
-
+    
 
     const [anchorEl1, setAnchorEl1] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(null);
@@ -1600,7 +1603,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     const [boolVal, setBoolVal] = useState(false);
 
     const handleClickOpenDocumentDetailsList = (sDoc) => {
-        console.log("selected document data obj", sDoc)
+        console.log("selected document data obj", sDoc);
+        sDoc["PostItemTypeID"] = selectedTask.SectionId;
         setDocForDetails(sDoc);
         setExpanded("panel1");
         setOpenDocumentDetailsList(true);
@@ -1806,6 +1810,49 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     const handleCloseDocumentListDMS = () => {
         setOpenDocumentListDMS(false);
     };
+    const CRM_TaskDeleteByTaskID = (userID,crmtaskID) => {
+        let obj = {
+          agrno: agrno,
+          Email: Email,
+          password: password,
+          UserID: userID ? userID : "",
+          TaskId: crmtaskID ? crmtaskID : ""
+        };
+        try {
+          Cls.CRM_TaskDeleteByTaskID(obj, (sts, data) => {
+            if (sts) {
+              if (data) {
+                console.log("CRM_TaskDeleteByTaskID", data);
+                if(data){
+                  toast.error(data);
+                //   setTimeout(() => {
+                    // navigate("/dashboard/Connections");
+                    setOpen(false);
+                    dispatch(fetchAllTasksRedux("Todo"));
+                //   },1500);
+                } else {
+                  toast.error("Deleting this contact is not allowed because it has attached documents. Please remove the attached documents before proceeding with the deletion.");
+                }
+                
+               
+               setAnchorEl(null);
+              }
+            }
+          });
+        } catch (err) {
+          console.log("Error while calling Json_GetCRMContactUDFValues", err);
+        }
+      };
+    const handleDeleteTask = (selectedTask) => {
+        console.log("deletetask",selectedTask);
+        Clsprect.ConfirmMessage("Are you sure you want to delete this task ? ", function (res) {
+          if (res) {
+           CRM_TaskDeleteByTaskID(selectedTask.UserID,selectedTask.ID);
+          }
+      })
+       
+      };
+    
     const Json_ExplorerSearchDoc = () => {
         console.log(selectedTask, 'Json_ExplorerSearchDoc', txtClientId);
         try {
@@ -1862,7 +1909,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
             console.log("Error while calling Json_getAssociatedTaskListByDocumentId", err);
         }
     }
-
+    console.log(docForDetails,"docfordetailssonam");
     const cellRender = (data)=>{
         console.log(data, "datadms1111111111111")
         let rowdata = data.data;
@@ -2296,6 +2343,10 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                 <AttachEmailIcon className="font-22" />
                                             </ListItemIcon>Change Folder</MenuItem>
                                     </Button>
+                                    <MenuItem className='ps-2 w-100' onClick={()=>{handleDeleteTask(selectedTask)}}>
+                                            <ListItemIcon>
+                                            <DeleteIcon fontSize="medium" />
+                                            </ListItemIcon>Delete Task</MenuItem>
                                     <Menu
                                         id="basic-menu"
                                         anchorEl={anchorElFolder}

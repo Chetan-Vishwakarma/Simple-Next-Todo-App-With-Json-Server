@@ -28,7 +28,8 @@ import AttachFileIcon from '@mui/icons-material/InsertLink';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import { setAllTaskFromRedux, setGetActivityDataSonam } from '../../src/redux/reducers/counterSlice';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateTaskFieldFromRedux } from '../redux/reducers/api_helper';
+import { fetchAllTasksRedux, updateTaskFieldFromRedux } from '../redux/reducers/api_helper';
+import CustomLoader from './CustomLoader';
 
 
 const agrno = localStorage.getItem("agrno");
@@ -42,6 +43,7 @@ const smsUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 function SearchResult({ myTotalTasks, myDocuments }) {
     const dispatch = useDispatch();
     const actualData = useSelector(state=> state.counter.actualData);
+    const {result:filteredDocuments, isLoading} = useSelector(state=>state.counter.advanceSearchResult);
 
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
     let ClsSms = new CommanCLS(smsUrl, agrno, Email, password);
@@ -51,7 +53,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     // const [target,setTarget] = useState(localStorage.getItem("globalSearchKey"));
     const folder = searchParams.get("folder");
     const [filteredTasks, setFilteredTasks] = useState([]);
-    const [filteredDocuments, setFilteredDocuments] = useState([]);
+    const [filteredDocuments_test, setFilteredDocuments] = useState([]);
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState({});
     const [expanded, setExpanded] = React.useState('panel1');
 
@@ -221,7 +223,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     }, [target, folder, myDocuments]);
 
     // useEffect(()=>{
-    //     setTarget(localStorage.getItem("globalSearchKey"));
+    //     dispatch(fetchAllTasksRedux("Todo"));
     // },[]);
 
     const handleDocumentNavigation = () => {
@@ -318,7 +320,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
             <Box className='clearfix'>
                 <h3 className='font-20'><SearchIcon />  We found the following Documents matching <span className='text-blue bold'>"{target}"</span></h3>
 
-                <Grid className='mt-0' container spacing={2}>
+                {isLoading? <CustomLoader/> :<Grid className='mt-0' container spacing={2}>
                     {filteredDocuments.length > 0 ? filteredDocuments.slice(0, 9).map((item, index) => {
                         console.log("search result file data", item)
                         return <Grid key={index} className='pt-0 d-flex w-100' item xs={12} lg={4} md={4} sm={12}>
@@ -452,7 +454,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                             </Box>
                             
                         </Grid>
-                    }) : <DataNotFound />}</Grid>
+                    }) : <DataNotFound />}</Grid>}
 
                 {filteredDocuments.length > 9 && <Box className='text-center mt-5'><Button onClick={handleDocumentNavigation} variant="text" className='btn-blue-2 mb-4' size='small'>View More</Button></Box>}
             </Box>

@@ -51,6 +51,8 @@ import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import BootstrapTooltip from '../../utils/BootstrapTooltip';
 import Fileformat from '../../images/files-icon/pdf.png';
 import GetFileType from '../../components/FileType';
+import { Json_ExplorerSearchDoc_Redux } from '../../redux/reducers/api_helper';
+import { useDispatch, useSelector } from "react-redux";
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -145,6 +147,9 @@ const MenuProps = {
 
 export default function DocumentList({ clientId }) {
     const location = useLocation();
+    const dispatch = useDispatch();
+    const { documents, isLoading } = useSelector(state=>state.counter.explorerSearchDocRedux);
+
     const { globalSearchDocs, strGlobal } = location.state ? location.state : { globalSearchDocs: [], strGlobal: "" };
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -152,7 +157,7 @@ export default function DocumentList({ clientId }) {
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
-    const [documents, setDocuments] = useState([]);
+    // const [documents, setDocuments] = useState([]);
     const [groupedOptions, setgroupedOptions] = useState([]);
     const [toggleScreen, setToggleScreen] = useState({ singleCardView: true, multipleCardView: false, tableGridView: false });
     const [filteredDocResult, setFilteredDocResult] = useState([]);
@@ -175,7 +180,7 @@ export default function DocumentList({ clientId }) {
     const [groupByFilterResult, setGroupByFilterResult] = useState({});
     const [selectedGroup, setSelectedGroup] = React.useState("");
     const [suggestionList, setSuggestionList] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading_test, setIsLoading] = useState(true);
 
     const [clientList, setClientList] = useState([]);
     const [selectedClient, setSelectedClient] = useState("");
@@ -289,85 +294,86 @@ export default function DocumentList({ clientId }) {
         }
     }
 
-    const Json_ExplorerSearchDoc = () => {
-        try {
-            let obj = {};
-            obj.ProjectId = folderId;
-            obj.ClientId = clientId;
-            obj.sectionId = "-1";
-            if (globalSearchDocs.length > 0) {
-                let fltDouble = [];
-                globalSearchDocs.map(itm => itm.Client).filter(item => {
-                    if (!fltDouble.includes(item)) {
-                        fltDouble.push(item);
-                    }
-                });
-                setClientList(fltDouble);
+    // const Json_ExplorerSearchDoc = () => {
+    //     try {
+    //         let obj = {};
+    //         obj.ProjectId = folderId;
+    //         obj.ClientId = clientId;
+    //         obj.sectionId = "-1";
+    //         if (globalSearchDocs.length > 0) {
+    //             let fltDouble = [];
+    //             globalSearchDocs.map(itm => itm.Client).filter(item => {
+    //                 if (!fltDouble.includes(item)) {
+    //                     fltDouble.push(item);
+    //                 }
+    //             });
+    //             setClientList(fltDouble);
 
-                setTimeout(() => {
-                    let docKeys = Object.keys(globalSearchDocs[0]);
-                    // console.log("documentKeys",docKeys);
-                    globalSearchDocs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
-                    globalSearchDocs.map((itm) => itm["Received Date"] = formatDate(itm["Received Date"]));
-                    setDocumentKeys(docKeys);
-                    setDocuments(globalSearchDocs);
-                    // handleDocumentsFilter(globalSearchDocs);
-                    setAdvFilteredResult(globalSearchDocs);
-                    let desc = globalSearchDocs.filter((item) => item.Description !== "");
-                    setgroupedOptions(desc);
-                    setIsLoading(false);
-                }, 1000);
+    //             setTimeout(() => {
+    //                 let docKeys = Object.keys(globalSearchDocs[0]);
+    //                 // console.log("documentKeys",docKeys);
+    //                 globalSearchDocs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
+    //                 globalSearchDocs.map((itm) => itm["Received Date"] = formatDate(itm["Received Date"]));
+    //                 setDocumentKeys(docKeys);
+    //                 setDocuments(globalSearchDocs);
+    //                 // handleDocumentsFilter(globalSearchDocs);
+    //                 setAdvFilteredResult(globalSearchDocs);
+    //                 let desc = globalSearchDocs.filter((item) => item.Description !== "");
+    //                 setgroupedOptions(desc);
+    //                 setIsLoading(false);
+    //             }, 1000);
 
-                // return;
-            } else {
-                Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
-                    if (data === "" || JSON.parse(data)?.Table[0]?.Message) {  // for data loading issue (api response issue)
-                        Json_ExplorerSearchDoc();
-                        return;
-                    }
-                    if (sts && data) {
-                        let json = JSON.parse(data);
-                        if (json?.Table6?.length > 0) {
-                            let docs = json.Table6;
-                            if (docs?.length > 0) {
-                                if (globalSearchDocs.length === 0) {
-                                    let docKeys = Object.keys(docs[0]);
-                                    setDocumentKeys(docKeys);
-                                    docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
-                                    docs.map((itm) => itm["Received Date"] = formatDate(itm["Received Date"]));
-                                    setDocuments(docs);
-                                    if (docs[0].Message) {   // for data loading issue (api response issue)
-                                        Json_ExplorerSearchDoc();
-                                        return;
-                                    }
-                                    // handleDocumentsFilter(docs);
-                                    setAdvFilteredResult(docs);
-                                    setIsLoading(false);
+    //             // return;
+    //         } else {
+    //             Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
+                    // if (data === "" || JSON.parse(data)?.Table[0]?.Message) {  // for data loading issue (api response issue)
+                    //     Json_ExplorerSearchDoc();
+                    //     return;
+                    // }
+    //                 if (sts && data) {
+    //                     let json = JSON.parse(data);
+    //                     if (json?.Table6?.length > 0) {
+    //                         let docs = json.Table6;
+    //                         if (docs?.length > 0) {
+    //                             if (globalSearchDocs.length === 0) {
+    //                                 let docKeys = Object.keys(docs[0]);
+    //                                 setDocumentKeys(docKeys);
+    //                                 docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
+    //                                 docs.map((itm) => itm["Received Date"] = formatDate(itm["Received Date"]));
+    //                                 setDocuments(docs);
+    //                                 if (docs[0].Message) {   // for data loading issue (api response issue)
+    //                                     Json_ExplorerSearchDoc();
+    //                                     return;
+    //                                 }
+    //                                 // handleDocumentsFilter(docs);
+    //                                 setAdvFilteredResult(docs);
+    //                                 setIsLoading(false);
 
-                                    let desc = docs.filter((item) => item.Description !== "");
-                                    setgroupedOptions(desc);
-                                }
-                                Json_GetFolderData();
-                            }
-                        } else {
-                            setIsLoading(false);
-                            setDataNotFoundBoolean(true);
-                        }
-                    }
-                })
-            }
-            Json_GetFolderData();
-        } catch (error) {
-            console.log("ExplorerSearchDoc", error)
-        }
-    }
+    //                                 let desc = docs.filter((item) => item.Description !== "");
+    //                                 setgroupedOptions(desc);
+    //                             }
+    //                             Json_GetFolderData();
+    //                         }
+    //                     } else {
+    //                         setIsLoading(false);
+    //                         setDataNotFoundBoolean(true);
+    //                     }
+    //                 }
+    //             })
+    //         }
+    //         Json_GetFolderData();
+    //     } catch (error) {
+    //         console.log("ExplorerSearchDoc", error)
+    //     }
+    // }
 
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
-        Json_ExplorerSearchDoc();
+        // Json_ExplorerSearchDoc();
+        dispatch(Json_ExplorerSearchDoc_Redux({ ProjectId: folderId, ClientId: clientId, sectionId: "-1" }));
     }, []);
     const handleSearch = (text) => {
         if (documents.length > 0) {
@@ -764,7 +770,7 @@ export default function DocumentList({ clientId }) {
 
                                                 Sections
                                             </MenuItem>
-                                            <MenuItem value="Section" className='text-danger sembold'><ClearIcon className='me-1'/>  Clear Filter</MenuItem>
+                                            <MenuItem value="Section" className='text-danger sembold'><ClearIcon className='me-1' />  Clear Filter</MenuItem>
                                             {sections.length > 0 && sections.map((itm) => {
                                                 return <MenuItem value={itm.Sec}>{itm.Sec}</MenuItem>
                                             })}
@@ -941,7 +947,7 @@ export default function DocumentList({ clientId }) {
                                             <MenuItem value="" style={{ display: "none" }}>
                                                 <SwapVertIcon className='pe-1' /> Sort By
                                             </MenuItem>
-                                            
+
                                             <MenuItem className='ps-1 text-danger sembold' value="None" onClick={() => setAdvFilteredResult([])}><ClearIcon className='ps-1' />  Clear Sortby</MenuItem>
                                             <MenuItem value={"Date"} className='ps-1'>
                                                 <CalendarMonthIcon className='pe-1' />
@@ -1093,7 +1099,7 @@ export default function DocumentList({ clientId }) {
                                 <Stack direction="row" spacing={1}>
                                     {Object.keys(filterCriteria).length > 0 && Object.keys(filterCriteria).map((key) => {
                                         if (!["Item Date", "Folder", "Section", "Client"].includes(key)) {
-                                            return <Chip label={`${key==="Description"?"Document Name":key==="SenderId"?"Filled By":key==="SubSection"?"Sub Section":key==="Notes"?"Has Notes":key==="Attach"?"Has Attachments":key==="Type"?"Document Type":key==="Comments"?"Comment":key==="CommentBy"&&"Comment By"}: ${filterCriteria[key][0]}`} variant="outlined" onDelete={() => {
+                                            return <Chip label={`${key === "Description" ? "Document Name" : key === "SenderId" ? "Filled By" : key === "SubSection" ? "Sub Section" : key === "Notes" ? "Has Notes" : key === "Attach" ? "Has Attachments" : key === "Type" ? "Document Type" : key === "Comments" ? "Comment" : key === "CommentBy" && "Comment By"}: ${filterCriteria[key][0]}`} variant="outlined" onDelete={() => {
                                                 handleFilterDeletion(key);
                                             }} />
                                         }
@@ -1103,7 +1109,7 @@ export default function DocumentList({ clientId }) {
                             </Box>
                         </Box>
 
-                        <Box className={globalSearchDocs.length>0?'client-details-scroll client-details-scroll-search-2':'client-details-scroll'} name='client-details-scroll-search'>
+                        <Box className={globalSearchDocs.length > 0 ? 'client-details-scroll client-details-scroll-search-2' : 'client-details-scroll'} name='client-details-scroll-search'>
                             {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
                             {toggleScreen.singleCardView && <DocumentDetails groupByFilterResult={groupByFilterResult} isGroupBy={isGroupBy} documents={documents} advFilteredResult={advFilteredResult} dataNotFoundBoolean={dataNotFoundBoolean} selectedGroup={selectedGroup}></DocumentDetails>}
                             {toggleScreen.multipleCardView &&

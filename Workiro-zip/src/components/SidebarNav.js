@@ -59,6 +59,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import AdvanceSearch from './AdvanceSearch';
 import { useDispatch, useSelector } from "react-redux"
+import { Json_AdvanceSearchDocFromRedux } from '../redux/reducers/api_helper';
 
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -144,7 +145,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export default function SidebarNav() {
 
   const location = useLocation();
+  const dispatch = useDispatch();
+
+  const {docDescriptions:documentsDescription} = useSelector(state=>state.counter.advanceSearchResult);
   const isAdvanceDocSearchRedux = useSelector((state)=>state.counter.isAdvanceDocSearchRedux);
+
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -175,7 +180,7 @@ export default function SidebarNav() {
 
   const [value, setValue] = React.useState(options[0]);
   const [inputValue, setInputValue] = React.useState('');
-  const [documentsDescription, setDocumentsDescription] = useState([]);
+  const [documentsDescription_test, setDocumentsDescription] = useState([]);
   const [myDocuments, setMyDocuments] = useState([]);
   const [isSearch, setIsSearch] = useState(false);
   const [forDocuments, setForDocuments] = useState("");
@@ -250,8 +255,8 @@ export default function SidebarNav() {
                     fltDouble.push(item);
                   }
                 });
-                setDocumentsDescription(fltDouble);
-                setMyDocuments(json.Table6);
+                // setDocumentsDescription(fltDouble);
+                // setMyDocuments(json.Table6);
               }
             }
           }
@@ -389,8 +394,12 @@ export default function SidebarNav() {
   }
 
   useEffect(() => {
+    // const data = setTimeout(() => {
+    //   Json_AdvanceSearchDoc(selectedFolder);
+    // }, 1000);
+    // return () => clearTimeout(data);
     const data = setTimeout(() => {
-      Json_AdvanceSearchDoc(selectedFolder);
+      dispatch(Json_AdvanceSearchDocFromRedux("",forDocuments));
     }, 1000);
     return () => clearTimeout(data);
   }, [forDocuments]);

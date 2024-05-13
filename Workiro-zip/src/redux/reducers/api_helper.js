@@ -14,7 +14,8 @@ import {
     setClientListByFolderIdFromRedux,
     setAllTaskFromRedux,
     setExplorerSearchDocRedux,
-    setCateGoryApi
+    setCateGoryApi,
+    setAdvanceSearchResultFromRedux
 } from "./counterSlice";
 
 const agrno = localStorage.getItem("agrno");
@@ -331,9 +332,13 @@ export const updateTaskFieldFromRedux = (FieldName, FieldValue, e) => dispatch =
 export const Json_ExplorerSearchDoc_Redux = (obj) => dispatch => {
     try {
         ClsSms.Json_ExplorerSearchDoc(obj, function (sts, data) {
+            if (data === "" || JSON.parse(data)?.Table[0]?.Message) {  // for data loading issue (api response issue)
+                Json_ExplorerSearchDoc_Redux();
+                return;
+            }
             if (sts && data) {
                 let json = JSON.parse(data);
-                console.log("ExplorerSearchDoc", json);
+                // console.log("ExplorerSearchDoc", json);
                 let tbl6 = json.Table6;
                 if (tbl6.length > 0) {
                     tbl6.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
@@ -377,6 +382,55 @@ function formatDate(inputDate) {
     const paddedDay = day < 10 ? `0${day}` : day;
     const paddedMonth = month < 10 ? `0${month}` : month;
     return `${paddedDay}/${paddedMonth}/${year}`;
+}
+
+
+export const Json_AdvanceSearchDocFromRedux = (f_id, description) => dispatch => {
+    if (description !== "") {
+        let obj = {
+            ClientId: "",
+            Description: description ? description : "",
+            Email: Email,
+            IsUDF: "F",
+            ItemFDate: "01/01/1900",
+            ItemTDate: "01/01/1900",
+            ItemrecFDate: "01/01/1900",
+            ItemrecTDate: "01/01/1900",
+            ProjectId: f_id ? f_id : FolderId,
+            agrno: agrno,
+            password: password,
+            sectionId: "-1",
+            udflist: [],
+            udfvalueList: []
+        };
+        try {
+            ClsSms.Json_AdvanceSearchDoc(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        let json = JSON.parse(data);
+                        if (json.Table6.length>0) {
+                            let fltDouble = [];
+                            json.Table6.map((itm) => itm.Description).filter(item => {
+                                if (!fltDouble.includes(item)) {
+                                    fltDouble.push(item);
+                                }
+                            });
+                            json.Table6.map(itm=>{
+                                itm["Item Date"]=new Date(itm["Item Date"]);
+                                itm["Received Date"]=new Date(itm["Received Date"]);
+                                itm["CommentDate"] = Cls.DateForMate(itm["CommentDate"]);
+                            });
+                            dispatch(setAdvanceSearchResultFromRedux({docs:json.Table6, descriptions: fltDouble}))
+                            // setDocumentsDescription(fltDouble);
+                            // setMyDocuments(json.Table6);
+                        }
+                    }
+                }
+            });
+        } catch (err) {
+            console.log("Error while calling Json_AdvanceSearchDoc", err);
+        }
+    }
 }
 
 
