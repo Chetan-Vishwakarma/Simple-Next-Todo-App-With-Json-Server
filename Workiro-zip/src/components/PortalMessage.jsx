@@ -638,8 +638,10 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
 
     const [openCertificate, setOpenCertificate] = React.useState(false);
     const handleClickOpenCertificate = (data) => {
-        setOpenCertificate(true);
-        GetSignedAttachment_Json(data);
+        console.log(data,"download_data");
+        //setOpenCertificate(true);
+        //GetSignedAttachment_Json(data);
+        GetAttachment_Json(data);
     };
     const handleCloseCertificate = () => {
         setOpenCertificate(false);
