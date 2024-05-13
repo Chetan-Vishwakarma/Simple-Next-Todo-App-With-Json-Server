@@ -59,7 +59,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import AdvanceSearch from './AdvanceSearch';
 import { useDispatch, useSelector } from "react-redux"
-import { Json_AdvanceSearchDocFromRedux, fetchAllTasksRedux } from '../redux/reducers/api_helper';
+import { Json_AdvanceSearchDocFromRedux, fetchAllSection, fetchAllTasksRedux, fetchFolders } from '../redux/reducers/api_helper';
 
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -356,6 +356,8 @@ export default function SidebarNav() {
     setEmail(localStorage.getItem("Email"));
     setUserId(localStorage.getItem("UserId"));
     Json_Get_CRM_UserByProjectId();
+    dispatch(fetchAllSection());
+    dispatch(fetchFolders());
     if(taskSubjects.length===0) dispatch(fetchAllTasksRedux("Todo"));
     // console.log("location Object",location.pathname.split("/").pop());
     tabs.length > 0 && tabs.map(itm => {

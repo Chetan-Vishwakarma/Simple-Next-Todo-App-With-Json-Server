@@ -55,7 +55,8 @@ const counterSlices = createSlice({
       isLoading: true,
       recentTaskList: [],
     },
-
+    sections:[],
+    folders: [],
     allTask: [],
     actualData: [],
     taskSubjects: [],
@@ -163,6 +164,12 @@ const counterSlices = createSlice({
       state.advanceSearchResult.docDescriptions = descriptions;
       state.advanceSearchResult.isLoading = false;
     },
+    setSectionDataInredux: (state, action) => {
+      state.sections = action.payload;
+    },
+    setFoldersInRedux: (state, action) => {
+      state.folders = action.payload;
+    },
     // chetan state end
     updateReduxDataSonam: (state, action) => {
       state.reduxData = action.payload;
@@ -251,7 +258,9 @@ export const {
   setExplorerSearchDocRedux,
   setAdvanceSearchResultFromRedux,
   setCateGoryApi,
-  clearExplorerSearchDocRedux
+  clearExplorerSearchDocRedux,
+  setSectionDataInredux,
+  setFoldersInRedux
 } = counterSlices.actions;
 
 // export const getUsers = () => async(dispatch) => {
