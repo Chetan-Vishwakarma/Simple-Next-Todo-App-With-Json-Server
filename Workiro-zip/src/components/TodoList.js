@@ -278,7 +278,6 @@ function TodoList() {
     const handleClickOpen = (task = selectedTask) => {
         setSelectedTask(task);
         setOpen(true);
-
     };
 
     const [age, setAge] = React.useState('');
@@ -561,7 +560,6 @@ function TodoList() {
                             if (item.ItemID) {
                                 addToWorkTable(item.ItemID, e);
                             }
-
                         });
                     }
 

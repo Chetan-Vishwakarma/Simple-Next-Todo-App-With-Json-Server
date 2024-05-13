@@ -156,6 +156,8 @@ export default function DocumentList({ clientId }) {
     const [searchParam, setSearchParam] = useSearchParams();
     const filter = searchParam.get("filter");
 
+    const {sections,folders} = useSelector(state => state.counter);
+
     
     let documents = [];
     const advResult = useSelector(state => state.counter.advanceSearchResult.result);
@@ -189,8 +191,8 @@ export default function DocumentList({ clientId }) {
     const [bulkSearch, setBulkSearch] = useState([]);
     const [alignment, setAlignment] = React.useState('left');
     const [isAdvFilter, setIsAdvFilter] = useState(false);
-    const [sections, setSections] = useState([]);
-    const [folders, setFolders] = useState([]);
+    const [sections_test, setSections] = useState([]);
+    const [folders_test, setFolders] = useState([]);
     const [selectedFolder, setSelectedFolder] = useState("");
     const [sortByProperty, setSortByProperty] = useState("");
     const [isGroupBy, setIsGroupBy] = useState(false);
@@ -260,138 +262,14 @@ export default function DocumentList({ clientId }) {
         }
     }
 
-    function Json_GetFolders() {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
-        }
-        try {
-            Cls.Json_GetFolders(obj, function (sts, data) {
-                if (sts) {
-                    if (data) {
-                        let js = JSON.parse(data);
-                        let tbl = js.Table;
-                        // console.log("Json_GetFolders", tbl);
-                        setFolders(tbl);
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_GetFolders", err);
-        }
-    }
-
-    const Json_GetFolderData = () => {
-        let obj = {
-            ClientId: "", Email: Email, ProjectId: folderId ? folderId : localStorage.getItem("FolderId"), SectionId: "-1", agrno: agrno, password: password
-        };
-        try {
-            Cls.Json_GetFolderData(obj, function (sts, data) {
-                if (sts && data) {
-                    let res = JSON.parse(data);
-                    if (res.Table) {
-                        //setSections(res.Table);
-                        let uniqueSecIDs = {};
-                        const filteredArray = res.Table.filter(item => {
-                            if (!uniqueSecIDs[item.SecID]) {
-                                uniqueSecIDs[item.SecID] = true;
-                                return true;
-                            }
-                            return false;
-                        });
-                        setSections(filteredArray);
-                        console.log("Json_GetFolderData", res);
-                        Json_GetFolders();
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_GetFolderData", err);
-        }
-    }
-
-    // const Json_ExplorerSearchDoc = () => {
-    //     try {
-    //         let obj = {};
-    //         obj.ProjectId = folderId;
-    //         obj.ClientId = clientId;
-    //         obj.sectionId = "-1";
-    //         if (globalSearchDocs.length > 0) {
-    //             let fltDouble = [];
-    //             globalSearchDocs.map(itm => itm.Client).filter(item => {
-    //                 if (!fltDouble.includes(item)) {
-    //                     fltDouble.push(item);
-    //                 }
-    //             });
-    //             setClientList(fltDouble);
-
-    //             setTimeout(() => {
-    //                 let docKeys = Object.keys(globalSearchDocs[0]);
-    //                 // console.log("documentKeys",docKeys);
-    //                 globalSearchDocs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
-    //                 globalSearchDocs.map((itm) => itm["Received Date"] = formatDate(itm["Received Date"]));
-    //                 setDocumentKeys(docKeys);
-    //                 setDocuments(globalSearchDocs);
-    //                 // handleDocumentsFilter(globalSearchDocs);
-    //                 setAdvFilteredResult(globalSearchDocs);
-    //                 let desc = globalSearchDocs.filter((item) => item.Description !== "");
-    //                 setgroupedOptions(desc);
-    //                 setIsLoading(false);
-    //             }, 1000);
-
-    //             // return;
-    //         } else {
-    //             Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
-    // if (data === "" || JSON.parse(data)?.Table[0]?.Message) {  // for data loading issue (api response issue)
-    //     Json_ExplorerSearchDoc();
-    //     return;
-    // }
-    //                 if (sts && data) {
-    //                     let json = JSON.parse(data);
-    //                     if (json?.Table6?.length > 0) {
-    //                         let docs = json.Table6;
-    //                         if (docs?.length > 0) {
-    //                             if (globalSearchDocs.length === 0) {
-    //                                 let docKeys = Object.keys(docs[0]);
-    //                                 setDocumentKeys(docKeys);
-    //                                 docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
-    //                                 docs.map((itm) => itm["Received Date"] = formatDate(itm["Received Date"]));
-    //                                 setDocuments(docs);
-    //                                 if (docs[0].Message) {   // for data loading issue (api response issue)
-    //                                     Json_ExplorerSearchDoc();
-    //                                     return;
-    //                                 }
-    //                                 // handleDocumentsFilter(docs);
-    //                                 setAdvFilteredResult(docs);
-    //                                 setIsLoading(false);
-
-    //                                 let desc = docs.filter((item) => item.Description !== "");
-    //                                 setgroupedOptions(desc);
-    //                             }
-    //                             Json_GetFolderData();
-    //                         }
-    //                     } else {
-    //                         setIsLoading(false);
-    //                         setDataNotFoundBoolean(true);
-    //                     }
-    //                 }
-    //             })
-    //         }
-    //         Json_GetFolderData();
-    //     } catch (error) {
-    //         console.log("ExplorerSearchDoc", error)
-    //     }
-    // }
-
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
-        // Json_ExplorerSearchDoc();
         dispatch(Json_ExplorerSearchDoc_Redux({ ProjectId: folderId, ClientId: clientId, sectionId: "-1" }));
     }, []);
+
     const handleSearch = (text) => {
         if (documents.length > 0) {
             let fltDesc = documents.filter(itm => itm.Description !== "");
@@ -405,18 +283,7 @@ export default function DocumentList({ clientId }) {
         }
     }
 
-    function formatDate(inputDate) {
-        const date = new Date(inputDate);
-        const day = date.getDate();
-        const month = date.getMonth() + 1; // January is 0, so add 1 to get the correct month
-        const year = date.getFullYear();
-        const paddedDay = day < 10 ? `0${day}` : day;
-        const paddedMonth = month < 10 ? `0${month}` : month;
-        return `${paddedDay}/${paddedMonth}/${year}`;
-    }
-
     const handleSearchByProperty = (flitData) => {
-        // console.log(searchByPropertyKey, "--------", searchByPropertyInput);
         setFilterCriteria({ ...filterCriteria, [searchByPropertyKey]: [searchByPropertyInput] });
 
         setSearchByPropertyInput("");
@@ -878,26 +745,6 @@ export default function DocumentList({ clientId }) {
                                             </Select>
                                         </BootstrapTooltip>
                                     </FormControl>}
-
-
-                                    <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border'>
-                                        <span className='custom-tooltip'>Document ID</span>
-                                        <Select
-                                            value={selectedClient}
-                                            // onChange={handleFilterOnClientSelection}
-                                            displayEmpty
-                                            inputProps={{ 'aria-label': 'Without label' }}
-                                            className='custom-dropdown'
-                                        >
-                                            <MenuItem value="" style={{ display: "none" }}>
-                                                Document ID
-                                            </MenuItem>
-                                            <MenuItem>
-                                                <input className='form-control' />
-                                            </MenuItem>
-                                        </Select>
-                                    </FormControl>
-
                                 </Box>
 
                                 <Typography variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>

@@ -15,7 +15,9 @@ import {
     setAllTaskFromRedux,
     setExplorerSearchDocRedux,
     setCateGoryApi,
-    setAdvanceSearchResultFromRedux
+    setAdvanceSearchResultFromRedux,
+    setSectionDataInredux,
+    setFoldersInRedux
 } from "./counterSlice";
 
 const agrno = localStorage.getItem("agrno");
@@ -430,6 +432,53 @@ export const Json_AdvanceSearchDocFromRedux = (f_id, description) => dispatch =>
         } catch (err) {
             console.log("Error while calling Json_AdvanceSearchDoc", err);
         }
+    }
+}
+
+export const fetchAllSection = (folder_id, section_id) => dispatch => {
+    let obj = {
+        ClientId: "", Email: Email, ProjectId: folder_id ? folder_id : FolderId, SectionId: section_id ? section_id : "-1", agrno: agrno, password: password
+    };
+    try {
+        Cls.Json_GetFolderData(obj, function (sts, data) {
+            if (sts && data) {
+                let res = JSON.parse(data);
+                if (res.Table) {;
+                    let uniqueSecIDs = {};
+                    const filteredArray = res.Table.filter(item => {
+                        if (!uniqueSecIDs[item.SecID]) {
+                            uniqueSecIDs[item.SecID] = true;
+                            return true;
+                        }
+                        return false;
+                    });
+                    dispatch(setSectionDataInredux(filteredArray));
+                }
+            }
+        });
+    } catch (err) {
+        console.log("Error while calling Json_GetFolderData", err);
+    }
+}
+
+export const fetchFolders=()=>dispatch=>{
+    let obj = {
+        agrno: agrno,
+        Email: Email,
+        password: password
+    }
+    try {
+        Cls.Json_GetFolders(obj, function (sts, data) {
+            if (sts) {
+                if (data) {
+                    let js = JSON.parse(data);
+                    let tbl = js.Table;
+                    dispatch(setFoldersInRedux(tbl));
+                }
+            }
+        });
+    } catch (err) {
+        console.log("Error while calling Json_GetFolders", err);
     }
 }
 
