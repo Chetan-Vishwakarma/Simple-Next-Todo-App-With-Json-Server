@@ -2645,6 +2645,10 @@ input[type=number] {
   padding: 0px;
 }
 
+.tox.tox-silver-sink.tox-tinymce-aux {
+  display: none !important;
+}
+
 @media only screen and (max-width: 1199px) {
   .client-box-main {
     flex: 0 0 33.33%;
