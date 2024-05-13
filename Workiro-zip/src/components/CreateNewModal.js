@@ -311,7 +311,7 @@ function CreateNewModalTask({ ...props }) {
     //     }
     // },[reduxRefForTaskModal,reduxRefClientAndDoc]);
     useEffect(() => {
-        console.log("dfdksfoier", reduxRefForTaskModal);
+        console.log("dfdksfoier", reduxRefForTaskModal,reduxRefClientAndDoc,txtTaskType);
         if (reduxRefForTaskModal) {
             setAddUser([]);
             setTaskType(reduxRefClientAndDoc.TaskType);

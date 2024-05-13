@@ -12,6 +12,28 @@ export default class CommanCLS extends AllService {
 
 
 
+    Json_SetCategory(obj,callBack) {
+        super.CreateNewServiceParamObject("Json_SetCategory",obj,true);
+        super.CallNewService("Json_SetCategory", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+    Json_GetCategory(obj,callBack) {
+        super.CreateNewServiceParamObject("Json_GetCategory",obj,true);
+        super.CallNewService("Json_GetCategory", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
     Json_ReFileDocument(obj,callBack) {
         super.CreateNewServiceParamObject("Json_ReFileDocument",obj,true);
         super.CallNewService("Json_ReFileDocument", function (status, Data) {

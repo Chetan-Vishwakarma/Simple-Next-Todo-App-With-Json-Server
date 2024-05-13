@@ -614,6 +614,11 @@ function NewTodoList() {
         // setsendUrldata(url);
         //window.open(url);
         setIsLoadingDoc(true)
+
+        let o = { SectionId: e ? e.PostItemTypeID : console.log("Section id is Blanck") };
+       // dispatch(GetCategory_Redu(o))
+
+
     };
 
     const [editingIndex, setEditingIndex] = useState(null);

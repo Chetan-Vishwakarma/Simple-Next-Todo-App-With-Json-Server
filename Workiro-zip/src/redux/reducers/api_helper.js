@@ -2,18 +2,20 @@ import CommanCLS from "../../services/CommanService";
 import dateForMyTask from "../../utils/dateForMyTask";
 import { formateDate } from "../../utils/fomatDateForConnectionsContacts";
 import { toast } from 'react-toastify';
-import { fetchAllTasks,
-     fetchRecentDocuments, 
-     fetchRecentTasks,
-      setAllFoldersFromRedux, 
-      setClientFromRedux,
-       setContactsFromRedux,
-       setSearchDocByIdFromRedux,
-       setSectionListFromRedux,
-       setClientListByFolderIdFromRedux,
-       setAllTaskFromRedux,
-       setExplorerSearchDocRedux
-     } from "./counterSlice";
+import {
+    fetchAllTasks,
+    fetchRecentDocuments,
+    fetchRecentTasks,
+    setAllFoldersFromRedux,
+    setClientFromRedux,
+    setContactsFromRedux,
+    setSearchDocByIdFromRedux,
+    setSectionListFromRedux,
+    setClientListByFolderIdFromRedux,
+    setAllTaskFromRedux,
+    setExplorerSearchDocRedux,
+    setCateGoryApi
+} from "./counterSlice";
 
 const agrno = localStorage.getItem("agrno");
 const password = localStorage.getItem("Password");
@@ -34,7 +36,7 @@ export const fetchRecentTasksRedux = () => dispatch => {
                 if (data) {
                     let json = JSON.parse(data);
                     let tbl = json.Table;
-                 //   console.log("Json_getRecentTaskList", tbl);
+                    //   console.log("Json_getRecentTaskList", tbl);
                     if (tbl.length > 0) {
                         dispatch(fetchRecentTasks(tbl));
                         return tbl;
@@ -61,14 +63,14 @@ export const fetchAllTasksRedux = (target) => dispatch => {
                             });
                             formattedTasks.sort((a, b) => b.CreationDate - a.CreationDate);
                             dispatch(fetchAllTasks(formattedTasks));
-                            dispatch(setAllTaskFromRedux({data:formattedTasks, taskFilter: { mstatus: ["Not Started", "On Hold", "In Progress"] } }))
+                            dispatch(setAllTaskFromRedux({ data: formattedTasks, taskFilter: { mstatus: ["Not Started", "On Hold", "In Progress"] } }))
                             return;
                         } else if (target === "MyTask") {
                             const formattedTasks = fltTask.map((task) => {
                                 return dateForMyTask(task);
                             });
                             formattedTasks.sort((a, b) => b.CreationDate - a.CreationDate);
-                           
+
                             dispatch(fetchAllTasks(formattedTasks));
                             return;
                         } else {
@@ -76,7 +78,7 @@ export const fetchAllTasksRedux = (target) => dispatch => {
                                 return dateForMyTask(task);
                             });
                             formattedTasks.sort((a, b) => b.CreationDate - a.CreationDate);
-                           
+
                             dispatch(fetchAllTasks(formattedTasks));
                             return;
                         }
@@ -223,7 +225,7 @@ export const getFolders_Redux = () => dispatch => {
 }
 ////////////////DocuSoft
 export const Json_SearchDocById_Redux = (ItemId) => dispatch => {
-    let obj = {      
+    let obj = {
         ItemId: ItemId
     };
     try {
@@ -239,17 +241,17 @@ export const Json_SearchDocById_Redux = (ItemId) => dispatch => {
     } catch (err) {
         console.log("Error while calling Json_SearchDocById", err);
     }
-} 
+}
 
-export const Json_GetSections_Redux = (pid) => dispatch=> {
+export const Json_GetSections_Redux = (pid) => dispatch => {
     try {
         let o = { ProjectId: pid }
         ClsSms.Json_GetSections(o, function (sts, data) {
             if (sts) {
                 if (data) {
                     let js = JSON.parse(data);
-                  //  let sectionList = js.Table;
-                   // console.log("Json_GetSections", sectionList)
+                    //  let sectionList = js.Table;
+                    // console.log("Json_GetSections", sectionList)
                     if (js.Table.length > 0) dispatch(setSectionListFromRedux(js.Table));
                 }
 
@@ -262,7 +264,7 @@ export const Json_GetSections_Redux = (pid) => dispatch=> {
 }
 
 export const Json_GetSupplierListByProject_Redux = (folder_id = "") => dispatch => {
-    let obj = {       
+    let obj = {
         ProjectId: folder_id ? folder_id : FolderId
     };
     try {
@@ -271,8 +273,8 @@ export const Json_GetSupplierListByProject_Redux = (folder_id = "") => dispatch 
                 if (data) {
                     let json = JSON.parse(data);
                     const clients_data = json?.Table;
-                    if(clients_data.length>0)dispatch(setClientListByFolderIdFromRedux(clients_data));
-                   
+                    if (clients_data.length > 0) dispatch(setClientListByFolderIdFromRedux(clients_data));
+
                 }
             }
         });
@@ -283,25 +285,25 @@ export const Json_GetSupplierListByProject_Redux = (folder_id = "") => dispatch 
 
 export const addSupplierActivityFromRedux = (e) => dispatch => {
     let obj = {};
-        obj.OriginatorNo = e.ClientNo;
-        obj.ActionReminder = "";
-        obj.Notes = "Completed by " + e["Forwarded By"];
-        obj.Status = "sys"; //selectedTask.Status;
-        obj.TaskId = e.ID;
-        obj.TaskName = "";
-        obj.ActivityLevelID = "";
-        obj.ItemId = "";
+    obj.OriginatorNo = e.ClientNo;
+    obj.ActionReminder = "";
+    obj.Notes = "Completed by " + e["Forwarded By"];
+    obj.Status = "sys"; //selectedTask.Status;
+    obj.TaskId = e.ID;
+    obj.TaskName = "";
+    obj.ActivityLevelID = "";
+    obj.ItemId = "";
 
-        try {
-            ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
-                if (sts && data) {
-                    // console.log({ status: true, messages: "Success", res: data });
-                    // Json_CRM_GetOutlookTask()
-                }
-            });
-        } catch (error) {
-            console.log({ status: false, messages: "Faild Please Try again" });
-        }
+    try {
+        ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
+            if (sts && data) {
+                // console.log({ status: true, messages: "Success", res: data });
+                // Json_CRM_GetOutlookTask()
+            }
+        });
+    } catch (error) {
+        console.log({ status: false, messages: "Faild Please Try again" });
+    }
 }
 
 export const updateTaskFieldFromRedux = (FieldName, FieldValue, e) => dispatch => {
@@ -326,27 +328,46 @@ export const updateTaskFieldFromRedux = (FieldName, FieldValue, e) => dispatch =
     })
 }
 
-export const Json_ExplorerSearchDoc_Redux =(obj)=>dispatch=>{
-       try {
-        ClsSms.Json_ExplorerSearchDoc(obj,function(sts,data){
+export const Json_ExplorerSearchDoc_Redux = (obj) => dispatch => {
+    try {
+        ClsSms.Json_ExplorerSearchDoc(obj, function (sts, data) {
             if (sts && data) {
                 let json = JSON.parse(data);
                 console.log("ExplorerSearchDoc", json);
                 let tbl6 = json.Table6;
-                if(tbl6.length>0){
+                if (tbl6.length > 0) {
                     tbl6.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
-                    tbl6.map((itm) => itm["Received Date"] = formatDate(itm["Received Date"]));    
-                    if(json.Table6.length>0)dispatch(setExplorerSearchDocRedux(tbl6));
+                    tbl6.map((itm) => itm["Received Date"] = formatDate(itm["Received Date"]));
+                    if (json.Table6.length > 0) dispatch(setExplorerSearchDocRedux(tbl6));
                 }
-           
-               
-               
+
+
+
             }
         })
-       } catch (error) {
-        console.log("Network Error Json_ExplorerSearchDoc",error)
-       }
+    } catch (error) {
+        console.log("Network Error Json_ExplorerSearchDoc", error)
+    }
 }
+
+
+export const GetCategory_Redux = (o) => dispatch => {
+    try {
+
+        ClsSms.Json_GetCategory(o, function (sts, data) {
+            console.log("Json_GetCategory22",data);
+            if (sts && data) {
+                let js = JSON.parse(data);
+                if (js) dispatch(setCateGoryApi(js))
+            }
+
+        })
+    } catch (error) {
+        console.log("Network Error Json_GetCategory", error)
+    }
+}
+
+
 
 function formatDate(inputDate) {
     const date = new Date(inputDate);

@@ -30,7 +30,7 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
 
     // const {selectedDocumentRedux} = useSelector((state)=>state.counter.selectedDocumentRedux);
 
-    console.log("selectedDocumentRedux", allFolders, allSections, allClientsList, selectedDocument,dayjs(selectedDocument["Item Date"]).format("YYYY/MM/DD"))
+    console.log("selectedDocumentRedux", allFolders, allSections, allClientsList, selectedDocument, dayjs(selectedDocument?selectedDocument["Item Date"]:null).format('DD/MM/YYYY'))
 
     const [isDisabled, setIsDisabled] = useState(false);
 
@@ -169,9 +169,13 @@ const ReFile = ({ ReIndexopen, setReIndexOpen, selectedDocument }) => {
         setIsDisabled(btnSubmit !== "Folder Update" && btnSubmit !== "Section Update" && btnSubmit !== "Client Update"&& btnSubmit !== "Document Date Update");
     }, [btnSubmit]);
 
+   // Assuming selectedDocument is defined and contains properties "Item Date" and "Received Date"
+const documentDate1 = selectedDocument ? dayjs(selectedDocument["Item Date"]).format('DD/MM/YYYY') : null;
+const receivedDate1 = selectedDocument ? dayjs(selectedDocument["Received Date"]).format('DD/MM/YYYY') : null;
 
-    const [documentDate, setDocumentDate] = useState(selectedDocument?dayjs(selectedDocument["Item Date"]): null);
-    const [receivedDate, setReceivedDate] = useState(selectedDocument? dayjs(selectedDocument["Received Date"]): null);
+// Initialize states with formatted dates
+const [documentDate, setDocumentDate] = useState(documentDate1);
+const [receivedDate, setReceivedDate] = useState(receivedDate1);
 
     const today = new Date();
     return (<>

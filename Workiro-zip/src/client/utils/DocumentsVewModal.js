@@ -51,6 +51,7 @@ import { TabList } from '@mui/lab';
 import { getFolders_Redux,Json_SearchDocById_Redux,Json_GetSections_Redux, Json_GetSupplierListByProject_Redux } from '../../redux/reducers/api_helper';
 import { useDispatch,useSelector } from 'react-redux'; 
 import ReFile from '../../components/ReFile';
+import SectionCategory from '../../components/SectionCategory';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -160,6 +161,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     const [ShareanchorEl, setShareAnchorEl] = React.useState(null);
     const [CreateTaskanchorEl, setCreateTaskAnchorEl] = React.useState(null);
     const [ReIndexopen, setReIndexOpen] = React.useState(false);
+    
     const [Categoryopen, CategorysetOpen] = React.useState(false);
 
 
@@ -299,7 +301,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         setViewerToken(localStorage.getItem("ViewerToken"));
 
         if (selectedDocument) {
-
+            
 
             dispatch(getFolders_Redux());
             dispatch(Json_SearchDocById_Redux(selectedDocument["Registration No."]));
@@ -676,9 +678,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         CategorysetOpen(true);
     };
 
-    const CategoryhandleClose = () => {
-        CategorysetOpen(false);
-    };
+   
 
 
     const [Renameopen, RenamesetOpen] = React.useState(false);
@@ -1072,79 +1072,9 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
             {/* category modal start */}
 
-            <Dialog
-                open={Categoryopen}
-                onClose={CategoryhandleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                className='custom-modal'
+           
 
-                sx={{
-                    maxWidth: 660,
-                    width: '100%',
-                    margin: '0 auto'
-                }}
-            >
-                <Box className="d-flex align-items-center justify-content-between modal-head">
-                    <Box className="dropdown-box">
-                        <Typography variant="h4" className='font-18 bold text-black'>
-                            Section Category
-                        </Typography>
-                    </Box>
-
-                    {/*  */}
-                    <Button onClick={CategoryhandleClose}>
-                        <span className="material-symbols-outlined text-black">
-                            cancel
-                        </span>
-                    </Button>
-                </Box>
-
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        <FormControl>
-                            <RadioGroup
-                                row
-                                aria-labelledby="demo-row-radio-buttons-group-label"
-                                name="row-radio-buttons-group"
-                            >
-                                <FormControlLabel value="1. Received" control={<Radio className='text-blue' />} label="1. Received" />
-                                <FormControlLabel value="2. Pending" control={<Radio className='text-blue' />} label="2. Pending" />
-                                <FormControlLabel value="3. Complete" control={<Radio className='text-blue' />} label="3. Complete" />
-                                <FormControlLabel value="4. Will Test" control={<Radio className='text-blue' />} label="4. Will Test" />
-
-                                <FormControlLabel value="1. Received" control={<Radio className='text-blue' />} label="1. Received" />
-                                <FormControlLabel value="2. Pending" control={<Radio className='text-blue' />} label="2. Pending" />
-                                <FormControlLabel value="3. Complete" control={<Radio className='text-blue' />} label="3. Complete" />
-                                <FormControlLabel value="4. Will Test" control={<Radio className='text-blue' />} label="4. Will Test" />
-
-
-                            </RadioGroup>
-                        </FormControl>
-                    </DialogContentText>
-
-                    <hr />
-
-                    <DialogActions className='justify-content-between'>
-
-                        <Typography variant="h4" className='font-14 bold text-black mb-0'>
-                            Doc ID: 992102
-                            {/* {console.log(selectedDocudata, "selectedDocudata11")}
-                            Doc ID: {selectedDocudata && selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : selectedDocudata?.ItemId
-                            } */}
-                        </Typography>
-
-                        <Box>
-                            <Button className='btn-red me-2' onClick={CategoryhandleClose}>Cancel</Button>
-                            <Button className='btn-blue-2' onClick={CategoryhandleClose} autoFocus>
-                                Submit
-                            </Button>
-                        </Box>
-                    </DialogActions>
-                </DialogContent>
-            </Dialog>
-
-
+<SectionCategory Categoryopen={Categoryopen} CategorysetOpen={CategorysetOpen} selectedDocument={selectedDocument}></SectionCategory>
 
             {/* Rename Modal */}
             <Dialog
