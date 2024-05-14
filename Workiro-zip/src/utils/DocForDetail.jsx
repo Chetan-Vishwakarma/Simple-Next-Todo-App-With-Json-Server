@@ -90,7 +90,6 @@ function DocForDetail({openDocumentDetailsList,setOpenDocumentDetailsList,docFor
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <Box className='table-responsive'>
-                                        {console.log("dsfjsdklfjdklj",getVertion)}
                                         {getVertion.length > 0 ? getVertion.map((item, index) => {
                                             return <>
                                                 <Box className="file-uploads" key={index}>

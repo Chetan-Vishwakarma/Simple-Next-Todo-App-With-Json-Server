@@ -89,7 +89,6 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
             if (sts) {
                 if (data) {
                     let json = JSON.parse(data);
-                    console.log("Json_RenameDocument", json);
                     if (json.Status === "Success") {
                         // Json_getRecentDocumentList();
                         toast.success(json.Message);
@@ -158,7 +157,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
                 <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument} Json_CRM_GetOutlookTask={Json_CRM_GetOutlookTask}></DocumentsVewModal>
-
+                {console.log("slkfjsdljfg",documents)}
                 {dataNotFoundBoolean ? <DataNotFound /> : <DataGrid
                     dataSource={advFilteredResult.length > 0 ? advFilteredResult : documents}
                     keyExpr="Guid"
@@ -186,7 +185,6 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                         dataType="string"  // Set the data type to "string" for proper grouping
                         cellRender={(data) => {
                             let rd = data.data;
-                            // console.log("file type11",data)
                             return <Box className="file-uploads">
                                 <label className="file-uploads-label file-uploads-document" onClick={(event) => {
                                     event.stopPropagation();
