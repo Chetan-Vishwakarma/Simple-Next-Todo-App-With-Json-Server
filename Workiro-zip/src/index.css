@@ -2061,10 +2061,11 @@ input[type=number] {
 .approval-main .approval-box {
   align-items: center;
   display: flex;
-  margin-right: 15px;
+  margin-right: 10px;
   border-right: 1px solid #f1f1f1;
-  padding-right: 15px;
+  padding-right: 10px;
   margin-bottom: 10px;
+  width: 100;
 }
 
 .download-btn-box {

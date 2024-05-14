@@ -874,7 +874,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                                     <Box className='ps-2'>
                                                         <h5 className='font-14 text-black mb-1'>Message Approved </h5>
                                                         <p className='font-12 text-gray sembold mb-2'>{documentStatus["Actioned On"] ? moment(documentStatus["Actioned On"]).format("DD/MM/YYYY") : ""}</p>
-                                                        <Button className='btn-blue-2' size="small" onClick={() => GetCertificate_Json()} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
+                                                        <Button className='btn btn-blue' size="small" onClick={() => GetCertificate_Json()} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
                                                     </Box>
                                                 </Box>
 
@@ -1124,12 +1124,12 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                                 item.Signed === "Yes" ? (<>
                                                     <Box className='approval-box'>
 
-                                                        <VerifiedIcon className="me-2" />
+                                                        <VerifiedIcon className="me-2 text-green" />
                                                         <Box>
-                                                            <Typography variant='subtitle1' className='text-center font-14'>
-                                                                Document Signed
+                                                            <Typography variant='subtitle1' className='font-14 text-black mb-1'>
+                                                                Document Signed</Typography>
                                                                 <Button className='btn-blue-2' size="small" onClick={() => handleClickOpenCertificate(item)} startIcon={<ScheduleIcon />}> Document Signed</Button>
-                                                            </Typography>
+                                                            
                                                         </Box>
                                                     </Box>
                                                 </>) : (<>
@@ -1148,19 +1148,19 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                                         {item["Actioned On"] !== null ? (<>
                                                             {item.Approved === "Yes" ? (
                                                                 <>
-                                                                    <Box className='d-flex'>
+                                                                    <Box className='d-flex w-100'>
                                                                         <VerifiedIcon className='text-green' />
-                                                                        <Box className='ps-3'>
+                                                                        <Box className='ps-2'>
                                                                             <h5 className='font-14 text-black mb-1'>Document Approved </h5>
                                                                             <p className='font-12 text-gray sembold mb-2'>{item["Actioned On"] ? moment(item["Actioned On"]).format("DD/MM/YYYY") : ""}</p>
-                                                                            <Button className='btn-blue-2' size="small" onClick={() => GetCertificate_Json(item)} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
+                                                                            <Button className='btn btn-blue' size="small" onClick={() => GetCertificate_Json(item)} startIcon={<ScheduleIcon />}>Certificate of Approval</Button>
                                                                         </Box>
                                                                     </Box>
 
                                                                 </>
                                                             ) : (
                                                                 <>
-                                                                    <Box className='d-flex'>
+                                                                    <Box className='d-flex w-100'>
                                                                         <HourglassEmptyIcon className='text-gray' />
                                                                         <Box className='ps-2'>
                                                                             {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
@@ -1170,7 +1170,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                                                     </Box>
                                                                 </>
                                                             )}
-                                                        </>) : (<Box className='d-flex'>
+                                                        </>) : (<Box className='d-flex w-100'>
                                                             <HourglassEmptyIcon className='text-gray' />
                                                             <Box className='ps-2'>
                                                                 {/* {<CopyLinkButton copyLink={copyLink}></CopyLinkButton>} */}
@@ -1180,7 +1180,7 @@ const PortalMessage = ({ selectedTask, Json_RegisterItem, setPortalComments, set
                                                     </>
                                                 ) : (
                                                     <>
-                                                        <Box className='d-flex'>
+                                                        <Box className='d-flex w-100'>
                                                             <DoDisturbIcon className='text-gray' />
                                                             <Box className='ps-3'>
                                                                 <h5 className='font-14 text-black mb-0'>Not sent for approval </h5>
