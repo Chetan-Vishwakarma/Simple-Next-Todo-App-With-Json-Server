@@ -217,8 +217,6 @@ function TodoList() {
                 }
             });
         });
-
-        filterExportData = [...fltData];
         if (Object.keys(dataInGroup).length > 0) {
 
             let gData = groupByProperty(fltData, selectedGroupBy);
