@@ -25,6 +25,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateTaskFieldFromRedux } from '../redux/reducers/api_helper';
 import CustomLoader from './CustomLoader';
 import TaskDetailModal from './TaskDetailModal';
+import DocumentTripleDot from '../utils/DocumentTripleDot';
 
 
 const agrno = localStorage.getItem("agrno");
@@ -404,7 +405,9 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                         </Box>
                                     </Box>
                                     <Box>
-                                        <Button
+                                        {console.log("fdgdfghgfsg",item)}
+                                        <DocumentTripleDot data={{data:item}} handleEdit={()=>{}}/>
+                                        {/* <Button
                                             id={`basic-button-${index}`}
                                             aria-controls={anchorElDocumentList[index] ? `basic-menu-${index}` : undefined}
                                             aria-haspopup="true"
@@ -472,7 +475,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                                     <CloudDownloadIcon fontSize="medium" />
                                                 </ListItemIcon>
                                                 Download</MenuItem>
-                                        </Menu>
+                                        </Menu> */}
                                     </Box>
                                 </label>
                             </Box>
