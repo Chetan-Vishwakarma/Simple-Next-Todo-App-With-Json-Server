@@ -86,7 +86,11 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
     const handleEdit = (index) => {
         setEditingIndex(index);
-        setUpdatedSubject(filteredDocuments[index].Description);
+        filteredDocuments.map(itm=>{
+            if(itm["Registration No."]===index){
+                setUpdatedSubject(itm.Description);
+            }
+        })
     };
     const handleChange = (event) => {
         setUpdatedSubject(event.target.value);
@@ -118,6 +122,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     }
 
     const handleSave = (newDesc, oldDesc, doc, index) => {
+        
         if (oldDesc === newDesc) return;
         Json_RenameDocument(doc, newDesc, index);
     };
@@ -367,7 +372,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                             {/* <img src={Fileformat} /> */}
                                         </div>
                                         <Box className="upload-content pe-3">
-                                            {editingIndex == index ? (
+                                            {editingIndex === item["Registration No."] ? (
                                                 <input
                                                     type="text"
                                                     defaultValue={item.Description}
@@ -406,76 +411,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                         </Box>
                                     </Box>
                                     <Box>
-                                        <DocumentTripleDot data={{ data: item }} handleEdit={() => { }} />
-                                        {/* <Button
-                                            id={`basic-button-${index}`}
-                                            aria-controls={anchorElDocumentList[index] ? `basic-menu-${index}` : undefined}
-                                            aria-haspopup="true"
-                                            aria-expanded={Boolean(anchorElDocumentList[index])}
-                                            onClick={(event) => handleClickDocumentList(event, index)}
-                                            className='min-width-auto'
-                                        >
-                                            <MoreVertIcon />
-                                        </Button>
-                                        <Menu
-                                            id={`basic-menu-${index}`}
-                                            anchorEl={anchorElDocumentList[index]}
-                                            open={Boolean(anchorElDocumentList[index])}
-                                            onClose={(event) => handleCloseDocument(event, index)}
-                                            MenuListProps={{
-                                                'aria-labelledby': `basic-button-${index}`,
-                                            }}
-                                            className='custom-dropdown'
-                                        >
-                                            <MenuItem
-                                                onClick={(event) => handleCloseDocument(event, index)}
-                                            >
-
-                                                <ListItemIcon>
-                                                    <PostAddIcon fontSize="medium" />
-                                                </ListItemIcon>
-                                                Create Task</MenuItem>
-                                            <MenuItem onClick={(event) => {
-                                                handleCloseDocument(event, index)
-                                                handleClickOpenDocumentDetailsList(item)
-                                            }}>
-                                                <ListItemIcon>
-                                                    <ArticleIcon fontSize="medium" />
-                                                </ListItemIcon>
-                                                Document Details</MenuItem>
-
-                                            <MenuItem
-                                                onClick={(event) => handleCloseDocument(event, index)}
-                                            >
-                                                <ListItemIcon>
-                                                    <CloudUploadIcon fontSize="medium" />
-                                                </ListItemIcon>
-                                                Upload New Version</MenuItem>
-                                            <MenuItem
-                                                onClick={(event) => {
-                                                    handleEdit(index);
-                                                    handleCloseDocument(event, index);
-                                                }}
-                                            >
-                                                <ListItemIcon>
-                                                    <DriveFileRenameOutlineIcon fontSize="medium" />
-                                                </ListItemIcon>
-                                                Rename Document</MenuItem>
-                                            <MenuItem
-                                                onClick={(event) => handleCloseDocument(event, index)}
-                                            >
-                                                <ListItemIcon>
-                                                    <TravelExploreIcon fontSize="medium" />
-                                                </ListItemIcon>
-                                                Open in Browser</MenuItem>
-                                            <MenuItem
-                                                onClick={(event) => handleCloseDocument(event, index)}
-                                            >
-                                                <ListItemIcon>
-                                                    <CloudDownloadIcon fontSize="medium" />
-                                                </ListItemIcon>
-                                                Download</MenuItem>
-                                        </Menu> */}
+                                        <DocumentTripleDot data={{ data: item }} handleEdit={handleEdit} />
                                     </Box>
                                 </label>
                             </Box>

@@ -199,7 +199,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                         <GetFileType Type={rd.Type ? rd.Type.toLowerCase() : null}></GetFileType>
 
                                         <Box className="upload-content pe-3">
-                                            {editingIndex === data.key ? <input
+                                            {editingIndex === data.data["Registration No."] ? <input
                                                 type="text"
                                                 defaultValue={data.data.Description}
                                                 value={updatedSubject}
