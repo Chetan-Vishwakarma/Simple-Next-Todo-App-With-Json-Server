@@ -432,9 +432,9 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                             <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
                                 <Box className='check-todo'>
-                                    <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
+                                    {/* <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
                                         <AttachFileIcon />
-                                    </Badge>
+                                    </Badge> */}
 
                                     <Radio className={item.Priority === 1 ? 'text-red ' : item.Priority === 2 ? 'text-green' : 'text-grey'} checked
                                         sx={{
@@ -444,8 +444,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                         }}
                                         size='small'
                                     />
-
-                                    {/* <PushPinIcon className='pinicon'></PushPinIcon> */}
 
                                 </Box>
 
