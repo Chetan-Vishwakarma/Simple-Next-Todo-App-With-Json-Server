@@ -331,7 +331,7 @@ function DocumentTripleDot({ data,handleEdit }) {
                 <MenuItem
                     onClick={(event) => {
                         // handleEditField(event, data.data["Registration No."]);
-                        handleEdit(data.data["Registration No."], data.data);
+                        handleEdit(data.data["Registration No."], data.data, data);
                         handleCloseDocument(event, data);
                     }}
                 >

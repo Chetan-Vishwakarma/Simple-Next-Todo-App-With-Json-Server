@@ -67,9 +67,9 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     const [updatedSubject, setUpdatedSubject] = useState('');
     const [test, setTest] = useState({});
 
-    const handleEdit = (index, data) => {
+    const handleEdit = (index, data, data2) => {
         setEditingIndex(index);
-        setUpdatedSubject(data.Description);
+        setUpdatedSubject(test[data2.key] ? test[data2.key] : data.Description);
     };
 
     const handleEditChange = (event) => {
@@ -103,6 +103,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     }
 
     const handleSave = (newDesc, oldDesc, doc, index) => {
+        setEditingIndex(null);
         if (oldDesc === newDesc) return;
         Json_RenameDocument(doc, newDesc, index);
     };
@@ -157,7 +158,6 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
                 <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument} Json_CRM_GetOutlookTask={Json_CRM_GetOutlookTask}></DocumentsVewModal>
-                {console.log("slkfjsdljfg",documents)}
                 {dataNotFoundBoolean ? <DataNotFound /> : <DataGrid
                     dataSource={advFilteredResult.length > 0 ? advFilteredResult : documents}
                     keyExpr="Guid"
@@ -201,7 +201,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                         <Box className="upload-content pe-3">
                                             {editingIndex === data.data["Registration No."] ? <input
                                                 type="text"
-                                                defaultValue={data.data.Description}
+                                                defaultValue={test[data.key] ? test[data.key] : data.data.Description}
                                                 value={updatedSubject}
                                                 onChange={handleEditChange}
                                                 autoFocus
@@ -218,7 +218,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                         </Box>
                                     </Box>
                                     <Box>
-                                        <DocumentTripleDot data={data} handleEdit={handleEdit}/>
+                                        <DocumentTripleDot data={data} handleEdit={handleEdit} />
                                     </Box>
                                 </label>
                             </Box>

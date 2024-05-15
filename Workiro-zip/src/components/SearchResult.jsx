@@ -372,7 +372,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                             {/* <img src={Fileformat} /> */}
                                         </div>
                                         <Box className="upload-content pe-3">
-                                            {editingIndex === item["Registration No."] ? (
+                                            {editingIndex === item["Registration No."] ? 
                                                 <input
                                                     type="text"
                                                     defaultValue={item.Description}
@@ -382,7 +382,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                                     onBlur={(e) => handleSave(e.target.value, item.Description, item, index)}
                                                     className='edit-input'
                                                 />
-                                            ) : (
+                                             : 
                                                 <BootstrapTooltip title={item.Description ? item.Description : ""} arrow
                                                     placement="bottom-start"
                                                     slotProps={{
@@ -402,7 +402,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                                         {Object.keys(test).includes(String(index)) ? test[index] : (item.Description && item.Description.length > 35) ? item.Description.substr(0, 35) + "..." : item.Description ? item.Description : "No Name"}
                                                     </Typography>
                                                 </BootstrapTooltip>
-                                            )}
+                                            }
                                             <Typography variant="body1">
                                                 {/* Size:  <span className='sembold'>{item.FileSize? item.FileSize: ""}</span> |  */}
                                                 Date <span className='sembold'>{item["Item Date"] ? item["Item Date"] : "01/01/2000"}</span>
