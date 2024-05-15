@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, ToggleButton, ToggleButtonGroup, FormControl, Select } from '@mui/material';
+import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Checkbox, ToggleButton, ToggleButtonGroup, FormControl, Select } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommanCLS from '../services/CommanService';
 import TaskDetailModal from './TaskDetailModal';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -31,7 +30,6 @@ import { useSearchParams } from 'react-router-dom';
 import ClearIcon from '@mui/icons-material/Clear';
 import DvrIcon from '@mui/icons-material/Dvr';
 import LanguageIcon from '@mui/icons-material/Language';
-import CustomBreadCrumbs from './CustomBreadCrumbs';
 import SortIcon from '@mui/icons-material/Sort';
 import PersonIcon from '@mui/icons-material/Person';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
@@ -41,8 +39,6 @@ import { toast } from 'react-toastify';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAllTaskFromRedux, setAllTaskFromReduxOrderWise } from '../redux/reducers/counterSlice';
-import ReportProblemIcon from '@mui/icons-material/ReportProblem';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { fetchAllTasksRedux, updateTaskFieldFromRedux } from '../redux/reducers/api_helper';
 import TaskCard from '../utils/TaskCard';
@@ -60,9 +56,6 @@ const BootstrapTooltip = styled(({ className, ...props }) => (
 }));
 
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20' />, <PublishedWithChangesIcon color='primary' className='me-1 font-20' />, <HourglassBottomIcon color='primary' className='me-1 font-20' />, <CheckCircleOutlineIcon color='success' className='me-1 font-20' />];
-let attatmentdata = [];
-let exportTaskData = [];
-let filterExportData = [];
 
 function TodoList() {
     const allTask = useSelector((state) => state.counter.allTask);
@@ -84,7 +77,6 @@ function TodoList() {
 
     const [anchorElDown, setAnchorElDown] = useState(null);
     const [selectedTask, setSelectedTask] = useState({});
-    const [anchorEl, setAnchorEl] = React.useState(null);
     const [attachmentFileTodo, setAttachmentFileTodo] = useState([]);
     const [loadMore, setLoadMore] = useState(20);
     const [folders, setFolders] = useState([]);
@@ -107,13 +99,6 @@ function TodoList() {
     });
     const { start, end } = state;
 
-    const open = Boolean(anchorEl);
-    const handleClick = (event) => {
-        // setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
     const handleMenuOpen = (event) => {
         setAnchorElDown(event.currentTarget);
     };
@@ -177,48 +162,6 @@ function TodoList() {
 
     }, []);
 
-
-
-    // useEffect(() => {
-    //     Json_CRM_GetOutlookTask();
-    // }, [isApi])
-
-
-    function DownLoadAttachment(Path) {
-        let OBJ = {};
-        OBJ.agrno = agrno;
-        OBJ.Email = Email;
-        OBJ.password = password;
-        OBJ.path = Path;
-        Cls.CallNewService('GetBase64FromFilePath', function (status, Data) {
-            if (status) {
-                var jsonObj = JSON.parse(Data);
-                if (jsonObj.Status === "Success") {
-                    var dencodedData = window.atob(Path);
-                    var fileName = dencodedData;
-                    var Typest = fileName.lastIndexOf("\\");
-                    fileName = fileName.slice(Typest + 1);
-                    // console.log('FileName', fileName);
-                    // console.log("jsonObj.Status", jsonObj.Message);
-                    var a = document.createElement("a"); //Create <a>
-                    a.href = "data:" + FileType(fileName) + ";base64," + jsonObj.Message; //Image Base64 Goes here
-                    a.download = fileName; //File name Here
-                    a.click(); //Downloaded file
-
-                }
-
-            }
-        });
-    }
-
-    function FileType(fileName) {
-        // for (var i = 0; i < fileName.length; i++) {
-        let Typest = fileName.lastIndexOf(".");
-        var Type = fileName.slice(Typest + 1);
-        var type = Type.toUpperCase();
-        return type;
-    }
-
     const [userList, setUserList] = React.useState([]);
 
     function Json_GetForwardUserList() {
@@ -234,20 +177,11 @@ function TodoList() {
                     if (data) {
                         let js = JSON.parse(data);
                         let { Status, Message } = js;
-                        // let dt = js.Table;
-                         console.log("Json_GetForwardUserList1112222", js)
                         if (Status === "Success") {
                             let tbl = Message.Table;
-                            //console.log("Json_GetForwardUserList1112222", tbl)
-                            // let result = tbl.filter((el) => {
-                            //     return el.CGroup !== "Yes";
-                            // });
-
                             setUserList(tbl);
-
                         }
                     }
-
                 }
             });
         } catch (error) {
@@ -263,29 +197,8 @@ function TodoList() {
         Json_GetFolders();
     }, []);
 
-    function startFormattingDate(dt) {
-        const date = new Date(dt);
-        const formattedDate = date.toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-        });
-        return formattedDate === "Invalid Date" ? " " : formattedDate;
-    }
-
     // modal
     const [openModal, setOpen] = React.useState(false);
-
-    const handleClickOpen = (task = selectedTask) => {
-        setSelectedTask(task);
-        setOpen(true);
-    };
-
-    const [age, setAge] = React.useState('');
-
-    const handleChange = (event) => {
-        setAge(event.target.value);
-    };
 
     useEffect(() => {
         let fltData = actualData.filter(function (obj) {
@@ -493,177 +406,6 @@ function TodoList() {
     const handleClose4 = () => {
         setAnchorEl4(null);
     };
-    //  function Json_Get_CRM_SavedTask_ByTaskId(taskid) {
-    //     // setAttachmentFile([]);
-    //     let obj = {};
-    //     obj.TaskId = taskid;
-    //      Cls.Json_Get_CRM_SavedTask_ByTaskId(obj, function (status, data) {
-    //         if (status && data) {
-    //             let json = JSON.parse(data);
-    //             console.log("Json_Get_CRM_SavedTask_ByTaskId", json);
-
-    //             let table6 = json.T6;
-    //             if (table6.length > 0) {
-    //                 attatmentdata.push(table6);
-    //                 setAttachmentFile(table6);
-
-    //             }
-    //         }
-    //     });
-    // }
-    // function addToWorkTable(Itid, e) {
-    //     console.log(e, "addToWorkTable", Itid);
-    //     let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has initiated a task-${e.Subject} . Task ID : ${e.ID}` };
-    //     console.log("addToWorkTable111", obj);
-    //     ClsSms.Json_AddToWork(obj, function (status, data) {
-    //         if (status) {
-    //             if (data) {
-    //                 //let json = JSON.parse(data);
-    //                 console.log("getitemid", data);
-    //             }
-    //         }
-    //     });
-    // }
-    function addToWorkTable(Itid, e) {
-        console.log(e, "addToWorkTable", Itid);
-        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has completed  a task-${e.Subject} . Task ID : ${e.ID}` };
-        console.log("addToWorkTable111", obj);
-        ClsSms.Json_AddToWork(obj, function (status, data) {
-            if (status) {
-                if (data) {
-                    //let json = JSON.parse(data);
-                    console.log("getitemid", data);
-                }
-            }
-        });
-    }
-    const GetMessageAttachments_Json = (mgsId, e) => {
-        let o = {
-            accid: agrno,
-            email: Email,
-            password: password,
-            messageId: mgsId,
-        };
-
-        ClsPortal.GetMessageAttachments_Json(o, function (sts, data) {
-
-            if (sts && data) {
-                let arrayOfObjects = JSON.parse(data);
-                // console.log("GetMessageAttachments_Json11", arrayOfObjects);
-                if (arrayOfObjects && arrayOfObjects.length > 0) {
-                    setAttachmentFileTodo(arrayOfObjects);
-                    if (e.Source === "Portal") {
-                        arrayOfObjects.forEach((item) => {
-                            if (item.ItemID) {
-                                addToWorkTable(item.ItemID, e);
-                            }
-                        });
-                    }
-
-                }
-            }
-        });
-    }
-    const MarkComplete = (e) => {
-
-        Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
-            if (res) {
-
-                dispatch(updateTaskFieldFromRedux("Status", "Completed", e));
-
-                try {
-                    let obj = {};
-                    obj.TaskId = e.ID;
-                    Cls.Json_Get_CRM_SavedTask_ByTaskId(obj, function (status, data) {
-                        if (status && data) {
-                            let json = JSON.parse(data);
-                            // console.log("Json_Get_CRM_SavedTask_ByTaskId", json);
-
-                            let table6 = json.T6;
-
-                            if (table6 && table6.length > 0) {
-                                table6.forEach((item) => {
-                                    addToWorkTable(item.ItemId, e);
-                                });
-                            } else {
-
-                            }
-
-                        }
-                    });
-                } catch (e) { }
-                try {
-                    if (e.Source === "Portal") {
-                        GetMessageAttachments_Json(e.PubMessageId, e);
-                    }
-                } catch (e) { }
-            }
-        })
-    }
-
-    const FiterAssinee = (ownerid) => {
-
-        let res = userList.filter((e) => e.UserId === ownerid);
-        // console.log("userList212121",res);
-        if (res.length > 0) {
-            return res[0].UserName;
-        }
-
-    }
-
-
-
-    const FilterAgs = (item) => {
-        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
-
-        // const userId = parseInt(localStorage.getItem("UserId"));
-
-        const filteredIds = arr.filter((k) => k !== item.OwnerID);
-
-        let userFilter = []; // Initialize an empty array to store filtered users
-
-        if (filteredIds.length > 0) {
-            userFilter = userList.filter((user) => filteredIds.includes(user.UserId));
-            // Filter userList to include only those users whose UserId is present in filteredIds
-        }
-
-
-        // const user = filteredIds.find((u) => u === userId);       
-
-
-        //const userToFind = user ? user : filteredIds[0];     
-
-        // const res = userToFind ? userList.find((e) => e.ID === userToFind) : null;  
-
-
-
-        return userFilter && userFilter.length > 0 ? userFilter : "";
-    }
-
-    const [anchorElMore, setAnchorElMore] = useState({}); // State to manage anchor element for each document
-    const [openMore, setOpenMore] = useState({}); // State to manage menu visibility for each document
-
-    const handleClickMore = (event, documentIndex) => {
-        setAnchorElMore((prevState) => ({
-            ...prevState,
-            [documentIndex]: event.currentTarget
-        }));
-        setOpenMore((prevState) => ({
-            ...prevState,
-            [documentIndex]: true
-        }));
-    };
-
-    const handleCloseMore = (documentIndex) => {
-        setAnchorElMore((prevState) => ({
-            ...prevState,
-            [documentIndex]: null
-        }));
-        setOpenMore((prevState) => ({
-            ...prevState,
-            [documentIndex]: false
-        }));
-    };
 
     const exportexcel = (data) => {
         let workbook = new Workbook();
@@ -671,21 +413,10 @@ function TodoList() {
         console.log(data, "worksheetdata", data[0]["EndDateTime"]);
         // Add column headers
         const headerRow = worksheet.addRow(["Source", "Subject", "Forwarded By", "End Date", "Client", "Status"]);
-
-        // Apply bold formatting to header row
         headerRow.eachCell((cell, colNumber) => {
             cell.font = { bold: true };
         });
-        // Add data rows
         data.forEach((item, index) => {
-            // let timestamp;
-            // let date;
-            // if (item["EndDateTime"]) {
-            //     timestamp = parseInt(item["EndDateTime"].slice(6, -2));
-            //     date = startFormattingDate(timestamp);
-            // } else {
-            //     date = '';
-            // }
             worksheet.addRow([
                 item?.Source,
                 item?.Subject,
@@ -710,27 +441,9 @@ function TodoList() {
     };
 
     const ExportData = useCallback((dataa) => {
-        // console.log(filterExportData, "11exportData",exportTaskData,dataa);
         exportexcel(dataa);
-        // if (filterExportData && filterExportData.length > 0) {
-        //     exportexcel(filterExportData);
-        // } 
-        // else if(allTask && allTask.length > 0) {
-        //     exportexcel(allTask);
-        // }
-        // else {
-        //     exportexcel(exportTaskData); // Export data from 
-        // }
         setAnchorElDown(null);
     }, []);
-
-
-
-    // useEffect(() => {
-    //     setAllTask([...reduxData]);
-    //     setActualData([...reduxData]);
-    //     dispatch(updateReduxDataSonam(reduxData));
-    // }, [reduxData, dispatch]);
 
     return (
         <>
