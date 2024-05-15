@@ -26,6 +26,7 @@ import { updateTaskFieldFromRedux } from '../redux/reducers/api_helper';
 import CustomLoader from './CustomLoader';
 import TaskDetailModal from './TaskDetailModal';
 import DocumentTripleDot from '../utils/DocumentTripleDot';
+import GetFileType from './FileType';
 
 
 const agrno = localStorage.getItem("agrno");
@@ -286,8 +287,8 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
 
 
-    const [anchorElMore, setAnchorElMore] = useState({}); 
-    const [openMore, setOpenMore] = useState({}); 
+    const [anchorElMore, setAnchorElMore] = useState({});
+    const [openMore, setOpenMore] = useState({});
 
     const handleClickMore = (event, documentIndex) => {
         setAnchorElMore((prevState) => ({
@@ -331,7 +332,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
             userFilter = userList.filter((user) => filteredIds.includes(user.UserId));
             console.log(userFilter, "hello pring data");
             // Filter userList to include only those users whose UserId is present in filteredIds
-        } 
+        }
 
         return userFilter && userFilter.length > 0 ? userFilter : "";
     }
@@ -340,7 +341,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         setSelectedTask(task);
         setOpen(true);
     };
-    
+
     return (
         <>
             <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
@@ -353,7 +354,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
                 {isLoading ? <CustomLoader /> : <Grid className='mt-0' container spacing={2}>
                     {filteredDocuments.length > 0 ? filteredDocuments.slice(0, 9).map((item, index) => {
-                        console.log("search result file data", item)
                         return <Grid key={index} className='pt-0 d-flex w-100' item xs={12} lg={4} md={4} sm={12}>
                             <Box className="file-uploads d-flex w-100">
                                 <label className="file-uploads-label file-uploads-document d-flex w-100" onClick={(event) => {
@@ -363,7 +363,8 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                 }} onDoubleClick={(e) => ViewerDocument(item)}>
                                     <Box className="d-flex align-items-center">
                                         <div className='img-format'>
-                                            <img src={Fileformat} />
+                                            <GetFileType Type={item.Type ? item.Type.toLowerCase() : null}></GetFileType>
+                                            {/* <img src={Fileformat} /> */}
                                         </div>
                                         <Box className="upload-content pe-3">
                                             {editingIndex == index ? (
@@ -399,14 +400,13 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                             )}
                                             <Typography variant="body1">
                                                 {/* Size:  <span className='sembold'>{item.FileSize? item.FileSize: ""}</span> |  */}
-                                                Date <span className='sembold'>{item["Item Date"] !== "NaN/NaN/NaN" ? formatDate(item["Item Date"]) : "01/01/2000"}</span>
+                                                Date <span className='sembold'>{item["Item Date"] ? item["Item Date"] : "01/01/2000"}</span>
                                                 | <span className='sembold'>{item.Client}</span>
                                             </Typography>
                                         </Box>
                                     </Box>
                                     <Box>
-                                        {console.log("fdgdfghgfsg",item)}
-                                        <DocumentTripleDot data={{data:item}} handleEdit={()=>{}}/>
+                                        <DocumentTripleDot data={{ data: item }} handleEdit={() => { }} />
                                         {/* <Button
                                             id={`basic-button-${index}`}
                                             aria-controls={anchorElDocumentList[index] ? `basic-menu-${index}` : undefined}

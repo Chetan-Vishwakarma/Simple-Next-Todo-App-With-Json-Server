@@ -155,6 +155,8 @@ function TodoList() {
         if(actualData.length===0 || allTask.length===0){
             dispatch(fetchAllTasksRedux("Todo"));
         }
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });  //This is for scroll to top when come to this component
 
         const handleScroll = () => {
             if (
