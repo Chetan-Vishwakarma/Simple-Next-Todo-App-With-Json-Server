@@ -27,6 +27,7 @@ import CustomLoader from './CustomLoader';
 import TaskDetailModal from './TaskDetailModal';
 import DocumentTripleDot from '../utils/DocumentTripleDot';
 import GetFileType from './FileType';
+import TaskCard from '../utils/TaskCard';
 
 
 const agrno = localStorage.getItem("agrno");
@@ -428,13 +429,14 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                     {isTaskLoadingFromRedux ? <CustomLoader /> : (filteredTasks.length > 0 ? filteredTasks.slice(0, 9).map((item, index) => {
                         const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
                         let userName = FilterAgs(item);
-                        return <Grid className='pt-0' item xs={12} lg={4} md={4} sm={12}>
-                            <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
+                        // return <Grid className='pt-0' item xs={12} lg={4} md={4} sm={12}>
+                            return <TaskCard item={item} index={index} />
+                            {/* <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
                                 <Box className='check-todo'>
                                     {/* <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
                                         <AttachFileIcon />
-                                    </Badge> */}
+                                    </Badge> **
 
                                     <Radio className={item.Priority === 1 ? 'text-red ' : item.Priority === 2 ? 'text-green' : 'text-grey'} checked
                                         sx={{
@@ -453,7 +455,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                     <Typography variant='subtitle1'><pan className='text-gray'>
 
                                         {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
-                                        {/* <a href='#'>Patrick</a>, */}
+                                        {/* <a href='#'>Patrick</a>, ***
                                         <span>{userName && userName.length > 0 ? userName[0].UserName : ""}</span>
 
 
@@ -524,8 +526,8 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                         </Button>
                                     </DateRangePicker>
                                 </Box>
-                            </Box>
-                        </Grid>
+                            </Box> */}
+                        // </Grid>
 
                     }) : <DataNotFound />)}
                 </Grid>
