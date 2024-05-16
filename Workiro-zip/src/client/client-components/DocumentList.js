@@ -160,6 +160,7 @@ export default function DocumentList({ clientId }) {
 
     const [searchParam, setSearchParam] = useSearchParams();
     const filter = searchParam.get("filter");
+    const adv = searchParam.get("adv");
 
     const { sections, folders } = useSelector(state => state.counter);
 
@@ -517,7 +518,7 @@ export default function DocumentList({ clientId }) {
 
     return (
         <>
-            {Boolean(filter) && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/DocumentList", tabName: "Documents List" }]} />}
+            {(Boolean(filter) && !Boolean(adv)) && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/DocumentList", tabName: "Documents List" }]} />}
 
             {isLoading ? <CustomLoader /> : <>
 

@@ -391,9 +391,9 @@ function formatDate(inputDate) {
 }
 
 
-export const Json_AdvanceSearchDocFromRedux = (f_id, description) => dispatch => {
+export const Json_AdvanceSearchDocFromRedux = (f_id, description, param_obj) => dispatch => {
     if (description !== "") {
-        let obj = {
+        let obj = Object.keys(param_obj).length>0 ? param_obj : {
             ClientId: "",
             Description: description ? description : "",
             Email: Email,

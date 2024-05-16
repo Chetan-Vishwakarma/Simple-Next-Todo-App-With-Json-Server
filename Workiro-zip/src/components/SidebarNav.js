@@ -398,7 +398,7 @@ export default function SidebarNav() {
     // }, 1000);
     // return () => clearTimeout(data);
     const data = setTimeout(() => {
-      dispatch(Json_AdvanceSearchDocFromRedux("",forDocuments));
+      dispatch(Json_AdvanceSearchDocFromRedux("",forDocuments,{}));
     }, 1000);
     return () => clearTimeout(data);
   }, [forDocuments]);

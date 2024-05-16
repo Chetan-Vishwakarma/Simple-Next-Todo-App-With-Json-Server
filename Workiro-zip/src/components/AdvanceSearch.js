@@ -16,6 +16,7 @@ import BootstrapTooltip from '../utils/BootstrapTooltip';
 import { toast } from 'react-toastify';
 import { useDispatch } from "react-redux"
 import { setIsAdvanceDocSearchRedux } from '../redux/reducers/counterSlice';
+import { Json_AdvanceSearchDocFromRedux } from '../redux/reducers/api_helper';
 
 let agrno = localStorage.getItem("agrno");
 let password = localStorage.getItem("Password");
@@ -221,7 +222,7 @@ function AdvanceSearch() {
                             setSelectedClient({});
                             handleClose();
                             dispatch(setIsAdvanceDocSearchRedux(true));
-                            navigate("/dashboard/SearchResult/Doc", { state: { globalSearchDocs: json.Table6, strGlobal: documentData.Description } });
+                            navigate("/dashboard/SearchResult/Doc");
                         } else {
                             toast.error("Documents not found for this criteria");
                             handleClose();
@@ -536,7 +537,9 @@ function AdvanceSearch() {
                                 let formated_end_date = format_YYYY_MM_DD(end._d);
                                 let obj = { ...documentData, ItemFDate: isDateShow ? formated_start_date : "01/01/1900", ItemTDate: isDateShow ? formated_end_date : "01/01/1900" };
                                 setDocumentData(obj);
-                                Json_AdvanceSearchDoc(obj);
+                                // Json_AdvanceSearchDoc(obj);
+                                dispatch(Json_AdvanceSearchDocFromRedux("","test",obj));
+                                navigate("/dashboard/DocumentList?filter=true&adv=true");
                             }}>
                                 Apply
                             </Button>
