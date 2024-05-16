@@ -149,6 +149,11 @@ const MenuProps = {
     },
 };
 
+const agrno = localStorage.getItem("agrno");
+const password = localStorage.getItem("Password");
+const Email = localStorage.getItem("Email");
+const folderId = localStorage.getItem("FolderId");
+
 export default function DocumentList({ clientId }) {
     const location = useLocation();
     const dispatch = useDispatch();
@@ -156,24 +161,25 @@ export default function DocumentList({ clientId }) {
     const [searchParam, setSearchParam] = useSearchParams();
     const filter = searchParam.get("filter");
 
-    const {sections,folders} = useSelector(state => state.counter);
+    const { sections, folders } = useSelector(state => state.counter);
 
-    
+
     let documents = [];
     const advResult = useSelector(state => state.counter.advanceSearchResult.result);
     const explorerResult = useSelector(state => state.counter.explorerSearchDocRedux.documents);
-    
+
     documents = Boolean(filter) ? advResult : explorerResult;
+
+    if (documents.length>0 && Object.keys(documents[0]).includes('ErrorLine')) {
+        dispatch(Json_ExplorerSearchDoc_Redux({ ProjectId: folderId, ClientId: clientId, sectionId: "-1" }));
+    }
 
     let isLoading = true;
     let explorerLoading = useSelector(state => state.counter.explorerSearchDocRedux.isLoading);
-    isLoading = Boolean(filter) ? false : explorerLoading; 
+    isLoading = Boolean(filter) ? false : (documents.length>0 && Object.keys(documents[0]).includes('ErrorLine'))?true: explorerLoading;
 
     const { globalSearchDocs, strGlobal } = location.state ? location.state : { globalSearchDocs: [], strGlobal: "" };
-    const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
-    const [password, setPassword] = useState(localStorage.getItem("Password"));
-    const [Email, setEmail] = useState(localStorage.getItem("Email"));
-    const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
+
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
     // const [documents, setDocuments] = useState([]);
@@ -263,11 +269,9 @@ export default function DocumentList({ clientId }) {
     }
 
     useEffect(() => {
-        setAgrNo(localStorage.getItem("agrno"));
-        setFolderId(localStorage.getItem("FolderId"));
-        setPassword(localStorage.getItem("Password"));
-        setEmail(localStorage.getItem("Email"));
-        dispatch(Json_ExplorerSearchDoc_Redux({ ProjectId: folderId, ClientId: clientId, sectionId: "-1" }));
+        if(documents.length===0){
+            dispatch(Json_ExplorerSearchDoc_Redux({ ProjectId: folderId, ClientId: clientId, sectionId: "-1" }));
+        }
     }, []);
 
     const handleSearch = (text) => {
@@ -513,7 +517,7 @@ export default function DocumentList({ clientId }) {
 
     return (
         <>
-            {/* {globalSearchDocs.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/DocumentList", tabName: "Documents List" }]} />} */}
+            {Boolean(filter) && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/DocumentList", tabName: "Documents List" }]} />}
 
             {isLoading ? <CustomLoader /> : <>
 

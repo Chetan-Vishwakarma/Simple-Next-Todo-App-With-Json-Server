@@ -42,6 +42,7 @@ import { setAllTaskFromRedux, setAllTaskFromReduxOrderWise } from '../redux/redu
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { fetchAllTasksRedux, updateTaskFieldFromRedux } from '../redux/reducers/api_helper';
 import TaskCard from '../utils/TaskCard';
+import CustomBreadCrumbs from './CustomBreadCrumbs';
 
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -447,7 +448,7 @@ function TodoList() {
         <>
             <Box className="container-fluid p-0">
 
-                {/* {globalSearchTask.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/MyTask", tabName: "My Task" }]} />} */}
+                {Boolean(filter) && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + localStorage.getItem("globalSearchKey"), tabName: "Search Result" }, { tabLink: "/dashboard/MyTask", tabName: "My Task" }]} />}
 
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal} attachmentFileTodo={attachmentFileTodo}></TaskDetailModal>
                 {/* <CreateNewModalTask setIsApi={setIsApi} isApi={isApi}></CreateNewModalTask> */}

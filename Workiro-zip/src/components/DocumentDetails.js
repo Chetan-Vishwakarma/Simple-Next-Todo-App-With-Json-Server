@@ -150,7 +150,6 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
             console.log("Error while calling Json_CRM_GetOutlookTask", err);
         }
     }
-
     return (
         <>
             <Box>
@@ -158,7 +157,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
                 <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument} Json_CRM_GetOutlookTask={Json_CRM_GetOutlookTask}></DocumentsVewModal>
-                {dataNotFoundBoolean ? <DataNotFound /> : <DataGrid
+                {(documents.length === 0 && advFilteredResult.length === 0) ? <DataNotFound /> : <DataGrid
                     dataSource={advFilteredResult.length > 0 ? advFilteredResult : documents}
                     keyExpr="Guid"
                     allowColumnReordering={true}

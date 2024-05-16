@@ -3403,13 +3403,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                         <TableCell align="left">{docForDetails && docForDetails["FileName"]?docForDetails["FileName"]:""}</TableCell>
                                                     </TableRow>
                                                 </TableBody>
-                                              
-
-                                            </>
-                                                
-                                              
-
-                                               
+                                            </> 
                                             )
                                             }
 
@@ -3417,7 +3411,6 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                     </TableContainer>
                                 </AccordionDetails>
                             </Accordion>
-                            {console.log(docForDetails,"Docdetailssonam")}
                             {docForDetails && docForDetails.type=="DMS" ? (
                             <><Accordion className='accordian-box' expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
                                     <AccordionSummary
