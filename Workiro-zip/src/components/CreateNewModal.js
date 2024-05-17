@@ -2382,12 +2382,12 @@ function CreateNewModalTask({ ...props }) {
                     obj.Subject =`Docusoft Task ${txtClient}`;
                     // obj.Body = `Hi ${item?.ForwardTo},"\r\n" ${ownerName} has initiated a task relating to ${txtClient} and you have been added as an assignee."\r\n" Task : ${textSubject} "\r\n" Task ID : ${taskID} "\r\n" Start Date : ${taskStartDate} Please click on the following link to upload Open Upload Page <a href="">Launch</a>`;
                     obj.Body = `Hi ${item?.ForwardTo},<br><br>
-${ownerName} has initiated a task relating to ${txtClient} and you have been added as an assignee.<br><br>
-Task: ${textSubject}<br>
-Task ID: ${taskID}<br>
-Start Date: ${taskStartDate}<br><br>
-Please click on the following link to upload:<br>
-Open Upload Page <a href="">Launch</a>`;
+                    ${ownerName} has initiated a task relating to ${txtClient} and you have been added as an assignee.<br><br>
+                    Task: ${textSubject}<br>
+                    Task ID: ${taskID}<br>
+                    Start Date: ${taskStartDate}<br><br>
+                    Please click on the following link to upload:<br>
+                    Open Upload Page <a href="${window.location.protocol+"//"+window.location.hostname+":"+window.location.port}/dashboard/MyTask">Open Task!</a>`;
                     obj.FromMail = Email;
                     obj.ToEmail = item?.UserEmail;
                     obj.strFileName = "";

@@ -1500,7 +1500,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                     Task ID: ${taskDataCom.ID}<br>
                     Start Date: ${taskDataCom.Start}<br><br>
                     Please click on the following link to upload:<br>
-                    Open Upload Page <a href="">Launch</a>`;
+                    Open Upload Page <a href="${window.location.protocol+"//"+window.location.hostname+":"+window.location.port}/dashboard/MyTask">Open Task!</a>`;
                     obj.FromMail = Email;
                     obj.ToEmail = item?.UserEmail;
                     obj.strFileName = "";

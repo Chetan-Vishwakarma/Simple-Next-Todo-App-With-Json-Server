@@ -814,6 +814,17 @@ console.log("formattedDate",formattedDate)
             }
         })
     }
+    GetAssigneeListByTaskId(obj, callBack) {
+        super.CreateNewServiceParamObject("Json_GetAssigneeListByTaskId", obj, false);
+        super.CallNewService("Json_GetAssigneeListByTaskId", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
     GetActiveUserById(obj, callBack) {
         super.CreateNewServiceParamObject("Json_GetActiveUserById", obj, false);
         super.CallNewService("Json_GetActiveUserById", function (status, Data) {

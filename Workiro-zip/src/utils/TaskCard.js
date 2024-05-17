@@ -120,7 +120,50 @@ function TaskCard({ item, index }) {
             }
         });
     }
+    // const Json_SendMail = (taskID,taskStartDate) => {
+    //     if(taskID){
+    //         if(addUser && addUser.length > 0) {
+    //             addUser.forEach(item => {
+    //                 let obj={};
+    //                 obj.Subject =`Docusoft Task ${txtClient}`;
+    //                 // obj.Body = `Hi ${item?.ForwardTo},"\r\n" ${ownerName} has initiated a task relating to ${txtClient} and you have been added as an assignee."\r\n" Task : ${textSubject} "\r\n" Task ID : ${taskID} "\r\n" Start Date : ${taskStartDate} Please click on the following link to upload Open Upload Page <a href="">Launch</a>`;
+    //                 obj.Body = `Hi ${item?.ForwardTo},<br><br>
+    //                 ${ownerName} has initiated a task relating to ${txtClient} and you have been added as an assignee.<br><br>
+    //                 Task: ${textSubject}<br>
+    //                 Task ID: ${taskID}<br>
+    //                 Start Date: ${taskStartDate}<br><br>
+    //                 Please click on the following link to upload:<br>
+    //                 Open Upload Page <a href="${window.location.protocol+"//"+window.location.hostname+":"+window.location.port}/dashboard/MyTask">Open Task!</a>`;
+    //                 obj.FromMail = Email;
+    //                 obj.ToEmail = item?.UserEmail;
+    //                 obj.strFileName = "";
+    //                 obj.Byte = null;
+    //                 console.log(obj,"sendmail_object data",addUser);
+    //                 cls.NewSendMail(obj, function (sts, data) {
+    //                     if (sts) {
+    //                         if (data) {
+    //                             console.log(data,"SendMail by sonam");
+    //                         }
+    //                     }
+    //                 });
+    //             });
+    //         }
+           
+    //     }
+      
+    // }
+    // const Json_GetAssigneeListByTaskId = () => {
+    //     let obj = {};
+    //     obj.AgrNo = "";
+    //     obj.Email ="";
+    //     obj.Password ="";
+    //     obj.taskId = "";
+    //     Cls.GetAssigneeListByTaskId(obj, function (status, data) {
+    //         if (status && data) {
 
+    //         }
+    //     });
+    // }
     const MarkComplete = (e) => {
         Cls.ConfirmMessage1("Are you sure you want to complete task", function (res) {
             if (res) {
