@@ -835,8 +835,15 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
         if (e.target.innerText) {
             console.log(e.target.innerText, "innerText");
             if (e.target.innerText == "Completed") {
-                Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
+                Cls.ConfirmMessage1("Are you sure you want to complete task", function (res) {
                     if (res) {
+                        const checkbox = document.getElementById('myCheckbox');
+                        const notifyAssignees = checkbox ? checkbox.checked : false;
+                        console.log(selectedTask,'taskdetailsmodal2 Assignees:', notifyAssignees);
+                        if(notifyAssignees==true){
+                            Json_SendMail(selectedTask);  //pending by sonam
+
+                        }
                         Json_UpdateTaskField("Status", e.target.innerText, returnMessageStatus(e.target.innerText));
                         if (attachmentFile && attachmentFile.length > 0) {
                             attachmentFile.forEach((item) => {
@@ -1479,13 +1486,45 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
             }
         });
     }
+    const Json_SendMail = (taskDataCom) => {
+        if(taskDataCom.ID){
+            if(addUser && addUser.length > 0) {
+                addUser.forEach(item => {
+                    let obj={};
+                    obj.Subject =`Docusoft Task ${txtClient}`;
+                    obj.Body = `Hi ${item?.ForwardTo},"\r\n" ${taskDataCom["Forwarded By"]} has initiated a task relating to ${txtClient} and you have been added as an assignee."\r\n" Task : ${taskDataCom.Subject} "\r\n" Task ID : ${taskDataCom.ID} "\r\n" Start Date : ${taskDataCom.Start} Please click on the following link to upload Open Upload Page <a href="">Launch</a>`;
+                    obj.FromMail = Email;
+                    obj.ToEmail = "sonam.choudhari@docusoft.net";//item?.UserEmail;
+                    obj.strFileName = "";
+                    obj.Byte = "";
+                    console.log(obj,"sendmail_object data",addUser);
+                    Cls.SendMail(obj, function (sts, data) {
+                        if (sts) {
+                            if (data) {
+                                console.log(data,"SendMail by sonam");
+                            }
+                        }
+                    });
+                });
+            }
+           
+        }
+      
+    }
     const handleChangeStatus = (event) => {
         console.log("change_statusevent", selectedTask);
 
         setChecked(event.target.checked);
         if (event.target.checked) {
-            Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
+            Cls.ConfirmMessage1("Are you sure you want to complete task", function (res) {
                 if (res) {
+                    const checkbox = document.getElementById('myCheckbox');
+                        const notifyAssignees = checkbox ? checkbox.checked : false;
+                        console.log(selectedTask,'taskdetailsmodal565 Assignees:', notifyAssignees);
+                        if(notifyAssignees==true){
+                               //pending by sonam
+                               Json_SendMail(selectedTask);
+                        }
                     Json_UpdateTaskField("Status", "Completed", returnMessageStatus("Completed"));
                     if (attachmentFile && attachmentFile.length > 0) {
                         attachmentFile.forEach((item) => {

@@ -122,8 +122,15 @@ function TaskCard({ item, index }) {
     }
 
     const MarkComplete = (e) => {
-        Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
+        Cls.ConfirmMessage1("Are you sure you want to complete task", function (res) {
             if (res) {
+                const checkbox = document.getElementById('myCheckbox');
+                const notifyAssignees = checkbox ? checkbox.checked : false;
+                console.log(e,'NotifySonam Assignees:', notifyAssignees);
+                if(notifyAssignees==true){
+                       //pending by sonam
+                }
+                console.log(res,"markcompleted");
                 dispatch(updateTaskFieldFromRedux("Status", "Completed", e));
                 try {
                     let obj = {};

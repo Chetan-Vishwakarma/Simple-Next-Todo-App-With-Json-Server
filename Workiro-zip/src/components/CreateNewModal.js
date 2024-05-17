@@ -1366,6 +1366,12 @@ function CreateNewModalTask({ ...props }) {
                                 addToWorkTable(item.ItemId, js.Message);
                             });
                         }
+                        if(SendMails===true){
+                            if(addUser && addUser.length > 0) {
+                                Json_SendMail(js.Message,moment(currentDate).format("YYYY/MM/DD"));
+                            }
+                        }
+                    
                         let strGuid = uuidv4().replace(/-/g, '');
                         localStorage.setItem("GUID", strGuid)
 
@@ -2142,6 +2148,11 @@ function CreateNewModalTask({ ...props }) {
                                         addToWorkTable(item.DocId, js.Message, textSubject);
                                     });
                                 }
+                                if(SendMails===true){
+                                    if(addUser && addUser.length > 0) {
+                                        Json_SendMail(js.Message,moment(currentDate).format("YYYY/MM/DD"));
+                                    }
+                                }
                                 CreatePortalMessage(js.Message)
                                 // toast.success("Created Task");
                                 setOpen(false);
@@ -2356,13 +2367,42 @@ function CreateNewModalTask({ ...props }) {
 
 
     const [isRemindMe, setIsRemindMe] = useState(false);
+    const [SendMails, setSendMails] = useState(true);
     const handleRemindMe = (e) => {
         setIsRemindMe(e.target.checked);
         if (!e.target.checked) {
             setRemiderDate("")
         }
     }
-
+    const Json_SendMail = (taskID,taskStartDate) => {
+        if(taskID){
+            if(addUser && addUser.length > 0) {
+                addUser.forEach(item => {
+                    let obj={};
+                    obj.Subject =`Docusoft Task ${txtClient}`;
+                    obj.Body = `Hi ${item?.ForwardTo},"\r\n" ${ownerName} has initiated a task relating to ${txtClient} and you have been added as an assignee."\r\n" Task : ${textSubject} "\r\n" Task ID : ${taskID} "\r\n" Start Date : ${taskStartDate} Please click on the following link to upload Open Upload Page <a href="">Launch</a>`;
+                    obj.FromMail = Email;
+                    obj.ToEmail = "sonam.choudhari@docusoft.net";//item?.UserEmail;
+                    obj.strFileName = "";
+                    obj.Byte = "";
+                    console.log(obj,"sendmail_object data",addUser);
+                    cls.SendMail(obj, function (sts, data) {
+                        if (sts) {
+                            if (data) {
+                                console.log(data,"SendMail by sonam");
+                            }
+                        }
+                    });
+                });
+            }
+           
+        }
+      
+    }
+    const handleSendMail = (e) => {
+        setSendMails(e.target.checked);
+        // Json_SendMail();
+    }
 
     const SigningMethods = (e) => {
         console.log("file name ", e)
@@ -3102,6 +3142,7 @@ close
                                                             }
                                                         })
                                                         : null}
+                                                         
                                                 </Box>
                                             </Box>
 
@@ -3139,6 +3180,7 @@ close
                                                 </Box>
                                             </Box>
                                         </Menu>
+                                        <Checkbox onChange={handleSendMail} checked={SendMails} {...label} size="small" />
                                     </Box>
                                     {/* Box End */}
 
