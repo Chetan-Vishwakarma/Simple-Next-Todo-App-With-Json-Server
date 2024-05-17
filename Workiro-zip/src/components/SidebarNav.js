@@ -665,9 +665,8 @@ export default function SidebarNav() {
           <Routes>
             {/* <Route path="/" element={<Login/>}/> */}
             {/* <Route path="/" element={<Client />} /> */}
-            <Route index element={<h1></h1>} />
+            <Route index element={<Dashboard/>} />
             <Route path="/Connections" element={<Client />} />
-            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/clientDetails" element={<ClientDetails />} />
             <Route path="/ContactDetails" element={<ContactDetails />} />
             <Route path="/MyTask" element={<TodoList />} />
