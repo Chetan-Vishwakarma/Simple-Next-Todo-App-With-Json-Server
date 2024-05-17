@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, Typography, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, Link, Chip, Stack, ListItemIcon, Radio, useMediaQuery, useTheme, Accordion, AccordionSummary, AccordionDetails, Checkbox } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import DocumentsVewModal from "../client/utils/DocumentsVewModal";
 import { toast } from 'react-toastify';
 import DataGrid, {
@@ -27,6 +27,7 @@ const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.a
 //const baseUrlDocuSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
 function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, selectedGroup }) {
+    console.log("sljdlkjgklje",documents);
     const dispatch = useDispatch();
     const Cls = new CommanCLS(baseUrl, agrno, Email, password);
     const ClsPractice = new CommanCLS(baseUrlPractice, agrno, Email, password);
@@ -67,9 +68,9 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     const [updatedSubject, setUpdatedSubject] = useState('');
     const [test, setTest] = useState({});
 
-    const handleEdit = (index, data) => {
+    const handleEdit = (index, data, data2) => {
         setEditingIndex(index);
-        setUpdatedSubject(data.Description);
+        setUpdatedSubject(test[data2.key] ? test[data2.key] : data.Description);
     };
 
     const handleEditChange = (event) => {
@@ -89,7 +90,6 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
             if (sts) {
                 if (data) {
                     let json = JSON.parse(data);
-                    console.log("Json_RenameDocument", json);
                     if (json.Status === "Success") {
                         // Json_getRecentDocumentList();
                         toast.success(json.Message);
@@ -104,6 +104,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
     }
 
     const handleSave = (newDesc, oldDesc, doc, index) => {
+        setEditingIndex(null);
         if (oldDesc === newDesc) return;
         Json_RenameDocument(doc, newDesc, index);
     };
@@ -150,7 +151,6 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
             console.log("Error while calling Json_CRM_GetOutlookTask", err);
         }
     }
-
     return (
         <>
             <Box>
@@ -158,8 +158,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal}></TaskDetailModal>
 
                 <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument} Json_CRM_GetOutlookTask={Json_CRM_GetOutlookTask}></DocumentsVewModal>
-
-                {dataNotFoundBoolean ? <DataNotFound /> : <DataGrid
+                {(documents.length === 0 && advFilteredResult.length === 0) ? <DataNotFound /> : <DataGrid
                     dataSource={advFilteredResult.length > 0 ? advFilteredResult : documents}
                     keyExpr="Guid"
                     allowColumnReordering={true}
@@ -186,7 +185,6 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                         dataType="string"  // Set the data type to "string" for proper grouping
                         cellRender={(data) => {
                             let rd = data.data;
-                            // console.log("file type11",data)
                             return <Box className="file-uploads">
                                 <label className="file-uploads-label file-uploads-document" onClick={(event) => {
                                     event.stopPropagation();
@@ -201,9 +199,9 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                         <GetFileType Type={rd.Type ? rd.Type.toLowerCase() : null}></GetFileType>
 
                                         <Box className="upload-content pe-3">
-                                            {editingIndex === data.key ? <input
+                                            {editingIndex === data.data["Registration No."] ? <input
                                                 type="text"
-                                                defaultValue={data.data.Description}
+                                                defaultValue={test[data.key] ? test[data.key] : data.data.Description}
                                                 value={updatedSubject}
                                                 onChange={handleEditChange}
                                                 autoFocus
@@ -220,7 +218,7 @@ function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, se
                                         </Box>
                                     </Box>
                                     <Box>
-                                        <DocumentTripleDot data={data} handleEdit={handleEdit}/>
+                                        <DocumentTripleDot data={data} handleEdit={handleEdit} />
                                     </Box>
                                 </label>
                             </Box>

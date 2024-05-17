@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, Typography, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, Link, Chip, Stack, ListItemIcon, Radio, useMediaQuery, useTheme, Accordion, AccordionSummary, AccordionDetails, Checkbox } from '@mui/material';
+import { Button, Menu, MenuItem, ListItemIcon } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -185,20 +185,20 @@ function DocumentTripleDot({ data,handleEdit }) {
     const handleClickDocumentList = (event, rowData) => {
         event.stopPropagation();
         const newAnchorElDocumentList = { ...anchorElDocumentList };
-        newAnchorElDocumentList[rowData.key] = event.currentTarget;
+        newAnchorElDocumentList[rowData.data["Registration No."]] = event.currentTarget;
         setAnchorElDocumentList(newAnchorElDocumentList);
     };
     const handleCloseDocument = (event, rowData) => {
         event.stopPropagation();
         const newAnchorElDocumentList = { ...anchorElDocumentList };
-        delete newAnchorElDocumentList[rowData.key];
+        delete newAnchorElDocumentList[rowData.data["Registration No."]];
         setAnchorElDocumentList(newAnchorElDocumentList);
     };
     const handleCloseDocumentCreateTask = (event, rowData) => {
         if (rowData) {
             event.stopPropagation();
             const newAnchorElDocumentList = { ...anchorElDocumentList };
-            delete newAnchorElDocumentList[rowData.key];
+            delete newAnchorElDocumentList[rowData.data["Registration No."]];
             setAnchorElDocumentList(newAnchorElDocumentList);
             Json_GetItemBase64DataById(rowData.data, "CRM");
         }
@@ -208,7 +208,7 @@ function DocumentTripleDot({ data,handleEdit }) {
             console.log("row selected data", rowData)
             event.stopPropagation();
             const newAnchorElDocumentList = { ...anchorElDocumentList };
-            delete newAnchorElDocumentList[rowData.key];
+            delete newAnchorElDocumentList[rowData.data["Registration No."]];
             setAnchorElDocumentList(newAnchorElDocumentList);
             let res = Json_GetItemBase64DataById(rowData.data, "Portal");
             if (res) {
@@ -239,7 +239,7 @@ function DocumentTripleDot({ data,handleEdit }) {
             event.stopPropagation();
             let selectedDocument = rowData.data;
             const newAnchorElDocumentList = { ...anchorElDocumentList };
-            delete newAnchorElDocumentList[rowData.key];
+            delete newAnchorElDocumentList[rowData.data["Registration No."]];
             setAnchorElDocumentList(newAnchorElDocumentList);
             var IsApproved = selectedDocument["IsApproved"];
             var PortalDocId = selectedDocument["PortalDocId"];
@@ -257,7 +257,7 @@ function DocumentTripleDot({ data,handleEdit }) {
         if (rowData) {
             event.stopPropagation();
             const newAnchorElDocumentList = { ...anchorElDocumentList };
-            delete newAnchorElDocumentList[rowData.key];
+            delete newAnchorElDocumentList[rowData.data["Registration No."]];
             setAnchorElDocumentList(newAnchorElDocumentList);
             downloadFile(rowData.data)
         }
@@ -273,12 +273,11 @@ function DocumentTripleDot({ data,handleEdit }) {
           getAudit={getAudit}
           call_Json_GetAudit={call_Json_GetAudit}
         />
-
             <Button
-                id={`basic-button-${data.key}`}
-                aria-controls={anchorElDocumentList[data.key] ? `basic-menu-${data.key}` : undefined}
+                id={`basic-button-${data.data["Registration No."]}`}
+                aria-controls={anchorElDocumentList[data.data["Registration No."]] ? `basic-menu-${data.data["Registration No."]}` : undefined}
                 aria-haspopup="true"
-                aria-expanded={Boolean(anchorElDocumentList[data.key])}
+                aria-expanded={Boolean(anchorElDocumentList[data.data["Registration No."]])}
                 onClick={(event) => {
                     handleClickDocumentList(event, data)
                 }}
@@ -287,13 +286,13 @@ function DocumentTripleDot({ data,handleEdit }) {
                 <MoreVertIcon />
             </Button>
             <Menu
-                id={`basic-menu-${data.key}`}
-                anchorEl={anchorElDocumentList[data.key]}
+                id={`basic-menu-${data.data["Registration No."]}`}
+                anchorEl={anchorElDocumentList[data.data["Registration No."]]}
 
-                open={Boolean(anchorElDocumentList[data.key])}
+                open={Boolean(anchorElDocumentList[data.data["Registration No."]])}
                 onClose={(event) => handleCloseDocument(event, data)}
                 MenuListProps={{
-                    'aria-labelledby': `basic-button-${data.key}`,
+                    'aria-labelledby': `basic-button-${data.data["Registration No."]}`,
                 }}
                 className='custom-dropdown'
             >
@@ -331,8 +330,8 @@ function DocumentTripleDot({ data,handleEdit }) {
                     Upload New Version</MenuItem>
                 <MenuItem
                     onClick={(event) => {
-                        // handleEditField(event, data.key);
-                        handleEdit(data.key, data.data);
+                        // handleEditField(event, data.data["Registration No."]);
+                        handleEdit(data.data["Registration No."], data.data, data);
                         handleCloseDocument(event, data);
                     }}
                 >

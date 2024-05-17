@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 function applyTaskFilters(data, criteria) {
   if (data && data.length > 0) {
     return data.filter(function (obj) {
-      return Object.keys(criteria).every(function (key) {
+      return Object.keys(criteria).every(function (key, index) {
         if (criteria[key][0].length > 0 || typeof criteria[key][0] === "object") {
           if (obj[key] && obj[key] !== undefined && obj[key] !== "") {
             if (key === "CreationDate") {
@@ -12,7 +12,11 @@ function applyTaskFilters(data, criteria) {
               let eDate = criteria[key][1];
               return docDate >= sDate && docDate <= eDate;
             } else {
-              return obj[key].toString().toLowerCase().includes(criteria[key][0].toString().toLowerCase());
+              if(criteria[key].length===1){
+                return obj[key].toString().toLowerCase().includes(criteria[key][0].toString().toLowerCase());
+              }else{
+                return obj[key].toString().toLowerCase().includes(criteria[key][0].toString().toLowerCase()) ||obj[key].toString().toLowerCase().includes(criteria[key][1].toString().toLowerCase()) || obj[key].toString().toLowerCase().includes(criteria[key][2].toString().toLowerCase());
+              }
             }
           }
         }
@@ -55,7 +59,7 @@ const counterSlices = createSlice({
       isLoading: true,
       recentTaskList: [],
     },
-    sections:[],
+    sections: [],
     folders: [],
     allTask: [],
     actualData: [],
@@ -159,10 +163,10 @@ const counterSlices = createSlice({
       state.connectionsState.allClientsList = action.payload;
     },
     setAdvanceSearchResultFromRedux: (state, action) => {
-      let { docs, descriptions } = action.payload
+      let { docs, descriptions, isLoading } = action.payload
       state.advanceSearchResult.result = docs;
       state.advanceSearchResult.docDescriptions = descriptions;
-      state.advanceSearchResult.isLoading = false;
+      state.advanceSearchResult.isLoading = isLoading;
     },
     setSectionDataInredux: (state, action) => {
       state.sections = action.payload;

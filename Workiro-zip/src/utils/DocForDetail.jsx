@@ -1,7 +1,7 @@
 import moment from 'moment';
 import React from 'react'
 import Activity from '../client/utils/Activity';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, Typography, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, Link, Chip, Stack, ListItemIcon, Radio, useMediaQuery, useTheme, Accordion, AccordionSummary, AccordionDetails, Checkbox } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, Typography, Dialog, DialogContent, DialogContentText, Link, Accordion, AccordionSummary, AccordionDetails, Checkbox } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
@@ -90,7 +90,6 @@ function DocForDetail({openDocumentDetailsList,setOpenDocumentDetailsList,docFor
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <Box className='table-responsive'>
-                                        {console.log("dsfjsdklfjdklj",getVertion)}
                                         {getVertion.length > 0 ? getVertion.map((item, index) => {
                                             return <>
                                                 <Box className="file-uploads" key={index}>

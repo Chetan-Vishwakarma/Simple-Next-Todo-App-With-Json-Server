@@ -10,21 +10,17 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ArticleIcon from '@mui/icons-material/Article';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
-import DescriptionIcon from '@mui/icons-material/Description';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import moment from 'moment';
 import DocumentsVewModal from '../client/utils/DocumentsVewModal';
 import { toast } from 'react-toastify';
 import DocDetails from './DocDetails';
-import DateRangePicker from 'react-bootstrap-daterangepicker';
 import CustomLoader from './CustomLoader';
-// import DocumentRenameModal from './DocumentRenameModal';
-import Fileformat from '../images/files-icon/pdf.png';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
 import GetFileType from './FileType';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRecentTasksRedux, fetchAllTasksRedux, fetchRecentDocumentsRedux } from '../redux/reducers/api_helper';
+import TaskCard from '../utils/TaskCard';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -40,29 +36,19 @@ function NewTodoList() {
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
-    const [isEditing, setIsEditing] = useState(false);
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
-    //const [sendUrldata, setsendUrldata] = useState("");
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
-    //const baseUrlPortal = "https://sharepoint.docusoftweb.com/dsdesktopwebservice.asmx/";
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
     let ClsSms = new CommanCLS(baseUrl, agrno, Email, password);
     let Cls = new CommanCLS(baseUrlPractice, agrno, Email, password);
-    //let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
-    //let Clsp = new CommanCLS(baseUrlPractice, agrno, Email, password);
-
-    // const [allTask, setAllTask] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
-    // const [recentTaskList, setRecentTaskList] = useState([]);
-    //const [crmTaskAcivity, setCRMTaskAcivity] = useState([]);
 
     const [anchorElMore, setAnchorElMore] = useState({}); // State to manage anchor element for each document
     const [openMore, setOpenMore] = useState({}); // State to manage menu visibility for each document
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [userName, setUserName] = React.useState(null);
-    const [recentDocument_Test, setRecentDocument] = React.useState([]);
 
     const [expanded, setExpanded] = React.useState('panel1');
 
@@ -71,22 +57,11 @@ function NewTodoList() {
 
     const [loadMore, setLoadMore] = useState(9);
     const [test, setTest] = useState({});
-    const [openRenameModal, setOpenRenameModal] = useState(false);
     // const handleOpen = () => setOpenRenameModal(true);
 
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
-    };
-    // const handleClose = () => {
-    //     setAnchorEl(null);
-    // };
-    const handleEditClick = () => {
-        setIsEditing(true);
-    };
-
-    const handleBlur = () => {
-        setIsEditing(false);
     };
     const Json_Get_CRM_UserByProjectId = () => {
         let obj = {
@@ -153,108 +128,7 @@ function NewTodoList() {
         }
     }
 
-    const Json_Get_CRM_Task_ActivityByTaskId = (item) => {
-
-        try {
-            let obj = {};
-            obj.TaskID = item.TaskID;
-            return new Promise((resolve, reject) => {
-                Cls.Json_Get_CRM_Task_ActivityByTaskId(obj, (sts, data) => {
-                    let json = JSON.parse(data);
-                    let tbl = json.Table;
-                    if (sts && tbl.length > 0) {
-                        //console.log("Error while calling Json_CRM_GetOutlookTask", tbl[tbl.length - 1]);
-                        resolve(tbl[tbl.length - 1].Notes);
-                    } else {
-                        reject("No data or Notes found");
-                    }
-                });
-            });
-
-        } catch (err) {
-            console.log("Error while calling Json_CRM_GetOutlookTask", err);
-        }
-    };
-
     const [isApi, setIsApi] = useState(false);
-
-    // const Json_ExplorerSearchDoc = () => {
-    //     try {
-    //         let obj = {};
-    //         obj.ProjectId = folderId;
-    //         obj.ClientId = "";
-    //         obj.sectionId = "-1";
-    //         Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
-    //             if (sts && data) {
-    //                 //console.log("ExplorerSearchDoc", JSON.parse(data));
-    //                 let json = JSON.parse(data);
-    //                 if (json?.Table6?.length > 0) {
-
-    //                     // let docs = json.Table6.length >= 100 ? json.Table6.slice(0, 80) : json.Table6;
-    //                     let docs = json.Table6;
-
-    //                     if (docs?.length > 0) {
-    //                         console.log("ExplorerSearchDoc", docs);
-    //                        // Json_getRecentDocumentList(docs)
-    //                     }
-    //                 }
-    //             }
-    //         })
-    //     } catch (error) {
-    //         console.log("ExplorerSearchDoc", error)
-    //     }
-    // }
-
-    const Json_getRecentDocumentList = () => {
-
-        try {
-            ClsSms.Json_getRecentDocumentList((sts, data) => {
-                if (sts) {
-                    if (data) {
-                        let json = JSON.parse(data);
-                        let tbl = json.Table;
-                        if (tbl.length > 0) {
-                            const mapMethod = tbl.map(el => {
-                                let date = "";
-                                if (el["RecentDate"]) {
-                                    const dateString = el["RecentDate"].slice(6, -2); // Extract the date part
-                                    const timestamp = parseInt(dateString); // Convert to timestamp
-                                    if (!isNaN(timestamp)) {
-                                        date = new Date(timestamp); // Create Date object using timestamp
-                                    } else {
-                                        console.error("Invalid timestamp:", dateString);
-                                    }
-                                } else {
-                                    date = el["RecentDate"];
-                                }
-                                return { ...el, ["RecentDate"]: date, ["Registration No."]: el.ItemId, ["Description"]: el.Subject, ["Type"]: el.type };
-                            });
-                            setRecentDocument(mapMethod);
-                            // const itemIdSet = new Set(tbl.map(item => item.ItemId));
-                            // console.log("Json_getRecentDocumentList", mapMethod);
-                        }
-
-
-
-                        // if (exData.length > 0) {
-                        //     const filteredArray2 = exData.filter(item => itemIdSet.has(item["Registration No."]));
-                        //     console.log("Json_getRecentDocumentList1", filteredArray2);
-                        //     if (filteredArray2.length > 0) {
-                        //         setRecentDocument(filteredArray2);
-                        //     }
-
-                        // }
-
-
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_getRecentDocumentList", err);
-        }
-    }
-
-
 
     const handleLoadMore = () => {
         // Increase the number of items to display by, for example, 5 when the button is clicked
@@ -423,18 +297,6 @@ function NewTodoList() {
         };
     }, []);
 
-    function startFormattingDate(dt) {
-        //const timestamp = parseInt(/\d+/.exec(dt));
-        const date = new Date(dt);
-        const formattedDate = date.toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-        });
-
-        return formattedDate === "Invalid Date" ? " " : formattedDate;
-    }
-
     // modal
     const [openModal, setOpen] = React.useState(false);
 
@@ -443,79 +305,8 @@ function NewTodoList() {
         setOpen(true);
     };
 
-
-
-    function returnMessageStatus(status) {
-        if (status === "Completed") {
-            return "Task Completed!";
-        } else {
-            return `Task status set to ${status}.`;
-        }
-    }
-    const MarkComplete = (e) => {
-        console.log("MarkComplete", e)
-        Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
-            if (res) {
-                Json_UpdateTaskField("Status", "Completed", e);
-            }
-        })
-    }
-    function Json_UpdateTaskField(FieldName, FieldValue, e) {
-        let o = {
-            agrno: agrno,
-            strEmail: Email,
-            password: password,
-            TaskId: e.ID,
-            FieldName: FieldName,
-            FieldValue: FieldValue
-        }
-
-        ClsSms.Json_UpdateTaskField(o, function (sts, data) {
-            if (sts && data) {
-                if (data === "Success") {
-                    toast.success("Completed")
-                    Json_AddSupplierActivity(e);
-                }
-                console.log("Json_UpdateTaskField", data)
-            }
-        })
-    }
-
-    const Json_AddSupplierActivity = (e) => {
-        let obj = {};
-        obj.OriginatorNo = e.ClientNo;
-        obj.ActionReminder = "";
-        obj.Notes = "Completed by " + e["Forwarded By"];
-        obj.Status = "sys"; //selectedTask.Status;
-        obj.TaskId = e.ID;
-        obj.TaskName = "";
-        obj.ActivityLevelID = "";
-        obj.ItemId = "";
-
-        try {
-            ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
-                if (sts && data) {
-                    console.log({ status: true, messages: "Success", res: data });
-                    Json_CRM_GetOutlookTask()
-                }
-            });
-        } catch (error) {
-            console.log({ status: false, messages: "Faild Please Try again" });
-        }
-    };
-
     // details dropdown
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState(null);
-    // const DocumentList = Boolean(anchorElDocumentList);
-    // const handleClickDocumentList = (event) => {
-    //     console.log(event.currentTarget);
-    //     event.stopPropagation();
-    //     setAnchorElDocumentList(event.currentTarget);
-    // };
-
-    // const handleCloseDocument = () => {
-    //     setAnchorElDocumentList(null);
-    // };
 
 
     const [openMenus, setOpenMenus] = React.useState({});
@@ -674,21 +465,6 @@ function NewTodoList() {
         setExpanded("panel1");
         setOpenDocumentDetailsList(true);
     };
-    const handleCloseDocumentDetailsList = () => {
-        setOpenDocumentDetailsList(false);
-    };
-
-    function startFormattingDate(dt) {
-        //const timestamp = parseInt(/\d+/.exec(dt));
-        const date = new Date(dt);
-        const formattedDate = date.toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-        });
-
-        return formattedDate === "Invalid Date" ? " " : formattedDate;
-    }
 
     const handleActiveTab = (target) => {
         // for (let key in activeSectionList) {
@@ -764,226 +540,8 @@ function NewTodoList() {
                 <Typography variant='subtitle1' className='font-16 bold mb-2'>The following tasks are due soon:</Typography>
 
                 <Box className='row' id="section1">
-                    {/* {
-                        allTask.length > 0 &&
-                        allTask.slice(0, loadMore).map((item, index) => {
-                            return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
-                                <Box className='todo-list-box white-box relative w-100' onClick={() => handleClickOpen(item)}>
-
-                                    <Radio className={item.Priority === 1 ? 'text-red check-todo' : item.Priority === 2 ? 'text-green check-todo' : 'text-grey check-todo'} checked
-                                        sx={{
-                                            '&.Mui-checked': {
-                                                color: "secondary",
-                                            },
-                                        }}
-                                    />
-
-                                    <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> {item.Source}</Typography>
-
-                                    <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
-
-                                    <Box className='d-flex align-items-center justify-content-between'>
-                                        <Typography variant='subtitle1'><pan className='text-gray'>
-                                            {item.UserName} <ArrowForwardIosIcon className='font-14' /> </pan>
-                                            <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +1</a></Typography>
-                                        <Typography variant='subtitle1 sembold'>{startFormattingDate(item["EndDateTime"])}</Typography>
-                                    </Box>
-
-                                    <Box className='d-flex align-items-center justify-content-between'>
-                                        <Typography variant='subtitle1'>{item.Client}</Typography>
-                                        <Typography variant='subtitle1'>
-
-                                            <Box>
-                                                <Button
-                                                    id="basic-button"
-                                                    aria-controls={open ? 'basic-menu' : undefined}
-                                                    aria-haspopup="true"
-                                                    aria-expanded={open ? 'true' : undefined}
-                                                    onClick={handleClick}
-                                                >
-                                                    {item.Status && item.Status}
-                                                </Button>
-                                                <Menu
-                                                    id="basic-menu"
-                                                    className='custom-dropdown'
-                                                    anchorEl={anchorEl}
-                                                    open={open}
-                                                    onClose={handleClose}
-                                                    MenuListProps={{
-                                                        'aria-labelledby': 'basic-button',
-                                                    }}
-                                                >
-                                                    <MenuItem onClick={handleClose}>High</MenuItem>
-                                                    <MenuItem onClick={handleClose}>Medium</MenuItem>
-                                                    <MenuItem onClick={handleClose}>Low</MenuItem>
-                                                </Menu>
-                                            </Box>
-
-                                        </Typography>
-                                    </Box>
-
-                                    <Box className='mt-2'>
-                                        <Button variant="text" className='btn-blue-2 me-2'>Mark Complete</Button>
-                                        <Button variant="text" className='btn-blue-2'>Defer</Button>
-                                    </Box>
-
-                                </Box>
-                            </Box>
-                        })
-                    } */}
-
-
                     {allTask.length > 0 ? allTask.slice(0, loadMore).map((item, index) => {
-                        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
-                        let userName = FilterAgs(item);
-                        const priority = item.Priority === 1 ? "High" :
-                            item.Priority === 2 ? "Normal" :
-                                item.Priority === 3 ? "Low" : "Normal";
-
-
-
-                        return <>
-
-                            <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
-                                <Box className='todo-list-box white-box relative w-100'
-                                    onDoubleClick={() => handleClickOpen(item)}>
-
-                                    <Box className='check-todo'>
-                                        {/* <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
-                                            <AttachFileIcon />
-                                        </Badge> */}
-
-                                        <Radio
-                                            checked
-                                            sx={{
-                                                '&.Mui-checked': {
-                                                    color: item.Priority === 1 ? "red" : item.Priority === 2 ? "secondary" : item.Priority === 3 ? "green" : "primary"
-                                                }
-                                            }}
-                                            size='small'
-                                        />
-
-                                        {/* <PushPinIcon className='pinicon'></PushPinIcon> */}
-
-                                    </Box>
-
-
-
-                                    <Typography variant='subtitle1 mb-3 d-block'><strong>Type: </strong> {item.Source} </Typography>
-
-                                    <Typography variant='h2' className='mb-2'>{item.Subject}
-                                        {/* <Skeleton /> */}
-                                    </Typography>
-
-                                    <Box className='d-flex align-items-center justify-content-between'>
-
-                                        <Typography variant='subtitle1'><pan className='text-gray'>
-                                        {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
-                                                            {/* <a href='#'>Patrick</a>, */}
-                                                            <span>{userName && userName.length > 0 ? userName[0].UserName : ""}</span> 
-                                                            
-
-                                                            {arr && arr.length > 2 ? <Button
-                                                                id={`demo-positioned-button-${index}`}
-                                                                aria-controls={openMore[index] ? `demo-positioned-menu-${index}` : undefined}
-                                                                aria-haspopup="true"
-                                                                aria-expanded={openMore[index] ? 'true' : undefined}
-                                                                onClick={(event) => handleClickMore(event, index)}
-                                                            >
-                                                                + {arr && arr.length > 0 ? arr.length - 2 : ""}
-                                                            </Button> : ""}
-
-                                                            <Menu
-                                                                id={`demo-positioned-menu-${index}`}
-                                                                anchorEl={anchorElMore[index]}
-                                                                open={openMore[index]}
-                                                                onClose={() => handleCloseMore(index)}
-                                                                anchorOrigin={{
-                                                                    vertical: 'top',
-                                                                    horizontal: 'left',
-                                                                }}
-                                                                transformOrigin={{
-                                                                    vertical: 'top',
-                                                                    horizontal: 'left',
-                                                                }}
-                                                            >
-                                                                {userName && userName.length > 1 ? userName.slice(1).map((user, idx) => (
-                                                                    <MenuItem key={idx} onClick={() => handleCloseMore(index)}>{user.UserName}</MenuItem>
-                                                                )) : ""}
-                                                            </Menu>
-                                            
-                                            </Typography>
-                                        {/* 
-                                        <Typography variant='subtitle1' ><pan className='text-gray'>
-                                            <a href='#'>{item.UserName}</a> <ArrowForwardIosIcon className='font-14' /> </pan>
-
-                                            <a href='#'>{item["Forwarded By"]}</a> <a href='#'> +{arr.length}</a></Typography> */}
-
-                                        <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
-                                    </Box>
-
-                                    <Box className='d-flex align-items-center justify-content-between'>
-                                        <Typography variant='subtitle1'>Docusoft india pvt ltd</Typography>
-                                        <Typography variant='subtitle1'>
-
-                                            <Box>
-                                                <Button
-                                                    id="basic-button"
-                                                    aria-controls={open ? 'basic-menu' : undefined}
-                                                    aria-haspopup="true"
-                                                    aria-expanded={open ? 'true' : undefined}
-                                                    onClick={handleClick}
-                                                    className='font-14'
-                                                    sx={{
-                                                        color: item.mstatus === "Completed" ? "green" : "primary"
-                                                    }}
-                                                >
-                                                    {item.mstatus}
-                                                </Button>
-                                                {/* <Menu
-                                                    id="basic-menu"
-                                                    className='custom-dropdown'
-                                                    anchorEl={anchorEl}
-                                                    open={open}
-                                                    onClose={handleClose}
-                                                    MenuListProps={{
-                                                        'aria-labelledby': 'basic-button',
-                                                    }}
-                                                >
-                                                    <MenuItem onClick={handleClose}>High</MenuItem>
-                                                    <MenuItem onClick={handleClose}>Medium</MenuItem>
-                                                    <MenuItem onClick={handleClose}>Low</MenuItem>
-                                                </Menu> */}
-                                            </Box>
-
-                                        </Typography>
-                                    </Box>
-
-                                    <Box className='mt-2'>
-                                        <Button variant="text" disabled={item.mstatus === "Completed"} className='btn-blue-2 me-2' onClick={() => MarkComplete(item)}>Mark Complete</Button>
-                                        <DateRangePicker initialSettings={{
-                                            singleDatePicker: true,
-                                            showDropdowns: true,
-                                            startDate: item["EndDateTime"],
-                                            minYear: 1901,
-                                            maxYear: 2100,
-                                        }}
-                                            onCallback={(start) => {
-                                                const date = start.format('YYYY/MM/DD');
-                                                Json_UpdateTaskField("EndDateTime", date, item);
-                                            }}
-                                        >
-                                            <Button variant="outlined" className='btn-outlin-2'>
-                                                Defer
-                                            </Button>
-                                        </DateRangePicker>
-                                    </Box>
-
-                                </Box>
-                            </Box>
-                            {/* col end */}
-
-                        </>
+                        return <TaskCard item={item} index={index}/>
                     }) : <CustomLoader />}
                 </Box>
 

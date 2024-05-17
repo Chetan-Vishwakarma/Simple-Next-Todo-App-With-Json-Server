@@ -25,6 +25,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateTaskFieldFromRedux } from '../redux/reducers/api_helper';
 import CustomLoader from './CustomLoader';
 import TaskDetailModal from './TaskDetailModal';
+import DocumentTripleDot from '../utils/DocumentTripleDot';
+import GetFileType from './FileType';
+import TaskCard from '../utils/TaskCard';
 
 
 const agrno = localStorage.getItem("agrno");
@@ -84,7 +87,11 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
     const handleEdit = (index) => {
         setEditingIndex(index);
-        setUpdatedSubject(filteredDocuments[index].Description);
+        filteredDocuments.map(itm=>{
+            if(itm["Registration No."]===index){
+                setUpdatedSubject(itm.Description);
+            }
+        })
     };
     const handleChange = (event) => {
         setUpdatedSubject(event.target.value);
@@ -116,6 +123,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
     }
 
     const handleSave = (newDesc, oldDesc, doc, index) => {
+        
         if (oldDesc === newDesc) return;
         Json_RenameDocument(doc, newDesc, index);
     };
@@ -285,8 +293,8 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
 
 
-    const [anchorElMore, setAnchorElMore] = useState({}); 
-    const [openMore, setOpenMore] = useState({}); 
+    const [anchorElMore, setAnchorElMore] = useState({});
+    const [openMore, setOpenMore] = useState({});
 
     const handleClickMore = (event, documentIndex) => {
         setAnchorElMore((prevState) => ({
@@ -330,7 +338,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
             userFilter = userList.filter((user) => filteredIds.includes(user.UserId));
             console.log(userFilter, "hello pring data");
             // Filter userList to include only those users whose UserId is present in filteredIds
-        } 
+        }
 
         return userFilter && userFilter.length > 0 ? userFilter : "";
     }
@@ -339,7 +347,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
         setSelectedTask(task);
         setOpen(true);
     };
-    
+
     return (
         <>
             <DocumentsVewModal isLoadingDoc={isLoadingDoc} setIsLoadingDoc={setIsLoadingDoc} openPDFView={openPDFView} setOpenPDFView={setOpenPDFView} selectedDocument={selectedDocument}></DocumentsVewModal>
@@ -352,7 +360,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
 
                 {isLoading ? <CustomLoader /> : <Grid className='mt-0' container spacing={2}>
                     {filteredDocuments.length > 0 ? filteredDocuments.slice(0, 9).map((item, index) => {
-                        console.log("search result file data", item)
                         return <Grid key={index} className='pt-0 d-flex w-100' item xs={12} lg={4} md={4} sm={12}>
                             <Box className="file-uploads d-flex w-100">
                                 <label className="file-uploads-label file-uploads-document d-flex w-100" onClick={(event) => {
@@ -362,10 +369,11 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                 }} onDoubleClick={(e) => ViewerDocument(item)}>
                                     <Box className="d-flex align-items-center">
                                         <div className='img-format'>
-                                            <img src={Fileformat} />
+                                            <GetFileType Type={item.Type ? item.Type.toLowerCase() : null}></GetFileType>
+                                            {/* <img src={Fileformat} /> */}
                                         </div>
                                         <Box className="upload-content pe-3">
-                                            {editingIndex == index ? (
+                                            {editingIndex === item["Registration No."] ? 
                                                 <input
                                                     type="text"
                                                     defaultValue={item.Description}
@@ -375,7 +383,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                                     onBlur={(e) => handleSave(e.target.value, item.Description, item, index)}
                                                     className='edit-input'
                                                 />
-                                            ) : (
+                                             : 
                                                 <BootstrapTooltip title={item.Description ? item.Description : ""} arrow
                                                     placement="bottom-start"
                                                     slotProps={{
@@ -395,84 +403,16 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                                         {Object.keys(test).includes(String(index)) ? test[index] : (item.Description && item.Description.length > 35) ? item.Description.substr(0, 35) + "..." : item.Description ? item.Description : "No Name"}
                                                     </Typography>
                                                 </BootstrapTooltip>
-                                            )}
+                                            }
                                             <Typography variant="body1">
                                                 {/* Size:  <span className='sembold'>{item.FileSize? item.FileSize: ""}</span> |  */}
-                                                Date <span className='sembold'>{item["Item Date"] !== "NaN/NaN/NaN" ? formatDate(item["Item Date"]) : "01/01/2000"}</span>
+                                                Date <span className='sembold'>{item["Item Date"] ? item["Item Date"] : "01/01/2000"}</span>
                                                 | <span className='sembold'>{item.Client}</span>
                                             </Typography>
                                         </Box>
                                     </Box>
                                     <Box>
-                                        <Button
-                                            id={`basic-button-${index}`}
-                                            aria-controls={anchorElDocumentList[index] ? `basic-menu-${index}` : undefined}
-                                            aria-haspopup="true"
-                                            aria-expanded={Boolean(anchorElDocumentList[index])}
-                                            onClick={(event) => handleClickDocumentList(event, index)}
-                                            className='min-width-auto'
-                                        >
-                                            <MoreVertIcon />
-                                        </Button>
-                                        <Menu
-                                            id={`basic-menu-${index}`}
-                                            anchorEl={anchorElDocumentList[index]}
-                                            open={Boolean(anchorElDocumentList[index])}
-                                            onClose={(event) => handleCloseDocument(event, index)}
-                                            MenuListProps={{
-                                                'aria-labelledby': `basic-button-${index}`,
-                                            }}
-                                            className='custom-dropdown'
-                                        >
-                                            <MenuItem
-                                                onClick={(event) => handleCloseDocument(event, index)}
-                                            >
-
-                                                <ListItemIcon>
-                                                    <PostAddIcon fontSize="medium" />
-                                                </ListItemIcon>
-                                                Create Task</MenuItem>
-                                            <MenuItem onClick={(event) => {
-                                                handleCloseDocument(event, index)
-                                                handleClickOpenDocumentDetailsList(item)
-                                            }}>
-                                                <ListItemIcon>
-                                                    <ArticleIcon fontSize="medium" />
-                                                </ListItemIcon>
-                                                Document Details</MenuItem>
-
-                                            <MenuItem
-                                                onClick={(event) => handleCloseDocument(event, index)}
-                                            >
-                                                <ListItemIcon>
-                                                    <CloudUploadIcon fontSize="medium" />
-                                                </ListItemIcon>
-                                                Upload New Version</MenuItem>
-                                            <MenuItem
-                                                onClick={(event) => {
-                                                    handleEdit(index);
-                                                    handleCloseDocument(event, index);
-                                                }}
-                                            >
-                                                <ListItemIcon>
-                                                    <DriveFileRenameOutlineIcon fontSize="medium" />
-                                                </ListItemIcon>
-                                                Rename Document</MenuItem>
-                                            <MenuItem
-                                                onClick={(event) => handleCloseDocument(event, index)}
-                                            >
-                                                <ListItemIcon>
-                                                    <TravelExploreIcon fontSize="medium" />
-                                                </ListItemIcon>
-                                                Open in Browser</MenuItem>
-                                            <MenuItem
-                                                onClick={(event) => handleCloseDocument(event, index)}
-                                            >
-                                                <ListItemIcon>
-                                                    <CloudDownloadIcon fontSize="medium" />
-                                                </ListItemIcon>
-                                                Download</MenuItem>
-                                        </Menu>
+                                        <DocumentTripleDot data={{ data: item }} handleEdit={handleEdit} />
                                     </Box>
                                 </label>
                             </Box>
@@ -489,13 +429,14 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                     {isTaskLoadingFromRedux ? <CustomLoader /> : (filteredTasks.length > 0 ? filteredTasks.slice(0, 9).map((item, index) => {
                         const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
                         let userName = FilterAgs(item);
-                        return <Grid className='pt-0' item xs={12} lg={4} md={4} sm={12}>
-                            <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
+                        // return <Grid className='pt-0' item xs={12} lg={4} md={4} sm={12}>
+                            return <TaskCard item={item} index={index} />
+                            {/* <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
 
                                 <Box className='check-todo'>
-                                    <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
+                                    {/* <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
                                         <AttachFileIcon />
-                                    </Badge>
+                                    </Badge> **
 
                                     <Radio className={item.Priority === 1 ? 'text-red ' : item.Priority === 2 ? 'text-green' : 'text-grey'} checked
                                         sx={{
@@ -506,8 +447,6 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                         size='small'
                                     />
 
-                                    {/* <PushPinIcon className='pinicon'></PushPinIcon> */}
-
                                 </Box>
 
                                 <Typography variant='subtitle1 mb-3 d-block'><strong>Type:</strong> {item.Source}</Typography>
@@ -516,7 +455,7 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                     <Typography variant='subtitle1'><pan className='text-gray'>
 
                                         {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
-                                        {/* <a href='#'>Patrick</a>, */}
+                                        {/* <a href='#'>Patrick</a>, ***
                                         <span>{userName && userName.length > 0 ? userName[0].UserName : ""}</span>
 
 
@@ -587,8 +526,8 @@ function SearchResult({ myTotalTasks, myDocuments }) {
                                         </Button>
                                     </DateRangePicker>
                                 </Box>
-                            </Box>
-                        </Grid>
+                            </Box> */}
+                        // </Grid>
 
                     }) : <DataNotFound />)}
                 </Grid>

@@ -334,22 +334,26 @@ export const updateTaskFieldFromRedux = (FieldName, FieldValue, e) => dispatch =
 export const Json_ExplorerSearchDoc_Redux = (obj) => dispatch => {
     try {
         ClsSms.Json_ExplorerSearchDoc(obj, function (sts, data) {
-            if (data === "" || JSON.parse(data)?.Table[0]?.Message) {  // for data loading issue (api response issue)
-                Json_ExplorerSearchDoc_Redux();
-                return;
-            }
+            
+            // if (data === "" || JSON.parse(data)?.Table[0]?.Message) {  // for data loading issue (api response issue)
+            //     Json_ExplorerSearchDoc_Redux(obj);
+            //     return;
+            // }else 
+            // if(JSON.parse(data)?.Table6[0]?.Message){
+            //     console.log("sdfjjkhreefs executed");
+            //     Json_ExplorerSearchDoc_Redux(obj);
+            // }
             if (sts && data) {
                 let json = JSON.parse(data);
                 // console.log("ExplorerSearchDoc", json);
                 let tbl6 = json.Table6;
-                if (tbl6.length > 0) {
+                if (tbl6 && tbl6.length > 0) {
                     tbl6.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
                     tbl6.map((itm) => itm["Received Date"] = formatDate(itm["Received Date"]));
-                    if (json.Table6.length > 0) dispatch(setExplorerSearchDocRedux(tbl6));
+                    if (tbl6.length > 0) dispatch(setExplorerSearchDocRedux(tbl6));
+                }else{
+                    dispatch(setExplorerSearchDocRedux([]));
                 }
-
-
-
             }
         })
     } catch (error) {
@@ -387,9 +391,9 @@ function formatDate(inputDate) {
 }
 
 
-export const Json_AdvanceSearchDocFromRedux = (f_id, description) => dispatch => {
+export const Json_AdvanceSearchDocFromRedux = (f_id, description, param_obj) => dispatch => {
     if (description !== "") {
-        let obj = {
+        let obj = Object.keys(param_obj).length>0 ? param_obj : {
             ClientId: "",
             Description: description ? description : "",
             Email: Email,
@@ -410,7 +414,7 @@ export const Json_AdvanceSearchDocFromRedux = (f_id, description) => dispatch =>
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        if (json.Table6.length > 0) {
+                        if (json.Table6 && json.Table6.length > 0) {
                             let fltDouble = [];
                             json.Table6.map((itm) => itm.Description).filter(item => {
                                 if (!fltDouble.includes(item)) {
@@ -422,10 +426,14 @@ export const Json_AdvanceSearchDocFromRedux = (f_id, description) => dispatch =>
                                 itm["Received Date"] = formatDate(itm["Received Date"]);
                                 itm["CommentDate"] = Cls.DateForMate(itm["CommentDate"]);
                             });
-                            dispatch(setAdvanceSearchResultFromRedux({ docs: json.Table6, descriptions: fltDouble }))
+                            dispatch(setAdvanceSearchResultFromRedux({ docs: json.Table6, descriptions: fltDouble, isLoading: false }))
                             // setDocumentsDescription(fltDouble);
                             // setMyDocuments(json.Table6);
+                        }else{
+                            dispatch(setAdvanceSearchResultFromRedux({ docs: [], descriptions: [], isLoading: false }))
                         }
+                    }else{
+                        dispatch(setAdvanceSearchResultFromRedux({ docs: [], descriptions: [], isLoading: false }))
                     }
                 }
             });

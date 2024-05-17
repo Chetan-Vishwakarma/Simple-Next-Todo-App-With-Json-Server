@@ -460,19 +460,12 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                         // console.log(formatDate(date),"dateformattingdate");
                         return { ...activity, Item_Date: formatedate,Guid:uuidv4().replace(/-/g, '') };
                     });
+                    let arr = [];
+                    formattedActivity.map(itm=>{
+                        if(itm.ItemId) arr.push({[itm.ItemId]:false})
+                    });
 
                     setAttachmentFile(formattedActivity);
-                    // setTimeout(() => {
-                    //     console.log("attachmentFile", attachmentFile);
-                    // }, 3000);
-
-                    // for (let item of table6) {
-
-                    //     // if(item.DestinationPath){
-                    //     //     let o = { Path: item.DestinationPath, FileName: GetFileNamebyPath(item.FileName) };
-                    //     //    // setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
-                    //     // }
-                    // }
                 }
             }
         });
@@ -1603,7 +1596,6 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     const [boolVal, setBoolVal] = useState(false);
 
     const handleClickOpenDocumentDetailsList = (sDoc) => {
-        console.log("selected document data obj", sDoc);
         sDoc["PostItemTypeID"] = selectedTask.SectionId;
         setDocForDetails(sDoc);
         setExpanded("panel1");
@@ -1631,7 +1623,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     }
 
     
-    function Json_SearchDocById(doc) {
+    function Json_SearchDocById(doc,index) {
         try {
             let o = {};
             o.ItemId = doc.ItemId;
@@ -3180,7 +3172,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
             {/* end */}
 
             {/* // document list modal */}
-
+        
             <Dialog
                 open={documentLis}
                 onClose={handleCloseDocumentList}
@@ -3192,27 +3184,12 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                     margin: '0 auto'
                 }}
             >
-                {/* <DialogTitle id="alert-dialog-title">
-                        {"Use Google's location service?"}
-                    </DialogTitle> */}
-
                 <Box className="d-flex align-items-center justify-content-between modal-head">
                     <Box className="dropdown-box">
                         <Typography variant="h4" className='font-18 bold mb-0 text-black'>
                             Attachment List
                         </Typography>
-                        {/* <Box className="btn-Select">
-                                    <Button className='btn-white'>Action</Button>
-                                    <Button className='btn-white'>Ser</Button>
-                                    <Button className='btn-white'>Custom</Button>
-
-                                    <hr />
-
-                                    <Button className='btn-blue-2' size="small">Apply Now</Button>
-                                </Box> */}
-                    </Box>
-
-                    {/*  */}
+                        </Box>
                     <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
                         <span className="material-symbols-outlined text-black">
                             cancel
@@ -3222,10 +3199,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
 
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-
                         <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
                             <Grid item xs={12} md={6}>
-
                                 <Box className="search-box">
                                     {attachmentFile.length > 0 && <DataGrid
                                         dataSource={attachmentFile}
@@ -3242,152 +3217,17 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                         <Sorting mode="single" />
                                         <Scrolling mode="virtual" />
                                         <Selection mode="multiple" />
-                                        {/* {selectedGroup === "Type" && <Column dataField="Type" groupIndex={0} dataType="Type" width={75} />}
-                                        {selectedGroup === "Comments" && <Column dataField="Comments" groupIndex={0} dataType="Comments" width={75} visible={false} />}
-                                        {selectedGroup === "Description" && <Column dataField="Description" groupIndex={0} dataType="Description" width={75} visible={false} />}
-                                        {selectedGroup === "CommentBy" && <Column dataField="CommentBy" groupIndex={0} dataType="CommentBy" width={75} visible={false} />} */}
                                         <Column
                                             dataField="Description"
                                             caption="Description"
-
                                             // Set the groupIndex to 0 to enable grouping by this column
                                             dataType="string"  // Set the data type to "string" for proper grouping
                                             cellRender={cellRender}
                                         />
                                     </DataGrid>}
-                                    {/* {attachmentFile.length > 0 ? attachmentFile.map((item, index) => {
-                                        let fileName = "";
-                                        if (item.FileName) {
-                                            let Typest = item.FileName.lastIndexOf("\\");
-                                            fileName = item.FileName.slice(Typest + 1);
-                                        }
-                                        else {
-                                            fileName = item.ItemId ? item.ItemId : "";
-                                        }
-                                        return <>
-                                            <Box className="file-uploads">
-                                                <label className="file-uploads-label file-uploads-document">
-                                                    <Box className="d-flex align-items-center">
-
-                                                        <Checkbox {...label} className="hover-checkbox p-0 ms-0" size="small" />
-
-                                                        <DescriptionIcon
-                                                            sx={{
-                                                                fontSize: 32,
-                                                            }}
-                                                            className='me-2 ms-0'
-                                                        />
-                                                        <Box className="upload-content pe-3">
-                                                            <Typography variant="h4" >
-                                                                {fileName}
-                                                            </Typography>
-                                                            <Typography variant="body1">
-                                                                Size:  <span className='sembold'>0.00 KB</span> | Date <span className='sembold'>09/03/2024</span>
-                                                            </Typography>
-                                                        </Box>
-                                                    </Box>
-                                                    <Box>
-                                                        <Button
-                                                            id="basic-button"
-                                                            aria-controls={DocumentList ? 'basic-menu' : undefined}
-                                                            aria-haspopup="true"
-                                                            aria-expanded={DocumentList ? 'true' : undefined}
-                                                            onClick={handleClickDocumentList}
-                                                            className='min-width-auto'
-                                                        >
-                                                            <MoreVertIcon />
-                                                        </Button>
-                                                        <Menu
-                                                            id="basic-menu"
-                                                            anchorEl={anchorElDocumentList}
-                                                            open={DocumentList}
-                                                            onClose={handleCloseDocument}
-                                                            MenuListProps={{
-                                                                'aria-labelledby': 'basic-button',
-                                                            }}
-                                                            className='custom-dropdown'
-                                                        >
-                                                            <MenuItem onClick={() => {
-                                                                handleCloseDocument()
-                                                                handleClickOpenDocumentDetailsList(item)
-                                                            }}>
-                                                                <ListItemIcon>
-                                                                    <ArticleIcon fontSize="medium" />
-                                                                </ListItemIcon>
-                                                                Document Details</MenuItem>
-
-                                                            <MenuItem onClick={handleCloseDocument}>
-                                                                <ListItemIcon>
-                                                                    <CloudUploadIcon fontSize="medium" />
-                                                                </ListItemIcon>
-                                                                Upload New Version</MenuItem>
-                                                            <MenuItem onClick={handleCloseDocument}>
-                                                                <ListItemIcon>
-                                                                    <DriveFileRenameOutlineIcon fontSize="medium" />
-                                                                </ListItemIcon>
-                                                                Rename Document</MenuItem>
-                                                            <MenuItem onClick={handleCloseDocument}>
-                                                                <ListItemIcon>
-                                                                    <TravelExploreIcon fontSize="medium" />
-                                                                </ListItemIcon>
-                                                                Open in Browser</MenuItem>
-                                                            <MenuItem onClick={() => handleDownloadDoc(item)}>
-                                                                <ListItemIcon>
-                                                                    <CloudDownloadIcon fontSize="medium" />
-                                                                </ListItemIcon>
-                                                                Download</MenuItem>
-                                                        </Menu>
-                                                    </Box>
-                                                </label>
-                                            </Box>
-                                            {/* file upload end
-                                        </>
-                                    }) : ""} */}
                                 </Box>
-
-                                {/* <Demo>
-                                    <List>
-
-                                        {attachmentFile.length > 0 ? attachmentFile.map((item, index) => {
-                                            let fileName = "";
-                                            if (item.FileName) {
-                                                let Typest = item.FileName.lastIndexOf("\\");
-                                                fileName = item.FileName.slice(Typest + 1);
-                                            }
-
-                                            return (<>
-                                                <ListItem key={index}
-                                                    secondaryAction={
-                                                        <IconButton edge="end" aria-label="delete">
-                                                            <DeleteIcon onClick={() => DeleteTasksAttachment(item)} />
-                                                            <DownloadForOfflineIcon onClick={() => handleDownloadDoc(item)} />
-                                                        </IconButton>
-                                                    }
-                                                >
-                                                    <ListItemAvatar>
-                                                        <Avatar>
-                                                            <FolderIcon />
-                                                        </Avatar>
-                                                    </ListItemAvatar>
-                                                    <ListItemText
-                                                        primary={fileName}
-                                                        secondary={secondary ? 'Secondary text' : null}
-                                                    />
-                                                </ListItem>
-                                            </>)
-                                        }) : ""}
-
-
-                                    </List>
-                                </Demo> */}
                             </Grid>
                         </Box>
-
-
-                        {/* <DocumentDetails></DocumentDetails> */}
-
-
-
                     </DialogContentText>
                 </DialogContent>
             </Dialog>
@@ -3563,13 +3403,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                         <TableCell align="left">{docForDetails && docForDetails["FileName"]?docForDetails["FileName"]:""}</TableCell>
                                                     </TableRow>
                                                 </TableBody>
-                                              
-
-                                            </>
-                                                
-                                              
-
-                                               
+                                            </> 
                                             )
                                             }
 
@@ -3577,7 +3411,6 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                     </TableContainer>
                                 </AccordionDetails>
                             </Accordion>
-                            {console.log(docForDetails,"Docdetailssonam")}
                             {docForDetails && docForDetails.type=="DMS" ? (
                             <><Accordion className='accordian-box' expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
                                     <AccordionSummary

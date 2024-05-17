@@ -398,7 +398,7 @@ export default function SidebarNav() {
     // }, 1000);
     // return () => clearTimeout(data);
     const data = setTimeout(() => {
-      dispatch(Json_AdvanceSearchDocFromRedux("",forDocuments));
+      dispatch(Json_AdvanceSearchDocFromRedux("",forDocuments,{}));
     }, 1000);
     return () => clearTimeout(data);
   }, [forDocuments]);
@@ -539,66 +539,9 @@ export default function SidebarNav() {
                     </Layout>
                   </Box>
 
-                  {/* <FormControl size="small" className='select-border'>
-                    <Select
-                      value={selectedFolder}
-                      onChange={(e) => {
-                        setSearchInputForGlobalSearch("");
-                        setSelectedFolder(String(e.target.value));
-                        return;
-                      }}
-                      displayEmpty
-                      inputProps={{ 'aria-label': 'Without label' }}
-                      className='custom-dropdown'
-                    >
-                      {folders.length > 0 && folders.map((itm) => {
-                        return <MenuItem value={itm.FolderID}>{itm.Folder}</MenuItem>
-                      })}
-                    </Select>
-                  </FormControl> */}
-
                   <div>
                     <AdvanceSearch folderList={folders}/>
                   </div>
-
-                  {/* <div>
-
-                    <ToggleButton
-                      // value="check"
-                      id="basic-button"
-                      aria-controls={open4 ? 'basic-menu' : undefined}
-                      aria-haspopup="true"
-                      aria-expanded={open4 ? 'true' : undefined}
-                      onClick={handleClick4}
-                      size='small'
-                      className='bg-blue'
-                    >
-                      <FolderOpenIcon className='text-blue' />
-                    </ToggleButton>
-
-                    <Menu
-                      id="basic-menu"
-                      anchorEl={anchorEl4}
-                      open={open4}
-                      onClose={handleClose4}
-                      MenuListProps={{
-                        'aria-labelledby': 'basic-button',
-                      }}
-                      className='custom-dropdown'
-                    >
-                      {folders.length > 0 && folders.map((itm) => {
-                        return <MenuItem value={itm.FolderID} onClick={(e)=>{
-                          if(e.target.value){
-                            setSearchInputForGlobalSearch("");
-                            setSelectedFolder(String(e.target.value));
-                          }
-                          handleClose4(e);
-                        }}><ListItemIcon>
-                        <FolderSharedIcon className="font-20 me-1" /></ListItemIcon>{itm.Folder}</MenuItem>
-                      })}
-
-                    </Menu>
-                  </div> */}
 
                 </Box>
 
@@ -619,73 +562,6 @@ export default function SidebarNav() {
                       </Badge>
 
                     </Button>
-
-                    {/* <Menu
-                      id="basic-menu3"
-                      className='custom-dropdown'
-                      anchorEl={anchorEl}
-                      open={opens2}
-                      onClose={handleClose}
-                      MenuListProps={{
-                        'aria-labelledby': 'basic-button3',
-                      }}
-                    >
-                      
-                      <li className="dotification-list">
-                        <Box className="notification-box">
-                          <Box className="notification-box-img">
-                            <img src={user} />
-                          </Box>    
-                          <Box className="notification-content">
-                          <span className='notification-date'>10h ago</span>
-
-                            <h4>Petrick Joy.</h4>
-                            <p>lorem ipsome dolor site amer this is a dummy text world tours.</p>
-                          </Box>
-                        </Box>
-                      </li>
-
-                      <li className="dotification-list">
-                        <Box className="notification-box">
-                          <Box className="notification-box-img">
-                            <img src={user} />
-                          </Box>    
-                          <Box className="notification-content">
-                          <span className='notification-date'>10h ago</span>
-
-                            <h4>Petrick Joy.</h4>
-                            <p>lorem ipsome dolor site amer this is a dummy text world tours.</p>
-                          </Box>
-                        </Box>
-                      </li>
-
-                      <li className="dotification-list">
-                        <Box className="notification-box">
-                          <Box className="notification-box-img">
-                            <img src={user} />
-                          </Box>    
-                          <Box className="notification-content">
-                            <span className='notification-date'>10h ago</span>
-                            <h4>Petrick Joy.</h4>
-                            <p>lorem ipsome dolor site amer this is a dummy text world tours.</p>
-                          </Box>
-                        </Box>
-                      </li>
-
-                      <li className="dotification-list">
-                        <Box className="notification-box">
-                          <Box className="notification-box-img">
-                            <img src={user} />
-                          </Box>    
-                          <Box className="notification-content">
-                          <span className='notification-date'>10h ago</span>
-                            <h4>Petrick Joy.</h4>
-                            <p>lorem ipsome dolor site amer this is a dummy text world tours.</p>
-                          </Box>
-                        </Box>
-                      </li>
-                      
-                    </Menu> */}
 
                   </Box>
 
@@ -749,10 +625,7 @@ export default function SidebarNav() {
 
                 </Box>
               </Box>
-
-
               <Menu>
-                {/* <MenuItem>Contacts</MenuItem> */}
               </Menu>
             </Box>
 
