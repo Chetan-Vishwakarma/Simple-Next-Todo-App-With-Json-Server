@@ -27,7 +27,6 @@ const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.a
 //const baseUrlDocuSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
 
 function DocumentDetails({ documents, advFilteredResult, dataNotFoundBoolean, selectedGroup }) {
-    console.log("sljdlkjgklje",documents);
     const dispatch = useDispatch();
     const Cls = new CommanCLS(baseUrl, agrno, Email, password);
     const ClsPractice = new CommanCLS(baseUrlPractice, agrno, Email, password);

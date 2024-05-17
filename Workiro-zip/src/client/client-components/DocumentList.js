@@ -978,7 +978,7 @@ export default function DocumentList({ clientId }) {
                             </Box>
                         </Box>
 
-                        <Box className={globalSearchDocs.length > 0 ? 'client-details-scroll client-details-scroll-search-2' : 'client-details-scroll'} name='client-details-scroll-search'>
+                        <Box className={Boolean(filter) && Boolean(adv) ? 'client-details-scroll client-details-scroll-search-2' : 'client-details-scroll'} name='client-details-scroll-search'>
                             {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
                             {toggleScreen.singleCardView && <DocumentDetails groupByFilterResult={groupByFilterResult} isGroupBy={isGroupBy} documents={documents} advFilteredResult={advFilteredResult} dataNotFoundBoolean={dataNotFoundBoolean} selectedGroup={selectedGroup}></DocumentDetails>}
                             {toggleScreen.multipleCardView &&
