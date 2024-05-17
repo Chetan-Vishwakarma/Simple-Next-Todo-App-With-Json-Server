@@ -32,7 +32,7 @@ function DocumentTripleDot({ data, handleEdit }) {
         try {
             let filesData = [];
             let obj = {};
-            obj.ItemId = item["Registration No."]
+            obj.ItemId = item.ItemId ? item.ItemId : item["Registration No."]
             // console.log("handle change fileData1", obj);
 
             Cls.Json_GetItemBase64DataById(obj, function (sts, base64data) {
@@ -45,7 +45,7 @@ function DocumentTripleDot({ data, handleEdit }) {
                             Preview: "", // Data URL for preview
                             DocId: item["Registration No."],
                             Guid: "",
-                            FileType: item["Type"].toLowerCase(),
+                            FileType: item?.DestinationPath ? item.DestinationPath.split(".").pop().toLowerCase() : item["Type"].toLowerCase(),
                             Description: item.Description
 
                         };
@@ -200,24 +200,25 @@ function DocumentTripleDot({ data, handleEdit }) {
             const newAnchorElDocumentList = { ...anchorElDocumentList };
             delete newAnchorElDocumentList[rowData.data["Registration No."]];
             setAnchorElDocumentList(newAnchorElDocumentList);
-            Json_GetItemBase64DataById(rowData.data, "CRM");
+            Json_SearchDocById(rowData.data, "CRM");
+            // Json_GetItemBase64DataById(rowData.data, "CRM");
         }
     };
     const handleCloseDocumentPublish = (event, rowData) => {
         if (rowData) {
-            console.log("row selected data", rowData)
             event.stopPropagation();
             const newAnchorElDocumentList = { ...anchorElDocumentList };
             delete newAnchorElDocumentList[rowData.data["Registration No."]];
             setAnchorElDocumentList(newAnchorElDocumentList);
-            let res = Json_GetItemBase64DataById(rowData.data, "Portal");
-            if (res) {
-                dispatch(handleOpenModalRedux("Portal"));
-            }
+            Json_SearchDocById(rowData.data, "Portal");
+            // let res = Json_GetItemBase64DataById(rowData.data, "Portal");
+            // if (res) {
+            //     dispatch(handleOpenModalRedux("Portal"));
+            // }
         }
     };
 
-    function Json_SearchDocById(doc, index) {
+    function Json_SearchDocById(doc, tskType) {
         try {
             let o = {};
             o.ItemId = doc.ItemId;
@@ -226,6 +227,10 @@ function DocumentTripleDot({ data, handleEdit }) {
                     if (data) {
                         let js = JSON.parse(data);
                         let tbl = js[""];
+                        if(tskType){
+                            Json_GetItemBase64DataById(tbl[0],tskType);
+                            return;
+                        }
                         setDocForDetails(tbl[0]);
                         setOpenDocumentDetailsList(true);
                     }
