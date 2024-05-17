@@ -163,10 +163,10 @@ const counterSlices = createSlice({
       state.connectionsState.allClientsList = action.payload;
     },
     setAdvanceSearchResultFromRedux: (state, action) => {
-      let { docs, descriptions } = action.payload
+      let { docs, descriptions, isLoading } = action.payload
       state.advanceSearchResult.result = docs;
       state.advanceSearchResult.docDescriptions = descriptions;
-      state.advanceSearchResult.isLoading = false;
+      state.advanceSearchResult.isLoading = isLoading;
     },
     setSectionDataInredux: (state, action) => {
       state.sections = action.payload;

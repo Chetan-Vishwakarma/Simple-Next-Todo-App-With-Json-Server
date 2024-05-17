@@ -426,10 +426,14 @@ export const Json_AdvanceSearchDocFromRedux = (f_id, description, param_obj) => 
                                 itm["Received Date"] = formatDate(itm["Received Date"]);
                                 itm["CommentDate"] = Cls.DateForMate(itm["CommentDate"]);
                             });
-                            dispatch(setAdvanceSearchResultFromRedux({ docs: json.Table6, descriptions: fltDouble }))
+                            dispatch(setAdvanceSearchResultFromRedux({ docs: json.Table6, descriptions: fltDouble, isLoading: false }))
                             // setDocumentsDescription(fltDouble);
                             // setMyDocuments(json.Table6);
+                        }else{
+                            dispatch(setAdvanceSearchResultFromRedux({ docs: [], descriptions: [], isLoading: false }))
                         }
+                    }else{
+                        dispatch(setAdvanceSearchResultFromRedux({ docs: [], descriptions: [], isLoading: false }))
                     }
                 }
             });
