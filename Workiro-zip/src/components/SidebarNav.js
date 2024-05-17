@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -16,10 +16,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { FormControl, Menu, MenuItem, Select } from '@mui/material';
+import { Menu, MenuItem } from '@mui/material';
 import logo from "../images/logo.png";
 import user from "../images/user.jpg";
 import Button from '@mui/material/Button';
@@ -35,7 +33,6 @@ import ContactDetails from '../contact/contact-components/ContactDetails';
 import TodoList from './TodoList';
 import CommanCLS from '../services/CommanService';
 import Logout from './Logout';
-// import AddContacts from './AddContacts';
 import NewTodoList from './NewTodoList';
 import FormatListNumberedRtlIcon from '@mui/icons-material/FormatListNumberedRtl';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -47,15 +44,7 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import GroupIcon from '@mui/icons-material/Group';
 import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
 import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LogoutIcon from '@mui/icons-material/Logout';
-import FolderSharedIcon from '@mui/icons-material/FolderShared';
-import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
-import PeopleIcon from '@mui/icons-material/People';
-import ShareIcon from '@mui/icons-material/Share';
-import PersonIcon from '@mui/icons-material/Person';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import ToggleButton from '@mui/material/ToggleButton';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import AdvanceSearch from './AdvanceSearch';
 import { useDispatch, useSelector } from "react-redux"
@@ -179,32 +168,14 @@ export default function SidebarNav() {
 
   const [value, setValue] = React.useState(options[0]);
   const [inputValue, setInputValue] = React.useState('');
-  const [documentsDescription_test, setDocumentsDescription] = useState([]);
   const [myDocuments, setMyDocuments] = useState([]);
   const [isSearch, setIsSearch] = useState(false);
   const [forDocuments, setForDocuments] = useState("");
   const [myTotalTasks, setMyTotalTasks] = useState([]);
-  const [taskSubjects_test, setTasksSubjects] = useState([]);
   const [filteredTaskSubjects, setFilteredTaskSubjects] = useState([]);
   const [folders, setFolders] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState(folderId);
   const [anchorEl4, setAnchorEl4] = React.useState(null);
-
-  const {
-    getRootProps,
-    getInputProps,
-    getListboxProps,
-    getOptionProps,
-    groupedOptions,
-    focused,
-  } = useAutocomplete({
-    id: 'controlled-state-demo',
-    options,
-    value,
-    onChange: (event, newValue) => setValue(newValue),
-    inputValue,
-    onInputChange: (event, newInputValue) => setInputValue(newInputValue),
-  });
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const opens = Boolean(anchorEl);
@@ -220,50 +191,6 @@ export default function SidebarNav() {
   const handleLogout = () => {
     localStorage.clear();
     navigate("/");
-  }
-
-  const Json_AdvanceSearchDoc = (f_id = folderId) => {
-    console.log("Json_AdvanceSearchDoc forDocuments", forDocuments);
-    if (forDocuments !== "") {
-      let obj = {
-        ClientId: "",
-        Description: forDocuments,
-        Email: Email,
-        IsUDF: "F",
-        ItemFDate: "01/01/1900",
-        ItemTDate: "01/01/1900",
-        ItemrecFDate: "01/01/1900",
-        ItemrecTDate: "01/01/1900",
-        ProjectId: f_id,
-        agrno: agrno,
-        password: password,
-        sectionId: "-1",
-        udflist: [],
-        udfvalueList: []
-      };
-      try {
-        Cls.Json_AdvanceSearchDoc(obj, (sts, data) => {
-          if (sts) {
-            if (data) {
-              let json = JSON.parse(data);
-              console.log("Json_AdvanceSearchDoc", json.Table6);
-              if (json.Table6) {
-                let fltDouble = [];
-                json.Table6.map((itm) => itm.Description).filter(item => {
-                  if (!fltDouble.includes(item)) {
-                    fltDouble.push(item);
-                  }
-                });
-                // setDocumentsDescription(fltDouble);
-                // setMyDocuments(json.Table6);
-              }
-            }
-          }
-        });
-      } catch (err) {
-        console.log("Error while calling Json_AdvanceSearchDoc", err);
-      }
-    }
   }
 
   function Json_GetFolders() {
@@ -285,37 +212,6 @@ export default function SidebarNav() {
       });
     } catch (err) {
       console.log("Error while calling Json_GetFolders", err);
-    }
-  }
-
-  const Json_CRM_GetOutlookTask = () => {
-    let obj = {
-      agrno: agrno,
-      Email: Email,
-      password: password
-    };
-    try {
-      practiceCls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
-        if (sts) {
-          if (data) {
-            console.log("Json_CRM_GetOutlookTask", JSON.parse(data));
-            let tasks = JSON.parse(data).Table;
-            let myTasks = tasks.filter((item) => item.AssignedToID.split(",").includes(userId) && (item.Source === "CRM" || item.Source === "Portal"));
-            let fltDouble = [];
-            [...myTasks].map(itm => itm.Subject).filter(subject => {
-              if (!fltDouble.includes(subject)) {
-                fltDouble.push(subject);
-              }
-            });
-            setTasksSubjects(fltDouble);
-            // setFilteredTaskSubjects(fltDouble);
-            setMyTotalTasks(myTasks);
-            Json_GetFolders();
-          }
-        }
-      });
-    } catch (err) {
-      console.log("Error while calling Json_CRM_GetOutlookTask", err);
     }
   }
 
@@ -393,10 +289,6 @@ export default function SidebarNav() {
   }
 
   useEffect(() => {
-    // const data = setTimeout(() => {
-    //   Json_AdvanceSearchDoc(selectedFolder);
-    // }, 1000);
-    // return () => clearTimeout(data);
     const data = setTimeout(() => {
       dispatch(Json_AdvanceSearchDocFromRedux("",forDocuments,{}));
     }, 1000);
@@ -404,6 +296,12 @@ export default function SidebarNav() {
   }, [forDocuments]);
 
 
+  function testFunc(){
+    setTabs([...tabs, { tabLink: `/dashboard/DocumentList?filter=true&adv=true`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);    
+    tabs.map(itm => {
+      itm.active = false;
+    });
+  }
 
   // dropdown
   const open4 = Boolean(anchorEl4);
@@ -540,7 +438,7 @@ export default function SidebarNav() {
                   </Box>
 
                   <div>
-                    <AdvanceSearch folderList={folders}/>
+                    <AdvanceSearch folderList={folders} testFunc={testFunc}/>
                   </div>
 
                 </Box>
@@ -648,7 +546,7 @@ export default function SidebarNav() {
           <CreateNewModal></CreateNewModal>
 
           <List className='side-navi'>
-
+            {console.log("fsdfkretgsg",tabs)}
             {tabs.map((text, index, arr) => (
               <ListItem className={text.active ? 'active' : ''} key={index} disablePadding sx={{ display: 'block' }}>
                 <ListItemButton

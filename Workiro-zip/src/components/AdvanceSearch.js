@@ -23,7 +23,7 @@ let password = localStorage.getItem("Password");
 let Email = localStorage.getItem("Email");
 let folderId = localStorage.getItem("FolderId");
 
-function AdvanceSearch() {
+function AdvanceSearch({testFunc}) {
     const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -223,6 +223,7 @@ function AdvanceSearch() {
                             });
                             setSelectedClient({});
                             navigate("/dashboard/DocumentList?filter=true&adv=true");
+                            testFunc();
                             // handleClose();
                             // dispatch(setIsAdvanceDocSearchRedux(true));
                             // navigate("/dashboard/SearchResult/Doc");
@@ -236,6 +237,7 @@ function AdvanceSearch() {
         } catch (err) {
             console.log("Error while calling Json_AdvanceSearchDoc", err);
         }
+        handleClose();
     }
     const Json_SearchDocById = () => {
         let obj = {
