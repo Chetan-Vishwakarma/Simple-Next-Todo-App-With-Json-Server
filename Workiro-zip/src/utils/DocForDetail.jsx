@@ -1,12 +1,21 @@
 import moment from 'moment';
-import React from 'react'
+import React, { useState } from 'react'
 import Activity from '../client/utils/Activity';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, Button, Typography, Dialog, DialogContent, DialogContentText, Link, Accordion, AccordionSummary, AccordionDetails, Checkbox } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import TaskDetailModal from '../components/TaskDetailModal';
+import { useSelector } from 'react-redux';
 
-function DocForDetail({openDocumentDetailsList,setOpenDocumentDetailsList,docForDetails,getVertion,associatedTask,getAudit, call_Json_GetAudit }) {
+function DocForDetail({ openDocumentDetailsList, setOpenDocumentDetailsList, docForDetails, getVertion, associatedTask, getAudit, call_Json_GetAudit }) {
+
+    const allTaskData = useSelector(state=>state.counter.actualData);
     const [expanded, setExpanded] = React.useState('panel1');
+    const [isApi, setIsApi] = useState(false);
+    const [openModal, setOpen] = React.useState(false);  //for task detail modal
+    const [selectedTask, setSelectedTask] = useState({});
+    const [attachmentFileTodo, setAttachmentFileTodo] = useState([]);
+
     const handleChange = (panel) => (event, newExpanded) => {
         setExpanded(newExpanded ? panel : false);
     };
@@ -14,8 +23,18 @@ function DocForDetail({openDocumentDetailsList,setOpenDocumentDetailsList,docFor
         event.stopPropagation();
         setOpenDocumentDetailsList(false);
     };
+    const handleTaskDetailModalOpen=(e,itm)=>{
+        e.stopPropagation();
+        e.preventDefault();
+        let fltTask = allTaskData.filter(task=>task.ID===itm.Taskid);
+        setSelectedTask(fltTask[0]);
+        setOpen(true);
+    }
     return (
         <>
+
+            <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal} attachmentFileTodo={attachmentFileTodo}></TaskDetailModal>
+
             <Dialog
                 open={openDocumentDetailsList}
                 onClose={(event) => handleCloseDocumentDetailsList(event)}
@@ -131,8 +150,8 @@ function DocForDetail({openDocumentDetailsList,setOpenDocumentDetailsList,docFor
                                         {associatedTask.length > 0 && associatedTask.map((itm, i) => {
                                             return <>
                                                 <Link key={i} href="#"
-                                                //  onClick={(e) => Json_CRM_GetOutlookTask(e, itm)} 
-                                                 className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />{itm.Subject}</Link>
+                                                     onClick={(e) => handleTaskDetailModalOpen(e, itm)} 
+                                                    className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />{itm.Subject}</Link>
                                             </>
                                         })}
                                     </Box>

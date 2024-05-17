@@ -21,6 +21,7 @@ import GetFileType from './FileType';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRecentTasksRedux, fetchAllTasksRedux, fetchRecentDocumentsRedux } from '../redux/reducers/api_helper';
 import TaskCard from '../utils/TaskCard';
+import DocumentTripleDot from '../utils/DocumentTripleDot';
 
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -869,7 +870,8 @@ function NewTodoList() {
                                                 </Box>
                                             </Box>
                                             <Box>
-                                                <Button
+                                                <DocumentTripleDot data={{data:item}} handleEdit={handleEdit}/>
+                                                {/* <Button
                                                     id={`basic-button-${index}`}
                                                     aria-controls={openMenus[index] ? `basic-menu-${index}` : undefined}
                                                     aria-haspopup="true"
@@ -923,7 +925,7 @@ function NewTodoList() {
                                                             <CloudDownloadIcon fontSize="medium" />
                                                         </ListItemIcon>
                                                         Download</MenuItem>
-                                                </Menu>
+                                                </Menu> */}
                                             </Box>
                                         </label>
                                     </Box>

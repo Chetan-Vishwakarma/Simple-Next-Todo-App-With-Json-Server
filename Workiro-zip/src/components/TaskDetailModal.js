@@ -85,6 +85,7 @@ import GetFileType from "./FileType";
 import { BorderBottom } from "@mui/icons-material";
 import { fetchAllTasksRedux } from "../redux/reducers/api_helper";
 import { useDispatch } from "react-redux";
+import DocumentTripleDot from "../utils/DocumentTripleDot";
 
 
 const Demo = styled('div')(({ theme }) => ({
@@ -1942,7 +1943,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                     </Box>
                 </Box>
                 <Box>
-                    <Button
+                    <DocumentTripleDot data={data} handleEdit={()=>{}}/>
+                    {/* <Button
                         id={`basic-button-${data.data.Guid}`}
                         aria-controls={anchorElDocumentList[data.data.Guid] ? `basic-menu-${data.data.Guid}` : undefined}
                         aria-haspopup="true"
@@ -2008,7 +2010,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                 <CloudDownloadIcon fontSize="medium" />
                             </ListItemIcon>
                             Download</MenuItem>
-                    </Menu>
+                    </Menu> */}
                 </Box>
             </label>
         </Box>

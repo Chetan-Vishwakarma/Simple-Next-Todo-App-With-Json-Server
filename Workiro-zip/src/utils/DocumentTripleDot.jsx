@@ -19,7 +19,7 @@ let Email = localStorage.getItem("Email");
 const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
 const Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
-function DocumentTripleDot({ data,handleEdit }) {
+function DocumentTripleDot({ data, handleEdit }) {
     const dispatch = useDispatch();
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState({});
     const [associatedTask, setAssociatedTask] = useState([]);
@@ -216,7 +216,29 @@ function DocumentTripleDot({ data,handleEdit }) {
             }
         }
     };
+
+    function Json_SearchDocById(doc, index) {
+        try {
+            let o = {};
+            o.ItemId = doc.ItemId;
+            Cls.Json_SearchDocById(o, function (sts, data) {
+                if (sts) {
+                    if (data) {
+                        let js = JSON.parse(data);
+                        let tbl = js[""];
+                        setDocForDetails(tbl[0]);
+                        setOpenDocumentDetailsList(true);
+                    }
+                }
+            })
+        } catch (error) {
+            toast.error("Something went wrong please try again")
+            console.log("NetWork Error Json_SearchDocById", error)
+        }
+    }
+
     const handleClickOpenDocumentDetailsList = (event, sDoc) => {
+        event.stopPropagation();
         Json_getAssociatedTaskListByDocumentId(sDoc);
         const updatedData = {};
 
@@ -228,11 +250,21 @@ function DocumentTripleDot({ data,handleEdit }) {
             }
         }
 
+        if (Object.keys(sDoc).length < 20) {
+            if(sDoc.ItemId===null){
+                toast.error("Item Id not available for this document");
+            }
+            Json_SearchDocById(sDoc);
+            Json_GetAudit(sDoc);
+            Json_GetVersionByItemId(sDoc)
+            return;
+        }
+
         setDocForDetails(updatedData);
-        event.stopPropagation();
         setOpenDocumentDetailsList(true);
         Json_GetAudit(sDoc);
         Json_GetVersionByItemId(sDoc)
+
     };
     const handleCloseDocumentOpenDocumentBrowers = (event, rowData) => {
         if (rowData) {
@@ -264,15 +296,15 @@ function DocumentTripleDot({ data,handleEdit }) {
     };
     return (
         <>
-        <DocForDetail 
-          openDocumentDetailsList={openDocumentDetailsList} 
-          setOpenDocumentDetailsList={setOpenDocumentDetailsList}
-          docForDetails={docForDetails}
-          getVertion={getVertion}
-          associatedTask={associatedTask}
-          getAudit={getAudit}
-          call_Json_GetAudit={call_Json_GetAudit}
-        />
+            <DocForDetail
+                openDocumentDetailsList={openDocumentDetailsList}
+                setOpenDocumentDetailsList={setOpenDocumentDetailsList}
+                docForDetails={docForDetails}
+                getVertion={getVertion}
+                associatedTask={associatedTask}
+                getAudit={getAudit}
+                call_Json_GetAudit={call_Json_GetAudit}
+            />
             <Button
                 id={`basic-button-${data.data["Registration No."]}`}
                 aria-controls={anchorElDocumentList[data.data["Registration No."]] ? `basic-menu-${data.data["Registration No."]}` : undefined}
