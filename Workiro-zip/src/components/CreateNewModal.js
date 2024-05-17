@@ -2384,9 +2384,9 @@ function CreateNewModalTask({ ...props }) {
                     obj.FromMail = Email;
                     obj.ToEmail = "sonam.choudhari@docusoft.net";//item?.UserEmail;
                     obj.strFileName = "";
-                    obj.Byte = "";
+                    obj.Byte = null;
                     console.log(obj,"sendmail_object data",addUser);
-                    cls.SendMail(obj, function (sts, data) {
+                    cls.NewSendMail(obj, function (sts, data) {
                         if (sts) {
                             if (data) {
                                 console.log(data,"SendMail by sonam");

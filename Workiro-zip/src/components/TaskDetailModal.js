@@ -1497,9 +1497,9 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                     obj.FromMail = Email;
                     obj.ToEmail = "sonam.choudhari@docusoft.net";//item?.UserEmail;
                     obj.strFileName = "";
-                    obj.Byte = "";
+                    obj.Byte = null;
                     console.log(obj,"sendmail_object data",addUser);
-                    Cls.SendMail(obj, function (sts, data) {
+                    Cls.NewSendMail(obj, function (sts, data) {
                         if (sts) {
                             if (data) {
                                 console.log(data,"SendMail by sonam");

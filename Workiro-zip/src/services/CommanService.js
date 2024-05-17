@@ -802,6 +802,17 @@ console.log("formattedDate",formattedDate)
                 callBack(false, []);
             }
         })
+    } 
+    NewSendMail(obj, callBack) {
+        super.CreateNewServiceParamObject("NewSendMail", obj, false);
+        super.CallNewService("NewSendMail", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
     }
     GetActiveUserById(obj, callBack) {
         super.CreateNewServiceParamObject("Json_GetActiveUserById", obj, false);
