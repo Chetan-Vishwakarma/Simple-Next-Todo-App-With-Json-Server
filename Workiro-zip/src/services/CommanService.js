@@ -102,8 +102,39 @@ getFileName(x){
 
         });
     }
+    
 
-   
+    ConfirmMessage1(txt,callBack) {
+        Swal.fire({
+            // title: "Are you sure you want to delete this item?",
+            text: txt,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes !",
+            html: `
+            <p>${txt}</p>
+            <label>
+                <input type="checkbox" id="myCheckbox" checked>
+                <span>Notify Assignees</span>
+            </label>
+        `,
+        // preConfirm: () => {
+        //     const checkbox = document.getElementById('myCheckbox');
+        //     return checkbox ? checkbox.checked : false;
+        //   }
+        }).then((result) => {
+            if (result.isConfirmed) {
+              return callBack(true)
+            }
+            else{
+                return callBack(false)
+            }
+
+        });
+    }
+    
 
     ////////////////////////////////////////Portal Methods
    
@@ -761,7 +792,28 @@ console.log("formattedDate",formattedDate)
             }
         })
     }
-
+    SendMail(obj, callBack) {
+        super.CreateNewServiceParamObject("Json_SendMail", obj, false);
+        super.CallNewService("Json_SendMail", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
+    GetActiveUserById(obj, callBack) {
+        super.CreateNewServiceParamObject("Json_GetActiveUserById", obj, false);
+        super.CallNewService("Json_GetActiveUserById", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
     Json_Get_DS_TaskManager(callBack) {
         super.CreateNewServiceParamObject("Json_Get_DS_TaskManager");
         super.CallNewService("Json_Get_DS_TaskManager", function (status, Data) {
