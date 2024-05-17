@@ -116,6 +116,7 @@ function CreateNewModalTask({ ...props }) {
     const reduxRefForTaskModal = useSelector((state => state.counter.openTaskModal));
     const reduxRefClientAndDoc = useSelector((state => state.counter.clientAndDocDataForTaskModal));
     const openDocumentModalByRedux = useSelector((state => state.counter.openDocumentModalByRedux));
+    const folderList = useSelector((state) => state.counter.folders);
 
     // const {
     //     documentDate = null,
@@ -195,7 +196,6 @@ function CreateNewModalTask({ ...props }) {
     const boolClient = Boolean(clientAnchorEl);
     ////////////////////end client Data
     ////////////////////////////////////////Folder list
-    const [folderList, setFolderList] = useState([]);
     const [searchFolderQuery, setSearchFolderQuery] = useState("");
 
     const [txtFolderId, setFolderId] = useState(localStorage.getItem("FolderId"));
@@ -951,35 +951,39 @@ function CreateNewModalTask({ ...props }) {
     );
 
     function Json_GetFolders() {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
+        let res = folderList.filter((f) => f.FolderID === parseInt(localStorage.getItem("ProjectId")));
+        if (res.length > 0) {
+            settxtFolder(res[0].Folder);
         }
+        // let obj = {
+        //     agrno: agrno,
+        //     Email: Email,
+        //     password: password
+        // }
 
-        try {
-            cls.Json_GetFolders(obj, function (sts, data) {
-                if (sts) {
-                    if (data) {
-                        let js = JSON.parse(data);
-                        let tbl = js.Table;
-                        console.log("get folder list", tbl);
-                        setFolderList(tbl);
-                        let res = tbl.filter((f) => f.FolderID === parseInt(localStorage.getItem("ProjectId")));
-                        if (res.length > 0) {
-                            settxtFolder(res[0].Folder);
-                        }
+        // try {
+        //     cls.Json_GetFolders(obj, function (sts, data) {
+        //         if (sts) {
+        //             if (data) {
+        //                 let js = JSON.parse(data);
+        //                 let tbl = js.Table;
+        //                 console.log("get folder list", tbl);
+        //                 setFolderList(tbl);
+        //                 let res = tbl.filter((f) => f.FolderID === parseInt(localStorage.getItem("ProjectId")));
+        //                 if (res.length > 0) {
+        //                     settxtFolder(res[0].Folder);
+        //                 }
 
-                    }
-                }
-            });
-        } catch (error) {
-            console.log({
-                status: false,
-                message: "Folder is Blank Try again",
-                error: error,
-            });
-        }
+        //             }
+        //         }
+        //     });
+        // } catch (error) {
+        //     console.log({
+        //         status: false,
+        //         message: "Folder is Blank Try again",
+        //         error: error,
+        //     });
+        // }
     }
 
     const handleSearchInputChangeFolder = (event) => {

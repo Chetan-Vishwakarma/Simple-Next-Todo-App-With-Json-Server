@@ -22,7 +22,7 @@ import DataGrid, {
     Selection,
     Scrolling,
     Sorting,
-    DataGridTypes 
+    DataGridTypes
 } from 'devextreme-react/data-grid';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import InsertPageBreakIcon from '@mui/icons-material/InsertPageBreak';
@@ -97,7 +97,7 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 let addItemdata = [];
 function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, attachmentFileTodo }) {
-    console.log(attachmentFileTodo, "TaskDetailModal2222", selectedTask);
+    const folderList = useSelector((state) => state.counter.folders);
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
     const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
     const baseUrlSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
@@ -118,7 +118,6 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     // const [NumPriority, setNumPriority] = React.useState(selectedTask.Priority);
     const [NumPriority, setNumPriority] = React.useState((selectedTask && selectedTask.Priority) ? selectedTask.Priority : "");
 
-    const [folderList, setFolderList] = useState([]);
     const [portalComments, setPortalComments] = useState([]);
     const [PortalDocumentShow, setPortalDocumentShow] = useState([]);
     const [copyLink, setCopyLink] = useState("");
@@ -431,7 +430,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
 
         return formattedDate;
     }
-    
+
     async function Json_Get_CRM_SavedTask_ByTaskId(taskid) {
         setAttachmentFile([]);
         let obj = {};
@@ -459,11 +458,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
 
                         const formatedate = formatDate(date)
                         // console.log(formatDate(date),"dateformattingdate");
-                        return { ...activity, Item_Date: formatedate,Guid:uuidv4().replace(/-/g, '') };
+                        return { ...activity, Item_Date: formatedate, Guid: uuidv4().replace(/-/g, '') };
                     });
                     let arr = [];
-                    formattedActivity.map(itm=>{
-                        if(itm.ItemId) arr.push({[itm.ItemId]:false})
+                    formattedActivity.map(itm => {
+                        if (itm.ItemId) arr.push({ [itm.ItemId]: false })
                     });
 
                     setAttachmentFile(formattedActivity);
@@ -587,35 +586,39 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
 
 
     function Json_GetFolders() {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
+        let res = folderList.filter((f) => f.FolderID === parseInt(localStorage.getItem("ProjectId")));
+        if (res.length > 0) {
+            settxtFolder(res[0].Folder);
         }
+        // let obj = {
+        //     agrno: agrno,
+        //     Email: Email,
+        //     password: password
+        // }
 
-        try {
-            Cls.Json_GetFolders(obj, function (sts, data) {
-                if (sts) {
-                    if (data) {
-                        let js = JSON.parse(data);
-                        let tbl = js.Table;
-                        console.log("get folder list", tbl);
-                        setFolderList(tbl);
-                        let res = tbl.filter((f) => f.FolderID === parseInt(localStorage.getItem("ProjectId")));
-                        if (res.length > 0) {
-                            settxtFolder(res[0].Folder);
-                        }
+        // try {
+        //     Cls.Json_GetFolders(obj, function (sts, data) {
+        //         if (sts) {
+        //             if (data) {
+        //                 let js = JSON.parse(data);
+        //                 let tbl = js.Table;
+        //                 console.log("get folder list", tbl);
+        //                 setFolderList(tbl);
+        //                 let res = tbl.filter((f) => f.FolderID === parseInt(localStorage.getItem("ProjectId")));
+        //                 if (res.length > 0) {
+        //                     settxtFolder(res[0].Folder);
+        //                 }
 
-                    }
-                }
-            });
-        } catch (error) {
-            console.log({
-                status: false,
-                message: "Folder is Blank Try again",
-                error: error,
-            });
-        }
+        //             }
+        //         }
+        //     });
+        // } catch (error) {
+        //     console.log({
+        //         status: false,
+        //         message: "Folder is Blank Try again",
+        //         error: error,
+        //     });
+        // }
     }
 
     function Json_GetForwardUserList(fid) {
@@ -722,7 +725,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
 
         // setCurrentDate(moment(selectedTask.Start, "DD/MM/YYYY").toDate());
 
-        console.log(docForDetails,"moment122222221", moment(selectedTask.Start, "DD/MM/YYYY").toDate());
+        console.log(docForDetails, "moment122222221", moment(selectedTask.Start, "DD/MM/YYYY").toDate());
 
         //moment(dateString, "DD/MM/YYYY").toDate();
         setNextDate(DateFormet(selectedTask.EndDateTime));
@@ -759,7 +762,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
 
 
 
-   
+
 
 
 
@@ -802,7 +805,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     };
 
 
-    
+
 
     const [anchorEl1, setAnchorEl1] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(null);
@@ -840,8 +843,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                     if (res) {
                         const checkbox = document.getElementById('myCheckbox');
                         const notifyAssignees = checkbox ? checkbox.checked : false;
-                        console.log(selectedTask,'taskdetailsmodal2 Assignees:', notifyAssignees);
-                        if(notifyAssignees==true){
+                        console.log(selectedTask, 'taskdetailsmodal2 Assignees:', notifyAssignees);
+                        if (notifyAssignees == true) {
                             Json_SendMail(selectedTask);  //pending by sonam
 
                         }
@@ -1488,29 +1491,29 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
         });
     }
     const Json_SendMail = (taskDataCom) => {
-        if(taskDataCom.ID){
-            if(addUser && addUser.length > 0) {
+        if (taskDataCom.ID) {
+            if (addUser && addUser.length > 0) {
                 addUser.forEach(item => {
-                    let obj={};
-                    obj.Subject =`Docusoft Task ${txtClient}`;
+                    let obj = {};
+                    obj.Subject = `Docusoft Task ${txtClient}`;
                     obj.Body = `Hi ${item?.ForwardTo},"\r\n" ${taskDataCom["Forwarded By"]} has initiated a task relating to ${txtClient} and you have been added as an assignee."\r\n" Task : ${taskDataCom.Subject} "\r\n" Task ID : ${taskDataCom.ID} "\r\n" Start Date : ${taskDataCom.Start} Please click on the following link to upload Open Upload Page <a href="">Launch</a>`;
                     obj.FromMail = Email;
                     obj.ToEmail = "sonam.choudhari@docusoft.net";//item?.UserEmail;
                     obj.strFileName = "";
                     obj.Byte = "";
-                    console.log(obj,"sendmail_object data",addUser);
+                    console.log(obj, "sendmail_object data", addUser);
                     Cls.SendMail(obj, function (sts, data) {
                         if (sts) {
                             if (data) {
-                                console.log(data,"SendMail by sonam");
+                                console.log(data, "SendMail by sonam");
                             }
                         }
                     });
                 });
             }
-           
+
         }
-      
+
     }
     const handleChangeStatus = (event) => {
         console.log("change_statusevent", selectedTask);
@@ -1520,12 +1523,12 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
             Cls.ConfirmMessage1("Are you sure you want to complete task", function (res) {
                 if (res) {
                     const checkbox = document.getElementById('myCheckbox');
-                        const notifyAssignees = checkbox ? checkbox.checked : false;
-                        console.log(selectedTask,'taskdetailsmodal565 Assignees:', notifyAssignees);
-                        if(notifyAssignees==true){
-                               //pending by sonam
-                               Json_SendMail(selectedTask);
-                        }
+                    const notifyAssignees = checkbox ? checkbox.checked : false;
+                    console.log(selectedTask, 'taskdetailsmodal565 Assignees:', notifyAssignees);
+                    if (notifyAssignees == true) {
+                        //pending by sonam
+                        Json_SendMail(selectedTask);
+                    }
                     Json_UpdateTaskField("Status", "Completed", returnMessageStatus("Completed"));
                     if (attachmentFile && attachmentFile.length > 0) {
                         attachmentFile.forEach((item) => {
@@ -1612,7 +1615,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     const [anchorElDocumentList, setAnchorElDocumentList] = React.useState({});
     // const DocumentList = Boolean(anchorElDocumentList);
     const handleClickDocumentList = (event, rowData) => {
-        console.log("djfldjdfds",rowData.key);
+        console.log("djfldjdfds", rowData.key);
         event.stopPropagation();
         const newAnchorElDocumentList = { ...anchorElDocumentList };
         newAnchorElDocumentList[rowData.data.Guid] = event.currentTarget;
@@ -1630,7 +1633,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
 
     // Document details List
     const [openDocumentDetailsList, setOpenDocumentDetailsList] = React.useState(false);
-   
+
     const [docForDetails, setDocForDetails] = useState({});
     const [docDetailsSearchByItemId, setDocDetailsSearchByItemId] = useState([]);
     const [boolVal, setBoolVal] = useState(false);
@@ -1647,7 +1650,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
             Json_SearchDocById(sDoc);
             Json_GetAudit(sDoc)
         }
-        else{
+        else {
             setBoolVal(false)
             setGetAudit([]);
             setDocDetailsSearchByItemId([]);
@@ -1662,8 +1665,8 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
         return { document, details };
     }
 
-    
-    function Json_SearchDocById(doc,index) {
+
+    function Json_SearchDocById(doc, index) {
         try {
             let o = {};
             o.ItemId = doc.ItemId;
@@ -1673,10 +1676,10 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                         setBoolVal(true)
                         let js = JSON.parse(data);
                         let tbl = js[""];
-                     
+
                         setDocDetailsSearchByItemId(tbl[0]);
 
-                        console.log("Json_SearchDocById", tbl.length )
+                        console.log("Json_SearchDocById", tbl.length)
 
 
                     }
@@ -1842,49 +1845,49 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     const handleCloseDocumentListDMS = () => {
         setOpenDocumentListDMS(false);
     };
-    const CRM_TaskDeleteByTaskID = (userID,crmtaskID) => {
+    const CRM_TaskDeleteByTaskID = (userID, crmtaskID) => {
         let obj = {
-          agrno: agrno,
-          Email: Email,
-          password: password,
-          UserID: userID ? userID : "",
-          TaskId: crmtaskID ? crmtaskID : ""
+            agrno: agrno,
+            Email: Email,
+            password: password,
+            UserID: userID ? userID : "",
+            TaskId: crmtaskID ? crmtaskID : ""
         };
         try {
-          Cls.CRM_TaskDeleteByTaskID(obj, (sts, data) => {
-            if (sts) {
-              if (data) {
-                console.log("CRM_TaskDeleteByTaskID", data);
-                if(data){
-                  toast.error(data);
-                //   setTimeout(() => {
-                    // navigate("/dashboard/Connections");
-                    setOpen(false);
-                    dispatch(fetchAllTasksRedux("Todo"));
-                //   },1500);
-                } else {
-                  toast.error("Deleting this contact is not allowed because it has attached documents. Please remove the attached documents before proceeding with the deletion.");
+            Cls.CRM_TaskDeleteByTaskID(obj, (sts, data) => {
+                if (sts) {
+                    if (data) {
+                        console.log("CRM_TaskDeleteByTaskID", data);
+                        if (data) {
+                            toast.error(data);
+                            //   setTimeout(() => {
+                            // navigate("/dashboard/Connections");
+                            setOpen(false);
+                            dispatch(fetchAllTasksRedux("Todo"));
+                            //   },1500);
+                        } else {
+                            toast.error("Deleting this contact is not allowed because it has attached documents. Please remove the attached documents before proceeding with the deletion.");
+                        }
+
+
+                        setAnchorEl(null);
+                    }
                 }
-                
-               
-               setAnchorEl(null);
-              }
-            }
-          });
+            });
         } catch (err) {
-          console.log("Error while calling Json_GetCRMContactUDFValues", err);
+            console.log("Error while calling Json_GetCRMContactUDFValues", err);
         }
-      };
+    };
     const handleDeleteTask = (selectedTask) => {
-        console.log("deletetask",selectedTask);
+        console.log("deletetask", selectedTask);
         Clsprect.ConfirmMessage("Are you sure you want to delete this task ? ", function (res) {
-          if (res) {
-           CRM_TaskDeleteByTaskID(selectedTask.UserID,selectedTask.ID);
-          }
-      })
-       
-      };
-    
+            if (res) {
+                CRM_TaskDeleteByTaskID(selectedTask.UserID, selectedTask.ID);
+            }
+        })
+
+    };
+
     const Json_ExplorerSearchDoc = () => {
         console.log(selectedTask, 'Json_ExplorerSearchDoc', txtClientId);
         try {
@@ -1941,49 +1944,49 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
             console.log("Error while calling Json_getAssociatedTaskListByDocumentId", err);
         }
     }
-    console.log(docForDetails,"docfordetailssonam");
-    const cellRender = (data)=>{
+    console.log(docForDetails, "docfordetailssonam");
+    const cellRender = (data) => {
         console.log(data, "datadms1111111111111")
         let rowdata = data.data;
         let rd = ClsSms.getFileExtension(rowdata.FileName);
         return (
             <Box className="file-uploads">
-            <label className="file-uploads-label file-uploads-document" onClick={(event) => {
-                event.stopPropagation();
-                event.preventDefault();
-                handleCloseDocument(event, data);
-            }} onDoubleClick={(event) => {
-                // handleClickOpenPDFView(event, data.data);
-                handleCloseDocument(event, data);
-            }}>
-                <Box className="d-flex align-items-center">
+                <label className="file-uploads-label file-uploads-document" onClick={(event) => {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    handleCloseDocument(event, data);
+                }} onDoubleClick={(event) => {
+                    // handleClickOpenPDFView(event, data.data);
+                    handleCloseDocument(event, data);
+                }}>
+                    <Box className="d-flex align-items-center">
 
-                    {/* <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" />  */}
+                        {/* <Checkbox {...label} onClick={(event)=>event.stopPropagation()} className="hover-checkbox p-0 ms-0" size="small" />  */}
 
-                    {/* <DescriptionIcon
+                        {/* <DescriptionIcon
                         sx={{
                             fontSize: 32,
                         }}
                         className='me-2 ms-0'
                     /> */}
-                    <div className='img-format'>
-                        {/* <img src={Fileformat} /> */}
-                        {<GetFileType Type={rd ? rd.toLowerCase() : null}></GetFileType>}
-                    </div>
-                    <Box className="upload-content pe-3">
-                        <Typography variant="h4" >
-                            {data.data.FileName ? data.data.FileName : "Demo"}
-                        </Typography>
-                        <Typography variant="body1">
-                            {/* Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span>  */}
-                            {/* Date <span className='sembold'>{data.data["Item_Date"] ? data.data["Item_Date"] : ""}</span> | */}
-                            Uploaded by <span className='sembold'>{forwardUser.ForwardTo}</span>
-                        </Typography>
+                        <div className='img-format'>
+                            {/* <img src={Fileformat} /> */}
+                            {<GetFileType Type={rd ? rd.toLowerCase() : null}></GetFileType>}
+                        </div>
+                        <Box className="upload-content pe-3">
+                            <Typography variant="h4" >
+                                {data.data.FileName ? data.data.FileName : "Demo"}
+                            </Typography>
+                            <Typography variant="body1">
+                                {/* Size:  <span className='sembold'>{data.data["FileSize"] ? data.data["FileSize"] : ""}</span>  */}
+                                {/* Date <span className='sembold'>{data.data["Item_Date"] ? data.data["Item_Date"] : ""}</span> | */}
+                                Uploaded by <span className='sembold'>{forwardUser.ForwardTo}</span>
+                            </Typography>
+                        </Box>
                     </Box>
-                </Box>
-                <Box>
-                    <DocumentTripleDot data={data} handleEdit={()=>{}}/>
-                    {/* <Button
+                    <Box>
+                        <DocumentTripleDot data={data} handleEdit={() => { }} />
+                        {/* <Button
                         id={`basic-button-${data.data.Guid}`}
                         aria-controls={anchorElDocumentList[data.data.Guid] ? `basic-menu-${data.data.Guid}` : undefined}
                         aria-haspopup="true"
@@ -2050,11 +2053,11 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                             </ListItemIcon>
                             Download</MenuItem>
                     </Menu> */}
-                </Box>
-            </label>
-        </Box>
+                    </Box>
+                </label>
+            </Box>
         )
-        
+
     }
 
     return (
@@ -2376,10 +2379,10 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                 <AttachEmailIcon className="font-22" />
                                             </ListItemIcon>Change Folder</MenuItem>
                                     </Button>
-                                    <MenuItem className='ps-2 w-100' onClick={()=>{handleDeleteTask(selectedTask)}}>
-                                            <ListItemIcon>
+                                    <MenuItem className='ps-2 w-100' onClick={() => { handleDeleteTask(selectedTask) }}>
+                                        <ListItemIcon>
                                             <DeleteIcon fontSize="medium" />
-                                            </ListItemIcon>Delete Task</MenuItem>
+                                        </ListItemIcon>Delete Task</MenuItem>
                                     <Menu
                                         id="basic-menu"
                                         anchorEl={anchorElFolder}
@@ -3213,7 +3216,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
             {/* end */}
 
             {/* // document list modal */}
-        
+
             <Dialog
                 open={documentLis}
                 onClose={handleCloseDocumentList}
@@ -3230,7 +3233,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                         <Typography variant="h4" className='font-18 bold mb-0 text-black'>
                             Attachment List
                         </Typography>
-                        </Box>
+                    </Box>
                     <Button onClick={handleCloseDocumentList} autoFocus sx={{ minWidth: 30 }}>
                         <span className="material-symbols-outlined text-black">
                             cancel
@@ -3316,33 +3319,33 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                 <AccordionDetails>
                                     <TableContainer component={Paper}>
                                         <Table sx={{ minWidth: '100%' }} aria-label="simple table" size="small">
-                                           
+
                                             {boolVal ? (<>
                                                 <TableHead>
-                                                <TableRow>
-                                                    <TableCell className='bold'>Document</TableCell>
-                                                    <TableCell className='bold'>Details</TableCell>
-                                                </TableRow>
-                                            </TableHead>
+                                                    <TableRow>
+                                                        <TableCell className='bold'>Document</TableCell>
+                                                        <TableCell className='bold'>Details</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
 
                                                 <TableBody>
                                                     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                                         <TableCell align="left" className='bold'>Registration No</TableCell>
-                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Registration No."]?docDetailsSearchByItemId["Registration No."]:""}</TableCell>
+                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Registration No."] ? docDetailsSearchByItemId["Registration No."] : ""}</TableCell>
                                                     </TableRow>
                                                 </TableBody>
 
                                                 <TableBody>
                                                     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                                         <TableCell align="left" className='bold'>Folder</TableCell>
-                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Folder"]?docDetailsSearchByItemId["Folder"]:""}</TableCell>
+                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Folder"] ? docDetailsSearchByItemId["Folder"] : ""}</TableCell>
                                                     </TableRow>
                                                 </TableBody>
 
                                                 <TableBody>
                                                     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                                         <TableCell align="left" className='bold'>Client</TableCell>
-                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Client"]?docDetailsSearchByItemId["Client"]:""}</TableCell>
+                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Client"] ? docDetailsSearchByItemId["Client"] : ""}</TableCell>
 
                                                     </TableRow>
                                                 </TableBody>
@@ -3350,7 +3353,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                 <TableBody>
                                                     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                                         <TableCell align="left" className='bold'>Section</TableCell>
-                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Section"]?docDetailsSearchByItemId["Section"]:""}</TableCell>
+                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Section"] ? docDetailsSearchByItemId["Section"] : ""}</TableCell>
 
                                                     </TableRow>
                                                 </TableBody>
@@ -3358,102 +3361,102 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                                                 <TableBody>
                                                     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                                         <TableCell align="left" className='bold'>Received Date</TableCell>
-                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Received Date"]?moment(docDetailsSearchByItemId["Received Date"]).format("DD/MM/YYYY"):""}</TableCell>
+                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Received Date"] ? moment(docDetailsSearchByItemId["Received Date"]).format("DD/MM/YYYY") : ""}</TableCell>
 
                                                     </TableRow>
                                                 </TableBody>
                                                 <TableBody>
                                                     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                                         <TableCell align="left" className='bold'>Item Date</TableCell>
-                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Item Date"]?moment(docDetailsSearchByItemId["Item Date"]).format("DD/MM/YYYY") :""}</TableCell>
+                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Item Date"] ? moment(docDetailsSearchByItemId["Item Date"]).format("DD/MM/YYYY") : ""}</TableCell>
 
                                                     </TableRow>
                                                 </TableBody>
                                                 <TableBody>
                                                     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                                         <TableCell align="left" className='bold'>File Size</TableCell>
-                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["FileSize"]?docDetailsSearchByItemId["FileSize"]:""}</TableCell>
+                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["FileSize"] ? docDetailsSearchByItemId["FileSize"] : ""}</TableCell>
 
                                                     </TableRow>
                                                 </TableBody>
                                                 <TableBody>
                                                     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                                         <TableCell align="left" className='bold'>Notes</TableCell>
-                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Notes"]?docDetailsSearchByItemId["Notes"]:""}</TableCell>
+                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Notes"] ? docDetailsSearchByItemId["Notes"] : ""}</TableCell>
 
                                                     </TableRow>
                                                 </TableBody>
                                                 <TableBody>
                                                     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                                         <TableCell align="left" className='bold'>Category</TableCell>
-                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Category"]?docDetailsSearchByItemId["Category"]:""}</TableCell>
+                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Category"] ? docDetailsSearchByItemId["Category"] : ""}</TableCell>
 
                                                     </TableRow>
                                                 </TableBody>
                                                 <TableBody>
                                                     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                                         <TableCell align="left" className='bold'>Attachment(s)</TableCell>
-                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Client"]?docDetailsSearchByItemId["Client"]:""}</TableCell>
+                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Client"] ? docDetailsSearchByItemId["Client"] : ""}</TableCell>
 
                                                     </TableRow>
                                                 </TableBody>
                                                 <TableBody>
                                                     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                                         <TableCell align="left" className='bold'>Type</TableCell>
-                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Type"]?docDetailsSearchByItemId["Type"]:""}</TableCell>
+                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Type"] ? docDetailsSearchByItemId["Type"] : ""}</TableCell>
 
                                                     </TableRow>
                                                 </TableBody>
                                                 <TableBody>
                                                     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                                         <TableCell align="left" className='bold'>Version</TableCell>
-                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Version"]?docDetailsSearchByItemId["Version"]:""}</TableCell>
+                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["Version"] ? docDetailsSearchByItemId["Version"] : ""}</TableCell>
 
                                                     </TableRow>
                                                 </TableBody>
                                                 <TableBody>
                                                     <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                                         <TableCell align="left" className='bold'>ReceivedBy</TableCell>
-                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["ReceivedBy"]?docDetailsSearchByItemId["ReceivedBy"]:""}</TableCell>
+                                                        <TableCell align="left">{docDetailsSearchByItemId && docDetailsSearchByItemId["ReceivedBy"] ? docDetailsSearchByItemId["ReceivedBy"] : ""}</TableCell>
 
                                                     </TableRow>
                                                 </TableBody>
                                             </>
 
-                                          
-                                          ) :
-                                            (<>
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell className='bold'>Document</TableCell>
-                                                    <TableCell className='bold'>Details</TableCell>
-                                                </TableRow>
-                                            </TableHead>
 
-                                                <TableBody>
-                                                    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                                        <TableCell align="left" className='bold'>AttachId</TableCell>
-                                                        <TableCell align="left">{docForDetails && docForDetails["AttachId"]?docForDetails["AttachId"]:""}</TableCell>
-                                                    </TableRow>
-                                                    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                                        <TableCell align="left" className='bold'>Type</TableCell>
-                                                        <TableCell align="left">{docForDetails && docForDetails["type"]?docForDetails["type"]:""}</TableCell>
-                                                    </TableRow>
-                                                    <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                                        <TableCell align="left" className='bold'>File Name</TableCell>
-                                                        <TableCell align="left">{docForDetails && docForDetails["FileName"]?docForDetails["FileName"]:""}</TableCell>
-                                                    </TableRow>
-                                                </TableBody>
-                                            </> 
-                                            )
+                                            ) :
+                                                (<>
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <TableCell className='bold'>Document</TableCell>
+                                                            <TableCell className='bold'>Details</TableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+
+                                                    <TableBody>
+                                                        <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                                            <TableCell align="left" className='bold'>AttachId</TableCell>
+                                                            <TableCell align="left">{docForDetails && docForDetails["AttachId"] ? docForDetails["AttachId"] : ""}</TableCell>
+                                                        </TableRow>
+                                                        <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                                            <TableCell align="left" className='bold'>Type</TableCell>
+                                                            <TableCell align="left">{docForDetails && docForDetails["type"] ? docForDetails["type"] : ""}</TableCell>
+                                                        </TableRow>
+                                                        <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                                            <TableCell align="left" className='bold'>File Name</TableCell>
+                                                            <TableCell align="left">{docForDetails && docForDetails["FileName"] ? docForDetails["FileName"] : ""}</TableCell>
+                                                        </TableRow>
+                                                    </TableBody>
+                                                </>
+                                                )
                                             }
 
                                         </Table>
                                     </TableContainer>
                                 </AccordionDetails>
                             </Accordion>
-                            {docForDetails && docForDetails.type=="DMS" ? (
-                            <><Accordion className='accordian-box' expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+                            {docForDetails && docForDetails.type == "DMS" ? (
+                                <><Accordion className='accordian-box' expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
                                     <AccordionSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         aria-controls="panel2-content"
@@ -3539,7 +3542,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
     })} */}
                                         </AccordionDetails>
                                     </Accordion></>
-) : null}
+                            ) : null}
                         </Box>
 
                     </DialogContentText>

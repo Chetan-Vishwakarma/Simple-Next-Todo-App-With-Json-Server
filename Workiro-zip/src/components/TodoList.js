@@ -62,6 +62,7 @@ const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 f
 function TodoList() {
     const allTask = useSelector((state) => state.counter.allTask);
     const actualData = useSelector((state) => state.counter.actualData);
+    const folders = useSelector((state) => state.counter.folders);
     const [searchParam,setSearchParam] = useSearchParams();
     const filter = searchParam.get("filter");
     const dispatch = useDispatch();
@@ -81,7 +82,6 @@ function TodoList() {
     const [selectedTask, setSelectedTask] = useState({});
     const [attachmentFileTodo, setAttachmentFileTodo] = useState([]);
     const [loadMore, setLoadMore] = useState(20);
-    const [folders, setFolders] = useState([]);
     const [selectedFolder, setSelectedFolder] = useState("Folder");
     const [selectedStatus, setSelectedStatus] = useState("Status");
     const [selectedType, setSelectedType] = useState("Source");
@@ -108,27 +108,6 @@ function TodoList() {
     const handleMenuClose = () => {
         setAnchorElDown(null);
     };
-    function Json_GetFolders() {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
-        }
-        try {
-            Cls.Json_GetFolders(obj, function (sts, data) {
-                if (sts) {
-                    if (data) {
-                        let js = JSON.parse(data);
-                        let tbl = js.Table;
-                        // console.log("Json_GetFolders", tbl);
-                        setFolders(tbl);
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_GetFolders", err);
-        }
-    }
 
     const [isApi, setIsApi] = useState(false);
 
@@ -196,7 +175,6 @@ function TodoList() {
         setAgrNo(localStorage.getItem("agrno"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
-        Json_GetFolders();
     }, []);
 
     // modal

@@ -1,52 +1,32 @@
 import React, { memo, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ToggleButton from "@mui/material/ToggleButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import BorderColorIcon from "@mui/icons-material/BorderColor";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import EmailIcon from "@mui/icons-material/Email";
-import Tab from "@mui/material/Tab";
-import TabContext from "@mui/lab/TabContext";
-import TabList from "@mui/lab/TabList";
-import TabPanel from "@mui/lab/TabPanel";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { useLocation, useSearchParams } from "react-router-dom";
-import CompaniesHouse from "../client/client-components/CompaniesHouse";
-import TaskList from "../client/client-components/TaskList";
+import { useSearchParams } from "react-router-dom";
 import CustomBreadCrumbs from "./CustomBreadCrumbs";
-import Contact from "../client/client-components/Contact";
 import CommanCLS from "../services/CommanService";
 import {
   Autocomplete,
   Grid,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   TextField,
 } from "@mui/material";
 import ContactMainform from "../contact/contact-components/ContactMainform";
 import UploadButtons from "../contact/contact-components/UploadProfile";
 import ContactUDF from "../contact/contact-components/ContactUDF";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { clearDefaultRoleSonam } from '../../src/redux/reducers/counterSlice';
-let originatorNo;
 let folderData;
 let clientData;
 let defaultclientData;
 let clientName;
 function AddContacts({ addContactData, contactDetails }) {
-  console.log(addContactData, "addContactData11111", contactDetails);
+  const folders = useSelector((state) => state.counter.folders);
   const [contact, setContact] = useState([]);
   const [Contactudfnull, setContactudfnull] = useState(false);
   const getAllStateReduxSonam = useSelector((state) => state.counter);
   const dispatch = useDispatch();
-  const [fillcontact, setFillContact] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   const tabValue = searchParams.get("val");
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -56,7 +36,6 @@ function AddContacts({ addContactData, contactDetails }) {
   const [value, setValue] = React.useState(tabValue ? tabValue : "1");
   const [clientDetails, setClientDetails] = useState({});
   const [clientDetailsclear, setClientDetailsclear] = useState({});
-  const [folders, setFolders] = useState([]);
   const [Importdata, setImportdata] = useState([]);
   const [GellAllClientList, setGellAllClientList] = useState([]);
   const [Importcontactdata, setImportcontactdata] = useState({});
@@ -174,25 +153,7 @@ function AddContacts({ addContactData, contactDetails }) {
       console.log("Error while calling Json_GetClientCardDetails", err);
     }
   };
-  const Json_GetFolders = () => {
-    let requestBody = {
-      agrno: agrno,
-      Email: Email,
-      password: password,
-    };
-    try {
-      Cls.Json_GetFolders(requestBody, (sts, data) => {
-        if (sts) {
-          if (data) {
-            let json = JSON.parse(data);
-            setFolders(json.Table);
-          }
-        }
-      });
-    } catch (err) {
-      console.log("Error while calling Json_GetToFavourites", err);
-    }
-  };
+  
   const Json_GetAllClientList = () => {
     let requestBody = {
       agrno: agrno,
@@ -555,36 +516,6 @@ function AddContacts({ addContactData, contactDetails }) {
     }
 
   };
-  const handleListItemClick = (item) => {
-    console.log("Selecteditem:", item);
-    setFillContact(item);
-    let data = { ...userContactDetails };
-    data = {
-      ...data,
-      ["Title"]: item.Salutation,
-      ["FirstName"]: item.FirstName,
-      ["LastName"]: item.LastName,
-      ["ReferenceName"]: "",
-      ["MainContact"]: item.MainContact,
-      ["Inactive"]: item.CActive,
-      ["GreetingName"]: item.Greeting,
-      ["EmailName"]: item.EMailId,
-      ["MainUserId"]: -1,
-      ["MainLine1Name"]: item.Add1,
-      ["MainLine2Name"]: item.Add2,
-      ["MainLine3Name"]: item.Add3,
-      ["MainTownName"]: item.Town,
-      ["MainPostcodeName"]: item.PostCode,
-      ["Maincontactcountry"]: "",
-      ["MainTelephoneName"]: item.Tel,
-      ["MainMobileName"]: item.Mobile,
-      ["mainCountry"]: "",
-      ["billingsCountry"]: "",
-      ["ragistersCountry"]: "",
-      ["ReferenceID"]: clientNames,
-    };
-    setContactDetails(data);
-  };
   const updateReferenceID = (client) => {
     let data = { ...userContactDetails };
     data = { ...data, ReferenceID: client };
@@ -766,8 +697,6 @@ function AddContacts({ addContactData, contactDetails }) {
     setPassword(localStorage.getItem("Password"));
     setEmail(localStorage.getItem("Email"));
     setFolderId(localStorage.getItem("FolderId"));
-    // setIntUserid(localStorage.getItem("UserId"));
-    Json_GetFolders();
     Json_GetClientCardDetails();
    
     Json_GetCRMContactUDFValues();

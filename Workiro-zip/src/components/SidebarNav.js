@@ -140,6 +140,7 @@ export default function SidebarNav() {
   const {docDescriptions:documentsDescription} = useSelector(state=>state.counter.advanceSearchResult);
   const isAdvanceDocSearchRedux = useSelector((state)=>state.counter.isAdvanceDocSearchRedux);
   const taskSubjects = useSelector((state)=>state.counter.taskSubjects);
+  const folders = useSelector((state) => state.counter.folders);
 
   const [isSearchResultTab,setisSearchResultTab] = useState(false);
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -175,7 +176,6 @@ export default function SidebarNav() {
   const [forDocuments, setForDocuments] = useState("");
   const [myTotalTasks, setMyTotalTasks] = useState([]);
   const [filteredTaskSubjects, setFilteredTaskSubjects] = useState([]);
-  const [folders, setFolders] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState(folderId);
   const [anchorEl4, setAnchorEl4] = React.useState(null);
 
@@ -195,27 +195,6 @@ export default function SidebarNav() {
     navigate("/");
   }
 
-  function Json_GetFolders() {
-    let obj = {
-      agrno: agrno,
-      Email: Email,
-      password: password
-    }
-    try {
-      Cls.Json_GetFolders(obj, function (sts, data) {
-        if (sts) {
-          if (data) {
-            let js = JSON.parse(data);
-            let tbl = js.Table;
-            // console.log("Json_GetFolders", tbl);
-            setFolders(tbl);
-          }
-        }
-      });
-    } catch (err) {
-      console.log("Error while calling Json_GetFolders", err);
-    }
-  }
 
   const Json_Get_CRM_UserByProjectId = () => {
     let obj = {

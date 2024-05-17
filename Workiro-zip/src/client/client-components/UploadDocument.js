@@ -23,7 +23,7 @@ import dayjs from 'dayjs';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
 import { fetchRecentDocumentsRedux } from '../../redux/reducers/api_helper';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -37,6 +37,7 @@ function UploadDocument({
 }) {
 
     const dispatch = useDispatch();
+    const folderList = useSelector((state) => state.counter.folders);
 
     const localtion = useLocation();
     console.log("location state",localtion.state)
@@ -68,7 +69,6 @@ function UploadDocument({
 
     const [clientList, setClientList] = useState([]);
     const [sectionList, setSectionList] = useState([]);
-    const [folderList, setFolderList] = useState([]);
     const [udfTable, setUDFTable] = useState([]);
     const [getAllFolderData, setGetAllFolderData] = useState([]);
 
@@ -191,36 +191,40 @@ function UploadDocument({
 
     //////////////////////////Get Foder Data
     function Json_GetFolders() {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
+        let res = folderList.filter((f) => f.FolderID === parseInt(localStorage.getItem("ProjectId")));
+        if (res.length > 0) {
+            setTxtFolderData(res[0]);
         }
+        // let obj = {
+        //     agrno: agrno,
+        //     Email: Email,
+        //     password: password
+        // }
 
-        try {
-            cls.Json_GetFolders(obj, function (sts, data) {
-                if (sts) {
-                    if (data) {
-                        let js = JSON.parse(data);
-                        let tbl = js.Table;
-                        let result = tbl.filter((el) => el.FolderID === parseInt(txtFolderId));
-                        console.log("get folder list", tbl);
-                        setFolderList(tbl);
-                        if (result.length > 0) {
-                            console.log("get folder list", result);
-                            // setTextFolderData(result[0])
-                            setTxtFolderData(result[0]);
-                        }
-                    }
-                }
-            });
-        } catch (error) {
-            console.log({
-                status: false,
-                message: "Folder is Blank Try again",
-                error: error,
-            });
-        }
+        // try {
+        //     cls.Json_GetFolders(obj, function (sts, data) {
+        //         if (sts) {
+        //             if (data) {
+        //                 let js = JSON.parse(data);
+        //                 let tbl = js.Table;
+        //                 let result = tbl.filter((el) => el.FolderID === parseInt(txtFolderId));
+        //                 console.log("get folder list", tbl);
+        //                 setFolderList(tbl);
+        //                 if (result.length > 0) {
+        //                     console.log("get folder list", result);
+        //                     // setTextFolderData(result[0])
+        //                     setTxtFolderData(result[0]);
+        //                 }
+        //             }
+        //         }
+        //     });
+        // } catch (error) {
+        //     console.log({
+        //         status: false,
+        //         message: "Folder is Blank Try again",
+        //         error: error,
+        //     });
+        // }
     }
 
     function Json_GetFolderData(fid) {

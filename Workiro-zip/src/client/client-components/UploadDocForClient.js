@@ -24,6 +24,7 @@ import CreateNewModalTask from '../../components/CreateNewModal';
 import moment from 'moment';
 import { ToastContainer, toast } from 'react-toastify';
 import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 let originatorNo;
 function UploadDocForClient({ 
       openUploadDocument, 
@@ -44,6 +45,7 @@ function UploadDocForClient({
         setOpenUploadDocument(false);
     };
 
+    const folderList = useSelector((state) => state.counter.folders);
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -56,7 +58,6 @@ function UploadDocForClient({
 
     const [clientList, setClientList] = useState([]);
     const [sectionList, setSectionList] = useState([]);
-    const [folderList, setFolderList] = useState([]);
     const [udfTable, setUDFTable] = useState([]);
     const [getAllFolderData, setGetAllFolderData] = useState([]);
 
@@ -177,36 +178,40 @@ function UploadDocForClient({
 
     //////////////////////////Get Foder Data
     function Json_GetFolders() {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
+        let res = folderList.filter((f) => f.FolderID === parseInt(localStorage.getItem("ProjectId")));
+        if (res.length > 0) {
+            setTextFolderData(res[0]);
         }
+        // let obj = {
+        //     agrno: agrno,
+        //     Email: Email,
+        //     password: password
+        // }
 
-        try {
-            cls.Json_GetFolders(obj, function (sts, data) {
-                if (sts) {
-                    if (data) {
-                        let js = JSON.parse(data);
-                        let tbl = js.Table;
-                        let result = tbl.filter((el) => el.FolderID === parseInt(txtFolderId));
-                        console.log("get folder list", tbl);
-                        setFolderList(tbl);
-                        if (result.length > 0) {
-                            console.log("get folder list", result);
-                            setTextFolderData(result[0])
-                            // setTxtFolderData(result[0]);
-                        }
-                    }
-                }
-            });
-        } catch (error) {
-            console.log({
-                status: false,
-                message: "Folder is Blank Try again",
-                error: error,
-            });
-        }
+        // try {
+        //     cls.Json_GetFolders(obj, function (sts, data) {
+        //         if (sts) {
+        //             if (data) {
+        //                 let js = JSON.parse(data);
+        //                 let tbl = js.Table;
+        //                 let result = tbl.filter((el) => el.FolderID === parseInt(txtFolderId));
+        //                 console.log("get folder list", tbl);
+        //                 setFolderList(tbl);
+        //                 if (result.length > 0) {
+        //                     console.log("get folder list", result);
+        //                     setTextFolderData(result[0])
+        //                     // setTxtFolderData(result[0]);
+        //                 }
+        //             }
+        //         }
+        //     });
+        // } catch (error) {
+        //     console.log({
+        //         status: false,
+        //         message: "Folder is Blank Try again",
+        //         error: error,
+        //     });
+        // }
     }
 
     function Json_GetFolderData() {

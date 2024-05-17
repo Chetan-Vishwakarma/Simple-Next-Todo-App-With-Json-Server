@@ -14,7 +14,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import BootstrapTooltip from '../utils/BootstrapTooltip';
 import { toast } from 'react-toastify';
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { setAdvanceSearchResultFromRedux, setIsAdvanceDocSearchRedux } from '../redux/reducers/counterSlice';
 import { Json_AdvanceSearchDocFromRedux } from '../redux/reducers/api_helper';
 
@@ -27,13 +27,13 @@ function AdvanceSearch({handleAdvNav,setisSearchResultTab}) {
     const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const folders = useSelector((state) => state.counter.folders);
     const { globalSearchDocs } = location.state ? location.state : { globalSearchDocs: [], strGlobal: "" };
     const baseUrlSms = "https://docusms.uk/dsdesktopwebservice.asmx/";
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
     let ClsSms = new CommanCLS(baseUrlSms, agrno, Email, password);
     const [sections, setSections] = useState([]);
-    const [folders, setFolders] = useState([]);
     const [clientList, setClientList] = useState([]);
     const [selectedClient, setSelectedClient] = useState({});
     const [isClientField, setIsClientField] = useState(false);
@@ -128,27 +128,7 @@ function AdvanceSearch({handleAdvNav,setisSearchResultTab}) {
             console.log("Error while calling Json_GetFolderData", err);
         }
     }
-    function Json_GetFolders() {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
-        }
-        try {
-            ClsSms.Json_GetFolders(obj, function (sts, data) {
-                if (sts) {
-                    if (data) {
-                        let js = JSON.parse(data);
-                        let tbl = js.Table;
-                        // console.log("Json_GetFolders", tbl);
-                        setFolders(tbl);
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_GetFolders", err);
-        }
-    }
+
     const Json_GetSupplierListByProject = (folder_id = folderId) => {
         let obj = {
             agrno: agrno,
@@ -174,7 +154,6 @@ function AdvanceSearch({handleAdvNav,setisSearchResultTab}) {
     }
     useEffect(() => {
         Json_GetFolderData();
-        Json_GetFolders();
         Json_GetSupplierListByProject();
     }, []);
     const format_YYYY_MM_DD = (dateString) => {
