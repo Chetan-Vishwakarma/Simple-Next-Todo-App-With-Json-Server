@@ -60,6 +60,7 @@ import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import AdvanceSearch from './AdvanceSearch';
 import { useDispatch, useSelector } from "react-redux"
 import { Json_AdvanceSearchDocFromRedux, fetchAllSection, fetchAllTasksRedux, fetchFolders } from '../redux/reducers/api_helper';
+import Dashboard from './Dashboard';
 
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -760,6 +761,7 @@ export default function SidebarNav() {
             {/* <Route path="/" element={<Client />} /> */}
             <Route index element={<h1></h1>} />
             <Route path="/Connections" element={<Client />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/clientDetails" element={<ClientDetails />} />
             <Route path="/ContactDetails" element={<ContactDetails />} />
             <Route path="/MyTask" element={<TodoList />} />
