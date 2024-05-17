@@ -140,7 +140,7 @@ export default function SidebarNav() {
   const isAdvanceDocSearchRedux = useSelector((state)=>state.counter.isAdvanceDocSearchRedux);
   const taskSubjects = useSelector((state)=>state.counter.taskSubjects);
 
-  const [testForNav,setTestForNav] = useState(false);
+  const [isSearchResultTab,setisSearchResultTab] = useState(false);
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -298,7 +298,11 @@ export default function SidebarNav() {
 
 
   function handleAdvNav(){
-    setTabs([...tabs, { tabLink: `/dashboard/DocumentList?filter=true&adv=true`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);    
+    let filteredTab = tabs;
+    if(isSearchResultTab){
+      filteredTab = tabs.filter(itm=>itm.tabName!=="Search Result");
+    }
+    setTabs([...filteredTab, { tabLink: `/dashboard/DocumentList?filter=true&adv=true`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);    
     tabs.map(itm => {
       itm.active = false;
     });
@@ -316,7 +320,7 @@ export default function SidebarNav() {
   useEffect(() => {
     setGlobalSearch(localStorage.getItem("globalSearchKey"));
     tabs.map(itm => {
-      if (itm.tabName === "Search Result" && testForNav===true) {
+      if (itm.tabName === "Search Result" && isSearchResultTab===true) {
           itm.tabLink = `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${folderId}`;
       } else {
         itm.tabLink = itm.tabLink;
@@ -384,7 +388,7 @@ export default function SidebarNav() {
                               }
                             });
                             setSearchInputForGlobalSearch("");
-                            setTestForNav(true);
+                            setisSearchResultTab(true);
                           }} 
                           className='w-100'>
                             <Input
@@ -442,7 +446,7 @@ export default function SidebarNav() {
                   </Box>
 
                   <div>
-                    <AdvanceSearch folderList={folders} handleAdvNav={handleAdvNav} setTestForNav={setTestForNav}/>
+                    <AdvanceSearch folderList={folders} handleAdvNav={handleAdvNav} setisSearchResultTab={setisSearchResultTab}/>
                   </div>
 
                 </Box>

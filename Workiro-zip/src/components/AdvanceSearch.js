@@ -23,7 +23,7 @@ let password = localStorage.getItem("Password");
 let Email = localStorage.getItem("Email");
 let folderId = localStorage.getItem("FolderId");
 
-function AdvanceSearch({handleAdvNav,setTestForNav}) {
+function AdvanceSearch({handleAdvNav,setisSearchResultTab}) {
     const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -224,7 +224,7 @@ function AdvanceSearch({handleAdvNav,setTestForNav}) {
                             setSelectedClient({});
                             navigate("/dashboard/DocumentList?filter=true&adv=true");
                             handleAdvNav();
-                            setTestForNav(false);
+                            setisSearchResultTab(false);
                             // handleClose();
                             // dispatch(setIsAdvanceDocSearchRedux(true));
                             // navigate("/dashboard/SearchResult/Doc");
