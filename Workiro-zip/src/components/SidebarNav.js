@@ -140,6 +140,7 @@ export default function SidebarNav() {
   const isAdvanceDocSearchRedux = useSelector((state)=>state.counter.isAdvanceDocSearchRedux);
   const taskSubjects = useSelector((state)=>state.counter.taskSubjects);
 
+  const [testForNav,setTestForNav] = useState(false);
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -296,7 +297,7 @@ export default function SidebarNav() {
   }, [forDocuments]);
 
 
-  function testFunc(){
+  function handleAdvNav(){
     setTabs([...tabs, { tabLink: `/dashboard/DocumentList?filter=true&adv=true`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);    
     tabs.map(itm => {
       itm.active = false;
@@ -315,12 +316,14 @@ export default function SidebarNav() {
   useEffect(() => {
     setGlobalSearch(localStorage.getItem("globalSearchKey"));
     tabs.map(itm => {
-      if (itm.tabName === "Search Result") {
-        itm.tabLink = `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${folderId}`;
+      if (itm.tabName === "Search Result" && testForNav===true) {
+          itm.tabLink = `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${folderId}`;
       } else {
         itm.tabLink = itm.tabLink;
       }
     });
+    
+    
     // setTabs([...tabs,{ tabLink: `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${folderId}`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
 
   }, [globalSearch, window.location.pathname]);
@@ -381,6 +384,7 @@ export default function SidebarNav() {
                               }
                             });
                             setSearchInputForGlobalSearch("");
+                            setTestForNav(true);
                           }} 
                           className='w-100'>
                             <Input
@@ -438,7 +442,7 @@ export default function SidebarNav() {
                   </Box>
 
                   <div>
-                    <AdvanceSearch folderList={folders} testFunc={testFunc}/>
+                    <AdvanceSearch folderList={folders} handleAdvNav={handleAdvNav} setTestForNav={setTestForNav}/>
                   </div>
 
                 </Box>
