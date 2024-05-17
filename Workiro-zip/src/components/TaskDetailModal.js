@@ -1493,7 +1493,14 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                 addUser.forEach(item => {
                     let obj={};
                     obj.Subject =`Docusoft Task ${txtClient}`;
-                    obj.Body = `Hi ${item?.ForwardTo},"\r\n" ${taskDataCom["Forwarded By"]} has initiated a task relating to ${txtClient} and you have been added as an assignee."\r\n" Task : ${taskDataCom.Subject} "\r\n" Task ID : ${taskDataCom.ID} "\r\n" Start Date : ${taskDataCom.Start} Please click on the following link to upload Open Upload Page <a href="">Launch</a>`;
+                    // obj.Body = `Hi ${item?.ForwardTo},"\r\n" ${taskDataCom["Forwarded By"]} has initiated a task relating to ${txtClient} and you have been added as an assignee."\r\n" Task : ${taskDataCom.Subject} "\r\n" Task ID : ${taskDataCom.ID} "\r\n" Start Date : ${taskDataCom.Start} Please click on the following link to upload Open Upload Page <a href="">Launch</a>`;
+                    obj.Body = `Hi ${item?.ForwardTo},<br><br>
+                    ${taskDataCom["Forwarded By"]} has initiated a task relating to ${txtClient} and you have been added as an assignee.<br><br>
+                    Task: ${taskDataCom.Subject}<br>
+                    Task ID: ${taskDataCom.ID}<br>
+                    Start Date: ${taskDataCom.Start}<br><br>
+                    Please click on the following link to upload:<br>
+                    Open Upload Page <a href="">Launch</a>`;
                     obj.FromMail = Email;
                     obj.ToEmail = item?.UserEmail;
                     obj.strFileName = "";
