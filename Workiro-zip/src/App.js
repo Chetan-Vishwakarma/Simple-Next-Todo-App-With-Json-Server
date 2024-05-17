@@ -12,6 +12,7 @@ import DocumentList from './client/client-components/DocumentList';
 import AddContacts from './components/AddContacts';
 
 import { ToastContainer, toast } from "react-toastify";
+import { Dashboard } from '@mui/icons-material'
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Login/>}/>
           <Route path='/dashboard' element={<PrivateRoute/>}>
+            {/* <Route path="dashboard" element={<Dashboard />} /> */}
             <Route path="Connections" element={<ClientDetails />} />
             <Route path="clientDetails" element={<ClientDetails />} />
             <Route path="ContactDetails" element={<ContactDetails />} />
