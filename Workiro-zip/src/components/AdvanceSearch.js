@@ -15,7 +15,7 @@ import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import BootstrapTooltip from '../utils/BootstrapTooltip';
 import { toast } from 'react-toastify';
 import { useDispatch } from "react-redux"
-import { setIsAdvanceDocSearchRedux } from '../redux/reducers/counterSlice';
+import { setAdvanceSearchResultFromRedux, setIsAdvanceDocSearchRedux } from '../redux/reducers/counterSlice';
 import { Json_AdvanceSearchDocFromRedux } from '../redux/reducers/api_helper';
 
 let agrno = localStorage.getItem("agrno");
@@ -538,6 +538,7 @@ function AdvanceSearch() {
                                 let obj = { ...documentData, ItemFDate: isDateShow ? formated_start_date : "01/01/1900", ItemTDate: isDateShow ? formated_end_date : "01/01/1900" };
                                 setDocumentData(obj);
                                 // Json_AdvanceSearchDoc(obj);
+                                dispatch(setAdvanceSearchResultFromRedux({docs:[], descriptions:[]}));
                                 dispatch(Json_AdvanceSearchDocFromRedux("","test",obj));
                                 navigate("/dashboard/DocumentList?filter=true&adv=true");
                             }}>

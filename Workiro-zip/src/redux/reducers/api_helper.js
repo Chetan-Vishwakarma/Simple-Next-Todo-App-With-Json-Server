@@ -414,7 +414,7 @@ export const Json_AdvanceSearchDocFromRedux = (f_id, description, param_obj) => 
                 if (sts) {
                     if (data) {
                         let json = JSON.parse(data);
-                        if (json.Table6.length > 0) {
+                        if (json.Table6 && json.Table6.length > 0) {
                             let fltDouble = [];
                             json.Table6.map((itm) => itm.Description).filter(item => {
                                 if (!fltDouble.includes(item)) {
