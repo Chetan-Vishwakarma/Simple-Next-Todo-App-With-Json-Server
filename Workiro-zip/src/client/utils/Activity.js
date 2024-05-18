@@ -44,6 +44,7 @@ import Activitygrid from './Activitygrid';
 import { exportDataGrid } from "devextreme/excel_exporter";
 import saveAs from "file-saver";
 import { useSelector, useDispatch } from 'react-redux';
+import { GetCategory_Redux } from '../../redux/reducers/api_helper';
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -73,12 +74,13 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     //  getAudit = getAudit.map((Actioned)=>{
     //     return { ...Actioned, ["Actioned Date"]: new Date() };
     // })
-    console.log(selectedDocument,"selectedDocument");
+    const dispatch = useDispatch();
+    let category = useSelector((state) => state.counter.AllCategory?.Table);
+    let getCateGory = category ? category : [];
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
     const [getUserComment, setgetUserComment] = useState([]);
-    const [getCateGory, setgetCateGory] = useState([]);
     const [FilterActivity, setFilterActivity] = useState([]);
     const [Auditcomments, setAuditcomments] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
@@ -118,28 +120,6 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
             console.log("Error while calling Json_GetClientCardDetails", err);
           }
     }
-    const Json_GetCategory =()=>{
-        let requestBody = {
-            agrno: agrno,
-            Email: Email,
-            password: password,
-            SectionId: selectedDocument ? selectedDocument.PostItemTypeID : ""
-          };
-          console.log(getAudit,selectedDocument,"getAudit,selectedDocument")
-          try {
-            cls.Json_GetCategory(requestBody, (sts, data) => {
-              if (sts) {
-                if (data) {
-                  let json = JSON.parse(data);
-                  setgetCateGory(json.Table);
-                }
-              }
-            });
-          } catch (err) {
-            console.log("Error while calling Json_GetClientCardDetails", err);
-          }
-    }
-
     
     const onChangeStandardCate = (event, value) => {
         event.preventDefault();
@@ -232,7 +212,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     }
         setselectedDocument(selectedDocument);
         Json_GetUserComments();
-        Json_GetCategory();
+        dispatch(GetCategory_Redux(selectedDocument ? selectedDocument.PostItemTypeID : ""));
     }, [getAudit])
 
 
