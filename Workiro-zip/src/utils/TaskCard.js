@@ -9,7 +9,7 @@ import { updateTaskFieldFromRedux } from '../redux/reducers/api_helper';
 import { useDispatch } from 'react-redux';
 import TaskDetailModal from '../components/TaskDetailModal';
 import CommanCLS from '../services/CommanService';
-
+import moment from 'moment';
 const agrno = localStorage.getItem("agrno");
 const password = localStorage.getItem("Password");
 const Email = localStorage.getItem("Email");
@@ -33,7 +33,7 @@ function TaskCard({ item, index }) {
     const open = Boolean(anchorEl);
     const [openModal, setOpen] = React.useState(false);  //for task detail modal
     const [attachmentFileTodo, setAttachmentFileTodo] = useState([]);
-
+    // const [addUser, setAddUser] = useState([]);
     const handleClickOpen = (task = selectedTask) => {
         setSelectedTask(task);
         setOpen(true);
@@ -120,7 +120,55 @@ function TaskCard({ item, index }) {
             }
         });
     }
-
+    const Json_SendMail = (taskID,addUser) => {
+        if(taskID.ID){
+            if(addUser && addUser.length > 0) {
+                addUser.forEach(item => {
+                    let obj={};
+                    obj.Subject =`Docusoft Task ${taskID.Client}`;
+                    obj.Body = `Hi ${item?.UserName},<br><br>
+                    ${taskID["Forwarded By"]} has initiated a task relating to ${taskID.Client} and you have been added as an assignee.<br><br>
+                    Task: ${taskID.Subject}<br>
+                    Task ID: ${taskID.ID}<br>
+                    Start Date: ${moment(taskID.Start).format("DD/MM/YYYY")
+                }<br><br>
+                    Please click on the following link to upload:<br>
+                    Open Upload Page <a href="${window.location.protocol+"//"+window.location.hostname+":"+window.location.port}/dashboard/MyTask">Open Task!</a>`;
+                    obj.FromMail = Email;
+                    obj.ToEmail = item?.UserEmail;
+                    obj.strFileName = "";
+                    obj.Byte = null;
+                    console.log(obj,"sendmail_object data",addUser);
+                    Cls.NewSendMail(obj, function (sts, data) {
+                        if (sts) {
+                            if (data) {
+                                console.log(data,"SendMail by sonam");
+                            }
+                        }
+                    });
+                });
+            }
+           
+        }
+      
+    }
+    const Json_GetAssigneeListByTaskId = (taskID) => {
+        let obj = {};
+        obj.AgrNo = agrno;
+        obj.Email = Email;
+        obj.Password = password;
+        obj.taskId = taskID.ID;
+        Cls.GetAssigneeListByTaskId(obj, function (status, data) {
+            if (status && data) {
+                let json = JSON.parse(data);
+                console.log(status,"statusdata",taskID);
+                if(json && json.length > 0) {
+                    //setAddUser(json);
+                    Json_SendMail(taskID,json);
+                }
+            }
+        });
+    }
     const MarkComplete = (e) => {
         Cls.ConfirmMessage1("Are you sure you want to complete task", function (res) {
             if (res) {
@@ -129,6 +177,7 @@ function TaskCard({ item, index }) {
                 console.log(e,'NotifySonam Assignees:', notifyAssignees);
                 if(notifyAssignees==true){
                        //pending by sonam
+                       Json_GetAssigneeListByTaskId(e);
                 }
                 console.log(res,"markcompleted");
                 dispatch(updateTaskFieldFromRedux("Status", "Completed", e));

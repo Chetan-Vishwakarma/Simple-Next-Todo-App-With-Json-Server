@@ -1494,15 +1494,22 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
         if (taskDataCom.ID) {
             if (addUser && addUser.length > 0) {
                 addUser.forEach(item => {
-                    let obj = {};
-                    obj.Subject = `Docusoft Task ${txtClient}`;
-                    obj.Body = `Hi ${item?.ForwardTo},"\r\n" ${taskDataCom["Forwarded By"]} has initiated a task relating to ${txtClient} and you have been added as an assignee."\r\n" Task : ${taskDataCom.Subject} "\r\n" Task ID : ${taskDataCom.ID} "\r\n" Start Date : ${taskDataCom.Start} Please click on the following link to upload Open Upload Page <a href="">Launch</a>`;
+                    let obj={};
+                    obj.Subject =`Docusoft Task ${txtClient}`;
+                    // obj.Body = `Hi ${item?.ForwardTo},"\r\n" ${taskDataCom["Forwarded By"]} has initiated a task relating to ${txtClient} and you have been added as an assignee."\r\n" Task : ${taskDataCom.Subject} "\r\n" Task ID : ${taskDataCom.ID} "\r\n" Start Date : ${taskDataCom.Start} Please click on the following link to upload Open Upload Page <a href="">Launch</a>`;
+                    obj.Body = `Hi ${item?.ForwardTo},<br><br>
+                    ${taskDataCom["Forwarded By"]} has initiated a task relating to ${txtClient} and you have been added as an assignee.<br><br>
+                    Task: ${taskDataCom.Subject}<br>
+                    Task ID: ${taskDataCom.ID}<br>
+                    Start Date: ${moment(taskDataCom.Start).format("DD/MM/YYYY")}<br><br>
+                    Please click on the following link to upload:<br>
+                    Open Upload Page <a href="${window.location.protocol+"//"+window.location.hostname+":"+window.location.port}/dashboard/MyTask">Open Task!</a>`;
                     obj.FromMail = Email;
-                    obj.ToEmail = "sonam.choudhari@docusoft.net";//item?.UserEmail;
+                    obj.ToEmail = item?.UserEmail;
                     obj.strFileName = "";
-                    obj.Byte = "";
-                    console.log(obj, "sendmail_object data", addUser);
-                    Cls.SendMail(obj, function (sts, data) {
+                    obj.Byte = null;
+                    console.log(obj,"sendmail_object data",addUser);
+                    Cls.NewSendMail(obj, function (sts, data) {
                         if (sts) {
                             if (data) {
                                 console.log(data, "SendMail by sonam");
