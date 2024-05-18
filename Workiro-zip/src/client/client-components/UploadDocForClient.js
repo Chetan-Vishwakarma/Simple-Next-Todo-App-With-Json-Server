@@ -11,7 +11,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-
+import { useDispatch, useSelector } from "react-redux";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
@@ -25,6 +25,7 @@ import moment from 'moment';
 import { ToastContainer, toast } from 'react-toastify';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { GetCategory_Redux } from '../../redux/reducers/api_helper';
 let originatorNo;
 function UploadDocForClient({ 
       openUploadDocument, 
@@ -44,7 +45,11 @@ function UploadDocForClient({
     const handleCloseDocumentUpload = () => {
         setOpenUploadDocument(false);
     };
-
+    const dispatch = useDispatch();
+    let category = useSelector((state) => state.counter.AllCategory?.Table);
+    let s_Desc = useSelector((state) => state.counter.AllCategory?.Table1);
+    let categoryList = category ? category : [];
+    let standarDescription = s_Desc ? s_Desc : [];
     const folderList = useSelector((state) => state.counter.folders);
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
@@ -79,7 +84,7 @@ function UploadDocForClient({
 
     const [receivedDate, setReceivedDate] = useState(null); // Initialize the selected date state
 
-    const [standarDescription, setStandarDescription] = useState([]); // Initialize the selected date state
+    // const [standarDescription, setStandarDescription] = useState([]); // Initialize the selected date state
 
     const [txtStandarDescription, settxtStandarDescription] = useState(""); // Initialize the selected date state
 
@@ -91,7 +96,7 @@ function UploadDocForClient({
 
     const [categoryid, setCategoryId] = useState(0);
 
-    const [categoryList, setCategoryList] = useState([])
+    // const [categoryList, setCategoryList] = useState([])
 
     const [showModalCreateTask, setshowModalCreateTask] = useState(false);
     const [openModal, setOpenModal] = useState(false);
@@ -325,16 +330,12 @@ function UploadDocForClient({
 
     }
 
-
-
-
-
     const handleSectionChange = (data) => {
         if (data !== null) {
             console.log("Get Clietn On click", data);
             setTxtSectionId(data.SecID)
             setTxtSectionData(data)
-            Json_GetCategory(data.SecID)
+            dispatch(GetCategory_Redux(data.SecID));
             Json_GetSubSections(data.SecID)
         }
 
@@ -397,28 +398,6 @@ function UploadDocForClient({
 
     }
 
-    function Json_GetCategory(SectionId) {
-
-        try {
-            let o = {};
-            o.SectionId = SectionId;
-            cls.Json_GetCategory(o, function (sts, data) {
-                if (sts) {
-                    let json = JSON.parse(data);
-                    let tbl1 = json.Table1;
-                    let tbl = json.Table;
-                    if (tbl.length > 0) {
-                        setCategoryList(tbl)
-                    }
-                    if (tbl1.length > 0) {
-                        setStandarDescription(tbl1);
-                    }
-                }
-            });
-        } catch (error) {
-            console.log({ Status: false, mgs: "Data not found", Error: error });
-        }
-    }
     //////////////////////////End Get Foder Data
     /////////////////////////////DAte Set
 

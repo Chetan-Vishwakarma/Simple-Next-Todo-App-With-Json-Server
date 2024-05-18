@@ -353,7 +353,6 @@ function UploadDocument({
             console.log("Get Clietn On click", data);
             setTxtSectionId(data.SecID)
             setTxtSectionData(data)
-            // Json_GetCategory(data.SecID)
             dispatch(GetCategory_Redux(data.SecID));
             Json_GetSubSections(data.SecID)
         }
