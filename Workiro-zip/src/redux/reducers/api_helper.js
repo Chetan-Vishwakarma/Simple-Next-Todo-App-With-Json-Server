@@ -364,14 +364,11 @@ export const Json_ExplorerSearchDoc_Redux = (obj) => dispatch => {
 
 export const GetCategory_Redux = (o) => dispatch => {
     try {
-
         ClsSms.Json_GetCategory(o, function (sts, data) {
-            console.log("Json_GetCategory22", data);
             if (sts && data) {
                 let js = JSON.parse(data);
                 if (js) dispatch(setCateGoryApi(js))
             }
-
         })
     } catch (error) {
         console.log("Network Error Json_GetCategory", error)

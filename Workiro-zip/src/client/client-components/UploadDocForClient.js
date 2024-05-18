@@ -404,7 +404,6 @@ function UploadDocForClient({
             o.SectionId = SectionId;
             cls.Json_GetCategory(o, function (sts, data) {
                 if (sts) {
-                    console.log("Json_GetCategory", data);
                     let json = JSON.parse(data);
                     let tbl1 = json.Table1;
                     let tbl = json.Table;
@@ -414,9 +413,6 @@ function UploadDocForClient({
                     if (tbl1.length > 0) {
                         setStandarDescription(tbl1);
                     }
-
-
-
                 }
             });
         } catch (error) {

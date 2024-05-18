@@ -131,7 +131,6 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
               if (sts) {
                 if (data) {
                   let json = JSON.parse(data);
-                  console.log("Json_GetCategory", json.Table);
                   setgetCateGory(json.Table);
                 }
               }

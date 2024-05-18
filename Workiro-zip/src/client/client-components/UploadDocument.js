@@ -349,6 +349,7 @@ function UploadDocument({
             setTxtSectionId(data.SecID)
             setTxtSectionData(data)
             Json_GetCategory(data.SecID)
+            
             Json_GetSubSections(data.SecID)
         }
 
@@ -412,13 +413,11 @@ function UploadDocument({
     }
 
     function Json_GetCategory(SectionId) {
-
         try {
             let o = {};
             o.SectionId = SectionId;
             cls.Json_GetCategory(o, function (sts, data) {
                 if (sts) {
-                    console.log("Json_GetCategory", data);
                     let json = JSON.parse(data);
                     let tbl1 = json.Table1;
                     let tbl = json.Table;
@@ -428,9 +427,6 @@ function UploadDocument({
                     if (tbl1.length > 0) {
                         setStandarDescription(tbl1);
                     }
-
-
-
                 }
             });
         } catch (error) {
