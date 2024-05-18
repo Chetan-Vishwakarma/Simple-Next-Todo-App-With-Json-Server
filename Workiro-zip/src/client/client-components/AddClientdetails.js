@@ -266,19 +266,11 @@ const AddClientdetails = React.memo(
           if (sts) {
             if (data) {
               let json = JSON.parse(data);
-              console.log(json, "Json_CompanyHouseDetails");
               let jdata = json.CompanyBasicDetails;
-              console.log("Json_CompanyHouseDetails1", jdata);
-              let singledata = json.CompanyDetails;
-              console.log(singledata, "singledatasingledata");
-              // setImportCompanyDetails(singledata[0]);
-              // setContactlistdata(json.Table);
               if (jdata.length > 0) {
                 setImportContact(jdata);
-                console.log("companyhousedata", jdata);
               } else {
                 // toast.error("Unable to fetch Company Details. Failed to receive information from Companies House.");
-                console.log("geterror500");
               }
             } else {
               console.log("error ins companyhouse");
@@ -297,10 +289,8 @@ const AddClientdetails = React.memo(
       try {
         Cls.Json_CompanyHouseDetails(requestBody, (sts, data) => {
           if (sts) {
-            console.log(sts, "testcompany");
             if (data) {
               let json = JSON.parse(data);
-              console.log(json, "Json_CompanyDetails264");
               let singledata = json.CompanyDetails[0];
               const defaultCompanyStatus = singledata.company_status;
               const defaultStatusObject = status.find(
@@ -309,7 +299,6 @@ const AddClientdetails = React.memo(
                   defaultCompanyStatus.toLowerCase()
               );
               const defaultStatus = defaultStatusObject || null;
-              console.log(defaultStatus, "defaultStatus22222", singledata);
               let data1 = { ...userDetail };
               data1 = {
                 ...data1,
