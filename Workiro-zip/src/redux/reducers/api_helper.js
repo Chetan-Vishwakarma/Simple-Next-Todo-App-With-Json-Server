@@ -362,9 +362,10 @@ export const Json_ExplorerSearchDoc_Redux = (obj) => dispatch => {
 }
 
 
-export const GetCategory_Redux = (o) => dispatch => {
+export const GetCategory_Redux = (secId) => dispatch => {
+    let obj = { SectionId: secId ? secId : "" }
     try {
-        ClsSms.Json_GetCategory(o, function (sts, data) {
+        ClsSms.Json_GetCategory(obj, function (sts, data) {
             if (sts && data) {
                 let js = JSON.parse(data);
                 if (js) dispatch(setCateGoryApi(js))

@@ -25,7 +25,7 @@ import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
-import { fetchRecentDocumentsRedux } from '../../redux/reducers/api_helper';
+import { GetCategory_Redux, fetchRecentDocumentsRedux } from '../../redux/reducers/api_helper';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 
@@ -38,6 +38,11 @@ function UploadDocument({
 
     const dispatch = useDispatch();
     const folderList = useSelector((state) => state.counter.folders);
+    let category = useSelector((state) => state.counter.AllCategory?.Table);
+    let s_Desc = useSelector((state) => state.counter.AllCategory?.Table1);
+    let categoryList = category ? category : [];
+    let standarDescription = s_Desc ? s_Desc : [];
+    // console.log("fdsdjlkjskt",categoryList);
 
     const localtion = useLocation();
     console.log("location state",localtion.state)
@@ -90,7 +95,7 @@ function UploadDocument({
 
     // const [receivedDate, setReceivedDate] = useState(null); // Initialize the selected date state
 
-    const [standarDescription, setStandarDescription] = useState([]); // Initialize the selected date state
+    // const [standarDescription, setStandarDescription] = useState([]); // Initialize the selected date state
 
     const [txtStandarDescription, settxtStandarDescription] = useState(""); // Initialize the selected date state
 
@@ -102,7 +107,7 @@ function UploadDocument({
 
     const [categoryid, setCategoryId] = useState(0);
 
-    const [categoryList, setCategoryList] = useState([])
+    // const [categoryList, setCategoryList] = useState([])
 
     const [showModalCreateTask, setshowModalCreateTask] = useState(false);
     // const [openModal, setOpenModal] = useState(false);
@@ -348,8 +353,8 @@ function UploadDocument({
             console.log("Get Clietn On click", data);
             setTxtSectionId(data.SecID)
             setTxtSectionData(data)
-            Json_GetCategory(data.SecID)
-            
+            // Json_GetCategory(data.SecID)
+            dispatch(GetCategory_Redux(data.SecID));
             Json_GetSubSections(data.SecID)
         }
 
@@ -410,28 +415,6 @@ function UploadDocument({
             setTxtSubSectionData(data);
         }
 
-    }
-
-    function Json_GetCategory(SectionId) {
-        try {
-            let o = {};
-            o.SectionId = SectionId;
-            cls.Json_GetCategory(o, function (sts, data) {
-                if (sts) {
-                    let json = JSON.parse(data);
-                    let tbl1 = json.Table1;
-                    let tbl = json.Table;
-                    if (tbl.length > 0) {
-                        setCategoryList(tbl)
-                    }
-                    if (tbl1.length > 0) {
-                        setStandarDescription(tbl1);
-                    }
-                }
-            });
-        } catch (error) {
-            console.log({ Status: false, mgs: "Data not found", Error: error });
-        }
     }
     //////////////////////////End Get Foder Data
     /////////////////////////////DAte Set
