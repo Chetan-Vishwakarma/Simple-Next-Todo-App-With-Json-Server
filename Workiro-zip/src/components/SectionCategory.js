@@ -2,7 +2,7 @@ import { Box, Button, Typography, Dialog, DialogContent, DialogContentText, Tabs
 import { useEffect, useState } from 'react';
 import CommanCLS from '../services/CommanService';
 import { toast } from 'react-toastify';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 const SectionCategory = ({ Categoryopen, CategorysetOpen, selectedDocument }) => {
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -11,39 +11,17 @@ const SectionCategory = ({ Categoryopen, CategorysetOpen, selectedDocument }) =>
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
     let cls = new CommanCLS(baseUrl, agrno, Email, password);
     const AllCategory= useSelector((state) => state.counter.AllCategory);
-    console.log("AllCategory",AllCategory);
 
     const CategoryhandleClose = () => {
         CategorysetOpen(false);
     };
 
-    const [categorList, setCategory] = useState([]);
     const [categoryObj, setCategoryObj] = useState({});
     const [isDisabledbtn, setIsDisabledbtn] = useState(true);
 
-    // const Json_GetCategory = () => {
-    //     setIsDisabledbtn(true);
-    //     try {
-    //         let o = { SectionId: selectedDocument ? selectedDocument.PostItemTypeID : console.log("Section id is Blanck") };
-    //         cls.Json_GetCategory(o, function (sts, data) {
-    //             if (sts && data) {
-    //                 let js = JSON.parse(data);
-
-    //                 if (js.Table.length > 0) {
-    //                     setCategory(js.Table);
-    //                      console.log("Json_GetCategory", js);
-    //                 }
-    //             }
-
-    //         })
-    //     } catch (error) {
-    //         console.log("Network Error Json_GetCategory", error)
-    //     }
-    // }
 
     useEffect(() => {
         setIsDisabledbtn(true);
-       // Json_GetCategory();
 
     }, [selectedDocument])
 
@@ -110,7 +88,6 @@ const SectionCategory = ({ Categoryopen, CategorysetOpen, selectedDocument }) =>
                         >
                             {AllCategory.length>0 && AllCategory.Table.length > 0 ? (
                                 AllCategory.Table.map((item, index) => {
-                                   // console.log("Json_GetCategory", item);
                                     return (<>
                                         <FormControlLabel
                                             key={index}
