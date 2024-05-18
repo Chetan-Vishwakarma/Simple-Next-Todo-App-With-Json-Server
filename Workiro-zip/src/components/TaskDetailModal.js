@@ -1498,7 +1498,7 @@ function TaskDetailModal({ setIsApi, isApi, selectedTask, openModal, setOpen, at
                     ${taskDataCom["Forwarded By"]} has initiated a task relating to ${txtClient} and you have been added as an assignee.<br><br>
                     Task: ${taskDataCom.Subject}<br>
                     Task ID: ${taskDataCom.ID}<br>
-                    Start Date: ${taskDataCom.Start}<br><br>
+                    Start Date: ${moment(taskDataCom.Start).format("DD/MM/YYYY")}<br><br>
                     Please click on the following link to upload:<br>
                     Open Upload Page <a href="${window.location.protocol+"//"+window.location.hostname+":"+window.location.port}/dashboard/MyTask">Open Task!</a>`;
                     obj.FromMail = Email;
