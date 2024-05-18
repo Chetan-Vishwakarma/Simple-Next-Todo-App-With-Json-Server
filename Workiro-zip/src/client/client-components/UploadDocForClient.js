@@ -4,7 +4,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -14,33 +13,26 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { useDispatch, useSelector } from "react-redux";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Checkbox, FormControlLabel } from '@mui/material';
 import CommanCLS from '../../services/CommanService';
 import dayjs from 'dayjs';
-import CreateNewModalTask from '../../components/CreateNewModal';
-//import { red } from '@mui/material/colors';
 import moment from 'moment';
-import { ToastContainer, toast } from 'react-toastify';
-import { useLocation, useSearchParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { useLocation } from 'react-router-dom';
 import { GetCategory_Redux } from '../../redux/reducers/api_helper';
 let originatorNo;
 function UploadDocForClient({ 
       openUploadDocument, 
       setOpenUploadDocument
     }) {
-    //console.log("location state",localtion.state)
     const localtion = useLocation();
     try {
         originatorNo = localtion.state;
     }
-
     catch (e) {
         console.log("originatorNo", e)
     }
-
 
     const handleCloseDocumentUpload = () => {
         setOpenUploadDocument(false);
@@ -372,7 +364,6 @@ function UploadDocForClient({
             o.ProjectId = txtFolderId;
             cls.Json_GetSubSections(o, function (sts, data) {
                 if (sts) {
-                    console.log("Json_GetSubSections", data);
                     let json = JSON.parse(data);
                     let tbl1 = json.Table1;
                     if (tbl1.length > 0) {
