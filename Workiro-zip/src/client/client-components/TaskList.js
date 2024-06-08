@@ -7,7 +7,7 @@ import DataGrid, {
   Pager, Paging, DataGridTypes,
 } from 'devextreme-react/data-grid';
 import 'devextreme/dist/css/dx.light.css';
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
 import ToggleButton from '@mui/material/ToggleButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -21,6 +21,7 @@ import DataNotFound from '../../components/DataNotFound';
 import DownloadIcon from '@mui/icons-material/Download';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import Fileformat from '../../images/files-icon/pdf.png';
+import { fetchAllTasksRedux } from '../../redux/reducers/api_helper';
 
 const saleAmountEditorOptions = { format: 'currency', showClearButton: true };
 const filterLabel = { 'aria-label': 'Filter' };
@@ -87,8 +88,11 @@ const orderHeaderFilter = (data) => {
 
 let exportTaskData = [];
 function TaskList({ clientName }) {
-  const reduxData = useSelector((state) => state.counter.reduxData);
-  console.log(reduxData, "reduxdatasonam");
+
+  const dispatch = useDispatch();
+  const outlookTaskList = useSelector((state) => state.counter.actualData).filter(task=>String(task.ClientNo).trim()===String(clientName).trim());
+  const isLoading = useSelector((state) => state.counter.isTaskLoadingFromRedux);
+
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -98,71 +102,14 @@ function TaskList({ clientName }) {
   //   let dt = new LoginDetails();
   let cls = new CommanCLS(baseUrl, agrno, Email, password);
 
-  const [showFilterRow, setShowFilterRow] = useState(true);
-  const [showHeaderFilter, setShowHeaderFilter] = useState(true);
-  const [currentFilter, setCurrentFilter] = useState(applyFilterTypes[0].key);
-
   const [anchorElDown, setAnchorElDown] = useState(null);
-  const [outlookTaskList, setOutlookTaskList] = useState([]);
   const [ExportTaskListData, setExportTaskListData] = useState([]);
   const [dataNotFound, setDataNotFound] = useState(false);
 
   const dataGridRef = useRef(null);
 
-  // const clearFilter = useCallback(() => {
-  //     dataGridRef.current.instance.clearFilter();
-  // }, []);
-
-  // const onShowFilterRowChanged = useCallback((e) => {
-  //     setShowFilterRow(e.value);
-  //     clearFilter();
-  // }, [clearFilter]);
-
-  // const onShowHeaderFilterChanged = useCallback((e) => {
-  //     setShowHeaderFilter(e.value);
-  //     clearFilter();
-  // }, [clearFilter]);
-
-  // const onCurrentFilterChanged = useCallback((e) => {
-  //     setCurrentFilter(e.value);
-  // }, []);
-
-
-  const Json_CRM_GetOutlookTask = () => {
-    try {
-      cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
-        if (sts) {
-          if (data) {
-            let json = JSON.parse(data);
-            console.log("Json_CRM_GetOutlookTasksonam", json?.Table);
-            if (json?.Table.length > 0) {
-              let filteredData = json.Table.filter(itm => itm["EndDateTime"] !== null && !itm["EndDateTime"].split("").includes("-") && itm["Start"] !== null && !itm["Start"].split("").includes("-") && itm.Client === clientName);
-              filteredData.map(itm => {
-                const timeStamp1 = parseInt(itm["EndDateTime"].match(/\d+/)[0]);
-                itm["EndDateTime"] = new Date(timeStamp1);
-                const timeStamp2 = parseInt(itm["Start"].match(/\d+/)[0]);
-                itm["Start"] = new Date(timeStamp2);
-              })
-              if (filteredData.length === 0) {
-                setDataNotFound(true);
-              }
-              console.log("filteredData", filteredData)
-              setOutlookTaskList(filteredData);
-              exportTaskData = [...filteredData];
-              setExportTaskListData([...filteredData]);
-            }
-
-          }
-        }
-      });
-    } catch (err) {
-      console.log("Error while calling Json_CRM_GetOutlookTask", err);
-    }
-  }
-
   useEffect(() => {
-    Json_CRM_GetOutlookTask();
-
+    dispatch(fetchAllTasksRedux("Todo"));
   }, [])
 
   const cellRender = (data) => {
@@ -244,21 +191,12 @@ function TaskList({ clientName }) {
   };
 
   const ExportData = useCallback(() => {
-    console.log("exportData", ExportTaskListData);
-    exportexcel(ExportTaskListData ? ExportTaskListData : []); // Export data from 
+    exportexcel(outlookTaskList.length>0 ? outlookTaskList : []); // Export data from 
     setAnchorElDown(null);
-  }, [ExportTaskListData]);
+  }, []);
+
   const handleRowDoubleClick = (e) => {
-    // Handle double click event on the row
-    console.log('Row double-clicked sdaskldjsajlaj:', e.data);
-    // if(selectedChoice==="All" || selectedChoice==="Contacts"){
-    //     let orgNo = e.data.OriginatorNo;
-    //     let contactNo = e.data.ContactNo;
-    //     handleContactNavigattion(orgNo, contactNo);
-    // }else{
-    //     let originatorNo = e.data.OriginatorNo;
-    //     handleClientNavigation(originatorNo);
-    // }
+    // console.log('Row double-clicked sdaskldjsajlaj:', e.data);
   };
 
   return (
@@ -270,7 +208,9 @@ function TaskList({ clientName }) {
           onClick={handleMenuOpen}
         >
           <DownloadIcon />
-        </ToggleButton><Menu
+        </ToggleButton>
+       
+        <Menu
           anchorEl={anchorElDown}
           open={Boolean(anchorElDown)}
           onClose={handleMenuClose}
@@ -280,7 +220,7 @@ function TaskList({ clientName }) {
       </div>
       <div className='table-responsive table-grid table-grid-2'>
 
-        {dataNotFound ? <DataNotFound /> : (outlookTaskList.length > 0 ? <DataGrid
+        {isLoading ? <CustomLoader /> : (outlookTaskList.length > 0 ? <DataGrid
           id="gridContainer"
           className='client-card-task-grid'
           ref={dataGridRef}
@@ -306,7 +246,8 @@ function TaskList({ clientName }) {
 
           <Column dataField="Subject" />
           <Column
-            dataField="Start"
+          caption="Start"
+            dataField="CreationDate"
             dataType="date"
             format="d/M/yyyy"
           />
@@ -341,7 +282,7 @@ function TaskList({ clientName }) {
             {/* <HeaderFilter groupInterval={10000} /> *
           </Column> */}
           
-        </DataGrid> : <CustomLoader />)}
+        </DataGrid> : <DataNotFound />)}
       </div>
     </>
   )

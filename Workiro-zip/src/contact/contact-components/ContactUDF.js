@@ -76,9 +76,9 @@ const ContactUDF = React.memo(({ data, setDataFromChild,contactDetails}) => {
   useEffect(() => {
     Json_GetForwardUserList();
   }, []);
-  useEffect(() => {
-    setDataFromChild(selectedDatetest);
-  }, [selectedDatetest]);
+  // useEffect(() => {
+  //   setDataFromChild(selectedDatetest);
+  // }, [selectedDatetest]);
   console.log("selectedDatetestsonamoutside", selectedDatetest);
   const renderDynamicInput = (data) => {
     console.log(data,"datetypedata");
@@ -103,7 +103,7 @@ const ContactUDF = React.memo(({ data, setDataFromChild,contactDetails}) => {
                 data.TextControlValue +
                 "_UDF"
               }
-              value={data.UdfValue}
+              defaultValue={data.UdfValue}
               onChange={handleInputChange}
             />
               );
@@ -176,7 +176,8 @@ const ContactUDF = React.memo(({ data, setDataFromChild,contactDetails}) => {
             break;
           case "Date":
             if (data && data.UdfValue) {
-              const defaultDateObject = dayjs(data.UdfValue, "DD-MM-YYYY");     
+              const defaultDateObject = dayjs(data.UdfValue, "DD-MM-YYYY");  
+              console.log(defaultDateObject,"defaultDateObject");   
              // const formattedDefaultDate = defaultDateObject.format("YYYY-MM-DD");
 if (defaultDateObject.isValid()) {
  
@@ -272,7 +273,7 @@ if (defaultDateObject.isValid()) {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  value={data.UdfValue}
+                  defaultValue={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -315,7 +316,7 @@ if (defaultDateObject.isValid()) {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  value={data.UdfValue}
+                  defaultValue={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -358,7 +359,7 @@ if (defaultDateObject.isValid()) {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  value={data.UdfValue}
+                  defaultValue={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );

@@ -112,7 +112,7 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
                 data.TextControlValue +
                 "_UDF"
               }
-              value={data.UdfValue}
+              defaultValue={data.UdfValue}
               onChange={handleInputChange}
             />
               );
@@ -186,6 +186,7 @@ const EditUDFClientcard = React.memo(({ data, setDataFromChild }) => {
           case "Date":
             if (data && data.UdfValue) {
                 let datatest = data.UdfValue;
+              console.log(datatest,"datasetfirst");
                 const defaultDateObject = dayjs(datatest, "MMM D YYYY h:mma");
 // const formattedDefaultDate = dayjs(defaultDateObject).format("MM/DD/YYYY");
 const formattedDefaultDate = defaultDateObject.format("YYYY-MM-DD");
@@ -200,6 +201,7 @@ if (defaultDateObject.isValid()) {
 
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DemoContainer
+      
         components={[
           "DatePicker",
           "TimePicker",
@@ -213,6 +215,7 @@ if (defaultDateObject.isValid()) {
           // value={currentDate}
         //   dateFormat="DD/MM/YYYY"
         //   value={currentDate}
+        className="custom-date-2"
           defaultValue={defaultDateObject}
           // defaultValue={formattedDefaultDate}
           label={data.Name}
@@ -247,11 +250,12 @@ if (defaultDateObject.isValid()) {
                       "DateTimePicker",
                       "DateRangePicker",
                     ]}
-                    className=''
+                    
                   > 
                     <DatePicker
                       // dateFormat="DD/MM/YYYY"
                       // value={currentDate}
+                      className="custom-date-2"
                       label={data.Name}
                       id={
                         data.UserDefFieldID +
@@ -287,7 +291,7 @@ if (defaultDateObject.isValid()) {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  value={data.UdfValue}
+                  defaultValue={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -330,7 +334,7 @@ if (defaultDateObject.isValid()) {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  value={data.UdfValue}
+                  defaultValue={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );
@@ -373,7 +377,7 @@ if (defaultDateObject.isValid()) {
                     data.TextControlValue +
                     "_UDF"
                   }
-                  value={data.UdfValue}
+                  defaultValue={data.UdfValue}
                   onChange={handleInputChange}
                 />
               );

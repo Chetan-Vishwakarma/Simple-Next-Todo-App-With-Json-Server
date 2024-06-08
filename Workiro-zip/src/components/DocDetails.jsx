@@ -8,6 +8,7 @@ import TaskDetailModal from './TaskDetailModal';
 import Fileformat from '../images/files-icon/pdf.png';
 
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 // sadik code start
 function createData(document, details) {
     return { document, details };
@@ -30,8 +31,11 @@ const rows = [
     createData('CC', 'test@gmail.com')
 ];
 
-function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocumentDetailsList, setOpenDocumentDetailsList }) {
+function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocumentDetailsList, setOpenDocumentDetailsList,selectedDocument }) {
     // const [openDocumentDetailsList, setOpenDocumentDetailsList] = useState(false);
+    const setDefaultdata= useSelector((state) => state.counter.GetActivityDataSonam);
+    console.log(setDefaultdata, "setDefaultdata11");
+    console.log(docForDetails,"docForDetails2211",selectedDocument);
     const [associatedTask, setAssociatedTask] = useState([]);
     const [selectedTask, setSelectedTask] = useState({});
     const [openModal, setOpen] = React.useState(false);
@@ -131,7 +135,12 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
         }
 
     }
+    const call_Json_GetAudit = () => {
+        console.log(setDefaultdata,"setDefaultdatasonam");
+        Json_GetAudit(setDefaultdata);
+    }
     useEffect(() => {
+    
         Json_GetAudit(docForDetails);
         Json_GetVersionByItemId(docForDetails)
     }, []);
@@ -227,8 +236,10 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
 
 
                                                 {
+                                                
                                                     Object.keys(docForDetails).length > 0 && (!Object.keys(docForDetails).includes("RecentDate"))
                                                         ? Object.keys(docForDetails).map((itm, i) => {
+                                                            
                                                             if (["Registration No.", "Folder", "Client", "Section", "Received Date", "Item Date", "FileSize", "Notes", "Category", "Attach", "Type", "Version", "Received By", "Item ID"].includes(itm)) {
                                                                 return <TableRow
                                                                     key={i}
@@ -256,93 +267,89 @@ function DocDetails({ expanded, setExpanded, ClsSms, docForDetails, openDocument
                                     </TableContainer>
                                 </AccordionDetails>
                             </Accordion>
+                            {/* {console.log(docForDetails,"docForDetails11sonam")} */}
+                            {docForDetails && docForDetails["Registration No."] ? (
+                            <><Accordion className='accordian-box' expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+                                    <AccordionSummary
+                                        expandIcon={<ExpandMoreIcon />}
+                                        aria-controls="panel2-content"
+                                        id="panel2-header"
+                                    >
+                                        Document Versions
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <Box className='table-responsive'>
 
-                            <Accordion className='accordian-box' expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel2-content"
-                                    id="panel2-header"
-                                >
-                                    Document Versions
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <Box className='table-responsive'>
-
-                                        {getVertion.length > 0 ? getVertion.map((item, index) => {
-                                            return <>
-                                                <Box className="file-uploads" key={index}>
-                                                    <label className="file-uploads-label file-uploads-document">
-                                                        <Box className="d-flex align-items-center">
-                                                            <div className='img-format'>
-                                                                <img src={Fileformat} />
-                                                            </div>
-                                                            <Box className="upload-content pe-3">
-                                                                <Typography variant="h4" >
-                                                                    Version No {item.VersionNo}
-                                                                </Typography>
-                                                                <Typography variant="body1">
-                                                                    {moment(item["VDate"]).format("DD/MM/YYYY HH:mm:ss")} | Updated by {item.UserName.toUpperCase()}
-                                                                </Typography>
+                                            {getVertion.length > 0 ? getVertion.map((item, index) => {
+                                                return <>
+                                                    <Box className="file-uploads" key={index}>
+                                                        <label className="file-uploads-label file-uploads-document">
+                                                            <Box className="d-flex align-items-center">
+                                                                <div className='img-format'>
+                                                                    <img src={Fileformat} />
+                                                                </div>
+                                                                <Box className="upload-content pe-3">
+                                                                    <Typography variant="h4">
+                                                                        Version No {item.VersionNo}
+                                                                    </Typography>
+                                                                    <Typography variant="body1">
+                                                                        {moment(item["VDate"]).format("DD/MM/YYYY HH:mm:ss")} | Updated by {item.UserName.toUpperCase()}
+                                                                    </Typography>
+                                                                </Box>
                                                             </Box>
-                                                        </Box>
-                                                    </label>
-                                                </Box>
-                                            </>
-                                        }) : ""}
-                                    </Box>
-                                </AccordionDetails>
-                            </Accordion>
-                            {/* end */}
+                                                        </label>
+                                                    </Box>
+                                                </>;
+                                            }) : ""}
+                                        </Box>
+                                    </AccordionDetails>
+                                </Accordion><Accordion onClick={() => Json_getAssociatedTaskListByDocumentId(docForDetails)} className='accordian-box' expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+                                        <AccordionSummary
+                                            expandIcon={<ExpandMoreIcon />}
+                                            aria-controls="panel3-content"
+                                            id="panel3-header"
+                                        >
+                                            Attached To
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <Box className='mt-3'>
 
-                            <Accordion onClick={() => Json_getAssociatedTaskListByDocumentId(docForDetails)} className='accordian-box' expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel3-content"
-                                    id="panel3-header"
-                                >
-                                    Attached To
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <Box className='mt-3'>
+                                                {associatedTask.length > 0 ? associatedTask.map((itm, i) => {
+                                                    return <>
+                                                        <Link key={i} href="#" onClick={(e) => Json_CRM_GetOutlookTask(e, itm)} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />{itm.Subject}</Link>
+                                                    </>;
+                                                }) : "Associated Task Not Available"}
+                                            </Box>
+                                        </AccordionDetails>
+                                    </Accordion><Accordion className='accordian-box' expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
+                                        <AccordionSummary
+                                            expandIcon={<ExpandMoreIcon />}
+                                            aria-controls="panel4-content"
+                                            id="panel4-header"
+                                        >
+                                            Activity
+                                        </AccordionSummary>
+                                        <AccordionDetails>
 
-                                        {associatedTask.length > 0 ? associatedTask.map((itm, i) => {
-                                            return <>
-                                                <Link key={i} href="#" onClick={(e) => Json_CRM_GetOutlookTask(e, itm)} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex"><RadioButtonUncheckedIcon className="me-1" />{itm.Subject}</Link>
-                                            </>
-                                        }) : "Associated Task Not Available"}
-                                    </Box>
-                                </AccordionDetails>
-                            </Accordion>
+                                            <Activity getAudit={getAudit} selectedDocument={docForDetails} call_Json_GetAudit={call_Json_GetAudit}></Activity>
 
-                            <Accordion className='accordian-box' expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel4-content"
-                                    id="panel4-header"
-                                >
-                                    Activity
-                                </AccordionSummary>
-                                <AccordionDetails>
+                                            {/* {Array(5).fill("").map(() => {
+        return <> */}
+                                            {/* <Box className='mb-3'>
+                <Typography variant="body1" className="text-black sembold font-16">
+                    New version uploaded
+                </Typography>
 
-                                    <Activity getAudit={getAudit}></Activity>
+                <Typography variant="body1" className="font-12 sembold text-gray">
+                    02:36PM 06/05/2023 | by Me
+                </Typography>
 
-                                    {/* {Array(5).fill("").map(() => {
-                                        return <> */}
-                                    {/* <Box className='mb-3'>
-                                                <Typography variant="body1" className="text-black sembold font-16">
-                                                    New version uploaded
-                                                </Typography>
-
-                                                <Typography variant="body1" className="font-12 sembold text-gray">
-                                                    02:36PM 06/05/2023 | by Me
-                                                </Typography>
-
-                                            </Box> */}
-                                    {/* </>
-                                    })} */}
-                                </AccordionDetails>
-                            </Accordion>
-
+            </Box> */}
+                                            {/* </>
+    })} */}
+                                        </AccordionDetails>
+                                    </Accordion></>
+                            ):null}
                         </Box>
 
                     </DialogContentText>

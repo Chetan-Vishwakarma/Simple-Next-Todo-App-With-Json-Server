@@ -39,7 +39,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import { useEffect } from "react";
 import CommanCLS from "../../services/CommanService";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -67,20 +67,35 @@ import DialogActions from '@mui/material/DialogActions';
 import AddContacts from "../../components/AddContacts";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ContactcardUDF from "./ContactcardUDF";
+import { useDispatch } from "react-redux";
+import { fetchSupplierListOrderByFavourite } from "../../redux/reducers/api_helper";
+// import DeleteIcon from '@mui/icons-material/Delete';
 const label = { inputProps: { "aria-label": "Switch demo" } };
 // const [nextDate, setNextDate] = useState("");
 
+const agrno = localStorage.getItem("agrno");
+const Email = localStorage.getItem("Email");
+const password = localStorage.getItem("Password");
+const folderId = localStorage.getItem("FolderId");
 function ContactDetails() {
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const { agrno, Email, password, folderId, originatorNo, contactNo } =
-    location.state;
+  const originatorNo = searchParams.get("originatorNo");
+  const contactNo = searchParams.get("contactNo");
+
+
+  // const { originatorNo, contactNo } =
+  // location.state;
+
+  console.log("djfdjfljfdj searchParams", { originatorNo: searchParams.get("originatorNo"), contactNo: searchParams.get("contactNo") });
+  console.log("djfdjfljfdj", { originatorNo: originatorNo, contactNo: contactNo });
 
   const [value, setValue] = React.useState("1");
 
   const [contactDetails, setContactDetails] = useState([]);
-
+  const dispatch = useDispatch();
   // dropdown
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -113,6 +128,8 @@ function ContactDetails() {
 
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   const portalUrl = "https://portal.docusoftweb.com/clientservices.asmx/";
+  const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+  let Clsprect = new CommanCLS(baseUrlPractice, agrno, Email, password);
   let portlCls = new CommanCLS(portalUrl, agrno, Email, password);
   let Cls = new CommanCLS(baseUrl, agrno, Email, password);
 
@@ -125,18 +142,18 @@ function ContactDetails() {
   };
   const handleClose5 = () => {
     setOpen5(false);
-};
+  };
 
   function formatDate(dateString) {
     // Extract the timestamp from the dateString
     const timestamp = parseInt(dateString.substring(6, dateString.length - 2));
-  
+
     // Create a new Date object using the timestamp
     const date = new Date(timestamp);
-  
+
     // Format the date into a human-readable format (e.g., "MM/DD/YYYY HH:MM:SS")
     const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} `;
-  
+
     return formattedDate;
   }
 
@@ -166,61 +183,61 @@ function ContactDetails() {
   };
   const Json_GetAllSentMessages = () => {
     let obj = {
-        agrno: agrno,
-        Email: Email,
-        password: password,
-        emailAddress:"",
-        ccode: originatorNo,
-        folder: folderId,
-      };
-      portlCls.Json_GetAllSentMessages(obj, (sts, data) => {
-        if (sts) {
-          if (data) {
-            let json = JSON.parse(data);
-            console.log("Json_GetAllSentMessages", json);
-            if(json && json.length > 0) {
-                const countToBeApprovedYes = json.filter(item => item["To be Approved"] === "Yes" && item["Approved"] === "No" && item["Date Approved"]==null).length;
-                console.log("To be Approved", countToBeApprovedYes);
-                
-                json.forEach(item => {
-                     if(item.Issued){
-                        
-                        const formattedDate = formatDate(item.Issued);
-                        console.log("formattedDate",formattedDate);
-                        setLastMsgSend(formattedDate);
-                     }
-                 });
-                 
-                   // Output: "12/1/2024 16:41:0"
-                  
-               
-                setTotalSendMsg(json.length);
-                setToBeApproved(countToBeApprovedYes);
-            }
-            
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      emailAddress: "",
+      ccode: originatorNo,
+      folder: folderId,
+    };
+    portlCls.Json_GetAllSentMessages(obj, (sts, data) => {
+      if (sts) {
+        if (data) {
+          let json = JSON.parse(data);
+          console.log("Json_GetAllSentMessages", json);
+          if (json && json.length > 0) {
+            const countToBeApprovedYes = json.filter(item => item["To be Approved"] === "Yes" && item["Approved"] === "No" && item["Date Approved"] == null).length;
+            console.log("To be Approved", countToBeApprovedYes);
+
+            json.forEach(item => {
+              if (item.Issued) {
+
+                const formattedDate = formatDate(item.Issued);
+                console.log("formattedDate", formattedDate);
+                setLastMsgSend(formattedDate);
+              }
+            });
+
+            // Output: "12/1/2024 16:41:0"
+
+
+            setTotalSendMsg(json.length);
+            setToBeApproved(countToBeApprovedYes);
           }
+
         }
-      });
+      }
+    });
   }
 
   const Json_GetAllReceivedMessages = () => {
     let obj = {
-        agrno: agrno,
-        Email: Email,
-        password: password,
-        emailAddress:"",
-        ccode: originatorNo,
-        folder: folderId,
-      };
-      portlCls.Json_GetAllReceivedMessages(obj, (sts, data) => {
-        if (sts) {
-          if (data) {
-            let json = JSON.parse(data);
-            console.log("Json_GetAllReceivedMessages", json);
-            setTotalRecieveMsg(json.length);
-          }
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      emailAddress: "",
+      ccode: originatorNo,
+      folder: folderId,
+    };
+    portlCls.Json_GetAllReceivedMessages(obj, (sts, data) => {
+      if (sts) {
+        if (data) {
+          let json = JSON.parse(data);
+          console.log("Json_GetAllReceivedMessages", json);
+          setTotalRecieveMsg(json.length);
         }
-      });
+      }
+    });
   }
 
   useEffect(() => {
@@ -239,22 +256,14 @@ function ContactDetails() {
             console.log("Json_GetAllContactsByClientID", json);
             let details = json.Table;
             setContactDetails(
-              details.filter((item) => item.ContactNo === contactNo)
+              details.filter((item) => item.ContactNo === Number(contactNo))
             );
             let contactdata = details.filter(
-              (item) => item.ContactNo === contactNo
+              (item) => item.ContactNo == contactNo
             );
-            console.log("Json_GetAllContactsByClientIDssss", contactdata);
+            console.log(contactNo, "Json_GetAllContactsByClientIDssss", contactdata);
             if (contactdata && contactdata.length > 0) {
-              try{
-                if(countries && countries.length > 0) {
-                  const matchingCountry = countries.find(country => country.label == contactdata[0].Country);
-                  setIssetCountry(matchingCountry);
-                  console.log(matchingCountry,"matching_country");
-                }
-              } catch(e){
-             console.log(e,"errorcountries");
-              }
+
               if (contactdata[0]["Portal User"]) {
                 console.log(contactdata[0]["Portal User"], "portaluser");
                 setIsPortalUser(true);
@@ -267,8 +276,17 @@ function ContactDetails() {
               } else {
                 setIsInactive(false);
               }
-              if(contactdata[0]["Bank Check Document ID"] || contactdata[0]["Bank Checked Date"] || contactdata[0]["License Check Document ID"] || contactdata[0]["License Checked Date"] || contactdata[0]["NI Check Document ID"] || contactdata[0]["NI Checked Date"] || contactdata[0]["Passport Check Document ID"] || contactdata[0]["Passport Checked Date"]){
+              if (contactdata[0]["Bank Check Document ID"] || contactdata[0]["Bank Checked Date"] || contactdata[0]["License Check Document ID"] || contactdata[0]["License Checked Date"] || contactdata[0]["NI Check Document ID"] || contactdata[0]["NI Checked Date"] || contactdata[0]["Passport Check Document ID"] || contactdata[0]["Passport Checked Date"]) {
                 setIsVerfy(true);
+              }
+              try {
+                if (countries && countries.length > 0) {
+                  const matchingCountry = countries.find(country => country.label == contactdata[0].Country);
+                  setIssetCountry(matchingCountry);
+                  console.log(matchingCountry, "matching_country");
+                }
+              } catch (e) {
+                console.log(e, "errorcountries");
               }
             }
           }
@@ -288,8 +306,48 @@ function ContactDetails() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  
-  const handleChangeBlock = () =>{
+  const SupplierContact = () => {
+    let obj = {
+      agrno: agrno,
+      Email: Email,
+      password: password,
+      ClientID: originatorNo ? originatorNo : "",
+      ContactEmail: contactDetails[0]["E-Mail"]
+    };
+    try {
+      Cls.SupplierContact(obj, (sts, data) => {
+        if (sts) {
+          if (data) {
+            console.log("SupplierContact", data);
+            if (data == "Success") {
+              toast.error("Contact deleted Successfully !");
+              setTimeout(() => {
+                navigate("/dashboard/Connections");
+                dispatch(fetchSupplierListOrderByFavourite(folderId));
+              }, 1000);
+            } else {
+              toast.error("Deleting this contact is not allowed because it has attached documents. Please remove the attached documents before proceeding with the deletion.");
+            }
+
+
+            setAnchorEl(null);
+          }
+        }
+      });
+    } catch (err) {
+      console.log("Error while calling Json_GetCRMContactUDFValues", err);
+    }
+  };
+  const handleDelete = () => {
+    console.log("deletecontact");
+    Clsprect.ConfirmMessage("Are you sure you want to delete this contact ? ", function (res) {
+      if (res) {
+        SupplierContact();
+      }
+    })
+
+  };
+  const handleChangeBlock = () => {
     setOpen5(true);
   }
   const handleClickOpen = () => {
@@ -356,128 +414,128 @@ function ContactDetails() {
   };
   const PortalUserAccountCreated_Json = () => {
     console.log("PortalUserAccountCreated", contactDetails);
-    if(contactDetails && contactDetails.length > 0) {
-        if (contactDetails[0]["E-Mail"].includes("@NoEmail")) {
-            toast.error("Please use a valid email address");
-        } else if (contactDetails[0].Active =="No") {
-            toast.error("Contact In-Active");
-        } else{
-            let obj = {
-                accid: agrno,
-                email: Email,
-                password: password,
-                PresetMemorableData: true,
-                IssueReminders: false,
-                ExcludeMessageLink: true,
-                KeepSignedIn: true,
-                AllowUpload: true,
-                ChangeProfile: true,
-                LoggedIn: false,
-                Blocked: false,
-                emailAddress: contactDetails[0]["E-Mail"]
-                  ? contactDetails[0]["E-Mail"]
-                  : "",
-                ccode: contactDetails[0].OriginatorNo
-                  ? contactDetails[0].OriginatorNo
-                  : "",
-                clientName: contactDetails[0]["Company Name"]
-                  ? contactDetails[0]["Company Name"]
-                  : "",
-              };
-              console.log(contactDetails, "contactDetails111");
-              try {
-                portlCls.PortalUserAccountCreated_Json(obj, (sts, data) => {
-                  if (sts) {
-                      toast.success("Portal Account Created Successfully !");
-                      // setIsPortalUser(true);
-                      setIsPortalUser(true);
-                    if (data) {
-                      // let json = JSON.parse(data);
-                      console.log("PortalUserAccountCreated_Json", data);
-                     
-          
-                      toast.success("Portal Account Created Successfully !");
-                    }
-                  }
-                });
-              } catch (err) {
-                console.log("Error while calling PortalUserAccountCreated_Json", err);
+    if (contactDetails && contactDetails.length > 0) {
+      if (contactDetails[0]["E-Mail"].includes("@NoEmail")) {
+        toast.error("Please use a valid email address");
+      } else if (contactDetails[0].Active == "No") {
+        toast.error("Contact In-Active");
+      } else {
+        let obj = {
+          accid: agrno,
+          email: Email,
+          password: password,
+          PresetMemorableData: true,
+          IssueReminders: false,
+          ExcludeMessageLink: true,
+          KeepSignedIn: true,
+          AllowUpload: true,
+          ChangeProfile: true,
+          LoggedIn: false,
+          Blocked: false,
+          emailAddress: contactDetails[0]["E-Mail"]
+            ? contactDetails[0]["E-Mail"]
+            : "",
+          ccode: contactDetails[0].OriginatorNo
+            ? contactDetails[0].OriginatorNo
+            : "",
+          clientName: contactDetails[0]["Company Name"]
+            ? contactDetails[0]["Company Name"]
+            : "",
+        };
+        console.log(contactDetails, "contactDetails111");
+        try {
+          portlCls.PortalUserAccountCreated_Json(obj, (sts, data) => {
+            if (sts) {
+              toast.success("Portal Account Created Successfully !");
+              // setIsPortalUser(true);
+              setIsPortalUser(true);
+              if (data) {
+                // let json = JSON.parse(data);
+                console.log("PortalUserAccountCreated_Json", data);
+
+
+                toast.success("Portal Account Created Successfully !");
               }
+            }
+          });
+        } catch (err) {
+          console.log("Error while calling PortalUserAccountCreated_Json", err);
         }
-        
-    } 
-    
-   
+      }
+
+    }
+
+
   };
   const PortalUserAccountUpdated_Json = () => {
-    console.log(selected,"selectedblock");
+    console.log(selected, "selectedblock");
     setOpen5(false);
-    if(selected === true){
-        let obj = {
-            accid: agrno,
-            email: Email,
-            password: password,
-            IssueReminders: false,
-            ExcludeMessageLink: true,
-            KeepSignedIn: true,
-            AllowUpload: true,
-            ChangeProfile: true,
-            LoggedIn: false,
-            Blocked: selected,
-            emailAddress: contactDetails[0]["E-Mail"]
-              ? contactDetails[0]["E-Mail"]
-              : ""
-          };
-          console.log(contactDetails, "contactDetails111",obj);
-          try {
-            portlCls.PortalUserAccountUpdated_Json(obj, (sts, data) => {
-              if (sts) {
-                // setOpen5(false);
-                if (data) {
-                  // let json = JSON.parse(data);
-                  console.log("PortalUserAccountUpdated_Json", data);
-                 
-                //   setSelected(true);
-                  toast.success("Portal account Blocked successfully!");
-                }
-              }
-            });
-          } catch (err) {
-            console.log("Error while calling PortalUserAccountCreated_Json", err);
+    if (selected === true) {
+      let obj = {
+        accid: agrno,
+        email: Email,
+        password: password,
+        IssueReminders: false,
+        ExcludeMessageLink: true,
+        KeepSignedIn: true,
+        AllowUpload: true,
+        ChangeProfile: true,
+        LoggedIn: false,
+        Blocked: selected,
+        emailAddress: contactDetails[0]["E-Mail"]
+          ? contactDetails[0]["E-Mail"]
+          : ""
+      };
+      console.log(contactDetails, "contactDetails111", obj);
+      try {
+        portlCls.PortalUserAccountUpdated_Json(obj, (sts, data) => {
+          if (sts) {
+            // setOpen5(false);
+            if (data) {
+              // let json = JSON.parse(data);
+              console.log("PortalUserAccountUpdated_Json", data);
+
+              //   setSelected(true);
+              toast.success("Portal account Blocked successfully!");
+            }
           }
+        });
+      } catch (err) {
+        console.log("Error while calling PortalUserAccountCreated_Json", err);
+      }
     } else {
-        let obj = {
-            accid: agrno,
-            email: Email,
-            password: password,
-            IssueReminders: false,
-            ExcludeMessageLink: true,
-            KeepSignedIn: true,
-            AllowUpload: true,
-            ChangeProfile: true,
-            LoggedIn: false,
-            Blocked: selected,
-            emailAddress: contactDetails[0]["E-Mail"]
-              ? contactDetails[0]["E-Mail"]
-              : ""
-          };
-          console.log(contactDetails, "contactDetails111",obj);
-          try {
-            portlCls.PortalUserAccountUpdated_Json(obj, (sts, data) => {
-              if (sts) {
-                // setOpen5(false);
-                if (data) {
-                  // let json = JSON.parse(data);
-                  console.log("PortalUserAccountUpdated_Json", data);
-                 
-                //   setSelected(true);
-                  toast.success("Portal account unblocked successfully !");
-                }
-              }
-            });
-          } catch (err) {
-            console.log("Error while calling PortalUserAccountCreated_Json", err);
+      let obj = {
+        accid: agrno,
+        email: Email,
+        password: password,
+        IssueReminders: false,
+        ExcludeMessageLink: true,
+        KeepSignedIn: true,
+        AllowUpload: true,
+        ChangeProfile: true,
+        LoggedIn: false,
+        Blocked: selected,
+        emailAddress: contactDetails[0]["E-Mail"]
+          ? contactDetails[0]["E-Mail"]
+          : ""
+      };
+      console.log(contactDetails, "contactDetails111", obj);
+      try {
+        portlCls.PortalUserAccountUpdated_Json(obj, (sts, data) => {
+          if (sts) {
+            // setOpen5(false);
+            if (data) {
+              // let json = JSON.parse(data);
+              console.log("PortalUserAccountUpdated_Json", data);
+
+              //   setSelected(true);
+              toast.success("Portal account unblocked successfully !");
+            }
           }
+        });
+      } catch (err) {
+        console.log("Error while calling PortalUserAccountCreated_Json", err);
+      }
     }
     setSelected(!selected);
   }
@@ -515,14 +573,14 @@ function ContactDetails() {
   };
   const [open51, setOpen51] = React.useState(false);
 
-    const handleClickOpen51 = () => {
-        setOpen51(true);
-    };
+  const handleClickOpen51 = () => {
+    setOpen51(true);
+  };
 
-    const handleClose51 = () => {
-        setOpen51(false);
-        // setAddContact(null);
-    };
+  const handleClose51 = () => {
+    setOpen51(false);
+    // setAddContact(null);
+  };
   return (
     <Box className="container-fluid p-0">
       {/* <CustomBreadCrumbs
@@ -535,7 +593,7 @@ function ContactDetails() {
       <Box className="d-flex align-items-center justify-content-between flex-wrap">
         <Box className="d-flex flex-wrap align-items-center">
 
-        <ArrowBackIosIcon className='mb-2 pointer' onClick={()=>navigate("/dashboard/Connections")}/>
+          <ArrowBackIosIcon className='mb-2 pointer' onClick={() => navigate("/dashboard/Connections")} />
 
           <Typography variant="h2" className="title me-3 mb-2" gutterBottom>
             {contactDetails.length > 0
@@ -564,7 +622,7 @@ function ContactDetails() {
             onClick={() => {
               handleClickOpen51()
               // handleClose51()
-          }}
+            }}
           >
             Edit Contacts
           </Button>
@@ -608,17 +666,23 @@ function ContactDetails() {
               TransitionComponent={Fade}
             >
               <MenuItem className="ps-1" onClick={handleClose}>
-                                <ListItemIcon>
-                                    <MarkEmailReadIcon fontSize="small" />
-                                </ListItemIcon>
-                                Send Email
-                            </MenuItem>
-                            <MenuItem className="ps-1" onClick={handleClose}>
-                                <ListItemIcon>
-                                    <MarkAsUnreadIcon fontSize="small" />
-                                </ListItemIcon>
-                                Send Portal Messages
-                            </MenuItem>
+                <ListItemIcon>
+                  <MarkEmailReadIcon fontSize="small" />
+                </ListItemIcon>
+                Send Email
+              </MenuItem>
+              <MenuItem className="ps-1" onClick={handleClose}>
+                <ListItemIcon>
+                  <MarkAsUnreadIcon fontSize="small" />
+                </ListItemIcon>
+                Send Portal Messages
+              </MenuItem>
+              <MenuItem className="ps-1" onClick={handleDelete}>
+                <ListItemIcon>
+                  <DeleteIcon fontSize="small" />
+                </ListItemIcon>
+                Delete Contact
+              </MenuItem>
             </Menu>
           </div>
         </Box>
@@ -651,19 +715,19 @@ function ContactDetails() {
                               </Box>
 
                               <Tooltip title={contactDetails[0].Country ? contactDetails[0].Country : ""} arrow>
-                              {issetCountry ? (<Box className="country-flage">
-                              <img  srcSet={`https://flagcdn.com/w40/${issetCountry.code.toLowerCase()}.png 2x`}
-    src={`https://flagcdn.com/w20/${issetCountry.code.toLowerCase()}.png`} className="" />
+                                {issetCountry ? (<Box className="country-flage">
+                                  <img srcSet={`https://flagcdn.com/w40/${issetCountry.code.toLowerCase()}.png 2x`}
+                                    src={`https://flagcdn.com/w20/${issetCountry.code.toLowerCase()}.png`} className="" />
 
                                 </Box>) : (
                                   <Box className="country-flage">
-                                  <img src={country} className="" />
-                                </Box>
+                                    <img src={country} className="" />
+                                  </Box>
                                 )}
-                                
+
                               </Tooltip>
-                             {isVerfy && (<VerifiedIcon className="user-register" />)}
-                              
+                              {isVerfy && (<VerifiedIcon className="user-register" />)}
+
                             </Box>
                             <Box className="clearfix">
                               <Typography
@@ -672,10 +736,10 @@ function ContactDetails() {
                                 gutterBottom
                               >
                                 {isInactive ? (
-                                <CircleIcon className="text-danger me-1 font-16" />
+                                  <CircleIcon className="text-danger me-1 font-16" />
                                 ) : (
-                                    <CircleIcon className="text-success me-1 font-16" />
-                                    )
+                                  <CircleIcon className="text-success me-1 font-16" />
+                                )
                                 }
                                 {" "}
                                 {item["First Name"] + " " + item["Last Name"]}
@@ -718,30 +782,30 @@ function ContactDetails() {
 
                             {isPortalUser ? (
                               <>
-                               <Box className='contact-availability-box'>
-                                <CheckCircleIcon />
-                                <Typography
-                                  variant="h5"
-                                  className="mb-0"
-                                  gutterBottom
-                                >
-                                  Portal User
-                                </Typography>
+                                <Box className='contact-availability-box'>
+                                  <CheckCircleIcon />
+                                  <Typography
+                                    variant="h5"
+                                    className="mb-0"
+                                    gutterBottom
+                                  >
+                                    Portal User
+                                  </Typography>
                                 </Box>
                               </>
                             ) : (
                               <>
                                 <>
-                                <Box className='contact-availability-box inactive'>
-                                  <CancelIcon />
-                                  <Typography
-                                    variant="h5"
-                                    className="mb-0"
-                                    gutterBottom
-                                   
-                                  >
-                                    Not Portal User
-                                  </Typography>
+                                  <Box className='contact-availability-box inactive'>
+                                    <CancelIcon />
+                                    <Typography
+                                      variant="h5"
+                                      className="mb-0"
+                                      gutterBottom
+
+                                    >
+                                      Not Portal User
+                                    </Typography>
                                   </Box>
                                 </>
                               </>
@@ -776,7 +840,7 @@ function ContactDetails() {
                                 Email
                               </p>
                               <p className="mb-0 font-14 text-gray">
-                               {item["E-Mail"]}
+                                {item["E-Mail"]}
                               </p>
                             </Box>
                           </Box>
@@ -901,51 +965,51 @@ function ContactDetails() {
                 <Box className="col-xl-8 col-lg-8 col-md-12 d-flex">
                   <Box className="white-box w-100">
                     <Box className="contact-detail-row mb-4 relative">
-                    {!isPortalUser && (
-                      <Box className="subscribe-box">
-                        <Typography variant="h4" className="mb-3 font-20">
-                          This contact does not have a portal account. Please
-                          create one to view the stats.
+                      {!isPortalUser && (
+                        <Box className="subscribe-box">
+                          <Typography variant="h4" className="mb-3 font-20">
+                            This contact does not have a portal account. Please
+                            create one to view the stats.
+                          </Typography>
+                          <Button variant="outlined" className="btn-blue-2"
+                            onClick={PortalUserAccountCreated_Json}
+                          >
+                            Create Portal Account
+                          </Button>
+                        </Box>
+                      )}
+                      <Box className="contact-detail-box">
+                        <HowToRegIcon />
+                        <Typography variant="h4" className="mb-0 " gutterBottom>
+                          Portal Status
+                          {/* <Switch {...label} defaultChecked size="small" /> */}
                         </Typography>
-                        <Button variant="outlined" className="btn-blue-2"
-                         onClick={PortalUserAccountCreated_Json}
+                        <Typography
+                          variant="Body2"
+                          className="mb-0 "
+                          gutterBottom
                         >
-                          Create Portal Account
-                        </Button>
+                          {selected ? "Unblock" : "Block"}
+                          {/* Unblock */}
+                        </Typography>
+
+                        <Box className='mt-2'>
+                          <ToggleButton
+                            className="toggle-btn"
+                            value="check"
+                            selected={selected}
+                            onChange={() => {
+                              handleChangeBlock()
+                            }}
+                            size="small"
+
+                          >
+                            {selected === true ? "Block" : "Unblock"}
+                            {/* Block */}
+                          </ToggleButton>
+                        </Box>
+
                       </Box>
-                    )}
-                     <Box className="contact-detail-box">
-                                                <HowToRegIcon />
-                                                <Typography variant="h4" className="mb-0 " gutterBottom>
-                                                    Portal Status
-                                                    {/* <Switch {...label} defaultChecked size="small" /> */}
-                                                </Typography>
-                                                <Typography
-                                                    variant="Body2"
-                                                    className="mb-0 "
-                                                    gutterBottom
-                                                >
-                                                     {selected ? "Unblock" : "Block"}
-                                                     {/* Unblock */}
-                                                </Typography>
-
-                                                <Box className='mt-2'>
-                                                    <ToggleButton
-                                                    className="toggle-btn"
-                                                        value="check"
-                                                        selected={selected}
-                                                        onChange={() => {
-                                                            handleChangeBlock()
-                                                        }}
-                                                        size="small"
-                                                        
-                                                    >
-                                                           {selected===true ? "Block" : "Unblock"}
-                                                           {/* Block */}
-                                                    </ToggleButton>
-                                                </Box>
-
-                                            </Box>
 
 
                       <Box className="contact-detail-box">
@@ -1004,7 +1068,7 @@ function ContactDetails() {
                           className="mb-0 "
                           gutterBottom
                         >
-                         {LastMsgSend}
+                          {LastMsgSend}
                         </Typography>
                       </Box>
                     </Box>
@@ -1015,10 +1079,10 @@ function ContactDetails() {
                       <Box className="">
                         <p className="font-16 bold mb-1 text-black">Notes</p>
                         <p className="mb-0 font-14 text-gray">
-                        {contactDetails.length > 0
-              ? contactDetails[0]["Note"]
-              : ""}
-                          
+                          {contactDetails.length > 0
+                            ? contactDetails[0]["Note"]
+                            : ""}
+
                         </p>
                       </Box>
                     </Box>
@@ -1033,7 +1097,7 @@ function ContactDetails() {
             {/* white box end */}
 
             <Box className="main-accordian">
-            <ContactcardUDF data={clientDetails} />
+              <ContactcardUDF data={clientDetails} />
             </Box>
           </TabPanel>
           {/* tab end */}
@@ -1321,110 +1385,130 @@ function ContactDetails() {
       {/* Checkmodal check modal End */}
 
       {/* viewer modal start */}
-      {selected===true ? (
+      {selected === true ? (
         <Dialog
-                open={open5}
-                onClose={handleClose5}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                className="custom-modal"
-            >
-                <Box className="d-flex align-items-center justify-content-between modal-head">
-                    <div>
-                        <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                        Do You want to block portal access for this portal user ? 
-                        </Typography>
-                    </div>
-                    <Button onClick={handleClose5 } autoFocus sx={{ minWidth: 30 }}>
-                        <span className="material-symbols-outlined text-black">
-                            {/* No */}
-                        </span>
-                    </Button>
-                </Box>
-                
-                <DialogActions>
-          <Button autoFocus variant="contained" onClick={PortalUserAccountUpdated_Json}>
-            Yes
-          </Button>
-          <Button autoFocus variant="outlined" onClick={handleClose5 }>
-           No
-          </Button>
-        </DialogActions>
-            </Dialog>
+          open={open5}
+          onClose={handleClose5}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          className="custom-modal custom-modal-sm"
+        // sx={{ maxWidth: '550px' }}
+        >
+          <Box className="d-flex align-items-center justify-content-between modal-head">
+            <div>
+              <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                Confirmation
+              </Typography>
+            </div>
+            <Button onClick={handleClose5} autoFocus sx={{ minWidth: 30 }}>
+              <span className="material-symbols-outlined text-black">
+                {/* No */}
+              </span>
+            </Button>
+          </Box>
+
+          <DialogContent className="">
+            <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+              Do You want to block portal access for this portal user ?
+            </Typography>
+
+            <hr />
+
+            <DialogActions>
+              <Button autoFocus variant="contained" className="btn-blue-2" onClick={PortalUserAccountUpdated_Json}>
+                Yes
+              </Button>
+              <Button autoFocus variant="outlined" className="btn btn-red" onClick={handleClose5}>
+                No
+              </Button>
+            </DialogActions>
+
+          </DialogContent>
+
+        </Dialog>
       ) : (
         <Dialog
-        open={open5}
-        onClose={handleClose5}
+          open={open5}
+          onClose={handleClose5}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          className="custom-modal custom-modal-sm"
+        >
+          <Box className="d-flex align-items-center justify-content-between modal-head">
+            <div>
+              <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+                Confirmation
+
+              </Typography>
+            </div>
+            <Button onClick={handleClose5} autoFocus sx={{ minWidth: 30 }}>
+              <span className="material-symbols-outlined text-black">
+                {/* No */}
+              </span>
+            </Button>
+          </Box>
+
+          <DialogContent className="">
+            <Typography variant="h4" className='font-18 bold mb-0 text-black'>
+              Do You want to Unblock portal access for this portal user ?
+            </Typography>
+          </DialogContent>
+
+          <hr />
+
+          <DialogActions>
+            <Button autoFocus variant="contained" className="btn-blue-2" onClick={PortalUserAccountUpdated_Json}>
+              Yes
+            </Button>
+            <Button autoFocus variant="outlined" className="btn-red" onClick={handleClose5}>
+              No
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )
+      }
+      <Dialog
+        open={open51}
+        onClose={handleClose51}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         className="custom-modal full-modal"
-    >
-        <Box className="d-flex align-items-center justify-content-between modal-head">
-            <div>
-                <Typography variant="h4" className='font-18 bold mb-0 text-black'>
-                Do You want to Unblock portal access for this portal user ? 
-                </Typography>
-            </div>
-            <Button onClick={handleClose5 } autoFocus sx={{ minWidth: 30 }}>
-                <span className="material-symbols-outlined text-black">
-                    {/* No */}
-                </span>
-            </Button>
-        </Box>
-        
-        <DialogActions>
-  <Button autoFocus variant="contained" onClick={PortalUserAccountUpdated_Json}>
-    Yes
-  </Button>
-  <Button autoFocus variant="outlined" onClick={handleClose5 }>
-   No
-  </Button>
-</DialogActions>
-    </Dialog>
-      )
-    }
-      <Dialog
-                open={open51}
-                onClose={handleClose51}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                className="custom-modal full-modal"
-            >
-                {/* <DialogTitle id="alert-dialog-title">
+      >
+        {/* <DialogTitle id="alert-dialog-title">
                     {"Use Google's location service?"}
                 </DialogTitle> */}
 
-                <Box className="d-flex align-items-center justify-content-between modal-head">
-                    <Box className="dropdown-box">
-                        <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                            Add Contact 
-                        </Typography>
-                    </Box>
+        <Box className="d-flex align-items-center justify-content-between modal-head">
+          <Box className="dropdown-box">
+            <Typography variant="h4" className='font-18 bold text-black mb-0'>
+              Edit Contact
+            </Typography>
+          </Box>
 
-                    {/*  */}
-                    <Button onClick={handleClose51}>
-                        <span className="material-symbols-outlined text-black">
-                            cancel
-                        </span>
-                    </Button>
-                </Box>
+          {/*  */}
+          <Button onClick={handleClose51}>
+            <span className="material-symbols-outlined text-black">
+              cancel
+            </span>
+          </Button>
+        </Box>
 
-                {/* <hr /> */}
+        {/* <hr /> */}
 
-                <DialogContent className="pt-0">
-                    <DialogContentText id="alert-dialog-description">
+        <DialogContent className="pt-0">
+          <DialogContentText id="alert-dialog-description">
 
-                        <AddContacts contactDetails={contactDetails}/>
+            <AddContacts contactDetails={contactDetails} />
 
-                    </DialogContentText>
-                </DialogContent>
-                {/* <DialogActions>
+          </DialogContentText>
+        </DialogContent>
+        {/* <DialogActions>
                     <Button onClick={handleClose5}>Disagree</Button>
                     <Button onClick={handleClose5} autoFocus>
                         Agree
                     </Button>
                 </DialogActions> */}
-            </Dialog>
+      </Dialog>
       <Dialog
         open={isViewerModalOpen}
         onClose={() => setIsViewerModalOpen(false)}

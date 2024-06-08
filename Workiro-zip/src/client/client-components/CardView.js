@@ -22,7 +22,7 @@ function CardView(props) {
   const {
     isSearch, handleDialogsOpen, handleSearch, filteredClientsForSearchBox, handleClientNavigation, filteredContactsForSearchBox,
     handleContactNavigattion, handleFolderSelection, isFolder, allFolders, isChoice, isAdvFilter, selectedProperty,
-    setSelectedProperty, clientKeys, contactKeys, selectedPropertyValue, setSelectedPropertyValue, advSearchKeyValue,
+    setSelectedProperty, selectedPropertyValue, setSelectedPropertyValue, advSearchKeyValue,
     setSelectedColor, colorArr, handleAdvanceFilterAgain, handleFilterRemove, onlyClients, filteredClients, clients,
     onlyContacts, filteredContacts, contacts, selectedFolder, selectedChoice, basedOnClientContactAndAll, objFilter, isDataNotFoundInClient, isDataNotFoundInContact, isDataNotFoundInBoth, objFilterColor, loadMore
   } = props;

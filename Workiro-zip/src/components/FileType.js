@@ -7,6 +7,9 @@ import htmlIcon from '../images/files-icon/html.png';
 import unknownIcon from '../images/files-icon/unknown.png';
 import pngIcon from '../images/files-icon/png.png';
 import jpgIcon from '../images/files-icon/jpg.png';
+import txtIcon from '../images/files-icon/text.png';
+
+
 
 const GetFileType = ({Type}) => {
    // Extracting data object from row
@@ -80,6 +83,11 @@ const GetFileType = ({Type}) => {
     else if (Type === "jpg") {
         img = (<div className='img-format'>
             <img src={jpgIcon} />
+        </div>)
+    }
+    else if (Type === "txt") {
+        img = (<div className='img-format'>
+            <img src={txtIcon} />
         </div>)
     }
     else  {

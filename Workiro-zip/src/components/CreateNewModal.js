@@ -41,6 +41,10 @@ import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { red, yellow, green } from '@mui/material/colors';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import EditIcon from '@mui/icons-material/Edit';
+
+
+
 
 import {
     List,
@@ -80,7 +84,10 @@ import EditReference from "../client/client-components/EditReference";
 import UploadDocument from "../client/client-components/UploadDocument";
 import AddContacts from "./AddContacts";
 import { handleOpenModalRedux, setMyTasks } from "../redux/reducers/counterSlice";
+import { fetchAllTasksRedux, fetchRecentTasksRedux } from "../redux/reducers/api_helper";
 import { useDispatch, useSelector } from "react-redux";
+import moment from "moment";
+import GetFileType from "./FileType";
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -106,9 +113,10 @@ const userId = localStorage.getItem("UserId");
 let addItemdata = [];
 function CreateNewModalTask({ ...props }) {
     const dispatch = useDispatch();
-    const reduxRefForTaskModal = useSelector((state=>state.counter.openTaskModal));
-    const reduxRefClientAndDoc = useSelector((state=>state.counter.clientAndDocDataForTaskModal));
-    const openDocumentModalByRedux = useSelector((state=>state.counter.openDocumentModalByRedux));
+    const reduxRefForTaskModal = useSelector((state => state.counter.openTaskModal));
+    const reduxRefClientAndDoc = useSelector((state => state.counter.clientAndDocDataForTaskModal));
+    const openDocumentModalByRedux = useSelector((state => state.counter.openDocumentModalByRedux));
+    const folderList = useSelector((state) => state.counter.folders);
 
     // const {
     //     documentDate = null,
@@ -188,7 +196,6 @@ function CreateNewModalTask({ ...props }) {
     const boolClient = Boolean(clientAnchorEl);
     ////////////////////end client Data
     ////////////////////////////////////////Folder list
-    const [folderList, setFolderList] = useState([]);
     const [searchFolderQuery, setSearchFolderQuery] = useState("");
 
     const [txtFolderId, setFolderId] = useState(localStorage.getItem("FolderId"));
@@ -229,6 +236,7 @@ function CreateNewModalTask({ ...props }) {
 
     const [currentDate, setCurrentDate] = useState(new Date()); // Initialize with the current date in "dd/mm/yyyy" format
     const [nextDate, setNextDate] = useState("");
+    const [nextDateclear, setNextDateClear] = useState(false);
     const [remiderDate, setRemiderDate] = useState("");
     const [expireDate, setExpireDate] = useState("");
 
@@ -302,31 +310,35 @@ function CreateNewModalTask({ ...props }) {
     //         return;
     //     }
     // },[reduxRefForTaskModal,reduxRefClientAndDoc]);
-    useEffect(()=>{
-        console.log("dfdksfoier",reduxRefForTaskModal);
-        if(reduxRefForTaskModal){
+    useEffect(() => {
+        console.log("dfdksfoier", reduxRefForTaskModal,reduxRefClientAndDoc,txtTaskType);
+        if (reduxRefForTaskModal) {
+            setAddUser([]);
             setTaskType(reduxRefClientAndDoc.TaskType);
             setCreateNewFileObj(reduxRefClientAndDoc.createNewFileObj);
             setTxtClientData(reduxRefClientAndDoc.txtClientData);
             setTxtFolderData(reduxRefClientAndDoc.txtFolderData);
             setTxtSectionData(reduxRefClientAndDoc.txtSectionData);
             // console.log("djskfdjeiurwio",reduxRefClientAndDoc);
-            if(reduxRefForTaskModal==="CRM"){
+            if (reduxRefForTaskModal === "CRM") {
                 setOpenUploadDocument(false);
                 handleClickOpen("CRM");
-            }else if(reduxRefForTaskModal==="Portal"){
+            } else if (reduxRefForTaskModal === "Portal") {
                 handleClickOpen("Portal");
             }
         } else {
             handleClose();
         }
-    },[reduxRefForTaskModal]);
+        ClearForm();
+        Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("FolderId"));
 
-    useEffect(()=>{
+    }, [reduxRefForTaskModal]);
+
+    useEffect(() => {
         setOpenUploadDocument(openDocumentModalByRedux);
-    },[openDocumentModalByRedux]);
+    }, [openDocumentModalByRedux]);
 
-    
+
 
 
     const handleClose = () => {
@@ -494,14 +506,18 @@ function CreateNewModalTask({ ...props }) {
                             return el.CGroup !== "Yes";
                         });
                         if (result.length > 0) {
+                            setAddUser([])
                             result.map((el) => {
+
                                 if (el.ID === parseInt(localStorage.getItem("UserId"))) {
-                                    console.log("Json_GetForwardUserList11", el);
+
                                     setOwnerID(el.ID);
                                     setOwnerName(el.ForwardTo);
                                     setOwnerRighClick(el);
                                     setClearData(el);
                                     setAddUser((pre) => [...pre, el])
+                                    console.log("Json_GetForwardUserList11", el);
+
                                 }
                             })
                         }
@@ -514,7 +530,7 @@ function CreateNewModalTask({ ...props }) {
                         setUserFilter(removeuser);
 
                         let commanuser = result.filter((e) => e.ID === parseInt(localStorage.getItem("UserId")));
-                        console.log("Json_GetForwardUserList11", removeuser);
+                        // console.log("Json_GetForwardUserList11", removeuser);
                         setSelectedUSer(commanuser[0]);
 
                     }
@@ -540,7 +556,7 @@ function CreateNewModalTask({ ...props }) {
 
 
         setTimeout(() => {
-            console.log("handalClickAddUser",addUser);
+            console.log("handalClickAddUser", addUser);
         }, 2000);
     };
 
@@ -550,7 +566,9 @@ function CreateNewModalTask({ ...props }) {
     // };
 
     const kbToMb = (kb) => {
-        let t = kb / 2024;
+
+
+        let t = kb / (1024 * 1024);
 
         return t.toFixed(2);
     };
@@ -852,7 +870,9 @@ function CreateNewModalTask({ ...props }) {
 
     const CurrentDateChange = (e) => {
         setCurrentDate(e);
-        setNextDate("");
+        // setNextDate("");
+        // setNextDateClear(true);
+        console.log("get folder list112222", moment(e).format("YYYY/MM/DD"));
     }
 
     const [selectedDate, setSelectedDate] = useState(null); // State for selected date
@@ -860,11 +880,14 @@ function CreateNewModalTask({ ...props }) {
 
 
     useEffect(() => {
-        console.log("get folder list112222", selectedDate);
+        // console.log("get folder list112222", selectedDate);
         setSelectedDate(null); // Set the selected date to null to clear it
     }, [currentDate]);
 
     useEffect(() => {
+
+        setAddUser([]);
+
 
         let strGuid = uuidv4().replace(/-/g, '');
         localStorage.setItem("GUID", strGuid)
@@ -928,35 +951,39 @@ function CreateNewModalTask({ ...props }) {
     );
 
     function Json_GetFolders() {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
+        let res = folderList.filter((f) => f.FolderID === parseInt(localStorage.getItem("ProjectId")));
+        if (res.length > 0) {
+            settxtFolder(res[0].Folder);
         }
+        // let obj = {
+        //     agrno: agrno,
+        //     Email: Email,
+        //     password: password
+        // }
 
-        try {
-            cls.Json_GetFolders(obj, function (sts, data) {
-                if (sts) {
-                    if (data) {
-                        let js = JSON.parse(data);
-                        let tbl = js.Table;
-                        console.log("get folder list", tbl);
-                        setFolderList(tbl);
-                        let res = tbl.filter((f) => f.FolderID === parseInt(localStorage.getItem("ProjectId")));
-                        if (res.length > 0) {
-                            settxtFolder(res[0].Folder);
-                        }
+        // try {
+        //     cls.Json_GetFolders(obj, function (sts, data) {
+        //         if (sts) {
+        //             if (data) {
+        //                 let js = JSON.parse(data);
+        //                 let tbl = js.Table;
+        //                 console.log("get folder list", tbl);
+        //                 setFolderList(tbl);
+        //                 let res = tbl.filter((f) => f.FolderID === parseInt(localStorage.getItem("ProjectId")));
+        //                 if (res.length > 0) {
+        //                     settxtFolder(res[0].Folder);
+        //                 }
 
-                    }
-                }
-            });
-        } catch (error) {
-            console.log({
-                status: false,
-                message: "Folder is Blank Try again",
-                error: error,
-            });
-        }
+        //             }
+        //         }
+        //     });
+        // } catch (error) {
+        //     console.log({
+        //         status: false,
+        //         message: "Folder is Blank Try again",
+        //         error: error,
+        //     });
+        // }
     }
 
     const handleSearchInputChangeFolder = (event) => {
@@ -992,6 +1019,7 @@ function CreateNewModalTask({ ...props }) {
         let completeCounter = 0;
 
         selectedFilesArray.forEach((file, index) => {
+
             const reader = new FileReader();
             completeCounter++;
             reader.onload = () => {
@@ -1006,7 +1034,7 @@ function CreateNewModalTask({ ...props }) {
                     Guid: localStorage.getItem("GUID"),
                     FileType: getFileExtension(file.name).toLowerCase()
                 };
-
+                console.log(fileData, "file size check")
                 filesData.push(fileData);
 
                 if (txtTaskType === "CRM") {
@@ -1041,7 +1069,7 @@ function CreateNewModalTask({ ...props }) {
         try {
             // let myNewArr = [...selectedFilesFromBrower, ...selectedDocumentFile];
             // console.log("myNewArr", myNewArr)
-            if(filedata){
+            if (filedata) {
                 setPortalSelectDoc(filedata);
             }
             console.log("PrepareDocumentsForPublish_Json22", filedata);
@@ -1124,9 +1152,15 @@ function CreateNewModalTask({ ...props }) {
                         let path = window.atob(res.Message);
                         let index = path.lastIndexOf("\\");
                         let fileName = path.slice(index + 1);
-                        let o = { Path: path, FileName: fileName }
+                        let o = { Path: path, FileName: filedata.FileName }
 
                         setAttachmentPath((prevAttachments) => [...prevAttachments, o]);
+
+                        // setSelectedFiles((prevUploadedFiles) => [
+                        //     ...prevUploadedFiles,
+                        //     ...filedata,
+                        // ]);
+
 
                     }
                 }
@@ -1264,21 +1298,28 @@ function CreateNewModalTask({ ...props }) {
         if (attachmentPath.length > 0) {
             attString = attachmentPath.map(obj => obj.Path).join('|');
         }
-
+        if (nextDate) {
+            // setLoading(true);
+        }
+        else {
+            toast.error("Please Select a Due Date");
+            setLoading(false);
+            return false
+        }
 
         //console.log("nextDate1", currentDate)
-        let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
-        if (nxtdd === "Invalid Date") {
-            let dd = nextDate.split("/");//30/03/2024
-            nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
-        }
+        // let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
+        // if (nxtdd === "Invalid Date") {
+        //     let dd = nextDate.split("/");//30/03/2024
+        //     nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
+        // }
 
         //console.log("nextDate",dayjs(nxtdd).format("YYYY/MM/DD"))
         let ooo = {
 
             "ClientIsRecurrence": false,
-            "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-            "ClientEnd": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
+            "StartDate": currentDate ? moment(currentDate).format("YYYY/MM/DD") : "1900/01/01",
+            "ClientEnd": nextDate ? moment(nextDate).format("YYYY/MM/DD") : "1900/01/01",
             "ClientDayNumber": "1",
             "ClientMonth": "1",
             "ClientOccurrenceCount": "1",
@@ -1288,18 +1329,18 @@ function CreateNewModalTask({ ...props }) {
             "ClientWeekDays": "1",
             "ClientWeekOfMonth": "1",
             "OwnerID": ownerID.toString(),
-            "AssignedToID": isaddUser?isaddUser:ownerID,
+            "AssignedToID": isaddUser ? isaddUser : ownerID,
             "AssociateWithID": textClientId,
             "FolderId": txtFolderId.toString(),
             "Subject": textSubject,
             "TypeofTaskID": txtSectionId.toString(),
-            "EndDateTime": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
-            "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
+            "EndDateTime": nextDate ? moment(nextDate).format("YYYY/MM/DD") : "1900/01/01",
+            "StartDateTime": moment(currentDate).format("YYYY/MM/DD"),// dayjs(currentDate).format("YYYY/MM/DD"),
             "Status": txtStatus,
             "Priority": txtPriorityId.toString(),
             "PercentComplete": "1",
             "ReminderSet": false,
-            "ReminderDateTime": remiderDate ? dayjs(remiderDate).format("YYYY/MM/DD") : "1900/01/01",
+            "ReminderDateTime": remiderDate ? moment(remiderDate).format("YYYY/MM/DD") : "1900/01/01",
             "TaskNo": "0",
             "Attachments": attString ? attString : "",
             "Details": txtdescription,
@@ -1311,7 +1352,7 @@ function CreateNewModalTask({ ...props }) {
             "Notes": "",
             "TaskSource": "CRM"
         }
-        console.log(selectedRows,"finalattStringsave data obj", attString);
+        console.log(ooo, "Json_CRM_Task_Save obj");
         cls.Json_CRM_Task_Save(ooo, function (sts, data) {
             if (sts) {
                 if (data) {
@@ -1320,25 +1361,34 @@ function CreateNewModalTask({ ...props }) {
                     console.log("save task rerurn value", js);
 
                     if (js.Status === "success") {
-                       
+
                         setOwnerMessage(js.Message);
-                      
+
                         if (selectedRows && selectedRows.length > 0) {
+
                             selectedRows.forEach((item) => {
                                 addToWorkTable(item.ItemId, js.Message);
                             });
                         }
+                        if(SendMails===true){
+                            if(addUser && addUser.length > 0) {
+                                Json_SendMail(js.Message,moment(currentDate).format("YYYY/MM/DD"));
+                            }
+                        }
+                    
                         let strGuid = uuidv4().replace(/-/g, '');
                         localStorage.setItem("GUID", strGuid)
 
                         Json_CRM_GetOutlookTask_ForTask();
                         setLoading(false);
+                        dispatch(fetchRecentTasksRedux());
+                        dispatch(fetchAllTasksRedux());
                         toast.success("Created Task !");
                         // setMessageId(js.Message);
-                      
+
                         if (selectedDocumentFile && selectedDocumentFile.length > 0) {
                             selectedDocumentFile.map((item) => {
-                                addToWorkTable(item.DocId, js.Message,textSubject);
+                                addToWorkTable(item.DocId, js.Message, textSubject);
                             });
                             // addToWorkTable(selectedDocumentFile.map(obj => obj.DocId), js.Message,textSubject);
                             Json_CRM_TaskDMSAttachmentInsert(js.Message);
@@ -1356,35 +1406,56 @@ function CreateNewModalTask({ ...props }) {
                         // setOpen(false);
 
                         // setAttachmentPath([]);
-                        //setSelectedFiles([])
+                        //setSelectedFiles([])                       
+
+                        setSelectedFiles([]);
+                        setSelectedDocumentFile([]);
+                        setAttachmentPath([]);
+
                     }
                     else {
                         toast.error("Task Not Created Please Try Again");
                         console.log("Response final", data)
+                        setLoading(false);
                     }
                 }
                 else {
-                    toast.error("Faild Created Task Try again !");
+                    toast.error("Failed Created Task Try again !");
                     setLoading(false);
                 }
 
 
                 // setLoading(false);
             }
+            else {
+                setLoading(false);
+            }
         })
 
     }
 
-   
+
 
 
     function ClearForm() {
-       // console.log("Add User List11", addUser);  
-//setAddUser(clearData)
-       
-//setAddUser([]);
 
-Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("FolderId"));
+        setOwnerID([]);
+        setOwnerName([]);
+        setOwnerRighClick([]);
+        setClearData([]);
+        setAddUser([])
+
+        setSelectedFiles([]);
+        setSelectedDocumentFile([]);
+        setAttachmentPath([]);
+
+        // console.log("Add User List11", addUser);  
+        //setAddUser(clearData)
+        setFilterText("");
+        //setAddUser([]);
+        setAttachmentPath([]);
+
+        Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("FolderId"));
 
         setCurrentDate(new Date())
         setTextSubject("");
@@ -1396,7 +1467,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
         setTxtDescriptin("");
         setTextClientId("")
 
-        setSelectedFiles([]);
+
 
         setTxtPriority("Normal");
         setTxtStatus("Not Started");
@@ -1599,7 +1670,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
     let statusarr = [
         { id: 1, "name": "Not Started  " },
         { id: 2, "name": "In Progress" },
-        { id: 3, "name": "On Hold"  },
+        { id: 3, "name": "On Hold" },
         { id: 4, "name": "Completed" },
         // { id: 5, "name": "Done" },
         // { id: 6, "name": "Completed" },
@@ -1622,18 +1693,41 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
         // addItemdata = [...uniqueData];
         console.log(addItemdata, "addItemdata");
     };
-    function addToWorkTable(Itid, taskID,textSubject) {
-        console.log(taskID, "addToWorkTable", Itid);
-        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${ownerName} has initiated a task-${textSubject} . Task ID : ${taskID}` };
-        console.log("addToWorkTable111", obj);
-        clsSms.Json_AddToWork(obj, function (status, data) {
-            if (status) {
-                if (data) {
-                    //let json = JSON.parse(data);
-                    console.log("getitemid", data);
-                }
+    function addToWorkTable(Itid, taskID, textSubject) {
+        const isaddUser = addUser.map(obj => obj.ForwardTo).join(',');
+        const filteredData = addUser.filter(item => item.ForwardTo !== ownerName);
+
+        console.log(isaddUser, addUser, "addToWorkTableownerName", ownerName);
+        if (Itid && taskID && textSubject) {
+            const obj = {
+                agrno: agrno,
+                Email: Email,
+                password: password,
+                ItemId: Itid,
+                comment: `${ownerName} has initiated a task-${textSubject}. Task ID: ${taskID}.`
+            };
+
+            if (addUser && addUser.length > 0 && filteredData.length > 0) {
+                // If addUser is present and has elements, add the filtered data as assignees
+                obj.comment += ` ${filteredData.length > 0 ? filteredData.map(item => item.ForwardTo).join(', ') : ''} have been added as assignees.`;
             }
-        });
+
+            // Use obj wherever needed in your code
+
+            console.log("addToWorkTable111", obj);
+            clsSms.Json_AddToWork(obj, function (status, data) {
+                if (status) {
+                    if (data) {
+                        //let json = JSON.parse(data);
+                        console.log("getitemid", data);
+
+
+                    }
+                }
+            });
+        }
+
+
     }
     const Json_GetClientCardDetails = (cid) => {
         try {
@@ -1673,13 +1767,13 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
     const renderTypeCell = (data) => {
         // Define the condition based on which the icon will be rendered
         if (data.value === 'pdf') {
-            return <PictureAsPdfIcon></PictureAsPdfIcon>;
+            return <Tooltip title={data.value} placement="top-start"><PictureAsPdfIcon></PictureAsPdfIcon></Tooltip>;
         } else if (data.value === 'txt') {
 
-            return <TextSnippetIcon></TextSnippetIcon>;
+            return <Tooltip title={data.value} placement="top-start"><TextSnippetIcon></TextSnippetIcon></Tooltip>;
         }
         // You can add more conditions or return default content if needed
-        return data.value;
+        return <Tooltip title={data.value} placement="top-start">{data.value}</Tooltip>;
     };
 
     // const getPortalUser = () => {
@@ -1769,7 +1863,10 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                     ]);
 
                     // Call PrepareDocumentsForPublish_Json after all files data are processed
-                    PrepareDocumentsForPublish_Json(filesData, 2);
+                    if (TaskType === "Portal") {
+                        PrepareDocumentsForPublish_Json(filesData, 2);
+                    }
+                    // PrepareDocumentsForPublish_Json(filesData, 2);
 
                     setOpenDocumentList(false);
                 }
@@ -1793,7 +1890,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                         return callBack(data);
                     }
                     else {
-                        toast.error(item.Description + "was not uploaded as it had no data")
+
                     }
 
                 }
@@ -1954,7 +2051,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
         GetSMSTemplate();
     }, [txtTemplateId])
 
-    
+
     const [editorContentValue, setEditorContentValue] = useState(null);
 
     // Handle selection change
@@ -1985,19 +2082,28 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                     setLoading(false);
                     return false
                 }
-
-
-                let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
-                if (nxtdd === "Invalid Date") {
-                    let dd = nextDate.split("/");//30/03/2024
-                    nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
+                if (nextDate) {
+                    // setLoading(true);
+                }
+                else {
+                    toast.error("Please Select a Due Date");
+                    setLoading(false);
+                    return false
                 }
 
+
+                // let nxtdd = dayjs(nextDate).format("YYYY/MM/DD");
+                // if (nxtdd === "Invalid Date") {
+                //     let dd = nextDate.split("/");//30/03/2024
+                //     nxtdd = dd[2] + "/" + dd[1] + "/" + dd[0];
+                // }
+
                 const isaddUser = addUser.map(obj => obj.ID).join(',');
+
                 let ooo = {
                     "ClientIsRecurrence": false,
-                    "StartDate": dayjs(currentDate).format("YYYY/MM/DD"),
-                    "ClientEnd": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
+                    "StartDate": currentDate ? moment(currentDate).format("YYYY/MM/DD") : "1900/01/01",
+                    "ClientEnd": nextDate ? moment(nextDate).format("YYYY/MM/DD") : "1900/01/01",
                     "ClientDayNumber": "1",
                     "ClientMonth": "1",
                     "ClientOccurrenceCount": "1",
@@ -2007,18 +2113,18 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                     "ClientWeekDays": "1",
                     "ClientWeekOfMonth": "1",
                     "OwnerID": ownerID.toString(),
-                    "AssignedToID": isaddUser?isaddUser:ownerID,
+                    "AssignedToID": isaddUser ? isaddUser : ownerID,
                     "AssociateWithID": textClientId,
                     "FolderId": txtFolderId.toString(),
                     "Subject": textSubject,
                     "TypeofTaskID": txtSectionId.toString(),
-                    "EndDateTime": nxtdd ? dayjs(nxtdd).format("YYYY/MM/DD") : "1900/01/01",
-                    "StartDateTime": dayjs(currentDate).format("YYYY/MM/DD"),
+                    "EndDateTime": nextDate ? moment(nextDate).format("YYYY/MM/DD") : "1900/01/01",
+                    "StartDateTime": currentDate ? moment(currentDate).format("YYYY/MM/DD") : "1900/01/01",
                     "Status": txtStatus,
                     "Priority": txtPriorityId.toString(),
                     "PercentComplete": "1",
                     "ReminderSet": false,
-                    "ReminderDateTime": remiderDate ? dayjs(remiderDate).format("YYYY/MM/DD") : "1900/01/01",
+                    "ReminderDateTime": remiderDate ? moment(remiderDate).format("YYYY/MM/DD") : "1900/01/01",
                     "TaskNo": "0",
                     "Attachments": "",
                     "Details": txtdescription,
@@ -2036,19 +2142,27 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                         if (data) {
                             setLoading(false);
                             let js = JSON.parse(data);
-                            console.log(selectedDocumentFile,"Json_CRM_Task_Saveportal ", js);
+                            console.log(selectedDocumentFile, "Json_CRM_Task_Saveportal ", js);
                             if (js.Status === "success") {
 
                                 // setMessageId(js.Message);
                                 if (selectedDocumentFile && selectedDocumentFile.length > 0) {
+                                    console.log(selectedDocumentFile, "selectedfite")
                                     selectedDocumentFile.map((item) => {
-                                        addToWorkTable(item.DocId, js.Message,textSubject);
+                                        addToWorkTable(item.DocId, js.Message, textSubject);
                                     });
-                                  }
+                                }
+                                if(SendMails===true){
+                                    if(addUser && addUser.length > 0) {
+                                        Json_SendMail(js.Message,moment(currentDate).format("YYYY/MM/DD"));
+                                    }
+                                }
                                 CreatePortalMessage(js.Message)
                                 // toast.success("Created Task");
                                 setOpen(false);
                                 // setIsApi(!isApi);
+                                dispatch(fetchAllTasksRedux("Todo"))
+
                             }
                             else {
                                 toast.error("Task Not Created Please Try Again");
@@ -2056,7 +2170,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                             }
                         } else {
                             setLoading(false);
-                            toast.error("Faild Created Task Try again !");
+                            toast.error("Failed Created Task Try again !");
                         }
 
 
@@ -2095,8 +2209,6 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                 // const ItemId = selectedDocumentFile.map(obj => obj.DocId);
                 // const fileNames = myNewArr.map(obj => obj["FileName"]);
                 // const fileDataBase64 = myNewArr.filter(obj => obj["Base64"] !== "").map(obj => obj["Base64"]);
-
-
                 let obj = {
                     "accid": agrno,
                     "email": Email,
@@ -2125,14 +2237,10 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                     "approvalResponse": "",
                     "uploadID": localStorage.getItem("GUID"),
                     "PubTaskid": taskid
-
-
                 }
-                console.log(PortalSelectDoc,"final save data obj", obj);
-
+                console.log(PortalSelectDoc, "final save data obj", obj);
                 var urlLetter = "https://portal.docusoftweb.com/clientservices.asmx/";
                 let cls = new CommanCLS(urlLetter, agrno, Email, password);
-
                 cls.MessagePublishedPortalTask_Json(obj, function (sts, data) {
                     if (sts) {
                         console.log("MessagePublished_Json", data)
@@ -2143,12 +2251,17 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                             if (createNewFileObj) {
                                 setOpenModal(false);
                             }
-                            setSelectedFiles([]);
+
                             ClearForm();
                             //setAttachmentPath([]);
                             //setSelectedFiles([])
                             let strGuid = uuidv4().replace(/-/g, '');
                             localStorage.setItem("GUID", strGuid)
+
+                            setSelectedFiles([]);
+                            setSelectedDocumentFile([]);
+                            setAttachmentPath([]);
+
 
                         }
                         setOpen(false);
@@ -2201,17 +2314,20 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
 
     const firsorScandCtr = (item) => {
         if (item) {
-            const words = item.ForwardTo.split(" ");
-            // Extract the first letter of each word and concatenate them
-            let result = "";
-            for (
-                let i = 0;
-                i < words.length && i < 2;
-                i++
-            ) {
-                result += words[i].charAt(0);
+            if (item.ForwardTo) {
+                const words = item.ForwardTo.split(" ");
+                // Extract the first letter of each word and concatenate them
+                let result = "";
+                for (
+                    let i = 0;
+                    i < words.length && i < 2;
+                    i++
+                ) {
+                    result += words[i].charAt(0);
+                }
+                return result;
             }
-            return result;
+
         }
 
     }
@@ -2255,13 +2371,49 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
 
 
     const [isRemindMe, setIsRemindMe] = useState(false);
+    const [SendMails, setSendMails] = useState(true);
     const handleRemindMe = (e) => {
         setIsRemindMe(e.target.checked);
         if (!e.target.checked) {
             setRemiderDate("")
         }
     }
-
+    const Json_SendMail = (taskID,taskStartDate) => {
+        if(taskID){
+            if(addUser && addUser.length > 0) {
+                addUser.forEach(item => {
+                    let obj={};
+                    obj.Subject =`Docusoft Task ${txtClient}`;
+                    // obj.Body = `Hi ${item?.ForwardTo},"\r\n" ${ownerName} has initiated a task relating to ${txtClient} and you have been added as an assignee."\r\n" Task : ${textSubject} "\r\n" Task ID : ${taskID} "\r\n" Start Date : ${taskStartDate} Please click on the following link to upload Open Upload Page <a href="">Launch</a>`;
+                    obj.Body = `Hi ${item?.ForwardTo},<br><br>
+                    ${ownerName} has initiated a task relating to ${txtClient} and you have been added as an assignee.<br><br>
+                    Task: ${textSubject}<br>
+                    Task ID: ${taskID}<br>
+                    Start Date: ${taskStartDate}<br><br>
+                    Please click on the following link to upload:<br>
+                    Open Upload Page <a href="${window.location.protocol+"//"+window.location.hostname+":"+window.location.port}/dashboard/MyTask">Open Task!</a>`;
+                    obj.FromMail = Email;
+                    obj.ToEmail = item?.UserEmail;
+                    obj.strFileName = "";
+                    obj.Byte = null;
+                    console.log(obj,"sendmail_object data",addUser);
+                    cls.NewSendMail(obj, function (sts, data) {
+                        if (sts) {
+                            if (data) {
+                                console.log(data,"SendMail by sonam");
+                            }
+                        }
+                    });
+                });
+            }
+           
+        }
+      
+    }
+    const handleSendMail = (e) => {
+        setSendMails(e.target.checked);
+        // Json_SendMail();
+    }
 
     const SigningMethods = (e) => {
         console.log("file name ", e)
@@ -2288,7 +2440,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
     };
     const handleCloseDoc = () => {
         setAnchorElDoc(null);
-
+        setSelectedFileIndex(null);
     };
 
     function DeleteFile(d) {
@@ -2302,11 +2454,67 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
             confirmButtonText: "Yes, delete it!"
         }).then((result) => {
             if (result.isConfirmed) {
-                RemoveFilesForUpload_Json(d)
+                if (selectedFiles.length > 0) {
+                    let res = selectedFiles.filter((el) => el.FileName !== d.FileName);
+                    setSelectedFiles(res);
+                }
+                if (selectedDocumentFile.length > 0) {
+                    let doc = selectedDocumentFile.filter((el) => el.FileName !== d.FileName);
+                    setSelectedDocumentFile(doc);
+                }
+                if (attachmentPath.length > 0) {
+                    let att = attachmentPath.filter((el) => el.FileName !== d.FileName);
+                    setAttachmentPath(att);
+                }
+
+                if (TaskType === "Portal") {
+                    RemoveFilesForUpload_Json(d)
+                }
+                else {
+                    DeleteTasksAttachment(d);
+                }
+
             }
         });
     }
 
+    function DeleteTasksAttachment(d) {
+        console.log("DeleteTasksAttachment", selectedFiles)
+        let res = attachmentPath.length > 0 ? attachmentPath.filter((el) => el.FileName === d.FileName) : toast.error("File name is not found !");
+
+        try {
+            let o = {
+                agrno: agrno,
+                EmailId: Email,
+                password: password,
+                //uploadID: localStorage.getItem("GUID"),
+                fileName: res[0].Path,
+                TaskId: "0"
+
+            }
+
+            clsSms.DeleteTasksAttachment_useCreateTask(o, function (sts, data) {
+                if (sts && data) {
+                    let js = JSON.parse(data);
+                    console.log("DeleteTasksAttachment", data)
+                    if (js.Status === "Success") {
+                        toast.success("Deleted Attachment");
+                        // Json_Get_CRM_SavedTask_ByTaskId(selectedTask.ID);
+
+
+
+                    }
+
+                }
+            })
+        } catch (error) {
+            console.log({
+                status: false,
+                message: "Folder is Blank Try again",
+                error: error,
+            });
+        }
+    }
 
     function RemoveFilesForUpload_Json(d) {
         console.log("RemoveFilesForUpload_Json", selectedFiles)
@@ -2322,12 +2530,24 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
             let cls = new CommanCLS(urlLetter, agrno, Email, password);
             cls.RemoveFilesForUpload_Json(o, function (sts, data) {
                 if (sts && data) {
-
                     if (data === "Success") {
                         toast.success("Removed File !");
-                        const updatedFiles = selectedFiles.filter(e => e.FileName !== d.FileName);
-                        console.log("updatedFiles", updatedFiles);
-                        setSelectedFiles(updatedFiles);
+                        //const updatedFiles = selectedFiles.filter(e => e.FileName !== d.FileName);
+                        // console.log("updatedFiles", updatedFiles);
+                        // setSelectedFiles(updatedFiles);
+                        if (selectedFiles.length > 0) {
+                            let res = selectedFiles.filter((el) => el.FileName !== d.FileName);
+                            setSelectedFiles(res);
+                        }
+                        if (selectedDocumentFile.length > 0) {
+                            let doc = selectedDocumentFile.filter((el) => el.FileName !== d.FileName);
+                            setSelectedDocumentFile(doc);
+                        }
+                        if (attachmentPath.length > 0) {
+                            let att = attachmentPath.filter((el) => el.FileName !== d.FileName);
+                            setAttachmentPath(att);
+                        }
+
                     }
                 }
             })
@@ -2443,6 +2663,17 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
     };
     const handleCloseFiles = () => {
         setAnchorElFiles(null);
+    };
+
+
+    // 
+    const [AddTemplateanchorEl, setAddTemplateAnchorEl] = React.useState(null);
+    const AddTemplateopen = Boolean(AddTemplateanchorEl);
+    const AddTemplatehandleClick = (event) => {
+        setAddTemplateAnchorEl(event.currentTarget);
+    };
+    const AddTemplatehandleClose = () => {
+        setAddTemplateAnchorEl(null);
     };
 
     return (
@@ -2653,39 +2884,522 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
 
                         <Box className="row full-height-modal">
                             <Box className="col-lg-8 border-end">
-                                <Box className="clearfix">
-                                    <Box>
-                                        <Box className="align-items-center">
-                                            {/* <span class="material-symbols-outlined">
+
+                                <Box className='clearfix'>
+
+                                    <Box className="align-items-center">
+                                        {/* <span class="material-symbols-outlined">
                                                 edit_square
                                             </span> */}
 
-                                            {/* <Checkbox
+                                        {/* <Checkbox
                                                 className='create-tast p-1 text-blue'
                                                 {...label}
                                                 defaultChecked
                                                 sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
                                             /> */}
 
-                                            {/* <Checkbox
+                                        {/* <Checkbox
                                                 {...label}
                                                 icon={<RadioButtonUncheckedOutlinedIcon />}
                                                 checkedIcon={<CheckCircleIcon />}
                                                 className="p-0"
                                             /> */}
 
-                                            <Box>
-                                                <input
-                                                    placeholder="Subject..."
-                                                    className="input-text"
-                                                    onChange={(e) => setTextSubject(e.target.value)}
-                                                    type="text"
-                                                    value={textSubject}
-                                                />
-                                            </Box>
+                                        <Box>
+                                            <input
+                                                placeholder="Subject..."
+                                                className="input-text"
+                                                onChange={(e) => setTextSubject(e.target.value)}
+                                                type="text"
+                                                value={textSubject}
+                                            />
                                         </Box>
+                                        {!isVisibleByTypeCRM && (<>
+                                        <Box className="mt-3 mb-3">
+                                            <textarea
+                                                className="form-control textarea-text resize-none"
+                                                placeholder="Description"
+                                                value={txtdescription} // Bind the value to the state
+                                                onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
+                                            ></textarea>
+                                        </Box>
+                                    </>)}
+                                    </Box>
+                                    {/* end */}
 
-                                        {/* <Box className="d-flex align-items-center mt-3">
+                                    <hr />
+
+                                    <Box className="mt-1 mb-3">
+                                        <Button
+                                            id="basic-button5"
+                                            aria-controls={
+                                                UserDropdownopen ? "basic-menu5" : undefined
+                                            }
+                                            aria-haspopup="true"
+                                            aria-expanded={UserDropdownopen ? "true" : undefined}
+                                            onContextMenu={handleRightClick}
+                                            className="p-0 w-auto d-inline-block"
+                                        >
+                                            <Box className="d-flex align-items-center">
+                                                {ownerRighClick && (<>
+                                                    <Box
+                                                        className="user-img-list me-1 admin"
+                                                        title={ownerRighClick.ForwardTo}
+                                                        key={ownerRighClick.ID}
+                                                    >
+                                                        <p>{firsorScandCtr(ownerRighClick)}</p>
+                                                    </Box> <ArrowForwardIosIcon className='me-1 font-20' />
+                                                </>)}
+
+                                                {addUser.length > 1
+                                                    ? addUser.slice(1, 3).map((item) => {
+                                                        const words = item.ForwardTo.split(" ");
+                                                        // Extract the first letter of each word and concatenate them
+                                                        let result = "";
+                                                        for (
+                                                            let i = 0;
+                                                            i < words.length && i < 2;
+                                                            i++
+                                                        ) {
+                                                            result += words[i].charAt(0);
+                                                        }
+                                                        if (item.ID !== ownerID) {
+                                                            return (
+                                                                <>
+                                                                    <Box
+                                                                        className="user-img-list me-1 admin"
+                                                                        title={item.ForwardTo}
+                                                                        key={item.ID}
+                                                                    >
+                                                                        <p>{result}</p>
+                                                                    </Box>
+
+
+                                                                </>
+                                                            );
+                                                        }
+                                                    })
+                                                    : null}
+                                            </Box>
+                                        </Button>
+
+                                        {dropdownVisible && (<Menu
+                                            id="basic-menu5"
+                                            anchorEl={userDropdownanchorElRight}
+                                            open={UserDropdownopenRight}
+                                            onClose={handleUserClose}
+                                            MenuListProps={{
+                                                "aria-labelledby": "basic-button5",
+                                            }}
+                                            className="user-list-dropdown"
+                                        >
+
+                                            <Box
+                                                className="inner-user-list-dropdown"
+                                                style={{ maxHeight: "200px", overflowY: "auto" }}
+                                            >
+                                                <p className="sembold">Transfer Ownership To:</p>
+
+                                                <Box className="box-user-list-dropdown">
+
+                                                    {addUser
+                                                        ? addUser.map((item, ind) => {
+                                                            if (item.ID === ownerID) {
+                                                                return (
+                                                                    <React.Fragment key={ind}>
+                                                                        <button type="button"
+                                                                            id={item.ID}
+                                                                        >
+                                                                            <Box className="user-img-list me-2">
+                                                                                <img src={user} alt="User" />
+                                                                            </Box>
+                                                                            <p>{item.ForwardTo}</p>
+                                                                        </button>
+                                                                    </React.Fragment>
+                                                                );
+                                                            } else {
+                                                                return (
+                                                                    <React.Fragment key={ind}>
+                                                                        <button type="button" id={item.ID}
+                                                                            onClick={() => handleItemClick(item)}
+                                                                        >
+                                                                            <Box className="user-img-list me-2">
+                                                                                <img src={user} alt="User" />
+                                                                            </Box>
+                                                                            <p>{item.ForwardTo}</p>
+                                                                            {/* <span
+className="close"
+onClick={() => handleRemoveUser(item.ID)}
+role="button" // Adding role="button" to indicate this element is clickable
+tabIndex="0" // Adding tabIndex to make the element focusable
+>
+<span className="material-symbols-outlined">
+close
+</span>
+</span> */}
+                                                                        </button>
+                                                                    </React.Fragment>
+                                                                );
+                                                            }
+                                                        })
+                                                        : null}
+                                                </Box>
+                                            </Box>
+                                        </Menu>)}
+
+                                        {addUser.length > 4 && (<>
+                                            <Button
+                                                id="basic-button"
+                                                aria-controls={openFiles ? 'basic-menu' : undefined}
+                                                aria-haspopup="true"
+                                                aria-expanded={openFiles ? 'true' : undefined}
+                                                onClick={handleClickFiles}
+                                                className="p-0 min-width-auto"
+                                            >
+                                                <Box
+                                                    className="user-img-list me-1 admin"
+                                                >
+                                                    <p>+{addUser.length - 3}</p>
+                                                </Box>
+                                            </Button>
+                                            <Menu
+                                                id="basic-menu"
+                                                anchorEl={anchorElFiles}
+                                                open={openFiles}
+                                                onClose={handleCloseFiles}
+                                                MenuListProps={{
+                                                    'aria-labelledby': 'basic-button',
+                                                }}
+                                                className="custom-menu"
+                                            >
+                                                {addUser.length > 3 &&
+                                                    addUser.slice(3, addUser.length).map((item, index) => (
+                                                        <MenuItem key={index} onClick={handleCloseFiles}>{item.ForwardTo}</MenuItem>
+                                                    ))
+                                                }
+                                            </Menu>
+                                        </>)}
+
+                                        <Button
+                                            id="basic-button5"
+                                            aria-controls={
+                                                UserDropdownopen ? "basic-menu5" : undefined
+                                            }
+                                            aria-haspopup="true"
+                                            aria-expanded={UserDropdownopen ? "true" : undefined}
+                                            onClick={handleUserClick}
+                                            className="p-0 w-auto d-inline-block"
+                                        >
+
+                                            <Box className="d-flex">
+                                                <span class="material-symbols-outlined">
+                                                    person_add
+                                                </span>
+                                            </Box>
+                                        </Button>
+
+                                        <Menu
+                                            id="basic-menu5"
+                                            anchorEl={userDropdownanchorEl}
+                                            open={UserDropdownopen}
+                                            onClose={handleUserClose}
+                                            MenuListProps={{
+                                                "aria-labelledby": "basic-button5",
+                                            }}
+                                            className="user-list-dropdown"
+                                        >
+
+                                            <Box
+                                                className="inner-user-list-dropdown"
+                                                style={{ maxHeight: "200px", overflowY: "auto" }}
+                                            >
+                                                <p className="sembold">Assigned</p>
+                                                <Box className="box-user-list-dropdown">
+                                                    {addUser
+                                                        ? addUser.map((item, ind) => {
+                                                            if (item.ID === ownerID) {
+                                                                return (
+                                                                    <React.Fragment key={ind}>
+                                                                        <button type="button" id={item.ID} >
+                                                                            <Box className="user-img-list me-2">
+                                                                                <img src={user} alt="User" />
+                                                                            </Box>
+                                                                            <p>{item.ForwardTo}</p>
+                                                                        </button>
+                                                                    </React.Fragment>
+                                                                );
+                                                            } else {
+                                                                return (
+                                                                    <React.Fragment key={ind}>
+                                                                        <button type="button" id={item.ID}>
+                                                                            <Box className="user-img-list me-2">
+                                                                                <img src={user} alt="User" />
+                                                                            </Box>
+                                                                            <p>{item.ForwardTo}</p>
+                                                                            <span
+                                                                                className="close"
+                                                                                onClick={() => handleRemoveUser(item.ID)}
+                                                                                role="button" // Adding role="button" to indicate this element is clickable
+                                                                                tabIndex="0" // Adding tabIndex to make the element focusable
+                                                                            >
+                                                                                <span className="material-symbols-outlined">
+                                                                                    close
+                                                                                </span>
+                                                                            </span>
+                                                                        </button>
+                                                                    </React.Fragment>
+                                                                );
+                                                            }
+                                                        })
+                                                        : null}
+                                                         
+                                                </Box>
+                                            </Box>
+
+                                            <Box className="inner-user-list-dropdown">
+                                                <p className="sembold mb-0">My Team</p>
+
+                                                <Box className="box-user-list-dropdown" style={{ maxHeight: "200px", overflowY: "auto" }}>
+                                                    <Box className="mb-1 mt-3 px-3">
+                                                        <input
+                                                            type="text"
+                                                            className="form-control"
+                                                            placeholder="Search..."
+                                                            value={filterText}
+                                                            onChange={(e) => setFilterText(e.target.value)}
+                                                        />
+                                                    </Box>
+                                                    <Box className="box-user-list-dropdown">
+
+                                                        {FilderDataList.map((item, ind) => (
+                                                            <React.Fragment key={ind}>
+                                                                <button
+                                                                    type="button"
+                                                                    id={item.ID}
+                                                                    onClick={() => handalClickAddUser(item)}
+                                                                >
+                                                                    <Box className="user-img-list me-2">
+                                                                        <img src={user} alt="User" />
+                                                                    </Box>
+                                                                    <p>{item.ForwardTo}</p>
+                                                                    {/* <a href="" className="close"><span className="material-symbols-outlined">close</span></a> */}
+                                                                </button>
+                                                            </React.Fragment>
+                                                        ))}
+                                                    </Box>
+                                                </Box>
+                                            </Box>
+                                        </Menu>
+                                        <Checkbox onChange={handleSendMail} checked={SendMails} {...label} size="small" />
+                                    </Box>
+                                    {/* Box End */}
+
+                                    <Box className="file-uploads">
+                                        <input
+                                            type="file"
+                                            id="file-upload"
+                                            multiple
+                                            onChange={handleFileSelect}
+                                        />
+                                        <label className="file-uploads-label" for="file-upload">
+                                            <Box className="d-flex align-items-center">
+                                                <span className="material-symbols-outlined icon">
+                                                    cloud_upload
+                                                </span>
+                                                <Box className="upload-content pe-3">
+                                                    <Typography variant="h4">
+                                                        Select a file or drag and drop here
+                                                    </Typography>
+                                                    <Typography variant="body1">
+                                                        JPG, PNG or PDF, file size no more than 10MB
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+
+                                            <Button
+                                                id="basic-button"
+                                                variant="contained"
+                                                aria-controls={openSelectFile ? 'basic-menu' : undefined}
+                                                aria-haspopup="true"
+                                                aria-expanded={openSelectFile ? 'true' : undefined}
+                                                onClick={handleClickSelectFile}
+                                                className="btn-blue-2"
+                                            >
+                                                Select file
+                                            </Button>
+                                            <Menu
+                                                id="basic-menu"
+                                                anchorEl={anchorSelectFileEl}
+                                                open={openSelectFile}
+                                                onClose={handleSelectFileClose}
+                                                MenuListProps={{
+                                                    'aria-labelledby': 'basic-button',
+                                                }}
+                                                className="custom-dropdown"
+                                            >
+                                                <label onClick={handleSelectFileClose} htmlFor="file-upload" className="d-block">
+                                                    <MenuItem><FileUploadIcon className="font-20 me-1" /> Upload File(s)</MenuItem>
+                                                </label>
+                                                <MenuItem onClick={handleDocumentClickOpen}><InsertPageBreakIcon className="font-20 me-1" /> Select From DMS</MenuItem>
+
+                                            </Menu>
+
+                                        </label>
+                                    </Box>
+                                    {/* Box End */}
+
+
+                                    <Box className="file-uploads file-upload-height">
+                                        {selectedFiles.length > 0
+                                            ? selectedFiles.map((file, index) => {
+                                                // console.log("Uploadin", file);
+
+                                                return (
+                                                    <>
+                                                        <label className="file-uploads-label mb-2" key={index}>
+                                                            <Box className="d-flex align-items-center">
+
+                                                                <span className="material-symbols-outlined icon">
+
+                                                                    {<GetFileType Type={file ? file.FileType.toLowerCase() : null}></GetFileType>}
+
+                                                                </span>
+                                                                <Box className="upload-content pe-3">
+                                                                    <Typography variant="h4">
+                                                                        {file ? file.FileName : ""}
+                                                                    </Typography>
+                                                                    <Typography variant="body1">
+                                                                        {file ? kbToMb(file.FileSize) : ""} MB
+                                                                    </Typography>
+                                                                </Box>
+                                                            </Box>
+
+                                                            <Box className="d-flex align-items-center">
+
+                                                                {txtTaskType === "Portal" && (<>
+                                                                    <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
+                                                                        Sign
+                                                                    </Button>
+                                                                </>)}
+
+                                                                <Box className="ps-2">
+
+                                                                    <Button
+                                                                        id="basic-button"
+                                                                        aria-controls={openDoc ? 'basic-menu' : undefined}
+                                                                        aria-haspopup="true"
+                                                                        aria-expanded={openDoc ? 'true' : undefined}
+                                                                        onClick={(event) => handleClickDoc(event, index)} // Pass index to handleClickDoc
+                                                                        className="min-width-auto"
+
+                                                                    >
+                                                                        <span className="material-symbols-outlined">
+                                                                            more_vert
+                                                                        </span>
+                                                                    </Button>
+
+                                                                    <Menu
+                                                                        id="basic-menu"
+                                                                        className="custom-dropdown"
+                                                                        anchorEl={anchorElDoc}
+                                                                        open={openDoc && selectedFileIndex === index} // Ensure the menu opens only for the selected file
+                                                                        onClose={handleCloseDoc}
+                                                                        MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
+                                                                    >
+                                                                        <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Remove</MenuItem>
+
+                                                                        <MenuItem className="ps-1"><EditIcon className="font-18 me-1" /> Rename</MenuItem>
+
+                                                                        {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
+                                                                            <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
+                                                                        )}
+                                                                    </Menu>
+
+                                                                </Box>
+                                                            </Box>
+                                                            {/* <Button variant="text" className='btn-blue-2'>Select file</Button> */}
+                                                        </label>
+                                                    </>
+                                                );
+                                            })
+                                            : (createNewFileObj && createNewFileObj.length > 0)
+                                                ? createNewFileObj.map((file, index) => {
+                                                    // console.log("Uploadin", file);
+
+                                                    return (
+                                                        <>
+                                                            <label className="file-uploads-label mb-2" key={index}>
+                                                                <Box className="d-flex align-items-center">
+                                                                    <span className="material-symbols-outlined icon">
+                                                                        description
+                                                                    </span>
+                                                                    <Box className="upload-content pe-3">
+                                                                        <Typography variant="h4">
+                                                                            {file ? file.FileName : ""}
+                                                                        </Typography>
+                                                                        <Typography variant="body1">
+                                                                            {file ? kbToMb(file.FileSize) : ""} MB
+                                                                        </Typography>
+                                                                    </Box>
+                                                                </Box>
+
+                                                                <Box className="d-flex align-items-center">
+
+                                                                    {txtTaskType === "Portal" && (<>
+                                                                        <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
+                                                                            Sign
+                                                                        </Button>
+                                                                    </>)}
+
+                                                                    <Box className="ps-2">
+
+                                                                        <Button
+                                                                            id="basic-button"
+                                                                            aria-controls={openDoc ? 'basic-menu' : undefined}
+                                                                            aria-haspopup="true"
+                                                                            aria-expanded={openDoc ? 'true' : undefined}
+                                                                            onClick={(event) => handleClickDoc(event, index)} // Pass index to handleClickDoc
+                                                                            className="min-width-auto"
+
+                                                                        >
+                                                                            <span className="material-symbols-outlined">
+                                                                                more_vert
+                                                                            </span>
+                                                                        </Button>
+
+                                                                        <Menu
+                                                                            id="basic-menu"
+                                                                            className="custom-dropdown"
+                                                                            anchorEl={anchorElDoc}
+                                                                            open={openDoc && selectedFileIndex === index} // Ensure the menu opens only for the selected file
+                                                                            onClose={handleCloseDoc}
+                                                                            MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
+                                                                        >
+                                                                            <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Delete</MenuItem>
+                                                                            {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
+                                                                                <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
+                                                                            )}
+                                                                        </Menu>
+
+                                                                    </Box>
+                                                                </Box>
+                                                                {/* <Button variant="text" className='btn-blue-2'>Select file</Button> */}
+                                                            </label>
+                                                        </>
+                                                    );
+                                                })
+                                                : null}
+                                    </Box>
+                                    {/* Box End */}
+                                </Box>
+                                {/* end */}
+
+
+                                <Box className="clearfix">
+
+
+                                    {/* <Box className="d-flex align-items-center mt-3">
                                             <span class="material-symbols-outlined">
                                                 edit_square
                                             </span>
@@ -2694,497 +3408,228 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                                             </Box>
                                         </Box> */}
 
-                                        {/* attached to start */}
-                                        <Box className='mt-3'>
+                                    {/* attached to start */}
+                                    <Box className='mt-3 mb-3'>
 
 
-                                            {/* attached to end */}
+                                        {/* attached to end */}
 
-                                            {isVisibleByTypeCRM && (
-                                                <>
-                                                    <Box className='mb-2'>
-                                                        <Autocomplete
-                                                            disablePortal
-                                                            id="combo-box-demo"
-                                                            options={userList}
-                                                            getOptionLabel={(option) => option.ForwardTo}
-                                                            renderInput={(params) => <TextField {...params} label="From" />}
-                                                            className="w-100"
-                                                            size="small"
-                                                            value={selectedUSer}
-                                                            onChange={handleOptionChangeFromUser}
-                                                        />
-                                                    </Box>
-                                                    <Box className='mb-2'>
+                                        {isVisibleByTypeCRM && (
+                                            <>
+                                                <Box className='mb-2'>
+                                                    <Autocomplete
+                                                        disablePortal
+                                                        id="combo-box-demo"
+                                                        options={userList}
+                                                        getOptionLabel={(option) => option.ForwardTo}
+                                                        renderInput={(params) => <TextField {...params} label="From" />}
+                                                        className="w-100"
+                                                        size="small"
+                                                        value={selectedUSer}
+                                                        onChange={handleOptionChangeFromUser}
+                                                    />
+                                                </Box>
+                                                <Box className='mb-2'>
 
-                                                        <Autocomplete
-                                                            multiple
-                                                            id="checkboxes-tags-demo"
-                                                            options={portalUserTo}
-                                                            disableCloseOnSelect
-                                                            getOptionLabel={(option) => option["E-Mail"]}
-                                                            size="small"
-                                                            renderOption={(props, option, { selected }) => (
-                                                                <li {...props}>
-                                                                    <Checkbox
+                                                    <Autocomplete
+                                                        multiple
+                                                        id="checkboxes-tags-demo"
+                                                        options={portalUserTo}
+                                                        disableCloseOnSelect
+                                                        getOptionLabel={(option) => option["E-Mail"]}
+                                                        size="small"
+                                                        renderOption={(props, option, { selected }) => (
+                                                            <li {...props}>
+                                                                <Checkbox
 
-                                                                        icon={icon}
-                                                                        checkedIcon={checkedIcon}
-                                                                        style={{ marginRight: 8 }}
-                                                                        checked={selected}
-                                                                    />
-                                                                    {option["First Name"] + " " + option["Last Name"] + " (" + option["E-Mail"] + ")"}
-                                                                </li>
-                                                            )}
-                                                            renderInput={(params) => (
-                                                                <TextField {...params} label="To:" limitTags={2} placeholder="" />
-                                                            )}
-                                                            onChange={handleAutocompleteChange} // Handle selection change
-
-                                                        />
-                                                    </Box>
-
-                                                    <Box className='mb-2'>
-                                                        <Autocomplete
-                                                            multiple
-                                                            id="checkboxes-tags-demo"
-                                                            options={portalUserCC}
-                                                            disableCloseOnSelect
-                                                            getOptionLabel={(option) => option["E-Mail"]}
-                                                            size="small"
-                                                            renderOption={(props, option, { selected }) => (
-                                                                <li {...props}>
-                                                                    <Checkbox
-                                                                        icon={icon}
-                                                                        checkedIcon={checkedIcon}
-                                                                        style={{ marginRight: 8 }}
-                                                                        checked={selected}
-                                                                    />
-                                                                    {option["First Name"] + " " + option["Last Name"] + " (" + option["E-Mail"] + ")"}
-                                                                </li>
-                                                            )}
-                                                            renderInput={(params) => (
-                                                                <TextField {...params} label="CC:" limitTags={2} placeholder="" />
-                                                            )}
-                                                            onChange={handleAutocompleteChangeOnCC} // Handle selection change
-                                                        />
-
-                                                    </Box>
-
-                                                    <Box className='mb-2'>
-                                                        <FormControlLabel control={<Checkbox checked={isCheckedForApproval} disabled={isDisabledForApproval} onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
-                                                        <FormControlLabel control={<Checkbox checked={isCheckedWithOutmgs} onChange={handleCheckboxChangeisCheckedWithOutmgs} />} label="Send Without Message" />
-
-                                                        <Button
-                                                            variant="contained"
-                                                            id="fade-button"
-                                                            aria-controls={openTemp ? 'fade-menu' : undefined}
-                                                            aria-haspopup="true"
-                                                            aria-expanded={openTemp ? 'true' : undefined}
-                                                            onClick={handleClickAddTemplate}
-                                                            className="btn-blue-2"
-
-                                                        >
-                                                            Add Template
-                                                        </Button>
-                                                        <Menu
-                                                            id="fade-menu"
-                                                            MenuListProps={{
-                                                                'aria-labelledby': 'fade-button',
-                                                            }}
-                                                            anchorEl={anchorElTemp}
-                                                            open={openTemp}
-                                                            onClose={handleCloseTemp}
-                                                            TransitionComponent={Fade}
-                                                            style={{ width: '50%', pending: "12px" }}
-                                                        >
-                                                            {errorMgs ? (
-                                                                <span sx={{ color: "red" }}>Email is blank, please select the mail</span>
-                                                            ) : (
-                                                                null // or any other element you want to render when errorMgs is false
-                                                            )}
-                                                            <DataGrid
-                                                                dataSource={smsTemplate}
-                                                                allowColumnReordering={true}
-                                                                rowAlternationEnabled={true}
-                                                                showBorders={true}
-                                                                width={"100%"}
-                                                                selection={{ mode: 'single' }}
-                                                                onSelectionChanged={handleSelectionChangedTemp} // Handle selection change event
-                                                            >
-                                                                <FilterRow visible={true} />
-                                                                <SearchPanel visible={false} highlightCaseSensitive={true} />
-
-                                                                <Column
-                                                                    dataField="Description"
-                                                                    caption="Description"
-                                                                    width={400}
+                                                                    icon={icon}
+                                                                    checkedIcon={checkedIcon}
+                                                                    style={{ marginRight: 8 }}
+                                                                    checked={selected}
                                                                 />
+                                                                {option["First Name"] + " " + option["Last Name"] + " (" + option["E-Mail"] + ")"}
+                                                            </li>
+                                                        )}
+                                                        renderInput={(params) => (
+                                                            <TextField {...params} label="To:" limitTags={2} placeholder="" />
+                                                        )}
+                                                        onChange={handleAutocompleteChange} // Handle selection change
 
-                                                                <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
-                                                                <Paging defaultPageSize={10} />
-                                                            </DataGrid>
+                                                    />
+                                                </Box>
+
+                                                <Box className='mb-2'>
+                                                    <Autocomplete
+                                                        multiple
+                                                        id="checkboxes-tags-demo"
+                                                        options={portalUserCC}
+                                                        disableCloseOnSelect
+                                                        getOptionLabel={(option) => option["E-Mail"]}
+                                                        size="small"
+                                                        renderOption={(props, option, { selected }) => (
+                                                            <li {...props}>
+                                                                <Checkbox
+                                                                    icon={icon}
+                                                                    checkedIcon={checkedIcon}
+                                                                    style={{ marginRight: 8 }}
+                                                                    checked={selected}
+                                                                />
+                                                                {option["First Name"] + " " + option["Last Name"] + " (" + option["E-Mail"] + ")"}
+                                                            </li>
+                                                        )}
+                                                        renderInput={(params) => (
+                                                            <TextField {...params} label="CC:" limitTags={2} placeholder="" />
+                                                        )}
+                                                        onChange={handleAutocompleteChangeOnCC} // Handle selection change
+                                                    />
+
+                                                </Box>
+
+
+
+
+                                                <Box className='mb-2 d-flex flex-wrap align-items-center'>
+
+                                                    <Box className='small-checkbox'>
+                                                        <FormControlLabel control={<Checkbox size='small' checked={isCheckedForApproval} disabled={isDisabledForApproval} onChange={handleCheckboxChangeForAppoval} />} label="For Approval" />
+                                                        <FormControlLabel control={<Checkbox size='small' checked={isCheckedWithOutmgs} onChange={handleCheckboxChangeisCheckedWithOutmgs} />} label="Send Without Message" />
+                                                        <FormControlLabel control={<Checkbox size='small' />} label="Append Signature" />
+                                                    </Box>
+
+                                                    {/* start */}
+                                                    <Box className="clearfix">
+                                                        <BootstrapTooltip title="Add Template" arrow
+                                                            placement="bottom-start"
+                                                            slotProps={{
+                                                                popper: {
+                                                                    modifiers: [
+                                                                        {
+                                                                            name: 'offset',
+                                                                            options: {
+                                                                                offset: [0, -10],
+                                                                            },
+                                                                        },
+                                                                    ],
+                                                                },
+                                                            }}
+                                                        >
+                                                            <Button
+                                                                id="basic-button"
+                                                                aria-controls={AddTemplateopen ? 'basic-menu' : undefined}
+                                                                aria-haspopup="true"
+                                                                aria-expanded={AddTemplateopen ? 'true' : undefined}
+                                                                onClick={AddTemplatehandleClick}
+                                                                className={'btn-blue-2'}
+                                                            >
+                                                                Add Tempalte
+                                                            </Button>
+                                                        </BootstrapTooltip>
+                                                        <Menu
+                                                            id="basic-menu"
+                                                            anchorEl={AddTemplateanchorEl}
+                                                            open={AddTemplateopen}
+                                                            onClose={AddTemplatehandleClose}
+                                                            MenuListProps={{
+                                                                'aria-labelledby': 'basic-button',
+                                                            }}
+                                                            className="search-list-main"
+                                                        >
+
+                                                            <Box className='px-1' >
+                                                                <TextField
+                                                                    label="Client"
+                                                                    variant="outlined"
+                                                                    autoFocus
+                                                                    value={searchQuery}
+                                                                    onChange={handleSearchInputChange}
+                                                                    sx={{ width: "100%" }}
+                                                                    size="small"
+                                                                />
+                                                            </Box>
+
+                                                            <List
+                                                                sx={{
+                                                                    width: "100%",
+                                                                    maxWidth: 360,
+                                                                    bgcolor: "background.paper",
+                                                                    maxHeight: '300px'
+                                                                }}
+                                                            >
+
+                                                                <MenuItem onClick={AddTemplatehandleClose}>Will Reference preview Test</MenuItem>
+                                                                <MenuItem onClick={AddTemplatehandleClose}>mytesttemplate</MenuItem>
+                                                                <MenuItem onClick={AddTemplatehandleClose}>Portal - ZH - Letter of engagment & Request list</MenuItem>
+                                                            </List>
                                                         </Menu>
                                                     </Box>
 
-                                                </>
-                                            )}
-                                            {txtTaskType === "Portal" && (
-                                                <HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
-                                            )}
 
-                                        </Box>
+                                                    {/* <Button
+                                                        variant="contained"
+                                                        id="fade-button"
+                                                        aria-controls={openTemp ? 'fade-menu' : undefined}
+                                                        aria-haspopup="true"
+                                                        aria-expanded={openTemp ? 'true' : undefined}
+                                                        onClick={handleClickAddTemplate}
+                                                        className="btn-blue-2"
 
-                                        {!isVisibleByTypeCRM && (<>
-                                            <Box className="mt-3 mb-3">
-                                                <textarea
-                                                    className="form-control textarea-text resize-none"
-                                                    placeholder="Description"
-                                                    value={txtdescription} // Bind the value to the state
-                                                    onChange={(e) => setTxtDescriptin(e.target.value)} // Handle changes to the textarea
-                                                ></textarea>
-                                            </Box>
-                                        </>)}
+                                                    >
+                                                        Add Template
+                                                    </Button>
+                                                    <Menu
+                                                        id="fade-menu"
+                                                        MenuListProps={{
+                                                            'aria-labelledby': 'fade-button',
+                                                        }}
+                                                        anchorEl={anchorElTemp}
+                                                        open={openTemp}
+                                                        onClose={handleCloseTemp}
+                                                        TransitionComponent={Fade}
+                                                        style={{ width: '50%', pending: "12px" }}
+                                                    >
+                                                        {errorMgs ? (
+                                                            <span sx={{ color: "red" }}>Email is blank, please select the mail</span>
+                                                        ) : (
+                                                            null // or any other element you want to render when errorMgs is false
+                                                        )}
+                                                        <DataGrid
+                                                            dataSource={smsTemplate}
+                                                            allowColumnReordering={true}
+                                                            rowAlternationEnabled={true}
+                                                            showBorders={true}
+                                                            width={"100%"}
+                                                            selection={{ mode: 'single' }}
+                                                            onSelectionChanged={handleSelectionChangedTemp} // Handle selection change event
+                                                        >
+                                                            <FilterRow visible={true} />
+                                                            <SearchPanel visible={false} highlightCaseSensitive={true} />
 
-                                        <div className="mt-1 mb-2">
+                                                            <Column
+                                                                dataField="Description"
+                                                                caption="Description"
+                                                                width={400}
+                                                            />
 
-<Button
-    id="basic-button5"
-    aria-controls={
-        UserDropdownopen ? "basic-menu5" : undefined
-    }
-    aria-haspopup="true"
-    aria-expanded={UserDropdownopen ? "true" : undefined}
-    onContextMenu={handleRightClick}
-    className="p-0 w-auto d-inline-block"
+                                                            <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
+                                                            <Paging defaultPageSize={10} />
+                                                        </DataGrid>
+                                                    </Menu> */}
+                                                </Box>
 
+                                            </>
+                                        )}
+                                        {txtTaskType === "Portal" && (
+                                            <HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>
+                                        )}
 
->
-    <Box className="d-flex align-items-center">
-        {ownerRighClick && (<>
-            <Box
-                className="user-img-list me-1 admin"
-                title={ownerRighClick.ForwardTo}
-                key={ownerRighClick.ID}
-            >
-                <p>{firsorScandCtr(ownerRighClick)}</p>
-            </Box> <ArrowForwardIosIcon className='me-1 font-20' />
-        </>)}
-
-
-        {addUser.length > 1
-            ? addUser.slice(1, 3).map((item) => {
-                const words = item.ForwardTo.split(" ");
-                // Extract the first letter of each word and concatenate them
-                let result = "";
-                for (
-                    let i = 0;
-                    i < words.length && i < 2;
-                    i++
-                ) {
-                    result += words[i].charAt(0);
-                }
-                if (item.ID !== ownerID) {
-                    return (
-                        <>
-                            <Box
-                                className="user-img-list me-1 admin"
-                                title={item.ForwardTo}
-                                key={item.ID}
-                            >
-                                <p>{result}</p>
-                            </Box>
-
-
-                        </>
-                    );
-                }
-
-
-            })
-            : null}
-
-    </Box>
-</Button>
-
-
-{dropdownVisible && (<Menu
-    id="basic-menu5"
-    anchorEl={userDropdownanchorElRight}
-    open={UserDropdownopenRight}
-    onClose={handleUserClose}
-    MenuListProps={{
-        "aria-labelledby": "basic-button5",
-    }}
-    className="user-list-dropdown"
->
-
-    <Box
-        className="inner-user-list-dropdown"
-        style={{ maxHeight: "200px", overflowY: "auto" }}
-    >
-        <p className="sembold">Transfer Ownership To:</p>
-
-        <Box className="box-user-list-dropdown">
-
-
-
-            {addUser
-                ? addUser.map((item, ind) => {
-                    if (item.ID === ownerID) {
-                        return (
-                            <React.Fragment key={ind}>
-                                <button type="button"
-                                    id={item.ID}
-                                >
-                                    <Box className="user-img-list me-2">
-                                        <img src={user} alt="User" />
                                     </Box>
-                                    <p>{item.ForwardTo}</p>
-                                </button>
-                            </React.Fragment>
-                        );
-                    } else {
-                        return (
-                            <React.Fragment key={ind}>
-                                <button type="button" id={item.ID}
-                                    onClick={() => handleItemClick(item)}
-                                >
-                                    <Box className="user-img-list me-2">
-                                        <img src={user} alt="User" />
-                                    </Box>
-                                    <p>{item.ForwardTo}</p>
-                                    {/* <span
-                                        className="close"
-                                        onClick={() => handleRemoveUser(item.ID)}
-                                        role="button" // Adding role="button" to indicate this element is clickable
-                                        tabIndex="0" // Adding tabIndex to make the element focusable
-                                    >
-                                        <span className="material-symbols-outlined">
-                                            close
-                                        </span>
-                                    </span> */}
-                                </button>
-                            </React.Fragment>
-                        );
-                    }
-                })
-                : null}
-        </Box>
-    </Box>
-</Menu>)}
 
-{addUser.length > 4 && (<>
-    <Button
-        id="basic-button"
-        aria-controls={openFiles ? 'basic-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={openFiles ? 'true' : undefined}
-        onClick={handleClickFiles}
-        className="p-0 min-width-auto"
-    >
-        <Box
-            className="user-img-list me-1 admin"
-        >
-            <p>+{addUser.length - 3}</p>
-        </Box>
-    </Button>
-    <Menu
-        id="basic-menu"
-        anchorEl={anchorElFiles}
-        open={openFiles}
-        onClose={handleCloseFiles}
-        MenuListProps={{
-            'aria-labelledby': 'basic-button',
-        }}
-        className="custom-menu"
-    >
-        {addUser.length > 3 &&
-            addUser.slice(3, addUser.length).map((item, index) => (
-                <MenuItem key={index} onClick={handleCloseFiles}>{item.ForwardTo}</MenuItem>
-            ))
-        }
-    </Menu>
-</>)}
-
-<Button
-    id="basic-button5"
-    aria-controls={
-        UserDropdownopen ? "basic-menu5" : undefined
-    }
-    aria-haspopup="true"
-    aria-expanded={UserDropdownopen ? "true" : undefined}
-    onClick={handleUserClick}
-    className="p-0 w-auto d-inline-block"
->
-
-    <Box className="d-flex">
-        <span class="material-symbols-outlined">
-            person_add
-        </span>
-    </Box>
-
-</Button>
-
-<Menu
-    id="basic-menu5"
-    anchorEl={userDropdownanchorEl}
-    open={UserDropdownopen}
-    onClose={handleUserClose}
-    MenuListProps={{
-        "aria-labelledby": "basic-button5",
-    }}
-    className="user-list-dropdown"
->
-
-    <Box
-        className="inner-user-list-dropdown"
-        style={{ maxHeight: "200px", overflowY: "auto" }}
-    >
-        <p className="sembold">Assigned</p>
-        <Box className="box-user-list-dropdown">
-            {addUser
-                ? addUser.map((item, ind) => {
-                    if (item.ID === ownerID) {
-                        return (
-                            <React.Fragment key={ind}>
-                                <button type="button" id={item.ID} >
-                                    <Box className="user-img-list me-2">
-                                        <img src={user} alt="User" />
-                                    </Box>
-                                    <p>{item.ForwardTo}</p>
-                                </button>
-                            </React.Fragment>
-                        );
-                    } else {
-                        return (
-                            <React.Fragment key={ind}>
-                                <button type="button" id={item.ID}>
-                                    <Box className="user-img-list me-2">
-                                        <img src={user} alt="User" />
-                                    </Box>
-                                    <p>{item.ForwardTo}</p>
-                                    <span
-                                        className="close"
-                                        onClick={() => handleRemoveUser(item.ID)}
-                                        role="button" // Adding role="button" to indicate this element is clickable
-                                        tabIndex="0" // Adding tabIndex to make the element focusable
-                                    >
-                                        <span className="material-symbols-outlined">
-                                            close
-                                        </span>
-                                    </span>
-                                </button>
-                            </React.Fragment>
-                        );
-                    }
-                })
-                : null}
-        </Box>
-    </Box>
-
-    <Box className="inner-user-list-dropdown">
-        <p className="sembold mb-0">My Team</p>
-
-        <Box className="box-user-list-dropdown" style={{ maxHeight: "200px", overflowY: "auto" }}>
-            <Box className="mb-1 mt-3 px-3">
-                <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search..."
-                    value={filterText}
-                    onChange={(e) => setFilterText(e.target.value)}
-                />
-            </Box>
-            <Box className="box-user-list-dropdown">
-
-                {FilderDataList.map((item, ind) => (
-                    <React.Fragment key={ind}>
-                        <button
-                            type="button"
-                            id={item.ID}
-                            onClick={() => handalClickAddUser(item)}
-                        >
-                            <Box className="user-img-list me-2">
-                                <img src={user} alt="User" />
-                            </Box>
-                            <p>{item.ForwardTo}</p>
-                            {/* <a href="" className="close">
-                        <span className="material-symbols-outlined">
-                          close
-                        </span>
-                      </a> */}
-                        </button>
-                    </React.Fragment>
-                ))}
-            </Box>
-        </Box>
-    </Box>
-</Menu>
+                                  
 
 
-</div>
-
-
-                                        
-                                    </Box>
                                 </Box>
 
                                 {/* end */}
-
-
-                                <Box className="file-uploads">
-                                    <input
-                                        type="file"
-                                        id="file-upload"
-                                        multiple
-                                        onChange={handleFileSelect}
-                                    />
-                                    <label className="file-uploads-label" for="file-upload">
-                                        <Box className="d-flex align-items-center">
-                                            <span className="material-symbols-outlined icon">
-                                                cloud_upload
-                                            </span>
-                                            <Box className="upload-content pe-3">
-                                                <Typography variant="h4">
-                                                    Select a file or drag and drop here
-                                                </Typography>
-                                                <Typography variant="body1">
-                                                    JPG, PNG or PDF, file size no more than 10MB
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-
-                                        <Button
-                                            id="basic-button"
-                                            variant="contained"
-                                            aria-controls={openSelectFile ? 'basic-menu' : undefined}
-                                            aria-haspopup="true"
-                                            aria-expanded={openSelectFile ? 'true' : undefined}
-                                            onClick={handleClickSelectFile}
-                                            className="btn-blue-2"
-                                        >
-                                            Select file
-                                        </Button>
-                                        <Menu
-                                            id="basic-menu"
-                                            anchorEl={anchorSelectFileEl}
-                                            open={openSelectFile}
-                                            onClose={handleSelectFileClose}
-                                            MenuListProps={{
-                                                'aria-labelledby': 'basic-button',
-                                            }}
-                                            className="custom-dropdown"
-                                        >
-                                            <label onClick={handleSelectFileClose} htmlFor="file-upload" className="d-block">
-                                                <MenuItem><FileUploadIcon className="font-20 me-1" /> Upload File(s)</MenuItem>
-                                            </label>
-                                            <MenuItem onClick={handleDocumentClickOpen}><InsertPageBreakIcon className="font-20 me-1" /> Select From DMS</MenuItem>
-
-                                        </Menu>
-
-                                    </label>
-                                </Box>
 
 
                                 {/* DMS Start 
@@ -3246,141 +3691,7 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
 
 
 
-                                <Box className="file-uploads file-upload-height">
-                                    {selectedFiles.length > 0
-                                        ? selectedFiles.map((file, index) => {
-                                            // console.log("Uploadin", file);
 
-                                            return (
-                                                <>
-                                                    <label className="file-uploads-label mb-2" key={index}>
-                                                        <Box className="d-flex align-items-center">
-                                                            <span className="material-symbols-outlined icon">
-                                                                description
-                                                            </span>
-                                                            <Box className="upload-content pe-3">
-                                                                <Typography variant="h4">
-                                                                    {file ? file.FileName : ""}
-                                                                </Typography>
-                                                                <Typography variant="body1">
-                                                                    {file ? kbToMb(file.FileSize) : ""} MB
-                                                                </Typography>
-                                                            </Box>
-                                                        </Box>
-
-                                                        <Box className="d-flex align-items-center">
-
-                                                            {txtTaskType === "Portal" && (<>
-                                                                <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
-                                                                    Sign
-                                                                </Button>
-                                                            </>)}
-
-                                                            <Box className="ps-2">
-
-                                                                <Button
-                                                                    id="basic-button"
-                                                                    aria-controls={openDoc ? 'basic-menu' : undefined}
-                                                                    aria-haspopup="true"
-                                                                    aria-expanded={openDoc ? 'true' : undefined}
-                                                                    onClick={(event) => handleClickDoc(event, index)} // Pass index to handleClickDoc
-                                                                    className="min-width-auto"
-
-                                                                >
-                                                                    <span className="material-symbols-outlined">
-                                                                        more_vert
-                                                                    </span>
-                                                                </Button>
-
-                                                                <Menu
-                                                                    id="basic-menu"
-                                                                    className="custom-dropdown"
-                                                                    anchorEl={anchorElDoc}
-                                                                    open={openDoc && selectedFileIndex === index} // Ensure the menu opens only for the selected file
-                                                                    onClose={handleCloseDoc}
-                                                                    MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
-                                                                >
-                                                                    <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Delete</MenuItem>
-                                                                    {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
-                                                                        <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
-                                                                    )}
-                                                                </Menu>
-
-                                                            </Box>
-                                                        </Box>
-                                                        {/* <Button variant="text" className='btn-blue-2'>Select file</Button> */}
-                                                    </label>
-                                                </>
-                                            );
-                                        })
-                                        : (createNewFileObj && createNewFileObj.length > 0)
-                                        ? createNewFileObj.map((file, index) => {
-                                            // console.log("Uploadin", file);
-
-                                            return (
-                                                <>
-                                                    <label className="file-uploads-label mb-2" key={index}>
-                                                        <Box className="d-flex align-items-center">
-                                                            <span className="material-symbols-outlined icon">
-                                                                description
-                                                            </span>
-                                                            <Box className="upload-content pe-3">
-                                                                <Typography variant="h4">
-                                                                    {file ? file.FileName : ""}
-                                                                </Typography>
-                                                                <Typography variant="body1">
-                                                                    {file ? kbToMb(file.FileSize) : ""} MB
-                                                                </Typography>
-                                                            </Box>
-                                                        </Box>
-
-                                                        <Box className="d-flex align-items-center">
-
-                                                            {txtTaskType === "Portal" && (<>
-                                                                <Button variant="text" onClick={() => SigningMethods(file)} className="btn-blue-2">
-                                                                    Sign
-                                                                </Button>
-                                                            </>)}
-
-                                                            <Box className="ps-2">
-
-                                                                <Button
-                                                                    id="basic-button"
-                                                                    aria-controls={openDoc ? 'basic-menu' : undefined}
-                                                                    aria-haspopup="true"
-                                                                    aria-expanded={openDoc ? 'true' : undefined}
-                                                                    onClick={(event) => handleClickDoc(event, index)} // Pass index to handleClickDoc
-                                                                    className="min-width-auto"
-
-                                                                >
-                                                                    <span className="material-symbols-outlined">
-                                                                        more_vert
-                                                                    </span>
-                                                                </Button>
-
-                                                                <Menu
-                                                                    id="basic-menu"
-                                                                    className="custom-dropdown"
-                                                                    anchorEl={anchorElDoc}
-                                                                    open={openDoc && selectedFileIndex === index} // Ensure the menu opens only for the selected file
-                                                                    onClose={handleCloseDoc}
-                                                                    MenuListProps={{ 'aria-labelledby': `basic-button-${index}` }} // Use index to associate each menu with its button
-                                                                >
-                                                                    <MenuItem onClick={() => DeleteFile(file)} className="ps-1"><DeleteIcon className="font-18 me-1" /> Delete</MenuItem>
-                                                                    {txtTaskType === "Portal" && (file.FileType === "docx" || file.FileType === "doc" || file.FileType === "xls" || file.FileType === "xlsx" || file.FileType === "msg") && (
-                                                                        <MenuItem onClick={(e) => ConvertToPdf_Json(file)} className="ps-1"><PictureAsPdfIcon className="font-18 me-1" /> Convert To Pdf</MenuItem>
-                                                                    )}
-                                                                </Menu>
-
-                                                            </Box>
-                                                        </Box>
-                                                        {/* <Button variant="text" className='btn-blue-2'>Select file</Button> */}
-                                                    </label>
-                                                </>
-                                            );
-                                        })
-                                        : null}
-                                </Box>
 
                                 {/* <Box className="mt-3 mb-3">
                                     <textarea
@@ -3784,13 +4095,9 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                                                     showIcon
                                                     dateFormat="DD/MM/YYYY"
                                                     value={currentDate}
-                                                    onChange={(e) => {
-                                                        console.log("hello,111111")
-                                                        CurrentDateChange(e);
-                                                        setNextDate("");
-                                                    }
-
-                                                    } // Handle date changes
+                                                    onChange={(date) => {
+                                                        CurrentDateChange(date);
+                                                    }}
                                                     timeFormat={false}
                                                     isValidDate={disablePastDt}
                                                     closeOnSelect={true}
@@ -3825,7 +4132,22 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                                             dateAdapter={AdapterDayjs}
                                         >
                                             <CalendarMonthIcon />
-                                            <DatePicker className=" w-100"
+                                            <DatePicker
+                                                showIcon
+                                                dateFormat="DD/MM/YYYY"
+                                                value={nextDate ? nextDate : ""}
+                                                onChange={(e) => setNextDate(e)} // Handle date changes
+                                                timeFormat={false}
+                                                isValidDate={disableDueDate}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
+                                            // sx={{
+                                            //     width: '140px'
+                                            // }}
+
+                                            />
+
+                                            {/* <DatePicker className=" w-100"
                                                 //selected={selectedDate}
                                                 showIcon
                                                 dateFormat="DD/MM/YYYY"
@@ -3835,8 +4157,8 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                                                 isValidDate={disableDueDate}
                                                 closeOnSelect={true}
                                                 icon="fa fa-calendar"
-                                                isClearable
-                                            />
+                                                isClearable={nextDateclear}
+                                            /> */}
                                         </LocalizationProvider>
                                     </Box>
                                 </Box>
@@ -3848,32 +4170,33 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                                     </label>
 
                                     {isRemindMe && (<>
-                                        <label className="font-14 d-block mb-1">Reminder Date</label>
-
-                                        <Box className='custom-datepicker'>
-                                            <CalendarMonthIcon />
-                                            <LocalizationProvider
-                                                className="pe-0"
-                                                dateAdapter={AdapterDayjs}
-                                                timeFormat={false}
-                                                isValidDate={disablePastDtTwoDate}
-                                            >
-
-                                                <DatePicker className=" w-100"
-                                                    showIcon
-                                                    dateFormat="DD/MM/YYYY"
-                                                    value={remiderDate}
-                                                    onChange={(e) => setRemiderDate(e)} // Handle date changes
-
+                                        <Box className='mb-2'>
+                                            <label className="font-14 d-block mb-1">Reminder Date</label>
+                                            <Box className='custom-datepicker'>
+                                                <CalendarMonthIcon />
+                                                <LocalizationProvider
+                                                    className="pe-0"
+                                                    dateAdapter={AdapterDayjs}
                                                     timeFormat={false}
                                                     isValidDate={disablePastDtTwoDate}
-                                                    closeOnSelect={true}
-                                                    placeholder='Reminder Date'
+                                                >
 
-                                                    icon="fa fa-calendar"
+                                                    <DatePicker className=" w-100"
+                                                        showIcon
+                                                        dateFormat="DD/MM/YYYY"
+                                                        value={remiderDate}
+                                                        onChange={(e) => setRemiderDate(e)} // Handle date changes
 
-                                                />
-                                            </LocalizationProvider>
+                                                        timeFormat={false}
+                                                        isValidDate={disablePastDtTwoDate}
+                                                        closeOnSelect={true}
+                                                        placeholder='Reminder Date'
+
+                                                        icon="fa fa-calendar"
+
+                                                    />
+                                                </LocalizationProvider>
+                                            </Box>
                                         </Box>
 
                                     </>)}
@@ -4114,20 +4437,32 @@ Json_GetForwardUserList(txtFolderId ? txtFolderId : localStorage.getItem("Folder
                                 dataField="Type"
                                 caption="Type"
                                 cellRender={renderTypeCell} // Render cells based on condition
+                                width={60}
                             />
 
                             <Column
                                 dataField="Description"
                                 caption="Description"
+                                width={300}
+                                cellRender={(data) => {
+                                    return <Tooltip title={data.data.Description} placement="top-start">
+                                        {data.data.Description}
+                                    </Tooltip>
+                                }}
                             />
                             <Column
                                 dataField="Section"
                                 caption="Section"
+                                cellRender={(data) => {
+                                    return <Tooltip title={data.data.Section} placement="top-start">
+                                        {data.data.Section}
+                                    </Tooltip>
+                                }}
                             />
-                            <Column
+                            {/* <Column
                                 dataField="Client"
                                 caption="Client"
-                            />
+                            /> */}
                             <Pager allowedPageSizes={pageSizes} showPageSizeSelector={true} />
                             <Paging defaultPageSize={10} />
                         </DataGrid>

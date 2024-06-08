@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -16,10 +16,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { FormControl, Menu, MenuItem, Select } from '@mui/material';
+import { Menu, MenuItem } from '@mui/material';
 import logo from "../images/logo.png";
 import user from "../images/user.jpg";
 import Button from '@mui/material/Button';
@@ -35,7 +33,6 @@ import ContactDetails from '../contact/contact-components/ContactDetails';
 import TodoList from './TodoList';
 import CommanCLS from '../services/CommanService';
 import Logout from './Logout';
-// import AddContacts from './AddContacts';
 import NewTodoList from './NewTodoList';
 import FormatListNumberedRtlIcon from '@mui/icons-material/FormatListNumberedRtl';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -47,17 +44,12 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import GroupIcon from '@mui/icons-material/Group';
 import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
 import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LogoutIcon from '@mui/icons-material/Logout';
-import FolderSharedIcon from '@mui/icons-material/FolderShared';
-import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
-import PeopleIcon from '@mui/icons-material/People';
-import ShareIcon from '@mui/icons-material/Share';
-import PersonIcon from '@mui/icons-material/Person';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
-import ToggleButton from '@mui/material/ToggleButton';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
-import TestForDetails from './TestForDetails';
+import AdvanceSearch from './AdvanceSearch';
+import { useDispatch, useSelector } from "react-redux"
+import { Json_AdvanceSearchDocFromRedux, fetchAllSection, fetchAllTasksRedux, fetchFolders } from '../redux/reducers/api_helper';
+import Dashboard from './Dashboard';
 
 
 const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -143,15 +135,20 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export default function SidebarNav() {
 
   const location = useLocation();
+  const dispatch = useDispatch();
 
+  const {docDescriptions:documentsDescription} = useSelector(state=>state.counter.advanceSearchResult);
+  const isAdvanceDocSearchRedux = useSelector((state)=>state.counter.isAdvanceDocSearchRedux);
+  const taskSubjects = useSelector((state)=>state.counter.taskSubjects);
+  const folders = useSelector((state) => state.counter.folders);
+
+  const [isSearchResultTab,setisSearchResultTab] = useState(false);
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
   const [password, setPassword] = useState(localStorage.getItem("Password"));
   const [Email, setEmail] = useState(localStorage.getItem("Email"));
   const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
   const [userId, setUserId] = useState(localStorage.getItem("UserId"));
   const [globalSearch, setGlobalSearch] = useState(localStorage.getItem("globalSearchKey"));
-
-  console.log("fueteuiuert", window.location.pathname);
 
   const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
   const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
@@ -174,32 +171,13 @@ export default function SidebarNav() {
 
   const [value, setValue] = React.useState(options[0]);
   const [inputValue, setInputValue] = React.useState('');
-  const [documentsDescription, setDocumentsDescription] = useState([]);
   const [myDocuments, setMyDocuments] = useState([]);
   const [isSearch, setIsSearch] = useState(false);
   const [forDocuments, setForDocuments] = useState("");
   const [myTotalTasks, setMyTotalTasks] = useState([]);
-  const [taskSubjects, setTasksSubjects] = useState([]);
   const [filteredTaskSubjects, setFilteredTaskSubjects] = useState([]);
-  const [folders, setFolders] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState(folderId);
   const [anchorEl4, setAnchorEl4] = React.useState(null);
-
-  const {
-    getRootProps,
-    getInputProps,
-    getListboxProps,
-    getOptionProps,
-    groupedOptions,
-    focused,
-  } = useAutocomplete({
-    id: 'controlled-state-demo',
-    options,
-    value,
-    onChange: (event, newValue) => setValue(newValue),
-    inputValue,
-    onInputChange: (event, newInputValue) => setInputValue(newInputValue),
-  });
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const opens = Boolean(anchorEl);
@@ -217,102 +195,6 @@ export default function SidebarNav() {
     navigate("/");
   }
 
-  const Json_AdvanceSearchDoc = (f_id = folderId) => {
-    console.log("Json_AdvanceSearchDoc forDocuments", forDocuments);
-    if (forDocuments !== "") {
-      let obj = {
-        ClientId: "",
-        Description: forDocuments,
-        Email: Email,
-        IsUDF: "F",
-        ItemFDate: "01/01/1900",
-        ItemTDate: "01/01/1900",
-        ItemrecFDate: "01/01/1900",
-        ItemrecTDate: "01/01/1900",
-        ProjectId: f_id,
-        agrno: agrno,
-        password: password,
-        sectionId: "-1",
-        udflist: [],
-        udfvalueList: []
-      };
-      try {
-        Cls.Json_AdvanceSearchDoc(obj, (sts, data) => {
-          if (sts) {
-            if (data) {
-              let json = JSON.parse(data);
-              console.log("Json_AdvanceSearchDoc", json.Table6);
-              if (json.Table6) {
-                let fltDouble = [];
-                json.Table6.map((itm) => itm.Description).filter(item => {
-                  if (!fltDouble.includes(item)) {
-                    fltDouble.push(item);
-                  }
-                });
-                setDocumentsDescription(fltDouble);
-                setMyDocuments(json.Table6);
-              }
-            }
-          }
-        });
-      } catch (err) {
-        console.log("Error while calling Json_AdvanceSearchDoc", err);
-      }
-    }
-  }
-
-  function Json_GetFolders() {
-    let obj = {
-      agrno: agrno,
-      Email: Email,
-      password: password
-    }
-    try {
-      Cls.Json_GetFolders(obj, function (sts, data) {
-        if (sts) {
-          if (data) {
-            let js = JSON.parse(data);
-            let tbl = js.Table;
-            // console.log("Json_GetFolders", tbl);
-            setFolders(tbl);
-          }
-        }
-      });
-    } catch (err) {
-      console.log("Error while calling Json_GetFolders", err);
-    }
-  }
-
-  const Json_CRM_GetOutlookTask = () => {
-    let obj = {
-      agrno: agrno,
-      Email: Email,
-      password: password
-    };
-    try {
-      practiceCls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
-        if (sts) {
-          if (data) {
-            console.log("Json_CRM_GetOutlookTask", JSON.parse(data));
-            let tasks = JSON.parse(data).Table;
-            let myTasks = tasks.filter((item) => item.AssignedToID.split(",").includes(userId) && (item.Source === "CRM" || item.Source === "Portal"));
-            let fltDouble = [];
-            [...myTasks].map(itm => itm.Subject).filter(subject => {
-              if (!fltDouble.includes(subject)) {
-                fltDouble.push(subject);
-              }
-            });
-            setTasksSubjects(fltDouble);
-            // setFilteredTaskSubjects(fltDouble);
-            setMyTotalTasks(myTasks);
-            Json_GetFolders();
-          }
-        }
-      });
-    } catch (err) {
-      console.log("Error while calling Json_CRM_GetOutlookTask", err);
-    }
-  }
 
   const Json_Get_CRM_UserByProjectId = () => {
     let obj = {
@@ -325,12 +207,10 @@ export default function SidebarNav() {
       if (sts) {
         if (data) {
           let json = JSON.parse(data);
-          console.log("Json_Get_CRM_UserByProjectId", json.Table);
           json.Table.map((item) => {
             if (item.loggedInUser === "True") {
               setUserName(item.DisplayName);
               setUserEmail(item.Name);
-              Json_CRM_GetOutlookTask();
             }
           });
         }
@@ -353,6 +233,9 @@ export default function SidebarNav() {
     setEmail(localStorage.getItem("Email"));
     setUserId(localStorage.getItem("UserId"));
     Json_Get_CRM_UserByProjectId();
+    dispatch(fetchAllSection());
+    dispatch(fetchFolders());
+    if(taskSubjects.length===0) dispatch(fetchAllTasksRedux("Todo"));
     // console.log("location Object",location.pathname.split("/").pop());
     tabs.length > 0 && tabs.map(itm => {
       if (itm.tabLink.split("/").pop() === location.pathname.split("/").pop()) {
@@ -388,12 +271,22 @@ export default function SidebarNav() {
 
   useEffect(() => {
     const data = setTimeout(() => {
-      Json_AdvanceSearchDoc(selectedFolder);
+      dispatch(Json_AdvanceSearchDocFromRedux("",forDocuments,{}));
     }, 1000);
     return () => clearTimeout(data);
   }, [forDocuments]);
 
 
+  function handleAdvNav(){
+    let filteredTab = tabs;
+    if(isSearchResultTab){
+      filteredTab = tabs.filter(itm=>itm.tabName!=="Search Result");
+    }
+    setTabs([...filteredTab, { tabLink: `/dashboard/DocumentList?filter=true&adv=true`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);    
+    tabs.map(itm => {
+      itm.active = false;
+    });
+  }
 
   // dropdown
   const open4 = Boolean(anchorEl4);
@@ -407,15 +300,26 @@ export default function SidebarNav() {
   useEffect(() => {
     setGlobalSearch(localStorage.getItem("globalSearchKey"));
     tabs.map(itm => {
-      if (itm.tabName === "Search Result") {
-        itm.tabLink = `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${folderId}`;
+      if (itm.tabName === "Search Result" && isSearchResultTab===true) {
+          itm.tabLink = `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${folderId}`;
       } else {
         itm.tabLink = itm.tabLink;
       }
     });
+    
+    
     // setTabs([...tabs,{ tabLink: `/dashboard/SearchResult?str=${localStorage.getItem("globalSearchKey")}&folder=${folderId}`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
 
   }, [globalSearch, window.location.pathname]);
+
+  useMemo(()=>{
+    if(isAdvanceDocSearchRedux){
+      setTabs([...tabs, { tabLink: `/dashboard/DocumentList`, tabName: 'Search Result', active: true, tabIcon: <ContentPasteSearchIcon /> }]);
+      tabs.map(itm => {
+        itm.active = false;
+      });
+    }
+  },[isAdvanceDocSearchRedux]);
 
   return (
     <>
@@ -464,6 +368,7 @@ export default function SidebarNav() {
                               }
                             });
                             setSearchInputForGlobalSearch("");
+                            setisSearchResultTab(true);
                           }} 
                           className='w-100'>
                             <Input
@@ -520,66 +425,9 @@ export default function SidebarNav() {
                     </Layout>
                   </Box>
 
-                  {/* <FormControl size="small" className='select-border'>
-                    <Select
-                      value={selectedFolder}
-                      onChange={(e) => {
-                        setSearchInputForGlobalSearch("");
-                        setSelectedFolder(String(e.target.value));
-                        return;
-                      }}
-                      displayEmpty
-                      inputProps={{ 'aria-label': 'Without label' }}
-                      className='custom-dropdown'
-                    >
-                      {folders.length > 0 && folders.map((itm) => {
-                        return <MenuItem value={itm.FolderID}>{itm.Folder}</MenuItem>
-                      })}
-                    </Select>
-                  </FormControl> */}
-
                   <div>
-                    <TestForDetails folderList={folders}/>
+                    <AdvanceSearch folderList={folders} handleAdvNav={handleAdvNav} setisSearchResultTab={setisSearchResultTab}/>
                   </div>
-
-                  {/* <div>
-
-                    <ToggleButton
-                      // value="check"
-                      id="basic-button"
-                      aria-controls={open4 ? 'basic-menu' : undefined}
-                      aria-haspopup="true"
-                      aria-expanded={open4 ? 'true' : undefined}
-                      onClick={handleClick4}
-                      size='small'
-                      className='bg-blue'
-                    >
-                      <FolderOpenIcon className='text-blue' />
-                    </ToggleButton>
-
-                    <Menu
-                      id="basic-menu"
-                      anchorEl={anchorEl4}
-                      open={open4}
-                      onClose={handleClose4}
-                      MenuListProps={{
-                        'aria-labelledby': 'basic-button',
-                      }}
-                      className='custom-dropdown'
-                    >
-                      {folders.length > 0 && folders.map((itm) => {
-                        return <MenuItem value={itm.FolderID} onClick={(e)=>{
-                          if(e.target.value){
-                            setSearchInputForGlobalSearch("");
-                            setSelectedFolder(String(e.target.value));
-                          }
-                          handleClose4(e);
-                        }}><ListItemIcon>
-                        <FolderSharedIcon className="font-20 me-1" /></ListItemIcon>{itm.Folder}</MenuItem>
-                      })}
-
-                    </Menu>
-                  </div> */}
 
                 </Box>
 
@@ -600,73 +448,6 @@ export default function SidebarNav() {
                       </Badge>
 
                     </Button>
-
-                    {/* <Menu
-                      id="basic-menu3"
-                      className='custom-dropdown'
-                      anchorEl={anchorEl}
-                      open={opens2}
-                      onClose={handleClose}
-                      MenuListProps={{
-                        'aria-labelledby': 'basic-button3',
-                      }}
-                    >
-                      
-                      <li className="dotification-list">
-                        <Box className="notification-box">
-                          <Box className="notification-box-img">
-                            <img src={user} />
-                          </Box>    
-                          <Box className="notification-content">
-                          <span className='notification-date'>10h ago</span>
-
-                            <h4>Petrick Joy.</h4>
-                            <p>lorem ipsome dolor site amer this is a dummy text world tours.</p>
-                          </Box>
-                        </Box>
-                      </li>
-
-                      <li className="dotification-list">
-                        <Box className="notification-box">
-                          <Box className="notification-box-img">
-                            <img src={user} />
-                          </Box>    
-                          <Box className="notification-content">
-                          <span className='notification-date'>10h ago</span>
-
-                            <h4>Petrick Joy.</h4>
-                            <p>lorem ipsome dolor site amer this is a dummy text world tours.</p>
-                          </Box>
-                        </Box>
-                      </li>
-
-                      <li className="dotification-list">
-                        <Box className="notification-box">
-                          <Box className="notification-box-img">
-                            <img src={user} />
-                          </Box>    
-                          <Box className="notification-content">
-                            <span className='notification-date'>10h ago</span>
-                            <h4>Petrick Joy.</h4>
-                            <p>lorem ipsome dolor site amer this is a dummy text world tours.</p>
-                          </Box>
-                        </Box>
-                      </li>
-
-                      <li className="dotification-list">
-                        <Box className="notification-box">
-                          <Box className="notification-box-img">
-                            <img src={user} />
-                          </Box>    
-                          <Box className="notification-content">
-                          <span className='notification-date'>10h ago</span>
-                            <h4>Petrick Joy.</h4>
-                            <p>lorem ipsome dolor site amer this is a dummy text world tours.</p>
-                          </Box>
-                        </Box>
-                      </li>
-                      
-                    </Menu> */}
 
                   </Box>
 
@@ -730,10 +511,7 @@ export default function SidebarNav() {
 
                 </Box>
               </Box>
-
-
               <Menu>
-                {/* <MenuItem>Contacts</MenuItem> */}
               </Menu>
             </Box>
 
@@ -756,7 +534,7 @@ export default function SidebarNav() {
           <CreateNewModal></CreateNewModal>
 
           <List className='side-navi'>
-
+            {console.log("fsdfkretgsg",tabs)}
             {tabs.map((text, index, arr) => (
               <ListItem className={text.active ? 'active' : ''} key={index} disablePadding sx={{ display: 'block' }}>
                 <ListItemButton
@@ -866,7 +644,7 @@ export default function SidebarNav() {
           <Routes>
             {/* <Route path="/" element={<Login/>}/> */}
             {/* <Route path="/" element={<Client />} /> */}
-            <Route index element={<h1></h1>} />
+            <Route index element={<Dashboard/>} />
             <Route path="/Connections" element={<Client />} />
             <Route path="/clientDetails" element={<ClientDetails />} />
             <Route path="/ContactDetails" element={<ContactDetails />} />

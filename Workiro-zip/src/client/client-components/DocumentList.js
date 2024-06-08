@@ -36,7 +36,7 @@ import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import moment from 'moment';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import CustomBreadCrumbs from '../../components/CustomBreadCrumbs';
 import CustomLoader from '../../components/CustomLoader';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -51,6 +51,12 @@ import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import BootstrapTooltip from '../../utils/BootstrapTooltip';
 import Fileformat from '../../images/files-icon/pdf.png';
 import GetFileType from '../../components/FileType';
+import { Json_ExplorerSearchDoc_Redux } from '../../redux/reducers/api_helper';
+import { useDispatch, useSelector } from "react-redux";
+import DownloadIcon from '@mui/icons-material/Download';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -143,16 +149,41 @@ const MenuProps = {
     },
 };
 
+const agrno = localStorage.getItem("agrno");
+const password = localStorage.getItem("Password");
+const Email = localStorage.getItem("Email");
+const folderId = localStorage.getItem("FolderId");
+
 export default function DocumentList({ clientId }) {
     const location = useLocation();
+    const dispatch = useDispatch();
+
+    const [searchParam, setSearchParam] = useSearchParams();
+    const filter = searchParam.get("filter");
+    const adv = searchParam.get("adv");
+
+    const { sections, folders } = useSelector(state => state.counter);
+
+
+    let documents = [];
+    const advResult = useSelector(state => state.counter.advanceSearchResult.result);
+    const explorerResult = useSelector(state => state.counter.explorerSearchDocRedux.documents);
+
+    documents = Boolean(filter) ? advResult : explorerResult;
+
+    if (documents.length>0 && Object.keys(documents[0]).includes('ErrorLine')) {
+        dispatch(Json_ExplorerSearchDoc_Redux({ ProjectId: folderId, ClientId: clientId, sectionId: "-1" }));
+    }
+
+    let isLoading = true;
+    let explorerLoading = useSelector(state => state.counter.explorerSearchDocRedux.isLoading);
+    isLoading = Boolean(filter) ? false : (documents.length>0 && Object.keys(documents[0]).includes('ErrorLine'))?true: explorerLoading;
+
     const { globalSearchDocs, strGlobal } = location.state ? location.state : { globalSearchDocs: [], strGlobal: "" };
-    const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
-    const [password, setPassword] = useState(localStorage.getItem("Password"));
-    const [Email, setEmail] = useState(localStorage.getItem("Email"));
-    const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
+
     const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
-    const [documents, setDocuments] = useState([]);
+    // const [documents, setDocuments] = useState([]);
     const [groupedOptions, setgroupedOptions] = useState([]);
     const [toggleScreen, setToggleScreen] = useState({ singleCardView: true, multipleCardView: false, tableGridView: false });
     const [filteredDocResult, setFilteredDocResult] = useState([]);
@@ -167,15 +198,15 @@ export default function DocumentList({ clientId }) {
     const [bulkSearch, setBulkSearch] = useState([]);
     const [alignment, setAlignment] = React.useState('left');
     const [isAdvFilter, setIsAdvFilter] = useState(false);
-    const [sections, setSections] = useState([]);
-    const [folders, setFolders] = useState([]);
+    const [sections_test, setSections] = useState([]);
+    const [folders_test, setFolders] = useState([]);
     const [selectedFolder, setSelectedFolder] = useState("");
     const [sortByProperty, setSortByProperty] = useState("");
     const [isGroupBy, setIsGroupBy] = useState(false);
     const [groupByFilterResult, setGroupByFilterResult] = useState({});
     const [selectedGroup, setSelectedGroup] = React.useState("");
     const [suggestionList, setSuggestionList] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading_test, setIsLoading] = useState(true);
 
     const [clientList, setClientList] = useState([]);
     const [selectedClient, setSelectedClient] = useState("");
@@ -238,137 +269,12 @@ export default function DocumentList({ clientId }) {
         }
     }
 
-    function Json_GetFolders() {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
-        }
-        try {
-            Cls.Json_GetFolders(obj, function (sts, data) {
-                if (sts) {
-                    if (data) {
-                        let js = JSON.parse(data);
-                        let tbl = js.Table;
-                        // console.log("Json_GetFolders", tbl);
-                        setFolders(tbl);
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_GetFolders", err);
-        }
-    }
-
-    const Json_GetFolderData = () => {
-        let obj = {
-            ClientId: "", Email: Email, ProjectId: folderId ? folderId : localStorage.getItem("FolderId"), SectionId: "-1", agrno: agrno, password: password
-        };
-        try {
-            Cls.Json_GetFolderData(obj, function (sts, data) {
-                if (sts && data) {
-                    let res = JSON.parse(data);
-                    if (res.Table) {
-                        //setSections(res.Table);
-                        let uniqueSecIDs = {};
-                        const filteredArray = res.Table.filter(item => {
-                            if (!uniqueSecIDs[item.SecID]) {
-                                uniqueSecIDs[item.SecID] = true;
-                                return true;
-                            }
-                            return false;
-                        });
-                        setSections(filteredArray);
-                        console.log("Json_GetFolderData", res);
-                        Json_GetFolders();
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_GetFolderData", err);
-        }
-    }
-
-    const Json_ExplorerSearchDoc = () => {
-        try {
-            let obj = {};
-            obj.ProjectId = folderId;
-            obj.ClientId = clientId;
-            obj.sectionId = "-1";
-            if (globalSearchDocs.length > 0) {
-                let fltDouble = [];
-                globalSearchDocs.map(itm => itm.Client).filter(item => {
-                    if (!fltDouble.includes(item)) {
-                        fltDouble.push(item);
-                    }
-                });
-                setClientList(fltDouble);
-
-                setTimeout(() => {
-                    let docKeys = Object.keys(globalSearchDocs[0]);
-                    // console.log("documentKeys",docKeys);
-                    globalSearchDocs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
-                    globalSearchDocs.map((itm) => itm["Received Date"] = formatDate(itm["Received Date"]));
-                    setDocumentKeys(docKeys);
-                    setDocuments(globalSearchDocs);
-                    // handleDocumentsFilter(globalSearchDocs);
-                    setAdvFilteredResult(globalSearchDocs);
-                    let desc = globalSearchDocs.filter((item) => item.Description !== "");
-                    setgroupedOptions(desc);
-                    setIsLoading(false);
-                }, 1000);
-
-                // return;
-            } else {
-                Cls.Json_ExplorerSearchDoc(obj, function (sts, data) {
-                    if (data === "" || JSON.parse(data)?.Table[0]?.Message) {  // for data loading issue (api response issue)
-                        Json_ExplorerSearchDoc();
-                        return;
-                    }
-                    if (sts && data) {
-                        let json = JSON.parse(data);
-                        if (json?.Table6?.length > 0) {
-                            let docs = json.Table6;
-                            if (docs?.length > 0) {
-                                if (globalSearchDocs.length === 0) {
-                                    let docKeys = Object.keys(docs[0]);
-                                    setDocumentKeys(docKeys);
-                                    docs.map((itm) => itm["Item Date"] = formatDate(itm["Item Date"]));
-                                    docs.map((itm) => itm["Received Date"] = formatDate(itm["Received Date"]));
-                                    setDocuments(docs);
-                                    if (docs[0].Message) {   // for data loading issue (api response issue)
-                                        Json_ExplorerSearchDoc();
-                                        return;
-                                    }
-                                    // handleDocumentsFilter(docs);
-                                    setAdvFilteredResult(docs);
-                                    setIsLoading(false);
-
-                                    let desc = docs.filter((item) => item.Description !== "");
-                                    setgroupedOptions(desc);
-                                }
-                                Json_GetFolderData();
-                            }
-                        } else {
-                            setIsLoading(false);
-                            setDataNotFoundBoolean(true);
-                        }
-                    }
-                })
-            }
-            Json_GetFolderData();
-        } catch (error) {
-            console.log("ExplorerSearchDoc", error)
-        }
-    }
-
     useEffect(() => {
-        setAgrNo(localStorage.getItem("agrno"));
-        setFolderId(localStorage.getItem("FolderId"));
-        setPassword(localStorage.getItem("Password"));
-        setEmail(localStorage.getItem("Email"));
-        Json_ExplorerSearchDoc();
+        if(documents.length===0){
+            dispatch(Json_ExplorerSearchDoc_Redux({ ProjectId: folderId, ClientId: clientId, sectionId: "-1" }));
+        }
     }, []);
+
     const handleSearch = (text) => {
         if (documents.length > 0) {
             let fltDesc = documents.filter(itm => itm.Description !== "");
@@ -382,18 +288,7 @@ export default function DocumentList({ clientId }) {
         }
     }
 
-    function formatDate(inputDate) {
-        const date = new Date(inputDate);
-        const day = date.getDate();
-        const month = date.getMonth() + 1; // January is 0, so add 1 to get the correct month
-        const year = date.getFullYear();
-        const paddedDay = day < 10 ? `0${day}` : day;
-        const paddedMonth = month < 10 ? `0${month}` : month;
-        return `${paddedDay}/${paddedMonth}/${year}`;
-    }
-
     const handleSearchByProperty = (flitData) => {
-        // console.log(searchByPropertyKey, "--------", searchByPropertyInput);
         setFilterCriteria({ ...filterCriteria, [searchByPropertyKey]: [searchByPropertyInput] });
 
         setSearchByPropertyInput("");
@@ -623,7 +518,7 @@ export default function DocumentList({ clientId }) {
 
     return (
         <>
-            {globalSearchDocs.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/DocumentList", tabName: "Documents List" }]} />}
+            {(Boolean(filter) && !Boolean(adv)) && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/DocumentList", tabName: "Documents List" }]} />}
 
             {isLoading ? <CustomLoader /> : <>
 
@@ -701,7 +596,7 @@ export default function DocumentList({ clientId }) {
                                         <div className='pointer d-flex align-items-center custom-datepicker-bordered' id="reportrange">
                                             <i className="fa fa-calendar"></i>
                                             <CalendarMonthIcon className='me-2 text-red' />
-                                            <span className='font-14'>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
+                                            <span className='font-12'>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
                                         </div>
                                         {/* <div
                                 id="reportrange"
@@ -730,123 +625,96 @@ export default function DocumentList({ clientId }) {
                                 <Box className='d-flex'>
 
                                     <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 mb-0'>
-                                        <BootstrapTooltip title="Sections" arrow
-                                            placement="bottom-start"
-                                            slotProps={{
-                                                popper: {
-                                                    modifiers: [
-                                                        {
-                                                            name: 'offset',
-                                                            options: {
-                                                                offset: [0, -10],
-                                                            },
-                                                        },
-                                                    ],
-                                                },
+                                        <span className='custom-tooltip'>Section</span>
+
+                                        <Select
+                                            value={selectedSection}
+                                            onChange={(e) => {
+                                                setSelectedSection(e.target.value);
+                                                if (e.target.value === "Section") {
+                                                    handleFilterDeletion('Section');
+                                                    setSelectedSection("");
+                                                    return;
+                                                } else if (e.target.value !== '') {
+                                                    setFilterCriteria({ ...filterCriteria, Section: [e.target.value] })
+                                                } else {
+                                                    handleFilterDeletion('Section');
+                                                    // let obj = Object.keys(filterCriteria).filter(objKey =>
+                                                    //     objKey !== 'Section').reduce((newObj, key) =>
+                                                    //     {
+                                                    //         newObj[key] = filterCriteria[key];
+                                                    //         return newObj;
+                                                    //     }, {}
+                                                    // );
+                                                    // setFilterCriteria(obj);
+                                                }
                                             }}
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            className='custom-dropdown'
+                                            MenuProps={{ PaperProps: { sx: { maxHeight: '300px !important' } } }}
                                         >
-                                            <Select
-                                                value={selectedSection}
-                                                onChange={(e) => {
-                                                    setSelectedSection(e.target.value);
-                                                    if (e.target.value === "Section") {
-                                                        handleFilterDeletion('Section');
-                                                        setSelectedSection("");
-                                                        return;
-                                                    } else if (e.target.value !== '') {
-                                                        setFilterCriteria({ ...filterCriteria, Section: [e.target.value] })
-                                                    } else {
-                                                        handleFilterDeletion('Section');
-                                                        // let obj = Object.keys(filterCriteria).filter(objKey =>
-                                                        //     objKey !== 'Section').reduce((newObj, key) =>
-                                                        //     {
-                                                        //         newObj[key] = filterCriteria[key];
-                                                        //         return newObj;
-                                                        //     }, {}
-                                                        // );
-                                                        // setFilterCriteria(obj);
-                                                    }
-                                                }}
-                                                displayEmpty
-                                                inputProps={{ 'aria-label': 'Without label' }}
-                                                className='custom-dropdown'
-                                            >
 
-                                                <MenuItem value="" style={{ display: "none" }}>
+                                            <MenuItem value="" style={{ display: "none" }}>
 
-                                                    Sections
-                                                </MenuItem>
-                                                <MenuItem value="Section" >00. Clear Filter</MenuItem>
-                                                {sections.length > 0 && sections.map((itm) => {
-                                                    return <MenuItem value={itm.Sec}>{itm.Sec}</MenuItem>
-                                                })}
+                                                Sections
+                                            </MenuItem>
+                                            <MenuItem value="Section" className='text-danger sembold'><ClearIcon className='me-1' />  Clear Filter</MenuItem>
+                                            {sections.length > 0 && sections.map((itm) => {
+                                                return <MenuItem value={itm.Sec}>{itm.Sec}</MenuItem>
+                                            })}
 
-                                                {/* <MenuItem value={10}>Section 1</MenuItem>
+                                            {/* <MenuItem value={10}>Section 1</MenuItem>
                                     <MenuItem value={20}>Section 2</MenuItem> */}
-                                            </Select>
-                                        </BootstrapTooltip>
+                                        </Select>
                                     </FormControl>
 
                                     <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 mb-0'>
-                                        <BootstrapTooltip title="Folders" arrow
-                                            placement="bottom-start"
-                                            slotProps={{
-                                                popper: {
-                                                    modifiers: [
-                                                        {
-                                                            name: 'offset',
-                                                            options: {
-                                                                offset: [0, -10],
-                                                            },
-                                                        },
-                                                    ],
-                                                },
+                                        <span className='custom-tooltip'>Folder</span>
+
+                                        <Select
+                                            value={selectedFolder}
+                                            onChange={(e) => {
+                                                setSelectedFolder(e.target.value);
+                                                if (e.target.value === "Folder") {
+                                                    handleFilterDeletion("Folder");
+                                                    setSelectedFolder("");
+                                                    return;
+                                                } else if (e.target.value !== '') {
+                                                    setFilterCriteria({ ...filterCriteria, Folder: [e.target.value] });
+                                                } else {
+                                                    handleFilterDeletion('Folder');
+                                                    // let obj = Object.keys(filterCriteria).filter(objKey =>
+                                                    //     objKey !== 'Folder').reduce((newObj, key) =>
+                                                    //     {
+                                                    //         newObj[key] = filterCriteria[key];
+                                                    //         return newObj;
+                                                    //     }, {}
+                                                    // );
+                                                    // setFilterCriteria(obj);
+                                                }
                                             }}
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            className='custom-dropdown'
                                         >
-                                            <Select
-                                                value={selectedFolder}
-                                                onChange={(e) => {
-                                                    setSelectedFolder(e.target.value);
-                                                    if (e.target.value === "Folder") {
-                                                        handleFilterDeletion("Folder");
-                                                        setSelectedFolder("");
-                                                        return;
-                                                    } else if (e.target.value !== '') {
-                                                        setFilterCriteria({ ...filterCriteria, Folder: [e.target.value] });
-                                                    } else {
-                                                        handleFilterDeletion('Folder');
-                                                        // let obj = Object.keys(filterCriteria).filter(objKey =>
-                                                        //     objKey !== 'Folder').reduce((newObj, key) =>
-                                                        //     {
-                                                        //         newObj[key] = filterCriteria[key];
-                                                        //         return newObj;
-                                                        //     }, {}
-                                                        // );
-                                                        // setFilterCriteria(obj);
-                                                    }
-                                                }}
-                                                displayEmpty
-                                                inputProps={{ 'aria-label': 'Without label' }}
-                                                className='custom-dropdown'
-                                            >
-                                                <MenuItem value="" style={{ display: "none" }}>Folders</MenuItem>
+                                            <MenuItem value="" style={{ display: "none" }}>Folders</MenuItem>
 
-                                                <MenuItem value="Folder" className='text-danger ps-1'>
-                                                    <ClearIcon className='font-18 me-1' />
-                                                    Clear Filters</MenuItem>
+                                            <MenuItem value="Folder" className='text-danger sembold ps-1'>
+                                                <ClearIcon className='font-18 me-1' />
+                                                Clear Filters</MenuItem>
 
-                                                {folders.length > 0 && folders.map((itm) => {
-                                                    return <MenuItem value={itm.Folder} className='ps-1'>
-                                                        <FolderSharedIcon className='font-18 me-1' />
-                                                        {itm.Folder}</MenuItem>
-                                                })}
-                                                {/* <MenuItem value="">
+                                            {folders.length > 0 && folders.map((itm) => {
+                                                return <MenuItem value={itm.Folder} className='ps-1'>
+                                                    <FolderSharedIcon className='font-18 me-1' />
+                                                    {itm.Folder}</MenuItem>
+                                            })}
+                                            {/* <MenuItem value="">
                                         Select
                                     </MenuItem>
                                     <MenuItem value={10}>Select 1</MenuItem>
                                     <MenuItem value={20}>Select 2</MenuItem> */}
-                                            </Select>
-                                        </BootstrapTooltip>
+                                        </Select>
                                     </FormControl>
                                 </Box>
 
@@ -882,142 +750,80 @@ export default function DocumentList({ clientId }) {
                                             </Select>
                                         </BootstrapTooltip>
                                     </FormControl>}
-
-
-                                    <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border'>
-                                        <BootstrapTooltip title="Select Reference" arrow
-                                            placement="bottom-start"
-                                            slotProps={{
-                                                popper: {
-                                                    modifiers: [
-                                                        {
-                                                            name: 'offset',
-                                                            options: {
-                                                                offset: [0, -10],
-                                                            },
-                                                        },
-                                                    ],
-                                                },
-                                            }}
-                                        >
-                                            <Select
-                                                value={selectedClient}
-                                                // onChange={handleFilterOnClientSelection}
-                                                displayEmpty
-                                                inputProps={{ 'aria-label': 'Without label' }}
-                                                className='custom-dropdown'
-                                            >
-                                                <MenuItem value="" style={{ display: "none" }}>
-                                                    Document ID
-                                                </MenuItem>
-
-                                                <MenuItem>
-                                                    <input className='form-control' />
-                                                </MenuItem>
-
-                                            </Select>
-                                        </BootstrapTooltip>
-                                    </FormControl>
-
                                 </Box>
 
                                 <Typography variant="Body2" className='font-14 sembold mb-1 text-black ps-2'>
                                     Sort By
                                 </Typography>
 
-
                                 <Box className='d-flex'>
                                     <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0 '>
-                                        <BootstrapTooltip title="Group By" arrow
-                                            placement="bottom-start"
-                                            slotProps={{
-                                                popper: {
-                                                    modifiers: [
-                                                        {
-                                                            name: 'offset',
-                                                            options: {
-                                                                offset: [0, -10],
-                                                            },
-                                                        },
-                                                    ],
-                                                },
+
+                                        <span className='custom-tooltip'>Group By</span>
+
+                                        <Select
+                                            value={selectedGroup}
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            className='custom-dropdown'
+                                            onChange={(e) => {
+                                                if (e.target.value === "Group By") {
+                                                    setSelectedGroup("");
+                                                    return;
+                                                }
+                                                setSelectedGroup(e.target.value);
                                             }}
                                         >
-                                            <Select
-                                                value={selectedGroup}
-                                                displayEmpty
-                                                inputProps={{ 'aria-label': 'Without label' }}
-                                                className='custom-dropdown'
-                                                onChange={(e) => {
-                                                    if (e.target.value === "Group By") {
-                                                        setSelectedGroup("");
-                                                        return;
-                                                    }
-                                                    setSelectedGroup(e.target.value);
-                                                }}
-                                            >
-                                                <MenuItem value="" style={{ display: "none" }}> Group By</MenuItem>
-                                                <MenuItem className='ps-1 text-red' value="Group By">
-                                                    <CloseIcon className='font-18 me-1' />
-                                                    Clear Group by</MenuItem>
-                                                <MenuItem className='ps-1' value="Description">
-                                                    <DescriptionIcon className='font-18 me-1' />
-                                                    Description</MenuItem>
-                                                <MenuItem className='ps-1' value={"CommentBy"}>
-                                                    <InsertCommentIcon className='font-18 me-1' />
-                                                    Comment By</MenuItem>
-                                                <MenuItem className='ps-1' value={"Type"}>
-                                                    <ChecklistIcon className='font-18 me-1' />
-                                                    Type</MenuItem>
-                                                {/* <MenuItem className='ps-1' value={"Comments"}>
+                                            <MenuItem value="" style={{ display: "none" }}> Group By</MenuItem>
+                                            <MenuItem className='ps-1 text-red' value="Group By">
+                                                <CloseIcon className='font-18 me-1' />
+                                                Clear Group by</MenuItem>
+                                            <MenuItem className='ps-1' value="Description">
+                                                <DescriptionIcon className='font-18 me-1' />
+                                                Description</MenuItem>
+                                            <MenuItem className='ps-1' value={"CommentBy"}>
+                                                <InsertCommentIcon className='font-18 me-1' />
+                                                Comment By</MenuItem>
+                                            <MenuItem className='ps-1' value={"Type"}>
+                                                <ChecklistIcon className='font-18 me-1' />
+                                                Type</MenuItem>
+                                            {/* <MenuItem className='ps-1' value={"Comments"}>
                                     <CloseIcon className='font-18 me-1' />
                                         Comments</MenuItem> */}
-                                                {/* <MenuItem value={20}>Comment</MenuItem> */}
-                                            </Select>
-                                        </BootstrapTooltip>
+                                            {/* <MenuItem value={20}>Comment</MenuItem> */}
+                                        </Select>
+
                                     </FormControl>
 
                                     <FormControl sx={{ m: 1, width: '100%' }} size="small" className='select-border mt-0'>
-                                        <BootstrapTooltip title="Sort By" arrow
-                                            placement="bottom-start"
-                                            slotProps={{
-                                                popper: {
-                                                    modifiers: [
-                                                        {
-                                                            name: 'offset',
-                                                            options: {
-                                                                offset: [0, -10],
-                                                            },
-                                                        },
-                                                    ],
-                                                },
-                                            }}
+
+                                        <span className='custom-tooltip'>Sort By</span>
+
+                                        <Select
+                                            value={sortByProperty}
+                                            onChange={(e) => {
+                                                if (e.target.value === "Sort By") {
+                                                    setSortByProperty("")
+                                                    return;
+                                                }
+                                                setSortByProperty(e.target.value)
+                                            }
+                                            }
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                            className='custom-dropdown'
                                         >
-                                            <Select
-                                                value={sortByProperty}
-                                                onChange={(e) => {
-                                                    if (e.target.value === "Sort By") {
-                                                        setSortByProperty("")
-                                                        return;
-                                                    }
-                                                    setSortByProperty(e.target.value)
-                                                }
-                                                }
-                                                displayEmpty
-                                                inputProps={{ 'aria-label': 'Without label' }}
-                                                className='custom-dropdown'
-                                            >
-                                                <MenuItem value="" style={{ display: "none" }}>
-                                                    <SwapVertIcon className='pe-1' /> Sort By
-                                                </MenuItem>
-                                                <MenuItem className='ps-1' value="None" onClick={() => setAdvFilteredResult([])}><WarningIcon className='ps-1' />  Clear Sortby</MenuItem>
-                                                <MenuItem value={"Date"} className='ps-1'>
-                                                    <CalendarMonthIcon className='pe-1' />
-                                                    By Date</MenuItem>
-                                                <MenuItem value={"Description"} className='ps-1'><DescriptionIcon className='pe-1' />
-                                                    By Description</MenuItem>
-                                            </Select>
-                                        </BootstrapTooltip>
+                                            <MenuItem value="" style={{ display: "none" }}>
+                                                <SwapVertIcon className='pe-1' /> Sort By
+                                            </MenuItem>
+
+                                            <MenuItem className='ps-1 text-danger sembold' value="None" onClick={() => setAdvFilteredResult([])}><ClearIcon className='ps-1' />  Clear Sortby</MenuItem>
+                                            <MenuItem value={"Date"} className='ps-1'>
+                                                <CalendarMonthIcon className='pe-1' />
+                                                By Date</MenuItem>
+                                            <MenuItem value={"Description"} className='ps-1'><DescriptionIcon className='pe-1' />
+                                                By Description</MenuItem>
+                                        </Select>
                                     </FormControl>
 
                                     {sortByProperty !== "" && sortByProperty !== "None" && <Checkbox
@@ -1082,7 +888,7 @@ export default function DocumentList({ clientId }) {
                 >
                     <Grid item xs={12} sm={12} md={toggleScreen.multipleCardView ? 12 : 12} lg={toggleScreen.multipleCardView ? 12 : 10}
                         xl={toggleScreen.multipleCardView ? 12 : 8}
-                        className='white-box'>
+                        className='white-box relative'>
                         <Box className={toggleScreen.multipleCardView ? 'd-flex m-auto justify-content-start w-100 align-items-end' : 'd-flex m-auto w-100 align-items-en'}>
                             {isAdvFilter === false && <Layout className=''>
                                 <AutocompleteWrapper className='mb-2'>
@@ -1158,13 +964,11 @@ export default function DocumentList({ clientId }) {
                         </Box>
 
                         <Box className='d-flex flex-wrap justify-content-between'>
-                            <Box className='mt-2'>
+                            <Box className='mb-2 overflowy-auto pb-1'>
                                 <Stack direction="row" spacing={1}>
-                                    {/* <Chip label="Client: patrick" variant="outlined" onDelete={handleDelete} />
-                                        <Chip label="Tell: 65456" variant="outlined" onDelete={handleDelete} /> */}
                                     {Object.keys(filterCriteria).length > 0 && Object.keys(filterCriteria).map((key) => {
                                         if (!["Item Date", "Folder", "Section", "Client"].includes(key)) {
-                                            return <Chip label={`${key}: ${filterCriteria[key][0]}`} variant="outlined" onDelete={() => {
+                                            return <Chip label={`${key === "Description" ? "Document Name" : key === "SenderId" ? "Filled By" : key === "SubSection" ? "Sub Section" : key === "Notes" ? "Has Notes" : key === "Attach" ? "Has Attachments" : key === "Type" ? "Document Type" : key === "Comments" ? "Comment" : key === "CommentBy" && "Comment By"}: ${filterCriteria[key][0]}`} variant="outlined" onDelete={() => {
                                                 handleFilterDeletion(key);
                                             }} />
                                         }
@@ -1174,14 +978,14 @@ export default function DocumentList({ clientId }) {
                             </Box>
                         </Box>
 
-                        <Box className='client-details-scroll' name='client-details-scroll-search'>
+                        <Box className={Boolean(filter) && Boolean(adv) ? 'client-details-scroll client-details-scroll-search-2' : 'client-details-scroll'} name='client-details-scroll-search'>
                             {/* Es component me document ki list show hoti he details nhi, Iska mujhe naam sahi karna he */}
                             {toggleScreen.singleCardView && <DocumentDetails groupByFilterResult={groupByFilterResult} isGroupBy={isGroupBy} documents={documents} advFilteredResult={advFilteredResult} dataNotFoundBoolean={dataNotFoundBoolean} selectedGroup={selectedGroup}></DocumentDetails>}
                             {toggleScreen.multipleCardView &&
                                 <Box className='row'>
                                     {advFilteredResult.length > 0 ? (
                                         advFilteredResult.map((itm) => {
-                                            console.log("file type 1122",itm)
+                                            console.log("file type 1122", itm)
                                             return <>
                                                 <Box className='col-xxl-3 col-xl-4 col-md-6'>
                                                     <Box className="file-uploads">
@@ -1248,6 +1052,37 @@ export default function DocumentList({ clientId }) {
                                     }))}
                                 </Box>
                             }
+
+
+                            <Box className='d-flex justify-content-between flex-wrap align-items-center file-selected-item'>
+                                <Box className='d-flex selected-file align-items-center'>
+                                    <Box className='select-item'>
+                                        <Typography variant="h4" className='font-20'>12</Typography>
+                                    </Box>
+                                    <Typography variant="h4" className='font-18'>Items selected</Typography>
+                                </Box>
+
+                                <Box className='d-flex ms-auto pe-4'>
+                                    <Button className=''>
+                                        Download
+                                        <DownloadIcon />
+                                    </Button>
+                                    <Button className=''>
+                                        Delete
+                                        <DeleteOutlineIcon />
+                                    </Button>
+                                    <Button className=''>
+                                        Move to
+                                        <ArrowForwardIcon />
+                                    </Button>
+                                </Box>
+
+                                <Button className='min-width-auto'>
+                                    <CloseIcon className='text-danger' />
+                                </Button>
+
+                            </Box>
+
                         </Box>
                     </Grid>
                 </Grid>}

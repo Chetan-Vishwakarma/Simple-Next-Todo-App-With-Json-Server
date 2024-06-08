@@ -11,6 +11,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import DnsIcon from '@mui/icons-material/Dns';
 import AppsIcon from '@mui/icons-material/Apps';
 import TableRowsIcon from '@mui/icons-material/TableRows';
+import ClearIcon from '@mui/icons-material/Clear';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import WarningIcon from '@mui/icons-material/Warning';
@@ -20,6 +21,7 @@ import FormControl from '@mui/material/FormControl';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'; // Import Excel icon
 import * as XLSX from 'xlsx';
  import {Workbook} from 'exceljs';
+ import moment from 'moment';
 //  import DataGrid from "devextreme-react/data-grid";
 import DataGrid, {
     Column, FilterRow, Search, SearchPanel, Selection,
@@ -41,7 +43,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import Activitygrid from './Activitygrid';
 import { exportDataGrid } from "devextreme/excel_exporter";
 import saveAs from "file-saver";
-import moment from 'moment';
+import { useSelector, useDispatch } from 'react-redux';
+import { GetCategory_Redux } from '../../redux/reducers/api_helper';
+
 const BootstrapTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} arrow classes={{ popper: className }} />
 ))(({ theme }) => ({
@@ -70,12 +74,13 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     //  getAudit = getAudit.map((Actioned)=>{
     //     return { ...Actioned, ["Actioned Date"]: new Date() };
     // })
-    console.log(getAudit,`ActivityselectedDocument`,selectedDocument);
+    const dispatch = useDispatch();
+    let category = useSelector((state) => state.counter.AllCategory?.Table);
+    let getCateGory = category ? category : [];
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
     const [getUserComment, setgetUserComment] = useState([]);
-    const [getCateGory, setgetCateGory] = useState([]);
     const [FilterActivity, setFilterActivity] = useState([]);
     const [Auditcomments, setAuditcomments] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
@@ -115,27 +120,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
             console.log("Error while calling Json_GetClientCardDetails", err);
           }
     }
-    const Json_GetCategory =()=>{
-        let requestBody = {
-            agrno: agrno,
-            Email: Email,
-            password: password,
-            SectionId: selectedDocument ? selectedDocument.PostItemTypeID : ""
-          };
-          try {
-            cls.Json_GetCategory(requestBody, (sts, data) => {
-              if (sts) {
-                if (data) {
-                  let json = JSON.parse(data);
-                  console.log("Json_GetCategory", json.Table);
-                  setgetCateGory(json.Table);
-                }
-              }
-            });
-          } catch (err) {
-            console.log("Error while calling Json_GetClientCardDetails", err);
-          }
-    }
+    
     const onChangeStandardCate = (event, value) => {
         event.preventDefault();
         if (value) {
@@ -193,7 +178,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
      
     function addToWorkTable() {
        
-        let obj = {  agrno: agrno, Email: Email, password: password,ItemId: selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : "", comment:userAddComment.TextAddComment};
+        let obj = {  agrno: agrno, Email: Email, password: password,ItemId: selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : selectedDocudata?.ItemId, comment:userAddComment.TextAddComment};
         console.log(selectedDocudata["Registration No."],"addToWorkTable111", obj);
         cls.Json_AddToWork(obj, function (status, data) {
           if (status) {
@@ -227,7 +212,7 @@ function Activity({getAudit,selectedDocument,call_Json_GetAudit}) {
     }
         setselectedDocument(selectedDocument);
         Json_GetUserComments();
-        Json_GetCategory();
+        dispatch(GetCategory_Redux(selectedDocument ? selectedDocument.PostItemTypeID : ""));
     }, [getAudit])
 
 
@@ -467,8 +452,8 @@ function handleAscendingSort() {
         // Sort by Actioned Date in ascending order
         const sortedArr = [...getAudit].sort((a, b) => {
             // Convert Actioned Date strings to date objects for comparison
-            const dateA = parseDate(a["Actioned Date"]);
-            const dateB = parseDate(b["Actioned Date"]);
+            const dateA = a["Actioned Date"];
+            const dateB = b["Actioned Date"];
             return dateA - dateB;
         });
         console.log(sortedArr, "Sorted by Date ascending");
@@ -486,7 +471,7 @@ function handleAscendingSort() {
 
         // Set the sorted array to tempdatafilter state variable
         setTempdatafilter(sortedArr);
-    }
+    } 
 }
 
 
@@ -496,8 +481,8 @@ function handleDescendingSort() {
         // Sort by Actioned Date in descending order
         const sortedArr = [...getAudit].sort((a, b) => {
             // Convert Actioned Date strings to date objects for comparison
-            const dateA = parseDate(a["Actioned Date"]);
-            const dateB = parseDate(b["Actioned Date"]);
+            const dateA = a["Actioned Date"];
+            const dateB = b["Actioned Date"];
             return dateB - dateA; // Compare in descending order
         });
         console.log(sortedArr, "Sorted by Date descending");
@@ -568,7 +553,7 @@ const handleRemoveOption = (optionToRemove) => {
   
         data.forEach((item, index) => {
           // Add your logic to populate the worksheet with data from the items
-          worksheet.addRow([item["Actioned Date"], item.Comments, item["ForwardedBy"]]);
+          worksheet.addRow([item["Actioned Date"] ? item["Actioned Date"] : moment(item["Activity Date"]).format("DD/MM/YYYY"), item.Comments, item["ForwardedBy"]]);
         });
        // Set column widths to add space between columns (in pixels)
   worksheet.columns.forEach(column => {
@@ -795,8 +780,9 @@ const handleRemoveOption = (optionToRemove) => {
                                                         // onChange={handleChange}
                                                         value={sortByProperty}
                                                         onChange={(e) => {
-                                                            if (e.target.value === "Sort By") {
-                                                                setSortByProperty("")
+                                                            if (e.target.value === "Clear Sort") {
+                                                                setSortByProperty("");
+                                                                setTempdatafilter(getAudit);
                                                                 return;
                                                             }
                                                             setSortByProperty(e.target.value)
@@ -810,7 +796,7 @@ const handleRemoveOption = (optionToRemove) => {
                                                         <MenuItem value="" style={{ display: "none" }}>
                                                             <SwapVertIcon className='pe-1' /> Sort By
                                                         </MenuItem>
-                                                        <MenuItem className='ps-1' value="None"><WarningIcon className='ps-1' />  Clear Sortby</MenuItem>
+                                                        <MenuItem value="Clear Sort" className='ps-1 text-danger sembold'><ClearIcon className=" me-2" /> Clear Sort</MenuItem>
                                                         <MenuItem value={"Date"} className='ps-1' >
                                                             <CalendarMonthIcon className='pe-1' />
                                                             By Date</MenuItem>
@@ -892,7 +878,8 @@ const handleRemoveOption = (optionToRemove) => {
                                               
                                                 className='custom-dropdown'
                                             >
-                                               <MenuItem value="Section" onClick={() => handleMenuItemClick("Clear Filter")}>Clear Filter</MenuItem>
+                                                
+                                               <MenuItem value="Section" onClick={() => handleMenuItemClick("Clear Filter")} className='text-danger sembold'><ClearIcon className='me-1'/> Clear Filter</MenuItem>
                                                 {UniqueUser && UniqueUser.length > 0 && UniqueUser.map((itm) => {
                                                     return <MenuItem key={itm.ForwardedBy} value={itm.ForwardedBy} onClick={() => handleMenuItemClick(itm.ForwardedBy)}>{itm.ForwardedBy}</MenuItem>
                                                 })}
@@ -941,7 +928,7 @@ const handleRemoveOption = (optionToRemove) => {
                 return getAudit.map((item, index) => (
                     <li key={index}>
                         <Box class="datetime">
-                            <span>{moment(item["Actioned Date"]).format("DD/MM/YYYY HH:mm:ss")}</span>
+                            <span>{moment(item["Actioned Date"] ? item["Actioned Date"] : item["Activity Date"]).format("DD/MM/YYYY HH:mm:ss")}</span>
                             <span>{ }</span>
                         </Box>
                         <Box class="line-dotted">
@@ -1025,7 +1012,7 @@ const handleRemoveOption = (optionToRemove) => {
                     {/*  */}
                     <Button onClick={AddCommenthandleClose}>
                         <span className="material-symbols-outlined text-black">
-                            cancel
+                        Cancel
                         </span>
                     </Button>
                 </Box>
@@ -1072,11 +1059,13 @@ const handleRemoveOption = (optionToRemove) => {
 
                     <DialogActions className='justify-content-between'>
                         <Typography variant="h4" className='font-18 bold text-black mb-0'>
-                            Doc ID: {selectedDocudata && selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : ""}
+                            {console.log(selectedDocudata,"selectedDocudata11")}
+                            Doc ID: {selectedDocudata && selectedDocudata["Registration No."] ? selectedDocudata["Registration No."] : selectedDocudata?.ItemId
+                            }
                         </Typography>
 
                         <Box>
-                            <Button onClick={AddCommenthandleClose} className='btn-red me-2'>Cancle</Button>
+                            <Button onClick={AddCommenthandleClose} className='btn-red me-2'>Cancel</Button>
                             <Button onClick={AddCommenthandleCloseSubmit} className='btn-blue-2' autoFocus>
                                 Submit
                             </Button>

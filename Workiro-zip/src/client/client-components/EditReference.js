@@ -2,10 +2,6 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CommanCLS from "../../services/CommanService";
-import UDFClientcard from "./UDFClientcard";
-import AddClientdetails from "./AddClientdetails";
-import AddClientaddress from "./AddClientaddress";
-import AddClientmaincontact from "./AddClientmaincontact";
 import { ToastContainer, toast } from 'react-toastify';
 import { memo } from "react";
 import Stepper from "@mui/material/Stepper";
@@ -17,7 +13,8 @@ import Typography from "@mui/material/Typography";
 import EditClientdetails from "./EditClientdetails";
 import EditUDFClientcard from "./EditUDFClientcard";
 import EditClientaddress from "./EditClientaddress";
-import { connect } from 'react-redux';
+import { useDispatch } from "react-redux";
+import { fetchSupplierListOrderByFavourite } from "../../redux/reducers/api_helper";
 function EditReference({ companyEditDetails }) {
   console.log(companyEditDetails, "companyEditDetails");
   const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
@@ -33,6 +30,7 @@ function EditReference({ companyEditDetails }) {
   const [dataCompanyHouse, setDataCompanyHouse] = useState([]);
   const [SendPorjectId, setSendPorjectId] = useState(null);
   const [activeStep, setActiveStep] = React.useState(0);
+  const dispatch = useDispatch();
   const [userDetail, setUserDetail] = useState({
     Clientname: companyEditDetails[0]?.OriginatorName,
     Clientid: companyEditDetails[0]?.OriginatorNo,
@@ -62,17 +60,17 @@ function EditReference({ companyEditDetails }) {
     mainAddress: "",
     biliAddress: "",
     regAddress: "",
-    fullAddress: "",
+    fullAddress: companyEditDetails[0]?.Address,
     Bussiness: "",
     Status: "",
     Source: "",
     Manager: "",
     Email: companyEditDetails[0]?.Email,
     folderId: localStorage.getItem("FolderId"),
-    BussId: companyEditDetails[0].BussID,
+    BussId: companyEditDetails[0]?.BussID,
     UserId: -1,
-    SourceId: companyEditDetails[0].SourceId,
-    StatusId: companyEditDetails[0].StatusId,
+    SourceId: companyEditDetails[0]?.SourceId,
+    StatusId: companyEditDetails[0]?.StatusId,
     Title: "",
     FirstName: "",
     LastName: "",
@@ -93,9 +91,9 @@ function EditReference({ companyEditDetails }) {
     mainCountry: "",
     billingsCountry: "",
     ragistersCountry: "",
-    CHNumber: "",
-    InActiveData:false,
-    HideData:false
+    CHNumber:companyEditDetails[0]?.CompanyNo,
+    InActiveData:companyEditDetails[0]?.OrgActive==="Yes" ? false : true,
+    HideData:companyEditDetails[0]?.OrgActive=="HID" ? true : false
   });
   console.log("userDetailuserDetail", userDetail);
   const [originatorNo, setoriginatorNo] = useState("");
@@ -110,7 +108,7 @@ function EditReference({ companyEditDetails }) {
       agrno: agrno,
       intProjectId: folderId,
       password: password,
-      strOrignatorNumber: companyEditDetails[0].OriginatorNo ? companyEditDetails[0].OriginatorNo : "",
+      strOrignatorNumber: companyEditDetails[0]?.OriginatorNo ? companyEditDetails[0]?.OriginatorNo : "",
     };
     try {
       webClientCLS.Json_GetClientCardDetails(obj, (sts, data) => {
@@ -349,6 +347,7 @@ function EditReference({ companyEditDetails }) {
             mainAddress();
             billingAddress();
             ragisterAddress();
+            // dispatch(fetchSupplierListOrderByFavourite(userDetail.folderId));
           }
           else {
             // toast.success("Reference ID Already Exists!");
@@ -426,20 +425,7 @@ function EditReference({ companyEditDetails }) {
       });
     } catch (e) { }
   };
-  const mapStateToProps = (state) => ({
-    userDetail: state.userDetail,
-    dataCompanyHouse: state.dataCompanyHouse,
-  });
-  const mapDispatchToProps = {
-    setUserDetail,
-    setDataCompanyHouse,
-    setSelectedFolderID,
-  };
-  const EditClientdetailsContainer = connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(EditClientdetails);
-
+ 
 
   useEffect(() => {
     setAgrNo(localStorage.getItem("agrno"));

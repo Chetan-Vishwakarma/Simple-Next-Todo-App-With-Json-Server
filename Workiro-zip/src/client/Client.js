@@ -14,12 +14,15 @@ import Button from "@mui/material/Button";
 import { styled } from '@mui/system';
 import PersonIcon from '@mui/icons-material/Person';
 import Fab from '@mui/material/Fab';
+import { ToastContainer, toast } from 'react-toastify';
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CustomLoader from '../components/CustomLoader';
 import SyncIcon from '@mui/icons-material/Sync';
 import Tooltip from '@mui/material/Tooltip';
+import { fetchContactListByFolderRedux, fetchSupplierListOrderByFavourite, getFolders_Redux } from '../redux/reducers/api_helper';
+import { useDispatch, useSelector } from 'react-redux';
 
 const CommonFilters = [
     { key: "Company Name", val: "Company Name" }, { key: "Address 1", val: "Address Line 1" },
@@ -69,37 +72,34 @@ const ClientFilters = [
 function Client() {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const { isLoading, clients, contacts, allFolders  } = useSelector(state=> state.counter.connectionsState);
 
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
     const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
-    //const data = useSelector((state) => state.counter.value);
-    //const dispatch = useDispatch();
-    const [clients, setClients] = useState([]);
-    const [contacts, setContacts] = useState([]);
     const [onlyContacts, setOnlyContacts] = useState(true);
     const [onlyClients, setOnlyClients] = useState(true);
     const [selectedChoice, setSelectedChoice] = useState("All");
     const [isChoice, setIsChoice] = useState(false);
     // Folders state start
-    const [allFolders, setAllFolders] = useState([]);
+    const [allFolders_test, setAllFolders] = useState([]);
     const [isFolder, setIsFolder] = useState(false);
     const [selectedFolder, setSelectedFolder] = useState("Clients");
     const [filteredFoldersList, setFilteredFoldersList] = useState([]);
     // Folders state ends
     // advance filter states start
     const [isAdvFilter, setIsAdvFilter] = useState(false);
-    const [clientKeys, setClientKeys] = useState([]);
-    const [contactKeys, setContactKeys] = useState([]);
     const [advSearchKeyValue, setAdvSearchKeyValue] = useState([]);
     const [filteredContacts, setFilteredContacts] = useState([]);
     const [filteredClients, setFilteredClients] = useState([]);
     const [selectedProperty, setSelectedProperty] = useState("");
     const [selectedPropertyValue, setSelectedPropertyValue] = useState("");
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading_test, setIsLoading] = useState(true);
     const colorArr = ["#e26124", "#20aedb", "#075adb", "#be1de8", "#00983b", "#ed32b3"];
 
 
@@ -150,95 +150,6 @@ function Client() {
     let Cls = new CommanCLS(baseUrl, agrno, Email, password);
     let practiceCls = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
-    const Json_GetFolders = () => {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
-        };
-        try {
-            Cls.Json_GetFolders(obj, (sts, data) => {
-                if (sts) {
-                    if (data) {
-                        let json = JSON.parse(data);
-                        console.log("Json_GetFolders", json);
-                        setAllFolders(json.Table);
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_GetFolders", err);
-        }
-    }
-
-    const Json_GetContactListByFolder = (folderId = folderId) => {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password,
-            intFolderId: folderId
-        };
-        try {
-            Cls.Json_GetContactListByFolder(obj, (sts, data) => {
-                if (sts) {
-                    if (data) {
-                        let json = JSON.parse(data);
-                        console.log("Json_GetContactListByFolder", json);
-                        setContacts(formateDate(json?.Table));  // ye date formate ke liye use kiya he
-                        setContactKeys(Object.keys(json.Table[0]));
-                        setIsLoading(false);
-                        Json_GetFolders();
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_GetContactListByFolder", err);
-        }
-    }
-
-    const Json_GetSupplierListByProject = (folder_id = folderId, favouriteClients = favourites) => {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password,
-            ProjectId: folder_id
-        };
-        try {
-            practiceCls.Json_GetSupplierListByProject(obj, (sts, data) => {
-                if (sts) {
-                    if (data) {
-                        let json = JSON.parse(data);
-                        const clients_data = json?.Table;
-
-                        // sorting functionality start
-                        const fvClient = favouriteClients.map(itm => itm.OriginatorNo);   // getting favourite clients org number
-                        const filterFvClient = [...new Set(fvClient)];  // filtering duplicate favourite client
-                        const dddd = [...clients_data].filter(itm => itm["Company Name"] !== '').sort((a, b) => a["Company Name"].localeCompare(b["Company Name"]));
-                        let dtaa = [...dddd].sort((a, b) => {
-                            let cpm = 0;
-                            if (filterFvClient.includes(a.OriginatorNo)) {
-                                cpm = -1;
-                            } else {
-                                cpm = 1;
-                            }
-                            return cpm;
-                        });
-                        // sorting functionality completed
-
-                        console.log("Json_GetSupplierListByProject", json);
-                        // setClients(json?.Table);  // old code 
-                        setClients(dtaa);
-                        setClientKeys(Object.keys(json.Table[0]));
-                        setIsLoading(false);
-                        Json_GetContactListByFolder(folder_id);
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_GetSupplierListByProject", err);
-        }
-    }
-
     function startFormattingDate(dt) {
         const timestamp = parseInt(/\d+/.exec(dt));
         const date = new Date(timestamp);
@@ -264,34 +175,16 @@ function Client() {
             setLoadMore((preValue) => preValue + 20);
         }
     }
-    const Json_GetToFavourites = () => {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
-        };
-        try {
-            Cls.Json_GetToFavourites(obj, (sts, data) => {
-                if (sts) {
-                    if (data) {
-                        let json = JSON.parse(data);
-                        Json_GetSupplierListByProject(folderId, json.Table);
-                        setFavourites(json.Table);
-                        console.log("Json_GetToFavourites", json.Table);
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_GetToFavourites", err);
-        }
-    }
+    
     useEffect(() => {
         setAgrNo(localStorage.getItem("agrno"));
         setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
-        // Json_GetSupplierListByProject();
-        Json_GetToFavourites();
+        
+        dispatch(fetchSupplierListOrderByFavourite());
+        dispatch(fetchContactListByFolderRedux());
+        dispatch(getFolders_Redux());
         window.addEventListener('scroll', eventHandler)
     }, []);
     const basedOnClientContactAndAll = (target) => {
@@ -311,16 +204,18 @@ function Client() {
     let handleFolderSelection = (folderID, folderName) => {
         setSelectedFolder(folderName);
         setIsFolder(false);
-        Json_GetSupplierListByProject(folderID);
-        Json_GetContactListByFolder(folderID);
+        dispatch(fetchSupplierListOrderByFavourite(folderID));
+        dispatch(fetchContactListByFolderRedux(folderID));
     }
     const handleSearch = (value) => {
+        if (value !== "") setIsSearch(true);
         setSearchInput(value);
         // for clients filter
         let filteredClientData = clients.filter((item) => {
-            return item["Company Name"] !== "" && item["Company Name"].toLowerCase().includes(searchInput.toLowerCase());
+            return item["Company Name"] !== "" && item["Company Name"].toLowerCase().includes(value.toLowerCase());
         });
         if (value === "") {
+            setIsSearch(false);
             setClientsForSearchBoxNotFound(false);
             setFilteredClientsForSearchBox([]);  // when you will face some issue then make an folderId state and pass folderId parameter in this function
         }
@@ -333,7 +228,7 @@ function Client() {
         }
         // for contacts filter
         let filteredContactData = contacts.filter((item) => {
-            return (item["First Name"] !== "" || item["Last Name"]) && `${item["First Name"]} ${item["Last Name"]}`.toLowerCase().includes(searchInput.toLowerCase());
+            return (item["First Name"] !== "" || item["Last Name"]) && `${item["First Name"]} ${item["Last Name"]}`.toLowerCase().includes(value.toLowerCase());
         });
         if (value === "") {
             setContactsForSearchBoxNotFound(false);
@@ -636,7 +531,8 @@ function Client() {
         setIsSearch(false);
     }
     const handleContactNavigattion = (originator_no, contact_no) => {
-        navigate('/dashboard/ContactDetails', {
+        // navigate(`/dashboard/ContactDetails?originatorNo=${originator_no}&contactNo=${contact_no}`);
+        navigate(`/dashboard/ContactDetails?originatorNo=${originator_no}&contactNo=${contact_no}`, {
             state: {
                 agrno: agrno,
                 Email: Email,
@@ -759,21 +655,31 @@ function Client() {
     };
     const SyncFunctionData = () => {
         console.log('SyncFunctionData');
-        let obj = {};
-        obj.agrno = agrno;
-        obj.Email = Email;
-        obj.password = password;
-
-        try {
-            Cls.TeamSolution(obj, function (sts, data) {
-                if (sts && data) {
-                    console.log({ status: true, messages: "Success", res: data });
-
+        const baseUrl = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
+        let Cls3 = new CommanCLS(baseUrl, agrno, Email, password);
+        Cls3.ConfirmMessage("Would you like to manually initiate Teams Sync?", function (res) {
+            if (res) {
+              
+                let obj = {};
+                obj.agrno = agrno;
+                obj.Email = Email;
+                obj.password = password;
+        
+                try {
+                    console.log(obj,"objectdata");
+                    Cls.TeamSolution(obj, function (sts, data) {
+                        if (sts && data) {
+                            console.log({ status: true, messages: "Success", res: data });
+                            toast.success("Teams sync initiated and is runnning in the background. Clients imported will automatically be shown on Micrsoft Teams.");
+                        }
+                    });
+                } catch (error) {
+                    console.log({ status: false, messages: "Faild Please Try again" });
                 }
-            });
-        } catch (error) {
-            console.log({ status: false, messages: "Faild Please Try again" });
-        }
+            }
+
+        });
+        
     }
 
 
@@ -796,7 +702,9 @@ function Client() {
                                             <span className="material-symbols-outlined search-icon">search</span>
 
                                             <Input
-                                                onClick={(e) => handleDialogsOpen(e, "Search")}
+                                                onClick={(e) => {
+                                                    if (e.target.value!=="") handleDialogsOpen(e, "Search");
+                                                }}
                                                 onChange={(e) => handleSearch(e.target.value)}
                                                 placeholder='Search'
                                                 className='ps-0' />
@@ -1121,8 +1029,6 @@ function Client() {
                             isAdvFilter={isAdvFilter}
                             selectedProperty={selectedProperty}
                             setSelectedProperty={setSelectedProperty}
-                            clientKeys={clientKeys}
-                            contactKeys={contactKeys}
                             selectedPropertyValue={selectedPropertyValue}
                             setSelectedPropertyValue={setSelectedPropertyValue}
                             advSearchKeyValue={advSearchKeyValue}

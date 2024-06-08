@@ -1,10 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Radio, Checkbox, TextField, Autocomplete, ToggleButton, ToggleButtonGroup, FormControl, Select, InputLabel,Badge } from '@mui/material';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Box, Button, Typography, Menu, MenuItem, Dialog, DialogContent, DialogContentText, ListItemIcon, Checkbox, ToggleButton, ToggleButtonGroup, FormControl, Select } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import user from "../images/user.jpg";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import ScheduleIcon from '@mui/icons-material/Schedule';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import CommanCLS from '../services/CommanService';
 import TaskDetailModal from './TaskDetailModal';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -14,10 +11,8 @@ import UpgradeIcon from '@mui/icons-material/Upgrade';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CustomLoader from './CustomLoader';
-import * as XLSX from 'xlsx';
 import { Workbook } from 'exceljs';
 import saveAs from "file-saver";
-// import { data } from 'jquery';
 import MergeIcon from '@mui/icons-material/Merge';
 import AttachEmailIcon from '@mui/icons-material/AttachEmail';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -31,104 +26,81 @@ import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
 import PortalDetails from './PortalDetails';
 import DataNotFound from './DataNotFound';
 import { styled } from '@mui/system';
-import { useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import ClearIcon from '@mui/icons-material/Clear';
 import DvrIcon from '@mui/icons-material/Dvr';
 import LanguageIcon from '@mui/icons-material/Language';
-import WatchLaterIcon from '@mui/icons-material/WatchLater';
-import CustomBreadCrumbs from './CustomBreadCrumbs';
 import SortIcon from '@mui/icons-material/Sort';
 import PersonIcon from '@mui/icons-material/Person';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
 import SubjectIcon from '@mui/icons-material/Subject';
 import { toast } from 'react-toastify';
-import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
-import PeopleIcon from '@mui/icons-material/People';
-import ShareIcon from '@mui/icons-material/Share';
 import FolderSharedIcon from '@mui/icons-material/FolderShared';
-import CreateNewModalTask from './CreateNewModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { setMyTasks } from '../redux/reducers/counterSlice';
-import ReportProblemIcon from '@mui/icons-material/ReportProblem';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { updateReduxDataSonam } from '../redux/reducers/counterSlice';
-import InsertLinkIcon from '@mui/icons-material/InsertLink';
+import { setAllTaskFromRedux, setAllTaskFromReduxOrderWise } from '../redux/reducers/counterSlice';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { fetchAllTasksRedux, updateTaskFieldFromRedux } from '../redux/reducers/api_helper';
+import TaskCard from '../utils/TaskCard';
+import CustomBreadCrumbs from './CustomBreadCrumbs';
+import { AutocompleteRoot,Option,Listbox,Input,AutocompleteWrapper,Layout  } from '../utils/myTaskUtils';
 
+
+const BootstrapTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+    [`& .${tooltipClasses.arrow}`]: {
+        // color: theme.palette.common.black,
+    },
+    [`& .${tooltipClasses.tooltip}`]: {
+        // backgroundColor: theme.palette.common.black,
+    },
+}));
 
 const statusIconList = [<DoNotDisturbAltIcon color='secondary' className='me-1 font-20' />, <PublishedWithChangesIcon color='primary' className='me-1 font-20' />, <HourglassBottomIcon color='primary' className='me-1 font-20' />, <CheckCircleOutlineIcon color='success' className='me-1 font-20' />];
-let attatmentdata = [];
-let exportTaskData = [];
-let filterExportData = [];
+
 function TodoList() {
-    const location = useLocation();
-    const reduxData = useSelector((data) => data.counter.myTasks);
-    const reduxDataSonam = useSelector((state) => state.counter.reduxData);
-    console.log(reduxDataSonam, "reduxdatasonam");
-    console.log(reduxData, "datatasklist");
+    const allTask = useSelector((state) => state.counter.allTask);
+    const actualData = useSelector((state) => state.counter.actualData);
+    const folders = useSelector((state) => state.counter.folders);
+    const [searchParam,setSearchParam] = useSearchParams();
+    const filter = searchParam.get("filter");
     const dispatch = useDispatch();
-    let dddd = location.state !== null ? location.state : { globalSearchTask: [] };
-    const { globalSearchTask, strGlobal } = dddd;
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
-    const [ExporttoExcel, setExporttoExcel] = React.useState([]);
-    const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
-    const [userId, setUserId] = useState(localStorage.getItem("UserId"));
     const baseUrlPractice = "https://practicetest.docusoftweb.com/PracticeServices.asmx/";
 
     let Cls = new CommanCLS(baseUrlPractice, agrno, Email, password);
     const baseUrlPortal = "https://portal.docusoftweb.com/clientservices.asmx/";
     let ClsPortal = new CommanCLS(baseUrlPortal, agrno, Email, password);
-    //let Clsp = new CommanCLS(baseUrlPractice, agrno, Email, password);
 
     const baseUrl = "https://docusms.uk/dsdesktopwebservice.asmx/";
-
     let ClsSms = new CommanCLS(baseUrl, agrno, Email, password);
 
     const [anchorElDown, setAnchorElDown] = useState(null);
-    const [allTask, setAllTask] = useState([...reduxData]);
-    const [actualData, setActualData] = useState([...reduxData]);
     const [selectedTask, setSelectedTask] = useState({});
-
-    const [anchorEl, setAnchorEl] = React.useState(null);
     const [attachmentFileTodo, setAttachmentFileTodo] = useState([]);
     const [loadMore, setLoadMore] = useState(20);
-
-    const [folders, setFolders] = useState([]);
     const [selectedFolder, setSelectedFolder] = useState("Folder");
     const [selectedStatus, setSelectedStatus] = useState("Status");
     const [selectedType, setSelectedType] = useState("Source");
-    const [taskFilter, setTaskFilter] = useState({});
-
+    const [taskFilter, setTaskFilter] = useState({"mstatus": ["Not Started", "On Hold", "In Progress"]});
     const [selectedSortBy, setSelectedSortBy] = useState("Sort By");
     const [selectedGroupBy, setSelectedGroupBy] = useState("Group By");
-
     const [dataInGroup, setDataInGroup] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [isSearch, setIsSearch] = useState(false);
-
     const [suggestionList, setSuggestionList] = useState([]);
-
     const [searchInput, setSearchInput] = useState("");
-
-
+    const [isDateShow, setIsDateShow] = useState(false);
 
     // for date datepicker
     const [state, setState] = useState({
-        start: moment().subtract(29, 'days'),
+        start: moment({ year: 1990, month: 0, day: 1 }),
         end: moment(),
     });
     const { start, end } = state;
 
-
-    const open = Boolean(anchorEl);
-    const handleClick = (event) => {
-        // setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
     const handleMenuOpen = (event) => {
         setAnchorElDown(event.currentTarget);
     };
@@ -136,140 +108,22 @@ function TodoList() {
     const handleMenuClose = () => {
         setAnchorElDown(null);
     };
-    function Json_GetFolders() {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
-        }
-        try {
-            Cls.Json_GetFolders(obj, function (sts, data) {
-                if (sts) {
-                    if (data) {
-                        let js = JSON.parse(data);
-                        let tbl = js.Table;
-                        // console.log("Json_GetFolders", tbl);
-                        setFolders(tbl);
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_GetFolders", err);
-        }
-    }
-    console.log("fdlkgjgljroirreotudfn", globalSearchTask.map(itm => itm.mstatus));
-    const Json_CRM_GetOutlookTask = () => {
-        if (globalSearchTask.length > 0) {
-            console.log("globalSearchTask", globalSearchTask);
-            const formattedTasks = globalSearchTask.map((task) => {
-                let timestamp;
-                if (task.EndDateTime) {
-                    timestamp = parseInt(task.EndDateTime.slice(6, -2));
-                }
-
-                const date = new Date(timestamp);
-
-                return { ...task, EndDateTime: date };
-            });
-
-            let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
-
-            let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
-                let timestamp;
-                if (task.CreationDate) {
-                    timestamp = parseInt(task.CreationDate.slice(6, -2));
-                }
-
-                const date = new Date(timestamp);
-
-                return { ...task, CreationDate: date };
-            }).sort((a, b) => b.CreationDate - a.CreationDate);
-
-            // dispatch(setMyTasks([...hasCreationDate]));
-            setActualData([...hasCreationDate]);
-            setAllTask([...hasCreationDate]);
-
-            setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] });
-            // setTaskFilter({...taskFilter, "EndDateTime": [start._d, end._d]});  // for initialization of filter
-            Json_GetFolders();
-            setIsApi(true);
-            setIsLoading(false);
-            return;
-        }
-        try {
-            Cls.Json_CRM_GetOutlookTask_ForTask((sts, data) => {
-                if (sts) {
-                    if (data) {
-                        let json = JSON.parse(data);
-                        console.log("Json_CRM_GetOutlookTask111", json);
-                        let result = json.Table.filter((el) => el.Source === "CRM" || el.Source === "Portal");
-                        console.log("resultoutlook", result);
-                        if (result && result.length > 0) {
-                            setExporttoExcel(result);
-                            exportTaskData = [...result];
-
-                        }
-                        const formattedTasks = result.map((task) => {
-                            let timestamp;
-                            if (task.EndDateTime) {
-                                timestamp = parseInt(task.EndDateTime.slice(6, -2));
-                            }
-
-                            const date = new Date(timestamp);
-
-                            return { ...task, EndDateTime: date };
-                        });
-
-                        // let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId) && item.mstatus !== "Completed");
-                        let myTasks = formattedTasks.filter((item) => item.AssignedToID.split(",").includes(userId));
-
-                        let hasCreationDate = myTasks.filter((item) => item.CreationDate !== null).map((task) => {
-                            let timestamp;
-                            if (task.CreationDate) {
-                                timestamp = parseInt(task.CreationDate.slice(6, -2));
-                            }
-
-                            const date = new Date(timestamp);
-
-                            return { ...task, CreationDate: date };
-                        }).sort((a, b) => b.CreationDate - a.CreationDate);
-
-                        hasCreationDate.filter(itm => {
-                            console.log(`sdfklrioire ${itm.mstatus}`);
-                        })
-
-                        dispatch(setMyTasks([...hasCreationDate]));
-                        // setActualData([...hasCreationDate]);
-                        // setAllTask([...hasCreationDate]);
-
-                        setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] });  // for initialization of filter
-                        setIsLoading(false);
-                        Json_GetFolders();
-                    }
-                }
-            });
-        } catch (err) {
-            console.log("Error while calling Json_CRM_GetOutlookTask", err);
-        }
-    }
 
     const [isApi, setIsApi] = useState(false);
 
-
-    const eventHandler = (e) => {
-        console.log("Load more data2", e);
-        if (window.innerHeight + e.target.documentElement.scrollTop + 1 >= e.target.documentElement.scrollHeight) {
-            // Check if there's more data to load before updating loadMore
-
-            setLoadMore((prevLoadMore) => prevLoadMore + 50);
+    useEffect(()=>{
+        if(!Boolean(filter)){
+            dispatch(fetchAllTasksRedux("Todo"));
         }
-    }
-
-    const loaderRef = useRef(null);
-
-
+    },[filter]);
 
     useEffect(() => {
+
+        if(actualData.length===0 || allTask.length===0){
+            dispatch(fetchAllTasksRedux("Todo"));
+        }
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });  //This is for scroll to top when come to this component
 
         const handleScroll = () => {
             if (
@@ -289,72 +143,26 @@ function TodoList() {
 
     }, []);
 
-
-
-    useEffect(() => {
-        Json_CRM_GetOutlookTask();
-    }, [isApi])
-
-
-    function DownLoadAttachment(Path) {
-        let OBJ = {};
-        OBJ.agrno = agrno;
-        OBJ.Email = Email;
-        OBJ.password = password;
-        OBJ.path = Path;
-        Cls.CallNewService('GetBase64FromFilePath', function (status, Data) {
-            if (status) {
-                var jsonObj = JSON.parse(Data);
-                if (jsonObj.Status === "Success") {
-                    var dencodedData = window.atob(Path);
-                    var fileName = dencodedData;
-                    var Typest = fileName.lastIndexOf("\\");
-                    fileName = fileName.slice(Typest + 1);
-                    // console.log('FileName', fileName);
-                    // console.log("jsonObj.Status", jsonObj.Message);
-                    var a = document.createElement("a"); //Create <a>
-                    a.href = "data:" + FileType(fileName) + ";base64," + jsonObj.Message; //Image Base64 Goes here
-                    a.download = fileName; //File name Here
-                    a.click(); //Downloaded file
-
-                }
-
-            }
-        });
-    }
-
-    function FileType(fileName) {
-        // for (var i = 0; i < fileName.length; i++) {
-        let Typest = fileName.lastIndexOf(".");
-        var Type = fileName.slice(Typest + 1);
-        var type = Type.toUpperCase();
-        return type;
-    }
-
     const [userList, setUserList] = React.useState([]);
 
     function Json_GetForwardUserList() {
         try {
 
             let o = {};
-            o.ProjectId = localStorage.getItem("FolderId");
-            o.SectionId = "-1";
-            ClsSms.Json_GetForwardUserList(o, function (sts, data) {
+            o.agrno = agrno;
+            o.Email = Email;
+            o.Password = password;
+
+            ClsSms.GetInternalUserList(o, function (sts, data) {
                 if (sts) {
                     if (data) {
                         let js = JSON.parse(data);
-                        let dt = js.Table;
-                        console.log("Json_GetForwardUserList111", dt)
-                        if (dt.length > 0) {
-                            let result = dt.filter((el) => {
-                                return el.CGroup !== "Yes";
-                            });
-
-                            setUserList(result);
-
+                        let { Status, Message } = js;
+                        if (Status === "Success") {
+                            let tbl = Message.Table;
+                            setUserList(tbl);
                         }
                     }
-
                 }
             });
         } catch (error) {
@@ -365,45 +173,14 @@ function TodoList() {
     useEffect(() => {
         Json_GetForwardUserList();
         setAgrNo(localStorage.getItem("agrno"));
-        setFolderId(localStorage.getItem("FolderId"));
         setPassword(localStorage.getItem("Password"));
         setEmail(localStorage.getItem("Email"));
-        Json_CRM_GetOutlookTask();
-
     }, []);
-
-    function startFormattingDate(dt) {
-        //const timestamp = parseInt(/\d+/.exec(dt));
-        const date = new Date(dt);
-        const formattedDate = date.toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-        });
-
-        return formattedDate === "Invalid Date" ? " " : formattedDate;
-    }
 
     // modal
     const [openModal, setOpen] = React.useState(false);
 
-    const handleClickOpen = (task = selectedTask) => {
-        setSelectedTask(task);
-
-        setOpen(true);
-
-    };
-
-    const [age, setAge] = React.useState('');
-
-    const handleChange = (event) => {
-        setAge(event.target.value);
-    };
-
     useEffect(() => {
-        actualData.filter(itm => {
-            console.log(`sdfklrioire ${itm.mstatus}`);
-        })
         let fltData = actualData.filter(function (obj) {
             return Object.keys(taskFilter).every(function (key) {
                 if (taskFilter[key][0].length > 0 || typeof taskFilter[key][0] === "object") {
@@ -420,11 +197,6 @@ function TodoList() {
                 }
             });
         });
-
-        console.log("fltData2222", fltData)
-
-        setAllTask([...fltData]);
-        filterExportData = [...fltData];
         if (Object.keys(dataInGroup).length > 0) {
 
             let gData = groupByProperty(fltData, selectedGroupBy);
@@ -432,7 +204,8 @@ function TodoList() {
             setDataInGroup(gData);
         }
 
-    }, [taskFilter]);
+    }, []);
+// }, [taskFilter]);
 
     function handleFilterDeletion(target) {
         let obj = Object.keys(taskFilter).filter(objKey =>
@@ -442,10 +215,18 @@ function TodoList() {
             }, {}
             );
         setTaskFilter(obj);
+        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: obj }));
     }
     const handleCallback = (start, end) => {
-        setTaskFilter({ ...taskFilter, "EndDateTime": [start._d, end._d] });
+        if (start._i === "Clear") {
+            setIsDateShow(false);
+            handleFilterDeletion("CreationDate");
+            return;
+        }
+        setTaskFilter({ ...taskFilter, "CreationDate": [start._d, end._d] });
+        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, "CreationDate": [start._d, end._d] } }));
         setState({ start, end });
+        setIsDateShow(true);
     };
 
     const label =
@@ -462,33 +243,39 @@ function TodoList() {
         switch (selectedSortBy) {
             case "EndDateTime":
                 let sotEndDate = [...allTask].sort((a, b) => b.EndDateTime - a.EndDateTime);
-                setAllTask(sotEndDate);
+                // setAllTask(sotEndDate);
+                dispatch(setAllTaskFromReduxOrderWise(sotEndDate));
                 isGroupDataExist(sotEndDate);
                 return;
             case "CreationDate":
                 let sortStartDate = [...allTask].sort((a, b) => b.CreationDate - a.CreationDate);
-                setAllTask(sortStartDate);
+                // setAllTask(sortStartDate);
+                dispatch(setAllTaskFromReduxOrderWise(sortStartDate));
                 isGroupDataExist(sortStartDate);
                 return;
             case "Subject":
                 let sortSubject = [...allTask].sort((a, b) => b.Subject.localeCompare(a.Subject));
-                setAllTask(sortSubject);
+                // setAllTask(sortSubject);
+                dispatch(setAllTaskFromReduxOrderWise(sortSubject));
                 isGroupDataExist(sortSubject);
                 return;
             case "Client":
                 let fltData = [...allTask].filter(itm => itm.Client !== null);
                 let sortClient = [...fltData].sort((a, b) => b.Client.localeCompare(a.Client));
-                setAllTask(sortClient);
+                // setAllTask(sortClient);
+                dispatch(setAllTaskFromReduxOrderWise(sortClient));
                 isGroupDataExist(sortClient);
                 return;
             case "Priority":
                 let sortPriority = [...allTask].sort((a, b) => b.Priority - a.Priority);
-                setAllTask(sortPriority);
+                // setAllTask(sortPriority);
+                dispatch(setAllTaskFromReduxOrderWise(sortPriority));
                 isGroupDataExist(sortPriority);
                 return;
             case "Section":
                 let sortSection = [...allTask].sort((a, b) => b.Section.split(" ")[1] - a.Section.split(" ")[1]);
-                setAllTask(sortSection);
+                // setAllTask(sortSection);
+                dispatch(setAllTaskFromReduxOrderWise(sortSection));
                 isGroupDataExist(sortSection);
                 return;
             default:
@@ -500,33 +287,39 @@ function TodoList() {
         switch (selectedSortBy) {
             case "EndDateTime":
                 let sotEndDate = [...allTask].sort((a, b) => a.EndDateTime - b.EndDateTime);
-                setAllTask(sotEndDate);
+                // setAllTask(sotEndDate);
+                dispatch(setAllTaskFromReduxOrderWise(sotEndDate));
                 isGroupDataExist(sotEndDate);
                 return;
             case "CreationDate":
                 let sortStartDate = [...allTask].sort((a, b) => a.CreationDate - b.CreationDate);
-                setAllTask(sortStartDate);
+                // setAllTask(sortStartDate);
+                dispatch(setAllTaskFromReduxOrderWise(sortStartDate));
                 isGroupDataExist(sortStartDate);
                 return;
             case "Subject":
                 let sortSubject = [...allTask].sort((a, b) => a.Subject.localeCompare(b.Subject));
-                setAllTask(sortSubject);
+                // setAllTask(sortSubject);
+                dispatch(setAllTaskFromReduxOrderWise(sortSubject));
                 isGroupDataExist(sortSubject);
                 return;
             case "Client":
                 let fltData = [...allTask].filter(itm => itm.Client !== null);
                 let sortClient = [...fltData].sort((a, b) => a.Client.localeCompare(b.Client));
-                setAllTask(sortClient);
+                // setAllTask(sortClient);
+                dispatch(setAllTaskFromReduxOrderWise(sortClient));
                 isGroupDataExist(sortClient);
                 return;
             case "Priority":
                 let sortPriority = [...allTask].sort((a, b) => a.Priority - b.Priority);
-                setAllTask(sortPriority);
+                // setAllTask(sortPriority);
+                dispatch(setAllTaskFromReduxOrderWise(sortPriority));
                 isGroupDataExist(sortPriority);
                 return;
             case "Section":
                 let sortSection = [...allTask].sort((a, b) => a.Section.split(" ")[1] - b.Section.split(" ")[1]);
-                setAllTask(sortSection);
+                // setAllTask(sortSection);
+                dispatch(setAllTaskFromReduxOrderWise(sortSection));
                 isGroupDataExist(sortSection);
                 return;
             default:
@@ -591,221 +384,17 @@ function TodoList() {
     const handleClose4 = () => {
         setAnchorEl4(null);
     };
-    //  function Json_Get_CRM_SavedTask_ByTaskId(taskid) {
-    //     // setAttachmentFile([]);
-    //     let obj = {};
-    //     obj.TaskId = taskid;
-    //      Cls.Json_Get_CRM_SavedTask_ByTaskId(obj, function (status, data) {
-    //         if (status && data) {
-    //             let json = JSON.parse(data);
-    //             console.log("Json_Get_CRM_SavedTask_ByTaskId", json);
 
-    //             let table6 = json.T6;
-    //             if (table6.length > 0) {
-    //                 attatmentdata.push(table6);
-    //                 setAttachmentFile(table6);
-
-    //             }
-    //         }
-    //     });
-    // }
-    // function addToWorkTable(Itid, e) {
-    //     console.log(e, "addToWorkTable", Itid);
-    //     let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has initiated a task-${e.Subject} . Task ID : ${e.ID}` };
-    //     console.log("addToWorkTable111", obj);
-    //     ClsSms.Json_AddToWork(obj, function (status, data) {
-    //         if (status) {
-    //             if (data) {
-    //                 //let json = JSON.parse(data);
-    //                 console.log("getitemid", data);
-    //             }
-    //         }
-    //     });
-    // }
-    function addToWorkTable(Itid, e) {
-        console.log(e, "addToWorkTable", Itid);
-        let obj = { agrno: agrno, Email: Email, password: password, ItemId: Itid, comment: `${e["Forwarded By"]} has completed  a task-${e.Subject} . Task ID : ${e.ID}` };
-        console.log("addToWorkTable111", obj);
-        ClsSms.Json_AddToWork(obj, function (status, data) {
-            if (status) {
-                if (data) {
-                    //let json = JSON.parse(data);
-                    console.log("getitemid", data);
-                }
-            }
-        });
-    }
-    const GetMessageAttachments_Json = (mgsId, e) => {
-        let o = {
-            accid: agrno,
-            email: Email,
-            password: password,
-            messageId: mgsId,
-        };
-
-        ClsPortal.GetMessageAttachments_Json(o, function (sts, data) {
-
-            if (sts && data) {
-                let arrayOfObjects = JSON.parse(data);
-                console.log("GetMessageAttachments_Json11", arrayOfObjects);
-                if (arrayOfObjects && arrayOfObjects.length > 0) {
-                    setAttachmentFileTodo(arrayOfObjects);
-                    if (e.Source === "Portal") {
-                        arrayOfObjects.forEach((item) => {
-                            if (item.ItemID) {
-                                addToWorkTable(item.ItemID, e);
-                            }
-
-                        });
-                    }
-
-                }
-            }
-        });
-    }
-    const MarkComplete = (e) => {
-
-        console.log(attatmentdata, "attatmentdataattatmentdata", e);
-
-        Cls.ConfirmMessage("Are you sure you want to complete task", function (res) {
-            if (res) {
-
-                Json_UpdateTaskField("Status", "Completed", e);
-
-                try {
-                    let obj = {};
-                    obj.TaskId = e.ID;
-                    Cls.Json_Get_CRM_SavedTask_ByTaskId(obj, function (status, data) {
-                        if (status && data) {
-                            let json = JSON.parse(data);
-                            console.log("Json_Get_CRM_SavedTask_ByTaskId", json);
-
-                            let table6 = json.T6;
-
-                            if (table6 && table6.length > 0) {
-                                table6.forEach((item) => {
-                                    addToWorkTable(item.ItemId, e);
-                                });
-                            } else {
-
-                            }
-
-                        }
-                    });
-                } catch (e) { }
-                try {
-                    if (e.Source === "Portal") {
-                        GetMessageAttachments_Json(e.PubMessageId, e);
-                    }
-                } catch (e) { }
-            }
-        })
-    }
-    function Json_UpdateTaskField(FieldName, FieldValue, e) {
-        // Json_Get_CRM_SavedTask_ByTaskId(e.ID);
-        let o = {
-            agrno: agrno,
-            strEmail: Email,
-            password: password,
-            TaskId: e.ID,
-            FieldName: FieldName,
-            FieldValue: FieldValue
-        }
-
-        ClsSms.Json_UpdateTaskField(o, function (sts, data) {
-            if (sts && data) {
-                if (data === "Success") {
-                    toast.success(FieldName === "EndDateTime" ? "Due Date Changed" : "Completed")
-
-                    Json_AddSupplierActivity(e);
-                }
-                console.log("Json_UpdateTaskField", data)
-            }
-        })
-    }
-
-    const Json_AddSupplierActivity = (e) => {
-        let obj = {};
-        obj.OriginatorNo = e.ClientNo;
-        obj.ActionReminder = "";
-        obj.Notes = "Completed by " + e["Forwarded By"];
-        obj.Status = "sys"; //selectedTask.Status;
-        obj.TaskId = e.ID;
-        obj.TaskName = "";
-        obj.ActivityLevelID = "";
-        obj.ItemId = "";
-
-        try {
-            ClsSms.Json_AddSupplierActivity(obj, function (sts, data) {
-                if (sts && data) {
-                    console.log({ status: true, messages: "Success", res: data });
-                    Json_CRM_GetOutlookTask()
-                }
-            });
-        } catch (error) {
-            console.log({ status: false, messages: "Faild Please Try again" });
-        }
-    };
-
-
-
-
-    const FiterAssinee = (ownerid) => {
-
-        let res = userList.filter((e) => e.ID === ownerid);
-        // console.log("userList212121",res);
-        if (res.length > 0) {
-            return res[0].ForwardTo;
-        }
-
-    }
     const exportexcel = (data) => {
         let workbook = new Workbook();
         let worksheet = workbook.addWorksheet("SheetName");
         console.log(data, "worksheetdata", data[0]["EndDateTime"]);
         // Add column headers
         const headerRow = worksheet.addRow(["Source", "Subject", "Forwarded By", "End Date", "Client", "Status"]);
-
-        // Apply bold formatting to header row
         headerRow.eachCell((cell, colNumber) => {
             cell.font = { bold: true };
         });
-
-        // Add data rows
         data.forEach((item, index) => {
-            let timestamp;
-            let date;
-            // if (item && item["EndDateTime"]) {
-            //   timestamp = parseInt(item["EndDateTime"].slice(6, -2));
-            //   date = startFormattingDate(timestamp);
-            // } else {
-            //   date = '';
-            // }
-            worksheet.addRow([
-                item?.Source,
-                item?.Subject,
-                item["Forwarded By"],
-                item["EndDateTime"],
-                item?.Client,
-                item?.Status
-            ]);
-        });
-
-        // Apply bold formatting to header row
-        headerRow.eachCell((cell, colNumber) => {
-            cell.font = { bold: true };
-        });
-
-        // Add data rows
-        data.forEach((item, index) => {
-            // let timestamp;
-            // let date;
-            // if (item["EndDateTime"]) {
-            //     timestamp = parseInt(item["EndDateTime"].slice(6, -2));
-            //     date = startFormattingDate(timestamp);
-            // } else {
-            //     date = '';
-            // }
             worksheet.addRow([
                 item?.Source,
                 item?.Subject,
@@ -829,47 +418,16 @@ function TodoList() {
         });
     };
 
-    const ExportData = useCallback(() => {
-        console.log(filterExportData, "11exportData", exportTaskData);
-        if (filterExportData && filterExportData.length > 0) {
-            exportexcel(filterExportData);
-        } else {
-            exportexcel(exportTaskData); // Export data from 
-        }
-
+    const ExportData = useCallback((dataa) => {
+        exportexcel(dataa);
         setAnchorElDown(null);
     }, []);
-
-    const FilterAgs = (item) => {
-        const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
-
-        const userId = parseInt(localStorage.getItem("UserId"));
-
-        const filteredIds = arr.filter((k) => k !== item.OwnerID);
-
-        const user = filteredIds.find((u) => u === userId);
-
-
-        const userToFind = user ? user : filteredIds[0];
-
-
-
-        const res = userToFind ? userList.find((e) => e.ID === userToFind) : null;
-
-        return res ? res.ForwardTo : "";
-    }
-
-    useEffect(() => {
-        setAllTask([...reduxData]);
-        setActualData([...reduxData]);
-        dispatch(updateReduxDataSonam(reduxData));
-    }, [reduxData, dispatch]);
 
     return (
         <>
             <Box className="container-fluid p-0">
 
-                {globalSearchTask.length > 0 && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + strGlobal, tabName: "Search Result" }, { tabLink: "/dashboard/MyTask", tabName: "My Task" }]} />}
+                {Boolean(filter) && <CustomBreadCrumbs tabs={[{ tabLink: "/dashboard/SearchResult?str=" + localStorage.getItem("globalSearchKey"), tabName: "Search Result" }, { tabLink: "/dashboard/MyTask", tabName: "My Task" }]} />}
 
                 <TaskDetailModal setIsApi={setIsApi} isApi={isApi} selectedTask={selectedTask} setOpen={setOpen} openModal={openModal} attachmentFileTodo={attachmentFileTodo}></TaskDetailModal>
                 {/* <CreateNewModalTask setIsApi={setIsApi} isApi={isApi}></CreateNewModalTask> */}
@@ -904,6 +462,7 @@ function TodoList() {
                                             let fltData = allTask.filter(itm => itm.Subject.toLowerCase().includes(e.target.value.toLowerCase()));
                                             setSuggestionList(fltData);
                                             setTaskFilter({ ...taskFilter, Subject: [e.target.value] });
+                                            dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, Subject: [e.target.value] } }));
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
@@ -957,13 +516,36 @@ function TodoList() {
                                         return;
                                     } else {
                                         setTaskFilter({ ...taskFilter, Folder: [e.target.value] })
+                                        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, Folder: [e.target.value] } }));
                                     }
                                 }}
                                 className='custom-dropdown'
                             >
+
+
+
                                 <MenuItem value="Folder" style={{ display: "none" }}>
-                                    Folders</MenuItem>
-                                <MenuItem value="" className='text-danger ps-1'><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
+                                    <BootstrapTooltip title="Filter by Folder" arrow
+                                        placement="top"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >
+                                        Folders
+                                    </BootstrapTooltip>
+
+                                </MenuItem>
+
+                                <MenuItem value="" className='text-danger sembold ps-1'><ClearIcon className="font-18 me-2" /> Clear Filter</MenuItem>
                                 {folders.length > 0 && folders.map((fld, i) => <MenuItem key={i} value={fld.Folder} className='ps-1'><FolderSharedIcon className="font-20 me-1" /> {fld.Folder}</MenuItem>)}
                             </Select>
                         </FormControl>
@@ -986,13 +568,31 @@ function TodoList() {
                                         return;
                                     } else {
                                         setTaskFilter({ ...taskFilter, Source: [e.target.value] });
+                                        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, Source: [e.target.value] } }));
                                     }
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value="Source" style={{ display: "none" }}>Type</MenuItem>
+                                <MenuItem value="Source" style={{ display: "none" }}>
+                                    <BootstrapTooltip title="Filter by Task Type" arrow
+                                        placement="top"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >Type
+                                    </BootstrapTooltip>
+                                </MenuItem>
                                 <MenuItem value="" className='ps-1 text-danger' >
-                                    <ClearIcon className="font-20 me-2" />
+                                    <ClearIcon className="font-18 me-2" />
                                     Clear Filter</MenuItem>
                                 <MenuItem className='ps-1' value="CRM">
                                     <DvrIcon className="font-20 me-2" />
@@ -1015,20 +615,42 @@ function TodoList() {
                                     if (e.target.value === "Status") {
                                         // handleFilterDeletion("mstatus");
                                         setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] })
+                                        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] } }));
                                         return;
                                     } else if (e.target.value === "") {
                                         // handleFilterDeletion("mstatus");
                                         setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] })
+                                        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] } }));
                                         setSelectedStatus("Status");
                                         return;
                                     } else {
                                         setTaskFilter({ ...taskFilter, mstatus: [e.target.value] });
+                                        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, mstatus: [e.target.value] } }));
                                     }
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem value={"Status"} style={{ display: "none" }}> Status</MenuItem>
-                                <MenuItem className='text-danger ps-1' value={""} ><ClearIcon className="font-20 me-2" /> Clear Filter</MenuItem>
+                                <MenuItem value={"Status"} style={{ display: "none" }}>
+                                    <BootstrapTooltip title="Filter by Task Status" arrow
+                                        placement="top"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >
+                                        Status
+                                    </BootstrapTooltip>
+
+                                </MenuItem>
+                                <MenuItem className='text-danger ps-1' value={""} ><ClearIcon className="font-20 me-2" />  Clear Filter</MenuItem>
                                 {["Not Started", "In Progress", "On Hold", "Completed"].map((itm, i) => <MenuItem key={i} value={itm} className='ps-1'> {statusIconList[i]} {itm}</MenuItem>)}
                             </Select>
                         </FormControl>
@@ -1041,6 +663,9 @@ function TodoList() {
                                     startDate: start.toDate(),
                                     endDate: end.toDate(),
                                     ranges: {
+                                        'Clear Filter': [
+                                            'Clear', 'Clear'
+                                        ],
                                         'All': [
                                             moment({ year: 1990, month: 0, day: 1 }).toDate(),
                                             moment().toDate()
@@ -1072,11 +697,26 @@ function TodoList() {
                             >
                                 <div className='pointer me-2 d-flex align-items-center' id="reportrange"
                                 >
-
-                                    <i className="fa fa-calendar"></i>
-                                    <CalendarMonthIcon className='me-2 text-red' />
-
-                                    <span>{label === "Invalid date - Invalid date" ? "All" : label}</span> <i className="fa fa-caret-down"></i>
+                                    <BootstrapTooltip title="Task Start Date" arrow
+                                        placement="top"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >
+                                        <i className="fa fa-calendar"></i>
+                                        <CalendarMonthIcon className='me-2 text-red' />
+                                        <span>
+                                            {isDateShow ? label : "Select Start Date"}</span> <i className="fa fa-caret-down"></i>
+                                    </BootstrapTooltip>
                                 </div>
                             </DateRangePicker>
                         </Box>
@@ -1091,18 +731,38 @@ function TodoList() {
                                 onChange={(e) => {
                                     if (e.target.value === "") {
                                         setSelectedSortBy("Sort By");
+                                        setTaskFilter({ ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] })
+                                        dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { ...taskFilter, "mstatus": ["Not Started", "On Hold", "In Progress"] } }));
                                         return;
                                     }
                                     setSelectedSortBy(e.target.value)
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem className='ps-2' value="Sort By" style={{ display: "none" }}><SortIcon />Sort By</MenuItem>
-                                <MenuItem className='ps-2 text-red' value="" onClick={() => setAllTask([...actualData])}><ClearIcon />Clear Sortby</MenuItem>
+                                <MenuItem className='ps-2' value="Sort By" style={{ display: "none" }}><SortIcon />
+                                    <BootstrapTooltip title="Sort By" arrow
+                                        placement="top"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >
+                                        Sort By
+                                    </BootstrapTooltip>
+                                </MenuItem>
+                                <MenuItem className='ps-2 text-danger sembold' value="" onClick={() => dispatch(setAllTaskFromRedux({data:actualData, taskFilter: { mstatus: ["Not Started", "On Hold", "In Progress"] } }))}><ClearIcon />Clear Sortby</MenuItem>
                                 <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
                                 <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
                                 <MenuItem className='ps-2' value="Priority"><PriorityHighIcon className='font-20 me-1' />Priority</MenuItem>
-                                <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-20 me-1' />Section</MenuItem>
+                                {/* <MenuItem className='ps-2' value="Section"><SpaceDashboardIcon className='font-20 me-1' />Section</MenuItem> */}
                                 <MenuItem className='ps-2' value="CreationDate"><CalendarMonthIcon className='font-20 me-1' />Start Date</MenuItem>
                             </Select>
                         </FormControl>
@@ -1124,7 +784,25 @@ function TodoList() {
                                 }}
                                 className='custom-dropdown'
                             >
-                                <MenuItem className='ps-2' value="Group By" style={{ display: "none" }}>Group By</MenuItem>
+                                <MenuItem className='ps-2' value="Group By" style={{ display: "none" }}>
+                                    <BootstrapTooltip title="Group By" arrow
+                                        placement="top"
+                                        slotProps={{
+                                            popper: {
+                                                modifiers: [
+                                                    {
+                                                        name: 'offset',
+                                                        options: {
+                                                            offset: [0, -10],
+                                                        },
+                                                    },
+                                                ],
+                                            },
+                                        }}
+                                    >
+                                        Group By
+                                    </BootstrapTooltip>
+                                </MenuItem>
                                 <MenuItem className='ps-2' value=""><ClearIcon className='font-20 me-1' />Clear Groupby</MenuItem>
                                 <MenuItem className='ps-2' value="Client"><PersonIcon className='font-20 me-1' />Client Name</MenuItem>
                                 <MenuItem className='ps-2' value="EndDateTime"><CalendarMonthIcon className='font-20 me-1' />Due Date</MenuItem>
@@ -1136,318 +814,54 @@ function TodoList() {
                         </FormControl>
 
                         <ToggleButtonGroup className='ms-3' size='small'>
-                            <ToggleButton value="left" aria-label="left aligned" onClick={handleMenuOpen}>
-                                <DownloadIcon />
-                            </ToggleButton>
+                            <BootstrapTooltip title="Download Tasks List" arrow
+                                placement="top"
+                                slotProps={{
+                                    popper: {
+                                        modifiers: [
+                                            {
+                                                name: 'offset',
+                                                options: {
+                                                    offset: [0, -10],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                }}
+                            >
+                                <ToggleButton value="left" aria-label="left aligned" onClick={handleMenuOpen}>
+                                    <DownloadIcon />
+                                </ToggleButton>
+                            </BootstrapTooltip>
                             <Menu
                                 anchorEl={anchorElDown}
                                 open={Boolean(anchorElDown)}
                                 onClose={handleMenuClose}
                             >
-                                <MenuItem onClick={ExportData}><InsertDriveFileIcon />  Export to Excel</MenuItem>
-
-
+                                <MenuItem onClick={()=>{ExportData(allTask)}}><InsertDriveFileIcon />  Export to Excel</MenuItem>
                             </Menu>
                         </ToggleButtonGroup>
-
                     </Box>
                 </Box>
 
-
                 <Box className='main-filter-box'>
                     {/* <Box className='row'> */}
-                    {isLoading ? <Box className="custom-loader"><CustomLoader /></Box> : (<Box className='row'>
-
+                    {allTask.length===0 && actualData.length===0 ? <Box className="custom-loader"><CustomLoader /></Box> : (<Box className='row'>
                         {
-
                             Object.keys(dataInGroup).length > 0 ? (<>
                                 {Object.keys(dataInGroup).map((key) => {
-
                                     return <>
                                         <h4>{key == 1 ? "High" : key == 2 ? "Medium" : key}</h4>
-
                                         {dataInGroup[key].length > 0 && dataInGroup[key].map((item, index) => {
-                                            const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
-                                            return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
-                                                <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
-
-                                                    {/*  */}
-
-                                                    <Box className='check-todo'>
-                                                        <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
-                                                            <InsertLinkIcon />
-                                                        </Badge>
-
-                                                        <Radio className={item.Priority === 1 ? 'text-red' : item.Priority === 2 ? 'text-green' : 'text-grey'} checked
-                                                            sx={{
-                                                                '&.Mui-checked': {
-                                                                    color: "secondary",
-                                                                },
-                                                            }}
-                                                            size='small'
-
-                                                        />
-
-                                                        {/* <PushPinIcon className='pinicon'></PushPinIcon> */}
-
-                                                    </Box>
-
-                                                    <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> {item.Source}</Typography>
-
-                                                    <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
-
-                                                    <Box className='d-flex align-items-center justify-content-between'>
-                                                        <Typography variant='subtitle1'><pan className='text-gray'>
-                                                            {FiterAssinee(item.OwnerID)} {arr.length > 2 && (<ArrowForwardIosIcon className='font-14' />)}  </pan>
-                                                            {/* <a href='#'>Patrick</a>, */}
-                                                            <a href='#'>{FilterAgs(item)}</a> <a href='#'> {arr.length > 2 && (<>
-                                                                + {arr.length - 2}
-                                                            </>)}</a></Typography>
-                                                        <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
-                                                    </Box>
-
-                                                    <Box className='d-flex align-items-center justify-content-between'>
-                                                        <Typography variant='subtitle1'>{item.Client}</Typography>
-                                                        <Typography variant='subtitle1'>
-
-                                                            <Box>
-                                                                <Button
-                                                                    id="basic-button"
-                                                                    aria-controls={open ? 'basic-menu' : undefined}
-                                                                    aria-haspopup="true"
-                                                                    aria-expanded={open ? 'true' : undefined}
-                                                                    onClick={handleClick}
-                                                                    className='font-14'
-                                                                    sx={{
-                                                                        color: item.mstatus === "Completed" ? "green" : "primary"
-                                                                    }}
-                                                                >
-                                                                    {item.mstatus}
-                                                                </Button>
-                                                                <Menu
-                                                                    id="basic-menu"
-                                                                    className='custom-dropdown'
-                                                                    anchorEl={anchorEl}
-                                                                    open={open}
-                                                                    onClose={handleClose}
-                                                                    MenuListProps={{
-                                                                        'aria-labelledby': 'basic-button',
-                                                                    }}
-                                                                >
-
-                                                                    <MenuItem onClick={handleClose}>
-                                                                        <PriorityHighIcon />
-                                                                        High</MenuItem>
-                                                                    <MenuItem onClick={handleClose}>
-                                                                        <ReportProblemIcon />
-                                                                        Medium</MenuItem>
-                                                                    <MenuItem onClick={handleClose}>
-                                                                        <ArrowDownwardIcon />
-                                                                        Low</MenuItem>
-                                                                </Menu>
-                                                            </Box>
-
-                                                        </Typography>
-                                                    </Box>
-
-                                                    <Box className='mt-2'>
-                                                        <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)} >Mark Complete</Button>
-                                                        <DateRangePicker initialSettings={{
-                                                            singleDatePicker: true,
-                                                            showDropdowns: true,
-                                                            startDate: item["EndDateTime"],
-                                                            minYear: 1901,
-                                                            maxYear: 2100,
-                                                        }}
-                                                            onCallback={(start) => {
-                                                                const date = start.format('YYYY/MM/DD');
-                                                                Json_UpdateTaskField("EndDateTime", date, item);
-                                                            }}
-                                                        >
-                                                            <Button variant="outlined" className='btn-outlin-2'>
-                                                                Defer
-                                                            </Button>
-                                                        </DateRangePicker>
-                                                    </Box>
-
-                                                </Box>
-                                            </Box>
+                                            return <TaskCard item={item} index={index} />
                                         })}
                                     </>
                                 })}
                             </>) : (allTask.length > 0 ?
                                 (allTask.slice(0, loadMore).map((item, index) => {
-                                    const arr = item.AssignedToID.split(",").filter(Boolean).map(Number);
-                                    return <Box key={index} className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex'>
-                                        <Box className='todo-list-box white-box relative w-100' onDoubleClick={() => handleClickOpen(item)}>
-
-                                            <Box className='check-todo'>
-                                                <Badge color="primary" className='custom-budget' badgeContent={0} showZero>
-                                                    <InsertLinkIcon />
-                                                </Badge>
-
-                                                <Radio className={item.Priority === 1 ? 'text-red' : item.Priority === 2 ? 'text-green' : 'text-grey'} checked
-                                                    sx={{
-                                                        '&.Mui-checked': {
-                                                            color: "secondary",
-                                                        },
-                                                    }}
-                                                    size='small'
-                                                />
-
-                                                {/* <PushPinIcon className='pinicon'></PushPinIcon> */}
-
-                                            </Box>
-
-                                            <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> {item.Source}</Typography>
-
-                                            <Typography variant='h2' className='mb-2'>{item.Subject}</Typography>
-
-                                            <Box className='d-flex align-items-center justify-content-between'>
-                                                <Typography variant='subtitle1'><pan className='text-gray'>
-                                                    {FiterAssinee(item.OwnerID)} {arr.length > 1 && (<ArrowForwardIosIcon className='font-14' />)} </pan>
-                                                    {/* <a href='#'>Patrick</a>, */}
-                                                    <a href='#'>{FilterAgs(item)}</a> <a href='#'> {arr.length > 2 && (<>
-                                                        +{arr.length - 2}
-                                                    </>)}</a></Typography>
-                                                <Typography variant='subtitle1 sembold'>{item["EndDateTime"] && startFormattingDate(item["EndDateTime"])}</Typography>
-                                            </Box>
-
-                                            <Box className='d-flex align-items-center justify-content-between'>
-                                                <Typography variant='subtitle1'>{item.Client}</Typography>
-                                                <Typography variant='subtitle1'>
-
-                                                    <Box>
-                                                        <Button
-                                                            id="basic-button"
-                                                            aria-controls={open ? 'basic-menu' : undefined}
-                                                            aria-haspopup="true"
-                                                            aria-expanded={open ? 'true' : undefined}
-                                                            onClick={handleClick}
-                                                            className='font-14'
-                                                            sx={{
-                                                                color: item.mstatus === "Completed" ? "green" : "primary"
-                                                            }}
-                                                        >
-                                                            {item.mstatus}
-                                                        </Button>
-                                                        <Menu
-                                                            id="basic-menu"
-                                                            className='custom-dropdown'
-                                                            anchorEl={anchorEl}
-                                                            open={open}
-                                                            onClose={handleClose}
-                                                            MenuListProps={{
-                                                                'aria-labelledby': 'basic-button',
-                                                            }}
-                                                        >
-                                                            <MenuItem onClick={handleClose}>
-                                                                <PriorityHighIcon />
-                                                                High</MenuItem>
-                                                            <MenuItem onClick={handleClose}>
-                                                                <ReportProblemIcon />
-                                                                Medium</MenuItem>
-                                                            <MenuItem onClick={handleClose}>
-                                                                <ArrowDownwardIcon />
-                                                                Low</MenuItem>
-                                                        </Menu>
-                                                    </Box>
-
-                                                </Typography>
-                                            </Box>
-
-
-
-                                            <Box className='mt-2'>
-                                                <Button variant="text" className='btn-blue-2 me-2' onClick={() => MarkComplete(item)} >Mark Complete</Button>
-                                                <DateRangePicker initialSettings={{
-                                                    singleDatePicker: true,
-                                                    showDropdowns: true,
-                                                    startDate: item["EndDateTime"],
-                                                    minYear: 1901,
-                                                    maxYear: 2100,
-                                                }}
-                                                    onCallback={(start) => {
-                                                        const date = start.format('YYYY/MM/DD');
-                                                        Json_UpdateTaskField("EndDateTime", date, item);
-                                                    }}
-                                                >
-                                                    <Button variant="outlined" className='btn-outlin-2'>
-                                                        Defer
-                                                    </Button>
-                                                </DateRangePicker>
-                                            </Box>
-
-                                        </Box>
-                                    </Box>
+                                    return <TaskCard item={item} index={index} />
                                 })) : (<DataNotFound />))
                         }
-
-                        {/* statick box */}
-                        {/* <Box className='col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-6 d-flex' onClick={handleClickOpenPortal}>
-                            <Box className='todo-list-box white-box relative w-100'>
-
-                                <Radio className='text-red check-todo' checked
-                                    sx={{
-                                        '&.Mui-checked': {
-                                            color: "secondary",
-                                        },
-                                    }}
-                                />
-
-                                <Typography variant='subtitle1 mb-4 d-block'><strong>Type:</strong> Signature Tast</Typography>
-
-                                <Typography variant='h2' className='mb-2'>Lorem ipsome dolor site</Typography>
-
-                                <Box className='d-flex align-items-center justify-content-between'>
-                                    <Typography variant='subtitle1'><pan className='text-gray'>
-                                        You <ArrowForwardIosIcon className='font-14' /> </pan>
-                                        <a href='#'>Patrick</a>,
-                                        <a href='#'>Patrick</a> <a href='#'> +5</a></Typography>
-                                    <Typography variant='subtitle1 sembold'>01/05/23</Typography>
-                                </Box>
-
-                                <Box className='d-flex align-items-center justify-content-between'>
-                                    <Typography variant='subtitle1'>Docusoft india pvt ltd</Typography>
-                                    <Typography variant='subtitle1'>
-
-                                        <Box>
-                                            <Button
-                                                id="basic-button"
-                                                aria-controls={open ? 'basic-menu' : undefined}
-                                                aria-haspopup="true"
-                                                aria-expanded={open ? 'true' : undefined}
-                                                onClick={handleClick}
-                                            >
-                                                priority
-                                            </Button>
-                                            <Menu
-                                                id="basic-menu"
-                                                className='custom-dropdown'
-                                                anchorEl={anchorEl}
-                                                open={open}
-                                                onClose={handleClose}
-                                                MenuListProps={{
-                                                    'aria-labelledby': 'basic-button',
-                                                }}
-                                            >
-                                                <MenuItem onClick={handleClose}>High</MenuItem>
-                                                <MenuItem onClick={handleClose}>Medium</MenuItem>
-                                                <MenuItem onClick={handleClose}>Low</MenuItem>
-                                            </Menu>
-                                        </Box>
-
-                                    </Typography>
-                                </Box>
-
-                                <Box className='mt-2'>
-                                    <Button variant="text" className='btn-blue-2 me-2'>Action</Button>
-                                    <Button variant="text" className='btn-blue-2'>Defer</Button>
-                                </Box>
-
-                            </Box>
-                        </Box> */}
-                        {/* col end */}
                     </Box>)}
                 </Box>
             </Box >
@@ -1602,148 +1016,6 @@ function TodoList() {
         </>
     )
 }
-
-const blue = {
-    100: '#DAECFF',
-    200: '#99CCF3',
-    400: '#3399FF',
-    500: '#007FFF',
-    600: '#0072E5',
-    700: '#0059B2',
-    900: '#003A75',
-};
-
-const grey = {
-    50: '#F3F6F9',
-    100: '#E5EAF2',
-    200: '#DAE2ED',
-    300: '#C7D0DD',
-    400: '#B0B8C4',
-    500: '#9DA8B7',
-    600: '#6B7A90',
-    700: '#434D5B',
-    800: '#303740',
-    900: '#1C2025',
-};
-
-const Layout = styled('div')`
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 4px;
-`;
-
-const AutocompleteWrapper = styled('div')`
-  position: relative;
-`;
-
-const AutocompleteRoot = styled('div')(
-    ({ theme }) => `
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-weight: 400;
-  border-radius: 8px;
-  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[500]};
-  background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-  border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-  box-shadow: 0px 2px 4px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.5)' : 'rgba(0,0,0, 0.05)'
-        };
-  display: flex;
-  gap: 5px;
-  padding-right: 5px;
-  overflow: hidden;
-  width: 320px;
-
-  &.Mui-focused {
-    border-color: ${blue[400]};
-    box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[700] : blue[200]};
-  }
-
-  &:hover {
-    border-color: ${blue[400]};
-  }
-
-  &:focus-visible {
-    outline: 0;
-  }
-`,
-);
-
-const Input = styled('input')(
-    ({ theme }) => `
-  font-size: 0.875rem;
-  font-family: inherit;
-  font-weight: 400;
-  line-height: 1.5;
-  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-  background: inherit;
-  border: none;
-  border-radius: inherit;
-  padding: 8px 12px;
-  outline: 0;
-  flex: 1 0 auto;
-`,
-);
-
-const Listbox = styled('ul')(
-    ({ theme }) => `
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 0.875rem;
-  box-sizing: border-box;
-  padding: 6px;
-  margin: 12px 0;
-  max-width: 320px;
-  border-radius: 12px;
-  overflow: auto;
-  outline: 0px;
-  max-height: 300px;
-  z-index: 1;
-  position: absolute;
-  left: 0;
-  right: 0;
-  background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-  border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
-  color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-  box-shadow: 0px 4px 6px ${theme.palette.mode === 'dark' ? 'rgba(0,0,0, 0.50)' : 'rgba(0,0,0, 0.05)'
-        };
-  `,
-);
-
-const Option = styled('li')(
-    ({ theme }) => `
-  list-style: none;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: default;
-
-  &:last-of-type {
-    border-bottom: none;
-  }
-
-  &:hover {
-    cursor: pointer;
-  }
-
-  &[aria-selected=true] {
-    background-color: ${theme.palette.mode === 'dark' ? blue[900] : blue[100]};
-    color: ${theme.palette.mode === 'dark' ? blue[100] : blue[900]};
-  }
-
-  &.base--focused,
-  &.base--focusVisible {
-    background-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[100]};
-    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
-  }
-
-  &.base--focusVisible {
-    box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[500] : blue[200]};
-  }
-
-  &[aria-selected=true].base--focused,
-  &[aria-selected=true].base--focusVisible {
-    background-color: ${theme.palette.mode === 'dark' ? blue[900] : blue[100]};
-    color: ${theme.palette.mode === 'dark' ? blue[100] : blue[900]};
-  }
-  `,
-);
 
 export default TodoList
 

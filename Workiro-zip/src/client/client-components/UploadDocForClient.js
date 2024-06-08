@@ -4,46 +4,45 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import DescriptionIcon from '@mui/icons-material/Description';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-
+import { useDispatch, useSelector } from "react-redux";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Checkbox, FormControlLabel } from '@mui/material';
 import CommanCLS from '../../services/CommanService';
 import dayjs from 'dayjs';
-import CreateNewModalTask from '../../components/CreateNewModal';
-//import { red } from '@mui/material/colors';
 import moment from 'moment';
-import { ToastContainer, toast } from 'react-toastify';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useLocation } from 'react-router-dom';
+import { GetCategory_Redux } from '../../redux/reducers/api_helper';
 let originatorNo;
 function UploadDocForClient({ 
       openUploadDocument, 
       setOpenUploadDocument
     }) {
-    //console.log("location state",localtion.state)
     const localtion = useLocation();
     try {
         originatorNo = localtion.state;
     }
-
     catch (e) {
         console.log("originatorNo", e)
     }
 
-
     const handleCloseDocumentUpload = () => {
         setOpenUploadDocument(false);
     };
-
+    const dispatch = useDispatch();
+    let category = useSelector((state) => state.counter.AllCategory?.Table);
+    let s_Desc = useSelector((state) => state.counter.AllCategory?.Table1);
+    let categoryList = category ? category : [];
+    let standarDescription = s_Desc ? s_Desc : [];
+    const folderList = useSelector((state) => state.counter.folders);
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -56,7 +55,6 @@ function UploadDocForClient({
 
     const [clientList, setClientList] = useState([]);
     const [sectionList, setSectionList] = useState([]);
-    const [folderList, setFolderList] = useState([]);
     const [udfTable, setUDFTable] = useState([]);
     const [getAllFolderData, setGetAllFolderData] = useState([]);
 
@@ -78,7 +76,7 @@ function UploadDocForClient({
 
     const [receivedDate, setReceivedDate] = useState(null); // Initialize the selected date state
 
-    const [standarDescription, setStandarDescription] = useState([]); // Initialize the selected date state
+    // const [standarDescription, setStandarDescription] = useState([]); // Initialize the selected date state
 
     const [txtStandarDescription, settxtStandarDescription] = useState(""); // Initialize the selected date state
 
@@ -90,7 +88,7 @@ function UploadDocForClient({
 
     const [categoryid, setCategoryId] = useState(0);
 
-    const [categoryList, setCategoryList] = useState([])
+    // const [categoryList, setCategoryList] = useState([])
 
     const [showModalCreateTask, setshowModalCreateTask] = useState(false);
     const [openModal, setOpenModal] = useState(false);
@@ -177,36 +175,40 @@ function UploadDocForClient({
 
     //////////////////////////Get Foder Data
     function Json_GetFolders() {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
+        let res = folderList.filter((f) => f.FolderID === parseInt(localStorage.getItem("ProjectId")));
+        if (res.length > 0) {
+            setTextFolderData(res[0]);
         }
+        // let obj = {
+        //     agrno: agrno,
+        //     Email: Email,
+        //     password: password
+        // }
 
-        try {
-            cls.Json_GetFolders(obj, function (sts, data) {
-                if (sts) {
-                    if (data) {
-                        let js = JSON.parse(data);
-                        let tbl = js.Table;
-                        let result = tbl.filter((el) => el.FolderID === parseInt(txtFolderId));
-                        console.log("get folder list", tbl);
-                        setFolderList(tbl);
-                        if (result.length > 0) {
-                            console.log("get folder list", result);
-                            setTextFolderData(result[0])
-                            // setTxtFolderData(result[0]);
-                        }
-                    }
-                }
-            });
-        } catch (error) {
-            console.log({
-                status: false,
-                message: "Folder is Blank Try again",
-                error: error,
-            });
-        }
+        // try {
+        //     cls.Json_GetFolders(obj, function (sts, data) {
+        //         if (sts) {
+        //             if (data) {
+        //                 let js = JSON.parse(data);
+        //                 let tbl = js.Table;
+        //                 let result = tbl.filter((el) => el.FolderID === parseInt(txtFolderId));
+        //                 console.log("get folder list", tbl);
+        //                 setFolderList(tbl);
+        //                 if (result.length > 0) {
+        //                     console.log("get folder list", result);
+        //                     setTextFolderData(result[0])
+        //                     // setTxtFolderData(result[0]);
+        //                 }
+        //             }
+        //         }
+        //     });
+        // } catch (error) {
+        //     console.log({
+        //         status: false,
+        //         message: "Folder is Blank Try again",
+        //         error: error,
+        //     });
+        // }
     }
 
     function Json_GetFolderData() {
@@ -320,16 +322,12 @@ function UploadDocForClient({
 
     }
 
-
-
-
-
     const handleSectionChange = (data) => {
         if (data !== null) {
             console.log("Get Clietn On click", data);
             setTxtSectionId(data.SecID)
             setTxtSectionData(data)
-            Json_GetCategory(data.SecID)
+            dispatch(GetCategory_Redux(data.SecID));
             Json_GetSubSections(data.SecID)
         }
 
@@ -366,7 +364,6 @@ function UploadDocForClient({
             o.ProjectId = txtFolderId;
             cls.Json_GetSubSections(o, function (sts, data) {
                 if (sts) {
-                    console.log("Json_GetSubSections", data);
                     let json = JSON.parse(data);
                     let tbl1 = json.Table1;
                     if (tbl1.length > 0) {
@@ -392,32 +389,6 @@ function UploadDocForClient({
 
     }
 
-    function Json_GetCategory(SectionId) {
-
-        try {
-            let o = {};
-            o.SectionId = SectionId;
-            cls.Json_GetCategory(o, function (sts, data) {
-                if (sts) {
-                    console.log("Json_GetCategory", data);
-                    let json = JSON.parse(data);
-                    let tbl1 = json.Table1;
-                    let tbl = json.Table;
-                    if (tbl.length > 0) {
-                        setCategoryList(tbl)
-                    }
-                    if (tbl1.length > 0) {
-                        setStandarDescription(tbl1);
-                    }
-
-
-
-                }
-            });
-        } catch (error) {
-            console.log({ Status: false, mgs: "Data not found", Error: error });
-        }
-    }
     //////////////////////////End Get Foder Data
     /////////////////////////////DAte Set
 

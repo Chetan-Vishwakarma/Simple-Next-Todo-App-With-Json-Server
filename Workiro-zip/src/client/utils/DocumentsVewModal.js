@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Box, Button, Typography, Dialog, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Menu, MenuItem } from '@mui/material';
+import { Box, Button, Typography, Dialog, DialogContent, DialogContentText, Tabs, Tab, Checkbox, Menu, MenuItem, DialogActions, Grid, FormControlLabel, TextField, Autocomplete, RadioGroup, FormLabel, Radio, FormControl } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 
 import TabPanel from '@mui/lab/TabPanel';
@@ -21,10 +21,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 import CreateNewModalTask from '../../components/CreateNewModal';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
-import { useDispatch } from "react-redux";
-import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux } from "../../redux/reducers/counterSlice"
 
+import { handleOpenModalRedux, setClientAndDocDataForTaskModalRedux, setGetActivitySonam, setOpenReIndex, setSelectedDocumentRedux } from "../../redux/reducers/counterSlice"
+import AlarmOnIcon from '@mui/icons-material/AlarmOn';
 import $ from 'jquery';
 import Fileformat from '../../images/files-icon/pdf.png';
 import ListIcon from '@mui/icons-material/List';
@@ -42,13 +43,30 @@ import DownloadIcon from '@mui/icons-material/Download';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import CreateIcon from '@mui/icons-material/Create';
 import ShareIcon from '@mui/icons-material/Share';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { TabList } from '@mui/lab';
+
+import { getFolders_Redux,Json_SearchDocById_Redux,Json_GetSections_Redux, Json_GetSupplierListByProject_Redux } from '../../redux/reducers/api_helper';
+import { useDispatch,useSelector } from 'react-redux'; 
+import ReFile from '../../components/ReFile';
+import SectionCategory from '../../components/SectionCategory';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 
 
+
 function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpenPDFView, selectedDocument, Json_CRM_GetOutlookTask }) {
+   // console.log(selectedDocument, "selected document ")
     const dispatch = useDispatch();
+
+
+   
+
+    //console.log(allFolders, "selected document ")
+
     const [agrno, setAgrNo] = useState(localStorage.getItem("agrno"));
     const [password, setPassword] = useState(localStorage.getItem("Password"));
     const [Email, setEmail] = useState(localStorage.getItem("Email"));
@@ -61,6 +79,8 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     const [txtClientData, setTxtClientData] = useState({});
     const [txtSectionData, setTxtSectionData] = useState({});
     const [txtFolderData, setTxtFolderData] = useState({});
+
+   
 
     //const [folderId, setFolderId] = useState(localStorage.getItem("FolderId"));
 
@@ -84,9 +104,42 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     const handleCloseChangeIndex = () => {
         setAnchorElChangeIndex(null);
     };
+    const handleChangeCheckOut = () => {
+
+        try {
+            let o = { ItemId: selectedDocument["Registration No."], ViewerToken: localStorage.getItem("ViewerToken") }
+            cls.Json_CheckoutItem(o, function (sts, data) {
+                if (sts) {
+                    if (data) {
+
+                        console.log("Json_CheckoutItem", data)
+                        if (data.includes("Success")) {
+                            var getversion = data.split(":")[1];
+                            let openUrl = `https://mydocusoft.com/DSFileViewer.aspx?agreementid=${agrno}&Email=${Email}&ItemId=${selectedDocument["Registration No."]}&Guid=${selectedDocument["guid"]}&VersionId=${getversion}&ViewerToken=${localStorage.getItem("ViewerToken")}`;
+
+                            window.open(openUrl);
+                            return;
+
+                        }
+
+                    }
+                }
+            })
+        } catch (error) {
+
+        }
+
+
+        setAnchorElChangeIndex(null);
+
+    };
 
     const [value, setValue] = React.useState('1');
-    const [viewerUrl, setViwerUrl] = React.useState('');
+
+    
+
+    const [viewerUrl, setViwerUrl] = React.useState("");
+   
     const [seletedFileData, setSeletedFileData] = React.useState([]);
     const [getVertion, setGetVertion] = React.useState([]);
     const [selectedFiles, setSelectedFiles] = React.useState([]);
@@ -104,6 +157,12 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     const [isLoading, setIsLoading] = useState(true);
 
     const [createNewFileObj, setCreateNewFileObj] = useState([]);
+
+    const [ShareanchorEl, setShareAnchorEl] = React.useState(null);
+    const [CreateTaskanchorEl, setCreateTaskAnchorEl] = React.useState(null);
+    const [ReIndexopen, setReIndexOpen] = React.useState(false);
+    
+    const [Categoryopen, CategorysetOpen] = React.useState(false);
 
 
     const handleChange = (event, newValue) => {
@@ -243,8 +302,19 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
         if (selectedDocument) {
             
-            
-            // console.log("selectedDocument", selectedDocument)
+
+            dispatch(getFolders_Redux());
+            dispatch(Json_SearchDocById_Redux(selectedDocument["Registration No."]));
+            if(selectedDocument.ProjectId){                    
+                dispatch(Json_GetSections_Redux(selectedDocument.ProjectId));
+                dispatch(Json_GetSupplierListByProject_Redux(selectedDocument.ProjectId))
+               } 
+
+            dispatch(setSelectedDocumentRedux(selectedDocument))
+          
+
+
+            console.log("selectedDocument", selectedDocument)
 
             setTxtClientData({ Client: selectedDocument.Client, ClientID: selectedDocument.SenderId })
             setTxtSectionData({ Sec: selectedDocument.Section, SecID: selectedDocument.PostItemTypeID })
@@ -253,7 +323,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
             Json_GetItemBase64DataById(selectedDocument)
 
             var IsApproved = selectedDocument["IsApproved"];
-            
+
             var PortalDocId = selectedDocument["PortalDocId"];
 
             let IsApp = "";
@@ -342,7 +412,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                         setCreateNewFileObj(filesData);
                     }
                     else {
-                        toast.error(item.Description + "was not uploaded as it had no data")
+                        toast.error("Document is blank.")
                     }
 
                 }
@@ -354,29 +424,29 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
     }
 
     function DowloadSingleFileOnClick() {
+        console.log("DowloadSingleFileOnClick", createNewFileObj)
         try {
-            if (seletedFileData.length === 1) {
-                const uint8Array = new Uint8Array(seletedFileData[0].FileData);
-                const blob = new Blob([uint8Array], { type: 'application/octet-stream' });
+            if (createNewFileObj.length > 0) {
+                const byteCharacters = atob(createNewFileObj[0].Base64);
+                const byteNumbers = new Array(byteCharacters.length);
 
-                // Create a URL representing the Blob
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: 'application/octet-stream' });
+
                 const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = createNewFileObj[0].FileName;
+                document.body.appendChild(a);
+                a.click();
 
-                // Create a link element pointing to the URL
-                const link = document.createElement('a');
-                link.href = url;
-
-                // Set the download attribute to specify the file name
-                link.download = seletedFileData[0].SubItemPath;
-
-                // Append the link to the document body
-                document.body.appendChild(link);
-
-                // Trigger a click event on the link to initiate the download
-                link.click();
-
-                // Remove the link from the document body
-                document.body.removeChild(link);
+                // Clean up
+                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
             }
             else {
                 Json_DownloadZip();
@@ -555,10 +625,30 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         // setopenModal(true)
         handleTaskModalOpening("Portal");
     }
+    const PublishDocument = () => {
+        try {
+            let o = { ItemId: selectedDocument["Registration No."] };
+            cls.Json_SearchDocById(o, function (sts, doc) {
+                if (sts) {
+                    if (doc) {
+                        let js = JSON.parse(doc);
+                        let tbl = js[""];
+                        console.log("Json_SearchDocById", tbl);
+                        let opeUrl = `https://www.sharedocuments.co.uk/Compose.aspx?accid=${agrno}&email=${Email}&check=${password}&sendclient=${tbl[0].SenderId}&sendemail=&clientname=${tbl[0].Client}&docs=${tbl[0]["Registration No."]}`;
+                        window.open(opeUrl);
+                    }
+                }
+
+            });
+        } catch (error) {
+            console.log("Network Error Json_SearchDocById")
+        }
+
+    }
 
 
     // 
-    const [CreateTaskanchorEl, setCreateTaskAnchorEl] = React.useState(null);
+
     const openCreateTask = Boolean(CreateTaskanchorEl);
     const createTaskhandleClick = (event) => {
         setCreateTaskAnchorEl(event.currentTarget);
@@ -569,7 +659,6 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
 
     // 
-    const [ShareanchorEl, setShareAnchorEl] = React.useState(null);
     const openShare = Boolean(ShareanchorEl);
     const SharehandleClick = (event) => {
         setShareAnchorEl(event.currentTarget);
@@ -578,8 +667,31 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
         setShareAnchorEl(null);
     };
 
+    const ReIndexhandleClickOpen = () => {        
+        setReIndexOpen(true);
+
+    };
+   
+
+
+    const CategoryhandleClickOpen = () => {
+        CategorysetOpen(true);
+    };
+
+   
+
+
+    const [Renameopen, RenamesetOpen] = React.useState(false);
+    const RenamehandleClickOpen = () => {
+        RenamesetOpen(true);
+    };
+    const RenamehandleClose = () => {
+        RenamesetOpen(false);
+    };
+
     return (
         <>
+        <ReFile ReIndexopen={ReIndexopen} setReIndexOpen={setReIndexOpen} selectedDocument={selectedDocument}></ReFile>
             <Dialog
                 open={openPDFView}
                 onClose={handleClosePDFView}
@@ -602,7 +714,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                     <Box className="d-flex align-items-center justify-content-between flex-wrap">
 
                         <Box className='text-end relative me-3'>
-                            <DownloadForOfflineIcon className='text-red pointer font-32 btn-download' />
+                            <DownloadForOfflineIcon onClick={DowloadSingleFileOnClick} className='text-red pointer font-32 btn-download' />
                         </Box>
 
                         <div>
@@ -641,7 +753,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 <MenuItem
                                     onClick={() => {
                                         CreateTaskhandleClose();
-                                        createTask();
+                                        createTaskForPublish();
                                     }}
                                 ><LanguageIcon className='me-1' /> Portal Task</MenuItem>
                             </Menu>
@@ -671,20 +783,20 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 <MenuItem
                                     onClick={() => {
                                         SharehandleClose();
-                                        createTaskForPublish();
+                                        PublishDocument();
                                     }}
                                 >
                                     <PublishIcon className='me-1' />
                                     Publish</MenuItem>
-                                <MenuItem onClick={SharehandleClose}>
+                                {/* <MenuItem onClick={SharehandleClose}>
                                     <ForwardToInboxIcon className='me-1' />
                                     Send as Form</MenuItem>
                                 <MenuItem onClick={SharehandleClose}>
                                     <MarkunreadIcon className='me-1' />
-                                    Email</MenuItem>
-                                <MenuItem onClick={SharehandleClose}>
+                                    Email</MenuItem> */}
+                                {/* <MenuItem onClick={SharehandleClose}>
                                     <DownloadIcon className='me-1' />
-                                    Download</MenuItem>
+                                    Download</MenuItem> */}
                             </Menu>
                         </div>
 
@@ -715,11 +827,35 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 }}
                             >
 
-                                <MenuItem onClick={handleCloseChangeIndex}> <ListIcon className='me-1' />  Re-index</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <RedeemIcon className='me-1' /> Check-Out</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <CategoryIcon className='me-1' /> Category</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <DriveFileRenameOutlineIcon className='me-1' /> Rename</MenuItem>
-                                <MenuItem onClick={handleCloseChangeIndex}> <AddToDriveIcon className='me-1' /> Upload to Drive</MenuItem>
+                                <MenuItem onClick={() => {
+                                    handleCloseChangeIndex();
+                                    ReIndexhandleClickOpen();
+                                }}>
+                                    <ListIcon className='me-1' />  Re-index
+                                </MenuItem>
+
+                                {selectedDocument && (selectedDocument.type === "docx" || selectedDocument.type === "doc" || selectedDocument.type === "excel" || selectedDocument.type === "xlsx") && (
+                                    <MenuItem onClick={handleChangeCheckOut}>
+                                        <RedeemIcon className='me-1' />
+                                        Check-Out
+                                    </MenuItem>
+                                )}
+                                
+                                {/* <MenuItem onClick={handleCloseChangeIndex}> <RedeemIcon className='me-1' /> Check-Out</MenuItem> */}
+                                <MenuItem onClick={() => {
+                                    handleCloseChangeIndex();
+                                    CategoryhandleClickOpen();
+                                }}
+                                > <CategoryIcon className='me-1' /> Category</MenuItem>
+                                <MenuItem
+
+                                    onClick={() => {
+                                        handleCloseChangeIndex();
+                                        RenamehandleClickOpen();
+                                    }}
+
+                                > <DriveFileRenameOutlineIcon className='me-1' /> Rename</MenuItem>
+                                {/* <MenuItem onClick={handleCloseChangeIndex}> <AddToDriveIcon className='me-1' /> Upload to Drive</MenuItem> */}
                             </Menu>
                         </Box>
 
@@ -738,14 +874,14 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                         <Box className="mt-3 full-height-modal">
                             <TabContext value={value}>
                                 <Box>
-                                    <Tabs onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
+                                    <TabList onChange={handleChange} aria-label="lab API tabs example" className='custom-tabs'>
                                         <Tab label="Documents" value="1" />
                                         <Tab label="Versions" value="2" />
                                         <Tab label="Notes" value="3" />
                                         <Tab label="Associated Tasks" value="4" />
                                         <Tab label="Activity" value="5" />
                                         <Tab label="Attachments" value="6" />
-                                    </Tabs>
+                                    </TabList>
                                 </Box>
                                 <TabPanel value="1" className='p-0'>
                                     <Box className='white-box'>
@@ -810,30 +946,34 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                                 </TabPanel>
 
                                 <TabPanel value="3" className='p-0'>
-                                    {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
-                                    <Box className='text-end'>
-                                        <Button onClick={SaveStickyNotes} variant="contained" className='mt-3'>Save Notes</Button>
-
-                                        {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
-
+                                    <Box className='mt-3'>
+                                        {<HtmlEditorDX templateDataMarkup={templateDataMarkup} setTemplateDataMarkup={setTemplateDataMarkup} setEditorContentValue={setEditorContentValue}></HtmlEditorDX>}
+                                        <Box className='text-end mt-2'>
+                                            <Button onClick={SaveStickyNotes} variant="contained" className='mt-3 btn-blue-2'>Save Notes</Button>
+                                            {/* <ToastContainer style={{ zIndex: "9999999" }}></ToastContainer> */}
+                                        </Box>
                                     </Box>
                                 </TabPanel>
 
                                 <TabPanel value="4" className='p-0'>
-                                    <Box className='text-center mt-3'>
+                                    <Box className='text-center mt-4'>
                                         {getAssociatedTaskList && getAssociatedTaskList.map((item, index) => {
                                             let str = item?.AssignedToID;
                                             let arr = str?.split(',').map(Number);
                                             let isUserAssigned = arr?.includes(parseInt(localStorage.getItem('UserId')));
                                             console.log("isUserAssigned", isUserAssigned)
                                             return (
-                                                <label key={index} onClick={(e) => Json_CRM_GetOutlookTask(e, item)} className="text-decoration-none d-inline-flex align-content-center me-3 mb-3 flex">
-                                                    <RadioButtonUncheckedIcon className={`me-1 ${isUserAssigned ? 'green' : 'disabled'}`} />
-                                                    {item.Subject}
-                                                </label>
+                                                // <Button key={index} onClick={(e) => Json_CRM_GetOutlookTask(e, item)} className="btn btn-outlin-2 me-2 mb-2" variant="outlined" disabled>
+                                                //     <AlarmOnIcon className={`me-2 ${isUserAssigned ? 'green' : 'disabled'}`} />
+                                                //     {item.Subject}
+                                                // </Button>
+
+                                                <Button key={index} onClick={(e) => Json_CRM_GetOutlookTask(e, item)} className="btn btn-outlin-2 me-2 mb-2" variant="outlined">
+                                                    <AlarmOnIcon className={`me-2 ${isUserAssigned ? 'green' : 'disabled'}`} />
+                                                    <span>{item.Subject}</span>
+                                                </Button>
                                             );
                                         })}
-
                                     </Box>
                                 </TabPanel>
 
@@ -857,7 +997,7 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
 
                                         <Button className='btn-red me-2 mb-1 ps-1' onClick={DeleteDocumentAttachment} startIcon={<AttachFileIcon />}>Delete</Button>
 
-                                        <Button className='btn-blue-2 me-2 mb-1 ps-1' onClick={DowloadSingleFileOnClick} startIcon={<AttachFileIcon />}>Download</Button>
+                                        <Button className='btn-blue-2 me-2 mb-1 ps-1' onClick={DowloadSingleFileOnClick} startIcon={<DownloadIcon />}>Download</Button>
 
                                     </Box>
 
@@ -924,10 +1064,85 @@ function DocumentsVewModal({ isLoadingDoc, setIsLoadingDoc, openPDFView, setOpen
                 </Button>
             </DialogActions> */}
             </Dialog>
+
+
+            {/* Re-Index modal Start */}
+           
+
+
+            {/* category modal start */}
+
+           
+
+<SectionCategory Categoryopen={Categoryopen} CategorysetOpen={CategorysetOpen} selectedDocument={selectedDocument}></SectionCategory>
+
+            {/* Rename Modal */}
+            <Dialog
+                open={Renameopen}
+                onClose={RenamehandleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='custom-modal'
+
+                sx={{
+                    maxWidth: 660,
+                    width: '100%',
+                    margin: '0 auto'
+                }}
+            >
+                <Box className="d-flex align-items-center justify-content-between modal-head">
+                    <Box className="dropdown-box">
+                        <Typography variant="h4" className='font-18 bold text-black'>
+                            Edit Description
+                        </Typography>
+                    </Box>
+
+                    {/*  */}
+                    <Button onClick={RenamehandleClose}>
+                        <span className="material-symbols-outlined text-black">
+                            cancel
+                        </span>
+                    </Button>
+                </Box>
+
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        <Box className='mb-3'>
+                            <Autocomplete
+                                disablePortal
+                                options={top100Films}
+                                renderInput={(params) => <TextField {...params} label="Standard Description List
+                                " />}
+                                MenuProps={{ PaperProps: { sx: { maxHeight: '100px !important' } } }}
+                            />
+                        </Box>
+
+                        <Box>
+                            <label className='font-14 text-black'>Document Date</label>
+                            <textarea className='textarea w-100' placeholder='Description'></textarea>
+                        </Box>
+
+                    </DialogContentText>
+
+                    <hr />
+
+                    <DialogActions>
+                        <Button onClick={RenamehandleClose} className='btn-red'>Cancel</Button>
+                        <Button onClick={RenamehandleClose} className='btn-blue-2' autoFocus>
+                            Submit
+                        </Button>
+                    </DialogActions>
+
+                </DialogContent>
+
+            </Dialog>
         </>
-
-
     )
 }
 
+const top100Films = [
+    { label: 'Client', year: 1994 },
+    { label: 'Cases', year: 1972 },
+    { label: 'Customer', year: 1974 },
+]
 export default DocumentsVewModal;

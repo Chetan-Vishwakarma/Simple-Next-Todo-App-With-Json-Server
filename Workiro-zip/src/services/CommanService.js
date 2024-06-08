@@ -9,7 +9,56 @@ export default class CommanCLS extends AllService {
     constructor(APIUrl, agrno, Email, password) {
         super(APIUrl, agrno, Email, password);
     }
+
+
+
+    Json_SetCategory(obj,callBack) {
+        super.CreateNewServiceParamObject("Json_SetCategory",obj,true);
+        super.CallNewService("Json_SetCategory", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+    Json_GetCategory(obj,callBack) {
+        super.CreateNewServiceParamObject("Json_GetCategory",obj,true);
+        super.CallNewService("Json_GetCategory", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+    Json_ReFileDocument(obj,callBack) {
+        super.CreateNewServiceParamObject("Json_ReFileDocument",obj,true);
+        super.CallNewService("Json_ReFileDocument", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+    Json_ReIndexDate(obj,callBack) {
+        super.CreateNewServiceParamObject("Json_ReIndexDate",obj,true);
+        super.CallNewService("Json_ReIndexDate", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+    
 ///////////////////all contact
+
 Json_GetContactListByFolder(obj,callBack) {
     super.CreateNewServiceParamObject("Json_GetContactListByFolder",obj,true);
     super.CallNewService("Json_GetContactListByFolder", function (status, Data) {
@@ -53,8 +102,39 @@ getFileName(x){
 
         });
     }
+    
 
-   
+    ConfirmMessage1(txt,callBack) {
+        Swal.fire({
+            // title: "Are you sure you want to delete this item?",
+            text: txt,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes !",
+            html: `
+            <p>${txt}</p>
+            <label>
+                <input type="checkbox" id="myCheckbox" checked>
+                <span>Notify Assignees</span>
+            </label>
+        `,
+        // preConfirm: () => {
+        //     const checkbox = document.getElementById('myCheckbox');
+        //     return checkbox ? checkbox.checked : false;
+        //   }
+        }).then((result) => {
+            if (result.isConfirmed) {
+              return callBack(true)
+            }
+            else{
+                return callBack(false)
+            }
+
+        });
+    }
+    
 
     ////////////////////////////////////////Portal Methods
    
@@ -290,6 +370,19 @@ getFileName(x){
             }
         })
     }
+
+    DeleteTasksAttachment_useCreateTask(obj, callBack) {
+        super.CreateNewServiceParamObject("DeleteTasksAttachment", obj, false);
+        super.CallNewService("DeleteTasksAttachment", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+
     Json_UpdateTaskField(obj, callBack) {
         super.CreateNewServiceParamObject("Json_UpdateTaskField", obj, false);
         super.CallNewService("Json_UpdateTaskField", function (status, Data) {
@@ -521,6 +614,18 @@ console.log("formattedDate",formattedDate)
         })
     }
 
+    Json_CheckoutItem(obj, callBack) {
+        super.CreateNewServiceParamObject("Json_CheckoutItem", obj, true);
+        super.CallNewService("Json_CheckoutItem", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
+
     
     Json_GetCategory(obj, callBack) {
         super.CreateNewServiceParamObject("Json_GetCategory", obj, true);
@@ -687,7 +792,50 @@ console.log("formattedDate",formattedDate)
             }
         })
     }
-
+    SendMail(obj, callBack) {
+        super.CreateNewServiceParamObject("Json_SendMail", obj, false);
+        super.CallNewService("Json_SendMail", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    } 
+    NewSendMail(obj, callBack) {
+        super.CreateNewServiceParamObject("NewSendMail", obj, false);
+        super.CallNewService("NewSendMail", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
+    GetAssigneeListByTaskId(obj, callBack) {
+        super.CreateNewServiceParamObject("Json_GetAssigneeListByTaskId", obj, false);
+        super.CallNewService("Json_GetAssigneeListByTaskId", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
+    GetActiveUserById(obj, callBack) {
+        super.CreateNewServiceParamObject("Json_GetActiveUserById", obj, false);
+        super.CallNewService("Json_GetActiveUserById", function (status, Data) {
+            if (status) {
+                callBack(true, Data);
+            }
+            else {
+                callBack(false, []);
+            }
+        })
+    }
     Json_Get_DS_TaskManager(callBack) {
         super.CreateNewServiceParamObject("Json_Get_DS_TaskManager");
         super.CallNewService("Json_Get_DS_TaskManager", function (status, Data) {
@@ -847,6 +995,17 @@ console.log("formattedDate",formattedDate)
         })
     }
 
+    GetInternalUserList(o,callBack) {
+        super.CreateNewServiceParamObject("GetInternalUserList",o,false);
+        super.CallNewService("GetInternalUserList", function (status, Data) {
+            if (status) {
+                return callBack(true, Data);
+            }
+            else {
+                return callBack(false, []);
+            }
+        })
+    }
     Json_GetForwardUserList(obj, callBack) {
         super.CreateNewServiceParamObject("Json_GetForwardUserList", obj, true);
         super.CallNewService("Json_GetForwardUserList", function (status, Data) {
@@ -1346,6 +1505,54 @@ console.log("formattedDate",formattedDate)
         //let o = { ProjectId: FolderId,SectionId: };
         super.CreateNewServiceParamObject("Json_GetUserComments", obj, true);
         super.CallNewService("Json_GetUserComments", function (status, Data) {
+          if (status) {
+            if (Data != "") {
+              return callBack(true, Data);
+            } else {
+              return callBack(false, []);
+            }
+          } else {
+            // console.log("status", status);
+          }
+        });
+      }
+
+      SupplierContact(obj, callBack) {
+        //let o = { ProjectId: FolderId,SectionId: };
+        super.CreateNewServiceParamObject("Json_deleteSupplierContact", obj, true);
+        super.CallNewService("Json_deleteSupplierContact", function (status, Data) {
+          if (status) {
+            if (Data != "") {
+              return callBack(true, Data);
+            } else {
+              return callBack(false, []);
+            }
+          } else {
+            // console.log("status", status);
+          }
+        });
+      }
+
+      Suppliers(obj, callBack) {
+        //let o = { ProjectId: FolderId,SectionId: };
+        super.CreateNewServiceParamObject("Json_DeleteSuppliers", obj, true);
+        super.CallNewService("Json_DeleteSuppliers", function (status, Data) {
+          if (status) {
+            if (Data != "") {
+              return callBack(true, Data);
+            } else {
+              return callBack(false, []);
+            }
+          } else {
+            // console.log("status", status);
+          }
+        });
+      }
+
+      CRM_TaskDeleteByTaskID(obj, callBack) {
+        //let o = { ProjectId: FolderId,SectionId: };
+        super.CreateNewServiceParamObject("Json_Get_CRM_TaskDeleteByTaskID", obj, true);
+        super.CallNewService("Json_Get_CRM_TaskDeleteByTaskID", function (status, Data) {
           if (status) {
             if (Data != "") {
               return callBack(true, Data);

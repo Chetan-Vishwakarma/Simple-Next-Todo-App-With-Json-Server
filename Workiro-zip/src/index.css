@@ -622,6 +622,22 @@ button {
   padding: 0px !important;
 }
 
+.custom-date-picker {
+  position: relative;
+}
+
+.custom-date-picker .form-control {
+  height: 52px;
+}
+
+.custom-date-picker svg {
+  position: absolute;
+  right: 12px;
+  top: 13px;
+  font-size: 26px;
+  color: #D41B20;
+}
+
 .text-black {
   color: #1C274C;
 }
@@ -670,6 +686,7 @@ hr {
 
 .swal2-container .swal2-popup.swal2-modal .swal2-default-outline.swal2-confirm {
   background-color: #4780ff !important;
+  font-size: 14px !important;
 }
 
 .swal2-container .swal2-popup.swal2-modal {
@@ -679,6 +696,7 @@ hr {
 
 .swal2-container .swal2-popup.swal2-modal .swal2-cancel {
   background-color: #d42027 !important;
+  font-size: 14px !important;
 }
 
 .custom-modal .MuiDialog-container .MuiDialog-paperWidthSm {
@@ -688,9 +706,13 @@ hr {
   /* padding: 10px 20px 10px; */
 }
 
+.custom-modal-sm .MuiDialog-container .MuiDialog-paperWidthSm {
+  max-width: 500px;
+}
+
 .custom-modal-1200 .MuiDialog-container .MuiDialog-paperWidthSm {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1100px;
 }
 
 .full-modal .MuiDialog-container .MuiDialog-paperWidthSm {
@@ -713,6 +735,9 @@ span.tox-statusbar__branding {
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .activity-timeline ul {
@@ -1014,6 +1039,13 @@ span.tox-statusbar__branding {
   word-break: break-all;
   display: flex;
   align-items: center;
+  border-radius: 0;
+  transition: .5s all ease;
+}
+
+.search-box ul li:hover {
+  color: #fff;
+  background: #d42027;
 }
 
 .client-img {
@@ -1128,6 +1160,20 @@ span.tox-statusbar__branding {
   z-index: 1;
   top: 23px;
   left: 0;
+}
+
+.dropdown-box .btn-select {}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
 .btn-white {
@@ -1349,7 +1395,8 @@ span.tox-statusbar__branding {
 }
 
 .box-user-list-dropdown button:hover {
-  background: #f1f1f1;
+  background: #d42027;
+  color: #fff;
 }
 
 .box-user-list-dropdown button p {
@@ -1360,7 +1407,7 @@ span.tox-statusbar__branding {
   /* background: red; */
   position: absolute;
   right: 6px;
-  top: 18px;
+  top: 12px;
   display: inline-block;
   color: red;
   /* font-size: 10px !important; */
@@ -1504,7 +1551,7 @@ span.tox-statusbar__branding {
 .main-accordian .accordian-box.Mui-expanded .MuiButtonBase-root {
   background: #D41B20;
   color: #fff;
-  /* min-height: 50px; */
+  min-height: 50px;
 }
 
 .main-accordian .accordian-box.Mui-expanded .MuiButtonBase-root svg {
@@ -1666,7 +1713,9 @@ span.tox-statusbar__branding {
 .check-todo svg {
   font-size: 26px;
 }
-
+.small-checkbox .MuiTypography-root {
+  font-size: 13px;
+}
 .check-todo {
   position: absolute !important;
   right: 10px;
@@ -1714,6 +1763,16 @@ span.tox-statusbar__branding {
   font-size: 40px;
   color: #AFAFAF;
 }
+
+.file-uploaded {
+  border-bottom: 1px solid #ebebeb;
+  background: #fff;
+}
+.file-uploaded:last-child {
+  border-bottom: 0px;
+}
+
+
 
 .main-file-upload {
   /* border-top: 1px solid #f1f1f1; */
@@ -1947,6 +2006,10 @@ span.tox-statusbar__branding {
   overflow-x: hidden;
 }
 
+.client-details-scroll-search-2 {
+  max-height: calc(100vh - 210px);
+}
+
 .main-chatbox {
   max-height: 270px;
   overflow: auto;
@@ -1998,10 +2061,11 @@ span.tox-statusbar__branding {
 .approval-main .approval-box {
   align-items: center;
   display: flex;
-  margin-right: 15px;
+  margin-right: 10px;
   border-right: 1px solid #f1f1f1;
-  padding-right: 15px;
+  padding-right: 10px;
   margin-bottom: 10px;
+  width: 100;
 }
 
 .download-btn-box {
@@ -2037,6 +2101,7 @@ span.tox-statusbar__branding {
 
 .date-padding-0 .MuiStack-root {
   padding-top: 0px;
+  overflow: visible;
 }
 
 .dx-datagrid-borders>.dx-datagrid-header-panel {
@@ -2075,6 +2140,7 @@ span.tox-statusbar__branding {
   color: #4780FF;
   font-size: 12px;
   padding-top: 0px !important;
+  font-family: "Poppins", sans-serif !important;
 
 }
 
@@ -2202,7 +2268,125 @@ span.tox-statusbar__branding {
   top: 5px;
   min-width: 16px;
   height: 16px;
+  right: 6px;
 }
+
+.btn-select .button-select {
+  /* color: red; */
+  /* font-size: 13px; */
+  /* border: 0; */
+  color: #4780FF;
+  font-weight: 600;
+  font-size: 12px;
+  /* padding-top: 0px !important; */
+  width: 100%;
+  /* text-align: left; */
+  justify-content: start;
+}
+
+.btn-select .button-select:hover {
+  background-color: transparent;
+}
+
+.btn-select .MuiAutocomplete-root {
+  margin: 0 10px;
+  font-size: 12px;
+}
+
+.btn-select .MuiAutocomplete-root {
+  font-size: 12px !important;
+}
+
+.custom-tooltip {
+  position: absolute;
+  top: 25px;
+  font-size: 11px;
+  background: #000;
+  color: #fff;
+  padding: 2px 8px;
+  display: block;
+  z-index: 1;
+  border-radius: 3px;
+  color: #fff;
+  opacity: 0;
+  visibility: hidden;
+  transition: .5s all ease;
+}
+
+.custom-tooltip:after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid #000;
+  position: absolute;
+  top: -10px;
+  right: 6px;
+  z-index: 1;
+}
+
+.select-border:hover .custom-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.daterangepicker .ranges ul li:first-child {
+  color: #D42026;
+  font-weight: 600;
+}
+
+.custom-date-2 .MuiButtonBase-root {
+  color: #D41B20;
+  background-color: #fff;
+  z-index: 1;
+}
+
+.daterangepicker .ranges ul li:first-child.active {
+  color: #fff;
+}
+
+.overflowy-auto {
+  overflow-y: auto;
+}
+
+.tox .tox-statusbar {
+  display: none !important;
+}
+
+.tox-notifications-container {
+  
+}
+
+.file-selected-item {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  min-width: 100%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  border: 1px solid #d3d3d3;
+  box-shadow: 0 0 10px #f3f1f1;
+  background: #fff;
+  padding-right: 15px;
+}
+.file-selected-item .selected-file .select-item {
+  background: #4780FF;
+  color: #fff;
+  margin-right: 10px;
+  min-width: 50px;
+  /* width: 100%; */
+  height: 50px;
+  /* border-radius: 90px; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5 6px;
+}
+
 
 @media only screen and (max-width: 1366px) {
   .MuiMenu-list .MuiButtonBase-root.MuiMenuItem-root {
@@ -2460,6 +2644,10 @@ span.tox-statusbar__branding {
   width: 100%;
   font-weight: 600;
   padding: 0px;
+}
+
+.tox.tox-silver-sink.tox-tinymce-aux {
+  display: none !important;
 }
 
 @media only screen and (max-width: 1199px) {
@@ -2772,7 +2960,6 @@ span.tox-statusbar__branding {
 
 .cd-vertical-nav {
   position: fixed;
-  z-index: 1;
   right: 5%;
   bottom: 30px;
   width: 90%;
@@ -2793,7 +2980,9 @@ span.tox-statusbar__branding {
   -moz-transition: -moz-transform .2s;
   transition: transform .2s;
   border-radius: .25em;
-  background-color: rgba(234, 242, 227, .9)
+  background-color: rgba(234, 242, 227, .9);
+  /* z-index: 9999; */
+  z-index: 9;
 }
 
 .cd-vertical-nav a {

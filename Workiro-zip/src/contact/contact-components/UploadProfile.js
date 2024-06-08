@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import user from "../../images/user-2.svg";
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
@@ -84,7 +85,10 @@ export default function UploadButtons({ userContactDetails, setContactDetails })
           </div>
         ))}
         {images.length === 0 && !previewImage && (
-          <img src={userContactDetails.Base64ImgData ? userContactDetails.Base64ImgData : user} alt="Blank Preview" style={{ maxWidth: '100px', maxHeight: '100px', margin: '5px', borderRadius: '90px' }} />
+          <Box className='client-img'>
+            <img src={userContactDetails.Base64ImgData ? userContactDetails.Base64ImgData : user} alt="Blank Preview" />
+          </Box>
+
         )}
       </div>
       <label htmlFor="contained-button-file">
@@ -109,7 +113,7 @@ export default function UploadButtons({ userContactDetails, setContactDetails })
         </Button>
       </label>
 
-      
+
 
     </Stack>
   );

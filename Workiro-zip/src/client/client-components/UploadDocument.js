@@ -15,28 +15,40 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+// import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import DatePicker from 'react-datetime';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import CommanCLS from '../../services/CommanService';
 import dayjs from 'dayjs';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setOpenDocumentModalByRedux } from '../../redux/reducers/counterSlice';
+import { GetCategory_Redux, fetchRecentDocumentsRedux } from '../../redux/reducers/api_helper';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+
 
 let originatorNo;
-function UploadDocument({ 
-      openUploadDocument, 
-      setOpenUploadDocument,
-      documentDate, setDocumentDate, receivedDate, setReceivedDate, setCreateNewFileObj, txtFolderData, setTxtFolderData, txtClientData, setTxtClientData, txtSectionData, setTxtSectionData, setTaskType, setOpenModal, handleClickOpen, openDocumentModalByRedux
-    }) {
-        //console.log("location state",localtion.state)
+function UploadDocument({
+    openUploadDocument,
+    setOpenUploadDocument,
+    documentDate, setDocumentDate, receivedDate, setReceivedDate, setCreateNewFileObj, txtFolderData, setTxtFolderData, txtClientData, setTxtClientData, txtSectionData, setTxtSectionData, setTaskType, setOpenModal, handleClickOpen, openDocumentModalByRedux
+}) {
+
     const dispatch = useDispatch();
+    const folderList = useSelector((state) => state.counter.folders);
+    let category = useSelector((state) => state.counter.AllCategory?.Table);
+    let s_Desc = useSelector((state) => state.counter.AllCategory?.Table1);
+    let categoryList = category ? category : [];
+    let standarDescription = s_Desc ? s_Desc : [];
+    // console.log("fdsdjlkjskt",categoryList);
+
     const localtion = useLocation();
+    console.log("location state",localtion.state)
     try {
         originatorNo = localtion.state;
-      //  console.log("originatorNo11",originatorNo )
+        //  console.log("originatorNo11",originatorNo )
     }
 
     catch (e) {
@@ -62,7 +74,6 @@ function UploadDocument({
 
     const [clientList, setClientList] = useState([]);
     const [sectionList, setSectionList] = useState([]);
-    const [folderList, setFolderList] = useState([]);
     const [udfTable, setUDFTable] = useState([]);
     const [getAllFolderData, setGetAllFolderData] = useState([]);
 
@@ -72,7 +83,7 @@ function UploadDocument({
 
     const [selectedFiles, setSelectedFiles] = useState([]);////////////Set file selected and upload
 
-    const [txtClientId, setTxtClientId] = useState(originatorNo);/////////////////for clientid set
+    const [txtClientId, setTxtClientId] = useState(originatorNo ?originatorNo.originatorNo:"");/////////////////for clientid set
 
     // const [txtClientData, setTxtClientData] = useState(null);/////////////////for clientid set
 
@@ -84,7 +95,7 @@ function UploadDocument({
 
     // const [receivedDate, setReceivedDate] = useState(null); // Initialize the selected date state
 
-    const [standarDescription, setStandarDescription] = useState([]); // Initialize the selected date state
+    // const [standarDescription, setStandarDescription] = useState([]); // Initialize the selected date state
 
     const [txtStandarDescription, settxtStandarDescription] = useState(""); // Initialize the selected date state
 
@@ -96,7 +107,7 @@ function UploadDocument({
 
     const [categoryid, setCategoryId] = useState(0);
 
-    const [categoryList, setCategoryList] = useState([])
+    // const [categoryList, setCategoryList] = useState([])
 
     const [showModalCreateTask, setshowModalCreateTask] = useState(false);
     // const [openModal, setOpenModal] = useState(false);
@@ -104,7 +115,7 @@ function UploadDocument({
 
 
     const [fileLangth, setFileLength] = useState(0);
-    
+
 
 
 
@@ -144,7 +155,7 @@ function UploadDocument({
                             Guid: localStorage.getItem("GUID"),
                             FileType: cls.getFileExtension(file.name).toLowerCase()
                         };
-                        
+
                         setSelectedFiles((prevUploadedFiles) => [...prevUploadedFiles, fileData]);
                         resolve();
                     };
@@ -185,36 +196,40 @@ function UploadDocument({
 
     //////////////////////////Get Foder Data
     function Json_GetFolders() {
-        let obj = {
-            agrno: agrno,
-            Email: Email,
-            password: password
+        let res = folderList.filter((f) => f.FolderID === parseInt(localStorage.getItem("ProjectId")));
+        if (res.length > 0) {
+            setTxtFolderData(res[0]);
         }
+        // let obj = {
+        //     agrno: agrno,
+        //     Email: Email,
+        //     password: password
+        // }
 
-        try {
-            cls.Json_GetFolders(obj, function (sts, data) {
-                if (sts) {
-                    if (data) {
-                        let js = JSON.parse(data);
-                        let tbl = js.Table;
-                        let result = tbl.filter((el) => el.FolderID === parseInt(txtFolderId));
-                        console.log("get folder list", tbl);
-                        setFolderList(tbl);
-                        if (result.length > 0) {
-                            console.log("get folder list", result);
-                            // setTextFolderData(result[0])
-                            setTxtFolderData(result[0]);
-                        }
-                    }
-                }
-            });
-        } catch (error) {
-            console.log({
-                status: false,
-                message: "Folder is Blank Try again",
-                error: error,
-            });
-        }
+        // try {
+        //     cls.Json_GetFolders(obj, function (sts, data) {
+        //         if (sts) {
+        //             if (data) {
+        //                 let js = JSON.parse(data);
+        //                 let tbl = js.Table;
+        //                 let result = tbl.filter((el) => el.FolderID === parseInt(txtFolderId));
+        //                 console.log("get folder list", tbl);
+        //                 setFolderList(tbl);
+        //                 if (result.length > 0) {
+        //                     console.log("get folder list", result);
+        //                     // setTextFolderData(result[0])
+        //                     setTxtFolderData(result[0]);
+        //                 }
+        //             }
+        //         }
+        //     });
+        // } catch (error) {
+        //     console.log({
+        //         status: false,
+        //         message: "Folder is Blank Try again",
+        //         error: error,
+        //     });
+        // }
     }
 
     function Json_GetFolderData(fid) {
@@ -298,9 +313,9 @@ function UploadDocument({
         Json_GetClientsByFolder(localStorage.getItem("ProjectId"))
         Json_GetFolders();
         Json_GetFolderData(localStorage.getItem("ProjectId"));
-        setDocumentDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
-        setReceivedDate(dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD")); // Update the selected date state with the new date value
-        // console.log("GetCurrentDayDate", dayjs(cls.GetCurrentDayDate()).format("YYYY/MM/DD"));
+        setDocumentDate(moment(new Date()).format("DD/MM/YYYY")); // Update the selected date state with the new date value
+        setReceivedDate(moment(new Date()).format("DD/MM/YYYY")); // Update the selected date state with the new date value
+         console.log("GetCurrentDayDate222", moment(new Date()).format("DD/MM/YYYY"));
         // console.log("GetNextDayDate", cls.GetNextDayDate());
         setOpenModal(false);
         setshowModalCreateTask(false)
@@ -338,7 +353,7 @@ function UploadDocument({
             console.log("Get Clietn On click", data);
             setTxtSectionId(data.SecID)
             setTxtSectionData(data)
-            Json_GetCategory(data.SecID)
+            dispatch(GetCategory_Redux(data.SecID));
             Json_GetSubSections(data.SecID)
         }
 
@@ -400,46 +415,19 @@ function UploadDocument({
         }
 
     }
-
-    function Json_GetCategory(SectionId) {
-
-        try {
-            let o = {};
-            o.SectionId = SectionId;
-            cls.Json_GetCategory(o, function (sts, data) {
-                if (sts) {
-                    console.log("Json_GetCategory", data);
-                    let json = JSON.parse(data);
-                    let tbl1 = json.Table1;
-                    let tbl = json.Table;
-                    if (tbl.length > 0) {
-                        setCategoryList(tbl)
-                    }
-                    if (tbl1.length > 0) {
-                        setStandarDescription(tbl1);
-                    }
-
-
-
-                }
-            });
-        } catch (error) {
-            console.log({ Status: false, mgs: "Data not found", Error: error });
-        }
-    }
     //////////////////////////End Get Foder Data
     /////////////////////////////DAte Set
 
 
 
     const handleDateChangeDocument = (date) => {
-       // console.log("Get Clietn On click", dayjs(date).format('YYYY/MM/DD'));
-        setDocumentDate(dayjs(date).format('YYYY/MM/DD')); // Update the selected date state
+        // console.log("Get Clietn On click", dayjs(date).format('YYYY/MM/DD'));
+        setDocumentDate(moment(date).format('DD/MM/YYYY')); // Update the selected date state
     };
 
     const handleDateChangeRecieved = (date) => {
         console.log("Get Clietn On click", dayjs(date).format('YYYY/MM/DD'));
-        setReceivedDate(dayjs(date).format('YYYY/MM/DD')); // Update the selected date state
+        setReceivedDate(moment(date).format('DD/MM/YYYY')); // Update the selected date state
     };
 
     const [createTaskChk, setCreateTaskChk] = useState(false);
@@ -484,11 +472,11 @@ function UploadDocument({
 
     const handleNext = () => {
         setStep(step + 1);
-        if(selectedFiles.length===1){
+        if (selectedFiles.length === 1) {
             settxtStandarDescription(cls.getFileName(selectedFiles[0].FileName));
         }
-        else{
-            settxtStandarDescription(""); 
+        else {
+            settxtStandarDescription("");
         }
     };
 
@@ -504,7 +492,7 @@ function UploadDocument({
         }
     }
 
-   
+
 
     const UploadDocumentCreattTask = async () => {
         try {
@@ -520,10 +508,10 @@ function UploadDocument({
                 // setOpenUploadDocument(false);   
             }
             else {
-               // Json_RegisterItem()
-                    toast.error("Please select a document",{
-                        toastStyle: {zIndex:9999},
-                    });
+                // Json_RegisterItem()
+                toast.error("Please select a document", {
+                    toastStyle: { zIndex: 9999 },
+                });
             }
 
         } catch (error) {
@@ -532,10 +520,31 @@ function UploadDocument({
 
     }
 
-   
-    let counter=0;
+
+    let counter = 0;
+
+    function dateFormatYYYYDDMM(originalDate){
+        // Original date string
+//var originalDate = "14/02/2024";
+
+// Split the original date string by "/"
+var parts = originalDate.split("/");
+
+// Create a new Date object using the parts
+var date = new Date(parts[2], parts[1] - 1, parts[0]);
+
+// Format the date into "yyyy/mm/dd" format
+var formattedDate = date.getFullYear() + "/" + 
+                    ("0" + (date.getMonth() + 1)).slice(-2) + "/" + 
+                    ("0" + date.getDate()).slice(-2);
+
+//console.log(formattedDate); // Output: "2024/02/14"
+return formattedDate;
+    }
 
     function Json_RegisterItem(fileData) {
+        console.log("document date 111",moment(documentDate).format("YYYY/MM/DD"),documentDate);
+
         try {
             let values;
             let concatenatedString;
@@ -576,9 +585,9 @@ function UploadDocument({
                     "originatorId": txtClientData.ClientID,
                     "senderId": txtClientData.ClientID,
                     "sectionName": txtSectionData.Sec,
-                    "extDescription":validationMessage==="" ? cls.getFileName(fileData.FileName) : txtStandarDescription,
+                    "extDescription": validationMessage === "" ? cls.getFileName(fileData.FileName) : txtStandarDescription,
                     "docDirection": "Incoming",
-                    "description": validationMessage==="" ? cls.getFileName(fileData.FileName) : txtStandarDescription,
+                    "description": validationMessage === "" ? cls.getFileName(fileData.FileName) : txtStandarDescription,
                     "priority": "",
                     "stickyNote": "",
                     "fileName": fileData ? fileData.FileName : "",
@@ -588,15 +597,15 @@ function UploadDocument({
                     "uDFList": concatenatedString,
                     "sUDFList": "",
                     "clientname": txtClientData.Client,
-                    "receiveDate": dayjs(receivedDate).format("YYYY/MM/DD"),
+                    "receiveDate": dateFormatYYYYDDMM(receivedDate),
                     "actionByDate": "1990/01/01",
-                    "actionDate": dayjs(documentDate).format("YYYY/MM/DD"),
-                    "docViewedDate": dayjs(documentDate).format("YYYY/MM/DD"),
+                    "actionDate": dateFormatYYYYDDMM(documentDate),
+                    "docViewedDate": dateFormatYYYYDDMM(documentDate),
                     "strb64": fileData ? fileData.Base64 : "",
                     "strtxt64": "",
                     "EmailMessageId": ""
                 }
-                
+
                 console.log("Json_RegisterItem", obj);
 
 
@@ -604,20 +613,20 @@ function UploadDocument({
                     if (sts) {
                         if (data) {
                             let js = JSON.parse(data)
-                           
+
                             if (js.Status === "true") {
                                 counter++;
-                               // console.log("Json_RegisterItem", js,counter)
+                                // console.log("Json_RegisterItem", js,counter)
                                 if (fileData) {
 
                                     fileData.DocId = js.ItemId;
                                     setCreateNewFileObj((Previous) => [...Previous, fileData]);
                                 }
 
-                                if(selectedFiles.length===counter){
-                                    let msg =`${selectedFiles.length}  Document(s) Uploaded!`;
-                                    console.log("Json_RegisterItem 222 ",msg)
-                                    toast.success(msg);                      
+                                if (selectedFiles.length === counter) {
+                                    let msg = `${selectedFiles.length}  Document(s) Uploaded!`;
+                                    console.log("Json_RegisterItem 222 ", msg)
+                                    toast.success(msg);
                                 }
 
                                 if (buttonNameText === "Submit & Create Portal Task" || buttonNameText === "Submit & Create Task") {
@@ -630,20 +639,17 @@ function UploadDocument({
                                     //     if(openModal){
                                     //         setOpenUploadDocument(false); 
                                     //     }
-                                      
+
                                     // }, 4000);    
-                                    
+
                                     // setOpenModal(true) doring conflict
                                     // setOpenUploadDocument(false);
-                                   
+
                                 }
                                 else {
                                     setOpenUploadDocument(false);
                                 }
-
-
-
-
+                                dispatch(fetchRecentDocumentsRedux());
                             }
                             else {
                                 toast.error("Faild Please Try Again");
@@ -710,7 +716,7 @@ function UploadDocument({
             [id]: setUdf // Update selected value for a specific ComboBox
         }));
 
-        
+
         // console.log("newValue",udfIdWithValue);
 
     };
@@ -815,7 +821,7 @@ function UploadDocument({
                                 </Box>
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
-                                    {!openDocumentModalByRedux?(<Autocomplete
+                                    {!openDocumentModalByRedux ? (<Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
                                         options={clientList}
@@ -826,11 +832,11 @@ function UploadDocument({
                                         //value={originatorNo.originatorNo} // Set default selected option based on the ID
                                         onChange={(event, newValue) => handleClientChange(newValue)}
                                         renderInput={(params) => <TextField {...params} label="Reference" />}
-                                    />):(<Autocomplete
+                                    />) : (<Autocomplete
                                         disablePortal
                                         id="combo-box-demo"
                                         options={clientList}
-                                        defaultValue={clientList.filter(itm=>itm.ClientID===originatorNo.originatorNo)[0]}
+                                        defaultValue={clientList.filter(itm => itm.ClientID === originatorNo.originatorNo)[0]}
                                         getOptionLabel={(option) => {
                                             // console.log("ldsfljfd",option.Client);
                                             return option.Client;
@@ -868,28 +874,39 @@ function UploadDocument({
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                     <label className='font-14 text-black'>Document Date</label>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                        <DatePicker className=" w-100"
-                                            format="DD/MM/YYYY"
-                                            defaultValue={moment()}
-                                            onChange={handleDateChangeDocument} // Handle date changes
-                                        />
 
+                                    <Box className='custom-date-picker'>
+                                        <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                            <DatePicker className=" w-100"
+                                                dateFormat="DD/MM/YYYY"
+                                                value={documentDate}
+                                                defaultValue={moment()}
+                                                onChange={(e)=>handleDateChangeDocument(e)} // Handle date changes
+                                                timeFormat={false}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
+                                            />
+                                        </LocalizationProvider>
+                                        <CalendarMonthIcon />
+                                    </Box>
 
-
-
-                                    </LocalizationProvider>
                                 </Box>
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12'>
                                     <label className='font-14 text-black'>Received Date</label>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs} >
-                                        <DatePicker className=" w-100"
-                                            format="DD/MM/YYYY"
-                                            defaultValue={moment()}
-                                            onChange={handleDateChangeRecieved} // Handle date changes
-                                        />
-                                    </LocalizationProvider>
+                                    <Box className='custom-date-picker'>
+                                        <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                            <DatePicker className=" w-100"
+                                                dateFormat="DD/MM/YYYY"
+                                                value={receivedDate}
+                                                onChange={(e)=>handleDateChangeRecieved(e)} // Handle date changes
+                                                timeFormat={false}
+                                                closeOnSelect={true}
+                                                icon="fa fa-calendar"
+                                            />
+                                        </LocalizationProvider>
+                                        <CalendarMonthIcon />
+                                    </Box>
                                 </Box>
 
                                 <Box className='col-lg-6 mb-3 col-md-6 col-sm-12 d-flex align-items-end'>
@@ -940,7 +957,7 @@ function UploadDocument({
                                     switch (item.ControlType) {
                                         case "ComboBox":
                                             count++;
-                                           // console.log("vlaueeee", count)
+                                            // console.log("vlaueeee", count)
                                             let data = getAllFolderData["Table" + count];
                                             if (data && data.length > 0 && item.UDFId === data[0]["UDFID"]) {
                                                 return (
